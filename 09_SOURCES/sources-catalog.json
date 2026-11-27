@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
-    "lastHarvestedAt": "2026-11-23T22:05:07.373Z",
+    "contentHash": "b905944fcfbb3865fbb9002b3c405caa9da72a8e8a284b8ff6bb7fd2f695b6bc",
+    "lastHarvestedAt": "2026-11-27T07:30:29.693Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "c0803f04",
+    "sourceVersion": "ffbae6ba",
     "license": "Apache-2.0",
-    "contentHash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
-    "lastHarvestedAt": "2026-11-26T14:44:39.117Z",
+    "contentHash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
+    "lastHarvestedAt": "2026-11-27T07:30:40.080Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "aa4f044b",
+    "sourceVersion": "078550d7",
     "license": "NOASSERTION",
-    "contentHash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
-    "lastHarvestedAt": "2026-11-26T13:36:05.951Z",
+    "contentHash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
+    "lastHarvestedAt": "2026-11-27T07:30:45.136Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {

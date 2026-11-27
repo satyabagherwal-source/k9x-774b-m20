@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:22:05.379Z",
+  "last_updated": "2026-11-27T07:30:45.149Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2242,14 +2242,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "content_hash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
-      "verified_at": "2026-11-23T22:05:07.381Z",
+      "content_hash": "b905944fcfbb3865fbb9002b3c405caa9da72a8e8a284b8ff6bb7fd2f695b6bc",
+      "verified_at": "2026-11-27T07:30:29.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:05:07.381Z"
+      "last_updated": "2026-11-27T07:30:29.706Z"
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
-      "verified_at": "2026-11-26T14:44:39.139Z",
+      "content_hash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
+      "verified_at": "2026-11-27T07:30:40.092Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:44:39.139Z"
+      "last_updated": "2026-11-27T07:30:40.092Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
-      "verified_at": "2026-11-26T13:36:05.969Z",
+      "content_hash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
+      "verified_at": "2026-11-27T07:30:45.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:36:05.969Z"
+      "last_updated": "2026-11-27T07:30:45.148Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",

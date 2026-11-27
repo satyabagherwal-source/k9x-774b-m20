@@ -13713,3 +13713,6 @@
 | `CYCLE-20261127-L4LD` | `2026-11-27T07:21:51.745Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`4685e863...`) |
 | `CYCLE-20261127-LBWZ` | `2026-11-27T07:22:01.235Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10848` | Yes (`47173e1c...`) |
 | `CYCLE-20261127-LF3D` | `2026-11-27T07:22:05.353Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10849` | Yes (`d5f12e4f...`) |
+| `CYCLE-20261127-W88O` | `2026-11-27T07:30:29.688Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`b905944f...`) |
+| `CYCLE-20261127-WG90` | `2026-11-27T07:30:40.068Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10850` | Yes (`f5b11a34...`) |
+| `CYCLE-20261127-WK5G` | `2026-11-27T07:30:45.124Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10851` | Yes (`2161f24c...`) |

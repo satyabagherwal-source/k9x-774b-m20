@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:22:11.658Z",
+  "last_updated": "2026-11-27T07:30:51.070Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T06:55:11.382Z",
@@ -738,7 +738,7 @@
       "staged_for_review": 0
     },
     "okteto-okteto-learnings.md": {
-      "processed_at": "2026-11-26T14:44:46.194Z",
+      "processed_at": "2026-11-27T07:30:49.048Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -958,9 +958,9 @@
       "staged_for_review": 1
     },
     "redisearch-redisearch-learnings.md": {
-      "processed_at": "2026-11-25T12:20:23.952Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T07:30:50.252Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "salvo-rs-salvo-learnings.md": {
       "processed_at": "2026-11-27T00:24:41.079Z",
@@ -2828,7 +2828,7 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm2.5-24b-a2b-learnings.md": {
-      "processed_at": "2026-11-23T22:05:26.917Z",
+      "processed_at": "2026-11-27T07:30:48.598Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4866,
+  "total_dossiers_evaluated": 4869,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3643
+  "total_staged_for_review": 3645
 }

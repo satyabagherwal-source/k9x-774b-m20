@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-5C34",
-    "timestamp": "2026-11-26T01:17:59.536Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "8867786e5b2aecdb30b36af542501511878f1b5dc5a6ab1fd87141968586d595",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-5FZN",
-    "timestamp": "2026-11-26T01:18:04.595Z",
-    "repository": "paradedb/paradedb",
-    "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-G1H0",
-    "timestamp": "2026-11-26T01:26:18.996Z",
-    "repository": "NousResearch/Arete-27B",
-    "learningId": "learn-huggingface-nousresearch-arete-27b",
-    "contentHash": "70aa58187742d4f0cf72409fffd5231c2ce357031b98f824aa3ad6021ea17f99",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-G2ZW",
     "timestamp": "2026-11-26T01:26:20.972Z",
     "repository": "ntex-rs/ntex",
@@ -7490,6 +7445,51 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "d5f12e4fd00f650a548feb7278e9a92cb8dcab3b651f9a30cb02fc8cd30305c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-W88O",
+    "timestamp": "2026-11-27T07:30:29.688Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "b905944fcfbb3865fbb9002b3c405caa9da72a8e8a284b8ff6bb7fd2f695b6bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WG90",
+    "timestamp": "2026-11-27T07:30:40.068Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WK5G",
+    "timestamp": "2026-11-27T07:30:45.124Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

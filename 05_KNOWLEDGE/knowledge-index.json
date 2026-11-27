@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T07:22:11.489Z",
+  "last_updated": "2026-11-27T07:30:50.900Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26429,
+  "total_items": 26434,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -231055,8 +231055,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "c0803f04",
-      "content_hash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
+      "source_version": "ffbae6ba",
+      "content_hash": "f5b11a340210f0cc7d100ea0d302a4d5dc7cae3b88d891f948a10830507f4cf7",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -231104,6 +231104,11 @@
           "number": 10706,
           "title": "add okteto git-credential and set it up in remote runs (ENG-23)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10850,
+          "title": "warn that hybrid mode is deprecated (PROD-555)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231111,7 +231116,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T14:44:38.850Z",
+      "verified_at": "2026-11-27T07:30:39.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231153,10 +231158,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "repository": "okteto/okteto",
-      "source_version": "c0803f04",
-      "content_hash": "6b9b3fc9bc1f71fd40ff1af1093fd9bdaa4b44a18319dda452cb5f0e27f357a1",
+      "source_version": "ffbae6ba",
+      "content_hash": "b409fe0c3ed3ce7b95be50db4ce154d8cfaab709e437301483687303c75e57fc",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T14:44:39.638Z"
+      "persisted_at": "2026-11-27T07:30:40.503Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto",
@@ -231165,10 +231170,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "c0803f04",
-      "content_hash": "181a1a271eeceb77bf573282b1ddafab6dd2844455af044563b6534ca0fd6e3a",
+      "source_version": "ffbae6ba",
+      "content_hash": "c5db6be1688bc5cf470545d06b380228b14a82781d1660f8b4f4d892dd3acc5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:44:39.842Z"
+      "persisted_at": "2026-11-27T07:30:40.690Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -231725,9 +231730,9 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b53ff923b4c44886be84298cc406550eb9469f66b9dc36e650e859e07f6533a",
+      "content_hash": "39952b6aedacd8a42c3980254cf312a6ae919c255cb217422ce9dd84437a59d5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T14:44:47.282Z"
+      "persisted_at": "2026-11-27T07:30:49.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings",
@@ -231737,9 +231742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b3da282c579fb4cbc2574f633963056ba614c31adacba47d34096e34fc6ebd6",
+      "content_hash": "fe36c7fbb69193b8b708eaccf8b633f7683d4ae9249aa9002e3a0d61998a4358",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:44:47.465Z"
+      "persisted_at": "2026-11-27T07:30:50.052Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -243992,7 +243997,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "e7956b2e95598b4efd23193e606c4ddd22f643aeeadc6ddc75015e214fd603c6",
+      "content_hash": "b905944fcfbb3865fbb9002b3c405caa9da72a8e8a284b8ff6bb7fd2f695b6bc",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [],
@@ -244001,7 +244006,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:05:07.167Z",
+      "verified_at": "2026-11-27T07:30:29.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244018,9 +244023,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B Core Invariants",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "3fb5dad578a2eca5a053970c90fec19353bdb6ee897bc3fc6fd285094e72c78c",
+      "content_hash": "ba74a9a6cbf5779f20fa6a08bd5a400ed3189a1bcd6a2a3601fa620214cdd117",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:05:07.575Z"
+      "persisted_at": "2026-11-27T07:30:29.925Z"
     },
     "learn-github-falkordb-falkordb": {
       "learning_id": "learn-github-falkordb-falkordb",
@@ -244273,9 +244278,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee87e337ff16677a8beabc3075ca0ad098155007b7fce609852f3154af71ba4c",
+      "content_hash": "193b6651c531730898e149e45c24ebfcb7c9862e5c13e106610e88a6e92c512b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:05:27.128Z"
+      "persisted_at": "2026-11-27T07:30:48.838Z"
     },
     "candidate_directive-docs-add-compose-dsl-coroutine-and-thread-switching-guide": {
       "item_id": "candidate_directive-docs-add-compose-dsl-coroutine-and-thread-switching-guide",
@@ -260028,8 +260033,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "aa4f044b",
-      "content_hash": "2b9e961d75c217e3e1c9a15a29e24acc7b7534edc83effe22655fb9dab16e14a",
+      "source_version": "078550d7",
+      "content_hash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -260067,6 +260072,11 @@
           "number": 10690,
           "title": "[MOD-21589] Add a nonblocking worker pause for assertion builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10851,
+          "title": "[RED-224927] Fix building from source on macOS when other Redis modules install",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260074,7 +260084,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:36:05.711Z",
+      "verified_at": "2026-11-27T07:30:44.881Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279033,10 +279043,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "repository": "RediSearch/RediSearch",
-      "source_version": "aa4f044b",
-      "content_hash": "a9f3884d51d268e515dae42ab6d9eca558f06a0daaea17f03165062436acd773",
+      "source_version": "078550d7",
+      "content_hash": "10edeb1cc8a50e3cbbd87f60b543ae13edd196831367df8bb9c8c0de42bd2a9b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:36:06.377Z"
+      "persisted_at": "2026-11-27T07:30:45.571Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch",
@@ -279045,10 +279055,10 @@
       "relative_path": "08_VERIFICATION/redisearch-redisearch-verification-protocol-empirical-defect-shield-for-redisear.md",
       "title": "Verification Protocol: Empirical Defect Shield for RediSearch/RediSearch",
       "repository": "RediSearch/RediSearch",
-      "source_version": "aa4f044b",
-      "content_hash": "b7e71e807d5b7f9f8e9adb9c1c5f5a69e68b6c8e711108d1eee798e0afca528b",
+      "source_version": "078550d7",
+      "content_hash": "af2c4972e861fb46e09ab3882698c1384732531fbddff09e857982d87756d5d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:36:06.561Z"
+      "persisted_at": "2026-11-27T07:30:45.759Z"
     },
     "learn-huggingface-autogluon-chronos-2": {
       "learning_id": "learn-huggingface-autogluon-chronos-2",
@@ -309432,9 +309442,9 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "repository": "redisearch-redisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ad6e7a31587b03cbae92fd79227f3c6aea7cbcd8aa36ae5b200f70bf1015314",
+      "content_hash": "5560d97476450ecf9e15deaf445b860c3c827d2574a6b81c28110aa7af69d3c5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:20:25.158Z"
+      "persisted_at": "2026-11-27T07:30:50.713Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch-learning",
@@ -309444,9 +309454,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for redisearch-redisearch-learnings",
       "repository": "redisearch-redisearch-learnings",
       "source_version": "HEAD",
-      "content_hash": "af2ed4cf862a7f06bcb1fd69e72f85f96f2a182865bb5a6bc0c606ad038d38b8",
+      "content_hash": "45b8154868a6d5119d3a285128cb2c001818084c303b69ff4e7d561c6ca94a43",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:20:25.446Z"
+      "persisted_at": "2026-11-27T07:30:50.900Z"
     },
     "rule-9566": {
       "learning_id": "rule-9566",
@@ -362645,6 +362655,70 @@
       "content_hash": "a65f9e44805f55502ea9fc270cc10016b94f52a9278ab428b83cfb5b4371fd33",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T07:22:09.908Z"
+    },
+    "rule-10850": {
+      "learning_id": "rule-10850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10850,
+      "title": "warn that hybrid mode is deprecated (PROD-555)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "ffbae6ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:30:39.836Z"
+    },
+    "candidate_directive-warn-that-hybrid-mode-is-deprecated-prod-555": {
+      "item_id": "candidate_directive-warn-that-hybrid-mode-is-deprecated-prod-555",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WGFS-warn-that-hybrid-mode-is-deprecated-prod-555.md",
+      "title": "warn that hybrid mode is deprecated (PROD-555)",
+      "repository": "okteto/okteto",
+      "source_version": "ffbae6ba",
+      "content_hash": "6ded2af1d64a1a6423f7828bcddf605e66779487a49ae8a34a75980b489bb89c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T07:30:40.315Z"
+    },
+    "rule-10851": {
+      "learning_id": "rule-10851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10851,
+      "title": "[RED-224927] Fix building from source on macOS when other Redis modules install",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "078550d7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:30:44.881Z"
+    },
+    "candidate_directive-red-224927-fix-building-from-source-on-macos-when-other-redis-modules-install": {
+      "item_id": "candidate_directive-red-224927-fix-building-from-source-on-macos-when-other-redis-modules-install",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WOBA-red-224927-fix-building-from-source-on-macos-when-other-redis-modules-install.md",
+      "title": "[RED-224927] Fix building from source on macOS when other Redis modules install",
+      "repository": "redisearch-redisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0aae197694a8c46f9633f913f053b31a2c6f9656cc035f018d24591953e9f09",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T07:30:50.521Z"
+    },
+    "candidate_directive-up-warn-that-hybrid-mode-is-deprecated-prod-555": {
+      "item_id": "candidate_directive-up-warn-that-hybrid-mode-is-deprecated-prod-555",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WNNN-up-warn-that-hybrid-mode-is-deprecated-prod-555.md",
+      "title": "up): warn that hybrid mode is deprecated (PROD-555)",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd2a54578cb20a7c7efbfa60058a0b244d5ea35bfaec2468133b54e841e1ca3e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T07:30:49.668Z"
     }
   },
   "ai-builder-brain": {

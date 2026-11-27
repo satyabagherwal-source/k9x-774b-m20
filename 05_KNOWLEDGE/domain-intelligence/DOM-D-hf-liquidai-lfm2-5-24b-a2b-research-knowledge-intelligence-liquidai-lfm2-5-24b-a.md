@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
   "source_version": "hf-liquidai-lfm2.5-24b-a2b",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:05:07.575Z",
+  "timestamp": "2026-11-27T07:30:29.925Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [LiquidAI/LFM2.5-24B-A2B](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B) (Revision: `hf-liquida`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:05:07.575Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:30:29.925Z`  
 > **Learning ID**: `learn-huggingface-liquidai-lfm2-5-24b-a2b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/LFM2.5-24B-A2B](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:05:06.760Z  
+> **Harvest Timestamp**: 2026-11-27T07:30:29.048Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 26894 downloads | 629 likes
+- **Stars / Engagement**: 26443 downloads | 631 likes
 
 ---
 

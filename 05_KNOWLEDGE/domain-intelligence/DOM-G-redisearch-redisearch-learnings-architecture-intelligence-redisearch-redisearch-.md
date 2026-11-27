@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:20:24.710Z",
+  "timestamp": "2026-11-27T07:30:50.392Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-redisearch-redisearch-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [redisearch-redisearch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:20:24.710Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:30:50.392Z`  
 > **Learning ID**: `LEARN-EVO-redisearch-redisearch-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from redisearch-redisearch-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `7a24743f`  
+> **Source Version**: `078550d7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:19:38.120Z  
+> **Timestamp**: 2026-11-27T07:30:43.949Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:19:38.112Z  
+> **Harvest Timestamp**: 2026-11-27T07:30:43.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6245 stars
+- **Stars / Engagement**: 6247 stars
 
 ---
 
@@ -84,6 +84,7 @@ import { execa } from 'execa';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stripVTControlCharacters } from 'node:util';
+import type { Plan } from './plan.ts';
 import type { Judge, Vcs } from './ports.ts';
 
 export const ENV = { GIT_EDITOR: 'true', GIT_TERMINAL_PROMPT: '0', NO_COLOR: '1' };
@@ -101,6 +102,8 @@ export interface CheckResult extends Check {
   log: string;
   /** Why the check failed: its exit code, or what its log shows. */
   problem?: string;
+  /** Markdown saved with the candidate's evidence and included in its PR. */
+  report?: string;
 }
 
 /** Where checks and trials run: the checkout, a directory for their logs, and the claim's signal and environment. */
@@ -110,7 +113,9 @@ export interface CheckEnv {
   vcs: Vcs;
   signal: AbortSignal;
   vars: Record<string, string>;
-  judges: Record<string, Judge>;
+  /** The plan the checks run under, as the judges read it. */
+  plan: Plan<any>;
+  judges: Record<string, Judge<any>>;
   debug: (message: string) => void;
 }
 
@@ -128,16 +133,18 @@ export async function runChecks(run: CheckEnv, checks: Check[]): Promise<CheckRe
     const started = Date.now();
     const exitCode = run.signal.aborted ? null : await execute(run, check.command, log);
     const result: CheckResult = { ...check, exitCode, started, ms: Date.now() - started, log };
-    result.problem =
+    const verdict =
       exitCode === null
-        ? 'timed out'
+        ? { problem: 'timed out' }
         : exitCode !== 0
-          ? `exited ${exitCode}`
+          ? { problem: `exited ${exitCode}` }
           : await run.judges[check.kind]?.({
               check: result,
               log: await readLog(log),
               root: run.root,
+              plan: run.plan,
             });
+    Object.assign(result, verdict);
     run.debug(`check \`${check.command}\` ${result.problem ?? 'passed'} in ${result.ms}ms: ${log}`);
     results.push(result);
     if (result.problem) break;
@@ -623,6 +630,7 @@ import {
   outstanding,
   passed,
   previousStage,
+  unchanged,
   progressMark,
   replaceFindings,
   repliesDue,
@@ -763,7 +771,7 @@ export function engine<X extends object>(o: EngineOptions<X>) {
     },
     {
       name: 'claim',
-      description: `Claim that a committed, checked-out revision completes a stage. Blocks while checks and ${profile.reviewers.length} reviewers run, opens or updates the stage PR on admission, and returns new findings.`,
+      description: `Claim that a committed, checked-out revision completes a stage. Blocks while checks and the stage's reviewers run, opens or updates the stage PR on admission, and returns new findings.`,
       schema: {
         type: 'object',
         properties: {
@@ -825,7 +833,7 @@ export function engine<X extends object>(o: EngineOptions<X>) {
     },
     {
       name: 'retro',
-      description: `Once every stage is admitted, nothing is outstanding and CI is green, record the postm
+      description: `Once every stage is admitted, nothing is outstanding and CI is green, record the postmort
 ```
 
 ### Core Architecture Module: `.amp/plugins/rust-port/core/gates.ts`
@@ -1460,6 +1468,12 @@ export const stageOrder = (job: Job): Stage[] => Object.keys(job.plan.stages);
 export const previousStage = (job: Job, stage: Stage): Stage | undefined =>
   stageOrder(job)[stageOrder(job).indexOf(stage) - 1];
 
+/** Whether the stage was admitted with nothing to change, as its base. */
+export function unchanged(job: Job, stage: Stage): boolean {
+  const admission = job.admitted[stage];
+  return !!admission && admission.candidate === admission.base;
+}
+
 /** A stage stays admitted while the plan and the admitted stage it was built on are unchanged. */
 export function isAdmitted(job: Job, stage: Stage): boolean {
   const admission = job.admitted[stage];
@@ -1536,13 +1550,7 @@ export function addFindings(state: State, findings: NewFinding[]): void {
     );
     if (again) {
       const key = `${finding.key}:${again.thread ?? again.comment}`;
-      if (!Object.values(state.findings).some((f) => f.key === key))
-        insert(state, { ...finding, key });
-      continue;
-    }
-    if (!existing.closed) existing.links = [...new Set([...existing.links, ...finding.links])];
-    for (const reply of finding.replies ?? [])
-      if (!existing.replies
+      if (!Object.values(state.findings).some((f) => f.key ==
 ```
 
 ### Core Architecture Module: `.amp/plugins/rust-port/core/plan.ts`
@@ -1680,6 +1688,7 @@ export function pullRequest<X extends object>(
   profile: Profile<X>,
   stage: Stage,
   record: string,
+  reports = '',
 ) {
   const { title, body } = plan.stages[stage];
   return {
@@ -1689,7 +1698,7 @@ export function pullRequest<X extends object>(
 #### Behavior changes from ${profile.languages.from}
 
 ${describeDivergences(plan, profile.languages)}
-
+${reports ? `\n${reports}\n` : ''}
 <details><summary>How this port ran</summary>
 
 ${describePlan(plan, profile, false)}
@@ -1791,6 +1800,11 @@ export interface Forge {
     existing?: PR;
   }): Promise<PR>;
   /**
+   * Registers `prs`, the job's stage PRs bottom to top, as one stack into `base`. A stack the
+   * forge cannot record is left unregistered: the PRs still chain through their bases.
+   */
+  linkStack(o: { base: string; prs: PR[] }): Promise<void>;
+  /**
    * The review comments and the CI verdict of a stage PR. `posted` are the comments the plugin
    * wrote; `head` is the revision it published.
    */
@@ -1826,11 +1840,12 @@ export interface Vcs {
 }
 
 /** Judges a check that exited 0 from its log, or the files it wrote under `root`. */
-export type Judge = (o: {
+export type Judge<X = {}> = (o: {
   check: CheckResult;
   log: string;
   root: string;
-}) => Promise<string | undefined> | string | undefined;
+  plan: Plan<X>;
+}) => Promise<Pick<CheckResult, 'problem' | 'report'>> | Pick<CheckResult, 'problem' | 'report'>;
 
 /** What a project brings: its stages, layout, rules, runners, judges, reviewers and hooks. */
 export interface Profile<X = {}> {
@@ -1852,7 +1867,7 @@ export interface Profile<X = {}> {
   testRunners: string[];
   /** Whether a reproduction command only runs tests with one of {@link testRunners}. */
   isTestCommand(command: string): boolean;
-  judges: Record<string, Judge>;
+  judges: Record<string, Judge<X>>;
   reviewers: Reviewer[];
   /** What the plan gets wrong about the repository at `base`, once it is well formed. */
   checkPlan?(plan: Plan<X>, o: { root: string; vcs: Vcs; base: string }): Promise<string[]>;
@@ -1899,634 +1914,714 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a24743f` (2026-11-25)
-**Commit Message**: [MOD-20693] Stop the query pipeline on memory pressure (#12378)
+### Incident Patch 1: `ff955074` (2026-11-26)
+**Commit Message**: [RED-224927] Fix building from source on macOS when other Redis modules install an older LLVM (#12490)
 
-* Check query memory at build, before execution
+* [RED-224927] Build on macOS with the LLVM bootstrap installs, not the first clang on PATH
 
-Carried from https://github.com/RediSearch/RediSearch/pull/12122
+When Redis bootstraps all bundled modules in one environment, RedisJSON's,
+RedisTimeSeries' and RedisBloom's macOS installers put Homebrew llvm@18 on
+PATH after ours. build.sh passed plain clang/clang++ to CMake, so Search
+compiled with Clang 18, whose libc++ lacks std::atomic_ref, and SVS failed
+to build.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Look for LLVM_VERSION where install_llvm.sh installs it (Homebrew
+llvm@<ver>, then the tarball's LLVM_INSTALL_DIR) and fall back to PATH,
+with a warning, only when neither holds that version.
 
-* Stop the sorter and score normalizer on memory pressure
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Carried from https://github.com/RediSearch/RediSearch/pull/12123
+* Point bindgen and the SDK at the macOS LLVM build.sh selects
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Export LIBCLANG_PATH from the selected LLVM, so bindgen does not load
+another module's libclang from PATH. When that LLVM is the upstream
+tarball and SDKROOT is unset, set it from xcrun: unlike Homebrew's clang,
+upstream clang has no default SDK, and install_llvm.sh persists SDKROOT
+only in GitHub Actions and bash/zsh login profiles.
 
-* Stop the grouper on memory pressure
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL
 
-Carried from https://github.com/RediSearch/RediSearch/pull/12124
-
-Conflicts with master resolved: master rewrote the GROUPBY key expansion
-(extractGroups recursion became invokeGroupReducers with a combination
-loop), so the per-row expansion checkpoint moved into that loop. A test
-addition conflicted with a neighbouring master test; both are kept.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the safe loader on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12125
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* Stop the WITHCOUNT depleter and APPLY/FILTER on memory pressure
-
-Carried from https://github.com/RediSearch/RediSearch/pull/12126
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EM
-
-**File**: `src/aggregate/aggregate_exec.c` (modified, +34/-3)
+**File**: `build.sh` (modified, +68/-1)
 ```diff
-@@ -24,6 +24,7 @@
- #include "search_ctx.h"
- #include "aggregate.h"
- #include "aggregate_exec_common.h"
-+#include "query_memory.h"
- #include "cursor.h"
- #include "concurrent_ctx.h"
- #include "rmutil/util.h"
-@@ -435,8 +436,19 @@ static inline void debugPauseStoreResults(AREQ *req, bool before) {
- }
- #endif
- static int applyOomStop(AREQ *req, int rc) {
--  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
--                      AREQ_QueryProcessingCtx(req)->err, rc);
-+  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
-+  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
-+  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
-+  // When no later cursor read reports the stop, the reply is cut.
-+  const bool lastReply =
-+      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
-+  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
-+  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-+      AREQ_QueryProcessingCtx(req)->oomCut &&
-+      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-+    QueryError_SetQueryOOMWarning(err);
-+  }
-+  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
+@@ -455,6 +455,72 @@ find_module_path() {
+   realpath "$module_path"
  }
  
- static void startPipeline(AREQ *req, ResultProcessor *rp, SearchResult ***results, SearchResult *r, int *rc) {
-@@ -722,7 +734,8 @@ static bool shouldSetCursorDone(AREQ *req, int rc) {
-   if (rc == RS_RESULT_STOPPED) {
-     switch (req->base.limits.timeout.config.timeoutPolicy) {
-       case TimeoutPolicy_Return:
--        return false;
-+        // A memory stop ends the request even when its outcome is reported as a timeout.
-+        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
-       case TimeoutPolicy_ReturnStrict:
-       case TimeoutPolicy_Fail:
-         return true;
-@@ -1406,6 +1419,15 @@ void AREQ_Execute_Callback(blockedClientReqCtx *BCRctx) {
-   blockedClientReqCtx_destroy(BCRctx);
- }
- 
-+// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
-+// builds a plan it never runs, so it is exempt.
-+static int checkBuildMemory(AREQ *req, QueryError *status) {
-+  if (!IsSearch(req) && !IsAggregate(req)) {
-+    return REDISMODULE_OK;
-+  }
-+  return QueryMemory_CheckBeforeExecution(&req->base.limits, req->base.reqConfig.oomPolicy, status);
++#-----------------------------------------------------------------------------
++# Function: select_macos_compilers
++# Set MACOS_C_COMPILER/MACOS_CXX_COMPILER to clang/clang++ from PATH when that
++# is Apple clang or LLVM_VERSION. Otherwise use the LLVM that
++# .install/install_llvm.sh installs, and export LIBCLANG_PATH so bindgen loads
++# the same LLVM's libclang; fall back to PATH if that LLVM is not installed.
++#
++# PATH can hold the wrong LLVM: when Redis bootstraps several modules into one
++# environment, modules bootstrapped after this one put an older Homebrew LLVM
++# ahead of ours, and that LLVM's libc++ lacks C++20 features SVS uses. Apple
++# clang is kept because Homebrew's packages of Redis build with it.
++#-----------------------------------------------------------------------------
++select_macos_compilers() {
++  local LLVM_VERSION LLVM_FULL_VERSION
++  source "$ROOT/.install/LLVM_VERSION.sh"
++
++  MACOS_C_COMPILER=clang
++  MACOS_CXX_COMPILER=clang++
++  local path_banner
++  path_banner=$({ clang --version 2>/dev/null || true; } | head -n1)
++  if [[ "$path_banner" == "Apple clang"* || \
++        "$(clang_major_version clang)" == "$LLVM_VERSION" ]]; then
++    return
++  fi
++
++  # Same locations, in the same order of preference, as install_llvm.sh.
++  local tarball_bin="${LLVM_INSTALL_DIR:-$HOME/.local/llvm}/bin"
++  local -a candidates=()
++  local brew_prefix
++  if command -v brew &>/dev/null && brew_prefix=$(brew --prefix 2>/dev/null); then
++    candidates+=("$brew_prefix/opt/llvm@${LLVM_VERSION}/bin")
++  fi
++  candidates+=("$tarball_bin")
++
++  local dir
++  for dir in "${candidates[@]}"; do
++    if [[ -x "$dir/clang" && -x "$dir/clang++" && \
++          "$(clang_major_version "$dir/clang")" == "$LLVM_VERSION" ]]; then
++      # run_cmake() runs its command unquoted, so these paths would be split
++      # at the space and fail in CMake with an unrelated error.
++      if [[ "$dir" =~ [[:space:]] ]]; then
++        echo "Error: LLVM $LLVM_VERSION is at '$dir', whose path contains whitespace." >&2
++        echo "Paths with whitespace are not supported; set LLVM_INSTALL_DIR to a path without it." >&2
++        exit 1
++      fi
++      MACOS_C_COMPILER="$dir/clang"
++      MACOS_CXX_COMPILER="$dir/clang++"
++      export LIBCLANG_PATH="${dir%/bin}/lib"
++      # Unlike Homebrew's, upstream clang has no default SDK. install_llvm.sh
++      # persists SDKROOT only in GitHub Actions and bash/zsh login profiles.
++      if [[ "$dir" == "$tarball_bin" && -z "${SDKROOT:-}" ]]; then
++        export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
++      fi
++      echo "Using LLVM $LLVM_VERSION from $dir instead of PATH's ${path_banner:-clang}"
++      return
++    fi
++  done
++
++  echo "WARNING: LLVM $LLVM_VERSION not found (run 'make bootstrap'); using PATH's ${path_banner:-clang}"
 +}
 +
- // Assumes the spec is guarded by its own lock (for read), such that races with
- // main-thread/GC updates are avoided.
- static int prepareExecutionPlan(AREQ *req, QueryError *status) {
-@@ -1471,6 +1493,15 @@ static int prepareExecutionPlan(AREQ *req, QueryError *status) {
-     req->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
-   }
- 
-+  if (rc == REDISMODULE_OK && checkBuildMemory(req, status) != REDISMODULE_OK) {
-+    return REDISMODULE_ERR;
-+  }
-+  // A build checkpoint that stopped the query under ON_OOM RETURN leaves the pipeline to run:
-+  // its row source, built only now, must end at its first read.
-+  if (rc == REDISMODULE_OK && QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
-+    RP_EndRowSourceOnStop(AREQ_QueryProcessingCtx(req));
-+  }
-+
-   if (IsDebug(req)) {
-     rc = parseAndCompileDebug((AREQ_Debug *)req, status);
-     if (rc != REDISMODULE_OK) {
-```
-
-**File**: `src/aggregate/aggregate_exec_common.c` (modified, +34/-6)
-```diff
-@@ -49,15 +49,23 @@
- 
- int ApplyOomStop(const QueryRequestLimits *limits, RSOomPolicy oomPolicy, QueryError *err,
-                  int rc) {
--  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits)) {
-+  // A blocked-client timeout's callback owns the reply, so it wins over an earlier OOM stop.
-+  if (rc != RS_RESULT_STOPPED || !QueryRequestLimits_IsMemoryStopped(limits) ||
-+      QueryRequestLimits_IsBlockedClientTimedOut(limits)) {
-     return rc;
-   }
-   if (oomPolicy == OomPolicy_Fail) {
-     QueryError_SetCode(err, QUERY_ERROR_CODE_OUT_OF_MEMORY);
-     return RS_RESULT_ERROR;
-   }
-   QueryError_SetQueryOOMWarning(err);
--  // Not STOPPED: that replies as a timeout, and a cursor would read again into the same stop.
-+  // A timeout that also fired outranks the stop: ON_TIMEOUT FAIL replies its error (the OOM
-+  // warning is then unused) and RETURN replies both warnings, the timeout one derived from rc.
-+  if (QueryRequestLimits_IsTimedOutExact(limits)) {
-+    return RS_RESULT_STOPPED;
-+  }
-+  // Without a timeout, EOF rather than STOPPED: STOPPED replies as a timeout, and a cursor would
-+  // read again into the same stop.
-   return RS_RESULT_EOF;
- }
- 
-@@ -102,6 +110,13 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {
- static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
- #endif
- 
-+static bool oomStopKeepsBufferedRows(const AREQ *areq) {
-+  const QueryRequestLimits *timeout = &areq->base.limits;
-+  return QueryRequestLimits_IsMemoryStopped(timeout) &&
-+         areq->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-+         !QueryRequestLimits_IsBlockedClientTimedOut(timeout);
++# Prints the LLVM major version of the clang binary $1, or nothing.
++clang_major_version() {
++  { "$1" --version 2>/dev/null || true; } | head -n1 | sed -En 's/.*version ([0-9]+).*/\1/p'
 +}
 +
-  SearchResult **AggregateResults(ResultProcessor *rp, AREQ *areq, int *rc) {
-    SearchResult **results = array_new(SearchResult *, 8);
-    SearchResult r = SearchResult_New();
-@@ -119,8 +134,19 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // Honour a memory stop or a main-thread timeout flag at the row
-      // boundary: buffering stages (safe loader, sorter yield) can keep emitting
-      // from internal buffers without re-touching upstream's per-row timeout check.
--     if (areq && (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
--                  QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits))) {
-+     // An OOM stop under ON_OOM RETURN is the exception: those stages then hand
-+     // over the rows they already hold (see RP_StopPolicy), and read nothing new.
-+     if (areq &&
-+         (QueryRequestLimits_IsMemoryStopped(&areq->base.limits) ||
-+          QueryRequestLimits_IsBlockedClientTimedOut(&areq->base.limits)) &&
-+         !oomStopKeepsBufferedRows(areq)) {
-+       *rc = RS_RESULT_STOPPED;
-+       break;
-+     }
-+     // Rows handed over after an OOM stop read nothing upstream, so no per-row check there sees
-+     // a clock deadline: this one ends the drain on it.
-+     if (areq && oomStopKeepsBufferedRows(areq) &&
-+         QueryRequestLimits_IsTimedOut(&areq->base.limits)) {
-        *rc = RS_RESULT_STOPPED;
-        break;
-      }
-@@ -138,8 +164,10 @@ static inline void debugCheckAndPauseAfterAggregateResult(AREQ *areq) {}
-      // Aggregate all results before populating the response
-      *results = AggregateResults(rp, ctx->areq, rc);
-      // Check timeout after aggregation; a memory stop raised while filling the limit ends it the
--     // same way.
--     if (QueryRequestLimits_ShouldStopExact(ctx->limits)) {
-+     // same way, except under ON_OOM RETURN, where the held rows keep coming over the next reads.
-+     if (QueryRequestLimits_IsTimedOutExact(ctx->limits) ||
-+         (QueryRequestLimits_IsMemoryStopped(ctx->limits) &&
-+          !(ctx->areq && oomStopKeepsBufferedRows(ctx->areq)))) {
-        *rc = RS_RESULT_STOPPED;
-      }
-    } else {
-```
-
-**File**: `src/aggregate/aggregate_exec_common.h` (modified, +3/-0)
-```diff
-@@ -35,6 +35,9 @@ void ReplyWithTimeoutError(RedisModule_Reply *reply);
-  *   startPipelineCommon buffers under FAIL.
-  * - Otherwise: the query OOM warning in `err` and RS_RESULT_EOF, so the rows
-  *   produced so far are the final, partial result instead of a timeout.
-+ *   If the request's timeout also fired (QueryRequestLimits_IsTimedOutExact),
-+ *   RS_RESULT_STOPPED is returned instead, so the timeout outcome is kept: an
-+ *   error under ON_TIMEOUT FAIL, a warning beside the OOM one otherwise.
-  */
- int ApplyOomStop(const struct QueryRequestLimits *limits, RSOomPolicy oomPolicy,
-                  QueryError *err, int rc);
-```
-
-**File**: `src/aggregate/aggregate_request.c` (modified, +6/-1)
-```diff
-@@ -1945,7 +1945,12 @@ int AREQ_BuildPipelineWithAggregationParams(AREQ *req,
-                                             QueryError *status) {
-   // Build errors go to the caller's `status`; the running pipeline reports into the request's own
-   // error slot, which the reply phase reads whenever (and on whichever thread) it runs.
--  Pipeline_Initialize(&req->pipeline, req->base.limits.timeout.config.timeoutPolicy, &req->base.reply.err);
-+  Pipeline_Initialize(&req->pipeline, &req->base);
-+  if (IsHybrid(req)) {
-+    // The hybrid reply does not map an OOM stop yet, so hybrid pipelines run without memory
-+    // checkpoints: a stop there would reply as a timeout.
-+    req->pipeline.qctx.limits = NULL;
-+  }
-   if (!IsCoordinator(req)) {
-     QueryPipelineParams params = {
-       .common = {
-```
-
-**File**: `src/aggregate/expr/expression.c` (modified, +4/-0)
-```diff
-@@ -481,6 +481,10 @@ typedef struct RPEvaluator {
- #define RESULT_EVAL_ERR RS_RESULT_MAX + 1
+ #-----------------------------------------------------------------------------
+ # Function: prepare_cmake_arguments
+ # Prepare arguments to pass to CMake
+@@ -733,7 +799,8 @@ prepare_cmake_arguments() {
+   CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -UCMAKE_TOOLCHAIN_FILE"
  
- static int rpevalCommon(RPEvaluator *pc, SearchResult *r) {
-+  // Checked before the next row, so the arena growth of the previous evaluation is counted.
-+  if (RP_FillShouldCut(&pc->base)) {
-+    return RS_RESULT_STOPPED;
-+  }
-   /** Get the upstream result */
-   int rc = pc->base.upstream->Next(pc->base.upstream, r);
-   if (rc != RS_RESULT_OK) {
-```
-
-**File**: `src/aggregate/group_by.c` (modified, +21/-2)
-```diff
-@@ -16,6 +16,7 @@
- #include "value_ffi.h"
- #include "search_result_ffi.h"
- #include "pipeline/pipeline.h"
-+#include "query_memory.h"
- #include "reducer.h"
- #include "query_error.h"
- #include "query_error_ffi.h"
-@@ -281,6 +282,13 @@ static int invokeGroupReducers(Grouper *g, RLookupRow *srcrow, t_docId docId) {
+   if [[ "$OS_NAME" == "macos" ]]; then
+-    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
++    select_macos_compilers
++    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=$MACOS_C_COMPILER -DCMAKE_CXX_COMPILER=$MACOS_CXX_COMPILER"
+   fi
  
-   // Rows without multi-valued keys belong to one group, so skip the scan for more.
-   do {
-+    // The array values of one row can reach up to maxGroups groups, new or existing, before the
-+    // per-row check.
-+    if (combinations > 1 && g->base.parent->limits &&
-+        QueryMemory_Checkpoint(g->base.parent->limits)) {
-+      RP_EndRowSourceOnStop(g->base.parent);
-+      return RS_RESULT_STOPPED;
-+    }
-     int rc = addToGroup(g, nkeys ? g->cursors[nkeys - 1].hash : 0, srcrow, docId);
-     if (rc != RS_RESULT_OK) {
-       return rc;
-@@ -298,6 +306,12 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
-   while ((rc = base->upstream->Next(base->upstream, res)) == RS_RESULT_OK) {
-     rc = invokeGroupReducers(g, SearchResult_GetRowDataMut(res), SearchResult_GetDocId(res));
-     SearchResult_Clear(res);
-+    if (rc == RS_RESULT_OK && base->parent->limits &&
-+        QueryMemory_Checkpoint(base->parent->limits)) {
-+      // No partial groups: like a timeout, the stop yields none, and Grouper_rpFree frees them.
-+      RP_EndRowSourceOnStop(base->parent);
-+      rc = RS_RESULT_STOPPED;
-+    }
-     if (rc != RS_RESULT_OK) {
-       break;
-     }
-@@ -311,9 +325,14 @@ static int Grouper_rpAccum(ResultProcessor *base, SearchResult *res) {
-     base->parent->skippedResults = 0;
-     g->iter = kh_begin(khid);
-     return Grouper_rpYield(base, res);
--  } else {
--    return rc;
-   }
-+  if (rc == RS_RESULT_STOPPED && base->parent->limits &&
-+      QueryRequestLimits_IsMemoryStopped(base->parent->limits)) {
-+    // No group is replied, so none is counted either.
-+    base->parent->totalResults = 0;
-+    base->parent->skippedResults = 0;
-+  }
-+  return rc;
- }
- 
- static void Grouper_rpFree(ResultProcessor *grrp) {
-```
-
-**File**: `src/coord/dist_aggregate.c` (modified, +5/-0)
-```diff
-@@ -724,6 +724,11 @@ void printAggProfile(RedisModule_Reply *reply, void *ctx) {
-     do {
-       MRReply_Free(rpnet->current.root);
-       RPNet_resetCurrent(rpnet);
-+      // A memory stop, possibly requested mid-drain, aborts the pop on an empty channel with
-+      // RS_RESULT_STOPPED forever. Take only what is queued, so the next call ends with EOF.
-+      if (QueryRequestLimits_IsMemoryStopped(&req->base.limits)) {
-+        rpnet->drainOnly = true;
-+      }
-     } while (getNextReply(rpnet) != RS_RESULT_EOF);
-     rpnet->breakdown.waitTime = waitTime;
-     rpnet->breakdown.convertTime = convertTime;
-```
-
-**File**: `src/hybrid/hybrid_request.c` (modified, +11/-2)
-```diff
-@@ -9,6 +9,7 @@
- 
- #include "hybrid/hybrid_request.h"
- #include "config.h"
-+#include "query_memory.h"
- #include <stdatomic.h>
- #include <stdint.h>
- #include <string.h>
-@@ -127,6 +128,12 @@ int HybridRequest_BuildDepletionPipeline(HybridRequest *req, bool depleteInBackg
-         if (isProfile) {
-           areq->profileClocks.profilePipelineBuildTime = rs_wall_clock_elapsed_ns(&parseClock);
-         }
-+        // Only FAIL is decided here: the hybrid reply does not map an OOM stop yet, so under
-+        // RETURN a stop requested now would reply as a timeout.
-+        if (rc == REDISMODULE_OK && areq->base.reqConfig.oomPolicy == OomPolicy_Fail) {
-+          rc = QueryMemory_CheckBeforeExecution(&areq->base.limits, areq->base.reqConfig.oomPolicy,
-+                                                &areq->base.reply.err);
-+        }
-         if (rc != REDISMODULE_OK) {
-             break;
-         }
-@@ -351,7 +358,9 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
-     // Initialize the tail pipeline that will merge results from all requests
-     hybridReq->tailPipeline = rm_calloc(1, sizeof(Pipeline));
-     AGPLN_Init(&hybridReq->tailPipeline->ap);
--    Pipeline_Initialize(hybridReq->tailPipeline, hybridReq->base.limits.timeout.config.timeoutPolicy, &hybridReq->base.reply.err);
-+    Pipeline_Initialize(hybridReq->tailPipeline, &hybridReq->base);
-+    // No memory checkpoints in hybrid pipelines (see AREQ_BuildPipelineWithAggregationParams).
-+    hybridReq->tailPipeline->qctx.limits = NULL;
-     QueryRequest_SetEndProcRef(&hybridReq->base, &hybridReq->tailPipeline->qctx.endProc);
-     // Capture the background-scan-OOM warning flag while the spec is guaranteed
-     // alive (main-thread command handling). The reply path reads only this
-@@ -364,7 +373,7 @@ void HybridRequest_Init(HybridRequest *hybridReq, RedisSearchCtx *sctx, AREQ **r
-     // Initialize pipelines for each individual request
-     for (size_t i = 0; i < nrequests; i++) {
-         initializeAREQ(requests[i]);
--        Pipeline_Initialize(&requests[i]->pipeline, requests[i]->base.limits.timeout.config.timeoutPolicy, &requests[i]->base.reply.err);
-+        Pipeline_Initialize(&requests[i]->pipeline, &requests[i]->base);
-     }
-     hybridReq->profileClocks.initClock = now;
- 
+   if [[ "$BUILD_INTEL_SVS_OPT" == "yes" || "$BUILD_INTEL_SVS_OPT" == "1" ]]; then
 ```
 
 ---
 
-### Incident Patch 2: `4fefcf22` (2026-11-25)
-**Commit Message**: [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (#12455)
+### Incident Patch 2: `b5adca86` (2026-11-26)
+**Commit Message**: [MOD-21663] Fix undefined behaviour when ordering intersection children with disk unions on Flex (#12596)
 
-* Fix a crash on DIALECT 1 tag queries on non-TAG fields
+* [MOD-21663] Ask each iterator for its intersection sort weight
 
-DIALECT 1 builds a tag node on any field, and the tag evaluator only
-debug-asserted the field type before reading tagOpts. A debug build
-aborted the server on a query such as `@vec:{x}` on a VECTOR field; a
-release build read that field's own options (vector parameters, a
-geometry index) as a tag index pointer. The evaluator now checks the
-type, and such a query matches nothing.
+An intersection orders its children by estimate times sort weight. For a
+child behind the C header, the weight came from a switch on the header's
+type tag that cast the iterator to Intersection<CRQEIterator> or
+UnionOpaque<CRQEIterator>. The disk backend's multi-range numeric and geo
+unions also report Union but hold type-erased children, so with union
+prioritisation on the cast read the wrong type.
 
-The flow test runs the query on VECTOR and GEOSHAPE fields, whose
-options put a non-null pointer where a TAG field keeps its tag index.
-On master it crashes the server; with the fix it returns no results.
+Add an IntersectionSortWeight callback as the new last field of the
+QueryIterator header. RQEIteratorWrapper installs it from the inner
+type's own RQEIterator::intersection_sort_weight, and CRQEIterator calls
+through it. A NULL callback means the neutral weight 1.0, so a header
+built outside this module that leaves it unset stays safe.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Check field types in the DIALECT 1 parser for tag, numeric and geo queries
+* [MOD-21663] Drop the unused C-iterator accessor and tighten the sort-weight docs
 
-DIALECT 1 built a tag, numeric range or geo filter node on a field of any
-type. DIALECT 2 and the legacy FILTER/GEOFILTER arguments reject or nullify
-such queries when they are built. Do the same in the DIALECT 1 grammar: a
-query on a field of the wrong type becomes a null node, which matches nothing,
-also inside an intersection.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-The eva
+* [MOD-21663] Remove imports left unused by the accessor removal
 
-**File**: `src/query_parser/v1/parser.c` (modified, +15/-1)
+Co-Authored-By: Claude Sonne
+
+**File**: `src/iterators/iterator_api.h` (modified, +8/-3)
 ```diff
-@@ -1562,6 +1562,11 @@ static YYACTIONTYPE yy_reduce(
-             if (!fs) {
-                 QueryNode_Free(yylhsminor.yy17);
-                 yylhsminor.yy17 = NULL;
-+            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
-+                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
-+                // a null node rather than a dropped clause, so an intersection with it stays empty.
-+                QueryNode_Free(yylhsminor.yy17);
-+                yylhsminor.yy17 = NewQueryNode(QN_NULL);
-             } else {
-                 yylhsminor.yy17->tag.fieldIndex = fs->index;
-             }
-@@ -1605,8 +1610,13 @@ static YYACTIONTYPE yy_reduce(
-     // we keep the capitalization as is
-     yylhsminor.yy17 = NULL;
-     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, yymsp[-2].minor.yy0.s, yymsp[-2].minor.yy0.len) : NULL;
--    if (fs) {
-+    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
-         yylhsminor.yy17 = NewNumericNode(yymsp[0].minor.yy86, fs);
-+    } else if (fs) {
-+        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+        QueryParam_Free(yymsp[0].minor.yy86);
-+        yymsp[0].minor.yy86 = NULL;
-+        yylhsminor.yy17 = NewQueryNode(QN_NULL);
-     } else if (yymsp[0].minor.yy86) {
-         QueryParam_Free(yymsp[0].minor.yy86);
-         yymsp[0].minor.yy86 = NULL;
-@@ -1630,6 +1640,10 @@ static YYACTIONTYPE yy_reduce(
-         if (!fs) {
-             QueryNode_Free(yylhsminor.yy17);
-             yylhsminor.yy17 = NULL;
-+        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
-+            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+            QueryNode_Free(yylhsminor.yy17);
-+            yylhsminor.yy17 = NewQueryNode(QN_NULL);
-         }
-     }
+@@ -178,6 +178,10 @@ typedef struct QueryIterator {
+    * report bounds: one that does must implement this. */
+   IteratorStatus (*ReadWithThreshold)(struct QueryIterator *self, double minCompetitiveScore);
+ 
++  /* Callbacks added after the others go last, so that adding them leaves the offsets of the
++   * earlier ones unchanged. A header that never sets one (e.g. a zero-initialised C/C++
++   * iterator such as the test mocks) gets NULL; each callback says what NULL means. */
++
+   /**
+    * Called immediately before the spec read lock is released, to inform the iterator that it
+    * must drop any state that depends on the lock being held (in particular, borrows into
+@@ -190,11 +194,12 @@ typedef struct QueryIterator {
+    *
+    * Rust-wrapped iterators flip their internal typestate from Active to Suspended here, so
+    * that subsequent calls to read/skip/current/rewind would hard-fail at the FFI boundary.
+-   *
+-   * Last in the struct so that adding it left the offsets of the other callbacks unchanged for
+-   * iterators built outside this module, such as the disk API's.
+    */
+   void (*Suspend)(struct QueryIterator *self);
++
++  /* The weight an intersection multiplies this child's `NumEstimated` by to order its children:
++   * the lowest product goes first. NULL means 1.0, a neutral weight. */
++  double (*IntersectionSortWeight)(const struct QueryIterator *self, bool prioritizeUnionChildren);
+ } QueryIterator;
+ 
+ static inline ValidateStatus Default_Revalidate(struct QueryIterator *base, struct IndexSpec *spec) {
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/boxed.rs` (modified, +1/-7)
+```diff
+@@ -61,7 +61,6 @@ use ref_mode::{Active, Suspended};
+ 
+ use crate::{
+     IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, ResumeOutcome, SkipToOutcome,
+-    c2rust,
+ };
+ 
+ /// Concrete-typed active iterator trait — the new shape of
+@@ -89,7 +88,7 @@ pub trait RQEIteratorBoxed<'index>: RQEIterator<'index> + 'index {
+     /// Transition to the suspended state.
+     ///
+     /// Must be called while the spec read lock is still held: an implementation may still read
+-    /// index memory, as [`CRQEIterator`](c2rust::CRQEIterator) does to snapshot its estimate.
++    /// index memory, as [`CRQEIterator`](crate::c2rust::CRQEIterator) does to snapshot its estimate.
+     fn suspend(self: Box<Self>) -> Box<Self::Suspended>;
  }
-```
-
-**File**: `src/query_parser/v1/parser.y` (modified, +15/-1)
-```diff
-@@ -513,6 +513,11 @@ expr(A) ::= modifier(B) COLON tag_list(C) . {
-             if (!fs) {
-                 QueryNode_Free(A);
-                 A = NULL;
-+            } else if (!FIELD_IS(fs, INDEXFLD_T_TAG)) {
-+                // DIALECT 2 rejects this; DIALECT 1 keeps it valid but matching nothing. It becomes
-+                // a null node rather than a dropped clause, so an intersection with it stays empty.
-+                QueryNode_Free(A);
-+                A = NewQueryNode(QN_NULL);
-             } else {
-                 A->tag.fieldIndex = fs->index;
-             }
-@@ -574,8 +579,13 @@ expr(A) ::= modifier(B) COLON numeric_range(C). {
-     // we keep the capitalization as is
-     A = NULL;
-     const FieldSpec *fs = ctx->sctx->spec ? IndexSpec_GetFieldWithLength(ctx->sctx->spec, B.s, B.len) : NULL;
--    if (fs) {
-+    if (fs && FIELD_IS(fs, INDEXFLD_T_NUMERIC)) {
-         A = NewNumericNode(C, fs);
-+    } else if (fs) {
-+        // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+        QueryParam_Free(C);
-+        C = NULL;
-+        A = NewQueryNode(QN_NULL);
-     } else if (C) {
-         QueryParam_Free(C);
-         C = NULL;
-@@ -602,6 +612,10 @@ expr(A) ::= modifier(B) COLON geo_filter(C). {
-         if (!fs) {
-             QueryNode_Free(A);
-             A = NULL;
-+        } else if (!FIELD_IS(fs, INDEXFLD_T_GEO)) {
-+            // As for a tag query on a non-TAG field: valid on DIALECT 1, matching nothing.
-+            QueryNode_Free(A);
-+            A = NewQueryNode(QN_NULL);
-         }
+ 
+@@ -730,11 +729,6 @@ impl<'index> RQEIterator<'index> for TypeErasedRQEIterator<'index> {
+         self.0.type_()
      }
+ 
+-    #[inline(always)]
+-    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
+-        self.0.as_c_iterator()
+-    }
+-
+     #[inline(always)]
+     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
+         self.0.intersection_sort_weight(prioritize_union_children)
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/c2rust.rs` (modified, +9/-73)
+```diff
+@@ -21,7 +21,6 @@ use crate::{
+     IteratorType, RQEIterator, RQEIteratorBoxed, RQEIteratorError, RQESuspendedIterator,
+     RQEValidateStatus, ResumeOutcome, SkipToOutcome,
+     interop::RQEIteratorWrapper,
+-    intersection::Intersection,
+     profile_print,
+     profile_print::ProfilePrint,
+     score_bound::{BlockBound, MinCompetitiveScore},
+@@ -66,7 +65,8 @@ pub struct CRQEIterator {
+     /// 2. [`Self::header`] is an owning pointer, in the same way `Box` owns the
+     ///    allocated heap data.
+     /// 3. All callbacks are defined (i.e. the function pointers are not NULL),
+-    ///    with the exception of `SkipTo` and `ProfileChildren`, which are optional.
++    ///    with the exception of `SkipTo`, `ProfileChildren` and
++    ///    `IntersectionSortWeight`, which are optional.
+     /// 4. All callbacks can be safely called, when the right aliasing conditions are
+     ///    in place
+     header: NonNull<QueryIterator>,
+@@ -150,7 +150,8 @@ impl CRQEIterator {
+     /// 2. `header` is an owning pointer, in the same way `Box` owns the
+     ///    allocated heap data.
+     /// 3. All callbacks are defined (i.e. the function pointers are not NULL),
+-    ///    with the exception of `SkipTo` and `ProfileChildren`, which are optional.
++    ///    with the exception of `SkipTo`, `ProfileChildren` and
++    ///    `IntersectionSortWeight`, which are optional.
+     /// 4. All callbacks can be safely called, when the right aliasing conditions are
+     ///    in place
+     pub unsafe fn new(header: NonNull<QueryIterator>) -> Self {
+@@ -382,77 +383,12 @@ impl<'index> RQEIterator<'index> for CRQEIterator {
+         self.type_
+     }
+ 
+-    fn as_c_iterator(&self) -> Option<&CRQEIterator> {
+-        Some(self)
+-    }
+-
+     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
+-        match self.type_ {
+-            IteratorType::Intersect => {
+-                // SAFETY:
+-                // 1. and 2. `type_ == INTERSECT_ITERATOR` guarantees `self` was produced by
+-                //    `RQEIteratorWrapper::boxed_new` with `Intersection<CRQEIterator>` as the
+-                //    inner type (`NewIntersectionIterator` is the sole constructor of a C
+-                //    wrapped intersection). `as_raw` returns the owning pointer, whose
+-                //    provenance spans the whole wrapper; a pointer derived from
+-                //    `&QueryIterator` would cover only the header and make the read of the
+-                //    wrapped iterator UB.
+-                // 3. The borrow ends within this expression, while `self` keeps the iterator
+-                //    alive.
+-                let n = unsafe {
+-                    RQEIteratorWrapper::<Intersection<'_, CRQEIterator>>::ref_from_header_ptr(
+-                        self.as_raw(),
+-                    )
+-                    .inner()
+-                    .num_children()
+-                };
+-                1.0 / n.max(1) as f64
+-            }
+-            IteratorType::Union if prioritize_union_children => {
+-                // SAFETY:
+-                // 1. and 2. `type_ == Union` guarantees `self` was produced by
+-                //    `RQEIteratorWrapper::boxed_new_inner` with `UnionOpaque<CRQEIterator>` as
+-                //    the inner type (`NewUnionIterator` is the sole constructor of a C wrapped
+-                //    union). `as_raw` returns the owning pointer, whose provenance spans the
+-                //    whole wrapper; a pointer derived from `&QueryIterator` would cover only
+-                //    the header and make the read of the wrapped iterator UB.
+-                // 3. The borrow ends within this expression, while `self` keeps the iterator
+-                //    alive.
+-                let n = unsafe {
+-                    RQEIteratorWrapper::<super::UnionOpaque<'_, CRQEIterator>>::ref_from_header_ptr(
+-                        self.as_raw(),
+-                    )
+-                    .inner()
+-                    .num_children_active()
+-                };
+-                n.max(1) as f64
+-            }
+-            IteratorType::InvIdxNumeric => 1.0,
+-            IteratorType::InvIdxTerm => 1.0,
+-            IteratorType::InvIdxWildcard => 1.0,
+-            IteratorType::InvIdxMissing => 1.0,
+-            IteratorType::InvIdxTag => 1.0,
+-            IteratorType::Hybrid => 1.0,
+-            IteratorType::Union => 1.0,
+-            IteratorType::Not => 1.0,
+-            IteratorType::NotOptimized => 1.0,
+-            IteratorType::Optional => 1.0,
+-            IteratorType::OptionalOptimized => 1.0,
+-            IteratorType::Wildcard => 1.0,
+-            IteratorType::Empty => 1.0,
+-            IteratorType::IdListSorted => 1.0,
+-            IteratorType::IdListUnsorted => 1.0,
+-            IteratorType::MetricSortedById => 1.0,
+-            IteratorType::MetricSortedByScore => 1.0,
+-            IteratorType::MetricLazySortedById => 1.0,
+-            IteratorType::MetricLazySortedByScore => 1.0,
+-          
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/src/interop.rs` (modified, +21/-0)
+```diff
+@@ -235,6 +235,7 @@ where
+                 CurrentMaxScore: Some(current_max_score::<I>),
+                 CurrentBlockBound: Some(current_block_bound::<I>),
+                 ReadWithThreshold: Some(read_with_threshold::<I>),
++                IntersectionSortWeight: Some(intersection_sort_weight::<I>),
+             },
+             state: WrapperState::Active(Box::new(inner)),
+         });
+@@ -621,6 +622,26 @@ extern "C" fn current_max_score<'index, I: RQEIteratorBoxed<'index> + 'index>(
+     wrapper.state.active_ref().current_max_score()
  }
+ 
++/// Panics while the iterator is suspended, like [`num_estimated`]: an intersection reads its
++/// children's weights only while it is being built, and a child being built into a tree is active.
++extern "C" fn intersection_sort_weight<'index, I: RQEIteratorBoxed<'index> + 'index>(
++    base: *const QueryIterator,
++    prioritize_union_children: bool,
++) -> f64 {
++    debug_assert!(base.is_aligned());
++    // SAFETY: 1. and 2. by invariant 1. of [`RQEIteratorWrapper`]. 3. C frees the iterator
++    // before the index data it borrows.
++    let wrapper = unsafe {
++        RQEIteratorWrapper::<'index, I>::ref_from_header_ptr(
++            NonNull::new(base.cast_mut()).expect("`base` must not be null"),
++        )
++    };
++    wrapper
++        .state
++        .active_ref()
++        .intersection_sort_weight(prioritize_union_children)
++}
++
+ extern "C" fn current_block_bound<'index, I: RQEIteratorBoxed<'index> + 'index>(
+     base: *const QueryIterator,
+     last_doc_id: *mut DocId,
 ```
 
-**File**: `src/redisearch_rs/query_eval/src/nodes/geo.rs` (modified, +15/-0)
+**File**: `src/redisearch_rs/rqe_iterators/src/lib.rs` (modified, +2/-15)
 ```diff
-@@ -48,6 +48,21 @@ pub(crate) fn eval<'index>(
-         field_index < ctx.spec().numFields,
-         "fieldIndex must be within the spec's current field count"
-     );
-+    if cfg!(debug_assertions) {
-+        let spec = ctx.spec();
-+        // SAFETY: `field_index` is within `spec.numFields` (asserted above), so this
-+        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
-+        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
-+        // SAFETY: `field_ptr` points into the live spec's field array, which the
-+        // query's spec read lock keeps alive and unmodified throughout evaluation.
-+        let field = unsafe { &*field_ptr };
-+        // Both query parsers and the legacy `GEOFILTER` argument build a geo node only on a
-+        // GEO field.
-+        assert!(
-+            field.types() & ffi::FieldType_INDEXFLD_T_GEO != 0,
-+            "a geo node must reference a geo field"
-+        );
+@@ -312,23 +312,14 @@ pub trait RQEIterator<'index> {
+     /// Returns the [`IteratorType`] of this iterator.
+     fn type_(&self) -> IteratorType;
+ 
+-    /// Returns `Some(&self)` if this iterator is a [`c2rust::CRQEIterator`], `None` otherwise.
+-    ///
+-    /// Used by [`Intersection`] to compute sort weights without requiring `'static`.
+-    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
+-        None
+-    }
+-
+     /// Returns the sort weight for this iterator when used as a child of an [`Intersection`].
+     ///
+     /// [`Intersection`] uses this to order its children before execution: a lower value makes
+     /// this iterator act as the pivot (minimising `SkipTo` calls). The final sort key is
+     /// `num_estimated * intersection_sort_weight(...)`.
+     ///
+-    /// Implementers:
+-    /// - [`Intersection`]: `1.0 / num_children` — fewer children means tighter selectivity.
+-    /// - [`Union`]: `num_children` when `prioritize_union_children`, else `1.0`.
+-    /// - Everything else: `1.0` — neutral, no influence.
++    /// `1.0` is neutral and is what leaf iterators return. Composites derive their own weight;
++    /// see the implementations on [`Intersection`] and the union iterators.
+     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64;
+ 
+     /**************** score bounds ****************/
+@@ -445,10 +436,6 @@ impl<'index, I: RQEIterator<'index> + ?Sized + 'index> RQEIterator<'index> for B
+         (**self).type_()
+     }
+ 
+-    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
+-        (**self).as_c_iterator()
+-    }
+-
+     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
+         (**self).intersection_sort_weight(prioritize_union_children)
+     }
+```
+
+**File**: `src/redisearch_rs/rqe_iterators/tests/integration/c2rust.rs` (modified, +61/-1)
+```diff
+@@ -12,7 +12,8 @@
+ 
+ use query_types::QueryNodeType;
+ use rqe_iterators::{
+-    RQEIterator, c2rust::CRQEIterator, id_list::IdListSorted, interop::RQEIteratorWrapper,
++    IteratorType, RQEIterator, RQEIteratorPrintable, UnionFullFlat, UnionOpaque, UnionVariant,
++    c2rust::CRQEIterator, id_list::IdListSorted, interop::RQEIteratorWrapper,
+     intersection::Intersection, union_opaque::build_union,
+ };
+ 
+@@ -48,3 +49,62 @@ fn sort_weight_of_c_wrapped_union() {
+     assert_eq!(it.intersection_sort_weight(true), 3.0);
+     assert_eq!(it.intersection_sort_weight(false), 1.0);
+ }
++
++/// A union over type-erased children, lowered as a type-erased leaf: the shape
++/// the disk backend gives multi-range numeric and geo clauses. It reports
++/// [`IteratorType::Union`] without being a `UnionOpaque<CRQEIterator>`.
++fn c_wrapped_type_erased_union(n: usize) -> CRQEIterator {
++    let children: Vec<Box<dyn RQEIteratorPrintable<'static>>> = (0..n)
++        .map(|_| Box::new(IdListSorted::new(vec![1, 2, 3])) as Box<_>)
++        .collect();
++    let union: Box<dyn RQEIteratorPrintable<'static>> = Box::new(UnionOpaque {
++        variant: UnionVariant::FlatFull(UnionFullFlat::new(children)),
++        query_node_type: QueryNodeType::Union,
++        query_string: None,
++    });
++    let it = CRQEIterator::from_rust_leaf(union);
++    assert_eq!(it.type_(), IteratorType::Union);
++    it
++}
++
++/// The weight comes from the union itself, whatever its child type. Under
++/// miri this also checks that nothing reads the wrapper as another type.
++#[test]
++fn sort_weight_of_c_wrapped_type_erased_union() {
++    let it = c_wrapped_type_erased_union(3);
++
++    assert_eq!(it.intersection_sort_weight(true), 3.0);
++    assert_eq!(it.intersection_sort_weight(false), 1.0);
++}
++
++/// A header built outside this module may leave `IntersectionSortWeight` NULL;
++/// such an iterator gets the neutral weight instead of its own.
++#[test]
++fn sort_weight_of_header_without_callback() {
++    let ptr = build_union(c_leaves(3), false, usize::MAX, QueryNodeType::Union, 1.0);
++    // SAFETY: `ptr` was just produced by a wrapper constructor and is not aliased.
++    unsafe { rqe_iterators::interop::patch_vtable(ptr, |h| h.IntersectionSortWeight = None) };
++    // SAFETY: `build_union` returns a uniquely-owned header with every
++    // required callback populated, and `IntersectionSortWeight` is optional.
++    let it = unsafe { CRQEIterator::new(ptr) };
++
++    assert_eq!(it.intersection_sort_weight(true), 1.0);
++}
++
++/// With union children prioritised, a type-erased union is weighted by its
++/// child count and so moves behind a leaf that estimates more documents.
++#[rstest::rstest]
++#[case::prioritized(true, IteratorType::IdListSorted)]
++#[case::not_prioritized(false, IteratorType::Union)]
++fn intersection_orders_c_wrapped_type_erased_union(
++    #[case] prioritize_union_children: bool,
++    #[case] first: IteratorType,
++) {
++    // The union estimates 9 documents, weighted 27 when prioritised; the leaf 12.
++    let union = c_wrapped_type_erased_union(3);
++    let leaf = CRQEIterator::from_rust_leaf(IdListSorted::new((1..=12).collect::<Vec<_>>()));
++
++    let intersection = Intersection::new(vec![union, leaf], 1.0, prioritize_union_children);
++
++    assert_eq!(intersection.child_at(0).type_(), first);
++}
+```
+
+**File**: `src/redisearch_rs/rqe_iterators_test_utils/src/contract_checker.rs` (modified, +1/-5)
+```diff
+@@ -20,7 +20,7 @@ use index_result::RSIndexResult;
+ use index_spec::IndexSpecReadGuard;
+ use rqe_core::DocId;
+ use rqe_iterators::{
+-    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome, c2rust,
++    IteratorType, RQEIterator, RQEIteratorError, RQEValidateStatus, SkipToOutcome,
+ };
+ 
+ /// Where the checker believes the wrapped iterator stands, updated on every
+@@ -708,10 +708,6 @@ impl<'index, I: RQEIterator<'index>> RQEIterator<'index> for ContractChecker<I>
+         self.inner.type_()
+     }
+ 
+-    fn as_c_iterator(&self) -> Option<&c2rust::CRQEIterator> {
+-        self.inner.as_c_iterator()
+-    }
+-
+     fn intersection_sort_weight(&self, prioritize_union_children: bool) -> f64 {
+         self.inner
+             .intersection_sort_weight(prioritize_union_children)
+```
+
+---
+
+### Incident Patch 3: `c6a7898d` (2026-11-26)
+**Commit Message**: Fix FT.HYBRID merging distinct document keys containing NUL (#12493) (#12560)
+
+* Preserve binary document keys when merging hybrid results
+
+* Borrow binary key views during hybrid result lookups
+
+* Share binary RString dictionary key helpers
+
+* Group RString dictionary declarations by operation
+
+**File**: `src/result_processor.c` (modified, +34/-32)
+```diff
+@@ -48,6 +48,7 @@
+ #include "doc_table.h"
+ #include "document.h"
+ #include "hiredis/sds.h"
++#include "buffer/buffer.h"
+ #include "index_result_rs.h"
+ #include "profile/profile.h"
+ #include "query_error.h"
+@@ -2734,14 +2735,14 @@ static void hybridSearchResultValueDestructor(void *privdata, void *obj) {
+   HybridSearchResult_Free((HybridSearchResult*)obj);
+ }
+ 
+-// Dictionary type for keyPtr -> HybridSearchResult mapping
++// Binary-safe document key -> HybridSearchResult mapping
+ dictType dictTypeHybridSearchResult = {
+-  .hashFunction = stringsHashFunction,
+-  .keyDup = stringsKeyDup,
+-  .valDup = NULL,
+-  .keyCompare = stringsKeyCompare,
+-  .keyDestructor = stringsKeyDestructor,
+-  .valDestructor = hybridSearchResultValueDestructor,
++    .hashFunction = rstringHashFunction,
++    .keyDup = rstringKeyDup,
++    .valDup = NULL,
++    .keyCompare = rstringKeyCompare,
++    .keyDestructor = stringsKeyDestructor,
++    .valDestructor = hybridSearchResultValueDestructor,
+ };
+ 
+  /*******************************************************************************************************************
+@@ -2794,45 +2795,46 @@ static inline bool RPHybridMerger_Error(const RPHybridMerger *self) {
+   * @param numUpstreams - the number of upstreams
+   * @param score - used to override the result's score
+  */
+- static bool hybridMergerStoreUpstreamResult(RPHybridMerger* self, SearchResult *r, size_t upstreamIndex, double score) {
+-  // Single shard case - use dmd->keyPtr
++static bool hybridMergerStoreUpstreamResult(RPHybridMerger *self, SearchResult *r,
++                                            size_t upstreamIndex, double score) {
+   RLookupRow translated = RLookupRow_New();
+   RLookupRow_WriteFieldsFrom(SearchResult_GetRowData(r),
+-      self->lookupCtx->sourceLookups[upstreamIndex], &translated,
+-      self->lookupCtx->tailLookup, self->lookupCtx->createMissingKeys);
++                             self->lookupCtx->sourceLookups[upstreamIndex], &translated,
++                             self->lookupCtx->tailLookup, self->lookupCtx->createMissingKeys);
+   RLookupRow_Reset(SearchResult_GetRowDataMut(r));
+   SearchResult_SetRowData(r, translated);
+ 
+   const RSDocumentMetadata *dmd = SearchResult_GetDocumentMetadata(r);
+-  const char *keyPtr = dmd ? dmd->keyPtr : NULL;
+-  // Coordinator case - no dmd - use docKey in rlookup
+-  const bool fallbackToLookup = !keyPtr && self->docKey;
+-  if (fallbackToLookup) {
++  RString key;
++  if (dmd && dmd->keyPtr) {
++    key.s = DMD_KeyPtrLen(dmd, &key.n);
++  } else {
++    if (!self->docKey) {
++      return false;
 +    }
- 
-     // Disk-index path: when the spec is backed by an on-disk index, delegate to
-     // the enterprise geo iterator instead of opening the in-memory range tree.
-```
-
-**File**: `src/redisearch_rs/query_eval/src/nodes/numeric.rs` (modified, +19/-0)
-```diff
-@@ -40,6 +40,25 @@ pub(crate) fn eval<'index>(
-         "numeric node must have a resolved field index"
-     );
-     let field_index = nf.field_index;
-+    if cfg!(debug_assertions) {
-+        let spec = ctx.spec();
-+        assert!(
-+            field_index < spec.numFields,
-+            "field_index must be within the spec's current field count"
-+        );
-+        // SAFETY: `field_index` is within `spec.numFields` (checked above), so this
-+        // stays within the bounds of the `numFields`-sized array `spec.fields` points to.
-+        let field_ptr = unsafe { spec.fields.add(field_index as usize) };
-+        // SAFETY: `field_ptr` points into the live spec's field array, which the
-+        // query's spec read lock keeps alive and unmodified throughout evaluation.
-+        let field = unsafe { &*field_ptr };
-+        // Both query parsers and the legacy `FILTER` argument build a numeric node only on a
-+        // NUMERIC field.
-+        assert!(
-+            field.types() & ffi::FieldType_INDEXFLD_T_NUMERIC != 0,
-+            "a numeric node must reference a numeric field"
-+        );
+     RSValue *docKeyValue = RLookupRow_Get(self->docKey, SearchResult_GetRowData(r));
+-    if (docKeyValue != NULL) {
+-      keyPtr = RSValue_StringPtrLen(docKeyValue, NULL);
++    if (!docKeyValue) {
++      return false;
 +    }
++    key.s = RSValue_StringPtrLen(docKeyValue, &key.n);
++    if (!key.s) {
++      return false;
+     }
+   }
+-  if (!keyPtr) {
+-    return false;
+-  }
+-
+-  // Check if we've seen this document before
+-  HybridSearchResult *hybridResult = (HybridSearchResult*)dictFetchValue(self->hybridResults, keyPtr);
  
-     // Disk-index path: when the spec is backed by an on-disk index, delegate to
-     // the enterprise numeric iterator instead of opening the in-memory range
++  HybridSearchResult *hybridResult = dictFetchValue(self->hybridResults, &key);
+   if (!hybridResult) {
+-    // First time seeing this document - create new hybrid result
+     hybridResult = HybridSearchResult_New(self->numUpstreams);
+-    dictAdd(self->hybridResults, (void*)keyPtr, hybridResult);
++    dictAdd(self->hybridResults, &key, hybridResult);
+   }
+ 
+-   SearchResult_SetScore(r, score);
+-   // The merger holds `r` in its dictionary across further upstream Reads;
+-   // preserve or drop the borrowed RSIndexResult so it does not dangle.
+-   SearchResult_BufferIndexResult(&self->base, r);
+-   HybridSearchResult_StoreResult(hybridResult, r, upstreamIndex);
+-   return true;
+- }
++  SearchResult_SetScore(r, score);
++  // The merger holds `r` in its dictionary across further upstream Reads;
++  // preserve or drop the borrowed RSIndexResult so it does not dangle.
++  SearchResult_BufferIndexResult(&self->base, r);
++  HybridSearchResult_StoreResult(hybridResult, r, upstreamIndex);
++  return true;
++}
+ 
+  /* Helper function to consume results from a single upstream */
+  static int hybridMergerConsumeFromUpstream(RPHybridMerger *self, size_t maxResults, size_t upstreamIndex) {
 ```
 
-**File**: `src/redisearch_rs/query_eval/src/nodes/tag.rs` (modified, +2/-1)
+**File**: `src/util/dict/dict.c` (modified, +20/-0)
 ```diff
-@@ -99,11 +99,12 @@ pub(crate) fn eval<'index>(
-     // Going through the raw pointer detaches the borrow from `ctx`, which the
-     // children's evaluation needs exclusively.
-     let field = unsafe { &*field_ptr };
-+    // Both query parsers build a tag node only on a TAG field.
-     debug_assert!(
-         field.types() & ffi::FieldType_INDEXFLD_T_TAG != 0,
-         "a tag node must reference a tag field"
-     );
--    // SAFETY: the field is a tag field, so `tagOpts` is the active union member.
-+    // SAFETY: the field is a tag field (asserted above), so `tagOpts` is the active union member.
-     let index = NonNull::new(unsafe { field.__bindgen_anon_1.tagOpts.tagIndex })?;
-     // SAFETY: the tag index belongs to the field; the query's spec read lock keeps
-     // it alive and excludes writers, so it is not restructured during evaluation.
+@@ -63,6 +63,7 @@
+ #include "redismodule.h"
+ #include "rmalloc.h"
+ #include "obfuscation/hidden.h"
++#include "buffer/buffer.h"
+ 
+ uint64_t stringsHashFunction(const void *key){
+     return RS_dictGenHashFunction(key, strlen((char*)key));
+@@ -130,6 +131,25 @@ void* redisStringsKeyDup(void *privdata, const void *key){
+   return (void*)RedisModule_HoldString(NULL, (RedisModuleString*)keyStr);
+ }
+ 
++uint64_t rstringHashFunction(const void *key) {
++  const RString *str = key;
++  return dictGenHashFunction(str->s, str->n);
++}
++
++int rstringKeyCompare(void *privdata, const void *left, const void *right) {
++  const RString *a = left, *b = right;
++  return a->n == b->n && memcmp(a->s, b->s, a->n) == 0;
++}
++
++void *rstringKeyDup(void *privdata, const void *key) {
++  const RString *src = key;
++  RString *copy = rm_malloc(sizeof(*copy) + src->n);
++  char *bytes = (char *)(copy + 1);
++  memcpy(bytes, src->s, src->n);
++  *copy = (RString){.s = bytes, .n = src->n};
++  return copy;
++}
++
+ static void stringsListValDestructor(void *privdata, void *val) {
+   arrayof(char *) list = val;
+   array_free_ex(list, rm_free(*(char **)ptr));
 ```
 
-**File**: `tests/pytests/test_geo.py` (modified, +20/-0)
+**File**: `src/util/dict/dict.h` (modified, +6/-0)
 ```diff
-@@ -241,3 +241,23 @@ def testGeoParseTrailingWhitespace(env):
-   conn.execute_command('HSET', 'ws2', 'g', '1.23, 4.56 ')
+@@ -254,10 +254,13 @@ extern dictType dictTypeUint64;
+ uint64_t stringsHashFunction(const void *key);
+ uint64_t hiddenNameHashFunction(const void *key);
+ uint64_t redisStringsHashFunction(const void *key);
++/* RString callbacks borrow binary-safe views: s must be non-NULL and readable for n bytes. */
++uint64_t rstringHashFunction(const void *key);
  
-   assertInfoField(env, 'idx', 'hash_indexing_failures', 0)
+ int stringsKeyCompare(void *privdata, const void *key1, const void *key2);
+ int hiddenNameKeyCompare(void *privdata, const void *key1, const void *key2);
+ int redisStringsKeyCompare(void *privdata, const void *key1, const void *key2);
++int rstringKeyCompare(void *privdata, const void *key1, const void *key2);
+ 
+ void stringsKeyDestructor(void *privdata, void *key);
+ void hiddenNameKeyDestructor(void *privdata, void *key);
+@@ -266,6 +269,9 @@ void redisStringsKeyDestructor(void *privdata, void *key);
+ void* stringsKeyDup(void *privdata, const void *key);
+ void* hiddenNameKeyDup(void *privdata, const void *key);
+ void* redisStringsKeyDup(void *privdata, const void *key);
++/* Copies the view and bytes into one allocation without a terminator;
++ * release it with stringsKeyDestructor. */
++void *rstringKeyDup(void *privdata, const void *key);
+ 
+ 
+ #endif /* __DICT_H */
+```
+
+**File**: `tests/pytests/test_hybrid.py` (modified, +18/-0)
+```diff
+@@ -585,3 +585,21 @@ def test_range_epsilon(self):
+             "vector_equivalent": "@vector_hnsw:[VECTOR_RANGE 5 $BLOB]=>{$EPSILON:0.5; $YIELD_DISTANCE_AS: vector_distance}"
+         }
+         run_test_scenario(self.env, self.index_name, scenario, self.vector_blob)
 +
 +
-+@skip(cluster=True)
-+def testDialect1GeoQueryOnANonGeoFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a geo filter on a non-GEO field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection. A NUMERIC field's range tree holds plain numbers, which
-+    # the filter's geohash ranges used to be matched against.
++def testHybridBinaryDocumentKeys(env):
++    """Keep full document keys distinct in standalone and coordinator hybrid mergers."""
 +    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'n', 'NUMERIC', 't', 'TAG', 'loc', 'GEO').ok()
-+    # `n` holds the geohash score of the query center, so matching the filter's geohash ranges
-+    # against the numeric tree would find the document.
-+    conn.execute_command('GEOADD', 'geohash_probe', 1, 1, 'p')
-+    center_score = conn.execute_command('ZSCORE', 'geohash_probe', 'p')
-+    conn.execute_command('DEL', 'geohash_probe')
-+    conn.execute_command('HSET', 'doc:1', 'n', center_score, 't', 'red', 'loc', '1,1')
-+    for field in ['n', 't']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km]', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[1 1 10 km] @loc:[1 1 10 km]',
-+                   'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@loc:[1 1 10 km]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
-```
-
-**File**: `tests/pytests/test_numbers.py` (modified, +14/-0)
-```diff
-@@ -893,3 +893,17 @@ def validate_subtree(subtree):
-     cause_split(1) # to the left (of 2, right of 0)
- 
-     validate_tree(env.cmd(debug_cmd(), 'DUMP_NUMIDXTREE', idx, field, 'MINIMAL'))
-+
-+
-+@skip(cluster=True)
-+def testDialect1NumericQueryOnANonNumericFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a numeric range on a non-NUMERIC field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection. A GEO field keeps its points in a numeric range tree,
-+    # which an unbounded range used to match.
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA', 'loc', 'GEO', 't', 'TAG', 'n', 'NUMERIC').ok()
-+    conn.execute_command('HSET', 'doc:1', 'loc', '1,1', 't', 'red', 'n', 5)
-+    for field in ['loc', 't']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf]', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:[-inf +inf] @n:[5 5]', 'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@n:[5 5]', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
-```
-
-**File**: `tests/pytests/test_tags.py` (modified, +18/-0)
-```diff
-@@ -1352,3 +1352,21 @@ def testSortableTagIndexingInvalidUtf8LoweringOverflow(env):
-     env.assertEqual(errors['last indexing error key'], 'doc2')
- 
-     env.expect('FT.SEARCH', 'idx_sortable', '*', 'NOCONTENT').equal([1, 'doc1'])
-+
-+
-+@skip(cluster=True)
-+def testDialect1TagQueryOnANonTagFieldMatchesNothing(env):
-+    # DIALECT 2 rejects a tag query on a non-TAG field. DIALECT 1 accepts it and it matches
-+    # nothing, also inside an intersection, which a dropped clause would not. VECTOR and GEOSHAPE
-+    # keep their own options where a TAG field keeps its tag index.
-+    conn = getConnectionByEnv(env)
-+    env.expect('FT.CREATE', 'idx', 'SCHEMA',
-+               'v', 'VECTOR', 'FLAT', 6, 'TYPE', 'FLOAT32', 'DIM', 2, 'DISTANCE_METRIC', 'L2',
-+               'g', 'GEOSHAPE', 'FLAT',
-+               't', 'TAG').ok()
-+    conn.execute_command('HSET', 'doc:1', 'v', np.array([1.0, 2.0], dtype=np.float32).tobytes(),
-+                         'g', 'POINT (1 1)', 't', 'red')
-+    for field in ['v', 'g']:
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}}', 'DIALECT', 1).equal([0])
-+        env.expect('FT.SEARCH', 'idx', f'@{field}:{{red}} @t:{{red}}', 'DIALECT', 1).equal([0])
-+    env.expect('FT.SEARCH', 'idx', '@t:{red}', 'NOCONTENT', 'DIALECT', 1).equal([1, 'doc:1'])
++    env.expect('FT.CREATE', 'idx', 'ON', 'HASH', 'PREFIX', 1, '{doc}:',
++               'SCHEMA', 'body', 'TEXT', 'v', 'VECTOR', 'FLAT', 6,
++               'TYPE', 'FLOAT32', 'DIM', 2, 'DISTANCE_METRIC', 'L2').ok()
++    vector = np.zeros(2, dtype=np.float32).tobytes()
++    keys = ['{doc}:one\x00suffix', '{doc}:one', '{doc}:one\x00other']
++    for count, key in enumerate(keys, 1):
++        conn.execute_command('HSET', key, 'body', 'needleft', 'v', vector)
++        result = env.cmd('FT.HYBRID', 'idx', 'SEARCH', 'needleft',
++                         'VSIM', '@v', '$B', 'KNN', 2, 'K', count,
++                         'PARAMS', 2, 'B', vector)
++        env.assertEqual(result[1], count, message=result)
++        rows = [dict(zip(row[::2], row[1::2])) for row in result[3]]
++        env.assertEqual(sorted(row['__key'] for row in rows), sorted(keys[:count]))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12545** (closed): [MOD-20990] Stop TAG dictionary walks when a query reaches its limits (@nonirosenfeldredis)
-- **PR #12543** (closed): [2.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12542** (closed): [2.8] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12541** (closed): [8.2] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12540** (closed): [8.4] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
-- **PR #12539** (closed): [8.6] [MOD-21401] Fix a crash on DIALECT 1 queries on fields of the wrong type (@redisearch-backport-pull-request[bot])
+- **PR #12609** (2026-11-26): [MOD-19636] Remove the unreachable FT.ADD PARTIAL fast path (@eyalrund)
+- **PR #12605** (2026-11-26): rust-port: let port plans retire header functions and list the C tests the swap replaces (@gdesmott)
+- **PR #12601** (2026-11-26): [MOD-19622] Reject vector indexes with an unknown SVS compression on load (@eyalrund)
+- **PR #12599** (2026-11-26): [8.8-rse] Fix nightly yield and HNSW checkpoint tests (@redisearch-backport-pull-request[bot])
+- **PR #12598** (2026-11-26): [MOD-21189] Find the heap union's score-skipping pivot without rescanning its children (@JoanFM)
+- **PR #12596** (2026-11-26): [MOD-21663] Fix undefined behaviour when ordering intersection children with disk unions on Flex (@ofiryanai)
 
 ---
 
@@ -2546,51 +2641,56 @@ The eva
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-20693] Stop the query pipeline on memory pressure
+## X. [RED-224927] Fix building from source on macOS when other Redis modules install 
 
 **RULE**:
-When implementing operations in `src/aggregate/aggregate_exec.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a24743f`: [MOD-20693] Stop the query pipeline on memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ff955074`: [RED-224927] Fix building from source on macOS when other Redis modules install an older LLVM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/aggregate/aggregate_exec.c`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#include "query_memory.h"
-  QueryError *err = AREQ_QueryProcessingCtx(req)->err;
-  // A buffering stage that kept its rows past an OOM stop may hold enough of them to fill the
-  // reply's limit or a pager's, so the reply ends without reading the stop's RS_RESULT_STOPPED.
-  // When no later cursor read reports the stop, the reply is cut.
-  const bool lastReply =
-      rc == RS_RESULT_EOF || (rc == RS_RESULT_OK && !(AREQ_RequestFlags(req) & QEXEC_F_IS_CURSOR));
-  // A blocked-client timeout that fired in the meantime owns the reply, as in ApplyOomStop.
-  if (lastReply && req->base.reqConfig.oomPolicy != OomPolicy_Fail &&
-      AREQ_QueryProcessingCtx(req)->oomCut &&
-      !QueryRequestLimits_IsBlockedClientTimedOut(&req->base.limits)) {
-    QueryError_SetQueryOOMWarning(err);
-  }
-  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy, err, rc);
-        // A memory stop ends the request even when its outcome is reported as a timeout.
-        return QueryRequestLimits_IsMemoryStopped(&req->base.limits);
-// Memory checkpoint once the query is built, which also covers the wait for a worker. FT.EXPLAIN
-// builds a plan it never runs, so it is exempt.
-static int checkBuild
+#-----------------------------------------------------------------------------
+# Function: select_macos_compilers
+# Set MACOS_C_COMPILER/MACOS_CXX_COMPILER to clang/clang++ from PATH when that
+# is Apple clang or LLVM_VERSION. Otherwise use the LLVM that
+# .install/install_llvm.sh installs, and export LIBCLANG_PATH so bindgen loads
+# the same LLVM's libclang; fall back to PATH if that LLVM is not installed.
+#
+# PATH can hold the wrong LLVM: when Redis bootstraps several modules into one
+# environment, modules bootstrapped after this one put an older Homebrew LLVM
+# ahead of ours, and that LLVM's libc++ lacks C++20 features SVS uses. Apple
+# clang is kept because Homebrew's packages of Redis build with it.
+#-----------------------------------------------------------------------------
+select_macos_compilers() {
+  local LLVM_VERSION LLVM_FULL_VERSION
+  source "$ROOT/.install/LLVM_VERSION.sh"
+
+  MACOS_C_COMPILER=clang
+  MACOS_CXX_COMPILER=clang++
+  local path_banner
+  path_banner=$({ clang --version 2>/dev/null || true; } | head -n1)
+  if [[ "$path_banner" == "Apple clang"* || \
+        "$(clang_major_version clang)" == "$LLVM_VERSION" ]]; then
+    return
+  fi
+
+  # Same locations, in t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  return ApplyOomStop(&req->base.limits, req->base.reqConfig.oomPolicy,
-                      AREQ_QueryProcessingCtx(req)->err, rc);
-        return false;
+    CMAKE_BASIC_ARGS="$CMAKE_BASIC_ARGS -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a24743f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ff955074` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

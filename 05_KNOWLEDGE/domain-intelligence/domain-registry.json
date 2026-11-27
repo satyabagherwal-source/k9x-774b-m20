@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T07:22:11.288Z",
+  "last_updated": "2026-11-27T07:30:50.713Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -15876,8 +15876,8 @@
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "6b9b3fc9bc1f71fd40ff1af1093fd9bdaa4b44a18319dda452cb5f0e27f357a1",
-      "created_at": "2026-11-26T14:44:39.638Z"
+      "content_hash": "b409fe0c3ed3ce7b95be50db4ce154d8cfaab709e437301483687303c75e57fc",
+      "created_at": "2026-11-27T07:30:40.503Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
@@ -15963,8 +15963,8 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "4b53ff923b4c44886be84298cc406550eb9469f66b9dc36e650e859e07f6533a",
-      "created_at": "2026-11-26T14:44:47.282Z"
+      "content_hash": "39952b6aedacd8a42c3980254cf312a6ae919c255cb217422ce9dd84437a59d5",
+      "created_at": "2026-11-27T07:30:49.861Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
@@ -19630,8 +19630,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-research-knowledge-intelligence-liquidai-lfm2-5-24b-a.md",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "content_hash": "3fb5dad578a2eca5a053970c90fec19353bdb6ee897bc3fc6fd285094e72c78c",
-      "created_at": "2026-11-23T22:05:07.575Z"
+      "content_hash": "ba74a9a6cbf5779f20fa6a08bd5a400ed3189a1bcd6a2a3601fa620214cdd117",
+      "created_at": "2026-11-27T07:30:29.925Z"
     },
     "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants",
@@ -19708,8 +19708,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-learnings-research-knowledge-intelligence-hf-liquidai.md",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-learnings",
-      "content_hash": "ee87e337ff16677a8beabc3075ca0ad098155007b7fce609852f3154af71ba4c",
-      "created_at": "2026-11-23T22:05:27.128Z"
+      "content_hash": "193b6651c531730898e149e45c24ebfcb7c9862e5c13e106610e88a6e92c512b",
+      "created_at": "2026-11-27T07:30:48.838Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
@@ -28366,8 +28366,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "a9f3884d51d268e515dae42ab6d9eca558f06a0daaea17f03165062436acd773",
-      "created_at": "2026-11-26T13:36:06.377Z"
+      "content_hash": "10edeb1cc8a50e3cbbd87f60b543ae13edd196831367df8bb9c8c0de42bd2a9b",
+      "created_at": "2026-11-27T07:30:45.571Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -36491,8 +36491,8 @@
       "title": "Architecture Intelligence: redisearch-redisearch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-learnings-architecture-intelligence-redisearch-redisearch-.md",
       "repository": "redisearch-redisearch-learnings",
-      "content_hash": "0ad6e7a31587b03cbae92fd79227f3c6aea7cbcd8aa36ae5b200f70bf1015314",
-      "created_at": "2026-11-25T12:20:25.158Z"
+      "content_hash": "5560d97476450ecf9e15deaf445b860c3c827d2574a6b81c28110aa7af69d3c5",
+      "created_at": "2026-11-27T07:30:50.713Z"
     },
     "DOM-J-FBEC7580": {
       "record_id": "DOM-J-FBEC7580",

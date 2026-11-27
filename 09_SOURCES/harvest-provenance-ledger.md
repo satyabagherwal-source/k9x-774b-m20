@@ -13746,3 +13746,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T07:21:51.750Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `1a8e9c9a` | Multi-dimensional audit evidence | 2026-11-27T07:22:01.246Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `049b39cf` | Multi-dimensional audit evidence | 2026-11-27T07:22:05.366Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T07:30:29.693Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ffbae6ba` | Multi-dimensional audit evidence | 2026-11-27T07:30:40.080Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `078550d7` | Multi-dimensional audit evidence | 2026-11-27T07:30:45.136Z |
