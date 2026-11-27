@@ -13772,3 +13772,5 @@
 | `CYCLE-20261127-9XX8` | `2026-11-27T11:25:06.428Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10887` | Yes (`db0f3afa...`) |
 | `CYCLE-20261127-L2PX` | `2026-11-27T11:33:45.861Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | Yes (`13f17ef1...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T11:34:28.744Z` | `nguyenphutrong-quotio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-457F0DDF` [Domain D] | Yes (`2617fdd2...`) |
+| `CYCLE-20261127-YWQ9` | `2026-11-27T11:44:31.281Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10888` | Yes (`9fa43264...`) |
+| `CYCLE-20261127-YXU8` | `2026-11-27T11:44:32.720Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10889` | Yes (`1da26c3d...`) |

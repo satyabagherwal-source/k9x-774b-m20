@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T11:33:55.802Z",
-    "lastVerified": "2026-11-27T11:33:55.802Z",
+    "lastChecked": "2026-11-27T11:44:36.178Z",
+    "lastVerified": "2026-11-27T11:44:36.178Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -290,9 +290,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T11:03:10.452Z",
+    "lastChecked": "2026-11-27T11:44:28.962Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T11:03:10.452Z"
+    "lastVerified": "2026-11-27T11:44:28.962Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -946,14 +946,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T17:15:04.170Z",
-    "lastVerified": "2026-11-26T17:15:04.170Z",
+    "lastChecked": "2026-11-27T11:44:29.819Z",
+    "lastVerified": "2026-11-27T11:44:29.819Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
+    "contentHash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1777,22 +1777,21 @@
     "lastVerified": "2026-11-27T03:35:11.554Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T06:46:25.131Z",
-    "lastVerified": "2026-11-27T06:46:25.131Z",
+    "lastChecked": "2026-11-27T11:44:27.539Z",
+    "lastVerified": "2026-11-27T11:44:27.539Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
+    "contentHash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b2358d26"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -5003,8 +5002,8 @@
     "officialUrl": "https://github.com/openyurtio/openyurt",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T18:14:27.866Z",
-    "lastVerified": "2026-11-26T18:14:27.866Z",
+    "lastChecked": "2026-11-27T11:44:21.497Z",
+    "lastVerified": "2026-11-27T11:44:21.497Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openyurtio-openyurt",
@@ -8550,9 +8549,9 @@
   "russhwolf-multiplatform-settings": {
     "name": "multiplatform-settings",
     "officialUrl": "https://github.com/russhwolf/multiplatform-settings",
-    "lastChecked": "2026-11-25T02:47:38.864Z",
+    "lastChecked": "2026-11-27T11:44:18.937Z",
     "revisionIdentifier": "f95cdff4",
-    "lastVerified": "2026-11-25T02:47:38.864Z"
+    "lastVerified": "2026-11-27T11:44:18.937Z"
   },
   "atanunq-viu": {
     "name": "viu",
@@ -9243,12 +9242,12 @@
     "lastVerified": "2026-11-25T05:28:57.541Z"
   },
   "tw93-pake": {
-    "name": "tw93/Pake",
+    "name": "Pake",
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T11:28:53.393Z",
-    "lastVerified": "2026-11-26T11:28:53.393Z",
+    "lastChecked": "2026-11-27T11:44:13.953Z",
+    "lastVerified": "2026-11-27T11:44:13.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
@@ -9257,7 +9256,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fbba2371"
   },
   "hf-openmoss-team-moss-image-sft": {
     "name": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -9599,9 +9599,9 @@
   "davo20019-seo-analysis": {
     "name": "seo-analysis",
     "officialUrl": "https://github.com/davo20019/seo-analysis",
-    "lastChecked": "2026-11-24T01:55:51.991Z",
+    "lastChecked": "2026-11-27T11:44:16.474Z",
     "revisionIdentifier": "902c09fd",
-    "lastVerified": "2026-11-24T01:55:51.991Z"
+    "lastVerified": "2026-11-27T11:44:16.474Z"
   },
   "alin23-lunar": {
     "name": "Lunar",

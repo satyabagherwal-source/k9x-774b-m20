@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T11:33:45.886Z",
+  "last_updated": "2026-11-27T11:44:32.751Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
-      "verified_at": "2026-11-26T17:57:07.025Z",
+      "content_hash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
+      "verified_at": "2026-11-27T11:44:32.750Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:57:07.025Z"
+      "last_updated": "2026-11-27T11:44:32.750Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
-      "verified_at": "2026-11-26T17:15:05.406Z",
+      "content_hash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
+      "verified_at": "2026-11-27T11:44:31.313Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:15:05.406Z"
+      "last_updated": "2026-11-27T11:44:31.313Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

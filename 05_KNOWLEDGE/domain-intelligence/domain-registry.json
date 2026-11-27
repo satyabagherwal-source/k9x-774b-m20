@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T11:34:31.376Z",
+  "last_updated": "2026-11-27T11:44:39.029Z",
   "total_records": 2831,
   "domains": {
     "A": {
@@ -10365,8 +10365,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "b33ac903d6ef6f9563c3828036643f21a98325f5d08bd88ec832dd570ade16d0",
-      "created_at": "2026-11-26T17:15:05.835Z"
+      "content_hash": "208aa054213980941005d8402c176d233abb323d9eacfe4f05efc754f0252d3e",
+      "created_at": "2026-11-27T11:44:31.830Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -10680,8 +10680,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "736ae5c7764831973e28430b519b349ea3ed7e58931027551b84f8ecac58b888",
-      "created_at": "2026-11-26T17:57:07.519Z"
+      "content_hash": "bd9bd00ee2c4f8c48a6e8c6cff62f12d79e618accd413360f20c41fb4ba3b380",
+      "created_at": "2026-11-27T11:44:33.231Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -12222,8 +12222,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "ced90e9df585dd4f92135fd859b14cb8b6e94960493f275c639acccc1eabb264",
-      "created_at": "2026-11-27T11:34:30.258Z"
+      "content_hash": "84a4cba5be79ad26b86fde620be5b012460df7276e3faf259587eec5acdddfff",
+      "created_at": "2026-11-27T11:44:39.029Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -27827,8 +27827,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "74400668a54c1cb83026171dce095445b85e69dcf6e179f315bb1006fa90cb4b",
-      "created_at": "2026-11-26T17:57:13.224Z"
+      "content_hash": "804f1b624e7e4e6e67837720aa970bb1013dc90c184f8fef0ecf60642114e1c8",
+      "created_at": "2026-11-27T11:44:36.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -29051,8 +29051,8 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
       "repository": "weaviate-weaviate-learnings",
-      "content_hash": "a9e51f414b284db973a135458b62be5f55638048291cab0927f430a3651a0b68",
-      "created_at": "2026-11-25T15:48:16.418Z"
+      "content_hash": "bcdd4d0c3a00807de1c39f7970a793d40e95d7955f65166ff4533a896a86c153",
+      "created_at": "2026-11-27T11:44:37.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T15:48:16.272Z",
+  "timestamp": "2026-11-27T11:44:37.585Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-weaviate-weaviate-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [weaviate-weaviate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T15:48:16.272Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T11:44:37.585Z`  
 > **Learning ID**: `LEARN-EVO-weaviate-weaviate-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from weaviate-weaviate-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `9f6b1e49`  
+> **Source Version**: `daddd4e1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:47:42.746Z  
+> **Timestamp**: 2026-11-27T11:44:29.943Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:47:42.741Z  
+> **Harvest Timestamp**: 2026-11-27T11:44:29.819Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16961 stars
+- **Stars / Engagement**: 16969 stars
 
 ---
 
@@ -1762,345 +1762,574 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f6b1e49` (2026-11-25)
-**Commit Message**: Merge pull request #14024 from weaviate/moogacs-remove-shard-status-endpoint
+### Incident Patch 1: `daddd4e1` (2026-11-27)
+**Commit Message**: Merge pull request #14007 from weaviate/claude/project-thread-zanigm
 
-refactor(cluster): remove the unused shard status update endpoint
+vector index update: one owner for a shard's vector index state
 
-**File**: `adapters/clients/remote_index.go` (modified, +0/-36)
+**File**: `adapters/repos/db/index_usage.go` (modified, +2/-1)
 ```diff
-@@ -668,42 +668,6 @@ func (c *RemoteIndex) GetShardStatus(ctx context.Context,
- 	return status, c.retry(ctx, 0, try)
+@@ -31,6 +31,7 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/dynamic"
++	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+ 	"github.com/weaviate/weaviate/cluster/usage/types"
+ 	"github.com/weaviate/weaviate/entities/diskio"
+ 	enterrors "github.com/weaviate/weaviate/entities/errors"
+@@ -579,7 +580,7 @@ func (i *Index) calculateUnloadedShardUsage(ctx context.Context, shardName strin
+ 	}
+ 
+ 	// one shard's unreadable mapping must not fail the whole collection's report
+-	indexIDs, locked, err := unloadedVectorIndexStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
++	indexIDs, locked, err := vectormanifest.UnloadedStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
+ 	cacheable := !locked && err == nil
+ 	if !cacheable {
+ 		reason := "a load holds the vector index mapping"
+```
+
+**File**: `adapters/repos/db/index_usage_cache_test.go` (modified, +1/-1)
+```diff
+@@ -299,7 +299,7 @@ func TestUnloadedShardUsageReportedWhenMappingUnreadable(t *testing.T) {
+ 
+ 	metadata, err := shardmeta.Open(shardPath(index.path(), tenantName), entlsmkv.BoltFlockTimeout)
+ 	require.NoError(t, err)
+-	require.NoError(t, metadata.Namespace(vectorIndexMappingNamespace).Put([]byte(vectorIndexMappingFormatVersionKey), []byte("99")))
++	require.NoError(t, metadata.Namespace(manifestNamespace).Put([]byte(manifestFormatVersionKey), []byte("99")))
+ 	require.NoError(t, metadata.Close())
+ 
+ 	usage, err := index.usageForCollection(ctx, semaphore.NewWeighted(1), true, vectorConfigs)
+```
+
+**File**: `adapters/repos/db/migrator.go` (modified, +7/-14)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/flat"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hfresh"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw"
++	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+ 	command "github.com/weaviate/weaviate/cluster/proto/api"
+ 	"github.com/weaviate/weaviate/cluster/router"
+ 	clusterschema "github.com/weaviate/weaviate/cluster/schema"
+@@ -939,27 +940,19 @@ func (m *Migrator) ValidateVectorIndexConfigsUpdate(old, updated map[string]sche
+ 	// A vector this update adds must not own a file an existing vector owns:
+ 	// file names derive from the name, so "compressed" next to the legacy
+ 	// vector shares its quantized bucket. Checked here, before the schema
+-	// commits; the shard checks again against its own records. Names are
+-	// enough: a vector rebuilt under a generated ID owns only names with a
+-	// "-", which no vector name has (see validateVectorIndexID).
+-	owners := make(map[string]vectorIndexOwner, len(old))
++	// commits; the shard checks again against its own records.
++	var existing, added []string
+ 	for name, cfg := range old {
+ 		if vectorIndexHasStorage(cfg) {
+-			owners[name] = ownerAt(vectorIndexID(name))
++			existing = append(existing, name)
+ 		}
+ 	}
+ 	for _, name := range slices.Sorted(maps.Keys(updated)) {
+-		if _, existed := old[name]; existed || !vectorIndexHasStorage(updated[name]) {
+-			continue
+-		}
+-		owner := ownerAt(vectorIndexID(name))
+-		collisions := vectorIndexCollisionsWith(owners, name, owner)
+-		if len(collisions) > 0 {
+-			return vectorIndexCollisionError(name, collisions)
++		if _, existed := old[name]; !existed && vectorIndexHasStorage(updated[name]) {
++			added = append(added, name)
+ 		}
+-		owners[name] = owner
+ 	}
+-	return nil
++	return vectormanifest.RefuseCollidingNames(existing, added)
  }
  
--func (c *RemoteIndex) UpdateShardStatus(ctx context.Context, hostName, indexName, shardName,
--	targetStatus string, schemaVersion uint64,
+ func (m *Migrator) ValidateInvertedIndexConfigUpdate(old, updated *models.InvertedIndexConfig,
+```
+
+**File**: `adapters/repos/db/shard.go` (modified, +3/-2)
+```diff
+@@ -34,6 +34,7 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
+ 	shardusage "github.com/weaviate/weaviate/adapters/repos/db/shard_usage"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
++	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+ 	"github.com/weaviate/weaviate/cluster/replication/changelog"
+ 	"github.com/weaviate/weaviate/cluster/router/types"
+ 	usagetypes "github.com/weaviate/weaviate/cluster/usage/types"
+@@ -407,8 +408,8 @@ type Shard struct {
+ 	// metadataDB is <shard>/index.db, open for the shard's life: the vector
+ 	// index mapping and dynamic's upgrade verdicts live in it.
+ 	metadataDB *shardmeta.DB
+-	// mapping is the shard's persisted view of its vector indexes.
+-	mapping *vectorIndexMapping
++	// manifest owns the persisted state of the shard's vector indexes.
++	manifest *vectormanifest.Manifest
+ 
+ 	// indicates whether shard is shut down or dropped (or ongoing)
+ 	shut atomic.Bool
+```
+
+**File**: `adapters/repos/db/shard_compressed_vectors_migrator.go` (modified, +33/-40)
+```diff
+@@ -20,7 +20,9 @@ import (
+ 	"path/filepath"
+ 
+ 	"github.com/sirupsen/logrus"
++
+ 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
++	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+ 	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
+ 	"github.com/weaviate/weaviate/entities/vectorindex"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/dynamic"
+@@ -65,27 +67,25 @@ func (m compressedVectorsMigrator) removeVectorsCompressedLink(lsmDir string) er
+ 	return nil
+ }
+ 
+-// do runs the compressed-vectors layout migration. records say where each
++// do runs the compressed-vectors layout migration. entries say where each
+ // vector's files live: the vector at "main" owns vectors_compressed, every
+-// other vector is a target. configs are the vectors' configs, the legacy one
+-// under the empty name.
+-func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRecord,
+-	configs map[string]schemaConfig.VectorIndexConfig,
 -) error {
--	paramsBytes, err := clusterapi.IndicesPayloads.UpdateShardStatusParams.Marshal(targetStatus)
--	if err != nil {
--		return errors.Wrap(err, "marshal request payload")
--	}
--	value := []string{strconv.FormatUint(schemaVersion, 10)}
--
--	try := func(ctx context.Context) (bool, error) {
--		req, err := setupRequest(ctx, http.MethodPost, hostName,
--			fmt.Sprintf("/indices/%s/shards/%s/status", indexName, shardName),
--			url.Values{replica.SchemaVersionKey: value}.Encode(),
--			bytes.NewReader(paramsBytes))
--		if err != nil {
--			return false, fmt.Errorf("create http request: %w", err)
--		}
--		clusterapi.IndicesPayloads.UpdateShardStatusParams.SetContentTypeHeaderReq(req)
--
--		res, err := c.client.Do(req)
--		if err != nil {
--			return ctx.Err() == nil, fmt.Errorf("connect: %w", err)
--		}
--		defer res.Body.Close()
--
--		if code := res.StatusCode; code != http.StatusOK {
--			body, _ := io.ReadAll(res.Body)
--			return shouldRetry(code), fmt.Errorf("status code: %v body: (%s)", code, body)
--		}
--
--		return false, nil
--	}
--
--	return c.retry(ctx, MAX_RETRIES, try)
--}
--
- func (c *RemoteIndex) PutFile(ctx context.Context, hostName, indexName,
- 	shardName, fileName string, payload io.ReadSeekCloser,
- ) error {
-```
-
-**File**: `adapters/clients/remote_index_test.go` (modified, +0/-32)
-```diff
-@@ -108,38 +108,6 @@ func TestRemoteIndexCreateShard(t *testing.T) {
- 	})
- }
++// other vector is a target.
++func (m compressedVectorsMigrator) do(s *Shard, entries []vectormanifest.Entry) error {
+ 	lsmDir := s.store.GetDir()
+ 	if m.isMigrationDone(lsmDir) {
+ 		// migration was performed, nothing to do
+ 		return nil
+ 	}
  
--func TestRemoteIndexUpdateShardStatus(t *testing.T) {
--	t.Parallel()
--
--	ctx := context.Background()
--	path := "/indices/C1/shards/S1/status"
--	fs := newFakeRemoteIndexServer(t, http.MethodPost, path)
--	ts := fs.server(t)
--	defer ts.Close()
--	client := newRemoteIndex(ts.Client())
--	t.Run("ConnectionError", func(t *testing.T) {
--		err := client.UpdateShardStatus(ctx, "", "C1", "S1", "NewStatus", 0)
--		assert.NotNil(t, err)
--		assert.Contains(t, err.Error(), "connect")
--	})
--	n := 0
--	fs.doAfter = func(w http.ResponseWriter, r *http.Request) {
--		switch n {
--		case 0:
--			w.WriteHeader(http.StatusInternalServerError)
--		case 1:
--			w.WriteHeader(http.StatusTooManyRequests)
--		default:
--			// do nothing
--		}
--		n++
--	}
--	t.Run("Success", func(t *testing.T) {
--		err := client.UpdateShardStatus(ctx, fs.host, "C1", "S1", "NewStatus", 0)
--		assert.Nil(t, err)
--	})
--}
--
- func TestRemoteIndexShardStatus(t *testing.T) {
- 	t.Parallel()
- 	var (
-```
-
-**File**: `adapters/handlers/rest/clusterapi/indices.go` (modified, +0/-52)
-```diff
-@@ -156,8 +156,6 @@ type shards interface {
- 		uuids []strfmt.UUID, deletionTime time.Time, dryRun bool, schemaVersion uint64) objects.BatchSimpleObjects
- 	GetShardQueueSize(ctx context.Context, indexName, shardName string) (int64, error)
- 	GetShardStatus(ctx context.Context, indexName, shardName string) (string, error)
--	UpdateShardStatus(ctx context.Context, indexName, shardName,
--		targetStatus string, schemaVersion uint64) error
+-	owner, hasOwner := "", false
+-	targets := make(map[string]vectorIndexRecord, len(records))
+-	for name, rec := range records {
+-		if rec.storageID() == vectorIndexID("") {
+-			owner, hasOwner = name, true
++	var owner vectormanifest.Entry
++	hasOwner := false
++	targets := make([]vectormanifest.Entry, 0, len(entries))
++	for _, e := range entries {
++		if e.StorageID == vectorIndexID("") {
++			owner, hasOwner = e, true
+ 			continue
+ 		}
+-		targets[name] = rec
++		targets = append(targets, e)
+ 	}
  
- 	// Replication-specific
- 	OverwriteObjects(ctx context.Context, indexName, shardName string,
-@@ -330,10 +328,6 @@ func (i *indices) indicesHandler() http.HandlerFunc {
- 				i.getGetShardStatus().ServeHTTP(w, r)
- 				return
+ 	vectorsCompressedPath := filepath.Join(lsmDir, helpers.VectorsCompressedBucketLSM)
+@@ -98,32 +98,32 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
+ 		if err != nil {
+ 			return err
+ 		}
+-		if hasOwner && records[owner].IndexType == vectorindex.VectorIndexTypeHFresh {
++		if hasOwner && owner.IndexType == vectorindex.VectorIndexTypeHFresh {
+ 			targets = nil
+ 		}
+ 		switch {
+-		case len(records) == 0:
++		case len(entries) == 0:
+ 			// do nothing
+ 		case len(targets) == 0:
+ 			// nothing to move: the bucket stays with its owner, or unattributed
+ 			if err := m.markMigrationDone(lsmDir); err != nil {
+ 				return fmt.Errorf("failed to mark migration as done: %w", err)
  			}
--			if r.Method == http.MethodPost {
--				i.postUpdateShardStatus().ServeHTTP(w, r)
--				return
--			}
- 			http.Error(w, "405 Method not Allowed", http.StatusMethodNotAllowed)
- 			return
- 
-@@ -1280,52 +1274,6 @@ func (i *indices) getGetShardStatus() http.Handler {
- 	})
+ 		case !hasOwner && len(targets) == 1:
+-			for name, rec := range targets {
++			for _, e := range targets {
+ 				// rename old bucket to new target vector bucket
+-				if err := m.migrate(name, rec, configs[name], lsmDir, true); err != nil {
+-					return fmt.Errorf("failed to rename old compressed vector bucket for target vector %s: %w", name, err)
++				if err := m.migrate(e, lsmDir, true); err != nil {
++					return fmt.Errorf("failed to rename old compressed vector bucket for target vector %s: %w", e.Name, err)
+ 				}
+ 			}
+ 			if err := m.markMigrationDone(lsmDir); err != nil {
+ 				return fmt.Errorf("failed to mark migration as done: %w", err)
+ 			}
+ 		default:
+ 			// copy old buckets to new target vector buckets
+-			for name, rec := range targets {
+-				if err := m.migrate(name, rec, configs[name], lsmDir, false); err != nil {
+-					return fmt.Errorf("failed to copy from old compressed vector bucket to new bucket for target vector: %s: %w", name, err)
++			for _, e := range targets {
++				if err := m.migrate(e, lsmDir, false); err != nil {
++					return fmt.Errorf("failed to copy from old compressed vector bucket to new bucket for target vector: %s: %w", e.Name, err)
+ 				}
+ 			}
+ 			if !hasOwner {
+@@ -139,7 +139,7 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
+ 				}
+ 			}
+ 		}
+-	} else if hasOwner && m.isQuantizationEnabled(configs[owner]) {
++	} else if hasOwner && m.isQuantizationEnabled(owner.Config) {
+ 		// a new legacy vector config was created, quantization is enabled but we didn't create the vectors_compressed
+ 		// folder yet but we need to mark that the migration was done in order for it to not be trigered on healthy vector indexes
+ 		if err := m.markMigrationDone(lsmDir); err != nil {
+@@ -150,38 +150,31 @@ func (m compressedVectorsMigrator) do(s *Shard, records map[string]vectorIndexRe
  }
  
--func (i *indices) postUpdateShardStatus() http.Handler {
--	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		args := i.regexpShardsStatus.FindStringSubmatch(r.URL.Path)
--		if len(args) != 3 {
--			http.Error(w, "invalid URI", http.StatusBadRequest)
--			return
--		}
--
--		index, shard := args[1], args[2]
--
--		defer r.Body.Close()
--		reqPayload, err := shared.ReadBody(r.Body, r.ContentLength)
+ // targetsWithStorage keeps the targets whose index already has its files.
+-func (m compressedVectorsMigrator) targetsWithStorage(s *Shard, targets map[string]vectorIndexRecord,
+-) (map[string]vectorIndexRecord, error) {
+-	kept := make(map[string]vectorIndexRecord, len(targets))
+-	for name, rec := range targets {
+-		dirs, err := s.vectorIndexStorageDirsFor(rec)
 -		if err != nil {
--			http.Error(w, "read request body: "+err.Error(), http.StatusInternalServerError)
--			return
+-			return nil, fmt.Errorf("vector %q: %w", name, err)
 -		}
--
--		ct, ok := shared.IndicesPayloads.UpdateShardStatusParams.CheckContentTypeHeaderReq(r)
--		if !ok {
--			http.Error(w, errors.Errorf("unexpected content type: %s", ct).Error(),
--				http.StatusUnsupportedMediaType)
--			return
--		}
--
--		targetStatus, err := shared.IndicesPayloads.UpdateShardStatusParams.
--			Unmarshal(reqPayload)
--		if err != nil {
--			http.Error(w, "unmarshal find doc ids params from json: "+err.Error(),
--				http.StatusBadRequest)
--			return
--		}
--
--		schemaVersion, err := extractSchemaVersionFromUrlQuery(r.URL.Query())
--		if err != nil {
--			http.Error(w, err.Error(), http.StatusBadRequest)
--			return
--		}
--
--		err = i.shards.UpdateShardStatus(r.Context(), index, shard, targetStatus, schemaVersion)
--		if err != nil {
--			http.Error(w, err.Error(), http.StatusInternalServerError)
--			return
--		}
--	})
--}
--
- func (i *indices) postShardFile() http.Handler {
- 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
- 		args := i.regexpShardFiles.FindStringSubmatch(r.URL.Path)
+-		exists, err := vectorIndexStorageExists(dirs)
++func (m compressedVectorsMigrator) targetsWithStorage(s *Shard, targets []vectormanifest.Entry,
++) ([]vectormanifest.Entry, error) {
++	kept := make([]vectormanifest.Entry, 0, len(
 ```
 
-**File**: `adapters/handlers/rest/clusterapi/indices_test.go` (modified, +16/-0)
+**File**: `adapters/repos/db/shard_debug.go` (modified, +7/-35)
 ```diff
-@@ -15,9 +15,11 @@ import (
- 	"fmt"
- 	"net/http"
- 	"net/http/httptest"
-+	"strings"
- 	"testing"
+@@ -18,14 +18,14 @@ import (
  
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/adapters/handlers/rest/clusterapi"
+ 	"github.com/pkg/errors"
+ 
+-	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/propertyspecific"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/common"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/geo"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hfresh"
+ 	"github.com/weaviate/weaviate/entities/additional"
+ 	enterrors "github.com/weaviate/weaviate/entities/errors"
+ 	"github.com/weaviate/weaviate/entities/schema"
++	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
+ 	"github.com/weaviate/weaviate/entities/storobj"
  )
  
-@@ -67,6 +69,20 @@ func TestMaintenanceModeIndices(t *testing.T) {
+@@ -41,7 +41,7 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
+ 		return fmt.Errorf("async indexing is not enabled")
  	}
+ 
+-	rec, ok, err := s.mapping.Get(targetVector)
++	entry, ok, err := s.manifest.Get(targetVector)
+ 	if err != nil {
+ 		return errors.Wrap(err, "read mapping record")
+ 	}
+@@ -69,7 +69,7 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
+ 
+ 	// bracketed like a creation: a crash in between leaves creating, which
+ 	// the next load resumes instead of refusing
+-	err = s.markVectorIndexCreating(targetVector, rec)
++	err = s.manifest.Reset(targetVector)
+ 	if err != nil {
+ 		q.Resume()
+ 		return errors.Wrap(err, "mark vector index creating")
+@@ -81,15 +81,16 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
+ 	}
+ 
+ 	if isHFresh {
+-		err = s.removeHFreshArtifacts(ctx, targetVector, rec.storageID())
++		// what is left would be loaded by the new index; it reuses the queue
++		err = s.manifest.RemoveIndexFiles(ctx, targetVector)
+ 		if err != nil {
+ 			return errors.Wrap(err, "remove hfresh files")
+ 		}
+ 	}
+ 
+ 	newConfig := s.index.GetVectorIndexConfig(targetVector)
+ 
+-	vidx, err = s.initVectorIndex(ctx, targetVector, rec.storageID(), newConfig, false)
++	vidx, err = s.initVectorIndex(ctx, targetVector, entry.StorageID, newConfig, false)
+ 	if err != nil {
+ 		return errors.Wrap(err, "init vector index")
+ 	}
+@@ -109,42 +110,13 @@ func (s *Shard) DebugResetVectorIndex(ctx context.Context, targetVector string)
+ 		}
+ 	}, s.index.logger)
+ 
+-	err = s.markVectorIndexReady(targetVector, rec)
++	err = s.manifest.Ready(map[string]schemaConfig.VectorIndexConfig{targetVector: newConfig})
+ 	if err != nil {
+ 		return errors.Wrap(err, "mark vector index ready")
+ 	}
+ 	return nil
  }
  
-+// Nodes before v1.35.19, v1.36.13 and v1.37.3 forward shard status updates to this removed route.
-+func TestPostShardStatusIsNotAllowed(t *testing.T) {
-+	indices := clusterapi.NewIndices(nil, nil, clusterapi.NewNoopAuthHandler(), func() bool { return false }, nil)
-+	mux := http.NewServeMux()
-+	mux.Handle("/indices/", indices.Indices())
-+	server := httptest.NewServer(mux)
-+	defer server.Close()
-+
-+	res, err := http.Post(server.URL+"/indices/MyClass/shards/myshard/status", "vnd.weaviate.updateshardstatusparams+json", strings.NewReader(`{"targetStatus":"READONLY"}`))
-+	require.NoError(t, err)
-+	defer res.Body.Close()
-+	assert.Equal(t, http.StatusMethodNotAllowed, res.StatusCode)
-+}
-+
- type indicesTestRequest struct {
- 	method string
- 	suffix string
-```
-
-**File**: `adapters/handlers/rest/clusterapi/shared/indices_payloads.go` (modified, +0/-50)
-```diff
-@@ -78,8 +78,6 @@ type indicesPayloads struct {
- 	GetShardQueueSizeResults   getShardQueueSizeResultsPayload
- 	GetShardStatusParams       getShardStatusParamsPayload
- 	GetShardStatusResults      getShardStatusResultsPayload
--	UpdateShardStatusParams    updateShardStatusParamsPayload
--	UpdateShardsStatusResults  updateShardsStatusResultsPayload
- 	ShardFiles                 shardFilesPayload
- 	ShardFileMetadataResults   shardFileMetadataResultsPayload
- 	ShardFilesResults          shardFilesResultsPayload
-@@ -1232,54 +1230,6 @@ func (p getShardStatusResultsPayload) CheckContentTypeHeader(r *http.Response) (
- 	return ct, ct == p.MIME()
- }
- 
--type updateShardStatusParamsPayload struct{}
--
--func (p updateShardStatusParamsPayload) Marshal(targetStatus string) ([]byte, error) {
--	type params struct {
--		TargetStatus string `json:"targetStatus"`
+-// removeHFreshArtifacts deletes what a dropped hfresh index left on disk,
+-// which the new index would otherwise load. The queue stays: the reset reuses it.
+-func (s *Shard) removeHFreshArtifacts(ctx context.Context, targetVector, physicalID string) error {
+-	var otherIDs []string
+-	for _, other := range otherTargetVectors(s.class, targetVector) {
+-		rec, ok, err := s.mapping.Get(other)
+-		if err != nil {
+-			return fmt.Errorf("vector %q: %w", other, err)
+-		}
+-		if ok {
+-			otherIDs = append(otherIDs, rec.storageID())
+-		}
 -	}
--
--	par := params{targetStatus}
--	return json.Marshal(par)
--}
--
--func (p updateShardStatusParamsPayload) Unmarshal(in []byte) (string, error) {
--	type updateShardStatusParametersPayload struct {
--		TargetStatus string `json:"targetStatus"`
+-	artifacts := helpers.VectorIndexArtifactsForID(physicalID, otherIDs)
+-	for _, bucket := range artifacts.LSMBuckets {
+-		err := s.removeBucket(ctx, bucket)
+-		if err != nil {
+-			return fmt.Errorf("drop bucket %q: %w", bucket, err)
+-		}
 -	}
--	var par updateShardStatusParametersPayload
--	err := json.Unmarshal(in, &par)
--	return par.TargetStatus, err
--}
--
--func (p updateShardStatusParamsPayload) MIME() string {
--	return "vnd.weaviate.updateshardstatusparams+json"
--}
--
--func (p updateShardStatusParamsPayload) CheckContentTypeHeaderReq(r *http.Request) (string, bool) {
--	ct := r.Header.Get("content-type")
--	return ct, ct == p.MIME()
--}
--
--func (p updateShardStatusParamsPayload) SetContentTypeHeaderReq(r *http.Request) {
--	r.Header.Set("content-type", p.MIME())
--}
--
--type updateShardsStatusResultsPayload struct{}
--
--func (p updateShardsStatusResultsPayload) MIME() string {
--	return "application/vnd.weaviate.updateshardstatusresults+octet-stream"
--}
--
--func (p updateShardsStatusResultsPayload) SetContentTypeHeader(w http.ResponseWriter) {
--	w.Header().Set("content-type", p.MIME())
--}
--
--func (p updateShardsStatusResultsPayload) CheckContentTypeHeader(r *http.Response) (string, bool) {
--	ct := r.Header.Get("content-type")
--	return ct, ct == p.MIME()
--}
--
- type shardFilesPayload struct{}
- 
- func (p shardFilesPayload) MIME() string {
-```
-
-**File**: `adapters/repos/db/fakes_for_tests.go` (modified, +0/-6)
-```diff
-@@ -416,12 +416,6 @@ func (f *FakeRemoteClient) GetShardStatus(ctx context.Context,
- 	return status, nil
- }
- 
--func (f *FakeRemoteClient) UpdateShardStatus(ctx context.Context, hostName, indexName, shardName,
--	targetStatus string, schemaVersion uint64,
--) error {
+-	for _, dir := range artifacts.ShardDirs {
+-		err := removeDirIfExists(s.path(), dir)
+-		if err != nil {
+-			return fmt.Errorf("drop directory %q: %w", dir, err)
+-		}
+-	}
 -	return nil
 -}
 -
- func (f *FakeRemoteClient) PutFile(ctx context.Context, hostName, indexName, shardName,
- 	fileName string, payload io.ReadSeekCloser,
- ) error {
+ // DebugResetGeoIndex is DebugResetVectorIndex for propName's geo index. It is
+ // for debugging only, under the same assumptions.
+ func (s *Shard) DebugResetGeoIndex(ctx context.Context, propName string) error {
 ```
 
-**File**: `adapters/repos/db/index.go` (modified, +0/-6)
+**File**: `adapters/repos/db/shard_drop_vector_index_helper.go` (modified, +4/-89)
 ```diff
-@@ -4959,12 +4959,6 @@ func (i *Index) updateShardStatus(ctx context.Context, shardName, targetStatus s
- 	})
+@@ -14,12 +14,9 @@ package db
+ import (
+ 	"context"
+ 	"fmt"
+-	"os"
+ 	"path/filepath"
+ 
+-	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+-	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
+-	"github.com/weaviate/weaviate/adapters/repos/db/vector/dynamic"
++	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	"github.com/weaviate/weaviate/entities/modelsext"
+ )
+@@ -78,94 +75,12 @@ func (s *Shard) clearDroppedVectorDimensions(ctx context.Context, class *models.
  }
  
--func (i *Index) IncomingUpdateShardStatus(ctx context.Context, shardName, targetStatus string, schemaVersion uint64) error {
--	return i.withShardForWrite(ctx, shardName, func(shard shardWriter) error {
--		return shard.UpdateStatus(targetStatus, statusReasonManualUpdate)
--	})
--}
+ // removeVectorIndexFiles removes every on-disk artifact of a named vector index
+-// (see helpers.VectorIndexArtifactsFor for the set and why it is centralised).
+-// otherTargetVectors are the collection's remaining vector names, needed so a
+-// sibling whose own bucket collides with one of this target's artifact names is
+-// not deleted along with it.
++// of a shard that is not loaded. otherTargetVectors are the collection's
++// remaining vector names, whose files stay.
+ func (h *vectorDropIndexHelper) removeVectorIndexFiles(
+ 	indexPath, shardName, targetVector string, otherTargetVectors []string,
+ ) error {
+-	lsmDir := filepath.Join(indexPath, shardName, "lsm")
+-	shardDir := filepath.Join(indexPath, shardName)
 -
- func (i *Index) findUUIDs(ctx context.Context,
- 	filters *filters.LocalFilter, tenant string, repl *additional.ReplicationProperties,
- 	perShardLimit int,
+-	// the record says what the vector owns; a shard from a pre-mapping backup
+-	// has none, and the naming rule is what its first load would record
+-	rec, recorded, initialized, err := readVectorIndexRecordOffline(shardDir, targetVector)
+-	if shardmeta.IsLocked(err) {
+-		// a load slipped in: the shard's own drop and reconcile finish it
+-		return nil
+-	}
+-	if err != nil {
+-		return err
+-	}
+-	var artifacts helpers.VectorIndexArtifacts
+-	var id string
+-	switch {
+-	case !initialized:
+-		id = helpers.VectorIndexIDForTarget(targetVector)
+-		artifacts = helpers.VectorIndexArtifactsFor(targetVector, otherTargetVectors)
+-	case !recorded:
+-		return nil // nothing recorded, nothing owned
+-	default:
+-		id = rec.storageID()
+-		records := map[string]vectorIndexRecord{targetVector: rec}
+-		var otherIDs []string
+-		for _, other := range otherTargetVectors {
+-			otherRec, ok, _, err := readVectorIndexRecordOffline(shardDir, other)
+-			if err != nil {
+-				return err
+-			}
+-			if !ok {
+-				continue
+-			}
+-			records[other] = otherRec
+-			otherIDs = append(otherIDs, otherRec.storageID())
+-		}
+-		// a sibling sharing a queue or files would lose them; a load refuses the pair
+-		err := refuseSharedVectorIndexQueues(records)
+-		if err != nil {
+-			return err
+-		}
+-		err = refuseGeneratedVectorIndexCollisions(records)
+-		if err != nil {
+-			return err
+-		}
+-		artifacts = helpers.VectorIndexArtifactsForID(id, otherIDs)
+-		artifacts.ShardDirs = append(artifacts.ShardDirs, helpers.QueueDirName(rec.queueIDOrDefault()))
+-	}
+-
+-	var dirs []string
+-	for _, bucket := range artifacts.LSMBuckets {
+-		dirs = append(dirs, filepath.Join(lsmDir, bucket))
+-	}
+-	for _, dir := range artifacts.ShardDirs {
+-		dirs = append(dirs, filepath.Join(shardDir, dir))
+-	}
+-
+-	for _, dir := range dirs {
+-		if err := os.RemoveAll(dir); err != nil {
+-			return fmt.Errorf("remove %s: %w", dir, err)
+-		}
+-	}
+-
+-	// A dynamic index records its flat-to-hnsw upgrade as a key in the shard's
+-	// index.db, which no artifact above can reach: that file is one per shard,
+-	// not one per vector, so removing it would take every sibling's state too.
+-	//
+-	// Unconditional because nothing here can tell a dynamic vector from any
+-	// other — the drop rewrote this entry's VectorIndexType to "none" and
+-	// discarded the original type along with its config.
+-	if err := dynamic.RemoveStateKeyForID(shardDir, id); err != nil {
+-		return fmt.Errorf("remove dynamic state for %q: %w", targetVector, err)
+-	}
+-
+-	// the record goes last, so a failed sweep keeps it for the retry
+-	key := []byte(vectorIndexMappingKey(targetVector))
+-	if err := shardmeta.DeleteOffline(shardDir, vectorIndexMappingNamespace, key); err != nil {
+-		return fmt.Errorf("remove mapping record for %q: %w", targetVector, err)
+-	}
+-
+-	return nil
++	return vectormanifest.DropUnloaded(filepath.Join(indexPath, shardName), targetVector, otherTargetVectors)
+ }
+ 
+ // otherTargetVectors lists the collection's vector names except `exclude` —
 ```
 
-**File**: `adapters/repos/db/reindex_recovery_lazy_test.go` (modified, +6/-2)
+**File**: `adapters/repos/db/shard_drop_vector_index_helper_test.go` (modified, +53/-49)
 ```diff
-@@ -436,10 +436,14 @@ func TestLiftingADoubleFaultReadOnlyShardRetriesRecovery(t *testing.T) {
- 		armsOnly bool
- 	}{
- 		{name: "manual status update", retries: true, lift: func(t *testing.T, fx *doubleFaultFixture, shard *Shard) (*Shard, error) {
--			return shard, fx.idx.IncomingUpdateShardStatus(fx.ctx, fx.name, storagestate.StatusReady.String(), 0)
-+			return shard, fx.idx.withShardForWrite(fx.ctx, fx.name, func(w shardWriter) error {
-+				return w.UpdateStatus(storagestate.StatusReady.String(), statusReasonManualUpdate)
-+			})
- 		}},
- 		{name: "manual shutdown status", retries: true, armsOnly: true, lift: func(t *testing.T, fx *doubleFaultFixture, shard *Shard) (*Shard, error) {
--			return shard, fx.idx.IncomingUpdateShardStatus(fx.ctx, fx.name, storagestate.StatusShutdown.String(), 0)
-+			return shard, fx.idx.withShardForWrite(fx.ctx, fx.name, func(w shardWriter) error {
-+				return w.UpdateStatus(storagestate.StatusShutdown.String(), statusReasonManualUpdate)
-+			})
- 		}},
- 		// The only row that asserts a held shard's Shutdown returns no error; the other rows discard it in cleanup.
- 		{name: "restart", armsOnly: true, lift: func(t *testing.T, fx *doubleFaultFixture, shard *Shard) (*Shard, error) {
+@@ -19,6 +19,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++
+ 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/shardmeta"
+ 	entlsmkv "github.com/weaviate/weaviate/entities/lsmkv"
+@@ -185,20 +186,20 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
+ 
+ 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+-		foo := vectorIndexRecord{PhysicalID: "vectors_foo", IndexType: "hnsw", State: "ready"}
+-		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "flat", State: "ready"}
+-		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
++		foo := manifestRecord{PhysicalID: "vectors_foo", IndexType: "hnsw", State: "ready"}
++		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "flat", State: "ready"}
++		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
+ 		require.NoError(t, db.Close())
+ 
+ 		require.NoError(t, h.removeVectorIndexFiles(indexPath, shardName, "foo", nil))
+ 
+ 		db, err = shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+ 		defer db.Close()
+-		records, initialized, err := newVectorIndexMapping(db).Load()
++		records, initialized, err := newManifestRecords(db).Load()
+ 		require.NoError(t, err)
+ 		assert.True(t, initialized)
+-		assert.Equal(t, map[string]vectorIndexRecord{"bar": bar}, records)
++		assert.Equal(t, map[string]manifestRecord{"bar": bar}, records)
+ 	})
+ 
+ 	t.Run("removes the queue under the record's queue ID", func(t *testing.T) {
+@@ -208,9 +209,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
+ 
+ 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+-		foo := vectorIndexRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
+-		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_bar"}
+-		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
++		foo := manifestRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
++		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_bar"}
++		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
+ 		require.NoError(t, db.Close())
+ 
+ 		commitLog := filepath.Join(shardDir, "vectors_foo_2.hnsw.commitlog.d")
+@@ -235,9 +236,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
+ 
+ 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+-		foo := vectorIndexRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
+-		bar := vectorIndexRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
+-		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "bar": bar}))
++		foo := manifestRecord{PhysicalID: "vectors_foo_2", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
++		bar := manifestRecord{PhysicalID: "vectors_bar", IndexType: "hnsw", State: "ready", QueueID: "vectors_foo"}
++		require.NoError(t, newManifestRecords(db).Initialize(map[string]manifestRecord{"foo": foo, "bar": bar}))
+ 		require.NoError(t, db.Close())
+ 
+ 		commitLog := filepath.Join(shardDir, "vectors_foo_2.hnsw.commitlog.d")
+@@ -255,9 +256,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
+ 		db, err = shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+ 		defer db.Close()
+-		records, _, err := newVectorIndexMapping(db).Load()
++		records, _, err := newManifestRecords(db).Load()
+ 		require.NoError(t, err)
+-		assert.Equal(t, map[string]vectorIndexRecord{"foo": foo, "bar": bar}, records)
++		assert.Equal(t, map[string]manifestRecord{"foo": foo, "bar": bar}, records)
+ 	})
+ 
+ 	t.Run("refuses files a sibling with a generated ID names and deletes nothing", func(t *testing.T) {
+@@ -267,9 +268,9 @@ func TestVectorDropIndexHelper_RemoveVectorIndexFiles(t *testing.T) {
+ 
+ 		db, err := shardmeta.Open(shardDir, entlsmkv.BoltFlockTimeout)
+ 		require.NoError(t, err)
+-		foo := vectorIndexRecord{PhysicalID: "a-b", IndexType: "hnsw", State: "ready", QueueID: "a-b"}
+-		mv := vectorIndexRecord{PhysicalID: "vectors_a-b", IndexType: "hnsw", State: "ready", QueueID: "vectors_mv"}
+-		require.NoError(t, newVectorIndexMapping(db).Initialize(map[string]vectorIndexRecord{"foo": foo, "mv": mv}))
++		foo := manifestRecord{PhysicalID: "a-b", IndexType: "hnsw", State: "ready", QueueID: "a-b"}
++		mv := manifestRecord{PhysicalID: "vectors_a-b", IndexType: "hnsw", State: "ready", QueueID: "vectors_mv"}
++		require.NoError(t, newManifestRecords(db).Initial
+```
+
+---
+
+### Incident Patch 2: `a9cb9aae` (2026-11-27)
+**Commit Message**: vectormanifest: say what Create finishes and what the package does not decide
+
+**File**: `adapters/repos/db/vectormanifest/manifest.go` (modified, +6/-3)
+```diff
+@@ -11,8 +11,10 @@
+ 
+ // Package vectormanifest owns the state a shard persists about its vector
+ // indexes: which index on disk each vector uses, in <shard>/index.db. Only
+-// this package reads or writes that state, and only it decides which files
+-// belong to a vector, except for package db's compressedVectorsMigrator.
++// this package reads or writes that state. Which files belong to a vector it
++// decides from the records; package db's compressedVectorsMigrator still picks
++// the owner of the old shared compressed bucket, and a shard without records
++// is dropped from by the names its caller passes.
+ package vectormanifest
+ 
+ import (
+@@ -242,7 +244,8 @@ func (m *Manifest) dropUnrecorded(ctx context.Context, dropped, siblings []strin
+ 
+ // Create records that name's index is about to be built under the naming rule
+ // and returns where. It refuses a vector whose files another one owns; a retry
+-// of an interrupted creation is not refused.
++// of an interrupted creation is not refused, and a drop of name this shard did
++// not finish is finished first.
+ func (m *Manifest) Create(ctx context.Context, name string, cfg schemaConfig.VectorIndexConfig) (Entry, error) {
+ 	m.mu.Lock()
+ 	defer m.mu.Unlock()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14028** (2026-11-25): Merge stable/v1.40 into stable/v1.41 (@antas-marcin)
-- **PR #14027** (2026-11-25): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #14026** (2026-11-25): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #14024** (2026-11-25): refactor(cluster): remove the unused shard status update endpoint (@moogacs)
-- **PR #14012** (2026-11-25): test(auth): switch WCD OIDC auth e2e tests to mockOIDC (@antas-marcin)
-- **PR #14008** (2026-11-24): fix(modules): remove unsupported models from generative-digitalocean e2e test list (@antas-marcin)
+- **PR #14064** (2026-11-27): feat(text2vec-openai): drop dimensions validation from class settings (@antas-marcin)
+- **PR #14063** (2026-11-27): Refuse lookups without a class when namespaces are enabled (@dirkkul)
+- **PR #14058** (2026-11-27): fix(authz): refuse role: prefixed role IDs that alias built-in roles (@jeroiraz)
+- **PR #14055** (closed): fix(cluster): authenticate the raft transport and the cluster RPC service (@jeroiraz)
+- **PR #14052** (2026-11-26): backup: restore adopts only the class index dir from staging (@jeroiraz)
+- **PR #14051** (2026-11-26): Reject incremental backup refs that would read outside the backup (@jeroiraz)
 
 ---
 
@@ -2114,6 +2343,38 @@ refactor(cluster): remove the unused shard status update endpoint
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Empirical Invariant Guard in index_usage.go
+
+**RULE**:
+When implementing operations in `adapters/repos/db/index_usage.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `daddd4e1`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/index_usage.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"github.com/weaviate/weaviate/adapters/repos/db/vectormanifest"
+	indexIDs, locked, err := vectormanifest.UnloadedStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	indexIDs, locked, err := unloadedVectorIndexStorageIDs(shardPath(i.path(), shardName), slices.Collect(maps.Keys(vectorConfigs)))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `daddd4e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

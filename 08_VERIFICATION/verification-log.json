@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-9GX9",
-    "timestamp": "2026-11-26T05:05:09.357Z",
-    "repository": "laion/clap-htsat-fused",
-    "learningId": "learn-huggingface-laion-clap-htsat-fused",
-    "contentHash": "586a05e03990f63316e01a48248c42aae687b0ebdfceafd2fca5ec6d4beaf5a0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-9OZL",
-    "timestamp": "2026-11-26T05:05:19.809Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "75e1089a762017dfe2aa3636aad9c625925f863940da32e5919a5654a0e86755",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-9QGK",
     "timestamp": "2026-11-26T05:05:21.716Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "13f17ef1ba0b1567eae7c33be9648fc18bd0355f3dc30736b3ec9bf52d6e9d3f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YWQ9",
+    "timestamp": "2026-11-27T11:44:31.281Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YXU8",
+    "timestamp": "2026-11-27T11:44:32.720Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

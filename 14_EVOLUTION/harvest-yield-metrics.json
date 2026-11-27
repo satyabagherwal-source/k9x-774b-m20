@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:33:45.883Z",
-  "total_cycles_completed": 13071,
-  "total_learnings_persisted": 13071,
-  "total_rules_promoted": 11799,
+  "last_updated": "2026-11-27T11:44:32.748Z",
+  "total_cycles_completed": 13073,
+  "total_learnings_persisted": 13073,
+  "total_rules_promoted": 11801,
   "history": [
-    {
-      "timestamp": "2026-11-26T21:17:20.616Z",
-      "repository": "arxhr007/Aliens_eye",
-      "learningId": "learn-github-arxhr007-aliens_eye",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T21:17:24.710Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T21:17:41.331Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1389,20 @@
       "repository": "nguyenphutrong/quotio",
       "learningId": "learn-github-nguyenphutrong-quotio",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:44:31.310Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:44:32.748Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

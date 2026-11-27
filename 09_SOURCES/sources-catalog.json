@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "b2358d26",
+    "sourceVersion": "d0d659bf",
     "license": "NOASSERTION",
-    "contentHash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
-    "lastHarvestedAt": "2026-11-26T17:57:07.002Z",
+    "contentHash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
+    "lastHarvestedAt": "2026-11-27T11:44:32.736Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "5d678d7a",
+    "sourceVersion": "daddd4e1",
     "license": "NOASSERTION",
-    "contentHash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
-    "lastHarvestedAt": "2026-11-26T17:15:05.385Z",
+    "contentHash": "9fa43264c42efd08dca7a9da272298d431da32f56a98a1c80ac0b5265809d84c",
+    "lastHarvestedAt": "2026-11-27T11:44:31.298Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
