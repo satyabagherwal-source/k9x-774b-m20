@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T18:08:35.724Z",
+  "updated_at": "2026-11-27T18:35:11.386Z",
   "stats": {
-    "total_discovered": 10509,
-    "approved_pending_harvest": 9976,
+    "total_discovered": 10514,
+    "approved_pending_harvest": 9981,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9981,
-      "OFFICIAL_DOCUMENTATION": 290,
+      "COMMUNITY_AND_EXPERT": 9985,
+      "OFFICIAL_DOCUMENTATION": 291,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 57,
@@ -227494,6 +227494,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
         "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-0B3C11CABE0A": {
+      "id": "SRC-0B3C11CABE0A",
+      "url": "https://docs.stepsecurity.io/packages/secure-registry/community-tier",
+      "title": "https://docs.stepsecurity.io/packages/secure-registry/community-tier",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:35:10.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-6686617006BB": {
+      "id": "SRC-6686617006BB",
+      "url": "https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0",
+      "title": "https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:35:10.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-4A1B0319FBAD": {
+      "id": "SRC-4A1B0319FBAD",
+      "url": "https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c",
+      "title": "https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:35:10.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-6689559D6789": {
+      "id": "SRC-6689559D6789",
+      "url": "https://redirect.github.com/step-security/harde",
+      "title": "https://redirect.github.com/step-security/harde",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:35:10.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
+      }
+    },
+    "SRC-AE8B51237918": {
+      "id": "SRC-AE8B51237918",
+      "url": "https://github.com/nolabs-ai/nono//.github/workflows",
+      "title": "https://github.com/nolabs-ai/nono//.github/workflows",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:35:11.386Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
+        "fileName": "nolabs-ai-nono-learnings.md"
       }
     }
   }

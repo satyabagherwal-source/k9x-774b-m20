@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T12:07:28.873Z",
+  "timestamp": "2026-11-27T18:35:10.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dnscontrol-dnscontrol-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dnscontrol-dnscontrol-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T12:07:28.873Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T18:35:10.426Z`  
 > **Learning ID**: `LEARN-EVO-dnscontrol-dnscontrol-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `62103794`  
+> **Source Version**: `4e43910a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:07:19.500Z  
+> **Timestamp**: 2026-11-27T18:35:01.425Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:07:19.389Z  
+> **Harvest Timestamp**: 2026-11-27T18:35:01.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4010 stars
+- **Stars / Engagement**: 4019 stars
 
 ---
 
@@ -682,11 +682,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5127** (2026-11-19): **commands: add NameFQDN when importing --ir**
-  *Symptoms*: The NameFQDN attr does not get generated when going through the --ir path (SetLabel is never called). This results in errors about NameFQDN not being set on 5.9, and in all entries having an empty NameFQDN on 5.10 which then means multiple entries with different names but the same target/value conflict.  So add the NameFQDN when importing via --ir.  Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854 (--ir unusable in v5)  <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
+- **Issue #5137** (2026-11-27): **fix: bug: glob(dir, recursive, "*") does nothing**
+  *Symptoms*: # Issue  `glob(dir, recursive, "*")` is supposed to match all files but it always returns an empty list  # Resolution  The third argument gets a "." added which makes it not work.  # Notes:  `glob(dir, recursive, "*")` is supposed to turn off the extension filter. The error message for a bad third argument says "* for no filter". In practice it matched nothing: a `.` was added before the `"*"` check, so the filter became `".*"`.  This PR: - skips the "add a leading dot" step when the extension is `"*"` - corrects a comment that said directories are listed with a trailing slash. They aren't: with `"*"`, directories, including `dir` itself, are listed without a trailing slash. - adds `TestGlobExtensionFilter`, which covers the default `.js`, an extension without the dot, no match, and `"*"` both recursive and non-recursive. The two `"*"` cases fail without the fix.  `require_glob()` always forces `".js"`, so it isn't affected. Only direct calls to the undocumented `glob()` change.  **Merge note:** #5136 has a test that pins the old behavior (`glob star filter matches nothing`). Whichever PR merges second needs that case changed to expect the full listing. I'll update it.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #5126** (2026-11-19): **ci: correct stale download-artifact pin comment**
-  *Symptoms*: ## What  Fixes the stale version comment on the SHA-pinned `actions/download-artifact` ref in `release_draft.yml`.  ## Why  Dependabot bumped this pin from v4.3.0 to v8.0.2 in #5081, but the pin's comment had trailing prose after the version ("`# v4.3.0, same major as the generator's upload-artifact v4.6.0`"), so Dependabot updated the SHA and left the comment untouched. On main the SHA is v8.0.2 while the comment still claims v4.3.0, and the documented "same major as the SLSA generator" constraint was silently crossed.  The three releases since the bump (Nov 12, 16, and 18) all succeeded, so download-artifact v8 happily reads the generator's upload-artifact v4.6.0 artifacts — nothing is broken, but the comment now lies. This PR updates the comment to a bare `# v8.0.2`, which is the form Dependabot maintains automatically. If we ever want to hold this pin to a specific major for real, that constraint belongs in a `dependabot.yml` ignore rule, not in a comment.  Refs #5125, where the broader "finish pinning the CI fleet" discussion lives.  ## Notes for reviewer  - One-line change, comment only — the SHA is unchanged (it was already v8.0.2's). - No `bin/generate-all.sh` output is affected by a workflow comment change. 
+- **Issue #5133** (2026-11-25): **build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.4 to 2.23.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.23.0</h2> <h2>What's Changed</h2> <ul> <li>Added integration with the StepSecurity Secure Registry community tier, a hosted SaaS registry that is free for public repositories using GitHub-hosted runners with Harden-Runner. Enable it with <code>secure-registry: true</code> to route JavaScript package downloads through Secure Registry, which applies a default two-day cooldown and blocks known compromised packages. See the <a href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community tier documentation</a> for setup and configuration.</li> <li>Bug fix: Redacted credentials and signatures from signed S3 URLs that could appear in agent error logs when event uploads failed.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0">https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c"><code>aebdcf6</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harde
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -703,128 +703,105 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62103794` (2026-11-19)
-**Commit Message**: commands: add NameFQDN when importing --ir (#5127)
+### Incident Patch 1: `4e43910a` (2026-11-27)
+**Commit Message**: fix: bug: glob(dir, recursive, "*") does nothing (#5137)
 
-The NameFQDN attr does not get generated when going through the --ir
-path (SetLabel is never called). This results in errors about NameFQDN
-not being set on 5.9, and in all entries having an empty NameFQDN on
-5.10 which then means multiple entries with different names but the same
-target/value conflict.
+# Issue
 
-So add the NameFQDN when importing via --ir.
+`glob(dir, recursive, "*")` is supposed to match all files but it always
+returns an empty list
 
-Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854
-(--ir unusable in v5)
+# Resolution
 
-<!--
-## Before submiting a pull request
+The third argument gets a "." added which makes it not work.
 
-Please make sure you've run the following commands from the root
-directory.
+# Notes:
 
-    bin/generate-all.sh
+`glob(dir, recursive, "*")` is supposed to turn off the extension
+filter. The error message for a bad third argument says "* for no
+filter". In practice it matched nothing: a `.` was added before the
+`"*"` check, so the filter became `".*"`.
 
-(this runs commands like "go generate", fixes formatting, and so on)
+This PR:
+- skips the "add a leading dot" step when the extension is `"*"`
+- corrects a comment that said directories are listed with a trailing
+slash. They aren't: with `"*"`, directories, including `dir` itself, are
+listed without a trailing slash.
+- adds `TestGlobExtensionFilter`, which covers the default `.js`, an
+extension without the dot, no match, and `"*"` both recursive and
+non-recursive. The two `"*"` cases fail without the fix.
 
-## Pull request title
+`require_glob()` always forces `".js"`, so it isn't affected. Only
+direct calls to the undocumented `glob()` change.
 
-The pull request title becomes the commit message on main and must
-follow Conventional Commits (the "PR: Commitlint" check enforces this).
-Provider-specific changes use the scope "p/PROVIDERNAME". The subject
-starts with a lowercase letter.
+**Merge note:** #5136 has a test that pins the old behavior (`glob star
+filter matches nothing`). Whichever PR merges second needs that case
+change
 
-Some examples:
-* ci: add required GHA permissions for goreleaser
-* docs: fix providers with "contributor support" table
-* feat(p/ROUTE53): allow R53_ALIAS records to enable target health
-evaluation
-
-More details can be found in
-
-**File**: `commands/commands.go` (modified, +18/-0)
+**File**: `pkg/js/js.go` (modified, +3/-2)
 ```diff
-@@ -185,6 +185,24 @@ func GetDNSConfig(args GetDNSConfigArgs) (*models.DNSConfig, error) {
- 		if err = dec.Decode(cfg); err != nil {
- 			return nil, err
- 		}
-+
-+		// RecordConfig.NameFQDN is not serialized (json:"-"), so records
-+		// decoded from an IR file have no FQDN and GetLabelFQDN() returns
-+		// "".  Reconstruct the label now that the domain (origin) is known,
-+		// otherwise FQDN-based validation (checkDuplicates and friends)
-+		// reports bogus errors for valid zones. See issue #4854.
-+		for _, d := range cfg.Domains {
-+			for _, r := range d.Records {
-+				if r != nil {
-+					r.SetLabel(r.GetLabel(), d.Name)
-+				}
-+			}
-+			for _, r := range d.EnsureAbsent {
-+				if r != nil {
-+					r.SetLabel(r.GetLabel(), d.Name)
-+				}
-+			}
-+		}
+@@ -305,8 +305,9 @@ func listFiles(call otto.FunctionCall) otto.Value {
+ 	if call.Argument(2).IsDefined() && !call.Argument(2).IsNull() {
+ 		if call.Argument(2).IsString() {
+ 			fileExtension = call.Argument(2).String() // Which file extension to filter for.
+-			if !strings.HasPrefix(fileExtension, ".") {
++			if fileExtension != "*" && !strings.HasPrefix(fileExtension, ".") {
+ 				// If it doesn't start with a dot, probably user forgot it and we do it instead.
++				// "*" means no filter, so it must be left alone.
+ 				fileExtension = "." + fileExtension
+ 			}
+ 		} else {
+@@ -315,7 +316,7 @@ func listFiles(call otto.FunctionCall) otto.Value {
  	}
  
- 	return preloadProviders(cfg)
+ 	// Now we're doing the actual work: Listing files.
+-	// Folders are ending with a slash. Can be identified later on from the user with JavaScript.
++	// With no filter ("*"), directories (including dir itself) are listed too.
+ 	// Additionally, when more smart logic required, user can use regex in JS.
+ 	files := make([]string, 0)      // init files list
+ 	dirClean := filepath.Clean(dir) // let's clean it here once, instead of over-and-over again within loop
 ```
 
----
-
-### Incident Patch 2: `cd6377f2` (2026-11-19)
-**Commit Message**: ci: correct stale download-artifact pin comment (#5126)
-
-## What
-
-Fixes the stale version comment on the SHA-pinned
-`actions/download-artifact` ref in `release_draft.yml`.
-
-## Why
-
-Dependabot bumped this pin from v4.3.0 to v8.0.2 in #5081, but the pin's
-comment had trailing prose after the version ("`# v4.3.0, same major as
-the generator's upload-artifact v4.6.0`"), so Dependabot updated the SHA
-and left the comment untouched. On main the SHA is v8.0.2 while the
-comment still claims v4.3.0, and the documented "same major as the SLSA
-generator" constraint was silently crossed.
-
-The three releases since the bump (Nov 12, 16, and 18) all succeeded, so
-download-artifact v8 happily reads the generator's upload-artifact
-v4.6.0 artifacts — nothing is broken, but the comment now lies. This PR
-updates the comment to a bare `# v8.0.2`, which is the form Dependabot
-maintains automatically. If we ever want to hold this pin to a specific
-major for real, that constraint belongs in a `dependabot.yml` ignore
-rule, not in a comment.
-
-Refs #5125, where the broader "finish pinning the CI fleet" discussion
-lives.
-
-## Notes for reviewer
-
-- One-line change, comment only — the SHA is unchanged (it was al
-
-**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
+**File**: `pkg/js/require_test.go` (modified, +25/-0)
 ```diff
-@@ -408,7 +408,7 @@ jobs:
-       contents: write # attach the provenance asset to the draft release
-     steps:
-       - name: Download the signed provenance
--        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v4.3.0, same major as the generator's upload-artifact v4.6.0
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-         with:
-           name: ${{ needs.provenance.outputs.provenance-name }}
- 
+@@ -76,3 +76,28 @@ D("example.com", REG, TXT("@", VALUE));
+ func jsString(s string) string {
+ 	return `"` + filepath.ToSlash(s) + `"`
+ }
++
++// TestGlobExtensionFilter checks glob()'s third argument, including "*"
++// (no filter).
++func TestGlobExtensionFilter(t *testing.T) {
++	dir := "pkg/js/parse_tests/complexImports/a"
++	tests := []struct{ desc, ext, want string }{
++		{"default is .js", ``, dir + "/a.js," + dir + "/c/c.js"},
++		{"dot is optional", `, true, "js"`, dir + "/a.js," + dir + "/c/c.js"},
++		{"no match", `, true, ".json"`, ""},
++		{"star means no filter", `, true, "*"`, dir + "," + dir + "/a.js," + dir + "/c," + dir + "/c/c.js"},
++		{"star non-recursive", `, false, "*"`, dir + "," + dir + "/a.js"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.desc, func(t *testing.T) {
++			oldCur, oldCfg := currentDirectory, configDirectory
++			currentDirectory, configDirectory = ".", ""
++			t.Cleanup(func() { currentDirectory, configDirectory = oldCur, oldCfg })
++
++			script := `D("x.com", "none", TXT("@", "" + glob("` + dir + `"` + tt.ext + `).join(",")));`
++			conf, err := ExecuteJavascriptString([]byte(script), true, nil)
++			testifyrequire.NoError(t, err)
++			testifyrequire.Equal(t, tt.want, conf.Domains[0].Records[0].GetTargetTXTJoined())
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5137** (2026-11-27): fix: bug: glob(dir, recursive, "*") does nothing (@TomOnTime)
+- **PR #5133** (2026-11-25): build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (@dependabot[bot])
 - **PR #5127** (2026-11-19): commands: add NameFQDN when importing --ir (@yuyuyureka)
 - **PR #5126** (2026-11-19): ci: correct stale download-artifact pin comment (@chicks-net)
 - **PR #5122** (2026-11-18): docs: update REFACTORING_PROJECTS and release notes template (@TomOnTime)
 - **PR #5120** (2026-11-18): build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (@dependabot[bot])
-- **PR #5119** (2026-11-18): fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (@TomOnTime)
-- **PR #5118** (2026-11-18): chore: prep release (@TomOnTime)
 
 ---
 
@@ -844,48 +821,34 @@ lives.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. commands: add NameFQDN when importing --ir
+## X. bug: glob(dir, recursive, "*") does nothing
 
 **RULE**:
-When implementing operations in `commands/commands.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/js/js.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62103794`: commands: add NameFQDN when importing --ir. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e43910a`: bug: glob(dir, recursive, "*") does nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/commands.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/js.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-		// RecordConfig.NameFQDN is not serialized (json:"-"), so records
-		// decoded from an IR file have no FQDN and GetLabelFQDN() returns
-		// "".  Reconstruct the label now that the domain (origin) is known,
-		// otherwise FQDN-based validation (checkDuplicates and friends)
-		// reports bogus errors for valid zones. See issue #4854.
-		for _, d := range cfg.Domains {
-			for _, r := range d.Records {
-				if r != nil {
-					r.SetLabel(r.GetLabel(), d.Name)
-				}
-			}
-			for _, r := range d.EnsureAbsent {
-				if r != nil {
-					r.SetLabel(r.GetLabel(), d.Name)
-				}
-			}
-		}
+			if fileExtension != "*" && !strings.HasPrefix(fileExtension, ".") {
+				// "*" means no filter, so it must be left alone.
+	// With no filter ("*"), directories (including dir itself) are listed too.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+			if !strings.HasPrefix(fileExtension, ".") {
+	// Folders are ending with a slash. Can be identified later on from the user with JavaScript.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62103794` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e43910a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

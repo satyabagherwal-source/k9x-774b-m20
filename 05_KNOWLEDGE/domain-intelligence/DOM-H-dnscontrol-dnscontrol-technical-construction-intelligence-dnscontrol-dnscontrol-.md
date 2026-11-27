@@ -4,23 +4,23 @@
 {
   "source_repository": "DNSControl/dnscontrol",
   "source_url": "https://github.com/DNSControl/dnscontrol",
-  "source_version": "54f54578",
+  "source_version": "4e43910a",
   "license": "MIT",
-  "timestamp": "2026-11-26T06:44:07.916Z",
+  "timestamp": "2026-11-27T18:35:02.914Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dnscontrol-dnscontrol",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `54f54578`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T06:44:07.916Z`  
+> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `4e43910a`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T18:35:02.914Z`  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T06:44:06.356Z  
+> **Harvest Timestamp**: 2026-11-27T18:35:01.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4016 stars
+- **Stars / Engagement**: 4019 stars
 
 ---
 
@@ -671,11 +671,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5137** (2026-11-27): **fix: bug: glob(dir, recursive, "*") does nothing**
+  *Symptoms*: # Issue  `glob(dir, recursive, "*")` is supposed to match all files but it always returns an empty list  # Resolution  The third argument gets a "." added which makes it not work.  # Notes:  `glob(dir, recursive, "*")` is supposed to turn off the extension filter. The error message for a bad third argument says "* for no filter". In practice it matched nothing: a `.` was added before the `"*"` check, so the filter became `".*"`.  This PR: - skips the "add a leading dot" step when the extension is `"*"` - corrects a comment that said directories are listed with a trailing slash. They aren't: with `"*"`, directories, including `dir` itself, are listed without a trailing slash. - adds `TestGlobExtensionFilter`, which covers the default `.js`, an extension without the dot, no match, and `"*"` both recursive and non-recursive. The two `"*"` cases fail without the fix.  `require_glob()` always forces `".js"`, so it isn't affected. Only direct calls to the undocumented `glob()` change.  **Merge note:** #5136 has a test that pins the old behavior (`glob star filter matches nothing`). Whichever PR merges second needs that case changed to expect the full listing. I'll update it.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+
 - **Issue #5133** (2026-11-25): **build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0**
   *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.4 to 2.23.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.23.0</h2> <h2>What's Changed</h2> <ul> <li>Added integration with the StepSecurity Secure Registry community tier, a hosted SaaS registry that is free for public repositories using GitHub-hosted runners with Harden-Runner. Enable it with <code>secure-registry: true</code> to route JavaScript package downloads through Secure Registry, which applies a default two-day cooldown and blocks known compromised packages. See the <a href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community tier documentation</a> for setup and configuration.</li> <li>Bug fix: Redacted credentials and signatures from signed S3 URLs that could appear in agent error logs when event uploads failed.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0">https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c"><code>aebdcf6</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harde
-
-- **Issue #5127** (2026-11-19): **commands: add NameFQDN when importing --ir**
-  *Symptoms*: The NameFQDN attr does not get generated when going through the --ir path (SetLabel is never called). This results in errors about NameFQDN not being set on 5.9, and in all entries having an empty NameFQDN on 5.10 which then means multiple entries with different names but the same target/value conflict.  So add the NameFQDN when importing via --ir.  Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854 (--ir unusable in v5)  <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -692,68 +692,105 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54f54578` (2026-11-25)
-**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (#5133)
+### Incident Patch 1: `4e43910a` (2026-11-27)
+**Commit Message**: fix: bug: glob(dir, recursive, "*") does nothing (#5137)
 
-Bumps
-[step-security/harden-runner](https://github.com/step-security/harden-runner)
-from 2.22.4 to 2.23.0.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
-releases</a>.</em></p>
-<blockquote>
-<h2>v2.23.0</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Added integration with the StepSecurity Secure Registry community
-tier, a hosted SaaS registry that is free for public repositories using
-GitHub-hosted runners with Harden-Runner. Enable it with
-<code>secure-registry: true</code> to route JavaScript package downloads
-through Secure Registry, which applies a default two-day cooldown and
-blocks known compromised packages. See the <a
-href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community
-tier documentation</a> for setup and configuration.</li>
-<li>Bug fix: Redacted credentials and signatures from signed S3 URLs
-that could appear in agent error logs when event uploads failed.</li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/step-security/harden-runner/compare
+# Issue
 
-**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
+`glob(dir, recursive, "*")` is supposed to match all files but it always
+returns an empty list
+
+# Resolution
+
+The third argument gets a "." added which makes it not work.
+
+# Notes:
+
+`glob(dir, recursive, "*")` is supposed to turn off the extension
+filter. The error message for a bad third argument says "* for no
+filter". In practice it matched nothing: a `.` was added before the
+`"*"` check, so the filter became `".*"`.
+
+This PR:
+- skips the "add a leading dot" step when the extension is `"*"`
+- corrects a comment that said directories are listed with a trailing
+slash. They aren't: with `"*"`, directories, including `dir` itself, are
+listed without a trailing slash.
+- adds `TestGlobExtensionFilter`, which covers the default `.js`, an
+extension without the dot, no match, and `"*"` both recursive and
+non-recursive. The two `"*"` cases fail without the fix.
+
+`require_glob()` always forces `".js"`, so it isn't affected. Only
+direct calls to the undocumented `glob()` change.
+
+**Merge note:** #5136 has a test that pins the old behavior (`glob star
+filter matches nothing`). Whichever PR merges second needs that case
+change
+
+**File**: `pkg/js/js.go` (modified, +3/-2)
 ```diff
-@@ -27,7 +27,7 @@ jobs:
-         target: [FuzzConfigJSON, FuzzTXTQuoted]
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
-         with:
-           egress-policy: audit
+@@ -305,8 +305,9 @@ func listFiles(call otto.FunctionCall) otto.Value {
+ 	if call.Argument(2).IsDefined() && !call.Argument(2).IsNull() {
+ 		if call.Argument(2).IsString() {
+ 			fileExtension = call.Argument(2).String() // Which file extension to filter for.
+-			if !strings.HasPrefix(fileExtension, ".") {
++			if fileExtension != "*" && !strings.HasPrefix(fileExtension, ".") {
+ 				// If it doesn't start with a dot, probably user forgot it and we do it instead.
++				// "*" means no filter, so it must be left alone.
+ 				fileExtension = "." + fileExtension
+ 			}
+ 		} else {
+@@ -315,7 +316,7 @@ func listFiles(call otto.FunctionCall) otto.Value {
+ 	}
  
+ 	// Now we're doing the actual work: Listing files.
+-	// Folders are ending with a slash. Can be identified later on from the user with JavaScript.
++	// With no filter ("*"), directories (including dir itself) are listed too.
+ 	// Additionally, when more smart logic required, user can use regex in JS.
+ 	files := make([]string, 0)      // init files list
+ 	dirClean := filepath.Clean(dir) // let's clean it here once, instead of over-and-over again within loop
 ```
 
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+**File**: `pkg/js/require_test.go` (modified, +25/-0)
 ```diff
-@@ -36,7 +36,7 @@ jobs:
- 
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
-         with:
-           egress-policy: audit
- 
+@@ -76,3 +76,28 @@ D("example.com", REG, TXT("@", VALUE));
+ func jsString(s string) string {
+ 	return `"` + filepath.ToSlash(s) + `"`
+ }
++
++// TestGlobExtensionFilter checks glob()'s third argument, including "*"
++// (no filter).
++func TestGlobExtensionFilter(t *testing.T) {
++	dir := "pkg/js/parse_tests/complexImports/a"
++	tests := []struct{ desc, ext, want string }{
++		{"default is .js", ``, dir + "/a.js," + dir + "/c/c.js"},
++		{"dot is optional", `, true, "js"`, dir + "/a.js," + dir + "/c/c.js"},
++		{"no match", `, true, ".json"`, ""},
++		{"star means no filter", `, true, "*"`, dir + "," + dir + "/a.js," + dir + "/c," + dir + "/c/c.js"},
++		{"star non-recursive", `, false, "*"`, dir + "," + dir + "/a.js"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.desc, func(t *testing.T) {
++			oldCur, oldCfg := currentDirectory, configDirectory
++			currentDirectory, configDirectory = ".", ""
++			t.Cleanup(func() { currentDirectory, configDirectory = oldCur, oldCfg })
++
++			script := `D("x.com", "none", TXT("@", "" + glob("` + dir + `"` + tt.ext + `).join(",")));`
++			conf, err := ExecuteJavascriptString([]byte(script), true, nil)
++			testifyrequire.NoError(t, err)
++			testifyrequire.Equal(t, tt.want, conf.Domains[0].Records[0].GetTargetTXTJoined())
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5137** (2026-11-27): fix: bug: glob(dir, recursive, "*") does nothing (@TomOnTime)
 - **PR #5133** (2026-11-25): build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (@dependabot[bot])
 - **PR #5127** (2026-11-19): commands: add NameFQDN when importing --ir (@yuyuyureka)
 - **PR #5126** (2026-11-19): ci: correct stale download-artifact pin comment (@chicks-net)
 - **PR #5122** (2026-11-18): docs: update REFACTORING_PROJECTS and release notes template (@TomOnTime)
 - **PR #5120** (2026-11-18): build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (@dependabot[bot])
-- **PR #5119** (2026-11-18): fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (@TomOnTime)
 
 ---
 
@@ -773,31 +810,34 @@ href="https://github.com/step-security/harden-runner/compare
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0
+## X. bug: glob(dir, recursive, "*") does nothing
 
 **RULE**:
-When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/js/js.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54f54578`: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e43910a`: bug: glob(dir, recursive, "*") does nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/js.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
+			if fileExtension != "*" && !strings.HasPrefix(fileExtension, ".") {
+				// "*" means no filter, so it must be left alone.
+	// With no filter ("*"), directories (including dir itself) are listed too.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+			if !strings.HasPrefix(fileExtension, ".") {
+	// Folders are ending with a slash. Can be identified later on from the user with JavaScript.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54f54578` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e43910a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

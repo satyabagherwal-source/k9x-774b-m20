@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:26:15.314Z",
-  "total_cycles_completed": 13138,
-  "total_learnings_persisted": 13138,
-  "total_rules_promoted": 11859,
+  "last_updated": "2026-11-27T18:35:04.930Z",
+  "total_cycles_completed": 13141,
+  "total_learnings_persisted": 13141,
+  "total_rules_promoted": 11862,
   "history": [
-    {
-      "timestamp": "2026-11-27T01:46:31.363Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T01:54:53.522Z",
-      "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T01:54:56.032Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-bingsu-adetailer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T01:55:05.293Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T18:26:15.314Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T18:34:59.620Z",
+      "repository": "nsh07/Tomato",
+      "learningId": "learn-github-nsh07-tomato",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T18:35:02.686Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T18:35:04.930Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T18:26:22.610Z",
+  "last_updated": "2026-11-27T18:35:12.355Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26701,
+  "total_items": 26710,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "d4d1c774",
-      "content_hash": "a1e35671b2b6a8a69c1ef37c5c90f20110cbb9683853e9ce12ab63b5f81722fc",
+      "source_version": "ec255726",
+      "content_hash": "be56096c9b52dfbf92e9805248875903e7ca5b14f9301bfffe7a025156685a5a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:24.970Z"
+      "persisted_at": "2026-11-27T18:35:05.384Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "d4d1c774",
-      "content_hash": "261d49942576ad3df1f0573df918f38dc3609f55655a3bb97b827506d4c94231",
+      "source_version": "ec255726",
+      "content_hash": "f465e6e745f5dff90d816c267689d2c7f6c1baae93303a2569aaf4e7c9672738",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:25.147Z"
+      "persisted_at": "2026-11-27T18:35:05.584Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "d4d1c774",
-      "content_hash": "48c4c09fe5fa11ab49fa8da42aa8aae4e1a433b8d17934490cf531f7b7e2cb22",
+      "source_version": "ec255726",
+      "content_hash": "ff908dd70f2cb17624b1a179a0f52b7c6867d3845b169599402409778d86c5ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:35:25.295Z"
+      "persisted_at": "2026-11-27T18:35:05.760Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113854,9 +113854,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddc4c8c3c35e93dab7cfece03de8f017aa723582fb5ede2a4ffcf6cc95a0ad51",
+      "content_hash": "9a01d90c22af2f4fa15bcc7e5631a493ec1a43f559f8bd42e55c684bc734269f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:07:33.733Z"
+      "persisted_at": "2026-11-27T18:35:11.936Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113866,9 +113866,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e6e058c8170d73b75a04c982f7339d8f702efedbb94b49dce96cae35807474f",
+      "content_hash": "dd75fc10c81c8ec4417848d9b5a93b3f078c73c1a30b6f491dca7a02bd0f908a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:07:33.968Z"
+      "persisted_at": "2026-11-27T18:35:12.163Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113878,9 +113878,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0f68de893ccf5d31cf465cce1440446662f62dd02dab0d33826beb92abe0874",
+      "content_hash": "c9d9104ece9e45611cafe4f4f660decbef6707ad6cf5c136f34801e7e152096f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:34.154Z"
+      "persisted_at": "2026-11-27T18:35:12.355Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -243004,8 +243004,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "54f54578",
-      "content_hash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
+      "source_version": "4e43910a",
+      "content_hash": "9de288f35058bbc2fdd22bf9ec66f17402bb479cced8d81920f3007e664affaf",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -243038,6 +243038,11 @@
           "number": 10619,
           "title": "build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10948,
+          "title": "glob(dir, recursive, \"*\") does nothing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243045,7 +243050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T06:44:07.338Z",
+      "verified_at": "2026-11-27T18:35:02.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243099,10 +243104,10 @@
       "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
       "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "54f54578",
-      "content_hash": "489c22ffda55ea95f1bf63919dc3cc09ae6f75d43c7936ec95d0b361a859a05e",
+      "source_version": "4e43910a",
+      "content_hash": "e459aee7eadabb0a180ce554f52516c0d5d54c1f6a66e1ac0b75ca617cd40b54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:44:08.478Z"
+      "persisted_at": "2026-11-27T18:35:03.339Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -243148,9 +243153,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "199d7331d146542e4fd30870e509aa936828227b050c48befb6d93009e52b4a8",
+      "content_hash": "972adad311d3f43ba3a16f0d9dab2dc1d907b3f6d99a094fb801c530ba6405dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:07:29.362Z"
+      "persisted_at": "2026-11-27T18:35:10.984Z"
     },
     "learn-huggingface-autotrust-jev-35b": {
       "learning_id": "learn-huggingface-autotrust-jev-35b",
@@ -243365,8 +243370,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "d4d1c774",
-      "content_hash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
+      "source_version": "ec255726",
+      "content_hash": "c2bb2477934e7f1d48d530b6aea225e989dc81c9a34403cbc003090b5cec45d0",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -243429,6 +243434,11 @@
           "number": 10508,
           "title": "keep command-only route hosts out of the session allowlist",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10949,
+          "title": "add operations docs and kubernetes manifests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243436,7 +243446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T10:35:24.331Z",
+      "verified_at": "2026-11-27T18:35:04.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254026,8 +254036,8 @@
       "slug": "nsh07-tomato",
       "platform": "github",
       "source_url": "https://github.com/nsh07/Tomato",
-      "source_version": "b3036b46",
-      "content_hash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
+      "source_version": "394dfd20",
+      "content_hash": "bd2bd1bf2571e69e4e1a3d4830709ef8bf1ea91a818f64f4f67040a5dd3a8bed",
       "dossier_path": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nsh07-tomato-learnings.md",
       "promoted_rules": [
@@ -254040,6 +254050,11 @@
           "number": 9473,
           "title": "Translated using Weblate (Russian)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10947,
+          "title": "improve widget fonts performance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254047,7 +254062,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T00:14:37.977Z",
+      "verified_at": "2026-11-27T18:34:59.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254089,10 +254104,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-architecture-intelligence-nsh07-tomato-core-invariants.md",
       "title": "Architecture Intelligence: nsh07/Tomato Core Invariants",
       "repository": "nsh07/Tomato",
-      "source_version": "b3036b46",
-      "content_hash": "f63c7dc1d394db23b3167a609682fed77f9f2f07ab92835fba20b5c1ce2bad9b",
+      "source_version": "394dfd20",
+      "content_hash": "04ebc8e0b62fe5e38de1c8f4211cf83f7705139baafaeec464abd069e201ec1b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:14:38.588Z"
+      "persisted_at": "2026-11-27T18:35:00.060Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato",
@@ -254101,10 +254116,10 @@
       "relative_path": "08_VERIFICATION/nsh07-tomato-verification-protocol-empirical-defect-shield-for-nsh07-tomato.md",
       "title": "Verification Protocol: Empirical Defect Shield for nsh07/Tomato",
       "repository": "nsh07/Tomato",
-      "source_version": "b3036b46",
-      "content_hash": "c4bce892303ad6d84420a3b7a97fb4ffe92ffd12763fa38b71f1858ac050fef7",
+      "source_version": "394dfd20",
+      "content_hash": "5b23345bcef35bb8b73a36d368787cf015a05899d98e4c50fac9680cb86b4f22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:14:38.768Z"
+      "persisted_at": "2026-11-27T18:35:00.266Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-videorebirthai-hyperflow-h3-flash-learnings-c",
@@ -254138,9 +254153,9 @@
       "title": "Architecture Intelligence: nsh07-tomato-learnings Core Invariants",
       "repository": "nsh07-tomato-learnings",
       "source_version": "HEAD",
-      "content_hash": "78d20ab8a8c7080eab769e03af72ac0b0dfb1b80426e4831bbd03792cd28447a",
+      "content_hash": "e94e94987f86ad808ff89f7f148e7de4f3b494388cfd0b311c61c968e87dbf03",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:14:43.313Z"
+      "persisted_at": "2026-11-27T18:35:09.413Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nsh07-tomato-learnings",
@@ -254150,9 +254165,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nsh07-tomato-learnings",
       "repository": "nsh07-tomato-learnings",
       "source_version": "HEAD",
-      "content_hash": "c48432abacf1c59630a3595a02c9f0657a7e04dc120ab6de9cba0ada99835d44",
+      "content_hash": "f56fd753ee24f14e7c1caced2995fcedb34a4fa0548737460bb21e420f428da8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:14:43.484Z"
+      "persisted_at": "2026-11-27T18:35:09.625Z"
     },
     "rule-8645": {
       "learning_id": "rule-8645",
@@ -292647,10 +292662,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-technical-construction-intelligence-dnscontrol-dnscontrol-.md",
       "title": "Technical Construction Intelligence: DNSControl/dnscontrol Core Invariants",
       "repository": "DNSControl/dnscontrol",
-      "source_version": "54f54578",
-      "content_hash": "33a8894f8765ea91c5bc93a30f378feaf630ce5f8cb1f64857d287b3146cc5ce",
+      "source_version": "4e43910a",
+      "content_hash": "cd615e93810d9964ad67a60956229c20121c1753b63d0f170ab284650309187d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T06:44:08.223Z"
+      "persisted_at": "2026-11-27T18:35:03.128Z"
     },
     "rule-9185": {
       "learning_id": "rule-9185",
@@ -292698,9 +292713,9 @@
       "title": "Technical Construction Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "repository": "dnscontrol-dnscontrol-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6bab194952ffed1d099d4616b7c0773f83040080e507cfea57802710f1b2167",
+      "content_hash": "cdebb72d0d409834250abc8099302990bfcc3b9a425f5ae5bb88b362d7c2c373",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T07:14:28.068Z"
+      "persisted_at": "2026-11-27T18:35:10.774Z"
     },
     "rule-9186": {
       "learning_id": "rule-9186",
@@ -366651,6 +366666,120 @@
       "content_hash": "edf900d27c29193b58a44aa9f45bdd2d25faedf2c7fbc963ad603ab223a79063",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T18:26:21.146Z"
+    },
+    "rule-10947": {
+      "learning_id": "rule-10947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10947,
+      "title": "improve widget fonts performance",
+      "source_url": "https://github.com/nsh07/Tomato",
+      "source_version": "394dfd20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:34:59.324Z"
+    },
+    "candidate_directive-improve-widget-fonts-performance": {
+      "item_id": "candidate_directive-improve-widget-fonts-performance",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MS98-improve-widget-fonts-performance.md",
+      "title": "improve widget fonts performance",
+      "repository": "nsh07/Tomato",
+      "source_version": "394dfd20",
+      "content_hash": "4793829a340e54f113eb6d499a3ca565fb0da1b953e07c287b7d4f1a2e8cb9f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T18:34:59.853Z"
+    },
+    "rule-10948": {
+      "learning_id": "rule-10948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10948,
+      "title": "glob(dir, recursive, \"*\") does nothing",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "4e43910a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:35:02.410Z"
+    },
+    "candidate_directive-glob-dir-recursive-does-nothing": {
+      "item_id": "candidate_directive-glob-dir-recursive-does-nothing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MUMA-glob-dir-recursive-does-nothing.md",
+      "title": "glob(dir, recursive, \"*\") does nothing",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "4e43910a",
+      "content_hash": "37e6759f4786db4a5f941b7371b38c596e0f21c4f6a9cff0a2dbe0d5705add93",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T18:35:02.915Z"
+    },
+    "rule-10949": {
+      "learning_id": "rule-10949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10949,
+      "title": "add operations docs and kubernetes manifests",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "ec255726",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:35:04.653Z"
+    },
+    "candidate_directive-add-operations-docs-and-kubernetes-manifests": {
+      "item_id": "candidate_directive-add-operations-docs-and-kubernetes-manifests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MWD5-add-operations-docs-and-kubernetes-manifests.md",
+      "title": "add operations docs and kubernetes manifests",
+      "repository": "nolabs-ai/nono",
+      "source_version": "ec255726",
+      "content_hash": "6f17f99b918264bd626fa6a7eaf290c697e9758be764b46570eaf51cbb5593db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:35:05.181Z"
+    },
+    "candidate_directive-perf-improve-widget-fonts-performance": {
+      "item_id": "candidate_directive-perf-improve-widget-fonts-performance",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MZGW-perf-improve-widget-fonts-performance.md",
+      "title": "perf): improve widget fonts performance",
+      "repository": "nsh07-tomato-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a51033a6a64598b46858f8681283227bb52590d997da2608fc5617c17b339f11",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T18:35:09.201Z"
+    },
+    "candidate_directive-bug-glob-dir-recursive-does-nothing": {
+      "item_id": "candidate_directive-bug-glob-dir-recursive-does-nothing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N0IN-bug-glob-dir-recursive-does-nothing.md",
+      "title": "bug: glob(dir, recursive, \"*\") does nothing",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a7845632cd93f7504ffdda2d53467358f9b04bdbb5e11b143c82719917784b6d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T18:35:10.559Z"
+    },
+    "candidate_directive-cli-add-operations-docs-and-kubernetes-manifests": {
+      "item_id": "candidate_directive-cli-add-operations-docs-and-kubernetes-manifests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N1F7-cli-add-operations-docs-and-kubernetes-manifests.md",
+      "title": "cli): add operations docs and kubernetes manifests",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a04a8910e176daa2b2eb91417c7fffbb8d783afabbfac8154d79a44c348e3559",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:35:11.735Z"
     }
   },
   "ai-builder-brain": {

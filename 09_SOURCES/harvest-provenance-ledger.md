@@ -13877,3 +13877,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a0377489` | Multi-dimensional audit evidence | 2026-11-27T18:08:31.346Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d25c9cce` | Multi-dimensional audit evidence | 2026-11-27T18:26:01.261Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e7bc9f3a` | Multi-dimensional audit evidence | 2026-11-27T18:26:15.309Z |
+| `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `394dfd20` | Multi-dimensional audit evidence | 2026-11-27T18:34:59.614Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `4e43910a` | Multi-dimensional audit evidence | 2026-11-27T18:35:02.680Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `ec255726` | Multi-dimensional audit evidence | 2026-11-27T18:35:04.924Z |

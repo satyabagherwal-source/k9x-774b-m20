@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T18:26:15.317Z",
+  "last_updated": "2026-11-27T18:35:04.933Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
-      "verified_at": "2026-11-25T10:35:24.564Z",
+      "content_hash": "c2bb2477934e7f1d48d530b6aea225e989dc81c9a34403cbc003090b5cec45d0",
+      "verified_at": "2026-11-27T18:35:04.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:35:24.564Z"
+      "last_updated": "2026-11-27T18:35:04.932Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
-      "verified_at": "2026-11-26T06:44:07.650Z",
+      "content_hash": "9de288f35058bbc2fdd22bf9ec66f17402bb479cced8d81920f3007e664affaf",
+      "verified_at": "2026-11-27T18:35:02.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:44:07.650Z"
+      "last_updated": "2026-11-27T18:35:02.688Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -12321,14 +12321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nsh07-tomato",
-      "content_hash": "5aa9e0597813a940ecda5d2a8b81fccdae0dbc9be79b865754b4caea2dc3e6b7",
-      "verified_at": "2026-11-20T00:14:38.231Z",
+      "content_hash": "bd2bd1bf2571e69e4e1a3d4830709ef8bf1ea91a818f64f4f67040a5dd3a8bed",
+      "verified_at": "2026-11-27T18:34:59.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T00:14:38.231Z"
+      "last_updated": "2026-11-27T18:34:59.622Z"
     },
     "modelcontextprotocol/kotlin-sdk": {
       "repository": "modelcontextprotocol/kotlin-sdk",

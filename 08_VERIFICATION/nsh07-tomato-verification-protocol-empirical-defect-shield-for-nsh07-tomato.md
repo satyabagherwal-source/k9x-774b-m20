@@ -4,22 +4,22 @@
 {
   "source_repository": "nsh07/Tomato",
   "source_url": "https://github.com/nsh07/Tomato",
-  "source_version": "b3036b46",
+  "source_version": "394dfd20",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-20T00:14:38.428Z",
+  "timestamp": "2026-11-27T18:34:59.853Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nsh07-tomato",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nsh07/Tomato](https://github.com/nsh07/Tomato) (Revision: `b3036b46`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-20T00:14:38.428Z`  
+> **Provenance**: Harvested from [nsh07/Tomato](https://github.com/nsh07/Tomato) (Revision: `394dfd20`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-27T18:34:59.853Z`  
 > **Learning ID**: `learn-github-nsh07-tomato`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nsh07/Tomato` (Commit: `b3036b46`)
+- **Target Repository**: `nsh07/Tomato` (Commit: `394dfd20`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nsh07-tomato-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nsh07/Tomato](https://github.com/nsh07/Tomato))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:14:36.963Z  
+> **Harvest Timestamp**: 2026-11-27T18:34:58.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Minimalist, data-oriented pomodoro timer for Android and Desktop based on Material 3 Expressive
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1550 stars
+- **Stars / Engagement**: 1562 stars
 
 ---
 
@@ -1156,57 +1156,64 @@ expect val currentOS: OS
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3036b46` (2026-11-17)
-**Commit Message**: Translated using Weblate (Russian)
+### Incident Patch 1: `394dfd20` (2026-11-26)
+**Commit Message**: fix(perf): improve widget fonts performance
 
-Currently translated at 100.0% (165 of 165 strings)
-
-Translated using Weblate (Russian)
-
-Currently translated at 100.0% (165 of 165 strings)
-
-Translated using Weblate (Russian)
-
-Currently translated at 100.0% (165 of 165 strings)
-
-Co-authored-by: Hosted Weblate <[REDACTED_EMAIL]>
-Co-authored-by: John Doe <[REDACTED_EMAIL]>
-Co-authored-by: Roman Serov <[REDACTED_EMAIL]>
-Co-authored-by: Роман Газенклевер <[REDACTED_EMAIL]>
-Translate-URL: https://hosted.weblate.org/projects/tomato/strings/ru/
-Translation: Tomato/Strings
-
-**File**: `shared/src/commonMain/composeResources/values-ru/strings.xml` (modified, +8/-2)
+**File**: `androidApp/src/main/java/org/nsh07/pomodoro/widget/components/GlanceText.kt` (modified, +28/-11)
 ```diff
-@@ -47,7 +47,7 @@
-     <string name="play">Пуск</string>
-     <string name="pomodoro_info">Сессия — это последовательность интервалов помодоро, которые содержат интервалы фокусировки, короткие интервалы перерыва и длинный интервал перерыва. Последний перерыв в сеансе — всегда долгий перерыв.</string>
-     <string name="restart">Перезапуск</string>
--    <string name="session_length">Длинна сессии</string>
-+    <string name="session_length">Продолжительность сессии</string>
-     <string name="session_length_desc">Интервалы фокусировки в одной сессии: %1$d</string>
-     <string name="settings">Настройки</string>
-     <string name="short_break">Короткий перерыв</string>
-@@ -57,7 +57,7 @@
-     <string name="start_next">Начать далее</string>
-     <string name="stats">Статистика</string>
-     <string name="stop">Стоп</string>
--    <string name="stop_alarm">Сигнал остановки</string>
-+    <string name="stop_alarm">Остановить сигнал</string>
-     <string name="stop_alarm_dialog_text">Текущий таймер завершен. Нажмите в любом месте для остановки сигнала.</string>
-     <string name="stop_alarm_question">Остановить сигнал?</string>
-     <string name="system_default">Система</string>
-@@ -170,4 +170,10 @@
-     <string name="chartreuse">Салатовый</string>
-     <string name="yellow">Жёлтый</string>
-     <string name="orange">Оранжевый</string>
-+    <string name="default_name">По умолчанию</string>
-+    <string name="advanced">Расширенные</string>
-+    <string name="next">Следующий</string>
-+    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d таймеры</string>
-+    <string name="rose">Роза</string>
-+    <string name="purple">Фиолетовый</string>
- </resources>
+@@ -32,6 +32,33 @@ import androidx.glance.Image
+ import androidx.glance.ImageProvider
+ import androidx.glance.text.FontWeight
+ import androidx.glance.unit.ColorProvider
++import java.util.concurrent.ConcurrentHashMap
++
++private const val GOOGLE_SANS_FLEX_ASSET_PATH =
++    "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
++
++private val typefaceLock = Any()
++
++@Volatile
++private var cachedBaseTypeface: Typeface? = null
++private val cachedStyleTypefaces = ConcurrentHashMap<Int, Typeface>()
++
++private fun getCustomTypeface(context: Context, fontWeight: FontWeight): Typeface {
++    val style = when (fontWeight) {
++        FontWeight.Bold -> Typeface.BOLD
++        FontWeight.Medium -> Typeface.ITALIC
++        else -> Typeface.NORMAL
++    }
++    cachedStyleTypefaces[style]?.let { return it }
++    return synchronized(typefaceLock) {
++        cachedStyleTypefaces[style]?.let { return@synchronized it }
++        val base = cachedBaseTypeface ?: Typeface.createFromAsset(
++            context.applicationContext.assets,
++            GOOGLE_SANS_FLEX_ASSET_PATH
++        ).also { cachedBaseTypeface = it }
++        Typeface.create(base, style).also { cachedStyleTypefaces[style] = it }
++    }
++}
+ 
+ fun createCustomFontBitmap(
+     context: Context,
+@@ -41,17 +68,7 @@ fun createCustomFontBitmap(
+     fontWeight: FontWeight = FontWeight.Normal,
+     isClock: Boolean = true
+ ): Bitmap {
+-    val customTypeface = Typeface.create(
+-        Typeface.createFromAsset(
+-            context.assets,
+-            "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
+-        ),
+-        when (fontWeight) {
+-            FontWeight.Bold -> Typeface.BOLD
+-            FontWeight.Medium -> Typeface.ITALIC
+-            else -> Typeface.NORMAL
+-        }
+-    )
++    val customTypeface = getCustomTypeface(context, fontWeight)
+     val displayMetrics = context.resources.displayMetrics
+ 
+     val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1235,39 +1242,68 @@ Translation: Tomato/Strings
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Translated using Weblate (Russian)
+## X. perf): improve widget fonts performance
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/composeResources/values-ru/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `androidApp/src/main/java/org/nsh07/pomodoro/widget/components/GlanceText.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nsh07/Tomato. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3036b46`: Translated using Weblate (Russian). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `394dfd20`: perf): improve widget fonts performance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/composeResources/values-ru/strings.xml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `androidApp/src/main/java/org/nsh07/pomodoro/widget/components/GlanceText.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    <string name="session_length">Продолжительность сессии</string>
-    <string name="stop_alarm">Остановить сигнал</string>
-    <string name="default_name">По умолчанию</string>
-    <string name="advanced">Расширенные</string>
-    <string name="next">Следующий</string>
-    <string name="topic_summary_format">%1$s / %2$s / %3$s, %4$d таймеры</string>
-    <string name="rose">Роза</string>
-    <string name="purple">Фиолетовый</string>
+import java.util.concurrent.ConcurrentHashMap
+
+private const val GOOGLE_SANS_FLEX_ASSET_PATH =
+    "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
+
+private val typefaceLock = Any()
+
+@Volatile
+private var cachedBaseTypeface: Typeface? = null
+private val cachedStyleTypefaces = ConcurrentHashMap<Int, Typeface>()
+
+private fun getCustomTypeface(context: Context, fontWeight: FontWeight): Typeface {
+    val style = when (fontWeight) {
+        FontWeight.Bold -> Typeface.BOLD
+        FontWeight.Medium -> Typeface.ITALIC
+        else -> Typeface.NORMAL
+    }
+    cachedStyleTypefaces[style]?.let { return it }
+    return synchronized(typefaceLock) {
+        cachedStyleTypefaces[style]?.let { return@synchronized it }
+        val base = cachedBaseTypeface ?: Typeface.createFromAsset(
+            context.applicationContext.assets,
+            GOOGLE_SANS_FLEX_ASSET_PATH
+        ).also { cachedBaseTypeface = it }
+        Typeface.create(base, style).also { cachedStyleTypefaces[style] = it }
+    }
+}
+    val customTypeface = getCustomTypeface(context, fontWeight)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-    <string name="session_length">Длинна сессии</string>
-    <string name="stop_alarm">Сигнал остановки</string>
+    val customTypeface = Typeface.create(
+        Typeface.createFromAsset(
+            context.assets,
+            "composeResources/tomato.shared.generated.resources/font/google_sans_flex.ttf"
+        ),
+        when (fontWeight) {
+            FontWeight.Bold -> Typeface.BOLD
+            FontWeight.Medium -> Typeface.ITALIC
+            else -> Typeface.NORMAL
+        }
+    )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3036b46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `394dfd20` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13844,3 +13844,6 @@
 | `CYCLE-20261127-OQJO` | `2026-11-27T18:08:31.332Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`6057cae8...`) |
 | `CYCLE-20261127-B8O1` | `2026-11-27T18:26:01.249Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10945` | Yes (`7549703d...`) |
 | `CYCLE-20261127-BJI8` | `2026-11-27T18:26:15.296Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10946` | Yes (`5884bc74...`) |
+| `CYCLE-20261127-MS29` | `2026-11-27T18:34:59.601Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10947` | Yes (`bd2bd1bf...`) |
+| `CYCLE-20261127-MUFG` | `2026-11-27T18:35:02.668Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10948` | Yes (`9de288f3...`) |
+| `CYCLE-20261127-MW5T` | `2026-11-27T18:35:04.913Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10949` | Yes (`c2bb2477...`) |

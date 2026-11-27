@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `d4d1c774`  
+> **Source Version**: `ec255726`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T10:35:23.395Z  
+> **Timestamp**: 2026-11-27T18:35:03.637Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:35:23.388Z  
+> **Harvest Timestamp**: 2026-11-27T18:35:03.631Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5100 stars
+- **Stars / Engagement**: 5130 stars
 
 ---
 
@@ -2982,1203 +2982,426 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `90a9c254` (2026-11-25)
-**Commit Message**: fix(proxy): keep command-only route hosts out of the session allowlist (#2363)
+### Incident Patch 1: `ec255726` (2026-11-27)
+**Commit Message**: feat(cli): add operations docs and kubernetes manifests
 
-build_proxy_config_from_flags adds every credential route's upstream host
-to allowed_hosts so the proxy can reach it after TLS interception. Tool
-sandbox (command_policies) routes are in that list too, and
-remove_tool_sandbox_routes later drops only the routes from the session
-proxy, never their hosts. The session therefore kept a plain CONNECT
-tunnel to every command-only upstream, wildcards included, with no
-credential injection, endpoint policy or approval: with a command policy
-holding https://sts.*.amazonaws.com, any session process reached
-sts.<region>.amazonaws.com directly.
+this update introduces a new operations section to the documentation alongside a set of kubernetes deployment manifests. the new content provides guidance on managing containers and kubernetes environments, while the manifests facilitate setting up the necessary namespaces, secrets, and pods for cluster operations.
 
-Skip tool sandbox routes when deriving the session allowlist. The
-command-scoped proxies build their own allowlist and are unaffected.
+- add documentation pages for operations overview, containers, and kubernetes
+- provide kubernetes templates for agent pods and smoke test jobs
+- update the documentation sidebar to include the new operations group
 
-Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
-Co-authored-by: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
-**File**: `crates/nono-cli/src/proxy_runtime.rs` (modified, +55/-0)
+**File**: `deploy/kubernetes/00-namespace.yaml` (added, +10/-0)
 ```diff
-@@ -2530,8 +2530,20 @@ pub(crate) fn build_proxy_config_from_flags(
-     // when the child curls the real upstream URL (CONNECT + TLS intercept).
-     // Use url::Url::parse so credentials embedded in the URL (user:pass@host)
-     // don't end up in the allowlist as a garbled "user:pass@host:port" string.
-+    //
-+    // Command-only (tool sandbox) routes are skipped: this allowlist is the
-+    // session proxy's, which never carries those routes (see
-+    // remove_tool_sandbox_routes), so their upstream would be a plain
-+    // CONNECT tunnel for every session process, with no credential injection
-+    // or endpoint policy. Command-scoped proxies build their own allowlist.
-     if host_allowlist_active {
-         for route in &routes {
-+            if proxy
-+                .tool_sandbox_proxy_credentials
-+                .contains(route.prefix.trim_matches('/'))
-+            {
-+                continue;
-+            }
-             if let Ok(parsed) = url::Url::parse(&route.upstream)
-                 && let Some(host) = parsed.host_str()
-             {
-@@ -4286,6 +4298,49 @@ mod tests {
-         );
-     }
- 
-+    /// A command-only (tool sandbox) credential route must not open its
-+    /// upstream to the session proxy: the session never carries the route, so
-+    /// the host would be a plain tunnel with no credential or endpoint policy.
-+    #[test]
-+    fn test_tool_sandbox_route_upstream_is_not_in_session_allowlist() {
-+        for strict in [false, true] {
-+            let mut proxy = proxy_with_custom_credential(
-+                strict,
-+                vec![crate::profile::AllowDomainEntry::Plain(
-+                    "www.example.com".to_string(),
-+                )],
-+            );
-+            proxy
-+                .tool_sandbox_proxy_credentials
-+                .insert("bedrock".to_string());
-+            let config = build_proxy_config_from_flags(&proxy).expect("build proxy config");
-+
-+            assert!(
-+                !config
-+                    .allowed_hosts
-+                    .iter()
-+                    .any(|host| host.starts_with("bedrock-runtime.")),
-+                "a command-only route upstream must not reach the session allowlist: {:?}",
-+                config.allowed_hosts
-+            );
-+            assert!(
-+                config
-+                    .allowed_hosts
-+                    .iter()
-+                    .any(|host| host == "www.example.com"),
-+                "the explicit allowlist entry must be preserved"
-+            );
-+            let filter = nono_proxy::filter::ProxyFilter::new_strict(&config.allowed_hosts);
-+            assert!(
-+                matches!(
-+                    filter.check_host_with_ips("bedrock-runtime.us-east-1.amazonaws.com", &[]),
-+                    nono::net_filter::FilterResult::DenyNotAllowed { .. },
-+                ),
-+                "the session filter must refuse a command-only route's host"
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn test_custom_credential_upstream_is_added_to_strict_empty_allowlist() {
-         let proxy = proxy_with_custom_credential(true, Vec::new());
+@@ -0,0 +1,10 @@
++# Namespace for sandboxed agents. Enforces the "restricted" Pod Security
++# Standard: nono needs no privileged mode, no added capabilities, and no
++# host access, so the strictest standard works.
++apiVersion: v1
++kind: Namespace
++metadata:
++  name: nono-agents
++  labels:
++    pod-security.kubernetes.io/enforce: restricted
++    pod-security.kubernetes.io/enforce-version: latest
 ```
 
----
-
-### Incident Patch 2: `d4d1c774` (2026-11-25)
-**Commit Message**: fix(proxy): send auth.extra_params on client_credentials token requests (#2362)
-
-* fix(proxy): send auth.extra_params on client_credentials token requests
-
-auth.extra_params loaded cleanly but was only sent on the SPIFFE
-jwt-bearer path; client_credentials requests silently dropped it.
-Append the params to the client_credentials body (sorted by key) on the
-initial exchange and every refresh.
-
-Reject extra_params keys that nono already sets (grant_type, client_id,
-client_secret, scope, client_assertion, client_assertion_type,
-assertion) so a request never repeats a parameter (RFC 6749 §3.2). The
-validator lives in nono-proxy config and runs from both the profile
-loader and the route builder.
-
-Also send auth.scope on the SPIFFE jwt-bearer path, which previously
-dropped it.
-
-Fixes #2361
-
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
-Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
-
-* docs(proxy): describe auth.extra_params independently of grant type
-
-extra_params and its reserved-key rules apply to every OAuth2 grant, so
-drop the per-grant wording from the schema and docs and point the SPIFFE
-page at the shared rules.
-
-Co-Authored-By: Claude <[REDACTED_EMAIL]>
-Signed-off-by: Leonardo Z
-
-**File**: `crates/nono-cli/src/profile/mod.rs` (modified, +37/-0)
+**File**: `deploy/kubernetes/01-secret.yaml` (added, +16/-0)
 ```diff
-@@ -943,9 +943,12 @@ fn validate_proxy_override(name: &str, cred: &CustomCredentialDef) -> Result<()>
- /// - `client_id` must not be empty
- /// - `client_secret` must not be empty and must be a credential reference
- ///   (env://, file://, op://, bw://, apple-password://) or plain value
-+/// - `extra_params` must not repeat a parameter nono sets
- fn validate_oauth2_auth(name: &str, auth: &OAuth2Config) -> Result<()> {
-     // Validate token_url — same rules as upstream URL (HTTPS or loopback HTTP)
-     validate_upstream_url(&auth.token_url, &format!("{}/auth.token_url", name))?;
-+    nono_proxy::config::validate_oauth2_extra_params(&auth.extra_params)
-+        .map_err(|e| NonoError::ProfileParse(format!("custom credential '{}': {}", name, e)))?;
- 
-     // When using client_assertion, client_id/client_secret are not required,
-     // but the assertion config itself must have valid fields.
-@@ -7373,6 +7376,40 @@ mod tests {
-         assert!(err.to_string().contains("mutually exclusive"));
-     }
- 
-+    #[test]
-+    fn test_validate_oauth2_extra_params_reserved_key_rejected() {
-+        let mut cred = oauth2_cred_builder();
-+        cred.auth = Some(OAuth2Config {
-+            token_url: "https://auth.example.com/oauth/token".to_string(),
-+            client_id: "my-client".to_string(),
-+            client_secret: "env://SECRET".to_string(),
-+            scope: String::new(),
-+            client_assertion: None,
-+            extra_params: [("client_secret".to_string(), "other".to_string())].into(),
-+        });
-+        let err = validate_custom_credential("test", &cred)
-+            .expect_err("reserved extra_params key should be rejected");
-+        assert!(err.to_string().contains("client_secret"));
-+    }
-+
-+    #[test]
-+    fn test_validate_oauth2_extra_params_extension_allowed() {
-+        let mut cred = oauth2_cred_builder();
-+        cred.auth = Some(OAuth2Config {
-+            token_url: "https://auth.example.com/oauth/token".to_string(),
-+            client_id: "my-client".to_string(),
-+            client_secret: "env://SECRET".to_string(),
-+            scope: String::new(),
-+            client_assertion: None,
-+            extra_params: [(
-+                "audience".to_string(),
-+                "https://tenant.example.com/api/v2/".to_string(),
-+            )]
-+            .into(),
-+        });
-+        assert!(validate_custom_credential("test", &cred).is_ok());
-+    }
-+
-     #[test]
-     fn test_validate_oauth2_scope_optional() {
-         let mut cred = oauth2_cred_builder();
+@@ -0,0 +1,16 @@
++# Example only. Do not commit real keys; create the Secret out-of-band:
++#
++#   kubectl -n nono-agents create secret generic llm-credentials \
++#     --from-literal=ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
++#
++# With `--credential anthropic`, nono reads this value in the supervisor
++# process and its proxy injects it into upstream requests. The sandboxed
++# agent never receives the key.
++apiVersion: v1
++kind: Secret
++metadata:
++  name: llm-credentials
++  namespace: nono-agents
++type: Opaque
++stringData:
++  ANTHROPIC_API_KEY: "REPLACE_ME"
 ```
 
-**File**: `crates/nono-proxy/src/config.rs` (modified, +82/-1)
+**File**: `deploy/kubernetes/10-smoke-test-job.yaml` (added, +59/-0)
 ```diff
-@@ -1948,11 +1948,54 @@ pub struct OAuth2Config {
-     /// Mutually exclusive with `client_id`/`client_secret`.
-     #[serde(default)]
-     pub client_assertion: Option<ClientAssertionConfig>,
--    /// Extra parameters merged into the token exchange POST body verbatim.
-+    /// Extra parameters appended to the token exchange POST body. Keys that
-+    /// the grant itself sets are rejected; see [`validate_oauth2_extra_params`].
-     #[serde(default)]
-     pub extra_params: std::collections::HashMap<String, String>,
- }
- 
-+/// Token request parameters set by nono's grants, matched case-insensitively.
-+const RESERVED_OAUTH2_PARAMS: &[&str] = &[
-+    "grant_type",
-+    "client_id",
-+    "client_secret",
-+    "scope",
-+    "client_assertion",
-+    "client_assertion_type",
-+    "assertion",
-+];
-+
-+/// Validate `OAuth2Config::extra_params`, shared by the profile loader and the
-+/// proxy route builder so the rules cannot drift.
-+///
-+/// Rejects empty keys and keys nono already sends: RFC 6749 §3.2 forbids
-+/// repeating a request parameter, and a repeated `grant_type` or credential
-+/// parameter could make the server read a different value than nono intends.
-+///
-+/// # Errors
-+///
-+/// Returns a message describing the first invalid key.
-+pub fn validate_oauth2_extra_params(
-+    params: &std::collections::HashMap<String, String>,
-+) -> std::result::Result<(), String> {
-+    let mut keys: Vec<&String> = params.keys().collect();
-+    keys.sort();
-+    for key in keys {
-+        if key.is_empty() {
-+            return Err("auth.extra_params keys cannot be empty".to_string());
-+        }
-+        if RESERVED_OAUTH2_PARAMS
-+            .iter()
-+            .any(|reserved| key.eq_ignore_ascii_case(reserved))
-+        {
-+            return Err(format!(
-+                "auth.extra_params cannot set '{key}': nono sets it for the token request"
-+            ));
-+        }
-+    }
-+    Ok(())
-+}
-+
- #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
- #[serde(tag = "type", rename_all = "snake_case")]
- pub enum ClientAssertionConfig {
-@@ -3182,6 +3225,44 @@ mod tests {
-         assert!(err.contains("dev-ro"), "{err}");
-     }
- 
-+    fn extra_params_of(keys: &[&str]) -> std::collections::HashMap<String, String> {
-+        keys.iter()
-+            .map(|k| (k.to_string(), "v".to_string()))
-+            .collect()
-+    }
-+
-+    #[test]
-+    fn test_oauth2_extra_params_validation_accepts_extension_params() {
-+        assert_eq!(
-+            validate_oauth2_extra_params(&extra_params_of(&["audience", "organization"])),
-+            Ok(())
-+        );
-+        assert_eq!(validate_oauth2_extra_params(&extra_params_of(&[])), Ok(()));
-+    }
-+
-+    #[test]
-+    fn test_oauth2_extra_params_validation_rejects_reserved_keys() {
-+        for key in [
-+            "grant_type",
-+            "client_id",
-+            "client_secret",
-+            "scope",
-+            "client_assertion",
-+            "client_assertion_type",
-+            "assertion",
-+            "Grant_Type",
-+        ] {
-+            let err = validate_oauth2_extra_params(&extra_params_of(&[key])).unwrap_err();
-+            assert!(err.contains(key), "{err}");
-+        }
-+    }
-+
-+    #[test]
-+    fn test_oauth2_extra_params_validation_rejects_empty_key() {
-+        let err = validate_oauth2_extra_params(&extra_params_of(&[""])).unwrap_err();
-+        assert!(err.contains("empty"), "{err}");
-+    }
-+
-     #[test]
-     fn test_aws_auth_config_profiles_absent_is_none() {
-         let aws: AwsAuthConfig = serde_json::from_str(r#"{"profile": "dev"}"#).unwrap();
+@@ -0,0 +1,59 @@
++# Verifies that nono can apply its sandbox inside a restricted pod.
++#
++#   kubectl apply -f 00-namespace.yaml -f 10-smoke-test-job.yaml
++#   kubectl -n nono-agents logs job/nono-smoke-test
++#
++# Expected: the write inside /work succeeds, the write outside it is
++# denied, and the job completes successfully.
++apiVersion: batch/v1
++kind: Job
++metadata:
++  name: nono-smoke-test
++  namespace: nono-agents
++spec:
++  backoffLimit: 0
++  ttlSecondsAfterFinished: 600
++  template:
++    spec:
++      restartPolicy: Never
++      automountServiceAccountToken: false
++      securityContext:
++        runAsNonRoot: true
++        runAsUser: 10001
++        runAsGroup: 10001
++        fsGroup: 10001
++        seccompProfile:
++          type: RuntimeDefault
++      containers:
++        - name: agent
++          image: ghcr.io/nolabs-ai/nono:latest # pin a version or digest in production
++          workingDir: /work
++          command: ["/bin/sh", "-c"]
++          args:
++            - |
++              set -u
++              nono run --allow-cwd --block-net -- sh -c 'echo ok > /work/inside.txt' \
++                || { echo "FAIL: write inside granted path was denied"; exit 1; }
++              if nono run --allow-cwd --block-net -- sh -c 'echo no > /tmp/outside.txt' 2>/dev/null; then
++                echo "FAIL: write outside granted path was allowed"; exit 1
++              fi
++              echo "PASS: sandbox enforced"
++          env:
++            - name: HOME
++              value: /home/agent
++          securityContext:
++            allowPrivilegeEscalation: false
++            readOnlyRootFilesystem: true
++            capabilities:
++              drop: ["ALL"]
++          resources:
++            requests: { cpu: 100m, memory: 128Mi }
++            limits: { cpu: "1", memory: 512Mi }
++          volumeMounts:
++            - { name: work, mountPath: /work }
++            - { name: home, mountPath: /home/agent }
++            - { name: tmp, mountPath: /tmp }
++      volumes:
++        - { name: work, emptyDir: {} }
++        - { name: home, emptyDir: {} }
++        - { name: tmp, emptyDir: {} }
 ```
 
-**File**: `crates/nono-proxy/src/credential.rs` (modified, +121/-5)
+**File**: `deploy/kubernetes/20-agent-pod.yaml` (added, +64/-0)
 ```diff
-@@ -480,17 +480,14 @@ impl CredentialStore {
-                         }
-                     };
- 
--                    let extra_params: Vec<(String, String)> = oauth2
--                        .extra_params
--                        .iter()
--                        .map(|(k, v)| (k.clone(), v.clone()))
--                        .collect();
-+                    let extra_params = sorted_extra_params(&oauth2.extra_params);
- 
-                     match tokio::task::block_in_place(|| {
-                         tokio::runtime::Handle::current().block_on(SpiffeAssertionTokenCache::new(
-                             oauth2.token_url.clone(),
-                             jwt_source,
-                             audience.clone(),
-+                            oauth2.scope.clone(),
-                             extra_params,
-                             tls_connector.clone(),
-                         ))
-@@ -569,6 +566,7 @@ impl CredentialStore {
-                         client_id,
-                         client_secret,
-                         scope: oauth2.scope.clone(),
-+                        extra_params: sorted_extra_params(&oauth2.extra_params),
-                     };
- 
-                     match TokenCache::new(config, tls_connector.clone()).await {
-@@ -791,6 +789,16 @@ const KEYRING_SERVICE: &str = nono::keystore::DEFAULT_SERVICE;
- 
- const KEYRING_TIMEOUT_HINT: &str = " Set NONO_KEYRING_TIMEOUT_SECS=N (default 120) to wait longer for keychain unlock; 0 disables the timeout.";
- 
-+/// Token-request extra params in key order, so the request body is deterministic.
-+fn sorted_extra_params(
-+    params: &std::collections::HashMap<String, String>,
-+) -> Vec<(String, String)> {
-+    let mut sorted: Vec<(String, String)> =
-+        params.iter().map(|(k, v)| (k.clone(), v.clone())).collect();
-+    sorted.sort();
-+    sorted
-+}
-+
- /// Redact a credential reference for safe display in warnings.
- ///
- /// Delegates to the appropriate URI-specific redaction helper so that
-@@ -973,6 +981,27 @@ mod tests {
-         TlsConnector::from(Arc::new(tls_config))
-     }
- 
-+    #[test]
-+    fn test_sorted_extra_params_orders_by_key() {
-+        let params = std::collections::HashMap::from([
-+            ("organization".to_string(), "org_123".to_string()),
-+            (
-+                "audience".to_string(),
-+                "https://api.example.com/".to_string(),
-+            ),
-+        ]);
-+        assert_eq!(
-+            sorted_extra_params(&params),
-+            vec![
-+                (
-+                    "audience".to_string(),
-+                    "https://api.example.com/".to_string()
-+                ),
-+                ("organization".to_string(), "org_123".to_string()),
-+            ]
-+        );
-+    }
-+
-     #[test]
-     fn test_empty_credential_store() {
-         let store = CredentialStore::empty();
-@@ -1506,6 +1535,92 @@ mod tests {
-         assert_eq!(cred.header_value.as_str(), "secret-key");
-     }
- 
-+    #[tokio::test]
-+    async fn test_load_oauth2_sends_extra_params() {
-+        use crate::config::OAuth2Config;
-+        use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
-+
-+        let _env = {
-+            let _lock = ENV_LOCK.lock().unwrap();
-+            EnvVarGuard::set_all(&[
-+                ("TEST_OAUTH2_EXTRA_CLIENT_ID", "test-client"),
-+                ("TEST_OAUTH2_EXTRA_CLIENT_SECRET", "test-secret"),
-+            ])
-+        };
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let addr = listener.local_addr().unwrap();
-+        let server = tokio::spawn(async move {
-+            let (stream, _) = listener.accept().await.unwrap();
-+            let mut reader = BufReader::new(stream);
-+            let mut content_length = 0usize;
-+            loop {
-+                let mut line = String::new();
-+                assert!(reader.read_line(&mut line).await.unwrap() > 0);
-+                if line == "\r\n" {
-+                    break;
-+                }
-+                if let Some(v) = line.to_ascii_lowercase().strip_prefix("content-length:") {
-+                    content_length = v.trim().parse().unwrap();
-+                }
-+            }
-+            let mut body = vec![0; content_length];
-+            reader.read_exact(&mut body).await.unwrap();
-+            let json = r#"{"access_token":"extra-params-token","expires_in":3600}"#;
-+            let response = format!(
-+                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
-+                json.len(),
-+                json
-+            );
-+            reader
-+                .get_mut()
-+                .write_all(response.as_bytes())
-+                .await
-+                .unwrap();
-+            reader.get_mut().shutdown().await.unwrap();
-+            body
-+        });
-+
-+        let routes = vec![RouteConfig {
-+            prefix: "my-api".to_string(),
-+            upstream: "https://api.example.com".to_string(),
-+            oauth2: 
+@@ -0,0 +1,64 @@
++# A coding agent run under nono with an API allow-list and credential
++# injection. Replace the command with your agent.
++#
++# - Filesystem: read/write limited to /work (--allow-cwd).
++# - Network: only the domains in the claude-code network profile.
++# - Credentials: ANTHROPIC_API_KEY is injected by nono's proxy and is not
++#   visible to the agent process.
++apiVersion: v1
++kind: Pod
++metadata:
++  name: claude-agent
++  namespace: nono-agents
++  labels:
++    app.kubernetes.io/name: nono-agent
++spec:
++  restartPolicy: Never
++  automountServiceAccountToken: false
++  securityContext:
++    runAsNonRoot: true
++    runAsUser: 10001
++    runAsGroup: 10001
++    fsGroup: 10001
++    seccompProfile:
++      type: RuntimeDefault
++  containers:
++    - name: agent
++      image: ghcr.io/nolabs-ai/nono:latest # pin a version or digest in production
++      workingDir: /work
++      command: ["nono"]
++      args:
++        - run
++        - --allow-cwd
++        - --network-profile
++        - claude-code
++        - --credential
++        - anthropic
++        - --
++        - claude
++        - -p
++        - "Summarize the repository in /work"
++      env:
++        - name: HOME
++          value: /home/agent
++        - name: ANTHROPIC_API_KEY
++          valueFrom:
++            secretKeyRef:
++              name: llm-credentials
++              key: ANTHROPIC_API_KEY
++      securityContext:
++        allowPrivilegeEscalation: false
++        readOnlyRootFilesystem: true
++        capabilities:
++          drop: ["ALL"]
++      resources:
++        requests: { cpu: 250m, memory: 512Mi }
++        limits: { cpu: "2", memory: 2Gi }
++      volumeMounts:
++        - { name: work, mountPath: /work }
++        - { name: home, mountPath: /home/agent }
++        - { name: tmp, mountPath: /tmp }
++  volumes:
++    - { name: work, emptyDir: {} }
++    - { name: home, emptyDir: {} }
++    - { name: tmp, emptyDir: {} }
 ```
 
-**File**: `crates/nono-proxy/src/oauth2.rs` (modified, +173/-17)
+**File**: `deploy/kubernetes/README.md` (added, +20/-0)
 ```diff
-@@ -52,6 +52,8 @@ pub struct OAuth2ExchangeConfig {
-     pub client_id: Zeroizing<String>,
-     pub client_secret: Zeroizing<String>,
-     pub scope: String,
-+    /// Extra form parameters appended to the token request body.
-+    pub extra_params: Vec<(String, String)>,
- }
- 
- /// Custom Debug that redacts secrets.
-@@ -62,6 +64,14 @@ impl std::fmt::Debug for OAuth2ExchangeConfig {
-             .field("client_id", &"[REDACTED]")
-             .field("client_secret", &"[REDACTED]")
-             .field("scope", &self.scope)
-+            .field(
-+                "extra_params",
-+                &self
-+                    .extra_params
-+                    .iter()
-+                    .map(|(k, _)| k.as_str())
-+                    .collect::<Vec<_>>(),
-+            )
-             .finish()
-     }
- }
-@@ -293,7 +303,12 @@ async fn exchange_token(
-     let path_with_query = token_request_target(&parsed);
- 
-     // ── Build form body ──────────────────────────────────────────────────
--    let body = build_token_request_body(&config.client_id, &config.client_secret, &config.scope);
-+    let body = build_token_request_body(
-+        &config.client_id,
-+        &config.client_secret,
-+        &config.scope,
-+        &config.extra_params,
-+    );
- 
-     // ── Build HTTP/1.1 request ───────────────────────────────────────────
-     let request = Zeroizing::new(format!(
-@@ -435,6 +450,7 @@ fn build_token_request_body(
-     client_id: &str,
-     client_secret: &str,
-     scope: &str,
-+    extra_params: &[(String, String)],
- ) -> Zeroizing<String> {
-     let mut body = Zeroizing::new(format!(
-         "grant_type=client_credentials&client_id={}&client_secret={}",
-@@ -444,9 +460,39 @@ fn build_token_request_body(
-     if !scope.is_empty() {
-         body.push_str(&format!("&scope={}", urlencoding::encode(scope)));
-     }
-+    append_form_params(&mut body, extra_params);
-+    body
-+}
+@@ -0,0 +1,20 @@
++# nono on Kubernetes: example manifests
 +
-+/// Build the `jwt-bearer` token request body. `scope` is omitted when empty.
-+fn build_jwt_bearer_request_body(
-+    assertion: &str,
-+    scope: &str,
-+    extra_params: &[(String, String)],
-+) -> Zeroizing<String> {
-+    let mut body = Zeroizing::new(format!(
-+        "grant_type={}&client_assertion_type={}&assertion={}",
-+        urlencoding::encode("urn:ietf:params:oauth:grant-type:jwt-bearer"),
-+        urlencoding::encode("urn:ietf:params:oauth:client-assertion-type:jwt-bearer"),
-+        urlencoding::encode(assertion),
-+    ));
-+    if !scope.is_empty() {
-+        body.push_str(&format!("&scope={}", urlencoding::encode(scope)));
-+    }
-+    append_form_params(&mut body, extra_params);
-     body
- }
- 
-+fn append_form_params(body: &mut Zeroizing<String>, params: &[(String, String)]) {
-+    for (k, v) in params {
-+        body.push_str(&format!(
-+            "&{}={}",
-+            urlencoding::encode(k),
-+            urlencoding::encode(v)
-+        ));
-+    }
-+}
++Plain manifests for running agents under nono in a pod. These are examples,
++not a supported deployment, and have not yet been validated on a live cluster.
 +
- /// Parse a standard OAuth2 token response JSON.
- ///
- /// Expects `{"access_token": "...", "expires_in": 3600, ...}`.
-@@ -486,6 +532,7 @@ pub struct SpiffeAssertionTokenCache {
-     jwt_source: Arc<crate::spiffe::SpiffeJwtSource>,
-     token_url: String,
-     assertion_audience: Vec<String>,
-+    scope: String,
-     extra_params: Vec<(String, String)>,
-     tls_connector: TlsConnector,
-     pub workload_spiffe_id: String,
-@@ -505,13 +552,15 @@ impl SpiffeAssertionTokenCache {
-         token_url: String,
-         jwt_source: Arc<crate::spiffe::SpiffeJwtSource>,
-         assertion_audience: Vec<String>,
-+        scope: String,
-         extra_params: Vec<(String, String)>,
-         tls_connector: TlsConnector,
-     ) -> Result<Self> {
-         let (access_token, expires_in, workload_spiffe_id) = exchange_jwt_assertion(
-             &token_url,
-             &jwt_source,
-             &assertion_audience,
-+            &scope,
-             &extra_params,
-             &tls_connector,
-         )
-@@ -525,6 +574,7 @@ impl SpiffeAssertionTokenCache {
-             jwt_source,
-             token_url,
-             assertion_audience,
-+            scope,
-             extra_params,
-             tls_connector,
-             workload_spiffe_id,
-@@ -566,6 +616,7 @@ impl SpiffeAssertionTokenCache {
-             &self.token_url,
-             &self.jwt_source,
-             &self.assertion_audience,
-+            &self.scope,
-             &self.extra_params,
-             &self.tls_connector,
-         )
-@@ -601,24 +652,12 @@ async fn exchange_jwt_assertion(
-     token_url: &str,
-     jwt_source: &crate::spiffe::SpiffeJwtSource,
-     audience: &[String],
-+    scope: &str,
-     extra_params: &[(String, String)],
-     tls_connector: &TlsConnector,
- ) -> Result<(Zeroizing<String>, Duration, String)> {
-     let (assertion, spiffe_id) = jwt_source.fetch_token(audience).await?;
--
--    let mut body = Zeroizing::new(format!(
--        "grant_type={}&client_assertion_type={}&assertion={}",
--        urlencoding::encode("urn:ietf:params:oauth:grant-type:jwt-bearer"),
--        urlencoding::encode("urn:ietf:params:oauth:c
++| File | Purpose |
++|------|---------|
++| `00-namespace.yaml` | Namespace enforcing the `restricted` Pod Security Standard |
++| `01-secret.yaml` | Example LLM credential Secret (create out-of-band) |
++| `10-smoke-test-job.yaml` | Job that checks nono can sandbox inside a restricted pod |
++| `20-agent-pod.yaml` | Agent pod with filesystem scope, network allow-list and credential injection |
++
++Quick start:
++
++    kubectl apply -f 00-namespace.yaml -f 10-smoke-test-job.yaml
++    kubectl -n nono-agents logs job/nono-smoke-test
++
++The pods need no privileged mode and no added capabilities. nono relies on
++Landlock, which requires `allowPrivilegeEscalation: false` (no_new_privs) and a
++runtime seccomp profile that permits the `landlock_*` syscalls.
 ```
 
-**File**: `crates/nono-proxy/src/route.rs` (modified, +26/-0)
+**File**: `docs/cli/operations/containers.mdx` (added, +70/-0)
 ```diff
-@@ -365,6 +365,12 @@ impl RouteStore {
-                 )));
-             }
- 
-+            if let Some(oauth2) = &route.oauth2 {
-+                crate::config::validate_oauth2_extra_params(&oauth2.extra_params).map_err(|e| {
-+                    ProxyError::Config(format!("route '{}': {}", normalized_prefix, e))
-+                })?;
-+            }
+@@ -0,0 +1,70 @@
++---
++title: Running nono in Containers
++description: Use the official nono container image, verify its signature, and run agents with restricted container settings
++---
 +
-             // A session phantom is only validated on routes that inject a
-             // credential; elsewhere the field would be silently ignored.
-             let phantom_template = match route.phantom_format.as_deref() {
-@@ -1660,6 +1666,26 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn oauth2_reserved_extra_params_rejected_by_route_store() {
-+        let route: RouteConfig = serde_json::from_value(serde_json::json!({
-+            "prefix": "api",
-+            "upstream": "https://api.example.com",
-+            "oauth2": {
-+                "token_url": "https://auth.example.com/oauth/token",
-+                "client_id": "cid",
-+                "client_secret": "env://SECRET",
-+                "extra_params": {"grant_type": "password"},
-+            },
-+        }))
-+        .unwrap();
-+        let err = RouteStore::load(&[route]).await.err();
-+        assert!(
-+            matches!(err, Some(ProxyError::Config(ref m)) if m.contains("grant_type")),
-+            "expected config error, got {err:?}"
-+        );
-+    }
++The official image runs `nono` as a non-root user and is published for `linux/amd64` and `linux/arm64`.
 +
-     #[tokio::test]
-     async fn http1_required_for_all_matching_aws_routes() {
-         let aws: RouteConfig = serde_json::from_value(serde_json::json!({
-```
-
-**File**: `docs/cli/features/credential-injection.mdx` (modified, +19/-0)
-```diff
-@@ -404,6 +404,25 @@ For APIs not covered by the built-in services, you can define custom credentials
- **Important:** Use underscores, not hyphens, in credential names (the keys in `custom_credentials`). The credential name is used to generate environment variables like `TELEGRAM_BASE_URL`. Shell variable names cannot contain hyphens, so `my-api` would create `MY-API_BASE_URL` which cannot be referenced as `$MY-API_BASE_URL` in shell scripts. Use `my_api` instead.
- 
- 
-+#### OAuth2 token request parameters
-+
-+Some token endpoints require parameters beyond the ones the grant defines. Set them in `auth.extra_params` and nono appends them to every token request, for any grant, including refreshes. For example, an endpoint that requires an `audience`:
-+
-+```json
-+"my_api": {
-+  "upstream": "https://api.example.com",
-+  "env_var": "MY_API_TOKEN",
-+  "auth": {
-+    "token_url": "https://auth.example.com/oauth/token",
-+    "client_id": "env://MY_API_CLIENT_ID",
-+    "client_secret": "env://MY_API_CLIENT_SECRET",
-+    "extra_params": { "audience": "https://api.example.com/" }
-+  }
-+}
++```
++ghcr.io/nolabs-ai/nono
 +```
 +
-+Values are sent as written. They are not resolved as credential references, so do not put secrets in them. nono rejects keys it already sets (`grant_type`, `client_id`, `client_secret`, `scope`, `client_assertion`, `client_assertion_type`, `assertion`, compared case-insensitively) because a repeated parameter can make the server read a different value than nono sends.
++## Tags
 +
- #### Shaping the phantom token
- 
- By default the phantom token in `env_var` is the bare session token. Some clients check a token's prefix locally and refuse one that does not look right. For example, `gh` rejects a `GH_TOKEN` that is not `ghp_` or `github_pat_` prefixed, before it sends any request, so the proxy never gets to swap in the real credential. Set `phantom_format` to wrap the session token:
-```
-
-**File**: `docs/cli/features/spiffe.mdx` (modified, +4/-2)
-```diff
-@@ -85,8 +85,10 @@ Use `auth.client_assertion` instead of the `spiffe` block for this flow:
- ```
- 
- When `client_assertion` is set, `client_id` and `client_secret` are not required — the JWT-SVID
--is the credential. Any extra parameters required by the token endpoint (such as federation rule IDs
--or workspace identifiers) can be passed via `auth.extra_params`:
-+is the credential. `auth.scope` is sent when set. Any extra parameters required by the token
-+endpoint (such as federation rule IDs or workspace identifiers) can be passed via
-+`auth.extra_params` (see [OAuth2 token request parameters](/cli/features/credential-injection#oauth2-token-request-parameters)
-+for the rules):
- 
- ```json
- "auth": {
-```
-
----
-
-### Incident Patch 3: `b2068b14` (2026-11-25)
-**Commit Message**: fix(platform): preserve device identity across unenrollment (#2365)
-
-* fix(platform): keep enrollment recovery available during policy outages
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
-* fix(platform): preserve installation identity when unenrolling
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/src/app_runtime.rs` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ use crate::why_runtime::run_why;
- use crate::{DETACHED_LAUNCH_ENV, Result};
- 
- pub(crate) fn run(cli: Cli) -> Result<()> {
--    crate::platform_policy::enforced::guard_command(&cli.command)?;
-+    crate::platform_policy::enforced::guard_command(&cli.command, cli.silent)?;
-     let mut update_handle = start_update_check_handle(&cli);
-     dispatch_command(cli.command, cli.silent, &mut update_handle)
- }
-```
-
-**File**: `crates/nono-cli/src/cli.rs` (modified, +7/-3)
-```diff
-@@ -2766,7 +2766,7 @@ pub enum PlatformCommands {
-         after_help = "EXAMPLES:\n  nono platform tenant list\n  nono platform tenant use acme --no-enroll"
-     )]
-     Tenant(TenantArgs),
--    /// Replace a revoked device enrollment after fresh authorization
-+    /// Replace an unenrolled device key after fresh authorization; revocation requires operator restoration
-     #[command(name = "re-enroll", help_template = COMMAND_HELP, next_help_heading = "OPTIONS", mut_arg("no_enroll", |arg| arg.hide(true)))]
-     #[command(
-         after_help = "EXAMPLES:\n  nono platform re-enroll\n  nono platform re-enroll --tenant acme"
-@@ -2783,10 +2783,10 @@ pub enum PlatformCommands {
-     #[command(help_template = COMMAND_HELP, next_help_heading = "OPTIONS")]
-     #[command(after_help = "EXAMPLES:\n  nono platform status\n  nono platform status --json")]
-     Status(PlatformStatusArgs),
--    /// Remove the local platform enrollment
-+    /// Unenroll this device on the platform and disable its local enrollment
-     #[command(help_template = COMMAND_HELP, next_help_heading = "OPTIONS")]
-     #[command(
--        after_help = "EXAMPLES:\n  nono platform unenroll\n  nono platform unenroll --delete-key"
-+        after_help = "EXAMPLES:\n  nono platform unenroll\n  nono platform unenroll --delete-key\n  nono platform unenroll --local-only"
-     )]
-     Unenroll(PlatformUnenrollArgs),
- }
-@@ -2936,6 +2936,10 @@ pub struct PlatformStatusArgs {
- #[derive(Parser, Debug)]
- #[command(disable_help_flag = true)]
- pub struct PlatformUnenrollArgs {
-+    /// Disable this installation locally without notifying the platform
-+    #[arg(long)]
-+    pub local_only: bool,
++| Tag | Meaning |
++|-----|---------|
++| `X.Y.Z` | An exact release |
++| `X.Y` | The latest patch of a minor release |
++| `latest` | The latest stable release |
 +
-     /// Also delete the local signing key (the next enrollment mints a new one)
-     #[arg(long)]
-     pub delete_key: bool,
-```
-
-**File**: `crates/nono-cli/src/login_cmd.rs` (modified, +31/-8)
-```diff
-@@ -256,7 +256,7 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
-         "{}",
-         login_summary(&record, (!select).then_some(&previous), &enrollment)
-     );
--    if let Err(error) = enrollment {
-+    if let Err(ref error) = enrollment {
-         let retry = if args.re_enroll {
-             "nono platform re-enroll"
-         } else {
-@@ -267,17 +267,26 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
-         );
-     } else if matches!(
-         enrollment,
--        Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled | EnrollmentResult::Reused)
-+        Ok(EnrollmentResult::Enrolled
-+            | EnrollmentResult::Reenrolled
-+            | EnrollmentResult::Reused
-+            | EnrollmentResult::Reactivated)
-     ) {
-         let state = platform_client::load_active_state()?.ok_or_else(|| {
-             NonoError::ActionRequired("device enrollment was saved but is unavailable for the policy check; run `nono platform status`".into())
-         })?;
-         platform_client::check_enrollment_policy(&state)?;
-     }
-+    if matches!(enrollment, Ok(EnrollmentResult::Revoked)) {
-+        return Err(NonoError::ActionRequired(
-+            "device is revoked; a platform operator must restore it before re-enrollment".into(),
-+        ));
-+    }
-     Ok(())
- }
- 
- enum EnrollmentResult {
-+    Reactivated,
-     Enrolled,
-     Reenrolled,
-     Reused,
-@@ -303,6 +312,7 @@ fn enroll_device(
-     let login_key = session::load_key()?.ok_or_else(not_signed_in)?;
-     let refresh = session::load_refresh_token()?.ok_or_else(not_signed_in)?;
-     let previous = platform_client::load_state()?;
-+    let was_unenrolled = platform_client::enrollment_unenrolled()?;
-     if re_enroll && previous.is_none() {
-         return Ok(EnrollmentResult::NotEnrolled);
-     }
-@@ -324,7 +334,9 @@ fn enroll_device(
-         )?,
-         (Some(previous), false) => (
-             previous.key_ref.clone(),
--            platform_client::load_signing_key(previous)?,
-+            platform_client::load_signing_key(previous).map_err(|error| if was_unenrolled {
-+                NonoError::ActionRequired(format!("the existing installation key could not be loaded ({error}); use `nono platform re-enroll` to authorize a replacement. A revoked registration must first be restored by a platform operator"))
-+            } else { error })?,
-         ),
-         (None, _) => crate::device_key::load_or_create(
-             &record.issuer,
-@@ -446,6 +458,8 @@ fn enroll_device(
-     }
-     Ok(if re_enroll {
-         EnrollmentResult::Reenrolled
-+    } else if reused && was_unenrolled {
-+        EnrollmentResult::Reactivated
-     } else if reused {
-         EnrollmentResult::Reused
-     } else {
-@@ -644,7 +658,7 @@ fn missing_enrollment_summary(args: &LoginArgs, record: Option<&session::Session
-     text.push_str(&summary_row("Enrollment", "Not recorded"));
-     text.push_str(&summary_row(
-         "Recovery",
--        "re-enroll is only for revoked device enrollments",
-+        "re-enroll replaces a key for an unenrolled device; revoked devices need platform operator restoration first",
-     ));
-     text.push_str(&summary_row(
-         "Next step",
-@@ -689,6 +703,10 @@ fn login_summary(
-     ));
-     let (label, color) = match enrollment {
-         Ok(EnrollmentResult::Enrolled) => ("Device enrolled", t.green),
-+        Ok(EnrollmentResult::Reactivated) => (
-+            "Device enrolled again · existing identity restored",
-+            t.green,
-+        ),
-         Ok(EnrollmentResult::Reenrolled) => ("Device re-enrolled with a new key", t.green),
-         Ok(EnrollmentResult::Reused) => ("Using existing device enrollment", t.text),
-         Ok(EnrollmentResult::Skipped) => ("Skipped (no-enroll enabled)", t.subtext),
-@@ -700,12 +718,17 @@ fn login_summary(
-     text.push_str(&summary_row("Enrollment", &fg(label, color).to_string()));
-     if matches!(
-         enrollment,
--        Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled | EnrollmentResult::Reused)
-+        Ok(EnrollmentResult::Enrolled
-+            | EnrollmentResult::Reenrolled
-+            | EnrollmentResult::Reused
-+            | EnrollmentResult::Reactivated)
-     ) && (switched
-         || previous.is_none()
-         || matches!(
-             enrollment,
--            Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled)
-+            Ok(EnrollmentResult::Enrolled
-+                | EnrollmentResult::Reenrolled
-+                | EnrollmentResult::Reactivated)
-         ))
-     {
-         text.push_str(&summary_row(
-@@ -725,7 +748,7 @@ fn login_summary(
-         .unwrap_or_else(|| clean(&record.tenant_id));
-     let hint = match enrollment {
-         Ok(EnrollmentResult::Revoked) => Some(format!(
--            "nono platform re-enroll --tenant {tenant_selector}"
-+            "Ask a platform operator to restore this device, then run nono platform login --tenant {tenant_selector}"
-         )),
-         Ok(EnrollmentResult::NotEnrolled 
-```
-
-**File**: `crates/nono-cli/src/platform_client.rs` (modified, +151/-44)
-```diff
-@@ -133,6 +133,8 @@ fn enroll(args: PlatformEnrollArgs) -> Result<()> {
-         display_name: request.display_name.clone(),
-         tenant: None,
-         revoked: false,
-+        unenrolled: false,
-+        unenrollment_confirmed: false,
-         last_policy_mode: None,
-     };
-     write_json_secure(&state_path, &stored)?;
-@@ -202,6 +204,12 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
-         None
-     };
-     let policy = match &stored {
-+        Some(stored) if stored.unenrolled && args.refresh => {
-+            return Err(NonoError::ActionRequired(
-+                "device is unenrolled; run `nono platform login` before refreshing policy".into(),
-+            ));
-+        }
-+        Some(stored) if stored.unenrolled => None,
-         Some(stored) if args.refresh => crate::platform_policy::refresh(&stored.state)?,
-         Some(stored) => crate::platform_policy::cached(&stored.state)?,
-         None if args.refresh => {
-@@ -223,7 +231,9 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
-             });
-         let mut output = match &stored {
-             Some(stored) => serde_json::json!({
--                "enrolled": !stored.revoked,
-+                "enrolled": !stored.revoked && !stored.unenrolled,
-+                "enrollment_status": if stored.revoked { "revoked" } else if stored.unenrolled { "unenrolled" } else { "active" },
-+                "platform_unenrollment_confirmed": stored.unenrolled && stored.unenrollment_confirmed,
-                 "platform_url": stored.state.platform_url,
-                 "tenant_id": stored.state.tenant_id,
-                 "subject_id": stored.state.subject_id,
-@@ -323,6 +333,8 @@ fn status_text(
-             "{name} · {}",
-             if stored.revoked {
-                 "revoked"
-+            } else if stored.unenrolled {
-+                "unenrolled"
-             } else {
-                 "enrolled"
-             }
-@@ -331,13 +343,26 @@ fn status_text(
-             kind,
-             &crate::theme::fg(&device, if stored.revoked { t.yellow } else { t.text }).to_string(),
-         ));
--        text.push_str(&crate::platform_policy::display::status_rows(
--            policy,
--            previous,
--            refreshed,
--            stored.last_policy_mode.as_deref(),
--        ));
--        let audit = if stored.revoked {
-+        if stored.unenrolled {
-+            text.push_str(&summary_row(
-+                "Enrollment",
-+                if stored.unenrollment_confirmed {
-+                    "Platform confirmed · use platform login to reactivate"
-+                } else {
-+                    "Local only · platform not notified"
-+                },
-+            ));
-+        } else {
-+            text.push_str(&crate::platform_policy::display::status_rows(
-+                policy,
-+                previous,
-+                refreshed,
-+                stored.last_policy_mode.as_deref(),
-+            ));
-+        }
-+        let audit = if stored.unenrolled {
-+            Some("Unavailable · device unenrolled".into())
-+        } else if stored.revoked {
-             Some("Unavailable · enrollment revoked".into())
-         } else {
-             match crate::audit_client::queued_count() {
-@@ -388,11 +413,15 @@ fn enrollment_text_with_heading(
-         .unwrap_or_else(|| "Name not recorded (see --json)".into());
-     let enrollment = if stored.revoked {
-         "Revoked"
-+    } else if stored.unenrolled {
-+        "Unenrolled"
-     } else {
-         "Registered locally"
-     };
-     let delivery = if stored.revoked {
-         "Unavailable: enrollment revoked"
-+    } else if stored.unenrolled {
-+        "Unavailable: device unenrolled"
-     } else {
-         "Automatic when sessions finish"
-     };
-@@ -431,55 +460,58 @@ fn enrollment_details(stored: &StoredEnrollment) -> String {
-     format!(
-         "{}{}",
-         summary_row(kind, &name),
--        summary_row("Enrolled", &enrolled)
-+        summary_row("First enrolled", &enrolled)
-     )
- }
- 
--/// Remove the local enrollment. Local-only by design: the platform-side
--/// subject stays active until a human revokes it in the console, because the
--/// device key must not be able to erase its own registration.
-+/// Deactivate without erasing identity/history. Keep the key and an inactive
-+/// local record so human-authorized login can reactivate the same device.
- fn unenroll(args: PlatformUnenrollArgs) -> Result<()> {
--    let state_path = state_path()?;
-     let Some(state) = load_state()? else {
-         println!("Not enrolled with a platform.");
-         return Ok(());
-     };
-     let queued = crate::audit_client::queued_count()?;
-+    let stored = current_enrollment(&state)?;
-+    let confirmed = if args.local_only {
-+        stored.unenrolled && stored.unenrollment_confirmed
-+    } else {
-+        confirm_unenrollment(&state)?;
-+        true
-+    };
- 
--    // Delete the key before the state file: the state holds the only key_ref,
--    // so removing it first would orphan the key in the keys
-```
-
-**File**: `crates/nono-cli/src/platform_policy.rs` (modified, +10/-2)
-```diff
-@@ -93,7 +93,7 @@ impl RefreshFailure {
-     fn error(self) -> NonoError {
-         let message = match self {
-             Self::Unauthorized(message) => format!(
--                "{message}; device authentication was refused. Run `nono platform re-enroll` to authorize recovery; the existing enrollment and policy remain in place."
-+                "{message}; device authentication was refused. Check its enrollment on the platform. A revoked device must be restored by a platform operator before `nono platform login` can enroll it again; the existing enrollment and policy remain in place."
-             ),
-             Self::Unavailable(message)
-             | Self::ServiceUnavailable(message)
-@@ -332,7 +332,15 @@ fn request<T: serde::de::DeserializeOwned>(
-         .map_err(|error| RefreshFailure::Unavailable(error.to_string()))?;
-     tracing::debug!(endpoint = path, request_id = %id, status = response.status().as_u16(), "Received platform policy response");
-     if !response.status().is_success() {
--        let message = format!("policy endpoint returned HTTP {}", response.status());
-+        let mut message = format!(
-+            "policy endpoint {method} {url} returned HTTP {}",
-+            response.status()
-+        );
-+        if response.status().as_u16() == 404 {
-+            message.push_str(
-+                "; the policy API is unavailable at the enrolled origin. Check that the deployment routes /api/v1/policy/refresh and /api/v1/policy/trust-root to platform-server, then retry `nono platform status --refresh`",
-+            );
-+        }
-         if response.status().as_u16() == 401 {
-             return Err(RefreshFailure::Unauthorized(message));
-         }
-```
-
-**File**: `crates/nono-cli/src/platform_policy/enforced.rs` (modified, +48/-1)
-```diff
-@@ -143,7 +143,11 @@ pub(crate) fn validate_resource_limits(
-     Ok(())
- }
- 
--pub(crate) fn guard_command(command: &Commands) -> Result<()> {
-+pub(crate) fn guard_command(command: &Commands, silent: bool) -> Result<()> {
-+    let enrollment_recovery = matches!(command, Commands::Platform(args) if matches!(
-+        args.command,
-+        PlatformCommands::Login(_) | PlatformCommands::Logout(_) | PlatformCommands::Unenroll(_)
-+    ));
-     let restricted = match command {
-         Commands::Profile(args) => matches!(
-             args.command,
-@@ -156,6 +160,10 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
-         Commands::Platform(args) => !matches!(
-             &args.command,
-             PlatformCommands::Status(_)
-+                // Human sign-in is separate from device authority. Enrollment
-+                // checks ownership/status on the platform and preserves the
-+                // pinned enforced identity and mode locally.
-+                | PlatformCommands::Login(_)
-                 | PlatformCommands::ReEnroll(_)
-                 | PlatformCommands::Tenant(crate::cli::TenantArgs {
-                     command: TenantCommands::List(_),
-@@ -198,13 +206,52 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
-         return Ok(());
-     };
-     let remembered = platform_client::last_policy_mode(&state)?;
-+    if enrollment_recovery && platform_client::enrollment_unenrolled()? {
-+        if remembered.as_deref() == Some("enforced")
-+            || super::cached(&state)?.is_some_and(|claims| claims.management_mode == "enforced")
-+        {
-+            return Err(denied(
-+                "this command needs a fresh platform release from enforced mode",
-+            ));
-+        }
-+        // Disabled identities cannot refresh policy, and --delete-key may
-+        // already have removed their key. Login still proves human authority
-+        // and device ownership before the platform reactivates anything.
-+        return Ok(());
-+    }
-     let enforced = match super::refresh_inner(&state, false) {
-         Ok(Some(claims)) => claims.management_mode == "enforced",
-         Ok(None) => {
-             return Err(denied(
-                 "a fresh assignment is required before changing local policy or enrollment",
-             ));
-         }
-+        Err(error)
-+            if enrollment_recovery
-+                && remembered.as_deref() != Some("enforced")
-+                && matches!(
-+                    error,
-+                    super::RefreshFailure::Unavailable(_)
-+                        | super::RefreshFailure::ServiceUnavailable(_)
-+                        | super::RefreshFailure::Unauthorized(_)
-+                ) =>
-+        {
-+            // Cleanup is not launch authority. An enrollment whose first
-+            // policy check failed must remain recoverable; a previously
-+            // enforced device still needs a fresh signed release. Check old
-+            // signed caches too, including enrollments predating mode history.
-+            if super::cached(&state)?.is_some_and(|claims| claims.management_mode == "enforced") {
-+                return Err(denied(
-+                    "this command needs a fresh platform release from enforced mode",
-+                ));
-+            }
-+            if !silent {
-+                eprintln!(
-+                    "Policy could not be checked; continuing with account management only. Session startup still requires its normal policy check."
-+                );
-+            }
-+            false
-+        }
-         Err(error) if error.allows_local_fallback(true, None, remembered.as_deref()) => false,
-         Err(error @ super::RefreshFailure::Unauthorized(_)) => return Err(error.error()),
-         Err(error) if remembered.as_deref() == Some("enforced") => {
-```
-
-**File**: `crates/nono-cli/tests/login_cli.rs` (modified, +1/-1)
-```diff
-@@ -179,7 +179,7 @@ fn reenrollment_without_local_registration_directs_to_normal_login() {
-     let text = String::from_utf8(output.stdout).expect("text");
-     assert!(text.contains("No enrollment to replace"), "{text}");
-     assert!(
--        text.contains("re-enroll is only for revoked device enrollments"),
-+        text.contains("revoked devices need platform operator restoration first"),
-         "{text}"
-     );
-     assert!(
-```
-
-**File**: `crates/nono-cli/tests/managed_policy.rs` (modified, +395/-2)
-```diff
-@@ -203,13 +203,16 @@ impl Client {
-                 match listener.accept() {
-                     Ok((mut stream, _)) => {
-                         let (path, request_id) = read_request(&mut stream);
--                        if path == REFRESH_PATH && status.load(Ordering::SeqCst) != 200 {
-+                        if matches!(path.as_str(), REFRESH_PATH | "/api/v1/enrollment/unenroll")
-+                            && status.load(Ordering::SeqCst) != 200
-+                        {
-                             write!(stream,"HTTP/1.1 {} Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",status.load(Ordering::SeqCst)).expect("refresh unavailable");
-                             continue;
-                         }
-                         if path != TRUST_PATH
-                             && path != REFRESH_PATH
-                             && path != "/api/v1/enrollment/exchange"
-+                            && path != "/api/v1/enrollment/unenroll"
-                         {
-                             stream.write_all(b"HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n").expect("audit unavailable");
-                             continue;
-@@ -221,6 +224,8 @@ impl Client {
-                                 "enrolled_at":"2026-01-01T00:00:00Z","policy_trust_root":trust
-                             }))
-                             .expect("enrollment response")
-+                        } else if path == "/api/v1/enrollment/unenroll" {
-+                            serde_json::to_vec(&json!({"protocol_version":"1","tenant_id":"tenant","subject_id":"device","unenrolled_at":chrono::Utc::now()})).expect("unenrollment confirmation")
-                         } else if path == TRUST_PATH {
-                             serde_json::to_vec(&trust).expect("trust response")
-                         } else {
-@@ -645,7 +650,6 @@ fn enforced_shell_wrap_and_management_commands_cannot_bypass_assignment() {
-         vec!["trust", "init"],
-         vec!["platform", "unenroll"],
-         vec!["platform", "logout"],
--        vec!["platform", "login", "--no-enroll"],
-         vec!["platform", "tenant", "use", "personal", "--no-enroll"],
-     ] {
-         let output = client.test.command().args(&args).output().expect("command");
-@@ -728,6 +732,290 @@ fn signed_platform_downgrade_restores_advisory_overrides() {
-         .assert_stderr_contains("Advisory");
- }
- 
-+#[test]
-+fn enrollment_recovery_survives_missing_policy_and_rejected_device_credentials() {
-+    for mode in [None, Some("audit_only"), Some("advisory")] {
-+        for status in [401, 404, 503, 0] {
-+            let mut client = Client::new(None);
-+            let enrollment = client.test.home().join(".config/nono/platform.json");
-+            let mut state: serde_json::Value =
-+                serde_json::from_slice(&fs::read(&enrollment).expect("state")).expect("JSON");
-+            state["last_policy_mode"] = mode.into();
-+            fs::write(&enrollment, state.to_string()).expect("state");
-+            if status == 0 {
-+                client.platform.stop();
-+            } else {
-+                client
-+                    .platform
-+                    .refresh_status
-+                    .store(status, Ordering::SeqCst);
-+            }
++Pre-release versions (alpha, beta, rc) are published only under their exact tag. In production, pin to an exact version or, better, an image digest.
 +
-+            // A failed first check still cannot authorize a session.
-+            if mode.is_none() {
-+                client
-+                    .test
-+                    .run()
-+                    .profile_name("default")
-+                    .exec(Argv::new("/bin/echo").arg("MUST_NOT_RUN"))
-+                    .assert_failure("recovery does not grant launch authority")
-+                    .assert_stdout_lacks("MUST_NOT_RUN");
-+            }
++## Verify the image
 +
-+            let login = client
-+                .test
-+                .command()
-+                .args([
-+                    "platform",
-+                    "login",
-+                    "--name",
-+                    "Aleks Device",
-+                    "--device-code",
-+                    "--no-open",
-+                    "--url",
-+                ])
-+                .arg(state["platform_url"].as_str().expect("origin"))
-+                .output()
-+                .expect("login");
-+            // This fixture has no OAuth server. Reaching discovery proves the
-+            // policy guard no longer prevents the requested login from running.
-+            assert!(
-+                String::from_utf8_lossy(&login.stderr).contains("authorization server"),
-+                "{mode:?}, HTTP {status}: {}",
-+                String::from_utf8_lossy(&login.stderr)
-+            );
-+            assert!(enrollment.exists());
++Release images are signed with Cosign using keyless signing from the release workflow.
 +
-+            let logout = client
-+                .test
-+                .command()
-+                .args(["platform", "logout"])
-+                .output()
-+                .expect("logout");
-+            assert!(
-+                logout.status.success(),
-+                "{}",
-+                String::from_utf8_lossy(&logou
++```bash
++cosign verify ghcr.io/nolabs-ai/nono:X.Y.Z \
++  --certificate-identity-regexp '^https://github.com/nolabs-ai/nono/\.github/workflows/' \
++  --certificate-oidc-issuer https://token.actions.githubusercontent.com
++```
++
++## Run an agent
++
++The image's entrypoint is `nono`, so arguments go straight to it. The working directory is `/work`.
++
++```bash
++docker run --rm \
++  --user 10001:10001 \
++  --read-only --tmpfs /tmp --tmpfs /home/agent -e HOME=/home/agent \
++  --cap-drop ALL --security-opt no-new-privileges \
++  -v "$PWD":/work \
++  ghcr.io/nolabs-ai/nono:latest \
++  run --allow-cwd --block-net -- my-agent
++```
++
++The container flags harden the container itself. The `nono run` arguments after the image name restrict what the agent can reach inside it. Both apply.
++
++## Build from source
++
++The repository includes Dockerfiles for custom builds. These variants are not published as images.
++
++| Dockerfile | Purpose |
++|------------|---------|
++| `docker/Dockerfile` | Standard multi-stage build |
++| `docker/Dockerfile-headless` | No D-Bus or Secret Service dependency |
++| `docker/Dockerfile-musl` | Static musl build |
++| `docker/Dockerfile.chainguard` | Chainguard (Wolfi) runtime base |
++
++```bash
++docker buildx build -f docker/Dockerfile -t nono .
++```
++
++## Credentials in containers
++
++A container usually has no system keyring. Supply credentials through `env://`, `file://`, or `op://` references. With `--credential`, nono's proxy injects the value into upstream requests so the agent process never receives it. See [Credential Injection](/cli/features/credential-injection).
++
++## Next steps
++
++- [Run agents on Kubernetes](/cli/operations/kubernetes)
++- [nono and containers](/cli/internals/containers)
+```
+
+**File**: `docs/cli/operations/kubernetes.mdx` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++---
++title: Running nono on Kubernetes
++description: Run sandboxed agents as pods with restricted security settings, credential injection, and a network allow-list
++---
++
++nono runs inside a pod with no privileged mode and no added capabilities, so it works under the `restricted` Pod Security Standard. Kubernetes isolates the agent from the cluster and node. nono limits what the agent can touch inside the pod.
++
++<Note>
++  The example manifests are provided as a starting point and are not a supported deployment. A Helm chart is not available yet.
++</Note>
++
++## Pod settings
++
++nono needs only the following from the pod:
++
++| Setting | Value | Why |
++|---------|-------|-----|
++| `allowPrivilegeEscalation` | `false` | Sets `no_new_privs`, which Landlock requires |
++| `seccompProfile` | `RuntimeDefault` | The runtime default allows the `landlock_*` syscalls |
++| `capabilities.drop` | `["ALL"]` | nono needs none |
++| `runAsNonRoot` | `true` | The image runs as a non-root user |
++| `readOnlyRootFilesystem` | `true` | Optional; give the agent writable `emptyDir` volumes instead |
++| `automountServiceAccountToken` | `false` | Agents rarely need cluster API access |
++
++Mount writable `emptyDir` volumes for the working directory, `HOME`, and `/tmp`, and set `HOME` explicitly.
++
++## Quick start
++
++The manifests live in `deploy/kubernetes/` in the repository.
++
++```bash
++kubectl apply -f 00-namespace.yaml -f 10-smoke-test-job.yaml
++kubectl -n nono-agents logs job/nono-smoke-test
++```
++
++The smoke test checks that a write inside the granted path succeeds and a write outside it is denied. A `PASS: sandbox enforced` line means nono can apply Landlock in your cluster.
++
++If it fails with a permission error when applying the sandbox, see [Troubleshooting](#troubleshooting).
++
++## Run an agent
++
++`20-agent-pod.yaml` runs an agent with a filesystem scope, a network allow-list, and credential injection:
++
++```yaml
++command: ["nono"]
++args:
++  - run
++  - --allow-cwd
++  - --network-profile
++  - claude-code
++  - --credential
++  - anthropic
++  - --
++  - claude
++  - -p
++  - "Summarize the repository in /work"
++```
++
++- `--allow-cwd` limits read and write access to the working directory.
++- `--network-profile claude-code` limits outbound traffic to the domains in that profile. Add domains with `--allow-domain`.
++- `--credential anthropic` makes nono's proxy inject the API key. The agent only sees a local proxy address.
++
++## Secrets
++
++Create the credential as a Kubernetes Secret and expose it to the nono process as an environment variable:
++
++```bash
++kubectl -n nono-agents create secret generic llm-credentials \
++  --from-literal=ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
++```
++
++The built-in `anthropic` route reads `ANTHROPIC_API_KEY` from the environment, and the proxy injects it into upstream requests. The sandboxed agent does not receive it. See [Credential Injection](/cli/features/credential-injection) for other routes and sources such as `file://`.
++
++<Tip>
++  Mounting the Secret as a file and referencing it with `file://` keeps it out of the process environment entirely.
++</Tip>
++
++## Network policy
++
++nono's allow-list restricts egress from the agent process. A Kubernetes `NetworkPolicy` independently restricts the pod. Use both: nono limits where the agent may connect, and `NetworkPolicy` limits the pod if something outside nono's scope misbehaves.
++
++## Troubleshooting
++
++| Symptom | Likely cause |
++|---------|--------------|
++| Sandbox fails to apply, with a permission or "operation not permitted" error | The seccomp profile blocks `landlock_*` syscalls, or `allowPrivilegeEscalation` is not `false` |
++| Sandbox reports Landlock unsupported | The node kernel has no Landlock; check the node OS and kernel version |
++| Network filtering not enforced | The node kernel is older than 6.7; see [Landlock](/cli/internals/landlock) |
++| Agent cannot write its config | `HOME` is not set to a writable volume |
++
++## Next steps
++
++- [Credential Injection](/cli/features/credential-injection)
++- [Networking](/cli/features/networking)
++- [Profiles & Groups](/cli/features/profiles-groups)
+```
+
+**File**: `docs/cli/operations/overview.mdx` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++---
++title: Operations Overview
++description: Where nono runs in practice and how to choose between a workstation, CI, a container, or Kubernetes
++---
++
++nono applies its sandbox to a single process using kernel features. There is no daemon to deploy and no privileged component, so the same binary works on a laptop, in a CI job, in a container, and in a Kubernetes pod. This section covers running it somewhere other than your own terminal.
++
++## Where nono runs
++
++| Environment | Typical use | Guide |
++|-------------|-------------|-------|
++| Workstation | Interactive coding agents | [Quickstart](/cli/getting_started/quickstart) |
++| Container | Reproducible agent environments, defense in depth | [Containers](/cli/operations/containers) |
++| Kubernetes | Agents scheduled as pods | [Kubernetes](/cli/operations/kubernetes) |
++
++## What nono does and does not replace
++
++nono restricts what one process can access: paths, network destinations, and credentials. It does not provide a separate filesystem, a PID namespace, or resource scheduling. In a cluster, the pod and the node still provide those. The two layers address different risks, so they are designed to be combined. See [nono and containers](/cli/internals/containers) for the full comparison.
++
++| Concern | Provided by |
++|---------|-------------|
++| Which files the agent can read or write | nono |
++| Which hosts the agent can reach | nono (and optionally NetworkPolicy) |
++| Keeping API keys out of the agent process | nono credential injection |
++| Isolating the agent from other workloads | Pod, node, and runtime class |
++| CPU and memory scheduling | Kubernetes |
++
++## Requirements
++
++- **Linux:** a kernel with Landlock enabled. Network filtering needs Landlock ABI v4 or newer (kernel 6.7+); see [Landlock](/cli/internals/landlock).
++- **No privileges:** nono does not need root, `CAP_SYS_ADMIN`, or a privileged container.
++- **Seccomp:** the runtime's seccomp profile must allow the `landlock_*` syscalls. The default profiles of current container runtimes all allow them.
++
++## Next steps
++
++- [Run the official container image](/cli/operations/containers)
++- [Run agents on Kubernetes](/cli/operations/kubernetes)
 ```
 
 #### Recent Merged Pull Requests:
@@ -4207,46 +3430,30 @@ Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): keep command-only route hosts out of the session allowlist
+## X. cli): add operations docs and kubernetes manifests
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/proxy_runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/kubernetes/00-namespace.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `90a9c254`: proxy): keep command-only route hosts out of the session allowlist. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec255726`: cli): add operations docs and kubernetes manifests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/proxy_runtime.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/kubernetes/00-namespace.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    //
-    // Command-only (tool sandbox) routes are skipped: this allowlist is the
-    // session proxy's, which never carries those routes (see
-    // remove_tool_sandbox_routes), so their upstream would be a plain
-    // CONNECT tunnel for every session process, with no credential injection
-    // or endpoint policy. Command-scoped proxies build their own allowlist.
-            if proxy
-                .tool_sandbox_proxy_credentials
-                .contains(route.prefix.trim_matches('/'))
-            {
-                continue;
-            }
-    /// A command-only (tool sandbox) credential route must not open its
-    /// upstream to the session proxy: the session never carries the route, so
-    /// the host would be a plain tunnel with no credential or endpoint policy.
-    #[test]
-    fn test_tool_sandbox_route_upstream_is_not_in_session_allowlist() {
-        for strict in [false, true] {
-            let mut proxy = proxy_with_custom_credential(
-                strict,
-                vec![crate::profile::AllowDomainEntry::Plain(
-                    "www.example.com".to_string(),
-                )],
-            );
-            proxy
-                .tool_sandbox_proxy_credentia
+# Namespace for sandboxed agents. Enforces the "restricted" Pod Security
+# Standard: nono needs no privileged mode, no added capabilities, and no
+# host access, so the strictest standard works.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nono-agents
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4256,4 +3463,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `90a9c254` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec255726` are properly handled with clean fallback behavior.

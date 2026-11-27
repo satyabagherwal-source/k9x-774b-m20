@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T18:26:22.399Z",
+  "last_updated": "2026-11-27T18:35:11.936Z",
   "total_records": 2847,
   "domains": {
     "A": {
@@ -9598,8 +9598,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "a1e35671b2b6a8a69c1ef37c5c90f20110cbb9683853e9ce12ab63b5f81722fc",
-      "created_at": "2026-11-25T10:35:24.970Z"
+      "content_hash": "be56096c9b52dfbf92e9805248875903e7ca5b14f9301bfffe7a025156685a5a",
+      "created_at": "2026-11-27T18:35:05.384Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -9667,8 +9667,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "ddc4c8c3c35e93dab7cfece03de8f017aa723582fb5ede2a4ffcf6cc95a0ad51",
-      "created_at": "2026-11-24T01:07:33.733Z"
+      "content_hash": "9a01d90c22af2f4fa15bcc7e5631a493ec1a43f559f8bd42e55c684bc734269f",
+      "created_at": "2026-11-27T18:35:11.936Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -22810,8 +22810,8 @@
       "title": "Architecture Intelligence: nsh07/Tomato Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-architecture-intelligence-nsh07-tomato-core-invariants.md",
       "repository": "nsh07/Tomato",
-      "content_hash": "f63c7dc1d394db23b3167a609682fed77f9f2f07ab92835fba20b5c1ce2bad9b",
-      "created_at": "2026-11-20T00:14:38.588Z"
+      "content_hash": "04ebc8e0b62fe5e38de1c8f4211cf83f7705139baafaeec464abd069e201ec1b",
+      "created_at": "2026-11-27T18:35:00.060Z"
     },
     "DOM-D-FAC11BEC": {
       "record_id": "DOM-D-FAC11BEC",
@@ -22870,8 +22870,8 @@
       "title": "Architecture Intelligence: nsh07-tomato-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nsh07-tomato-learnings-architecture-intelligence-nsh07-tomato-learnings-core-inv.md",
       "repository": "nsh07-tomato-learnings",
-      "content_hash": "78d20ab8a8c7080eab769e03af72ac0b0dfb1b80426e4831bbd03792cd28447a",
-      "created_at": "2026-11-20T00:14:43.313Z"
+      "content_hash": "e94e94987f86ad808ff89f7f148e7de4f3b494388cfd0b311c61c968e87dbf03",
+      "created_at": "2026-11-27T18:35:09.413Z"
     },
     "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-modelcontextprotocol-kotlin-sdk-core-invariants",
@@ -31512,8 +31512,8 @@
       "title": "Technical Construction Intelligence: DNSControl/dnscontrol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-technical-construction-intelligence-dnscontrol-dnscontrol-.md",
       "repository": "DNSControl/dnscontrol",
-      "content_hash": "33a8894f8765ea91c5bc93a30f378feaf630ce5f8cb1f64857d287b3146cc5ce",
-      "created_at": "2026-11-26T06:44:08.223Z"
+      "content_hash": "cd615e93810d9964ad67a60956229c20121c1753b63d0f170ab284650309187d",
+      "created_at": "2026-11-27T18:35:03.128Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
@@ -31521,8 +31521,8 @@
       "title": "Technical Construction Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-learnings-technical-construction-intelligence-dnscontrol-d.md",
       "repository": "dnscontrol-dnscontrol-learnings",
-      "content_hash": "c6bab194952ffed1d099d4616b7c0773f83040080e507cfea57802710f1b2167",
-      "created_at": "2026-11-19T07:14:28.068Z"
+      "content_hash": "cdebb72d0d409834250abc8099302990bfcc3b9a425f5ae5bb88b362d7c2c373",
+      "created_at": "2026-11-27T18:35:10.774Z"
     },
     "DOM-H-CC987E5F": {
       "record_id": "DOM-H-CC987E5F",

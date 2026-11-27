@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-FSFZ",
-    "timestamp": "2026-11-26T09:22:00.767Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "4743a21c9f63ffeb47bd7205e77bc43b4c74b6bd50491fd13874da88953973c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-FZ2A",
-    "timestamp": "2026-11-26T09:22:09.346Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-XK9O",
-    "timestamp": "2026-11-26T09:35:49.980Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-01XB",
     "timestamp": "2026-11-26T09:37:46.175Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-MS29",
+    "timestamp": "2026-11-27T18:34:59.601Z",
+    "repository": "nsh07/Tomato",
+    "learningId": "learn-github-nsh07-tomato",
+    "contentHash": "bd2bd1bf2571e69e4e1a3d4830709ef8bf1ea91a818f64f4f67040a5dd3a8bed",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-MUFG",
+    "timestamp": "2026-11-27T18:35:02.668Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "9de288f35058bbc2fdd22bf9ec66f17402bb479cced8d81920f3007e664affaf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-MW5T",
+    "timestamp": "2026-11-27T18:35:04.913Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "c2bb2477934e7f1d48d530b6aea225e989dc81c9a34403cbc003090b5cec45d0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
