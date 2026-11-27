@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T16:42:23.822Z",
-  "total_records": 2840,
+  "last_updated": "2026-11-27T16:52:48.399Z",
+  "total_records": 2841,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1043,
+      "total": 1044,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1116,7 +1116,8 @@
         "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants",
         "DOM-D-457F0DDF",
         "DOM-D-ACBB63D0",
-        "DOM-D-4E0DE84A"
+        "DOM-D-4E0DE84A",
+        "DOM-D-CFD4C4AD"
       ]
     },
     "E": {
@@ -8583,8 +8584,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "556051149a77a726c2e2f9a2ce52a93eb836246ea37bb1fff089552f0a3bfab5",
-      "created_at": "2026-11-27T12:03:44.690Z"
+      "content_hash": "964e253dd2318a4767caeed7a85f16d7042ba7758ddfc9f5349ad589364276ed",
+      "created_at": "2026-11-27T16:52:07.152Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8601,8 +8602,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "7a292fff66a7062cf490301d21bee6a1e3fbd291a5ba55c62f25bb4715391a3e",
-      "created_at": "2026-11-27T12:03:52.590Z"
+      "content_hash": "e44a0c1e5dd5df7ccc7fdadd283f1733f4ad694a0d2c93822b28a35e92a551fd",
+      "created_at": "2026-11-27T16:52:45.251Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -33970,8 +33971,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "7a8dbcdfebafe5c76e9444c751b1258d3afbe666e6c81248230714cb217f09cb",
-      "created_at": "2026-11-27T16:13:03.210Z"
+      "content_hash": "4b9dc38225a52a89c55a7ef5cef2fe7762fc8fa99cddf368cc8cdab371836434",
+      "created_at": "2026-11-27T16:52:48.399Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46787,8 +46788,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a81f7ec095b693d324aede73bd975676e505d9bae802902be0ffa5eb73274adb",
-      "created_at": "2026-11-27T16:21:47.075Z"
+      "content_hash": "86d93785cf8c2c9dc1870d6a7c6df5007fb68f86f8e9724d3b0eaf27d5a78a36",
+      "created_at": "2026-11-27T16:52:46.691Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -47972,6 +47973,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T16:42:21.430Z"
+    },
+    "DOM-D-CFD4C4AD": {
+      "record_id": "DOM-D-CFD4C4AD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): cilium/cilium",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  \n> **Source Version**: `d74ff6dc`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "39e5a0801a6a33651d0aa114a4087f5ef4008bb61fad65b4d0092f06573c3c48",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  \n> **Source**: github ([https://github.com/cilium/ciliu",
+      "provenance": {
+        "source_uri": "project://cilium-cilium/cilium-cilium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T16:52:10.147Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cilium-cilium)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of cilium-cilium"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T16:52:44.808Z"
     }
   }
 }

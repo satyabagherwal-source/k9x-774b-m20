@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T12:03:52.241Z",
+  "timestamp": "2026-11-27T16:52:45.091Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T12:03:52.241Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T16:52:45.091Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium-cilium-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `5f2ffdd2`  
+> **Source Version**: `d74ff6dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T12:03:42.992Z  
+> **Timestamp**: 2026-11-27T16:52:06.041Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T12:03:42.988Z  
+> **Harvest Timestamp**: 2026-11-27T16:52:05.936Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1287,13 +1287,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50304** (2026-11-27): **Pr/41ks/eks enable ipsec ipv6**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [ ] All commits are signed off. See the section [Developer’s Certificate of Origin] - [ ] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [ ] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  Fixes: #issue-number  ```release-note <!-- Enter the release note text here or remove this release-note section from your PR description. Do NOT put an "empty" release note here --> ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate o
-
-- **Issue #50299** (2026-11-27): **[v1.20] mutual-auth: Mark Mutual Auth as deprecated.**
-  *Symptoms*: This commit updates the docs to correctly mark Mutual Auth as deprecated in the v1.20 release.  It has already been removed from `main`/`v1.21`.  Fixes: #47132  This PR was made with AIL:0. 
+- **Issue #50310** (2026-11-27): **gha/conformance-ipsec: Skip IPv6 in EKS run of Conformance IPSec**
+  *Symptoms*: PR #49240 added IPv6 testing in the EKS suite. The ENI + IPv6 + IPSec setup is known not to work and the issue is tracked in #49834. Until this is resolved, we need to skip IPv6 runs with IPSec to keep the CI running.  The skip will be removed once the bug is fixed and the issue is closed.  AIL:0 
   **Post-Mortem & Fix Analysis**:
   > /test
+  > FYI @aanm 
+
+- **Issue #50309** (2026-11-27): **gha: Free runner disk space before Network Policy E2E tests**
+  *Symptoms*: Run the existing disk-cleanup action after trusted checkout to leave room for Kubernetes downloads and image pulls.  AIL: 4.
+  **Post-Mortem & Fix Analysis**:
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1311,65 +1313,140 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f2ffdd2` (2026-11-26)
-**Commit Message**: CODEOWNERS: Cover missing IPsec test file
+### Incident Patch 1: `aad711cb` (2026-11-24)
+**Commit Message**: docs: Remove fromRequires/toRequires policy documentation
 
-File cilium-cli/connectivity/tests/ipsec_key_derivation.go should be
-owned by the IPsec team like the other IPsec file in the same directory.
+The fromRequires and toRequires fields were deprecated in v1.17 and
+their enforcement was removed in v1.19 by #42615.
 
-Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
+This PR removes the now deprecated documentation that documented the
+beahvior of these fields.
 
-**File**: `CODEOWNERS` (modified, +1/-1)
+Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+
+**File**: `Documentation/security/policy/layer3.rst` (modified, +0/-54)
 ```diff
-@@ -409,7 +409,7 @@ Makefile* @cilium/build
- /cilium-cli/connectivity/tests/from-cidr.go @cilium/sig-policy
- /cilium-cli/connectivity/tests/health.go @cilium/sig-agent
- /cilium-cli/connectivity/tests/host.go @cilium/sig-agent
--/cilium-cli/connectivity/tests/ipsec_xfrm.go @cilium/ipsec
-+/cilium-cli/connectivity/tests/ipsec* @cilium/ipsec
- /cilium-cli/connectivity/tests/lrp.go @cilium/sig-lb
- /cilium-cli/connectivity/tests/pod.go @cilium/sig-agent
- /cilium-cli/connectivity/tests/service.go @cilium/sig-lb
+@@ -150,60 +150,6 @@ egress.
+ .. literalinclude:: ../../../examples/policies/l3/egress-default-deny/egress-default-deny.yaml
+   :language: yaml
+ 
+-Additional Label Requirements
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-.. warning::
+-
+-   The ``fromRequires`` and ``toRequires`` fields are deprecated as of Cilium
+-   1.17.x. They have been removed as of Cilium 1.19.
+-
+-It is often required to apply the principle of *separation of concern* when defining
+-policies. For this reason, an additional construct exists which allows to establish
+-base requirements for any connectivity to happen.
+-
+-For this purpose, the ``fromRequires`` field can be used to establish label
+-requirements which serve as a foundation for any ``fromEndpoints``
+-relationship.  ``fromRequires`` is a list of additional constraints which must
+-be met in order for the selected endpoints to be reachable. These additional
+-constraints do not grant access privileges by themselves, so to allow traffic
+-there must also be rules which match ``fromEndpoints``. The same applies for
+-egress policies, with ``toRequires`` and ``toEndpoints``.
+-
+-The purpose of this rule is to allow establishing base requirements such as, any
+-endpoint in ``env=prod`` can only be accessed if the source endpoint also carries
+-the label ``env=prod``.
+-
+-.. warning::
+-
+-   ``toRequires`` and ``fromRequires`` apply to all rules that share the same
+-   endpoint selector and are not limited by other egress or ingress rules.
+-   As a result ``toRequires`` and ``fromRequires`` limits all ingress and egress traffic
+-   that applies to its endpoint selector. An important implication of the fact
+-   that ``toRequires`` and ``fromRequires`` limit all ingress and egress traffic
+-   that applies to an endpoint selector is that the other egress and ingress rules
+-   (such as ``fromEndpoints``, ``fromPorts``, ``toEntities``, ``toServices``, and the rest)
+-   do not limit the scope of the ``toRequires`` of ``fromRequires`` fields. Pairing other
+-   ingress and egress rules with a ``toRequires`` or ``fromRequires`` will result in valid
+-   policy, but the requirements set in ``toRequires`` and ``fromRequires`` stay in effect
+-   no matter what would otherwise be allowed by the other rules.
+-
+-
+-This example shows how to require every endpoint with the label ``env=prod`` to
+-be only accessible if the source endpoint also has the label ``env=prod``.
+-
+-.. literalinclude:: ../../../examples/policies/l3/requires/requires.yaml
+-  :language: yaml
+-
+-This ``fromRequires`` rule doesn't allow anything on its own and needs to be
+-combined with other rules to allow traffic. For example, when combined with the
+-example policy below, the endpoint with label ``env=prod`` will become
+-accessible from endpoints that have both labels ``env=prod`` and
+-``role=frontend``.
+-
+-.. literalinclude:: ../../../examples/policies/l3/requires/endpoints.yaml
+-  :language: yaml
+-
+ .. _Services based:
+ 
+ Services based
 ```
 
----
-
-### Incident Patch 2: `f9e1e6a9` (2026-11-19)
-**Commit Message**: workflows/netperf: Raise network bandwidth limit
-
-The default instance type we use on GKE for CI is limited to 10Gbps.
-This commit changes the instance type to a bigger one that has a
-bandwidth limit of 32Gbps. This is just enough to not be limited by the
-wire when we run the netperf TCP_STREAM tests. Of course, we're still
-running at line rate when running the same test with multiple flows.
-
-This change improves the numbers for TCP_STREAM, but also seems to
-improve performance for the TCP_CRR benchmark. The downside is that the
-new instance type costs ~8 times more than the previous one. This is
-likely okay because this workflow doesn't run on pull requests by
-default. It only runs on a schedule, once a day.
-
-Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/net-perf-gke.yaml` (modified, +1/-0)
+**File**: `examples/policies/l3/requires/endpoints.yaml` (removed, +0/-13)
 ```diff
-@@ -306,6 +306,7 @@ jobs:
-           fallback-zones: ${{ steps.fallback-zones.outputs.zones }}
-           node-taints: ${{ steps.vars.outputs.node_taints }}
-           labels: "usage=${{ github.repository_owner }}-${{ github.event.repository.name }},owner=${{ steps.vars.outputs.owner }}"
-+          machine-type: "n2-standard-16"
+@@ -1,13 +0,0 @@
+-apiVersion: "cilium.io/v2"
+-kind: CiliumNetworkPolicy
+-metadata:
+-  name: "l3-rule"
+-specs:
+-  - description: "For endpoints with env=prod, allow if source also has label role=frontend"
+-    endpointSelector:
+-      matchLabels:
+-        env: prod
+-    ingress:
+-    - fromEndpoints:
+-      - matchLabels:
+-          role: frontend
+```
+
+**File**: `examples/policies/l3/requires/requires.yaml` (removed, +0/-13)
+```diff
+@@ -1,13 +0,0 @@
+-apiVersion: "cilium.io/v2"
+-kind: CiliumNetworkPolicy
+-metadata:
+-  name: "requires-rule"
+-specs:
+-  - description: "For endpoints with env=prod, only allow if source also has label env=prod"
+-    endpointSelector:
+-      matchLabels:
+-        env: prod
+-    ingress:
+-    - fromRequires:
+-      - matchLabels:
+-          env: prod
+```
+
+**File**: `pkg/policy/api/rules.go` (modified, +1/-3)
+```diff
+@@ -10,9 +10,7 @@ import (
  
-       - name: Create ESP allow firewall rule
-         if: ${{ matrix.name == 'tunnel-ipsec' }}
+ // Rules is a collection of api.Rule.
+ //
+-// All rules must be evaluated in order to come to a conclusion. While
+-// it is sufficient to have a single fromEndpoints rule match, none of
+-// the fromRequires may be violated at the same time.
++// All rules must be evaluated in order to come to a conclusion.
+ // +deepequal-gen:private-method=true
+ type Rules []*Rule
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50310** (2026-11-27): gha/conformance-ipsec: Skip IPv6 in EKS run of Conformance IPSec (@41ks)
+- **PR #50309** (2026-11-27): gha: Free runner disk space before Network Policy E2E tests (@utaal)
+- **PR #50305** (closed): gha/eks: Enable IPSec + IPv6 conformance test run (@41ks)
 - **PR #50304** (closed): Pr/41ks/eks enable ipsec ipv6 (@41ks)
 - **PR #50299** (2026-11-27): [v1.20] mutual-auth: Mark Mutual Auth as deprecated. (@youngnick)
 - **PR #50293** (2026-11-27): CODEOWNERS: Cover missing IPsec test file (@pchaigno)
-- **PR #50290** (2026-11-27): cli/connectivity: Don't dump the IPsec keys on test failures (@pchaigno)
-- **PR #50285** (closed): [v1.18] testing backports (@aanm)
-- **PR #50284** (closed): [v1.19] testing backports (@aanm)
 
 ---
 
@@ -1383,37 +1460,6 @@ Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. CODEOWNERS: Cover missing IPsec test file
-
-**RULE**:
-When implementing operations in `CODEOWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `5f2ffdd2`: CODEOWNERS: Cover missing IPsec test file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODEOWNERS`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-/cilium-cli/connectivity/tests/ipsec* @cilium/ipsec
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-/cilium-cli/connectivity/tests/ipsec_xfrm.go @cilium/ipsec
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f2ffdd2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

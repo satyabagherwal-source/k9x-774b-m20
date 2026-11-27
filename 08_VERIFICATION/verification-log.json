@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-FGZ7",
-    "timestamp": "2026-11-26T07:57:47.059Z",
-    "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-    "contentHash": "05467ae18678d432e6049e70e75faad3204b974c975aa237ba01563f6b2e2361",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-FNUF",
     "timestamp": "2026-11-26T07:57:55.959Z",
     "repository": "kube-rs/kube",
@@ -7490,6 +7475,21 @@
     "repository": "rook/rook",
     "learningId": "learn-github-rook-rook",
     "contentHash": "f6dd871ebaa193337d02938a0a3a2fbb80d8293cb1d6262e33d0a75dd274ebe4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YH3W",
+    "timestamp": "2026-11-27T16:52:06.812Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "06c1637370e6113890794cc288788fbfaa5582b047bbbc82c61e904597413ccf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

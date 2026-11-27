@@ -13854,3 +13854,5 @@ Every entry in this ledger must capture:
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `2e31fc94` | Multi-dimensional audit evidence | 2026-11-27T16:41:33.334Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `99836e57` | Multi-dimensional audit evidence | 2026-11-27T16:41:39.273Z |
 | `learn-dom-d-4e0de84a` | `project://rook-rook` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md` | 2026-11-27T16:42:21.483Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d74ff6dc` | Multi-dimensional audit evidence | 2026-11-27T16:52:06.817Z |
+| `learn-dom-d-cfd4c4ad` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-27T16:52:44.852Z |

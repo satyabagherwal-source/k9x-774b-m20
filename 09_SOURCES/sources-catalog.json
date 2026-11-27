@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "5f2ffdd2",
+    "sourceVersion": "d74ff6dc",
     "license": "Apache-2.0",
-    "contentHash": "338e41e091096c916d469f74d70091752f523f45c0e370f61135e6d620d0e69e",
-    "lastHarvestedAt": "2026-11-27T12:03:44.232Z",
+    "contentHash": "06c1637370e6113890794cc288788fbfaa5582b047bbbc82c61e904597413ccf",
+    "lastHarvestedAt": "2026-11-27T16:52:06.817Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:41:39.288Z",
-  "total_cycles_completed": 13118,
-  "total_learnings_persisted": 13118,
+  "last_updated": "2026-11-27T16:52:06.824Z",
+  "total_cycles_completed": 13119,
+  "total_learnings_persisted": 13119,
   "total_rules_promoted": 11843,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:24:31.121Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:32:58.240Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T16:41:39.288Z",
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:52:06.824Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

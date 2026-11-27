@@ -13821,3 +13821,5 @@
 | `CYCLE-20261127-KWAI` | `2026-11-27T16:41:33.306Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10930` | Yes (`ce993cf2...`) |
 | `CYCLE-20261127-L0W4` | `2026-11-27T16:41:39.268Z` | `rook/rook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rook-rook-learnings.md` | Yes (`f6dd871e...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T16:42:21.483Z` | `rook-rook` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4E0DE84A` [Domain D] | Yes (`afc52ea9...`) |
+| `CYCLE-20261127-YH3W` | `2026-11-27T16:52:06.812Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`06c16373...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T16:52:44.852Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CFD4C4AD` [Domain D] | Yes (`39e5a080...`) |
