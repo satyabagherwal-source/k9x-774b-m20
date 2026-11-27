@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:12:32.187Z",
+  "last_updated": "2026-11-27T12:21:23.277Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
-      "verified_at": "2026-11-27T08:32:39.489Z",
+      "content_hash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
+      "verified_at": "2026-11-27T12:21:23.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T08:32:39.489Z"
+      "last_updated": "2026-11-27T12:21:23.276Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
-      "verified_at": "2026-11-25T03:28:28.336Z",
+      "content_hash": "2de16b4c884d9986d6b21f9ebc90c2dab30e643132bb9b1ba2620eb76392ea4d",
+      "verified_at": "2026-11-27T12:21:15.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:28:28.336Z"
+      "last_updated": "2026-11-27T12:21:15.458Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
-      "verified_at": "2026-11-26T12:11:29.439Z",
+      "content_hash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
+      "verified_at": "2026-11-27T12:21:10.053Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:11:29.439Z"
+      "last_updated": "2026-11-27T12:21:10.053Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",

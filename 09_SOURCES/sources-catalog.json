@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "d414fa94",
+    "sourceVersion": "df7ba30c",
     "license": "MIT",
-    "contentHash": "4d8a526d22871d0963425bb7ce5f9d57ca3a0272923da979f7353b656af1cdc4",
-    "lastHarvestedAt": "2026-11-26T17:48:21.880Z",
+    "contentHash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
+    "lastHarvestedAt": "2026-11-27T12:21:23.263Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "6bf6a477",
+    "sourceVersion": "0f0c3c6d",
     "license": "Apache-2.0",
-    "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
-    "lastHarvestedAt": "2026-11-25T03:28:28.317Z",
+    "contentHash": "2de16b4c884d9986d6b21f9ebc90c2dab30e643132bb9b1ba2620eb76392ea4d",
+    "lastHarvestedAt": "2026-11-27T12:21:15.446Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "d9327074",
+    "sourceVersion": "f9797ded",
     "license": "Apache-2.0",
-    "contentHash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
-    "lastHarvestedAt": "2026-11-26T12:11:29.413Z",
+    "contentHash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
+    "lastHarvestedAt": "2026-11-27T12:21:10.039Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

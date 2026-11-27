@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T12:11:38.538Z",
+  "timestamp": "2026-11-27T12:21:27.019Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yyjeqhc-webcodex-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yyjeqhc-webcodex-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T12:11:38.538Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T12:21:27.019Z`  
 > **Learning ID**: `LEARN-EVO-yyjeqhc-webcodex-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 74%
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from yyjeqhc-webcodex-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `d9327074`  
+> **Source Version**: `f9797ded`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T12:11:27.792Z  
+> **Timestamp**: 2026-11-27T12:21:08.787Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T12:11:27.637Z  
+> **Harvest Timestamp**: 2026-11-27T12:21:08.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2524 stars
+- **Stars / Engagement**: 2528 stars
 
 ---
 
@@ -2215,733 +2215,114 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa95c2b6` (2026-11-26)
-**Commit Message**: fix(projects): prevent Runner inventory refresh from blocking project onboarding (#1442)
+### Incident Patch 1: `19edca39` (2026-11-27)
+**Commit Message**: fix(browser): prevent idle Windows native peers from busy-spinning (#1447)
 
-**File**: `crates/webcodex-runner/src/webcodex_runner/transport/project_inventory.rs` (modified, +8/-28)
+**File**: `crates/webcodex-browser/src/bridge.rs` (modified, +13/-3)
 ```diff
-@@ -419,9 +419,8 @@ pub(super) fn handle_project_inventory_status(
- }
- 
- pub(super) struct StreamingProjectInventoryCoordinator {
--    supported: bool,
-+    pub(super) supported: bool,
-     pub(super) sync: Option<ProjectInventorySync>,
--    project_cache: RunnerProjectCache,
-     pub(super) retry_backoff: RetryBackoff,
-     pub(super) retry_at: Option<tokio::time::Instant>,
- }
-@@ -431,7 +430,6 @@ impl StreamingProjectInventoryCoordinator {
-         Self {
-             supported: sync.is_some(),
-             sync,
--            project_cache: RunnerProjectCache::default(),
-             retry_backoff: RetryBackoff::new(&PROJECT_INVENTORY_STAGING_RETRY_BACKOFF_STEPS),
-             retry_at: None,
-         }
-@@ -465,22 +463,6 @@ impl StreamingProjectInventoryCoordinator {
-         self.queue_pending(transport, out_tx);
-     }
- 
--    pub(super) fn refresh_from_current_projects(
--        &mut self,
--        transport: StreamTransport,
--        cfg: &RunnerConfig,
--        runtime: &RunnerRuntimeState,
--        out_tx: &tokio::sync::mpsc::Sender<RunnerEnvelope>,
--        reason_code: &str,
--    ) {
--        if !self.supported {
--            return;
--        }
--        self.project_cache.invalidate();
--        let projects = runtime.project_summaries(&mut self.project_cache, cfg);
--        self.replace_projects(projects, transport, out_tx, reason_code);
--    }
--
-     /// A mutation during Git enrichment must not leave the older catalog
-     /// visible until the worker finishes, and needs no Git probe to correct it.
-     pub(super) fn refresh_from_project_metadata(
-@@ -498,7 +480,7 @@ impl StreamingProjectInventoryCoordinator {
-         self.replace_projects(projects, transport, out_tx, reason_code);
-     }
- 
--    fn replace_projects(
-+    pub(super) fn replace_projects(
-         &mut self,
-         projects: Vec<RunnerProjectSummary>,
-         transport: StreamTransport,
-@@ -522,7 +504,6 @@ impl StreamingProjectInventoryCoordinator {
-         &mut self,
-         transport: StreamTransport,
-         status: ShellProjectInventoryStatus,
--        cfg: &RunnerConfig,
-         runtime: &RunnerRuntimeState,
-         out_tx: &tokio::sync::mpsc::Sender<RunnerEnvelope>,
-     ) {
-@@ -538,13 +519,12 @@ impl StreamingProjectInventoryCoordinator {
-             ProjectInventoryStatusAction::RetryExactAfter(delay) => {
-                 self.retry_at = Some(tokio::time::Instant::now() + delay);
-             }
--            ProjectInventoryStatusAction::FreshResnapshot => self.refresh_from_current_projects(
--                transport,
--                cfg,
--                runtime,
--                out_tx,
--                "project_inventory_server_invalidated_snapshot",
--            ),
-+            ProjectInventoryStatusAction::FreshResnapshot => {
-+                self.retry_at = None;
-+                if self.supported {
-+                    runtime.invalidate_project_inventory();
-+                }
-+            }
-         }
+@@ -450,9 +450,19 @@ fn serve(listener: TcpListener, config: Rendezvous, weak: Weak<State>) {
      }
  }
+ fn serve_peer(mut stream: TcpStream, config: &Rendezvous, state: &State) {
+-    let _ = stream.set_read_timeout(Some(Duration::from_millis(50)));
+-    let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
+-    let _ = stream.set_nodelay(true);
++    // Windows inherits the listener's nonblocking mode. Idle peer reads must
++    // wait for their timeout, not retry WouldBlock continuously.
++    if stream.set_nonblocking(false).is_err()
++        || stream
++            .set_read_timeout(Some(Duration::from_millis(50)))
++            .is_err()
++        || stream
++            .set_write_timeout(Some(Duration::from_millis(200)))
++            .is_err()
++        || stream.set_nodelay(true).is_err()
++    {
++        return;
++    }
+     let deadline = Instant::now() + Duration::from_secs(2);
+     let mut frames = FrameReader::new(4096);
+     let hello = loop {
 ```
 
-**File**: `crates/webcodex-runner/src/webcodex_runner/transport/stream.rs` (modified, +12/-23)
+**File**: `crates/webcodex-browser/src/bridge/tests.rs` (modified, +60/-0)
 ```diff
-@@ -326,40 +326,29 @@ where
-                 } else {
-                     last_scan_publication = Some(publication);
-                 }
--                project_inventory = StreamingProjectInventoryCoordinator::new(Some(paged_sync_after_registration(projects)));
--                project_inventory.queue_pending(transport, &out_tx);
-+                project_inventory.replace_projects(projects, transport, &out_tx, "project_inventory_background_scan");
-             }
-             _ = tokio::time::sleep_until(project_inventory_retry_deadline), if project_inventory_retry_at.is_some() => {
-                 project_inventory.retry_pending_now(transport, &out_tx);
-             }
-             refresh = project_inventory_refresh_rx.changed() => {
--                if refresh.is_ok() {
--                    if initial_scan.is_some() {
--                        if last_scan_publication.is_some() {
--                            project_inventory.refresh_from_project_metadata(
--                                transport,
--                                cfg,
--                                runtime,
--                                &out_tx,
--                                "project_inventory_local_project_mutation",
--                            );
--                        }
--                        // Reuse the dirty worker, or replace an already completed
--                        // but unconsumed scan. Never run a second synchronous Git
--                        // scan on the stream thread while initial discovery waits.
--                        match runtime.initial_project_scan(cfg) {
--                            Ok(receiver) => initial_scan = Some(receiver),
--                            Err(error) => session_error = Some(error),
--                        }
--                    } else {
--                        project_inventory.refresh_from_current_projects(
-+                if refresh.is_ok() && project_inventory.supported {
-+                    if last_scan_publication.is_some() {
-+                        project_inventory.refresh_from_project_metadata(
-                             transport,
-                             cfg,
-                             runtime,
-                             &out_tx,
--                            "project_inventory_local_project_mutation",
-+                            "project_inventory_refresh_while_enriching",
-                         );
-                     }
-+                    // Project mutations and Server-requested resnapshots use
-+                    // the same worker as startup. Git probes must never hold
-+                    // the stream reader while new requests or pings are queued.
-+                    match runtime.initial_project_scan(cfg) {
-+                        Ok(receiver) => initial_scan = Some(receiver),
-+                        Err(error) => session_error = Some(error),
-+                    }
-                 }
-             }
-             _ = &mut shutdown => {
-```
-
-**File**: `crates/webcodex-runner/src/webcodex_runner/transport/stream_envelopes.rs` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@ pub(super) fn handle_stream_envelope(
-         }
-         RunnerEnvelope::Pong { .. } => None,
-         RunnerEnvelope::ProjectInventoryStatus { status } => {
--            project_inventory.handle_status(transport, status, cfg, runtime, out_tx);
-+            project_inventory.handle_status(transport, status, runtime, out_tx);
-             None
-         }
-         RunnerEnvelope::Registered { .. } if transport == StreamTransport::Quic => None,
-```
-
-**File**: `crates/webcodex-runner/src/webcodex_runner/transport_tests/initial_project_scan.rs` (modified, +86/-0)
-```diff
-@@ -877,6 +877,92 @@ async fn mutation_during_git_enrichment_republishes_catalog_and_discards_stale_r
-     assert!(runtime.shutdown().timed_out_phases.is_empty());
+@@ -111,6 +111,66 @@ fn authentication_requires_exact_version_instance_origin_and_secret() {
+     assert!(!config.accepts(&hello));
+     assert!(native::run(&["chrome-extension://wrong/".into()]).is_err());
  }
- 
-+#[tokio::test]
-+async fn refresh_after_initial_inventory_keeps_websocket_requests_responsive() {
-+    let temp = tempfile::tempdir().unwrap();
-+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let (cfg, _) = registry_config(
-+        temp.path(),
-+        format!("http://{}", listener.local_addr().unwrap()),
-+        3,
-+    );
-+    let runtime = test_runtime(&cfg);
-+    let scan = hold_project_enrichment(&runtime, &cfg).await;
-+    let initial = runtime.project_metadata_summaries(&cfg);
-+    let requests = [
-+        initial_scan_unregister_request(&cfg, &initial[0], "first-mutation"),
-+        initial_scan_unregister_request(&cfg, &initial[1], "second-mutation"),
-+    ];
-+    let session_runtime = runtime.clone();
-+    let session = tokio::spawn(async move {
-+        websocket_session_classified(&cfg, initial, "inst-test", &session_runtime).await
-+    });
-+    let (socket, _) = listener.accept().await.unwrap();
-+    let mut ws = tokio_tungstenite::accept_async(socket).await.unwrap();
-+    read_register(&mut ws).await;
-+    send_registered_ack_only(&mut ws).await;
-+    let before = next_inventory_page(&mut ws).await;
-+    assert_eq!(before.total_reported, 3);
-+
-+    let while_held = tokio::time::timeout(Duration::from_secs(3), async {
-+        for (index, request) in requests.into_iter().enumerate() {
-+            let request_id = request.request_id.clone();
-+            ws.send(WsMessage::Text(
-+                RunnerEnvelope::Request { request }
-+                    .to_json()
-+                    .unwrap()
-+                    .into(),
-+            ))
-+            .await
-+            .unwrap();
-+            let message = ws.next().await.unwrap().unwrap();
-+            match RunnerEnvelope::from_slice(message.into_text().unwrap().as_bytes()).unwrap() {
-+                RunnerEnvelope::Result { payload } => {
-+                    assert_eq!(payload.result.request_id, request_id);
-+                    assert_eq!(payload.result.exit_code, Some(0), "{payload:?}");
-+                }
-+                other => panic!("expected mutation result, got {}", other.kind()),
-+            }
-+            let expected_generation = (index + 1) as u64;
-+            while runtime.initial_project_scan.lock().unwrap().generation < expected_generation {
-+                tokio::task::yield_now().await;
-+            }
-+        }
-+        ws.send(WsMessage::Text(
-+            RunnerEnvelope::Ping { ts: 26 }.to_json().unwrap().into(),
-+        ))
-+        .await
-+        .unwrap();
-+        let pong = ws.next().await.unwrap().unwrap();
-+        assert!(matches!(
-+            RunnerEnvelope::from_slice(pong.into_text().unwrap().as_bytes()).unwrap(),
-+            RunnerEnvelope::Pong { ts: 26 }
-+        ));
-+    })
-+    .await;
-+    scan.release.send(()).unwrap();
-+    while_held.expect("a post-startup refresh must not block the next mutation or ping");
-+
-+    let enriched = tokio::time::timeout(Duration::from_secs(3), async {
-+        loop {
-+            let page = next_inventory_page(&mut ws).await;
-+            assert_eq!(project_ids(&page), ["project-0002"]);
-+            if page.projects[0].git_branch.as_deref() == Some("main") {
-+                break page;
-+            }
-+        }
-+    })
-+    .await
-+    .expect("the background scan must publish the latest catalog and Git details");
-+    assert!(enriched.snapshot_sequence > before.snapshot_sequence);
-+    assert_eq!(scan.enrichments.load(Ordering::SeqCst), 2);
-+
-+    runtime.request_shutdown_signal();
-+    let _ = ws.close(None).await;
-+    let _ = tokio::time::timeout(Duration::from_secs(3), session).await;
-+    assert!(runtime.shutdown().timed_out_phases.is_empty());
-+}
-+
- #[tokio::test]
- async fn reconnect_during_git_enrichment_gets_catalog_and_shares_the_one_worker() {
-     let temp = tempfile::tempdir().unwrap();
-```
-
-**File**: `crates/webcodex-runner/src/webcodex_runner/transport_tests/project_inventory.rs` (modified, +14/-11)
-```diff
-@@ -1,4 +1,3 @@
--
- #[test]
- fn project_inventory_pager_honors_count_byte_and_ack_boundaries() {
-     for count in [64usize, 65, 100, 256, 1024] {
-@@ -334,7 +333,6 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-         coordinator.handle_status(
-             transport,
-             inventory_status("in_progress", &generation_a, 100, page_a0.projects.len()),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -358,7 +356,7 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-             ),
-         )
-         .unwrap();
--        coordinator.refresh_from_current_projects(
-+        coordinator.refresh_from_project_metadata(
-             transport,
-             &cfg,
-             &runtime,
-@@ -387,6 +385,7 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-         // The authoritative dynamic projection can race after B/page0 and retire
-         // it too. A stale status is therefore the synchronization fence: abandon
-         // the old logical snapshot and re-observe project-registry as generation C.
-+        let scan_changes = runtime.project_inventory_changes();
-         coordinator.handle_status(
-             transport,
-             ShellProjectInventoryStatus {
-@@ -399,10 +398,21 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-                 max_summaries_per_page: PROJECT_INVENTORY_PAGE_MAX_SUMMARIES,
-                 max_serialized_bytes_per_page: PROJECT_INVENTORY_PAGE_MAX_SERIALIZED_BYTES,
-             },
--            &cfg,
-             &runtime,
-             &tx,
-         );
-+        assert!(scan_changes.has_changed().unwrap());
-+        let mut scan = runtime.initial_project_scan(&cfg).unwrap();
-+        let publication = runtime
-+            .next_project_scan_publication(&mut scan, None)
-+            .await
-+            .unwrap();
-+        coordinator.replace_projects(
-+            (*publication.projects).clone(),
-+            transport,
-+            &tx,
-+            "test_resnapshot",
-+        );
-         let page_c0 = match rx.recv().await {
-             Some(RunnerEnvelope::ProjectInventoryPage { page }) => page,
-             other => panic!("expected fresh generation C page 0, got {other:?}"),
-@@ -427,7 +437,6 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-         coordinator.handle_status(
-             transport,
-             inventory_status("in_progress", &generation_c, 101, page_c0.projects.len()),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -442,7 +451,6 @@ async fn streaming_stale_generation_resnapshots_current_projects_for_websocket_a
-         coordinator.handle_status(
-             transport,
-             inventory_status("complete", &generation_c, 101, 101),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -478,7 +486,6 @@ async fn streaming_delayed_success_ack_does_not_discard_current_sync() {
-         coordinator.handle_status(
-             transport,
-             inventory_status("in_progress", &generation_a, 100, page_a0.projects.len()),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -494,7 +501,6 @@ async fn streaming_delayed_success_ack_does_not_discard_current_sync() {
-         coordinator.handle_status(
-             transport,
-             inventory_status("in_progress", &generation_a, 100, page_a0.projects.len()),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -541,7 +547,6 @@ async fn streaming_delayed_success_ack_does_not_discard_current_sync() {
-                 max_summaries_per_page: PROJECT_INVENTORY_PAGE_MAX_SUMMARIES,
-                 max_serialized_bytes_per_page: PROJECT_INVENTORY_PAGE_MAX_SERIALIZED_BYTES,
-             },
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -552,7 +557,6 @@ async fn streaming_delayed_success_ack_does_not_discard_current_sync() {
-         coordinator.handle_status(
-             transport,
-             inventory_status("in_progress", &generation_a, 100, page_a0.projects.len()),
--            &cfg,
-             &runtime,
-             &tx,
-         );
-@@ -604,7 +608,6 @@ async fn streaming_permanent_inventory_error_does_not_fresh_resnapshot() {
-                 max_summaries_per_page: PROJECT_INVENTORY_PAGE_MAX_SUMMARIES,
-                 max_serialized_bytes_per_page: PROJECT_INVENTORY_PAGE_MAX_SERIALIZED_BYTES,
-             },
--            &cfg,
-             &runtime,
-             &tx,
-         );
-```
-
-**File**: `src/tool_runtime/projects.rs` (modified, +22/-3)
-```diff
-@@ -1242,11 +1242,30 @@ impl ToolRuntime {
-             match tokio::time::timeout(Duration::from_secs(PROJECT_OP_WAIT_SECS), rx).await {
-                 Ok(Ok(response)) => response,
-                 Ok(Err(_)) | Err(_) => {
--                    self.runner_registry.cancel_request(&request_id).await;
-+                    if self
-+                        .runner_registry
-+                        .cancel_request_dispatch_state(&request_id)
-+                        .await
-+                        == Some(false)
-+                    {
-+                        return ToolResult::err_with_output(
-+                            "project_operation_not_started",
-+                            json!({
-+                                "error_code": "project_operation_not_started",
-+                                "execution_state": "not_started",
-+                                "state_changed": false,
-+                            }),
-+                        );
-+                    }
-                     return ToolResult::err_with_output(
-                         "operation_indeterminate",
--                        json!({"error_code":"operation_indeterminate"}),
--                    );
-+                        json!({
-+                            "error_code": "operation_indeterminate",
-+                            "execution_state": "outcome_unknown",
-+                            "state_changed": null,
-+                        }),
-+                    )
-+                    .with_recovery(RecoveryKind::Reobserve);
-                 }
-             };
- 
-```
-
-**File**: `src/tool_runtime/projects/maintenance.rs` (modified, +39/-1)
-```diff
-@@ -8,6 +8,43 @@ pub(super) fn registered_git_summary(project: &RunnerProjectSummary) -> Value {
-         "source":"runner_inventory","freshness":"unverified"})
- }
- 
-+// The Server may run on a different OS. Compare DOS drive spellings to the
-+// Runner's verbatim drive path without resolving files or folding directory case.
-+fn registered_workspace_path_matches(registered: &str, requested: &str) -> bool {
-+    if registered == requested {
-+        return true;
-+    }
-+    fn drive_path(path: &str) -> Option<(u8, &str)> {
-+        let verbatim = path.strip_prefix(r"\\?\");
-+        let path = verbatim.unwrap_or(path);
-+        let [drive, b':', b'\\' | b'/', ..] = path.as_bytes() else {
-+            return None;
-+        };
-+        if !drive.is_ascii_alphabetic() || (verbatim.is_some() && path.contains('/')) {
-+            return None;
-+        }
-+        let tail = &path[3..];
-+        // Verbatim paths keep dots/spaces that the DOS form may interpret
-+        // differently. Leave unusual or traversing spellings to the Runner.
-+        if tail
-+            .split(['\\', '/'])
-+            .any(|part| part.ends_with(['.', ' ']) || part.contains([':', '*', '?']))
-+        {
-+            return None;
-+        }
-+        Some((drive.to_ascii_uppercase(), tail))
-+    }
-+    let (Some((registered_drive, registered_tail)), Some((requested_drive, requested_tail))) =
-+        (drive_path(registered), drive_path(requested))
-+    else {
-+        return false;
-+    };
-+    registered_drive == requested_drive
-+        && registered_tail
-+            .split(['\\', '/'])
-+            .eq(requested_tail.split(['\\', '/']))
-+}
-+
- impl ToolRuntime {
-     pub(crate) async fn resolve_workspace(
-         &self,
-@@ -52,7 +89,8 @@ impl ToolRuntime {
-             .iter()
-             .filter(|project| {
-                 let id = runner_project_runtime_id(&client_id, &project.id);
--                path.as_ref().is_none_or(|path| project.path == *path)
-+                path.as_ref()
-+                    .is_none_or(|path| registered_workspace_path_matches(&project.path, path))
-                     && query
-                         .as_deref()
-                         .is_none_or(|query| super::project_query_matches(query, &id, project))
-```
-
-**File**: `src/tool_runtime/tests/targeted_inventory.rs` (modified, +104/-0)
-```diff
-@@ -1475,6 +1475,110 @@ async fn workspace_resolution_never_creates_sessions_or_dispatches_and_does_not_
-         .is_none());
- }
- 
-+#[tokio::test]
-+async fn workspace_resolution_accepts_dos_spellings_of_registered_verbatim_drive_paths() {
-+    let runtime = test_runtime();
-+    let mut project = maintenance_project("training");
-+    project.path = r"\\?\C:\Projects\training".into();
-+    register_target_agent(&runtime, "windows", vec![project], None).await;
-+
-+    for path in [
-+        r"C:\Projects\training",
-+        "c:/Projects/training",
-+        r"\\?\C:\Projects\training",
-+    ] {
-+        let result = maintenance_call(
-+            &runtime,
-+            "resolve_workspace",
-+            json!({"client_id":"windows","path":path}),
-+        )
-+        .await;
-+        assert_eq!(result.output["resolution"], "resolved", "{path}");
-+        assert_eq!(
-+            result.output["workspace"]["project"],
-+            "agent:windows:training"
-+        );
-+        assert_eq!(
-+            result.output["workspace"]["path"],
-+            r"\\?\C:\Projects\training"
-+        );
-+    }
-+    for path in [
-+        r"D:\Projects\training",
-+        r"C:\Projects\..\Projects\training",
-+        r"C:\Projects\training.",
-+        r"\\.\C:\Projects\training",
-+        r"C:\Projects\Training",
-+    ] {
-+        let result = maintenance_call(
-+            &runtime,
-+            "resolve_workspace",
-+            json!({"client_id":"windows","path":path}),
-+        )
-+        .await;
-+        assert_eq!(result.output["resolution"], "not_found", "{path}");
-+    }
-+}
-+
-+#[tokio::test(start_paused = true)]
-+async fn project_registration_timeout_only_reports_no_effect_when_dispatch_is_ruled_out() {
-+    for dispatch in [false, true] {
-+        let runtime = test_runtime();
-+        register_target_agent(&runtime, "onboarding", vec![], None).await;
-+        let register = tokio::spawn({
-+            let runtime = runtime.clone();
-+            async move {
-+                let auth = bootstrap_auth_context();
-+                runtime
-+                    .register_project(
-+                        "onboarding".into(),
-+                        "existing".into(),
-+                        "Existing".into(),
-+                        "/srv/existing".into(),
-+                        None,
-+                        true,
-+                        false,
-+                        Some(&auth),
-+                    )
-+                    .await
-+            }
-+        });
-+
-+        let poll = || crate::runner_protocol::RunnerPollRequest {
-+            client_id: "onboarding".into(),
-+            runner_instance_id: "inst-onboarding".into(),
-+        };
-+        if dispatch {
-+            loop {
-+                assert!(!register.is_finished());
-+                if let Some(request) = runtime.runner_registry.poll(poll()).await.unwrap() {
-+                    assert_eq!(request.kind, "register_project");
-+                    break;
-+                }
-+                tokio::task::yield_now().await;
-+            }
-+        }
-+
-+        let result = register.await.unwrap();
-+        assert!(!result.success, "{result:?}");
-+        if dispatch {
-+            assert_eq!(result.output["error_code"], "operation_indeterminate");
-+            assert_eq!(result.output["execution_state"], "outcome_unknown");
-+            assert!(result.output["state_changed"].is_null());
-+        } else {
-+            assert_eq!(result.output["error_code"], "project_operation_not_started");
-+            assert_eq!(result.output["execution_state"], "not_started");
-+            assert_eq!(result.output["state_changed"], false);
-+        }
-+        assert!(runtime
-+            .runner_registry
-+            .poll(poll())
-+            .await
-+            .unwrap()
-+            .is_none());
-+    }
-+}
-+
- #[tokio::test]
- async fn workspace_resolution_does_not_claim_uniqueness_or_absence_during_inventory_sync() {
-     use crate::runner_protocol::ShellProjectInventoryPage;
-```
-
----
-
-### Incident Patch 2: `d9327074` (2026-11-26)
-**Commit Message**: fix(desktop): report incompatible Cloudflare status when configuration identity is missing (#1443)
-
-**File**: `apps/desktop/src-tauri/src/state/cloudflare_connections.rs` (modified, +36/-19)
-```diff
-@@ -57,6 +57,9 @@ impl CloudflareConnectionRequest {
- 
- #[derive(Debug, Clone, Serialize, Deserialize)]
- pub struct CloudflareConnectionStatus {
-+    // Older Servers omit this field. parse_status rejects the missing identity
-+    // before the observation can be displayed or used to authorize a mutation.
-+    #[serde(default)]
-     pub configuration_id: String,
-     pub profile_id: String,
-     pub server_instance_id: String,
-@@ -76,6 +79,29 @@ pub struct CloudflareConnectionStatus {
- }
- 
- impl CloudflareConnectionStatus {
-+    fn parse_status(bytes: &[u8], stage: &str, profile_id: &str) -> DesktopResult<Self> {
-+        let invalid = || unavailable_for(stage, profile_id, Some("invalid_response"));
-+        let status: Self = serde_json::from_slice(bytes).map_err(|_| invalid())?;
-+        if status.profile_id != profile_id
-+            || !matches!(
-+                status.lifecycle.as_str(),
-+                "stopped" | "starting" | "running" | "disconnected" | "error"
-+            )
-+        {
-+            return Err(invalid());
-+        }
-+        if status.configuration_id.is_empty() {
-+            return Err(DesktopError::new(
-+                "runtime_protocol_incompatible",
-+                "The local Server cannot identify the selected Cloudflare configuration",
-+                "Update the local Server to the Runtime bundled with this Desktop and refresh the connection.",
-+            )
-+            .with_stage(stage)
-+            .with_operation_context(None, None, Some(profile_id), None));
-+        }
-+        Ok(status)
-+    }
-+
-     fn check_materialized_revision(&mut self, revision: u64) {
-         // Windows Server reads protected materializations. Preserve the observed
-         // generation for Stop while the user applies the newer catalog revision.
-@@ -242,16 +268,12 @@ impl AppState {
-                     &status_request,
-                 )
-                 .await?;
--                let observed: CloudflareConnectionStatus = serde_json::from_slice(&observed)
--                    .map_err(|_| {
--                        unavailable_for(
--                            request.stage(),
--                            &profile.profile_id,
--                            Some("invalid_response"),
--                        )
--                    })?;
-+                let observed = CloudflareConnectionStatus::parse_status(
-+                    &observed,
-+                    status_request.stage(),
-+                    &profile.profile_id,
-+                )?;
-                 if observed.configuration_id != profile.configuration_id
--                    || observed.profile_id != profile.profile_id
-                     || observed.server_instance_id != expected_instance
-                     || expected_revision.is_some_and(|revision| {
-                         revision != observed.configured_revision || revision != profile.revision
-@@ -306,16 +328,11 @@ impl AppState {
-                 },
-             ));
-         }
--        let mut status: CloudflareConnectionStatus =
--            serde_json::from_slice(&bytes).map_err(|_| unavailable())?;
--        if status.profile_id != request.profile_id()
--            || !matches!(
--                status.lifecycle.as_str(),
--                "stopped" | "starting" | "running" | "disconnected" | "error"
--            )
--        {
--            return Err(unavailable());
--        }
-+        let mut status = CloudflareConnectionStatus::parse_status(
-+            &bytes,
-+            request.stage(),
-+            request.profile_id(),
-+        )?;
-         if status.configuration_id != profile.configuration_id {
-             return Err(stale_revision(request.stage(), &profile.profile_id));
-         }
-```
-
-**File**: `apps/desktop/src-tauri/src/state/cloudflare_connections/tests.rs` (modified, +39/-0)
-```diff
-@@ -62,6 +62,45 @@ fn cloudflare_native_actions_require_selected_instance_and_secret_free_status()
-     assert_eq!(active.process_generation, 2);
- }
- 
++#[cfg(windows)]
 +#[test]
-+fn cloudflare_native_status_requires_server_configuration_identity() {
-+    let mut wire = serde_json::json!({
-+        "profile_id": "profile", "server_instance_id": "instance",
-+        "process_generation": 0, "lifecycle": "stopped", "oauth_configured": false,
-+        "observed_authorization": false, "configured_revision": 1,
-+        "local_target": "http://127.0.0.1:1234"
-+    });
-+    let parse = |wire: &serde_json::Value| {
-+        CloudflareConnectionStatus::parse_status(
-+            &serde_json::to_vec(wire).unwrap(),
-+            "cloudflare_status",
-+            "profile",
-+        )
++fn native_peer_waits_for_idle_accepted_socket_instead_of_spinning() {
++    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
++    listener.set_nonblocking(true).unwrap();
++    let address = listener.local_addr().unwrap();
++    let mut client = TcpStream::connect(address).unwrap();
++    client
++        .set_read_timeout(Some(Duration::from_secs(3)))
++        .unwrap();
++    client
++        .set_write_timeout(Some(Duration::from_secs(3)))
++        .unwrap();
++    let (stream, _) = listener.accept().unwrap();
++    let probe = stream.try_clone().unwrap();
++    // Bound this observation even if peer setup regresses. Socket mode is
++    // shared by the clone, so this reads the real worker's configured behavior.
++    probe
++        .set_read_timeout(Some(Duration::from_millis(50)))
++        .unwrap();
++    let config = Rendezvous {
++        version: VERSION,
++        address,
++        instance: "idle-peer-fixture".into(),
++        token: "fixture-secret".into(),
 +    };
-+    let error = parse(&wire).unwrap_err();
-+    assert_eq!(error.code, "runtime_protocol_incompatible");
-+    let diagnostic = error.diagnostic_ref().unwrap();
-+    assert_eq!(diagnostic.stage.as_deref(), Some("cloudflare_status"));
-+    assert_eq!(diagnostic.resource_id.as_deref(), Some("profile"));
-+    assert!(!diagnostic.retry_allowed);
-+    wire["configuration_id"] = serde_json::json!("");
++    let state = Arc::new(State {
++        registry: Mutex::new(Registry::default()),
++        stop: AtomicBool::new(false),
++        next_channel: AtomicU64::new(1),
++        queued: Arc::new(AtomicUsize::new(0)),
++    });
++    let worker_state = state.clone();
++    let hello = json!({
++        "version": VERSION,
++        "instance": config.instance,
++        "token": config.token,
++        "extension_id": EXTENSION_ID,
++        "parent_pid": std::process::id(),
++    });
++    let worker = std::thread::spawn(move || serve_peer(stream, &config, &worker_state));
++    protocol::write_frame(&mut client, &hello, 4096, false).unwrap();
++    let ready = protocol::read_blocking(&mut client, MAX_RESPONSE, false).unwrap();
++    assert_eq!(ready["kind"], "ready");
++
++    // The ready acknowledgement proves production setup finished. No further
++    // frame is sent; on Windows blocking waits time out, whereas inherited
++    // nonblocking mode immediately returns WouldBlock.
++    let idle = probe.peek(&mut [0]);
++    drop(probe);
++    drop(client);
++    state.stop.store(true, Ordering::Release);
++    worker.join().unwrap();
 +    assert_eq!(
-+        parse(&wire).unwrap_err().code,
-+        "runtime_protocol_incompatible"
-+    );
-+    wire["configuration_id"] = serde_json::json!("configuration");
-+    assert_eq!(parse(&wire).unwrap().configuration_id, "configuration");
-+    wire["profile_id"] = serde_json::json!("another-profile");
-+    assert_eq!(
-+        parse(&wire).unwrap_err().code,
-+        "cloudflare_control_unavailable"
-+    );
-+    assert_eq!(
-+        parse(&serde_json::json!({})).unwrap_err().code,
-+        "cloudflare_control_unavailable"
++        idle.unwrap_err().kind(),
++        io::ErrorKind::TimedOut,
++        "an idle native peer must wait for its socket timeout, not busy-poll",
 +    );
 +}
 +
- #[tokio::test]
- async fn cloudflare_native_http_rejects_redirect_and_does_not_expose_response_body() {
-     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+ #[test]
+ fn unauthenticated_socket_cannot_offer_tabs_and_native_owner_is_exclusive() {
+     let (_temp, root) = root();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1447** (2026-11-27): fix(browser): prevent idle Windows native peers from busy-spinning (@lucha0404)
+- **PR #1446** (2026-11-27): Resume v0.5.0 Workflow Sessions transparently after upgrade (@yyjeqhc)
 - **PR #1443** (2026-11-26): fix(desktop): report incompatible Cloudflare status when configuration identity is missing (@Corden404)
 - **PR #1442** (2026-11-26): fix(projects): prevent Runner inventory refresh from blocking project onboarding (@deefery)
 - **PR #1440** (2026-11-24): docs: distinguish Windows Desktop and service startup (@cloudgpuapp)
 - **PR #1437** (2026-11-23): perf(desktop): accelerate Windows status checks and acknowledge lifecycle actions (@swjnxyf)
-- **PR #1436** (2026-11-23): chore: bump WebCodex and Desktop versions to 0.5.1 (@swjnxyf)
-- **PR #1435** (2026-11-23): Desktop 一键准备本机环境、Windows 无控制台任务和 Gemini 连接 (@yyjeqhc)
 
 ---
 
@@ -2961,65 +2342,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. projects): prevent Runner inventory refresh from blocking project onboarding
+## X. browser): prevent idle Windows native peers from busy-spinning
 
 **RULE**:
-When implementing operations in `crates/webcodex-runner/src/webcodex_runner/transport/project_inventory.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/webcodex-browser/src/bridge.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa95c2b6`: projects): prevent Runner inventory refresh from blocking project onboarding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19edca39`: browser): prevent idle Windows native peers from busy-spinning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/webcodex-runner/src/webcodex_runner/transport/project_inventory.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/webcodex-browser/src/bridge.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub(super) supported: bool,
-    pub(super) fn replace_projects(
-            ProjectInventoryStatusAction::FreshResnapshot => {
-                self.retry_at = None;
-                if self.supported {
-                    runtime.invalidate_project_inventory();
-                }
-            }
+    // Windows inherits the listener's nonblocking mode. Idle peer reads must
+    // wait for their timeout, not retry WouldBlock continuously.
+    if stream.set_nonblocking(false).is_err()
+        || stream
+            .set_read_timeout(Some(Duration::from_millis(50)))
+            .is_err()
+        || stream
+            .set_write_timeout(Some(Duration::from_millis(200)))
+            .is_err()
+        || stream.set_nodelay(true).is_err()
+    {
+        return;
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    supported: bool,
-    project_cache: RunnerProjectCache,
-            project_cache: RunnerProjectCache::default(),
-    pub(super) fn refresh_from_current_projects(
-        &mut self,
-        transport: StreamTransport,
-        cfg: &RunnerConfig,
-        runtime: &RunnerRuntimeState,
-        out_tx: &tokio::sync::mpsc::Sender<RunnerEnvelope>,
-        reason_code: &str,
-    ) {
-        if !self.supported {
-            return;
-        }
-        self.project_cache.invalidate();
-        let projects = runtime.project_summaries(&mut self.project_cache, cfg);
-        self.replace_projects(projects, transport, out_tx, reason_code);
-    }
-
-    fn replace_projects(
-        cfg: &RunnerConfig,
-            ProjectInventoryStatusAction::FreshResnapshot => self.refresh_from_current_projects(
-                transport,
-                cfg,
-                runtime,
-                out_tx,
-                "project_inventory_server_invalidated_snapshot",
-            ),
+    let _ = stream.set_read_timeout(Some(Duration::from_millis(50)));
+    let _ = stream.set_write_timeout(Some(Duration::from_millis(200)));
+    let _ = stream.set_nodelay(true);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa95c2b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19edca39` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

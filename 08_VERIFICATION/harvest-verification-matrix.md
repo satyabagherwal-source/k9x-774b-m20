@@ -13782,3 +13782,6 @@
 | `CYCLE-20261127-YOXK` | `2026-11-27T12:12:20.792Z` | `strata-engine/Inkling-2-Mini-Strata` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md` | Yes (`31faa4bf...`) |
 | `CYCLE-20261127-YUTD` | `2026-11-27T12:12:28.417Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10895` | Yes (`7a36cdf2...`) |
 | `CYCLE-20261127-YXPB` | `2026-11-27T12:12:32.159Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10896` | Yes (`79fe0f6c...`) |
+| `CYCLE-20261127-A1AF` | `2026-11-27T12:21:10.023Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10897` | Yes (`d9d130e1...`) |
+| `CYCLE-20261127-A5GO` | `2026-11-27T12:21:15.432Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10898` | Yes (`2de16b4c...`) |
+| `CYCLE-20261127-ABHR` | `2026-11-27T12:21:23.247Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10899` | Yes (`58369d31...`) |

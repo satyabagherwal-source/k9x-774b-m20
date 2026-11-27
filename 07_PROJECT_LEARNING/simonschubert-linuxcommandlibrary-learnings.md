@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source**: github ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
-> **Source Version**: `6bf6a477`  
+> **Source Version**: `0f0c3c6d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T03:28:26.833Z  
+> **Timestamp**: 2026-11-27T12:21:14.193Z  
 > **Learning ID**: `learn-github-simonschubert-linuxcommandlibrary`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SimonSchubert/LinuxCommandLibrary](https://github.com/SimonSchubert/LinuxCommandLibrary))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:28:26.825Z  
+> **Harvest Timestamp**: 2026-11-27T12:21:14.188Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2130 stars
+- **Stars / Engagement**: 2135 stars
 
 ---
 
@@ -320,6 +320,426 @@ fun rememberSearchState(initialText: String = ""): SearchState {
 
 ```
 
+### Core Architecture Module: `linuxApp/src/LclCore.cpp`
+```
+#include "LclCore.h"
+
+#include <algorithm>
+#include <fstream>
+#include <iterator>
+#include <string_view>
+
+namespace lcl {
+
+namespace {
+
+using std::string_view;
+constexpr auto npos = string_view::npos;
+
+bool isSpace(char c)
+{
+    return c == ' ' || (c >= '\t' && c <= '\r') || (c >= 0x1C && c <= 0x1F);
+}
+
+string_view trim(string_view s)
+{
+    while (!s.empty() && isSpace(s.front()))
+        s.remove_prefix(1);
+    while (!s.empty() && isSpace(s.back()))
+        s.remove_suffix(1);
+    return s;
+}
+
+bool startsWith(string_view s, string_view prefix)
+{
+    return s.substr(0, prefix.size()) == prefix;
+}
+
+bool endsWith(string_view s, string_view suffix)
+{
+    return s.size() >= suffix.size() && s.substr(s.size() - suffix.size()) == suffix;
+}
+
+/** Splits on \n, \r\n and \r. Always returns at least one line. */
+std::vector<string_view> lines(string_view s)
+{
+    std::vector<string_view> out;
+    size_t start = 0;
+    for (size_t i = 0; i < s.size(); ++i) {
+        if (s[i] != '\n' && s[i] != '\r')
+            continue;
+        out.push_back(s.substr(start, i - start));
+        if (s[i] == '\r' && i + 1 < s.size() && s[i + 1] == '\n')
+            ++i;
+        start = i + 1;
+    }
+    out.push_back(s.substr(start));
+    return out;
+}
+
+/** Length in UTF-16 units, which is what the UI's own string lengths are measured in. */
+int utf16Length(string_view s)
+{
+    int n = 0;
+    for (unsigned char c : s) {
+        if ((c & 0xC0) != 0x80)
+            ++n;
+        if (c >= 0xF0)
+            ++n;
+    }
+    return n;
+}
+
+std::string asciiCase(string_view s, bool upper)
+{
+    std::string out(s);
+    for (char& c : out) {
+        if (upper && c >= 'a' && c <= 'z')
+            c -= 32;
+        else if (!upper && c >= 'A' && c <= 'Z')
+            c += 32;
+    }
+    return out;
+}
+
+void replaceAll(std::string& s, string_view from, string_view to)
+{
+    for (size_t at = s.find(from); at != std::string::npos; at = s.find(from, at + to.size()))
+        s.replace(at, from.size(), to);
+}
+
+/**
+ * Matches `delim`, one or more characters other than `stop`, then `delim` again,
+ * starting exactly at `at`. Returns the index past the match, or npos.
+ */
+size_t matchDelimited(string_view s, size_t at, string_view delim, char stop, string_view& content)
+{
+    if (s.substr(at, delim.size()) != delim)
+        return npos;
+    const size_t from = at + delim.size();
+    size_t to = from;
+    while (to < s.size() && s[to] != stop)
+        ++to;
+    if (to == from || s.substr(to, delim.size()) != delim)
+        return npos;
+    content = s.substr(from, to - from);
+    return to + delim.size();
+}
+
+/** Matches `[label](target)` starting exactly at `at`. Returns the index past it, or npos. */
+size_t matchLink(string_view s, size_t at, string_view& label, string_view& target)
+{
+    if (at >= s.size() || s[at] != '[')
+        return npos;
+    const size_t close = s.find(']', at + 1);
+    if (close == npos || close == at + 1 || close + 1 >= s.size() || s[close + 1] != '(')
+        return npos;
+    const size_t end = s.find(')', close + 2);
+    if (end == npos || end == close + 2)
+        return npos;
+    label = s.substr(at + 1, close - at - 1);
+    target = s.substr(close + 2, end - close - 2);
+    return end + 1;
+}
+
+struct Inline {
+    std::string text;
+    int weight = 0;
+
+    void plain(string_view piece)
+    {
+        text += piece;
+        weight += utf16Length(piece);
+    }
+
+    void man(string_view name)
+    {
+        text.append("[").append(name).append("](man:").append(name).append(")");
+        weight += utf16Length(name);
+    }
+};
+
+/** Inline code inside a table cell: shown as plain text, except for man page links. */
+void appendInlineCode(string_view code, Inline& out)
+{
+    size_t plainFrom = 0;
+    for (size_t i = 0; i < code.size();) {
+        string_view label, target;
+        const size_t end = matchLink(code, i, label, target);
+        if (end == npos || !startsWith(target, "/man/") || target.size() == 5) {
+            ++i;
+            continue;
+        }
+        out.plain(code.substr(plainFrom, i - plainFrom));
+        out.man(target.substr(5));
+        i = plainFrom = end;
+    }
+    out.plain(code.substr(plainFrom));
+}
+
+/** **bold**, _italic_ and, in table cells, `code`. Whichever starts first wins. */
+Inline parseInline(string_view text, bool withCode)
+{
+    Inline out;
+    size_t plainFrom = 0;
+    for (size_t i = 0; i < text.size();) {
+        const char c = text[i];
+        string_view content;
+        size_t end = npos;
+        if (c == '*')
+            end = matchDelimited(text, i, "**", '*', content);
+        else if (c == '_')
+            end = matchDelimited(text, i, "_", '_', content);
+        else if (c == '`' && withCode)
+            end = matchDelimited(text, i, "`", '`', content);
+        if (end == npos) {
+            ++i;
+            continue;
+        }
+        out.plain(text.substr(plainFrom, i - plainFrom));
+        if (c == '`') {
+            appendInlineCode(content, out);
+        } else {
+            const string_view mark = c == '*' ? "**" : "_";
+            out.text.append(mark).append(content).append(mark);
+            out.weight += utf16Length(content);
+        }
+        i = plainFrom = end;
+    }
+    out.plain(text.substr(plainFrom));
+    return out;
+}
+
+/**
+ * A code line. Links inside it are the only Markdown: man page cross references become
+ * `man:` links, http(s) targets stay links, anything else falls back to its label.
+ */
+Block codeBlock(string_view code)
+{
+    std::string command;
+    std::string text;
+    size_t plainFrom = 0;
+    for (size_t i = 0; i < code.size();) {
+        string_view label, target;
+        const size_t end = matchLink(code, i, label, target);
+        if (end == npos) {
+            ++i;
+            continue;
+        }
+        const string_view before = code.substr(plainFrom, i - plainFrom);
+        command.append(before).append(label);
+        text += before;
+        if (startsWith(target, "/man/")) {
+            const string_view name = target.substr(5);
+            text.append("[").append(name).append("](man:").append(name).append(")");
+        } else if (startsWith(target, "http://") || startsWith(target, "https://")) {
+            text.append("[").append(label).append("](").append(target).append(")");
+        } else {
+            text += label;
+        }
+        i = plainFrom = end;
+    }
+    command += code.substr(plainFrom);
+    text += code.substr(plainFrom);
+
+    text = std::string(trim(text));
+    if (text.empty())
+        text = "`" + command + "`";
+    return { "code", std::move(text), utf16Length(command) };
+}
+
+std::vector<std::string> splitTableRow(string_view line)
+{
+    // A placeholder keeps escaped pipes (\|) out of the way of the split.
+    static const std::string placeholder("\0PIPE\0", 6);
+    std::string row(trim(line));
+    replaceAll(row, "\\|", placeholder);
+    string_view rest = row;
+    if (rest.size() >= 2 && rest.front() == '|' && rest.back() == '|')
+        rest = rest.substr(1, rest.size() - 2);
+
+    std::vector<std::string> cells;
+    for (;;) {
+        const size_t bar = rest.find('|');
+        std::string cell(rest.substr(0, bar));
+        replaceAll(cell, placeholder, "|");
+        cells.emplace_back(trim(cell));
+        if (bar == npos)
+            return cells;
+        rest.remove_prefix(bar + 1);
+    }
+}
+
+bool isTableLine(string_view trimmed)
+{
+    return startsWith(trimmed, "|") && endsWith(trimmed, "|");
+}
+
+void appendTableRow(string_view line, Block& table)
+{
+    if (!table.text.empty())
+        table.text += '\n';
+    table.text += '|';
+    for (const std::string& cell : splitTableRow(line)) {
+        const Inline parsed = parseInline(cell, true);
+        table.text.append(" ").append(parsed.text).append(" |");
+        table.weight += parsed.weight;
+    }
+}
+
+/** `rows` is the header row, the divider, then the body. Fewer than two is not a table. */
+bool tableBlock(const std::vector<string_view>& rows, Block& table)
+{
+    if (rows.size() < 2)
+        return false;
+    table = { "table", {}, 0 };
+    appendTableRow(rows[0], table);
+    table.text += "\n|";
+    for (size_t i = splitTableRow(rows[0]).size(); i > 0; --i)
+        table.text += " --- |";
+    for (size_t i = 2; i < rows.size(); ++i) {
+        // Stray divider rows: nothing but pipes, dashes and spaces.
+        const string_view row = trim(rows[i]);
+        const bool divider = std::all_of(row.begin(), row.end(), [](char c) { return c == '|' || c == '-' || isSpace(c); });
+        if (!divider)
+            appendTableRow(rows[i], table);
+    }
+    return true;
+}
+
+} // namespace
+
+std::vector<std::pair<std::string, std::string>> splitByHeaders(const std::string& content, const std::string& prefix)
+{
+    std::vector<std::pair<std::string, std::string>> sections;
+    bool insideCode = false;
+    bool open = false;
+    std::string title;
+    std::string body;
+    const auto flush = [&] {
+        if (open)
+            sections.emplace_back(title, std::string(trim(body)));
+    };
+
+    for (const string_view line : lines(content)) {
+        const string_view trimmed = trim(line);
+        // Only a fence on its own toggles a block: ```code``` opens and closes on one line.
+        if (startsWith(trimmed, "```") && trimmed.find("```", 3) == npos)
+            insideCode = !insideCode;
+
+        if (!insideCode && startsWith(line, prefix)) {
+            flush();
+            open = true;
+            title = std::string(trim(line.substr(prefix.size())));
+            body.clear();
+        } else if (open) {
+            body.append(line).append("\n");
+        }
+    }
+    flush();
+    return sections;
+}
+
+std::vector<Block> parseContent(const std::string& content)
+{
+    std::vector<Block> blocks;
+    const std::vector<string_view> all = lines(content);
+    size_t i = 0;
+    while (i < all.size()) {
+        const string_view line = trim(all[i]);
+
+        if (startsWith(line, "<!--")) {
+            // Hidden metadata such as <!-- verified: 2026-06-09 -->, possibly multi-line.
+            if (!endsWith(line
+```
+
+### Core Architecture Module: `linuxApp/src/LclCore.h`
+```
+#pragma once
+
+#include <string>
+#include <utility>
+#include <vector>
+
+/*
+ * The content layer of the Qt app: reads the Markdown assets and turns them into the
+ * rows the UI shows. Plain standard C++ with UTF-8 strings and no Qt, so it builds and
+ * tests on its own.
+ *
+ * This is a port of the Kotlin MarkdownParser and repositories in :common and
+ * :viewmodels, which the mobile and desktop apps still use. The two must agree on what
+ * a page parses to, so a change to the Markdown dialect has to land in both.
+ */
+namespace lcl {
+
+/** One rendered block of a section, group or tip. */
+struct Block {
+    /** "text", "quote", "code" or "table", so the UI can style them differently. */
+    const char* kind;
+    /** Markdown for Qt's Text.MarkdownText. Man pages are linked as `man:<name>`. */
+    std::string text;
+    /** Visible characters (UTF-16 units), for sizing without rendering. */
+    int weight;
+};
+
+/** A command section, a basics group or a tip: a title over a list of blocks. */
+struct Titled {
+    std::string title;
+    std::vector<Block> blocks;
+};
+
+struct Category {
+    std::string id;
+    std::string title;
+};
+
+/** Splits on lines starting with `prefix` ("# " or "## "), ignoring fenced code. */
+std::vector<std::pair<std::string, std::string>> splitByHeaders(const std::string& content, const std::string& prefix);
+
+/** Parses the body under a header into blocks. */
+std::vector<Block> parseContent(const std::string& content);
+
+/** Where a command section sorts: TLDR first, SEE ALSO and RESOURCES last. */
+int sectionSortPriority(const std::string& title);
+
+/** Visible size of a tip card: its title plus all of its blocks. */
+int weight(const Titled& item);
+
+class Library {
+public:
+    /** `assetsDir` holds commands/, basics/ and tips.md. */
+    explicit Library(std::string assetsDir);
+
+    /** Every command name, sorted. */
+    const std::vector<std::string>& commands();
+    /** Names containing `query`: exact match first, then prefix matches, then the rest. */
+    std::vector<std::string> search(const std::string& query);
+    std::vector<Titled> sections(const std::string& command) const;
+
+    /** Basics categories in display order. */
+    const std::vector<Category>& categories();
+    std::vector<Titled> groups(const std::string& categoryId) const;
+
+    const std::vector<Titled>& tips();
+
+private:
+    bool read(const std::string& path, std::string& out) const;
+    std::vector<std::string> list(const std::string& dir) const;
+
+    std::string m_dir;
+    std::vector<std::string> m_commands;
+    std::vector<std::string> m_lowerCommands;
+    std::vector<Category> m_categories;
+    std::vector<Titled> m_tips;
+    bool m_commandsLoaded = false;
+    bool m_categoriesLoaded = false;
+    bool m_tipsLoaded = false;
+};
+
+} // namespace lcl
+
+```
+
 ### Core Architecture Module: `viewmodels/src/commonMain/kotlin/com/linuxcommandlibrary/app/ui/screens/basicgroups/BasicGroupsUiState.kt`
 ```
 package com.linuxcommandlibrary.app.ui.screens.basicgroups
@@ -386,91 +806,6 @@ data class SearchUiState(
     val filteredCommands: ImmutableList<CommandInfo> = persistentListOf(),
     val filteredBasicGroups: ImmutableList<BasicGroupMatch> = persistentListOf(),
 )
-
-```
-
-### Core Architecture Module: `viewmodels/src/linuxMain/kotlin/com/linuxcommandlibrary/app/nativeapi/MarkdownRenderer.kt`
-```
-package com.linuxcommandlibrary.app.nativeapi
-
-import com.linuxcommandlibrary.shared.CommandElement
-import com.linuxcommandlibrary.shared.TextElement
-import com.linuxcommandlibrary.shared.TipSectionElement
-
-/*
- * Renders parsed basics/tips content back to Markdown for Qt's Text.MarkdownText.
- *
- * Commands already ship as Markdown and are passed through untouched, but basics and
- * tips only exist as parsed element trees. Serialising them here keeps the C boundary
- * to plain strings instead of exposing the whole sealed hierarchy through the header.
- *
- * Man pages and links become `man:` / `lcl:` URLs so QML's onLinkActivated can route
- * them without needing to know how they were encoded.
- */
-
-/** Block kind, so the UI can style code and quotes differently from prose. */
-internal fun TipSectionElement.kind(): String = when (this) {
-    is TipSectionElement.Text -> "text"
-    is TipSectionElement.Blockquote -> "quote"
-    is TipSectionElement.Code -> "code"
-    is TipSectionElement.Table -> "table"
-}
-
-internal fun TipSectionElement.toMarkdown(): String = when (this) {
-    is TipSectionElement.Text -> elements.inline()
-    is TipSectionElement.Blockquote -> "> " + elements.inline()
-    is TipSectionElement.Code -> elements.commandLine().ifBlank { "`$command`" }
-    is TipSectionElement.Table -> table()
-}
-
-/**
- * Character count of the rendered element, without rendering it. Used to balance the
- * tip card columns, which otherwise had to build every tip's Markdown just to measure it.
- */
-internal fun TipSectionElement.weight(): Int = when (this) {
-    is TipSectionElement.Text -> elements.textLength()
-    is TipSectionElement.Blockquote -> elements.textLength()
-    is TipSectionElement.Code -> command.length
-    is TipSectionElement.Table -> headers.sumOf { it.textLength() } + rows.sumOf { row -> row.sumOf { it.textLength() } }
-}
-
-private fun List<TextElement>.textLength(): Int = sumOf { element ->
-    when (element) {
-        is TextElement.Plain -> element.text.length
-        is TextElement.Bold -> element.text.length
-        is TextElement.Italic -> element.text.length
-        is TextElement.Man -> element.man.length
-        is TextElement.Link -> element.text.length
-    }
-}
-
-private fun List<TextElement>.inline(): String = joinToString("") { element ->
-    when (element) {
-        is TextElement.Plain -> element.text
-        is TextElement.Bold -> "**${element.text}**"
-        is TextElement.Italic -> "_${element.text}_"
-        is TextElement.Man -> "[${element.man}](man:${element.man})"
-        is TextElement.Link -> "[${element.text}](lcl:${element.action})"
-    }
-}
-
-private fun List<CommandElement>.commandLine(): String = joinToString("") { element ->
-    when (element) {
-        is CommandElement.Text -> element.text
-        is CommandElement.Man -> "[${element.man}](man:${element.man})"
-        is CommandElement.Url -> "[${element.command}](${element.url})"
-    }
-}.trim()
-
-private fun TipSectionElement.Table.table(): String {
-    if (headers.isEmpty()) return ""
-    val head = headers.joinToString(" | ", prefix = "| ", postfix = " |") { it.inline() }
-    val divider = headers.joinToString(" | ", prefix = "| ", postfix = " |") { "---" }
-    val body = rows.joinToString("\n") { row ->
-        row.joinToString(" | ", prefix = "| ", postfix = " |") { it.inline() }
-    }
-    return listOf(head, divider, body).filter { it.isNotBlank() }.joinToString("\n")
-}
 
 ```
 
@@ -715,118 +1050,6 @@ object ContentFormatter {
 
 ```
 
-### Core Architecture Module: `cli/src/commonMain/kotlin/com/linuxcommandlibrary/nativecli/Main.kt`
-```
-package com.linuxcommandlibrary.nativecli
-
-import com.github.ajalt.mordant.terminal.Terminal
-import com.linuxcommandlibrary.nativecli.data.DataRepository
-import com.linuxcommandlibrary.shared.Version
-
-fun main(args: Array<String>) {
-    val terminal = Terminal()
-
-    when {
-        args.isEmpty() -> {
-            // Interactive mode
-            val app = TuiApp(terminal)
-            app.run()
-        }
-
-        args[0] == "--help" || args[0] == "-h" -> {
-            showHelp(terminal)
-        }
-
-        args[0] == "--version" || args[0] == "-v" -> {
-            terminal.println("Linux Command Library v${Version.APP_VERSION}")
-        }
-
-        args[0] == "--list" || args[0] == "-l" -> {
-            // List all commands
-            DataRepository.getCommandNames().forEach { name ->
-                terminal.println(name)
-            }
-        }
-
-        else -> {
-            // Direct command access: lcl grep
-            val commandName = args[0].lowercase()
-            val commands = DataRepository.getCommandNames()
-
-            // Check for exact match
-            val exactMatch = commands.find { it.lowercase() == commandName }
-            if (exactMatch != null) {
-                // Show command details directly (non-interactive)
-                showCommandNonInteractive(terminal, exactMatch)
-            } else {
-                // Try fuzzy search
-                val matches = DataRepository.getCommandsByQuery(commandName).take(10)
-                if (matches.isNotEmpty()) {
-                    if (matches.size == 1) {
-                        // Single match, show it
-                        showCommandNonInteractive(terminal, matches[0].name)
-                    } else {
-                        // Multiple matches, start interactive with search pre-filled
-                        terminal.println("Multiple commands found for '$commandName':")
-                        matches.forEachIndexed { index, cmd ->
-                            terminal.println("  ${index + 1}. ${cmd.name}")
-                        }
-                        terminal.println()
-                        terminal.println("Run 'lcl <command>' with an exact name, or run 'lcl' for interactive mode.")
-                    }
-                } else {
-                    terminal.println("Command not found: $commandName")
-                    terminal.println("Run 'lcl --list' to see all available commands.")
-                }
-            }
-        }
-    }
-}
-
-private fun showHelp(terminal: Terminal) {
-    terminal.println(
-        """
-Linux Command Library - Native CLI
-
-Usage:
-  lcl                    Start interactive mode
-  lcl <command>          Show details for a specific command
-  lcl --list, -l         List all available commands
-  lcl --version, -v      Show version
-  lcl --help, -h         Show this help
-
-Interactive Mode Controls:
-  Arrow keys / j/k       Navigate up/down
-  Enter                  Select item
-  Esc / q                Go back / Exit
-  Page Up/Down           Scroll pages
-  Home / End             Jump to start/end
-  Type characters        Search (in search screen)
-
-Examples:
-  lcl                    # Start interactive browser
-  lcl grep               # Show grep command details
-  lcl --list | grep net  # Find network-related commands
-        """.trimIndent(),
-    )
-}
-
-private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
-    val sections = DataRepository.getCommandSections(commandName)
-
-    terminal.println()
-    terminal.println(Theme.sectionTitle(commandName))
-    terminal.println()
-
-    sections.forEach { section ->
-        terminal.println(Theme.header(section.title))
-        terminal.println(ContentFormatter.format(section.title, section.content))
-        terminal.println()
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -854,503 +1077,803 @@ private fun showCommandNonInteractive(terminal: Terminal, commandName: String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bf6a477` (2026-11-23)
-**Commit Message**: Add commands
+### Incident Patch 1: `37095a4e` (2026-11-26)
+**Commit Message**: Port Linux app content layer to C++
 
-**File**: `assets/commands/index.txt` (modified, +5/-0)
+**File**: `.github/workflows/android.yml` (modified, +2/-47)
 ```diff
-@@ -8345,6 +8345,7 @@ tlmgr-dump-tlpdb.md
- tlmgr-generate.md
- tlmgr-gui.md
- tlmgr-info.md
-+tlmgr-init-usertree.md
- tlmgr-install.md
- tlmgr-key.md
- tlmgr-option.md
-@@ -8594,11 +8595,14 @@ ufw-delete.md
- ufw-deny.md
- ufw-disable.md
- ufw-enable.md
-+ufw-insert.md
- ufw-limit.md
- ufw-logging.md
-+ufw-prepend.md
- ufw-reject.md
- ufw-reload.md
- ufw-reset.md
-+ufw-route.md
- ufw-show.md
- ufw-status.md
- ufw-version.md
-@@ -9393,6 +9397,7 @@ zcomplete.md
- zdb.md
- zdiff.md
- zdump.md
-+zean.md
- zebra.md
- zed.md
- zeditor.md
+@@ -258,54 +258,15 @@ jobs:
+           name: linux-tar-package
+           path: LinuxCommandLibrary-linux-x86_64.tar.gz
+ 
+-  # Kotlin/Native cannot run on linux-aarch64 hosts (only linux-x64, windows-x64,
+-  # and macOS). Cross-compile both shared libraries here, same as cli-linux.
+-  linux-gui-libs:
+-    name: Build Linux Qt native libraries
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-      - name: Setup JDK
+-        uses: actions/setup-java@v4
+-        with:
+-          distribution: temurin
+-          java-version: "21"
+-      - name: Set execution flag for gradlew
+-        run: chmod +x gradlew
+-      - name: Build Kotlin/Native shared libraries
+-        run: |
+-          ./gradlew :viewmodels:linkReleaseSharedLinuxX64 :viewmodels:linkReleaseSharedLinuxArm64 --stacktrace
+-          test -f viewmodels/build/bin/linuxX64/releaseShared/liblcl.so
+-          test -f viewmodels/build/bin/linuxX64/releaseShared/liblcl_api.h
+-          test -f viewmodels/build/bin/linuxArm64/releaseShared/liblcl.so
+-          test -f viewmodels/build/bin/linuxArm64/releaseShared/liblcl_api.h
+-      - name: Upload linuxX64 native library
+-        uses: actions/upload-artifact@v4
+-        with:
+-          name: liblcl-linux-x64
+-          path: viewmodels/build/bin/linuxX64/releaseShared/
+-      - name: Upload linuxArm64 native library
+-        uses: actions/upload-artifact@v4
+-        with:
+-          name: liblcl-linux-arm64
+-          path: viewmodels/build/bin/linuxArm64/releaseShared/
+-
+   # The x86_64 binary must be linked against Arch's Qt: Arch builds Qt with
+   # -mno-direct-extern-access, and a binary linked against another distro's Qt
+   # is rejected by Arch's loader (see aur/lcl-gui-bin/PKGBUILD).
+   linux-gui-x64:
+     name: Generate Linux Qt GUI (x86_64)
+-    needs: [linux-gui-libs]
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+-      - name: Download linuxX64 native library
+-        uses: actions/download-artifact@v4
+-        with:
+-          name: liblcl-linux-x64
+-          path: viewmodels/build/bin/linuxX64/releaseShared
+       - name: Set execution flag for packager
+         run: chmod +x scripts/package-linux-gui.sh
+       - name: Build Qt GUI against Arch Qt
+@@ -318,7 +279,7 @@ jobs:
+             archlinux:latest \
+             bash -lc 'set -euo pipefail
+               pacman -Sy --noconfirm cmake ninja gcc qt6-base qt6-declarative qt6-svg
+-              exec scripts/package-linux-gui.sh "$VERSION" x86_64 viewmodels/build/bin/linuxX64/releaseShared
++              exec scripts/package-linux-gui.sh "$VERSION" x86_64
+             '
+       - name: Upload Linux Qt GUI x86_64 Artifact
+         uses: actions/upload-artifact@v4
+@@ -328,16 +289,10 @@ jobs:
+ 
+   linux-gui-arm64:
+     name: Generate Linux Qt GUI (aarch64)
+-    needs: [linux-gui-libs]
+     runs-on: ubuntu-24.04-arm
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+-      - name: Download linuxArm64 native library
+-        uses: actions/download-artifact@v4
+-        with:
+-          name: liblcl-linux-arm64
+-          path: viewmodels/build/bin/linuxArm64/releaseShared
+       - name: Set execution flag for packager
+         run: chmod +x scripts/package-linux-gui.sh
+       - name: Install Qt 6 and CMake
+@@ -347,7 +302,7 @@ jobs:
+       - name: Build and package Qt GUI
+         run: |
+           VERSION="${GITHUB_REF_NAME#v}"
+-          scripts/package-linux-gui.sh "$VERSION" aarch64 viewmodels/build/bin/linuxArm64/releaseShared
++          scripts/package-linux-gui.sh "$VERSION" aarch64
+       - name: Upload Linux Qt GUI aarch64 Artifact
+         uses: actions/upload-artifact@v4
+         with:
 ```
 
-**File**: `assets/commands/tlmgr-init-usertree.md` (added, +67/-0)
+**File**: `aur/lcl-gui-bin/.SRCINFO` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,67 @@
-+# TAGLINE
-+
-+Create a user TeX Live tree for tlmgr user mode
-+
-+# TLDR
-+
-+Initialize the default user tree (**TEXMFHOME**)
-+
-+```tlmgr init-usertree```
-+
-+Initialize a tree in a **chosen directory**
-+
-+```tlmgr init-usertree --usertree [path/to/texmf]```
-+
-+After setup, **install** into that tree
-+
-+```tlmgr --usermode install [package]```
-+
-+Use a **non-default** tree for one command
-+
-+```tlmgr --usermode --usertree [path/to/texmf] install [package]```
-+
-+# SYNOPSIS
-+
-+**tlmgr** [**--usertree** _dir_] **init-usertree**
-+
-+# PARAMETERS
-+
-+**init-usertree**
-+> Create the directories and the minimal package database a user tree needs
-+
-+**--usertree** _dir_
-+> Use _dir_ instead of the default user tree (**TEXMFHOME**)
-+
-+# DESCRIPTION
-+
-+**tlmgr init-usertree** prepares a texmf tree for TeX Live user mode. It is a **tlmgr** action, not a separate binary.
-+
-+User mode lets someone without write access to the system TeX Live installation install and update packages in a tree of their own. The action creates `web2c` and `tlpkg/tlpobj` under the user tree, plus a minimal `tlpkg/texlive.tlpdb`. The default location is the directory named by **TEXMFHOME**. **--usertree** selects another directory.
-+
-+Initialization does not turn user mode on. Later package commands must pass **--usermode** every time. No configuration-file setting enables it. With a non-default tree, pass **--usertree** on those commands as well.
-+
-+The user tree's `texlive.tlpdb` lists only packages that **tlmgr** installed there, plus options from the virtual package `00texlive.installation`. Only relocatable packages can be installed in user mode. Packages that ship executables, and a few core packages, are not relocatable. Most of the TeX Live catalogue is relocatable.
-+
-+# CAVEATS
-+
-+Run **init-usertree** before **--usermode** package actions. **tlmgr** warns and refuses actions that user mode does not support. **platform** is not supported. **gui** is not supported in current releases.
-+
-+Actions that do not need write permission behave as in normal mode. Those include **check**, **help**, **list**, **search**, **show**, and **version**.
-+
-+In user mode, installing a collection installs its dependent packages but not dependent collections. A package that ships map files rewrites `updmap.cfg` under the user tree's `web2c` directory and keeps a backup of the previous file.
-+
-+User-mode logs are written under **TEXMFVAR** `/web2c/` rather than the system variable tree.
-+
-+# SEE ALSO
-+
-+[tlmgr](/man/tlmgr)(1), [tlmgr-install](/man/tlmgr-install)(1), [tlmgr-update](/man/tlmgr-update)(1), [tlmgr-remove](/man/tlmgr-remove)(1), [tlmgr-option](/man/tlmgr-option)(1), [tex](/man/tex)(1)
-+
-+# RESOURCES
-+
-+```[Homepage](https://www.tug.org/texlive/)```
-+
-+```[Documentation](https://www.tug.org/texlive/doc/tlmgr.html)```
-+
-+```[Source code](https://www.tug.org/texlive/svn/)```
-+
-+<!-- verified: 2026-11-23 -->
+@@ -9,7 +9,6 @@ pkgbase = lcl-gui-bin
+ 	depends = gcc-libs
+ 	depends = glibc
+ 	depends = hicolor-icon-theme
+-	depends = libxcrypt-compat
+ 	depends = qt6-base
+ 	depends = qt6-declarative
+ 	depends = qt6-svg
 ```
 
-**File**: `assets/commands/tlmgr.md` (modified, +1/-1)
+**File**: `aur/lcl-gui-bin/PKGBUILD` (modified, +0/-3)
 ```diff
-@@ -160,7 +160,7 @@ Requires TeX Live (not distro packages). Some distributions manage separately. N
+@@ -12,8 +12,6 @@ depends=(
+   'gcc-libs'
+   'glibc'
+   'hicolor-icon-theme'
+-  # The Kotlin/Native runtime links libcrypt.so.1; Arch ships libcrypt.so.2.
+-  'libxcrypt-compat'
+   'qt6-base'
+   'qt6-declarative'
+   'qt6-svg'
+@@ -45,7 +43,6 @@ package() {
+     cd "${srcdir}/lcl-gui-${pkgver}"
  
- # SEE ALSO
+     install -Dm755 bin/lcl-gui "${pkgdir}/usr/bin/lcl-gui"
+-    install -Dm755 lib/liblcl.so "${pkgdir}/usr/lib/liblcl.so"
  
--[latex](/man/latex)(1), [pdflatex](/man/pdflatex)(1), [texdoc](/man/texdoc)(1), [install-tl](/man/install-tl)(1)
-+[latex](/man/latex)(1), [pdflatex](/man/pdflatex)(1), [texdoc](/man/texdoc)(1), [install-tl](/man/install-tl)(1), [tlmgr-init-usertree](/man/tlmgr-init-usertree)(1)
- 
- # RESOURCES
- 
+     install -dm755 "${pkgdir}/usr/share/lcl"
+     cp -r share/lcl/assets "${pkgdir}/usr/share/lcl/assets"
 ```
 
-**File**: `assets/commands/ufw-delete.md` (modified, +1/-1)
+**File**: `linuxApp/CMakeLists.txt` (modified, +11/-20)
 ```diff
-@@ -87,7 +87,7 @@ Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for ipt
+@@ -8,21 +8,16 @@ set(CMAKE_AUTOMOC ON)
+ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick Svg)
+ qt_standard_project_setup()
  
- # SEE ALSO
+-# Directory holding liblcl.so and liblcl_api.h, produced by
+-# ./gradlew :viewmodels:linkReleaseSharedLinux<Arch>
+-set(LCL_NATIVE_DIR "" CACHE PATH "Kotlin/Native shared library output directory")
+-if(NOT LCL_NATIVE_DIR)
+-    message(FATAL_ERROR "Set -DLCL_NATIVE_DIR to the directory containing liblcl.so")
+-endif()
+-
+ qt_add_executable(lcl-gui
+     src/main.cpp
+     src/LclBridge.cpp
++    src/LclCore.cpp
+     src/OmarchyTheme.cpp
+     src/IconProvider.cpp
+     src/AppConfig.cpp
+     src/TomlFile.cpp
+     src/LclBridge.h
++    src/LclCore.h
+     src/OmarchyTheme.h
+     src/IconProvider.h
+     src/AppConfig.h
+@@ -36,18 +31,15 @@ qt_add_resources(lcl-gui "qml"
+           icons/ic_arrow_back.svg
+ )
  
--[ufw](/man/ufw)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-default](/man/ufw-default)(8), [iptables](/man/iptables)(8)
-+[ufw](/man/ufw)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-default](/man/ufw-default)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-route](/man/ufw-route)(8), [iptables](/man/iptables)(8)
+-target_include_directories(lcl-gui PRIVATE ${LCL_NATIVE_DIR} src)
+-target_link_libraries(lcl-gui PRIVATE
+-    Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Svg
+-    ${LCL_NATIVE_DIR}/liblcl.so
+-)
+-# The Kotlin library sits next to the build output while developing, but is installed
+-# to a standard library directory, which is already on the loader's search path. Baking
+-# the build directory into the shipped binary would be wrong.
+-set_target_properties(lcl-gui PROPERTIES
+-    BUILD_RPATH "${LCL_NATIVE_DIR}"
+-    INSTALL_RPATH ""
+-)
++target_include_directories(lcl-gui PRIVATE src)
++target_link_libraries(lcl-gui PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Svg)
++
++# The content layer has no Qt in it, so its test is a plain executable: ctest runs it.
++enable_testing()
++add_executable(lcl-core-test tests/LclCoreTest.cpp src/LclCore.cpp)
++target_include_directories(lcl-core-test PRIVATE src)
++set_target_properties(lcl-core-test PROPERTIES AUTOMOC OFF)
++add_test(NAME lcl-core COMMAND lcl-core-test "${CMAKE_CURRENT_SOURCE_DIR}/../assets")
  
- # RESOURCES
+ # Assets and icons live outside this directory; both are overridable so a development
+ # run can point at the working tree.
+@@ -56,7 +48,6 @@ set(LCL_ICONS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../icons" CACHE PATH "Shared SVG
  
+ include(GNUInstallDirs)
+ install(TARGETS lcl-gui RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+-install(FILES "${LCL_NATIVE_DIR}/liblcl.so" DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install(DIRECTORY "${LCL_ASSETS_DIR}/" DESTINATION ${CMAKE_INSTALL_DATADIR}/lcl/assets)
+ install(DIRECTORY "${LCL_ICONS_DIR}/" DESTINATION ${CMAKE_INSTALL_DATADIR}/lcl/icons
+         FILES_MATCHING PATTERN "*.svg")
 ```
 
-**File**: `assets/commands/ufw-insert.md` (added, +94/-0)
+**File**: `linuxApp/src/LclBridge.cpp` (modified, +50/-95)
 ```diff
-@@ -0,0 +1,94 @@
-+# TAGLINE
-+
-+Insert an Uncomplicated Firewall rule at a numbered position
-+
-+# TLDR
-+
-+List rules with **numbers**
-+
-+```sudo ufw status numbered```
-+
-+**Insert** a deny rule as rule number 1
-+
-+```sudo ufw insert 1 deny from [source_address]```
-+
-+Insert an **allow** for a port and protocol at a chosen position
-+
-+```sudo ufw insert [3] allow [22]/tcp```
-+
-+Insert a **full-syntax** rule at a position
-+
-+```sudo ufw insert 3 deny to any port 22 from 10.0.0.135 proto tcp```
-+
-+Insert a **rate limit** rule
-+
-+```sudo ufw insert [2] limit [22]/tcp```
-+
-+**Preview** an insertion without applying it
-+
-+```sudo ufw --dry-run insert [3] deny from [source_address]```
-+
-+# SYNOPSIS
-+
-+**ufw** [_--dry-run_] **insert** _NUM_ **allow**|**deny**|**reject**|**limit** [_rule_]
-+
-+**ufw** [_--dry-run_] **route insert** _NUM_ **allow**|**deny**|**reject**|**limit** [_rule_]
-+
-+# PARAMETERS
-+
-+**insert** _NUM_
-+> Place the new user rule at that 1-based position. Later rules shift down. Read positions from `ufw status numbered`
-+
-+**route insert** _NUM_
-+> Same positioning for a forwarded rule. See **ufw route**
-+
-+**allow** / **deny** / **reject** / **limit**
-+> Action of the inserted rule. The rest of the line is normal ufw rule syntax: a port, an application profile, or the full **from** / **to** / **port** / **proto** / **on** form
-+
-+**comment** '_text_'
-+> Attach a comment to the new rule. **insert** cannot change the comment on a rule that already exists
-+
-+**--dry-run**
-+> Show what would change without applying it
-+
-+# DESCRIPTION
-+
-+**ufw insert** adds an Uncomplicated Firewall rule at a specific position instead of appending it. It is a **ufw** subcommand, not a separate binary.
-+
-+The first matching rule wins, so position is the point of the command. With four rules already loaded, `ufw insert 3 deny to any port 22 from 10.0.0.135 proto tcp` makes the new rule number 3 and shifts the previous third and fourth rules down.
-+
-+**prepend** is the form that does not take a number: it places the rule ahead of every existing rule of the same IP version. **route insert** uses the same numbering for traffic forwarded through the host.
-+
-+# CAVEATS
-+
-+Requires root or sudo. Check `ufw status numbered` immediately before inserting. Deletes and earlier inserts renumber the list. Inserting a rule that blocks the current SSH session can lock you out. Prefer **--dry-run** on a remote host.
-+
-+When IPv6 is enabled, a generic rule such as `ufw allow 22/tcp` creates paired IPv4 and IPv6 entries. **insert** adds a rule; it does not rewrite rules already in the list.
-+
-+# HISTORY
-+
-+Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
-+
-+# INSTALL
-+
-+```dnf: sudo dnf install ufw```
-+
-+```pacman: sudo pacman -S ufw```
-+
-+```apk: sudo apk add ufw```
-+
-+```zypper: sudo zypper install ufw```
-+
-+<!-- packages: 2026-11-23 -->
-+
-+# SEE ALSO
-+
-+[ufw](/man/ufw)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-route](/man/ufw-route)(8), [iptables](/man/iptables)(8)
-+
-+# RESOURCES
-+
-+```[Source code](https://git.launchpad.net/ufw)```
-+
-+```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
-+
-+<!-- verified: 2026-11-23 -->
-```
-
-**File**: `assets/commands/ufw-prepend.md` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+# TAGLINE
-+
-+Add an Uncomplicated Firewall rule ahead of existing rules
-+
-+# TLDR
-+
-+**Deny** a source address ahead of the current rules
-+
-+```sudo ufw prepend deny from [source_address]```
-+
-+Prepend a deny for a **subnet**
-+
-+```sudo ufw prepend deny from 192.168.0.0/24```
-+
-+**Reject** traffic from a source to one port
-+
-+```sudo ufw prepend reject from [source_address] to any port [25]```
-+
-+Prepend an **allow** for a port and protocol
-+
-+```sudo ufw prepend allow [22]/tcp```
-+
-+Prepend a **routed** rule
-+
-+```sudo ufw route prepend deny to [destination_address]```
-+
-+**Preview** a prepend without applying it
-+
-+```sudo ufw --dry-run prepend deny from [source_address]```
-+
-+# SYNOPSIS
-+
-+**ufw** [_--dry-run_] **prepend** **allow**|**deny**|**reject**|**limit** [_rule_]
-+
-+**ufw** [_--dry-run_] **route prepend** **allow**|**deny**|**reject**|**limit** [_rule_]
-+
-+# PARAMETERS
-+
-+**prepend**
-+> Insert the rule before every existing user rule of the same IP version. No rule number is required
-+
-+**route prepend**
-+> Same placement for a forwarded rule
-+
-+**allow** / **deny** / **reject** / **limit**
-+> Action of the new rule. The rest of the line is normal ufw rule syntax
-+
-+**comment** '_text_'
-+> Attach a comment to the new rule. **prepend** cannot change the comment on a rule that already exists
-+
-+**--dry-run**
-+> Show what would change without applying it
-+
-+# DESCRIPTION
-+
-+**ufw prepend** adds a rule at the front of the matching ruleset. It is a **ufw** subcommand, not a separate binary.
-+
-+Unlike **ufw insert**, prepend does not take a position. An IPv4 rule is placed before every other IPv4 rule. An IPv6 rule is placed before every other IPv6 rule. That is the form used by dynamic firewalls and intrusion-prevention hooks, which must push a block ahead of rules already loaded without looking up a number.
-+
-+The rule body is the same syntax as **ufw allow**, **ufw deny**, **ufw reject**, and **ufw limit**, including the full **from** / **to** / **port** / **proto** form. **ufw route prepend** targets traffic forwarded through the host rather than traffic destined to it.
-+
-+# CAVEATS
-+
-+Requires root or sudo. A broad prepended allow can shadow a later, more specific deny, because the first match wins. A prepended deny of the current SSH source can lock you out. Prefer **--dry-run**.
-+
-+IPv4 and IPv6 lists are ordered separately, so the new rule is not always number 1 in the combined `ufw status numbered` listing.
-+
-+# HISTORY
-+
-+Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
-+
-+# INSTALL
-+
-+```dnf: sudo dnf install ufw```
-+
-+```pacman: sudo pacman -S ufw```
-+
-+```apk: sudo apk add ufw```
-+
-+```zypper: sudo zypper install ufw```
-+
-+<!-- packages: 2026-11-23 -->
-+
-+# SEE ALSO
-+
-+[ufw](/man/ufw)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-status](/man/ufw-status)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-deny](/man/ufw-deny)(8), [ufw-route](/man/ufw-route)(8)
-+
-+# RESOURCES
-+
-+```[Source code](https://git.launchpad.net/ufw)```
-+
-+```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
-+
-+<!-- verified: 2026-11-23 -->
-```
-
-**File**: `assets/commands/ufw-route.md` (added, +118/-0)
-```diff
-@@ -0,0 +1,118 @@
-+# TAGLINE
-+
-+Manage Uncomplicated Firewall rules for forwarded traffic
-+
-+# TLDR
-+
-+**Allow** traffic forwarded from one interface to another
-+
-+```sudo ufw route allow in on eth0 out on eth1```
-+
-+Allow a **subnet** to reach a host on one port and protocol
-+
-+```sudo ufw route allow from 10.0.0.0/24 to [destination_address] port [80] proto tcp```
-+
-+**Deny** forwarded traffic to an address
-+
-+```sudo ufw route deny to [destination_address]```
-+
-+**Reject** forwarded traffic leaving an interface
-+
-+```sudo ufw route reject out on [eth1]```
-+
-+**Insert** a route rule at a numbered position
-+
-+```sudo ufw route insert [1] deny from [source_address]```
-+
-+**Delete** a route rule by repeating it
-+
-+```sudo ufw route delete deny to 192.168.0.12```
-+
-+**Preview** a route rule without applying it
-+
-+```sudo ufw --dry-run route allow in on eth0 out on eth1```
-+
-+# SYNOPSIS
-+
-+**ufw** [_--dry-run_] **route** [**delete**] [**insert** _NUM_] [**prepend**] **allow**|**deny**|**reject**|**limit** [_rule_]
-+
-+# PARAMETERS
-+
-+**route**
-+> Match traffic forwarded through this host, not traffic destined to the host
-+
-+**allow** / **deny** / **reject** / **limit**
-+> Action for matching forwarded packets
-+
-+**in on** _interface_
-+> Interface the forwarded packet arrives on
-+
-+**out on** _interface_
-+> Interface the forwarded packet leaves on
-+
-+**from** _address_ / **to** _address_
-+> Source and destination. **to** is often a host behind the firewall, not this machine
-+
-+**port** _port_ / **proto** _protocol_
-+> Destination port and protocol, as in other ufw rules. An application profile uses **app** in place of **port**
-+
-+**insert** _NUM_
-+> Place the route rule at that 1-based position
-+
-+**prepend**
-+> Place the route rule ahead of other route rules of the same IP version
-+
-+**delete**
-+> Remove the route rule given in the rest of the command. Numbered removal is `ufw delete NUM` after `ufw status numbered`
-+
-+**comment** '_text_'
-+> Attach a comment to the rule
-+
-+**--dry-run**
-+> Show what would change without applying it
-+
-+# DESCRIPTION
-+
-+**ufw route** manages rules for packets routed through the host. It is a **ufw** subcommand, not a separate binary.
-+
-+Ordinary **allow** and **deny** rules apply when this machine is an endpoint. A route rule applies when the packet should leave toward another host. `ufw route allow in on eth0 out on eth1 to 12.34.45.67 port 80 proto tcp` accepts packets that arrive on eth0 and are forwarded out eth1 to TCP port 80 on that address.
-+
-+In `ufw status`, forwarded rules are marked **ALLOW FWD** (or the matching deny, reject, or limit action). Input and output rules print the interface relative to this host as an endpoint. Route rules print it relative to the direction packets flow through the firewall.
-+
-+The default policy for routed traffic is deny. A route rule does not turn forwarding on. Enable IPv4 forwarding and IPv6 forwarding for `default` and `all` in `/etc/ufw/sysctl.conf`, then run `ufw disable` and `ufw enable` so ufw reloads those settings. Another sysctl configuration can override that file. See **sysctl**.
-+
-+# CAVEATS
-+
-+Requires root or sudo. Turning on forwarding makes the host a router. Keep the default routed policy at deny unless every forwarded flow is intentional.
-+
-+Route syntax is not OpenBSD PF syntax. Interfaces are written **in on** and **out on**, matching netfilter's FORWARD chain.
-+
-+Deleting by number removes one numbered row. When IPv6 is enabled, prefixing the original rule with **route delete** is the form that drops the rule as specified rather than a single numbered row.
-+
-+# HISTORY
-+
-+Part of **ufw** (Uncomplicated Firewall), the Ubuntu-originated frontend for iptables and nftables.
-+
-+# INSTALL
-+
-+```dnf: sudo dnf install ufw```
-+
-+```pacman: sudo pacman -S ufw```
-+
-+```apk: sudo apk add ufw```
-+
-+```zypper: sudo zypper install ufw```
-+
-+<!-- packages: 2026-11-23 -->
-+
-+# SEE ALSO
-+
-+[ufw](/man/ufw)(8), [ufw-allow](/man/ufw-allow)(8), [ufw-default](/man/ufw-default)(8), [ufw-delete](/man/ufw-delete)(8), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [sysctl](/man/sysctl)(8), [iptables](/man/iptables)(8)
-+
-+# RESOURCES
-+
-+```[Source code](https://git.launchpad.net/ufw)```
-+
-+```[Documentation](https://manpages.ubuntu.com/manpages/man8/ufw.8.html)```
-+
-+<!-- verified: 2026-11-23 -->
-```
-
-**File**: `assets/commands/ufw.md` (modified, +1/-1)
-```diff
-@@ -203,4 +203,4 @@ Default policies are deny incoming, allow outgoing, deny forwarding. Enabling uf
+@@ -1,47 +1,25 @@
+ #include "LclBridge.h"
  
- # SEE ALSO
+-#include "liblcl_api.h"
+-
+ namespace {
  
--[iptables](/man/iptables)(8), [ip6tables](/man/ip6tables)(8), [nft](/man/nft)(8), [firewall-cmd](/man/firewall-cmd)(1)
-+[iptables](/man/iptables)(8), [ip6tables](/man/ip6tables)(8), [nft](/man/nft)(8), [firewall-cmd](/man/firewall-cmd)(1), [ufw-insert](/man/ufw-insert)(8), [ufw-prepend](/man/ufw-prepend)(8), [ufw-route](/man/ufw-route)(8)
+-liblcl_ExportedSymbols* lib()
+-{
+-    static liblcl_ExportedSymbols* symbols = liblcl_symbols();
+-    return symbols;
+-}
+-
+-// Every const char* the Kotlin side returns is owned by us and must be disposed.
+-QString take(const char* value)
++// Packages install the assets under /usr/share/lcl/assets; LCL_ASSETS_DIR overrides
++// that for development.
++lcl::Library& library()
+ {
+-    if (!value)
+-        return QString();
+-    const QString result = QString::fromUtf8(value);
+-    lib()->DisposeString(value);
+-    return result;
+-}
+-
+-auto& lclApi()
+-{
+-    return lib()->kotlin.root.com.linuxcommandlibrary.app.nativeapi.LclApi;
+-}
+-
+-auto api()
+-{
+-    static auto instance = lclApi()._instance();
++    const QString dir = qEnvironmentVariable("LCL_ASSETS_DIR");
++    static lcl::Library instance(dir.isEmpty() ? "/usr/share/lcl/assets" : dir.toStdString());
+     return instance;
+ }
+ 
+-// Blocks are fetched the same way for sections, groups and tips; only the three
+-// accessors differ.
+-template <typename Kind, typename Text>
+-QVariantList collectBlocks(int count, Kind kind, Text text)
++QVariantList blocksOf(const std::vector<lcl::Titled>& items, int index)
+ {
+     QVariantList blocks;
+-    blocks.reserve(count);
+-    for (int i = 0; i < count; ++i) {
++    if (index < 0 || index >= int(items.size()))
++        return blocks;
++    for (const lcl::Block& block : items[index].blocks) {
+         blocks.append(QVariantMap {
+-            { QStringLiteral("kind"), take(kind(i)) },
+-            { QStringLiteral("text"), take(text(i)) },
++            { QStringLiteral("kind"), QString::fromLatin1(block.kind) },
++            { QStringLiteral("text"), QString::fromStdString(block.text) },
+         });
+     }
+     return blocks;
+@@ -51,21 +29,36 @@ QVariantList collectBlocks(int count, Kind kind, Text text)
+ 
+ void lclStart()
+ {
+-    lclApi().start(api());
++    library().commands();
++}
++
++// --- Titled rows: command sections and basics groups ---
++
++QVariant TitledBlocksModel::data(const QModelIndex& index, int role) const
++{
++    if (!has(index) || role != TitleRole)
++        return {};
++    return QString::fromStdString(m_items[index.row()].title);
++}
++
++QVariantList TitledBlocksModel::blocksAt(int index) const
++{
++    return blocksOf(m_items, index);
+ }
+ 
+ // --- Commands ---
+ 
+-int CommandsModel::countNow() const
++CommandsModel::CommandsModel(QObject* parent)
++    : LclListModel(parent)
++    , m_results(library().commands())
+ {
+-    return lclApi().resultCount(api());
+ }
+ 
+ QVariant CommandsModel::data(const QModelIndex& index, int role) const
+ {
+     if (!has(index) || role != NameRole)
+         return {};
+-    return take(lclApi().resultName(api(), index.row()));
++    return QString::fromStdString(m_results[index.row()]);
+ }
+ 
+ QHash<int, QByteArray> CommandsModel::roleNames() const
+@@ -78,59 +71,41 @@ void CommandsModel::setQuery(const QString& query)
+     if (query == m_query)
+         return;
+     m_query = query;
+-    lclApi().setQuery(api(), query.toUtf8().constData());
+-    resetTo(lclApi().resultCount(api()));
++    beginResetModel();
++    m_results = library().search(query.toStdString());
++    endResetModel();
+     emit queryChanged();
+ }
+ 
+ // --- Command sections ---
+ 
+-int SectionsModel::countNow() const
+-{
+-    return lclApi().sectionCount(api());
+-}
+-
+-QVariant SectionsModel::data(const QModelIndex& index, int role) const
+-{
+-    if (!has(index) || role != TitleRole)
+-        return {};
+-    return take(lclApi().sectionTitle(api(), index.row()));
+-}
+-
+-QVariantList SectionsModel::blocksAt(int index) const
+-{
+-    return collectBlocks(
+-        lclApi().sectionBlockCount(api(), index),
+-        [index](int block) { return lclApi().sectionBlockKind(api(), index, block); },
+-        [index](int block) { return lclApi().sectionBlockText(api(), index, block); });
+-}
+-
+ void SectionsModel::setCommand(const QString& command)
+ {
+     if (command == m_command)
+         return;
+     m_command = command;
+-    // The selection is pushed once here, so the row reads below are index-only.
+-    lclApi().selectCommand(api(), command.toUtf8().constData());
+-    resetTo(lclApi().sectionCount(api()));
++    beginResetModel();
++    m_items = library().sections(command.toStdString());
++    endResetModel();
+     emit commandChanged();
+ }
+ 
+ // --- Basics categories ---
+ 
+-int CategoriesModel::countNow() const
++int CategoriesModel::count() const
+ {
+-    return lclApi().categoryCount(api());
++    return int(library().categories().size());
+ }
+ 
+ QVariant CategoriesModel::data(const QModelIndex& index, int role) const
+ {
+     if (!has(index))
+         return {};
++    const lcl::Category& category = library().categories()[index.row()];
+     if (role == IdRole)
+-        return take(lclApi().categoryId(api(), index.row()));
++        return QString::fromStdString(category.id);
+     if (role == TitleRole)
+-        return take(lclApi().categoryTitle(api(), i
+```
+
+**File**: `linuxApp/src/LclBridge.h` (modified, +21/-40)
+```diff
+@@ -5,10 +5,11 @@
+ #include <QString>
+ #include <QVariantList>
+ 
++#include "LclCore.h"
++
+ /**
+- * Shared plumbing for the bridge models: a row count that is fetched on first use and
+- * a reset helper. Counting lazily keeps asset parsing off the startup path for the
+- * sections the user has not opened.
++ * Qt models over the content layer in LclCore. This base only holds the plumbing they
++ * share.
+  */
+ class LclListModel : public QAbstractListModel {
+     Q_OBJECT
+@@ -18,31 +19,16 @@ class LclListModel : public QAbstractListModel {
+ 
+     int rowCount(const QModelIndex& parent = QModelIndex()) const override
+     {
+-        if (parent.isValid())
+-            return 0;
+-        if (m_count < 0)
+-            m_count = countNow();
+-        return m_count;
++        return parent.isValid() ? 0 : count();
+     }
+ 
+ protected:
+-    /** Current size according to the shared layer. Called once, then cached. */
+-    virtual int countNow() const { return 0; }
++    virtual int count() const = 0;
+ 
+     bool has(const QModelIndex& index) const
+     {
+         return index.isValid() && index.row() >= 0 && index.row() < rowCount();
+     }
+-
+-    void resetTo(int count)
+-    {
+-        beginResetModel();
+-        m_count = count;
+-        endResetModel();
+-    }
+-
+-private:
+-    mutable int m_count = -1;
+ };
+ 
+ /**
+@@ -57,10 +43,16 @@ class TitledBlocksModel : public LclListModel {
+ 
+     using LclListModel::LclListModel;
+ 
++    QVariant data(const QModelIndex& index, int role) const override;
+     QHash<int, QByteArray> roleNames() const override { return { { TitleRole, "title" } }; }
+ 
+     /** Blocks of one row as [{kind, text}, ...], for a Repeater inside a card. */
+-    Q_INVOKABLE virtual QVariantList blocksAt(int index) const = 0;
++    Q_INVOKABLE QVariantList blocksAt(int index) const;
++
++protected:
++    int count() const override { return int(m_items.size()); }
++
++    std::vector<lcl::Titled> m_items;
+ };
+ 
+ /** Rows are the current (optionally filtered) command list. */
+@@ -71,7 +63,7 @@ class CommandsModel : public LclListModel {
+ public:
+     enum Roles { NameRole = Qt::UserRole + 1 };
+ 
+-    using LclListModel::LclListModel;
++    explicit CommandsModel(QObject* parent = nullptr);
+ 
+     QVariant data(const QModelIndex& index, int role) const override;
+     QHash<int, QByteArray> roleNames() const override;
+@@ -83,37 +75,32 @@ class CommandsModel : public LclListModel {
+     void queryChanged();
+ 
+ protected:
+-    int countNow() const override;
++    int count() const override { return int(m_results.size()); }
+ 
+ private:
+     QString m_query;
++    std::vector<std::string> m_results;
+ };
+ 
+-/** Sections of one command, parsed by the shared MarkdownParser. */
++/** Sections of one command. */
+ class SectionsModel : public TitledBlocksModel {
+     Q_OBJECT
+     Q_PROPERTY(QString command READ command WRITE setCommand NOTIFY commandChanged)
+ 
+ public:
+     using TitledBlocksModel::TitledBlocksModel;
+ 
+-    QVariant data(const QModelIndex& index, int role) const override;
+-    QVariantList blocksAt(int index) const override;
+-
+     QString command() const { return m_command; }
+     void setCommand(const QString& command);
+ 
+ signals:
+     void commandChanged();
+ 
+-protected:
+-    int countNow() const override;
+-
+ private:
+     QString m_command;
+ };
+ 
+-/** The basics categories, in the shared layer's own display order. */
++/** The basics categories, in display order. */
+ class CategoriesModel : public LclListModel {
+     Q_OBJECT
+ 
+@@ -126,29 +113,23 @@ class CategoriesModel : public LclListModel {
+     QHash<int, QByteArray> roleNames() const override;
+ 
+ protected:
+-    int countNow() const override;
++    int count() const override;
+ };
+ 
+-/** Groups of one basics category, rendered to Markdown by the shared layer. */
++/** Groups of one basics category. */
+ class GroupsModel : public TitledBlocksModel {
+     Q_OBJECT
+     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
+ 
+ public:
+     using TitledBlocksModel::TitledBlocksModel;
+ 
+-    QVariant data(const QModelIndex& index, int role) const override;
+-    QVariantList blocksAt(int index) const override;
+-
+     QString categoryId() const { return m_categoryId; }
+     void setCategoryId(const QString& id);
+ 
+ signals:
+     void categoryIdChanged();
+ 
+-protected:
+-    int countNow() const override;
+-
+ private:
+     QString m_categoryId;
+ };
+@@ -171,5 +152,5 @@ class Tips : public QObject {
+     Q_INVOKABLE QVariantList blocksAt(int index) const;
+ };
+ 
+-/** Starts the Kotlin runtime and loads the command index. Call once, before the models. */
++/** Loads the command index. Call once, before the models. */
+ void lclStart();
+```
+
+**File**: `linuxApp/src/LclCore.cpp` (added, +552/-0)
+```diff
+@@ -0,0 +1,552 @@
++#include "LclCore.h"
++
++#include <algorithm>
++#include <fstream>
++#include <iterator>
++#include <string_view>
++
++namespace lcl {
++
++namespace {
++
++using std::string_view;
++constexpr auto npos = string_view::npos;
++
++bool isSpace(char c)
++{
++    return c == ' ' || (c >= '\t' && c <= '\r') || (c >= 0x1C && c <= 0x1F);
++}
++
++string_view trim(string_view s)
++{
++    while (!s.empty() && isSpace(s.front()))
++        s.remove_prefix(1);
++    while (!s.empty() && isSpace(s.back()))
++        s.remove_suffix(1);
++    return s;
++}
++
++bool startsWith(string_view s, string_view prefix)
++{
++    return s.substr(0, prefix.size()) == prefix;
++}
++
++bool endsWith(string_view s, string_view suffix)
++{
++    return s.size() >= suffix.size() && s.substr(s.size() - suffix.size()) == suffix;
++}
++
++/** Splits on \n, \r\n and \r. Always returns at least one line. */
++std::vector<string_view> lines(string_view s)
++{
++    std::vector<string_view> out;
++    size_t start = 0;
++    for (size_t i = 0; i < s.size(); ++i) {
++        if (s[i] != '\n' && s[i] != '\r')
++            continue;
++        out.push_back(s.substr(start, i - start));
++        if (s[i] == '\r' && i + 1 < s.size() && s[i + 1] == '\n')
++            ++i;
++        start = i + 1;
++    }
++    out.push_back(s.substr(start));
++    return out;
++}
++
++/** Length in UTF-16 units, which is what the UI's own string lengths are measured in. */
++int utf16Length(string_view s)
++{
++    int n = 0;
++    for (unsigned char c : s) {
++        if ((c & 0xC0) != 0x80)
++            ++n;
++        if (c >= 0xF0)
++            ++n;
++    }
++    return n;
++}
++
++std::string asciiCase(string_view s, bool upper)
++{
++    std::string out(s);
++    for (char& c : out) {
++        if (upper && c >= 'a' && c <= 'z')
++            c -= 32;
++        else if (!upper && c >= 'A' && c <= 'Z')
++            c += 32;
++    }
++    return out;
++}
++
++void replaceAll(std::string& s, string_view from, string_view to)
++{
++    for (size_t at = s.find(from); at != std::string::npos; at = s.find(from, at + to.size()))
++        s.replace(at, from.size(), to);
++}
++
++/**
++ * Matches `delim`, one or more characters other than `stop`, then `delim` again,
++ * starting exactly at `at`. Returns the index past the match, or npos.
++ */
++size_t matchDelimited(string_view s, size_t at, string_view delim, char stop, string_view& content)
++{
++    if (s.substr(at, delim.size()) != delim)
++        return npos;
++    const size_t from = at + delim.size();
++    size_t to = from;
++    while (to < s.size() && s[to] != stop)
++        ++to;
++    if (to == from || s.substr(to, delim.size()) != delim)
++        return npos;
++    content = s.substr(from, to - from);
++    return to + delim.size();
++}
++
++/** Matches `[label](target)` starting exactly at `at`. Returns the index past it, or npos. */
++size_t matchLink(string_view s, size_t at, string_view& label, string_view& target)
++{
++    if (at >= s.size() || s[at] != '[')
++        return npos;
++    const size_t close = s.find(']', at + 1);
++    if (close == npos || close == at + 1 || close + 1 >= s.size() || s[close + 1] != '(')
++        return npos;
++    const size_t end = s.find(')', close + 2);
++    if (end == npos || end == close + 2)
++        return npos;
++    label = s.substr(at + 1, close - at - 1);
++    target = s.substr(close + 2, end - close - 2);
++    return end + 1;
++}
++
++struct Inline {
++    std::string text;
++    int weight = 0;
++
++    void plain(string_view piece)
++    {
++        text += piece;
++        weight += utf16Length(piece);
++    }
++
++    void man(string_view name)
++    {
++        text.append("[").append(name).append("](man:").append(name).append(")");
++        weight += utf16Length(name);
++    }
++};
++
++/** Inline code inside a table cell: shown as plain text, except for man page links. */
++void appendInlineCode(string_view code, Inline& out)
++{
++    size_t plainFrom = 0;
++    for (size_t i = 0; i < code.size();) {
++        string_view label, target;
++        const size_t end = matchLink(code, i, label, target);
++        if (end == npos || !startsWith(target, "/man/") || target.size() == 5) {
++            ++i;
++            continue;
++        }
++        out.plain(code.substr(plainFrom, i - plainFrom));
++        out.man(target.substr(5));
++        i = plainFrom = end;
++    }
++    out.plain(code.substr(plainFrom));
++}
++
++/** **bold**, _italic_ and, in table cells, `code`. Whichever starts first wins. */
++Inline parseInline(string_view text, bool withCode)
++{
++    Inline out;
++    size_t plainFrom = 0;
++    for (size_t i = 0; i < text.size();) {
++        const char c = text[i];
++        string_view content;
++        size_t end = npos;
++        if (c == '*')
++            end = matchDelimited(text, i, "**", '*', content);
++        else if (c == '_')
++            end = matchDelimited(text, i, "_", '_', content);
++        else if (c == '`' && withCode)
++            end = matchDelimited(text, i, "`", '`', content);
++        if (end == npos) {
++            ++i;
++            
+```
+
+**File**: `linuxApp/src/LclCore.h` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++#pragma once
++
++#include <string>
++#include <utility>
++#include <vector>
++
++/*
++ * The content layer of the Qt app: reads the Markdown assets and turns them into the
++ * rows the UI shows. Plain standard C++ with UTF-8 strings and no Qt, so it builds and
++ * tests on its own.
++ *
++ * This is a port of the Kotlin MarkdownParser and repositories in :common and
++ * :viewmodels, which the mobile and desktop apps still use. The two must agree on what
++ * a page parses to, so a change to the Markdown dialect has to land in both.
++ */
++namespace lcl {
++
++/** One rendered block of a section, group or tip. */
++struct Block {
++    /** "text", "quote", "code" or "table", so the UI can style them differently. */
++    const char* kind;
++    /** Markdown for Qt's Text.MarkdownText. Man pages are linked as `man:<name>`. */
++    std::string text;
++    /** Visible characters (UTF-16 units), for sizing without rendering. */
++    int weight;
++};
++
++/** A command section, a basics group or a tip: a title over a list of blocks. */
++struct Titled {
++    std::string title;
++    std::vector<Block> blocks;
++};
++
++struct Category {
++    std::string id;
++    std::string title;
++};
++
++/** Splits on lines starting with `prefix` ("# " or "## "), ignoring fenced code. */
++std::vector<std::pair<std::string, std::string>> splitByHeaders(const std::string& content, const std::string& prefix);
++
++/** Parses the body under a header into blocks. */
++std::vector<Block> parseContent(const std::string& content);
++
++/** Where a command section sorts: TLDR first, SEE ALSO and RESOURCES last. */
++int sectionSortPriority(const std::string& title);
++
++/** Visible size of a tip card: its title plus all of its blocks. */
++int weight(const Titled& item);
++
++class Library {
++public:
++    /** `assetsDir` holds commands/, basics/ and tips.md. */
++    explicit Library(std::string assetsDir);
++
++    /** Every command name, sorted. */
++    const std::vector<std::string>& commands();
++    /** Names containing `query`: exact match first, then prefix matches, then the rest. */
++    std::vector<std::string> search(const std::string& query);
++    std::vector<Titled> sections(const std::string& command) const;
++
++    /** Basics categories in display order. */
++    const std::vector<Category>& categories();
++    std::vector<Titled> groups(const std::string& categoryId) const;
++
++    const std::vector<Titled>& tips();
++
++private:
++    bool read(const std::string& path, std::string& out) const;
++    std::vector<std::string> list(const std::string& dir) const;
++
++    std::string m_dir;
++    std::vector<std::string> m_commands;
++    std::vector<std::string> m_lowerCommands;
++    std::vector<Category> m_categories;
++    std::vector<Titled> m_tips;
++    bool m_commandsLoaded = false;
++    bool m_categoriesLoaded = false;
++    bool m_tipsLoaded = false;
++};
++
++} // namespace lcl
 ```
 
 ---
 
-### Incident Patch 2: `ce6510ce` (2026-11-23)
-**Commit Message**: Upgrade dependencies
+### Incident Patch 2: `0abae41e` (2026-11-26)
+**Commit Message**: Auto-fix: lintFix and refresh Paparazzi screenshots [skip ci]
 
-**File**: `android/build.gradle.kts` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ android {
-         libs.versions.android.compileSdk
-             .get()
-             .toInt()
-+    // Compose 1.13 (BOM 2026.11.01) AARs require compile SDK 37.1.
-+    compileSdkMinor = 1
-     defaultConfig {
-         applicationId = "com.inspiredandroid.linuxcommandbibliotheca"
-         minSdk =
-```
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ kotlin = "2.4.21"
- composeMultiplatform = "1.12.2"
- composeMaterial3 = "1.9.0"
- composeMaterial3Adaptive = "1.3.0"
--composeBom = "2026.09.00"
-+composeBom = "2026.11.01"
- activityCompose = "1.13.0"
- json = "20260814"
- koinCore = "4.2.2"
-```
 
 #### Recent Merged Pull Requests:
 - **PR #135** (2026-11-07): Correct octal permission terminology (@mvanhorn)
@@ -1378,32 +1901,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add commands
+## X. Port Linux app content layer to C++
 
 **RULE**:
-When implementing operations in `assets/commands/index.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SimonSchubert/LinuxCommandLibrary. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bf6a477`: Add commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `37095a4e`: Port Linux app content layer to C++. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `assets/commands/index.txt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/android.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-tlmgr-init-usertree.md
-ufw-insert.md
-ufw-prepend.md
-ufw-route.md
-zean.md
+              exec scripts/package-linux-gui.sh "$VERSION" x86_64
+          scripts/package-linux-gui.sh "$VERSION" aarch64
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  # Kotlin/Native cannot run on linux-aarch64 hosts (only linux-x64, windows-x64,
+  # and macOS). Cross-compile both shared libraries here, same as cli-linux.
+  linux-gui-libs:
+    name: Build Linux Qt native libraries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Set execution flag for gradlew
+        run: chmod +x gradlew
+      - name: Build Kotlin/Native shared libraries
+        run: |
+          ./gradlew :viewmodels:linkReleaseSharedLinuxX64 :viewmodels:linkReleaseSharedLinuxArm64 --stacktrace
+          test -f viewmodels/build/bin/linuxX64/releaseShared/liblcl.so
+          test -f viewmodels/build/bin/linuxX64/releaseShared/liblcl_api.h
+          test -f viewmodels/build/bin/linuxArm64/releaseShared/liblcl.so
+          test -f viewmodels/build/bin/linuxArm64/releaseShared/liblcl_api.h
+      - name: Upload linuxX64 native library
+        uses: actions/upload-artifact@v4
+        with:
+          name: liblcl-linux-x64
+          path: viewmodels/build/bin/linuxX64/releaseShared/
+      -
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bf6a477` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `37095a4e` are properly handled with clean fallback behavior.

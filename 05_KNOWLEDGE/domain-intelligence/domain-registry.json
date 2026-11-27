@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:12:37.994Z",
+  "last_updated": "2026-11-27T12:21:29.387Z",
   "total_records": 2834,
   "domains": {
     "A": {
@@ -9043,10 +9043,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "d3467dc1541d424af87dc75fea79058b89ed2ea8a7ec6f1775ad71b705778cde",
-      "created_at": "2026-11-27T08:32:39.937Z"
+      "content_hash": "57cf8b11d67f2a2cda00dcb2b45af3cb8e64fea67e86f61ddf8b95d87cf65775",
+      "created_at": "2026-11-27T12:21:23.718Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -24488,8 +24488,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "repository": "yyjeqhc/webcodex",
-      "content_hash": "da43ab693650a92201b92d547895cb4b48d39906313ab857c16bfeb9d67ac0fe",
-      "created_at": "2026-11-26T12:11:30.066Z"
+      "content_hash": "2efdb19beeb9c2d6c637ec820337a083d5705f4b22ba967f062d2c9307ab2e52",
+      "created_at": "2026-11-27T12:21:10.492Z"
     },
     "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
@@ -24497,8 +24497,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
       "repository": "yyjeqhc-webcodex-learnings",
-      "content_hash": "6eea5b4bd37468b530d4f8030b8d78c9097ae7e1130739daa1c391c495d097e7",
-      "created_at": "2026-11-26T12:11:39.056Z"
+      "content_hash": "2f58fc55fdfaadd2e32a0f9b7cb87e645a5dab67690dcd67d54f7d81105f1491",
+      "created_at": "2026-11-27T12:21:27.376Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
@@ -24996,8 +24996,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-turso-learnings",
-      "content_hash": "eb58739ef469a7a4298d1d19f162694902d525ef974242487770807af1992a01",
-      "created_at": "2026-11-26T17:48:29.493Z"
+      "content_hash": "9573850e13dfd7915e0b9a172eb347986dbc44cae7b3e0e604fb634c51020430",
+      "created_at": "2026-11-27T12:21:29.387Z"
     },
     "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-n4ze3m-tiny-voca-core-invariants",
@@ -34132,8 +34132,8 @@
       "title": "Technical Construction Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-technical-construction-intelligence-simonschub.md",
       "repository": "SimonSchubert/LinuxCommandLibrary",
-      "content_hash": "c394e3645c082187b568d3f15c8dab3bb445d0b3f20ba93468d73062662d799f",
-      "created_at": "2026-11-25T03:28:28.888Z"
+      "content_hash": "fec946738fbea623fb7a955d23e5ed4b9d378c51d2b7552b809fc319b585ed97",
+      "created_at": "2026-11-27T12:21:15.928Z"
     },
     "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-",
@@ -34141,8 +34141,8 @@
       "title": "Technical Construction Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-learnings-technical-construction-intelligence-.md",
       "repository": "simonschubert-linuxcommandlibrary-learnings",
-      "content_hash": "9f417bf9eb1ef233a3fd9689ab3710dd09745f664cc11af7ce74210c95699069",
-      "created_at": "2026-11-25T03:28:34.526Z"
+      "content_hash": "0edf2e246e446ee80afd6269dd3dbc3373f0579e7bfb44ba18489cab53955351",
+      "created_at": "2026-11-27T12:21:28.463Z"
     },
     "domain_intelligence-design-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",

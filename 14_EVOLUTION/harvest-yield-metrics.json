@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:12:32.183Z",
-  "total_cycles_completed": 13081,
-  "total_learnings_persisted": 13081,
-  "total_rules_promoted": 11808,
+  "last_updated": "2026-11-27T12:21:23.273Z",
+  "total_cycles_completed": 13084,
+  "total_learnings_persisted": 13084,
+  "total_rules_promoted": 11811,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:10:39.618Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:10:46.801Z",
-      "repository": "aws-amplify/amplify-js",
-      "learningId": "learn-github-aws-amplify-amplify-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:21:38.898Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:21:49.416Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T12:12:32.183Z",
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:21:10.051Z",
+      "repository": "yyjeqhc/webcodex",
+      "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:21:15.456Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:21:23.273Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

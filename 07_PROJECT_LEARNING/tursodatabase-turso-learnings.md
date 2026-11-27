@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `d414fa94`  
+> **Source Version**: `df7ba30c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T17:48:20.717Z  
+> **Timestamp**: 2026-11-27T12:21:21.983Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T17:48:20.712Z  
+> **Harvest Timestamp**: 2026-11-27T12:21:21.977Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25376 stars
+- **Stars / Engagement**: 25383 stars
 
 ---
 
@@ -1432,14 +1432,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12568** (2026-11-26): **benches: add point and range seek benchmarks**
-  *Symptoms*: ## Description  Adds `seek_benchmark`: point and range seeks, by rowid and through a secondary index.  | benchmark | query | rows | | --- | --- | ---: | | `point_rowid` | `WHERE id = ?1` | 1 | | `point_index` | `WHERE k = ?1` | 1 | | `range_rowid` | `WHERE id >= ?1 AND id < ?2` | 10 / 100 / 1000 | | `range_index` | `WHERE k >= ?1 AND k < ?2` | 10 / 100 / 1000 |  - 100k rows in memory, with the whole db in the page cache, so it measures CPU work, not IO. - `k` is a shuffled copy of `id`, and each call jumps to a far-away key, so no two calls read the same leaf. - Each bench asserts its `EXPLAIN QUERY PLAN` first. A seek that turns into a scan, or a range that drops a bound, fails instead of reporting a slower number. - `perf_nightly.yml` gets a step for the new target, since its check step fails without one.  ### Measurements  Instructions per call (callgrind on the CodSpeed build, two runs identical):  | benchmark | instructions | | --- | ---: | | `point_rowid` | 7,833 | | `point_index` | 15,238 | | `range_rowid` 10 / 100 / 1000 | 15,866 / 83,744 / 762,514 | | `range_index` 10 / 100 / 1000 | 46,485 / 354,494 / 3,434,211 |  Sanity check: adding ~400 instructions to the table B-tree seek showed up as ~400 per table seek in every benchmark (`point_rowid` +5.1%, `range_index[1000]` +11.6%).  ## Motivation and context  Part of #4809 (the two seek items). No engine code changes.  ### The weakest part about this PR  - Covers 2 of the 6 items in #4809. - `range_index` mostly measures
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/RandoomWalks%3Abenches-seek-read-path?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **68 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `e074bd7cb9a3` is [here](https://github.com/tursodatabase/turso/pull/12568#pullrequestreview-6077669609).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer started this review on its own, as it does for pull requests from outside contributors. Push a fix to get a re-review (up to 6 reviews in all); a pull request whose blocking findings stay unaddressed for 7 days is closed. Maintainers: add `autofixer: no-review` to stop these reviews, or `autofixer: review-requested` to review it as requested.</sub>  <!-- autofixer:ratings:eyJ2ZXJzaW9uIjoxLCJoZWFkU2hhIjoiZTA3NGJkN2NiOWEzZjEyMGUyZWRkMDJhZjdiYTI2NDlhMmRhOTJjZiIsImltcGFjdCI6eyJjYXRlZ29yeSI6IlBlcmZvcm1hbmNlIiwicmVhY2giOiJub3JtYWwtdXNlIn0sInJpc2siOnsibGV2ZWwiOiJsb3ciLCJhcmVhcyI6W3siYXJlYSI6ImJlbmNobWF
+- **Issue #12597** (2026-11-27): **postgres/conformance: move the fixed boolean tests out of gaps**
+  *Symptoms*: PR #12428 made every condition a boolean in tursopg, and removed the gap markers of the tests it fixed. But these tests stayed in the files under `gaps/`, which hold the tests of differences from PostgreSQL.  This moves them to the files of their subject. Each commit moves the tests of one subject. The names, SQL, setups and expected answers do not change.  | Tests | From | To | | --- | --- | --- | | `is-true-is-not-true-on-bool-col`, `in-with-null-three-valued`, `boolean-comparison-output`, `exists-subquery-output` | `gaps/operators-functions.sqltest` | `types/bool.sqltest` | | `like-case-sensitive-literal`, `regex-classes-d-and-escapes`, `similar-to` | `gaps/operators-functions.sqltest` | `pattern-matching.sqltest` (new) | | `eq-any-int-array-literal`, `array-array-literal` | `gaps/operators-functions.sqltest` | `array-operators.sqltest` (new) | | `of-a-json-boolean-is-the-text-true` | `gaps/operators-functions.sqltest` | `jsonb-operators.sqltest` | | `gen-random-uuid-format`, `to-char-null-timestamptz-row` | `gaps/operators-functions.sqltest` | `functions.sqltest` | | `current-user-current-role` | `gaps/operators-functions.sqltest` | `roles/functions.sqltest` | | `omitted-nullable-uuid-column-stays-null` | `gaps/ddl-catalog.sqltest` | `table.sqltest` | | `timestamptz-equality-across-offsets` | `gaps/params-casts.sqltest` | `datetime-input.sqltest` |  These commits were the last eight commits of #12389. #12428 merged the other commits of that PR, so it is closed.  All the c
 
-- **Issue #12567** (2026-11-26): **core: abort a grouped completion whose IO fails to start**
-  *Symptoms*:  <img width="2424" height="1604" alt="image" src="https://github.com/user-attachments/assets/b1e1312a-70fa-4336-9931-f1996f5d6b3c" />   ## Why  On main, a page read that fails to start during a page split (`balance_non_root`) leaves its completion unfinished, and the thread then waits for it forever. The statement never returns and the error is never reported.  ## Example  `begin_read_page` adds a completion to a `CompletionGroup` before the file call, because the IO can finish inside the call:  ```rust group.add(&c); db_file.read_page(page_idx, io_ctx, c)   // returns Err: the IO did not start, nothing finishes c ```  `balance_non_root` then handles the error:  ```rust self.pager.io.drain_completions(group.completions())?;   // while any !finished { io.step() } ```  `c` is never finished, so the loop does not end. `DatabaseFile::read_page` returns `Err` this way for page 0, a bad page size and an offset overflow. Any `File` whose `pread` returns `Err` without finishing the completion does the same.  ## Fix  - One helper, `start_in_group(group, c, start)` in `core/io/completions.rs`: when a group is given, it adds `c` to the group, calls `start(c)`, and calls `c.abort()` if `start` returns `Err` and `c` is not finished. Abort runs the completion's callback, so a write callback also runs when its write fails to start. - `CompletionGroup::add` is private. Code outside that module can add a completion to a group only through the helper. - All 11 call
+- **Issue #12593** (2026-11-27): **core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints**
+  *Symptoms*: ## Problem  ``` fresh file, experimental autovacuum on  PRAGMA auto_vacuum=FULL          -> header written, dirty pages cleared,                                     then SetCookie marks page 1 dirty again (no transaction) PRAGMA page_count, step one row, drop the statement               -> read rollback panics:                                     "dirty pages should be empty for read txn" PRAGMA wal_checkpoint(TRUNCATE)  -> Busy: "cannot checkpoint while another statement is active" ```  `INCREMENTAL` failed the same way. `NONE` did not.  The auto_vacuum setter in `core/translate/pragma.rs` calls `Pager::persist_auto_vacuum_mode`. That function writes both auto-vacuum header fields of the new database and clears the dirty pages, because no transaction is open. The setter then also emitted `ReadCookie`, `If` and `SetCookie IncrementalVacuum` with `TransactionMode::None`. That `SetCookie` wrote the same value again and marked page 1 dirty, and no transaction committed or rolled back that change.  ## Fix  - Remove the `ReadCookie`/`If`/`Halt`/`SetCookie` block from the auto_vacuum setter. The setter returns early when page 1 exists, so the block only ran on new databases, where `persist_auto_vacuum_mode` has already written the value. - `op_set_cookie` now asserts that the pager holds the WAL write lock when MVCC (multi-version concurrency control) is off. In MVCC mode it already returned an error without a transaction. A program that emits `SetCookie` without a write transactio
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,506 +1453,751 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `297600f8` (2026-11-26)
-**Commit Message**: Merge 'postgres: refuse unsupported statements with 0A000 and suggest workarounds' from Jussi Saurio
+### Incident Patch 1: `71ae9708` (2026-11-27)
+**Commit Message**: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
 
-Closes #11778 and #12056.
+Hey folks, a first-time contributor here. Perfloop has found an issue,
+but I have looked at it. Since I am not familiar with codebase, I can
+largely validate just symptoms; patch itself seems to make sense, but I
+defer to your thinking here.
 
-<img width="758" height="792" alt="Screenshot 2026-11-26 at 7 00 06"
-src="https://github.com/user-
-attachments/assets/ac51e683-c019-426f-bd7c-8e4adec274a2" />
+A database whose write-ahead log (WAL) still holds committed
+transactions loses them without any error. This gets triggered if a read
+of the 32-byte WAL header or a WAL frame returns fewer bytes than
+requested while more bytes are available. I was able to reproduce this
+locally (also in the patch attached).
 
-tursopg answered valid PostgreSQL it can't run with 42601 (syntax
-error). It now answers with 0A000 (feature not supported). Where a
-workaround gives the same result, the error carries it in the HINT
-field. Error messages are unchanged.
+Write/prep files with SQLite, through the rusqlite crate, and then open
+them with Turso:
 
-Statements that PostgreSQL rejects too can also get 0A000 instead of
-PostgreSQL's own code. tursopg doesn't copy PostgreSQL's checks of
-invalid input just to match its code.
+  - set a 512-byte page size, switch to WAL mode, and run CREATE TABLE
+t(x). SQLite records the new table in the WAL file source.db-wal.
+  - run `PRAGMA wal_checkpoint(TRUNCATE)`, which copies every WAL frame
+into the main database file `source.db`, then shrinks `source.db-wal` to
+0 bytes.
+  - `INSERT INTO t VALUES (1)` and `INSERT INTO t VALUES (2)`. db-wal
+grows to 1,104 bytes. Rows 1 and 2 now exist only in source.db-wal, and
+source.db still holds an empty table.
+  - open 
 
-How it was done:
-- Each error now gets its code where it is raised, in the translator and
-in the frontend. The rules in `postgres/frontend/error.rs` that guessed
-the code from the message text are gone for these errors. `ParseError`
-can no longer be built from a plain string, so a new refusal can't fall
-back to 42601.
-- Every hint's workaround was run in tursopg and in PostgreSQL. Hints
-that gave a different result were dropped (e.g. `round(x, s)` for
-`numeric(p,s)`: `round(1.005, 2)` is 1.0 i
-
-**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +8/-0)
+**File**: `core/storage/sqlite3_ondisk.rs` (modified, +41/-12)
 ```diff
-@@ -2622,6 +2622,14 @@ expect error {
-     permission denied: "pg_description" is a system catalog
- }
+@@ -1624,6 +1624,9 @@ impl BuildSharedWal {
+                     self.phase = BuildSharedWalPhase::AwaitHeader(c);
+                 }
+                 BuildSharedWalPhase::AwaitHeader(c) => {
++                    if let Some(err) = c.get_error() {
++                        return Err(err.into());
++                    }
+                     if !c.succeeded() {
+                         io_yield_one!(c);
+                     }
+@@ -1651,6 +1654,9 @@ impl BuildSharedWal {
+                     };
+                 }
+                 BuildSharedWalPhase::AwaitChunk { completion, offset } => {
++                    if let Some(err) = completion.get_error() {
++                        return Err(err.into());
++                    }
+                     if !completion.succeeded() {
+                         io_yield_one!(completion);
+                     }
+@@ -1742,8 +1748,7 @@ impl StreamingWalReader {
+         let reader = self.clone();
+         let completion: Box<ReadComplete> = Box::new(move |res| {
+             let _reader = reader.clone();
+-            _reader.handle_header_read(res);
+-            None
++            _reader.handle_header_read(res)
+         });
+         let c = Completion::new_read(header_buf, completion);
+         self.file.pread(0, c)
+@@ -1777,22 +1782,31 @@ impl StreamingWalReader {
+         let completion: Box<ReadComplete> = Box::new(move |res| {
+             tracing::debug!("WAL chunk read complete");
+             let reader = me.clone();
+-            reader.handle_chunk_read(res);
+-            None
++            reader.handle_chunk_read(offset, res)
+         });
+         let c = Completion::new_read(buf, completion);
+         let guard = self.file.pread(offset, c)?;
+         Ok((read_size, guard))
+     }
  
-+test system-catalog-rejects-policies {
-+    CREATE POLICY p ON pg_description USING (true);
-+}
-+@sqlstate 42501
-+expect error {
-+    permission denied: "pg_description" is a system catalog
-+}
-+
- test pg-depend-has-the-relations-that-a-view-reads {
-     CREATE TABLE dep_base (a int);
-     CREATE TABLE dep_other (a int);
+-    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
++    fn handle_header_read(
++        self: Arc<Self>,
++        res: Result<(Arc<Buffer>, i32), CompletionError>,
++    ) -> Option<CompletionError> {
+         let Ok((buf, bytes_read)) = res else {
+             self.finalize_loading();
+-            return;
++            return None;
+         };
++        // The file is at least as long as the header, so a read that returns
++        // fewer bytes does not mean that the WAL has no header. If recovery
++        // treated it that way, the committed frames would not be visible and
++        // the next write would overwrite them.
+         if bytes_read != WAL_HEADER_SIZE as i32 {
+-            self.finalize_loading();
+-            return;
++            return Some(CompletionError::ShortReadWalFrame {
++                offset: 0,
++                expected: WAL_HEADER_SIZE,
++                actual: bytes_read as usize,
++            });
+         }
+ 
+         let (page_sz, c1, c2, use_native, ok) = {
+@@ -1836,7 +1850,7 @@ impl StreamingWalReader {
+         if PageSize::new(page_sz).is_none() || !ok {
+             *self.header.lock() = WalHeader::default();
+             self.finalize_loading();
+-            return;
++            return None;
+         }
+         {
+             let mut st = self.state.write();
+@@ -1849,14 +1863,28 @@ impl StreamingWalReader {
+         self.off_atomic
+             .store(WAL_HEADER_SIZE as u64, Ordering::Release);
+         self.page_atomic.store(page_sz as u64, Ordering::Release);
++        None
+     }
+ 
+-    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
++    fn handle_chunk_read(
++        self: Arc<Self>,
++        offset: u64,
++        res: Result<(Arc<Buffer>, i32), CompletionError>,
++    ) -> Option<CompletionError> {
+         let Ok((buf, bytes_read)) = res else {
+             self.finalize_loading();
+-            return;
++            return None;
+         };
+-        let buf_slice = &buf.as_slice()[..bytes_read as usize];
++        // The requested bytes are all inside the file, so a read that returns
++        // fewer bytes does not show where the valid frames end.
++        if bytes_read as usize != buf.len() {
++            return Some(CompletionError::ShortReadWalFrame {
++                offset,
++                expected: buf.len(),
++                actual: bytes_read as usize,
++            });
++        }
++        let buf_slice = buf.as_slice();
+         // Snapshot salts/endianness once to avoid per-frame header locks
+         let (header_copy, use_native) = {
+             let st = self.state.read();
+@@ -1870,6 +1898,7 @@ impl StreamingWalReader {
+         if consumed < buf_slice.len() || self.off_atomic.load(Ordering::Acquire) >= self.file_size {
+             self.finalize_loading();
+         }
++        None
+     }
+ 
+     // Processes frames from a buffer, returns bytes processed
 ```
 
-**File**: `postgres/conformance/pg-sqltests/copy.sqltest` (modified, +3/-0)
+**File**: `tests/integration/queued_io.rs` (modified, +31/-1)
 ```diff
-@@ -124,12 +124,14 @@ expect {
- test copy-missing-table-errors {
-     COPY missing TO STDOUT;
+@@ -87,6 +87,7 @@ struct QueuedIoState {
+     owner: Mutex<String>,
+     ordinals: Mutex<HashMap<String, u32>>,
+     fail_next: Mutex<Option<QueuedIoOpKind>>,
++    wal_read_limit: Mutex<Option<usize>>,
  }
-+@sqlstate 42P01
- expect error {}
  
- @setup users
- test copy-missing-column-errors {
-     COPY users (missing) TO STDOUT;
+ impl QueuedIoState {
+@@ -99,6 +100,7 @@ impl QueuedIoState {
+             owner: Mutex::new("unowned".to_string()),
+             ordinals: Mutex::new(HashMap::new()),
+             fail_next: Mutex::new(None),
++            wal_read_limit: Mutex::new(None),
+         }
+     }
  }
-+@sqlstate 42703
- expect error {}
+@@ -120,6 +122,12 @@ impl QueuedIo {
+         }
+     }
  
- @setup users
-@@ -143,6 +145,7 @@ test copy-view-errors {
-     CREATE VIEW user_view AS SELECT id FROM users;
-     COPY user_view TO STDOUT;
- }
-+@sqlstate 42809
- expect error {}
- 
- test copy-bytea-array-elements-as-hex {
++    #[cfg(not(feature = "checksum"))]
++    pub(crate) fn limit_wal_reads(&self, bytes: usize) {
++        assert!(bytes > 0);
++        *self.state.wal_read_limit.lock().unwrap() = Some(bytes);
++    }
++
+     pub(crate) fn step_one(&self) -> turso_core::Result<Option<QueuedIoEvent>> {
+         self.step_at(0, false)
+     }
+@@ -429,9 +437,31 @@ impl File for QueuedFile {
+     fn pread(&self, pos: u64, completion: Completion) -> turso_core::Result<Completion> {
+         let inner = self.inner.clone();
+         let c = completion.clone();
++        let limit = if self.path.ends_with("-wal") {
++            *self.state.wal_read_limit.lock().unwrap()
++        } else {
++            None
++        };
+         let len = completion.as_read().buf().len();
+         self.enqueue(QueuedIoOpKind::Pread, pos, len, completion, move || {
+-            drop(inner.pread(pos, c)?);
++            if let Some(limit) = limit {
++                let len = c.as_read().buf().len().min(limit);
++                let buf = Arc::new(Buffer::new_temporary(len));
++                let read = Completion::new_read(buf, move |res| {
++                    match res {
++                        Ok((buf, n)) => {
++                            c.as_read().buf().as_mut_slice()[..n as usize]
++                                .copy_from_slice(&buf.as_slice()[..n as usize]);
++                            c.complete(n);
++                        }
++                        Err(err) => c.error(err),
++                    }
++                    None
++                });
++                drop(inner.pread(pos, read)?);
++            } else {
++                drop(inner.pread(pos, c)?);
++            }
+             Ok(())
+         })
+     }
 ```
 
-**File**: `postgres/conformance/pg-sqltests/errors.sqltest` (modified, +178/-0)
+**File**: `tests/integration/storage/short_read.rs` (modified, +114/-0)
 ```diff
-@@ -106,3 +106,181 @@ test error-drop-type-used-by-a-cast-in-a-policy {
+@@ -234,3 +234,117 @@ fn test_zeroed_page_returns_corrupt_error() {
+             .contains("Invalid page type: 0");
+     }
  }
- @sqlstate 2BP01
- expect error {}
 +
-+# The statements below are valid PostgreSQL that tursopg refuses. A refusal
-+# has SQLSTATE 0A000, never a syntax error or an internal error.
++#[test]
++fn test_wal_short_reads_fail_open_without_losing_rows() {
++    use crate::common::ExecRows;
++    use crate::queued_io::QueuedIo;
++    use std::sync::Arc;
++    use turso_core::{
++        Buffer, Completion, CompletionError, Database, IOResult, LimboError, OpenFlags,
++        OpenOptions, WalFileShared, IO,
++    };
++    use turso_sqlite::SqliteDialect;
 +
-+@compat-gap "syntax:select"
-+test error-unsupported-select-without-columns {
-+    CREATE TABLE t (a int);
-+    SELECT FROM t;
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
++    let dir = tempfile::tempdir().unwrap();
++    let source_path = dir.path().join("source.db");
++    let source = rusqlite::Connection::open(&source_path).unwrap();
++    source
++        .execute_batch(
++            "PRAGMA page_size=512;
++             PRAGMA journal_mode=WAL;
++             CREATE TABLE t(x);
++             PRAGMA wal_checkpoint(TRUNCATE);
++             INSERT INTO t VALUES (1);
++             INSERT INTO t VALUES (2);
++             INSERT INTO t VALUES (3);
++             INSERT INTO t VALUES (4);",
++        )
++        .unwrap();
++    let db_bytes = std::fs::read(&source_path).unwrap();
++    let wal_bytes = std::fs::read(dir.path().join("source.db-wal")).unwrap();
 +
-+@compat-gap "syntax:values"
-+test error-unsupported-values-in-a-set-operation {
-+    VALUES (1) UNION VALUES (2) ORDER BY 1;
++    for limit in (1..=32).chain([33, 100, 535, 536, 600, 1100, 2143]) {
++        let io = Arc::new(QueuedIo::new());
++        let path = dir.path().join(format!("short-{limit}.db"));
++        let path = path.to_str().unwrap();
++        for (name, bytes) in [
++            (path.to_owned(), &db_bytes),
++            (format!("{path}-wal"), &wal_bytes),
++        ] {
++            let file = io.open_file(&name, OpenFlags::Create, false).unwrap();
++            let c = file
++                .pwrite(
++                    0,
++                    Arc::new(Buffer::new(bytes.clone())),
++                    Completion::new_write(|_| {}),
++                )
++                .unwrap();
++            io.wait_for_completion(c).unwrap();
++        }
++        io.limit_wal_reads(limit);
++        let recovery_io: Arc<dyn IO> = io.clone();
++        let mut recovery = WalFileShared::open_shared_if_exists_begin(
++            &recovery_io,
++            &format!("{path}-wal"),
++            OpenFlags::Create,
++        )
++        .unwrap();
++        let err = 'recovery: {
++            for _ in 0..100 {
++                match recovery.poll() {
++                    Err(err) => break 'recovery err,
++                    Ok(IOResult::Done(_)) => panic!("WAL read limit {limit}: recovery succeeded"),
++                    Ok(IOResult::IO(c)) => {
++                        while !c.finished() {
++                            io.step().unwrap();
++                        }
++                    }
++                }
++            }
++            panic!("WAL read limit {limit}: recovery did not finish");
++        };
++        assert!(
++            matches!(
++                *err,
++                LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })
++            ),
++            "WAL read limit {limit}: unexpected recovery error {err:?}"
++        );
++        match Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))) {
++            Err(LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })) => {}
++            Err(err) => panic!("WAL read limit {limit}: unexpected open error {err:?}"),
++            Ok(db) => {
++                io.limit_wal_reads(usize::MAX);
++                let conn = db
++                    .connect(ConnectOpts::new(SessionRole::Superuser))
++                    .unwrap();
++                let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++                panic!("WAL read limit {limit}: open succeeded with rows {rows:?}");
++            }
++        }
++        io.limit_wal_reads(usize::MAX);
++        let db =
++            Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++        assert_eq!(rows, vec![(1,), (2,), (3,), (4,)], "WAL read limit {limit}");
++        if limit == 600 {
++            conn.execute("INSERT INTO t VALUES (5)").unwrap();
++            drop(conn);
++            drop(db);
++            let db = Database::open(io, path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
++            let conn = db
++                .connect(ConnectOpts::new(SessionRole::Superuser))
++                .unwrap();
++            let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++            assert_eq!(
++                rows,
++                vec![(1,), (2,), (3,), (4,), (5,)],
++                "rows after writing and reopening"
++            );
++        }
++    }
 +}
-+expect {
-+    1
-+    2
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:create-function"
-+test error-unsupported-function-cost-with-underscores {
-+    CREATE FUNCTION f() RETURNS int LANGUAGE sql COST 1_000.5 AS 'SELECT 1';
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:select-into"
-+test error-unsupported-select-into-in-a-set-operation {
-+    SELECT 1 AS a INTO t UNION SELECT 2;
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:array-slice"
-+test error-unsupported-array-slice-without-lower-bound {
-+    SELECT (ARRAY[1, 2, 3])[:2];
-+}
-+expect {
-+    {1,2}
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:from-function"
-+test error-unsupported-coalesce-in-from {
-+    SELECT * FROM coalesce(1, 2);
-+}
-+expect {
-+    1
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:drop-cast"
-+test error-unsupported-drop-cast {
-+    DROP CAST IF EXISTS (int AS text);
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:drop-operator"
-+test error-unsupported-drop-operator {
-+    DROP OPERATOR IF EXISTS ### (int, int);
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:copy"
-+test error-unsupported-copy-to-program {
-+    CREATE TABLE t (a int);
-+    COPY t TO PROGRAM 'cat';
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:with-search"
-+test error-unsupported-search-depth-first {
-+    WITH RECURSIVE r(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM r WHERE n < 2)
-+        SEARCH DEPTH FIRST BY n SET ord
-+    SELECT n FROM r ORDER BY ord;
-+}
-+expect {
-+    1
-+    2
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+test error-drop-policy-on-a-table-of-another-database {
-+    DROP POLICY p ON db.s.t;
-+}
-+@sqlstate 0A000
-+expect error {}
-+
-+test error-json-to-record-with-two-arguments {
-+    SELECT * FROM json_to_record('{"a": 1}', 1) AS x(a int);
-+}
-+@sqlstate 42883
-+expect error {}
-+
-+test error-distinct-on-a-function-that-is-not-an-aggregate {
-+    SELECT int4(DISTINCT a) FROM (VALUES (1)) AS t(a);
-+}
-+@sqlstate 42809
-+expect error {}
-+
-+# The statements below fail in PostgreSQL with an error other than
-+# feature_not_supported, and tursopg reports the same SQLSTATE.
-+
-+test error-update-assigns-a-column-twice {
-+    CREATE TABLE t (a int);
-+    UPDATE t SET a = 1, a = 2;
-+}
-+@sqlstate 42601
-+expect error {}
-+
-+test error-on-conflict-assigns-a-column-twice {
-+    CREATE TABLE t (a int PRIMARY KEY);
-+    INSERT INTO t VALUES (1) ON CONFLICT (a) DO UPDATE SET a = 2, a = 3;
-+}
-+@sqlstate 42601
-+expect error {}
-+
-+@compat-gap "syntax:copy"
-+test copy-to-with-freeze-false {
-+    CREATE TABLE t (a int);
-+    COPY t TO STDOUT (FREEZE false);
-+}
-+expect {
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+test error-alter-sequence-owned-by-one-name {
-+    CREATE SEQUENCE s;
-+    ALTER SEQUENCE s OWNED BY x;
-+}
-+@sqlstate 42601
-+expect error {}
-+
-+@compat-gap "syntax:row-star"
-+test union-of-a-row-star-and-two-columns {
-+    CREATE TABLE u2(a int, b int);
-+    INSERT INTO u2 VALUES (1, 2);
-+    SELECT (u2).* FROM u2 UNION ALL SELECT 3, 4 ORDER BY 1;
-+}
-+expect {
-+    1|2
-+    3|4
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
-+
-+@compat-gap "syntax:row-field"
-+test field-of-a-row-constructor {
-+    SELECT (ROW(1, 2)).f1;
-+}
-+expect {
-+    1
-+}
-+@sqlstate 0A000
-+expect @tursopg error {}
 ```
 
-**File**: `postgres/conformance/pg-sqltests/explain.sqltest` (modified, +1/-0)
+---
+
+### Incident Patch 2: `df7ba30c` (2026-11-27)
+**Commit Message**: Merge 'postgres/conformance: move the fixed boolean tests out of gaps' from Pekka Enberg
+
+PR #12428 made every condition a boolean in tursopg, and removed the gap
+markers of the tests it fixed. But these tests stayed in the files under
+`gaps/`, which hold the tests of differences from PostgreSQL.
+
+This moves them to the files of their subject. Each commit moves the
+tests of one subject. The names, SQL, setups and expected answers do not
+change.
+
+| Tests | From | To |
+| --- | --- | --- |
+| `is-true-is-not-true-on-bool-col`, `in-with-null-three-valued`,
+`boolean-comparison-output`, `exists-subquery-output` | `gaps/operators-
+functions.sqltest` | `types/bool.sqltest` |
+| `like-case-sensitive-literal`, `regex-classes-d-and-escapes`,
+`similar-to` | `gaps/operators-functions.sqltest` | `pattern-
+matching.sqltest` (new) |
+| `eq-any-int-array-literal`, `array-array-literal` | `gaps/operators-
+functions.sqltest` | `array-operators.sqltest` (new) |
+| `of-a-json-boolean-is-the-text-true` | `gaps/operators-
+functions.sqltest` | `jsonb-operators.sqltest` |
+| `gen-random-uuid-format`, `to-char-null-timestamptz-row` |
+`gaps/operators-functions.sqltest` | `functions.sqltest` |
+| `current-user-curr
+
+**File**: `postgres/conformance/pg-sqltests/array-operators.sqltest` (added, +17/-0)
 ```diff
-@@ -64,6 +64,7 @@ expect {
- test explain-analyze-errors {
-     EXPLAIN ANALYZE SELECT 1;
- }
-+@sqlstate 0A000
- expect error {}
- 
- test explain-options-error {
+@@ -0,0 +1,17 @@
++# The array operators = ANY, @>, <@ and &&.
++
++@database :memory:
++
++test eq-any-int-array-literal {
++    SELECT 1 = ANY('{1,2}'::int[]), 3 = ANY('{1,2}'::int[]);
++}
++expect {
++    t|f
++}
++
++test array-array-literal {
++    SELECT ARRAY[1,2] @> ARRAY[1], ARRAY['a'] <@ ARRAY['a','b'], ARRAY[1] && ARRAY[2];
++}
++expect {
++    t|t|f
++}
 ```
 
-**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +8/-8)
+**File**: `postgres/conformance/pg-sqltests/datetime-input.sqltest` (modified, +7/-0)
 ```diff
-@@ -95,7 +95,7 @@ test alter-column-set-default {
- }
+@@ -1137,3 +1137,10 @@ test cast-jsonb-to-numbers {
  expect {
+     1|1|1.5|1.5
  }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-05: ALTER COLUMN DROP DEFAULT
-@@ -106,7 +106,7 @@ test alter-column-drop-default {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-06: ALTER COLUMN SET NOT NULL
-@@ -117,7 +117,7 @@ test alter-column-set-not-null {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-07: ALTER COLUMN DROP NOT NULL
-@@ -128,7 +128,7 @@ test alter-column-drop-not-null {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-08: ALTER COLUMN TYPE
-@@ -150,7 +150,7 @@ test add-constraint-unique {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-10: ADD CONSTRAINT FOREIGN KEY
-@@ -162,7 +162,7 @@ test add-constraint-foreign-key {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-11: ADD CONSTRAINT CHECK
-@@ -173,7 +173,7 @@ test add-constraint-check {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-12: DROP CONSTRAINT
-@@ -184,7 +184,7 @@ test drop-constraint {
- }
- expect {
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # E-13: ALTER TABLE RENAME TO
++
++test timestamptz-equality-across-offsets {
++    SELECT '2026-10-08 14:00:00+02'::timestamptz = '2026-10-08 12:00:00Z'::timestamptz;
++}
++expect {
++    t
++}
 ```
 
-**File**: `postgres/conformance/pg-sqltests/gaps/operators-functions.sqltest` (modified, +10/-10)
+**File**: `postgres/conformance/pg-sqltests/functions.sqltest` (modified, +16/-0)
 ```diff
-@@ -165,7 +165,7 @@ expect {
-     3
-     4
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-16: ILIKE ALL(array)
-@@ -179,7 +179,7 @@ expect {
-     3
-     4
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-17: ~ regex is case-sensitive
-@@ -262,7 +262,7 @@ test all-any-non-equality {
- expect {
+@@ -3400,3 +3400,19 @@ expect {
+     f|f|f
      t|t
  }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-28: = ANY(array) with NULL element
-@@ -511,7 +511,7 @@ test to-tsvector-plainto-tsquery {
- expect {
-     t
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-56: websearch_to_tsquery
-@@ -522,7 +522,7 @@ test websearch-to-tsquery {
- expect {
-     t
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-57: to_tsquery / phraseto_tsquery
-@@ -533,7 +533,7 @@ test to-tsquery-phraseto-tsquery {
- expect {
-     t|t
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-58: text col @@ to_tsquery
-@@ -545,7 +545,7 @@ test text-col-to-tsquery {
- expect {
++
++test gen-random-uuid-format {
++    SELECT gen_random_uuid()::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
++}
++expect {
++    t
++}
++
++test to-char-null-timestamptz-row {
++    CREATE TABLE to_char_times (at timestamptz);
++    INSERT INTO to_char_times VALUES (NULL);
++    SELECT to_char(at, 'YYYY') IS NULL FROM to_char_times;
++}
++expect {
++    t
++}
+```
+
+**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +0/-10)
+```diff
+@@ -830,16 +830,6 @@ expect {
      1
  }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
  
- # B-59: to_tsvector output
-@@ -578,7 +578,7 @@ test range-overlap-strictly-left-adjacent {
- expect {
-     t|t|t
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-62: tstzrange contains
-@@ -815,7 +815,7 @@ test caret-is-the-power-operator {
- expect {
-     8
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-84: || with NULL and int
-@@ -1152,7 +1152,7 @@ test with-insert-returning-data-modifying-cte {
- expect {
-     9
- }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
- 
- # B-110: row comparison (a,b) > (x,y) (keyset pagination)
+-# E-73: omitted nullable uuid column stays NULL
+-test omitted-nullable-uuid-column-stays-null {
+-    CREATE TABLE t (id int PRIMARY KEY, u uuid);
+-    INSERT INTO t (id) VALUES (1);
+-    SELECT id, u IS NULL FROM t;
+-}
+-expect {
+-    1|t
+-}
+-
+ # E-74: quoted identifier keeps its case in pg_class
+ test quoted-identifier-keeps-its-case-in-pg-class {
+     CREATE TABLE "Todos" (id int);
 ```
 
-**File**: `postgres/conformance/pg-sqltests/jsonb-operators.sqltest` (modified, +2/-2)
+**File**: `postgres/conformance/pg-sqltests/gaps/operators-functions.sqltest` (modified, +0/-111)
 ```diff
-@@ -775,7 +775,7 @@ test jsonb-matches-jsonpath {
- expect {
+@@ -56,18 +56,6 @@ expect {
+     2
+ }
+ 
+-# B-04: IS TRUE / IS NOT TRUE on bool col
+-@setup t_id_s_n_arr_ia_j_ok_with_rows
+-test is-true-is-not-true-on-bool-col {
+-    SELECT id, ok IS TRUE, ok IS NOT TRUE FROM t ORDER BY id;
+-}
+-expect {
+-    1|t|f
+-    2|f|t
+-    3|f|t
+-    4|f|t
+-}
+-
+ # B-05: IS UNKNOWN
+ @setup t_id_s_n_arr_ia_j_ok_with_rows
+ test is-unknown {
+@@ -87,14 +75,6 @@ expect {
+     2
+ }
+ 
+-# B-07: LIKE case-sensitive literal
+-test like-case-sensitive-literal {
+-    SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%';
+-}
+-expect {
+-    f|t|f
+-}
+-
+ # B-08: LIKE default escape \_
+ @setup t_id_s_n_arr_ia_j_ok_with_rows
+ test like-default-escape-underscore {
+@@ -222,38 +202,6 @@ expect {
+     4
+ }
+ 
+-# B-21: regex classes \d and escapes
+-test regex-classes-d-and-escapes {
+-    SELECT 'a1' ~ '^a\d$', 'a.c' ~ '^a\.c$', 'abc' ~ '^a\.c$';
+-}
+-expect {
+-    t|t|f
+-}
+-
+-# B-22: SIMILAR TO
+-test similar-to {
+-    SELECT 'abc' SIMILAR TO 'a(b|x)c', 'abc' SIMILAR TO 'b';
+-}
+-expect {
+-    t|f
+-}
+-
+-# B-23: IN with NULL (three-valued)
+-test in-with-null-three-valued {
+-    SELECT 1 IN (1, NULL), 2 IN (1, NULL), 2 NOT IN (1, NULL);
+-}
+-expect {
+-    t||
+-}
+-
+-# B-25: = ANY('{..}'::int[])
+-test eq-any-int-array-literal {
+-    SELECT 1 = ANY('{1,2}'::int[]), 3 = ANY('{1,2}'::int[]);
+-}
+-expect {
+-    t|f
+-}
+-
+ # B-26: > ALL / < ANY (non-equality)
+ @compat-gap "syntax:any-all"
+ test all-any-non-equality {
+@@ -321,14 +269,6 @@ expect {
+     1
+ }
+ 
+-# B-35: ARRAY @> ARRAY literal
+-test array-array-literal {
+-    SELECT ARRAY[1,2] @> ARRAY[1], ARRAY['a'] <@ ARRAY['a','b'], ARRAY[1] && ARRAY[2];
+-}
+-expect {
+-    t|t|f
+-}
+-
+ # B-36: array subscript 1-based + out of range
+ @setup t_id_s_n_arr_ia_j_ok_with_rows
+ test array-subscript-1-based-out-of-range {
+@@ -761,14 +701,6 @@ expect {
      t
  }
--@sqlstate 42601
-+@sqlstate 0A000
- expect @tursopg error {}
  
- @compat-gap "operator:jsonb #- _text"
-@@ -785,7 +785,7 @@ test jsonb-delete-path {
- expect {
-     {"a": {}}
+-# B-78: gen_random_uuid() format
+-test gen-random-uuid-format {
+-    SELECT gen_random_uuid()::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+-}
+-expect {
+-    t
+-}
+-
+ # B-79: set_config + current_setting
+ test set-config-current-setting {
+     SELECT set_config('request.jwt.claims', '{"sub":"u1"}', true);
+@@ -970,14 +902,6 @@ expect {
+     1|2
  }
--@sqlstate 42601
-+@sqlstate 0A000
+ 
+-# B-97: current_user / current_role
+-test current-user-current-role {
+-    SELECT current_user = current_role;
+-}
+-expect {
+-    t
+-}
+-
+ # B-98: pg_catalog.-qualified function
+ test pg-catalog-qualified-function {
+     SELECT pg_catalog.lower('A');
+@@ -1062,24 +986,6 @@ expect {
+     z|0
+ }
+ 
+-# B-106: boolean comparison output
+-@setup t_id_s_n_arr_ia_j_ok_with_rows
+-test boolean-comparison-output {
+-    SELECT id < 2, n IS NULL FROM t WHERE id = 1;
+-}
+-expect {
+-    t|f
+-}
+-
+-# B-107: EXISTS subquery output
+-@setup t_id_s_n_arr_ia_j_ok_with_rows
+-test exists-subquery-output {
+-    SELECT EXISTS (SELECT 1 FROM t WHERE id = 1);
+-}
+-expect {
+-    t
+-}
+-
+ # B-117: VALUES list with column aliases v(x)
+ test values-list-with-column-aliases-v-x {
+     SELECT x FROM (VALUES (1), (2)) v(x) ORDER BY x;
+@@ -1270,15 +1176,6 @@ expect @tursopg raw {
+  12
+ }
+ 
+-test to-char-null-timestamptz-row {
+-    CREATE TABLE to_char_times (at timestamptz);
+-    INSERT INTO to_char_times VALUES (NULL);
+-    SELECT to_char(at, 'YYYY') IS NULL FROM to_char_times;
+-}
+-expect {
+-    t
+-}
+-
+ # to_timestamp(double precision)
+ @compat-gap "function:to_timestamp"
+ test to-timestamp-epoch {
+@@ -1315,14 +1212,6 @@ expect {
+ @sqlstate 42883
  expect @tursopg error {}
  
- # jsonb_insert() of tursopg is the function of SQLite, which takes a JSON
+-# B-127: ->> of a JSON boolean is the text true
+-test of-a-json-boolean-is-the-text-true {
+-    SELECT '{"a": true}'::jsonb ->> 'a', '{"a": true}'::jsonb ->> 'a' <> 'true';
+-}
+-expect {
+-    true|f
+-}
+-
+ # B-128: jsonb || concatenates two objects
+ # B-122 also uses ||. After a fix, the output still differs because of A-45.
+ @compat-gap "operator:jsonb || jsonb"
 ```
 
-**File**: `postgres/conformance/pg-sqltests/schema.sqltest` (modified, +18/-0)
+**File**: `postgres/conformance/pg-sqltests/gaps/params-casts.sqltest` (modified, +0/-8)
 ```diff
-@@ -89,6 +89,24 @@ expect error {
-     different from the one being created
+@@ -185,14 +185,6 @@ test invalid-timestamptz {
+ @sqlstate 22007
+ expect error {}
+ 
+-# A-36: timestamptz equality across offsets
+-test timestamptz-equality-across-offsets {
+-    SELECT '2026-10-08 14:00:00+02'::timestamptz = '2026-10-08 12:00:00Z'::timestamptz;
+-}
+-expect {
+-    t
+-}
+-
+ # A-37: timestamp drops offset
+ test timestamp-drops-offset {
+     SELECT '2026-10-08 14:00:00+02'::timestamp;
+```
+
+**File**: `postgres/conformance/pg-sqltests/jsonb-operators.sqltest` (modified, +7/-0)
+```diff
+@@ -717,6 +717,13 @@ expect @tursopg {
+     -1
  }
  
-+# tursopg runs the elements of CREATE SCHEMA as separate statements, which it
-+# cannot do inside a transaction block.
-+@compat-gap "syntax:create-schema"
-+test create-schema-with-elements-in-a-transaction {
-+    BEGIN;
-+    CREATE SCHEMA elements_in_tx CREATE TABLE t (a int);
-+    INSERT INTO elements_in_tx.t VALUES (1);
-+    COMMIT;
-+    SELECT a FROM elements_in_tx.t;
++test of-a-json-boolean-is-the-text-true {
++    SELECT '{"a": true}'::jsonb ->> 'a', '{"a": true}'::jsonb ->> 'a' <> 'true';
 +}
 +expect {
-+    1
-+}
-+@sqlstate 0A000
-+expect @tursopg error {
-+    CREATE SCHEMA with schema elements cannot run inside a transaction block
++    true|f
 +}
 +
- # Both tests create the same schema: on an in-memory server each must get its
- # own empty schema, not a file left by the other test.
- test create-schema-starts-empty {
+ # Known differences of @> and <@
+ 
+ # tursopg compares a json or text value as jsonb, where PostgreSQL has @> only
+```
+
+**File**: `postgres/conformance/pg-sqltests/pattern-matching.sqltest` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++# LIKE, the regular expression operators and SIMILAR TO.
++
++@database :memory:
++
++test like-case-sensitive-literal {
++    SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%';
++}
++expect {
++    f|t|f
++}
++
++test regex-classes-d-and-escapes {
++    SELECT 'a1' ~ '^a\d$', 'a.c' ~ '^a\.c$', 'abc' ~ '^a\.c$';
++}
++expect {
++    t|t|f
++}
++
++test similar-to {
++    SELECT 'abc' SIMILAR TO 'a(b|x)c', 'abc' SIMILAR TO 'b';
++}
++expect {
++    t|f
++}
+```
+
+---
+
+### Incident Patch 3: `6c9e975d` (2026-11-24)
+**Commit Message**: postgres/conformance: move the test of an omitted uuid column to table.sqltest
+
+PR #12428 fixed the gap of the test `omitted-nullable-uuid-column-stays-null`: the result is a boolean, and tursopg prints it as t or f now. It is a plain test of a column that an INSERT leaves out now, and the tests of table columns are in `table.sqltest`.
+
+The names, SQL and expected answers do not change.
+
+**File**: `postgres/conformance/pg-sqltests/gaps/ddl-catalog.sqltest` (modified, +0/-10)
+```diff
+@@ -830,16 +830,6 @@ expect {
+     1
+ }
+ 
+-# E-73: omitted nullable uuid column stays NULL
+-test omitted-nullable-uuid-column-stays-null {
+-    CREATE TABLE t (id int PRIMARY KEY, u uuid);
+-    INSERT INTO t (id) VALUES (1);
+-    SELECT id, u IS NULL FROM t;
+-}
+-expect {
+-    1|t
+-}
+-
+ # E-74: quoted identifier keeps its case in pg_class
+ test quoted-identifier-keeps-its-case-in-pg-class {
+     CREATE TABLE "Todos" (id int);
+```
+
+**File**: `postgres/conformance/pg-sqltests/table.sqltest` (modified, +9/-0)
+```diff
+@@ -1549,3 +1549,12 @@ test integer-primary-key-refuses-an-upsert-to-null {
+ }
+ @sqlstate 23502
+ expect error {}
++
++test omitted-nullable-uuid-column-stays-null {
++    CREATE TABLE t (id int PRIMARY KEY, u uuid);
++    INSERT INTO t (id) VALUES (1);
++    SELECT id, u IS NULL FROM t;
++}
++expect {
++    1|t
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12568** (2026-11-26): benches: add point and range seek benchmarks (@RandoomWalks)
-- **PR #12567** (2026-11-26): core: abort a grouped completion whose IO fails to start (@jussisaurio)
-- **PR #12561** (2026-11-26): bindings/c: ship the static library in releases (@sAchin-680)
-- **PR #12543** (2026-11-26): sync/engine: drop the generated columns that use a dropped column first (@avinassh)
-- **PR #12537** (2026-11-26): sync/engine: do not rename a generated column to a re-added name (@avinassh)
-- **PR #12534** (2026-11-26): postgres: refuse unsupported statements with 0A000 and suggest workarounds (@jussisaurio)
+- **PR #12597** (2026-11-27): postgres/conformance: move the fixed boolean tests out of gaps (@penberg)
+- **PR #12593** (2026-11-27): core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints (@turso-github-handyman[bot])
+- **PR #12591** (closed): core: normalize sqlite nan values and generalize type ordering (@glommer)
+- **PR #12580** (2026-11-26): postgres/catalog: describe each catalog with a CatalogTable impl (@pedrocarlo)
+- **PR #12573** (2026-11-27): core/mvcc: return busy from a contended explicit checkpoint (@sAchin-680)
+- **PR #12569** (2026-11-26): postgres: make pg_type one table of the built-in types (@glommer)
 
 ---
 
@@ -1975,35 +2217,68 @@ that gave a different result were dropped (e.g. `round(x, s)` for
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'postgres: refuse unsupported statements with 0A000 and suggest workaround
+## X. Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
 
 **RULE**:
-When implementing operations in `postgres/conformance/pg-sqltests/catalog.sqltest`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/storage/sqlite3_ondisk.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `297600f8`: Merge 'postgres: refuse unsupported statements with 0A000 and suggest workarounds' from Jussi Saurio. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `71ae9708`: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/conformance/pg-sqltests/catalog.sqltest`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/sqlite3_ondisk.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test system-catalog-rejects-policies {
-    CREATE POLICY p ON pg_description USING (true);
-}
-@sqlstate 42501
-expect error {
-    permission denied: "pg_description" is a system catalog
-}
-
+                    if let Some(err) = c.get_error() {
+                        return Err(err.into());
+                    }
+                    if let Some(err) = completion.get_error() {
+                        return Err(err.into());
+                    }
+            _reader.handle_header_read(res)
+            reader.handle_chunk_read(offset, res)
+    fn handle_header_read(
+        self: Arc<Self>,
+        res: Result<(Arc<Buffer>, i32), CompletionError>,
+    ) -> Option<CompletionError> {
+            return None;
+        // The file is at least as long as the header, so a read that returns
+        // fewer bytes does not mean that the WAL has no header. If recovery
+        // treated it that way, the committed frames would not be visible and
+        // the next write would overwrite them.
+            return Some(CompletionError::ShortReadWalFrame {
+                offset: 0,
+                expected: WAL_HEADER_SIZE,
+                actual: bytes_read as usize,
+            });
+            return None;
+        None
+    fn handle_chunk_read(
+        self: Arc<Self>,
+        offset: u64,
+        res: Result<(Arc<Buffer>, i32), CompletionError>,
+    ) -> Option<CompletionError> {
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            _reader.handle_header_read(res);
+            None
+            reader.handle_chunk_read(res);
+            None
+    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
+            return;
+            self.finalize_loading();
+            return;
+            return;
+    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
+            return;
+        let buf_slice = &buf.as_slice()[..bytes_read as usize];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `297600f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `71ae9708` are properly handled with clean fallback behavior.

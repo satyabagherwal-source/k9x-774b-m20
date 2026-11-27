@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-GEZ7",
-    "timestamp": "2026-11-26T05:38:33.043Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TB8Z",
-    "timestamp": "2026-11-26T05:48:34.739Z",
-    "repository": "ConceptCountry/qwen-concept-27b",
-    "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
-    "contentHash": "69b044a0894cb21bb4ce25d53319b044c350f50a22434c308111078e80707206",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TJTY",
-    "timestamp": "2026-11-26T05:48:45.862Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-45LV",
     "timestamp": "2026-11-26T05:57:00.643Z",
     "repository": "Abiray/MiniMax-H3-Image-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "pulumi/pulumi",
     "learningId": "learn-github-pulumi-pulumi",
     "contentHash": "79fe0f6c0cbc63ffc25efe2de3502e834f103a1d4fa8f950ddb5f69dc23e4d63",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-A1AF",
+    "timestamp": "2026-11-27T12:21:10.023Z",
+    "repository": "yyjeqhc/webcodex",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "d9d130e1011c87b53e9adf8079acf2ab04de68c50e6dd4ba77971b2dd0cabe23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-A5GO",
+    "timestamp": "2026-11-27T12:21:15.432Z",
+    "repository": "SimonSchubert/LinuxCommandLibrary",
+    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
+    "contentHash": "2de16b4c884d9986d6b21f9ebc90c2dab30e643132bb9b1ba2620eb76392ea4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ABHR",
+    "timestamp": "2026-11-27T12:21:23.247Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

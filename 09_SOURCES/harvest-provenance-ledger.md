@@ -13815,3 +13815,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-strata-engine-inkling-2-mini-strata` | `https://huggingface.co/strata-engine/Inkling-2-Mini-Strata` | `hf-strata-` | Multi-dimensional audit evidence | 2026-11-27T12:12:20.796Z |
 | `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `5d72ca42` | Multi-dimensional audit evidence | 2026-11-27T12:12:28.431Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `dd1fa72b` | Multi-dimensional audit evidence | 2026-11-27T12:12:32.173Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f9797ded` | Multi-dimensional audit evidence | 2026-11-27T12:21:10.039Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `0f0c3c6d` | Multi-dimensional audit evidence | 2026-11-27T12:21:15.446Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `df7ba30c` | Multi-dimensional audit evidence | 2026-11-27T12:21:23.263Z |
