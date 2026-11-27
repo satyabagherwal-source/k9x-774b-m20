@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
-    "lastHarvestedAt": "2026-11-23T23:18:09.327Z",
+    "contentHash": "077ecf9115237fb1d75ce07863750d68f1ad5809eab2a0f3b5eea23b601d2e0d",
+    "lastHarvestedAt": "2026-11-27T08:58:14.715Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
@@ -13618,5 +13618,15 @@
     "contentHash": "dca859621fec710ac8b2565a298756d4c40a6f3ddd3372631fb30212c59b2eca",
     "lastHarvestedAt": "2026-11-27T06:14:35.301Z",
     "learningId": "learn-github-oracle-devrel-oracle-ai-developer-hub"
+  },
+  "hf-inclusionai-ming-image-0.2-design": {
+    "repository": "inclusionAI/Ming-Image-0.2-Design",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.2-Design",
+    "sourceVersion": "hf-inclusionai-ming-image-0.2-design",
+    "license": "Open-Source",
+    "contentHash": "db84edd88f1328b483a566294f515120a4331eb50b5f9f98e1cdec52c2f2be12",
+    "lastHarvestedAt": "2026-11-27T08:58:12.141Z",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-2-design"
   }
 }

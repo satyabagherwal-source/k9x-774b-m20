@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-0GJ3",
-    "timestamp": "2026-11-26T02:38:10.863Z",
-    "repository": "VideoRebirthAI/hyperflow-h3-flash",
-    "learningId": "learn-huggingface-videorebirthai-hyperflow-h3-flash",
-    "contentHash": "ed205455312dcaad10faf7b6153b8abad74e6c535aa8e9f95fddc7afdba3966c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-0LM9",
-    "timestamp": "2026-11-26T02:38:17.457Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-BCG6",
     "timestamp": "2026-11-26T02:46:38.790Z",
     "repository": "MiniMaxAI/MiniMax-H3-Image",
@@ -7490,6 +7460,36 @@
     "repository": "pyannote/speaker-diarization-community-1",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
     "contentHash": "282d190844df703aae0158419de7b25586ed036b0d33f1e0d1db58d2c24aa8a1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-10RS",
+    "timestamp": "2026-11-27T08:58:12.136Z",
+    "repository": "inclusionAI/Ming-Image-0.2-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-2-design",
+    "contentHash": "db84edd88f1328b483a566294f515120a4331eb50b5f9f98e1cdec52c2f2be12",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-12RB",
+    "timestamp": "2026-11-27T08:58:14.711Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "077ecf9115237fb1d75ce07863750d68f1ad5809eab2a0f3b5eea23b601d2e0d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T08:46:50.678Z",
-  "total_records": 2816,
+  "last_updated": "2026-11-27T08:58:57.562Z",
+  "total_records": 2819,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1036,
+      "total": 1038,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1109,7 +1109,9 @@
         "DOM-D-D67ECC01",
         "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learn",
         "domain_intelligence-research-knowledge-intelligence-loyalai-underdog-saluki-27b-1-0-core-invariants",
-        "DOM-D-D749CB6F"
+        "DOM-D-D749CB6F",
+        "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c"
       ]
     },
     "E": {
@@ -1121,7 +1123,7 @@
       ]
     },
     "F": {
-      "total": 119,
+      "total": 120,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1241,7 +1243,8 @@
         "DOM-F-C1405A3A",
         "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
         "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants",
-        "DOM-F-1B31BB0E"
+        "DOM-F-1B31BB0E",
+        "DOM-F-B48FD193"
       ]
     },
     "G": {
@@ -9549,8 +9552,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ad4679bbc30423a04ef75a9a4a63e817e3e2d6e2a69771576a4b643d36e2ec64",
-      "created_at": "2026-11-27T06:37:55.639Z"
+      "content_hash": "d53ca86a44be304b984d4a375630bdb11a5b878ec9b5a5eb02673cc189f48279",
+      "created_at": "2026-11-27T08:58:57.562Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20153,8 +20156,8 @@
       "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-research-knowledge-intelligence-meta-mo.md",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "content_hash": "8c7102ebc9fc61d18d0a6cef6cbad674330b485c4bd20d3a03d3005ad1485274",
-      "created_at": "2026-11-23T23:18:09.542Z"
+      "content_hash": "8cf2d9ee4389b01782f0ee1f25da43d44ddadb30c9247cff2fe79b2de531ea1b",
+      "created_at": "2026-11-27T08:58:14.954Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-core-invariants",
@@ -20219,8 +20222,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-learnings-research-knowledge-intelligen.md",
       "repository": "hf-meta-models-muse-spark-open-816b-a42b-learnings",
-      "content_hash": "3c7ea8001b4400d38ddfc1c0c0efc70348732319620b5861aa75d13185a25d8a",
-      "created_at": "2026-11-23T23:18:29.258Z"
+      "content_hash": "1c7f38273a8b4e0d100922ec5afaf65217198314f1f237257d9bb218d499e3d6",
+      "created_at": "2026-11-27T08:58:56.669Z"
     },
     "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nativescript-nativescript-learnings-core-invariants",
@@ -47536,6 +47539,72 @@
       "confidence": 0.81,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T07:59:17.448Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.2-Design Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-2-design-research-knowledge-intelligence-inclusionai.md",
+      "repository": "inclusionAI/Ming-Image-0.2-Design",
+      "content_hash": "d0524c77536a989fc463c4a59c81b5517e3e35b077ca5976296787490c6338f1",
+      "created_at": "2026-11-27T08:58:12.390Z"
+    },
+    "DOM-F-B48FD193": {
+      "record_id": "DOM-F-B48FD193",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/Ming-Image-0.2-Design",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inclusionAI/Ming-Image-0.2-Design](https://huggingface.co/inclusionAI/Ming-Image-0.2-Design))  \n> **Source Version**: `hf-inclusion`  \n> **L",
+      "content_hash": "506cdd491181d563a94cdfbd231ebd22c074d3162d0a3b53fdcfbc12b6fd2f4c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-inclusionai-ming-image-0.2-design/hf-inclusionai-ming-image-0.2-design-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T08:58:26.321Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-ming-image-0.2-design)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inclusionai-ming-image-0.2-design"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.71,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T08:58:55.751Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.2-design-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-2-design-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-inclusionai-ming-image-0.2-design-learnings",
+      "content_hash": "28254b515a83930cb4ea3e7ecffa95484894fbd347549c112f1167676cb36df8",
+      "created_at": "2026-11-27T08:58:56.134Z"
     }
   }
 }

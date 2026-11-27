@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:46:51.143Z",
+  "last_updated": "2026-11-27T08:58:57.981Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T08:46:49.070Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-27T06:37:55.092Z",
+      "processed_at": "2026-11-27T08:58:56.930Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2863,7 +2863,7 @@
       "staged_for_review": 0
     },
     "hf-meta-models-muse-spark-open-816b-a42b-learnings.md": {
-      "processed_at": "2026-11-23T23:18:29.069Z",
+      "processed_at": "2026-11-27T08:58:56.381Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4031,9 +4031,14 @@
       "processed_at": "2026-11-27T06:14:54.734Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-inclusionai-ming-image-0.2-design-learnings.md": {
+      "processed_at": "2026-11-27T08:58:55.784Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4887,
-  "total_canonical_promoted": 575,
-  "total_staged_for_review": 3656
+  "total_dossiers_evaluated": 4890,
+  "total_canonical_promoted": 576,
+  "total_staged_for_review": 3657
 }

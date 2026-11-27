@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T08:32:43.994Z",
+  "updated_at": "2026-11-27T08:58:55.830Z",
   "stats": {
-    "total_discovered": 10276,
-    "approved_pending_harvest": 9747,
+    "total_discovered": 10277,
+    "approved_pending_harvest": 9748,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9751,
+      "COMMUNITY_AND_EXPERT": 9752,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222396,6 +222396,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
         "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-9CC617C714E6": {
+      "id": "SRC-9CC617C714E6",
+      "url": "https://huggingface.co/inclusionAI/Ming-Image-0.2-Design",
+      "title": "https://huggingface.co/inclusionAI/Ming-Image-0.2-Design",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:58:55.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md",
+        "fileName": "hf-inclusionai-ming-image-0.2-design-learnings.md"
       }
     }
   }

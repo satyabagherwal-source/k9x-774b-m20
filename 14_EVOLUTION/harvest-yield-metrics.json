@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:46:40.153Z",
-  "total_cycles_completed": 13037,
-  "total_learnings_persisted": 13037,
+  "last_updated": "2026-11-27T08:58:14.727Z",
+  "total_cycles_completed": 13039,
+  "total_learnings_persisted": 13039,
   "total_rules_promoted": 11772,
   "history": [
-    {
-      "timestamp": "2026-11-26T19:07:37.600Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T19:07:49.040Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T19:16:07.581Z",
       "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T08:46:40.153Z",
       "repository": "pyannote/speaker-diarization-community-1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:58:12.154Z",
+      "repository": "inclusionAI/Ming-Image-0.2-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-2-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:58:14.727Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

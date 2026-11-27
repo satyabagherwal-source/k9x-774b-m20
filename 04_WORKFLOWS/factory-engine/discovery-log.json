@@ -22513,5 +22513,17 @@
     "qualityScore": 2659,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-27T06:14:01.504Z"
+  },
+  {
+    "name": "inclusionAI/Ming-Image-0.2-Design",
+    "fullName": "inclusionAI/Ming-Image-0.2-Design",
+    "url": "https://huggingface.co/inclusionAI/Ming-Image-0.2-Design",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: inclusionAI/Ming-Image-0.2-Design (120 likes, 0 downloads)",
+    "likes": 120,
+    "downloads": 0,
+    "qualityScore": 1200,
+    "discoveredAt": "2026-11-27T08:55:57.474Z"
   }
 ]

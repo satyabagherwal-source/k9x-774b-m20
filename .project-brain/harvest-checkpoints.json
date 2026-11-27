@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T08:46:40.156Z",
+  "last_updated": "2026-11-27T08:58:14.730Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2421,14 +2421,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "19e3c3ca2b89218aae7459a38b4ea4125d263a4c8bb47764c360dde3155d4836",
-      "verified_at": "2026-11-23T23:18:09.335Z",
+      "content_hash": "077ecf9115237fb1d75ce07863750d68f1ad5809eab2a0f3b5eea23b601d2e0d",
+      "verified_at": "2026-11-27T08:58:14.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:18:09.335Z"
+      "last_updated": "2026-11-27T08:58:14.730Z"
     },
     "black-forest-labs/flux-3-image-klein-comfy": {
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -20564,6 +20564,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-27T06:14:35.314Z"
+    },
+    "inclusionAI/Ming-Image-0.2-Design": {
+      "repository": "inclusionAI/Ming-Image-0.2-Design",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-inclusionai-ming-image-0-2-design",
+      "content_hash": "db84edd88f1328b483a566294f515120a4331eb50b5f9f98e1cdec52c2f2be12",
+      "verified_at": "2026-11-27T08:58:12.157Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-27T08:58:12.157Z"
     }
   },
   "repos": {

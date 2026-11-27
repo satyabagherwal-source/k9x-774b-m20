@@ -13734,3 +13734,6 @@
 | `CYCLE-20261127-34YL` | `2026-11-27T08:31:51.261Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`e1eef5a4...`) |
 | `CYCLE-20261127-465I` | `2026-11-27T08:32:39.462Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10861` | Yes (`afe26651...`) |
 | `CYCLE-20261127-M6TL` | `2026-11-27T08:46:40.137Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`282d1908...`) |
+| `CYCLE-20261127-10RS` | `2026-11-27T08:58:12.136Z` | `inclusionAI/Ming-Image-0.2-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md` | Yes (`db84edd8...`) |
+| `CYCLE-20261127-12RB` | `2026-11-27T08:58:14.711Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`077ecf91...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T08:58:55.783Z` | `hf-inclusionai-ming-image-0.2-design` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-B48FD193` [Domain F] | Yes (`506cdd49...`) |
