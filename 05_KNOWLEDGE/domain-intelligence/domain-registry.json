@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:34:29.257Z",
+  "last_updated": "2026-11-27T10:43:22.510Z",
   "total_records": 2827,
   "domains": {
     "A": {
@@ -9854,8 +9854,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "8ac176248468359d76eee1571ec9b4fd5aa2c990a686e51a60b93b7f87be09f4",
-      "created_at": "2026-11-26T16:21:27.830Z"
+      "content_hash": "8b4277a77d819bd97ef03b3153b7a30b54f8968847c6213320ff13b9a6d9ec1e",
+      "created_at": "2026-11-27T10:43:16.569Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -9914,8 +9914,8 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
       "repository": "milvus-io-milvus-learnings",
-      "content_hash": "a399763591a61f902bf2d9eafcf672ddcb71098b9073ad863c5e89ffa63fe2dd",
-      "created_at": "2026-11-24T19:36:18.868Z"
+      "content_hash": "29f45db707360965d85a3814ab0163d399de35ce0587cabe7c616b9983f512a8",
+      "created_at": "2026-11-27T10:43:21.446Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -10193,8 +10193,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "22c2a1871dce9e3f02bd7a9db88ab4c56111438ec86d139a985ed1a66d41420e",
-      "created_at": "2026-11-27T01:25:32.193Z"
+      "content_hash": "a1ff70e99393555686a2715ea02018f231f7acb33c1e7db041b6a483ec2ebcf2",
+      "created_at": "2026-11-27T10:43:12.068Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10271,8 +10271,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "b350f4928528d4e6ebcce10f3dc5bb2a25fb93e223d868a4bb43e47571f08da9",
-      "created_at": "2026-11-27T01:25:37.194Z"
+      "content_hash": "c6f65eeaf903a52c90a988f5085e95d235d3417e28d64fe16199e398b98758b6",
+      "created_at": "2026-11-27T10:43:20.165Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15618,8 +15618,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "6feb05161dd2ab7dea97a4569162f9faab8df787b686d64048be05de56875067",
-      "created_at": "2026-11-27T10:26:05.950Z"
+      "content_hash": "225b64432279223f2261b3ffb92a834059db7286e6e9e37251387e858e4b1829",
+      "created_at": "2026-11-27T10:43:22.510Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",

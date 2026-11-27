@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T10:34:29.426Z",
+  "last_updated": "2026-11-27T10:43:22.715Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26507,
+  "total_items": 26513,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "b830b0cd",
-      "content_hash": "8ac176248468359d76eee1571ec9b4fd5aa2c990a686e51a60b93b7f87be09f4",
+      "source_version": "8425467c",
+      "content_hash": "8b4277a77d819bd97ef03b3153b7a30b54f8968847c6213320ff13b9a6d9ec1e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:21:27.830Z"
+      "persisted_at": "2026-11-27T10:43:16.569Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "b830b0cd",
-      "content_hash": "04ce2b7ec6e8b2a242e29785346eea00d44578e5dcfd804afe39a3cf4ddf2cef",
+      "source_version": "8425467c",
+      "content_hash": "68a3bee371c996a0a20ff3e0427a2ae9b452d72f8b5b2eecb45cb9b55e75582d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:21:28.100Z"
+      "persisted_at": "2026-11-27T10:43:16.778Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -114214,9 +114214,9 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "a399763591a61f902bf2d9eafcf672ddcb71098b9073ad863c5e89ffa63fe2dd",
+      "content_hash": "29f45db707360965d85a3814ab0163d399de35ce0587cabe7c616b9983f512a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:36:18.868Z"
+      "persisted_at": "2026-11-27T10:43:21.446Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings",
@@ -114226,9 +114226,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io-milvus-learnings",
       "repository": "milvus-io-milvus-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3522d6792082ede8354941d620a6c3045860ae2759a58f128401ad6582399c7",
+      "content_hash": "a83d194ccb5a5718bebe6d9f438967634e58c6dacc2205e4083cf33e30fbe326",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:36:19.051Z"
+      "persisted_at": "2026-11-27T10:43:21.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "f1ef04b9",
-      "content_hash": "22c2a1871dce9e3f02bd7a9db88ab4c56111438ec86d139a985ed1a66d41420e",
+      "source_version": "7fa79ec4",
+      "content_hash": "a1ff70e99393555686a2715ea02018f231f7acb33c1e7db041b6a483ec2ebcf2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:25:32.193Z"
+      "persisted_at": "2026-11-27T10:43:12.068Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "f1ef04b9",
-      "content_hash": "1edbb07a11e289aa63f1f1194e66dfc15e9fd9f0f9d47f8af6e092214df2e35c",
+      "source_version": "7fa79ec4",
+      "content_hash": "5df36482c4660caca0bbf02d0acc3f5d168b2bb2c1fb986200d273fd661b31fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:25:32.398Z"
+      "persisted_at": "2026-11-27T10:43:12.276Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "b350f4928528d4e6ebcce10f3dc5bb2a25fb93e223d868a4bb43e47571f08da9",
+      "content_hash": "c6f65eeaf903a52c90a988f5085e95d235d3417e28d64fe16199e398b98758b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:25:37.194Z"
+      "persisted_at": "2026-11-27T10:43:20.165Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cde9293696ced70ef5fd50b26b2f40e6715108c349710535735af3eff70ec05",
+      "content_hash": "d45dea29695115de7a576dbb0134aee8b0f04185915927678b19524b075ac4b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:25:37.406Z"
+      "persisted_at": "2026-11-27T10:43:20.373Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221301,8 +221301,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "f1ef04b9",
-      "content_hash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
+      "source_version": "7fa79ec4",
+      "content_hash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221495,6 +221495,11 @@
           "number": 10809,
           "title": "log each PUT hop decision at INFO",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10879,
+          "title": "do not await a heal's stream inside the simulation event loop",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221502,7 +221507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T01:25:31.455Z",
+      "verified_at": "2026-11-27T10:43:11.324Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230271,9 +230276,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6feb05161dd2ab7dea97a4569162f9faab8df787b686d64048be05de56875067",
+      "content_hash": "225b64432279223f2261b3ffb92a834059db7286e6e9e37251387e858e4b1829",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:26:05.950Z"
+      "persisted_at": "2026-11-27T10:43:22.510Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230283,9 +230288,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "f218d65d92edc366eb93f2be9c9881a7d2c0b1e25e407f0bf2aa0e3d7ace429e",
+      "content_hash": "e8518b40bd07cb833adbb99d5157ce01f01ea34d8db3300c73ae6fdf3b1c9f7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:26:06.159Z"
+      "persisted_at": "2026-11-27T10:43:22.715Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -244955,8 +244960,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "b830b0cd",
-      "content_hash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
+      "source_version": "8425467c",
+      "content_hash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -245019,6 +245024,11 @@
           "number": 10724,
           "title": "build(deps): bump milvus-storage for per-client GCP credentials",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10880,
+          "title": "Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245026,7 +245036,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:21:26.862Z",
+      "verified_at": "2026-11-27T10:43:15.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -350150,13 +350160,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-61WS-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S9Q2-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf9372294a8e8d3dd1f24a5d11f80be315198cee1fdbd714ba375f8987f2dfac",
+      "content_hash": "f7e4a55ee7365280a132b671e7a169065bfac5563cda3e3497e9495bb4a0780a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:26:05.741Z"
+      "persisted_at": "2026-11-27T10:43:22.298Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363800,6 +363810,82 @@
       "content_hash": "7b345a1b5d9158a460b85e20770fab6fbdff5ed55bdff850c7179a7a218c04e8",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T10:34:27.706Z"
+    },
+    "rule-10879": {
+      "learning_id": "rule-10879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10879,
+      "title": "do not await a heal's stream inside the simulation event loop",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "7fa79ec4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T10:43:11.324Z"
+    },
+    "candidate_directive-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop": {
+      "item_id": "candidate_directive-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S1NZ-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop.md",
+      "title": "do not await a heal's stream inside the simulation event loop",
+      "repository": "freenet/freenet-core",
+      "source_version": "7fa79ec4",
+      "content_hash": "b867f72e68c7598c5492e4be63fa89687a8056bc3f9651e073a3d3e0662c5ef5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:43:11.859Z"
+    },
+    "rule-10880": {
+      "learning_id": "rule-10880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10880,
+      "title": "Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "8425467c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T10:43:15.821Z"
+    },
+    "candidate_directive-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module": {
+      "item_id": "candidate_directive-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S54Y-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module.md",
+      "title": "Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+      "repository": "milvus-io/milvus",
+      "source_version": "8425467c",
+      "content_hash": "830185312b835c9ef818e0396fb4c630b583a523a7495537d541a86223e94244",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:43:16.358Z"
+    },
+    "candidate_directive-test-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop": {
+      "item_id": "candidate_directive-test-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S7WG-test-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop.md",
+      "title": "test): do not await a heal's stream inside the simulation event loop",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "11b44f933b8db15222c6af3b064c5d54bef5773857143fb85956a48409edc1de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:43:19.940Z"
+    },
+    "candidate_directive-enhance-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module": {
+      "item_id": "candidate_directive-enhance-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S8WG-enhance-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module.md",
+      "title": "enhance: Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef049650bb9ffb754c8e050e07c9bb9f1f6ea58f2057f746ed98b803a2b0a969",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:43:21.235Z"
     }
   },
   "ai-builder-brain": {

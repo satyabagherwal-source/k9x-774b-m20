@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T10:01:41.299Z",
-    "lastVerified": "2026-11-27T10:01:41.299Z",
+    "lastChecked": "2026-11-27T10:43:10.328Z",
+    "lastVerified": "2026-11-27T10:43:10.328Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T10:34:27.216Z",
-    "lastVerified": "2026-11-27T10:34:27.216Z",
+    "lastChecked": "2026-11-27T10:43:19.491Z",
+    "lastVerified": "2026-11-27T10:43:19.491Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -500,14 +500,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T16:21:25.686Z",
-    "lastVerified": "2026-11-26T16:21:25.686Z",
+    "lastChecked": "2026-11-27T10:43:14.823Z",
+    "lastVerified": "2026-11-27T10:43:14.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
+    "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1268,22 +1268,21 @@
     "revisionIdentifier": "549d8f57"
   },
   "freenet-freenet-core": {
-    "name": "freenet-core",
+    "name": "freenet/freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:48:20.645Z",
-    "lastVerified": "2026-11-27T05:48:20.645Z",
+    "lastChecked": "2026-11-27T10:43:10.203Z",
+    "lastVerified": "2026-11-27T10:43:10.203Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
+    "contentHash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f1ef04b9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4614,9 +4613,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-26T17:23:02.139Z",
+    "lastChecked": "2026-11-27T10:43:02.820Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-26T17:23:02.139Z"
+    "lastVerified": "2026-11-27T10:43:02.820Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbaseio/trailbase",
@@ -8289,12 +8288,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "microsoft-react-native-windows": {
-    "name": "microsoft/react-native-windows",
+    "name": "react-native-windows",
     "officialUrl": "https://github.com/microsoft/react-native-windows",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-25T01:52:51.621Z",
-    "lastVerified": "2026-11-25T01:52:51.621Z",
+    "lastChecked": "2026-11-27T10:43:00.451Z",
+    "lastVerified": "2026-11-27T10:43:00.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-react-native-windows",
@@ -8303,7 +8302,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d1f9d2de"
   },
   "hf-francisring-prism": {
     "name": "FrancisRing/Prism",
@@ -8984,12 +8984,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "astral-sh-uv": {
-    "name": "astral-sh/uv",
+    "name": "uv",
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T10:08:15.621Z",
-    "lastVerified": "2026-11-26T10:08:15.621Z",
+    "lastChecked": "2026-11-27T10:42:55.360Z",
+    "lastVerified": "2026-11-27T10:42:55.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
@@ -8998,7 +8998,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9bf01bef"
   },
   "hf-pyannote-speaker-diarization-community-1": {
     "name": "pyannote/speaker-diarization-community-1",
@@ -9426,9 +9427,9 @@
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
     "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
-    "lastChecked": "2026-11-24T00:57:11.292Z",
+    "lastChecked": "2026-11-27T10:42:57.895Z",
     "revisionIdentifier": "7e5d3c5",
-    "lastVerified": "2026-11-24T00:57:11.292Z"
+    "lastVerified": "2026-11-27T10:42:57.895Z"
   },
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",

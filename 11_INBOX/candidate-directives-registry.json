@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:34:29.072Z",
+  "last_updated": "2026-11-27T10:43:22.298Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61418,11 +61418,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-61WS",
+      "id": "CD-S9Q2",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-61WS-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-S9Q2-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69905,6 +69905,59 @@
       "source_repo": "dosco-deeporg",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9CD32E-a-server-install-is-healthy-before-setup.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-S1NZ",
+      "directive_title": "do not await a heal's stream inside the simulation event loop",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "7fa79ec4",
+      "staged_file": "11_INBOX/candidate-directives/CD-S1NZ-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S54Y",
+      "directive_title": "Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+      "source_repo": "milvus-io/milvus",
+      "source_commit": "8425467c",
+      "staged_file": "11_INBOX/candidate-directives/CD-S54Y-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S7WG",
+      "directive_title": "test): do not await a heal's stream inside the simulation event loop",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S7WG-test-do-not-await-a-heal-s-stream-inside-the-simulation-event-loop.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-S8WG",
+      "directive_title": "enhance: Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module",
+      "source_repo": "milvus-io-milvus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S8WG-enhance-build-milvus_fips_enabled-on-on-go-s-fips-140-3-module.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-2D505C",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2D505C-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

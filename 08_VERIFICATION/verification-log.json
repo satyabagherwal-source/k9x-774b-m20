@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QMOO",
-    "timestamp": "2026-11-26T04:22:30.744Z",
-    "repository": "thinkingmachines/Inkling-2-Small",
-    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-    "contentHash": "782f2ffdacca2a1f0bb72ff53f16b4ebaeff5fe1a03f04458612817b536e9897",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1AYX",
-    "timestamp": "2026-11-26T04:30:48.777Z",
-    "repository": "meituan-longcat/LongCat-2.5",
-    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
-    "contentHash": "2b1e804347d990c0216d33deba73a39db85fbbaf76664c01454980a954e5b928",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-1D4N",
     "timestamp": "2026-11-26T04:30:51.575Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7460,36 @@
     "repository": "dosco/deeporg",
     "learningId": "learn-github-dosco-deeporg",
     "contentHash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-S1GL",
+    "timestamp": "2026-11-27T10:43:11.589Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-S4XE",
+    "timestamp": "2026-11-27T10:43:16.082Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

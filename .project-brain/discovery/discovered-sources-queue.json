@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T09:45:00.217Z",
+  "updated_at": "2026-11-27T10:43:20.965Z",
   "stats": {
-    "total_discovered": 10286,
-    "approved_pending_harvest": 9757,
+    "total_discovered": 10291,
+    "approved_pending_harvest": 9762,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9761,
+      "COMMUNITY_AND_EXPERT": 9766,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222616,6 +222616,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
         "fileName": "tw93-mole-learnings.md"
+      }
+    },
+    "SRC-3E7EDDC8B8A6": {
+      "id": "SRC-3E7EDDC8B8A6",
+      "url": "https://github.com/milvus-io/milvus/pull/56128",
+      "title": "https://github.com/milvus-io/milvus/pull/56128",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:43:20.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-31F77B6C368D": {
+      "id": "SRC-31F77B6C368D",
+      "url": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/pipeline-overview",
+      "title": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/pipeline-overview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:43:20.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-27785AC7301C": {
+      "id": "SRC-27785AC7301C",
+      "url": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/artifact",
+      "title": "https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/artifact",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:43:20.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-6B18967969B8": {
+      "id": "SRC-6B18967969B8",
+      "url": "https://github.com/milvus-io/milvus/blob/814ca9da80c7773a5f3dd4c4f9bbc62ccb77d67f/docs/design-docs/design_docs/20261123-fips-go-cryptographic-module.md",
+      "title": "https://github.com/milvus-io/milvus/blob/814ca9da80c7773a5f3dd4c4f9bbc62ccb77d67f/docs/design-docs/design_docs/20261123-fips-go-cryptographic-module.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:43:20.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-1A99A95CF51D": {
+      "id": "SRC-1A99A95CF51D",
+      "url": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5247",
+      "title": "https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5247",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:43:20.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
       }
     }
   }

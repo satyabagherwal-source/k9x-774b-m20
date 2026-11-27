@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "f1ef04b9",
+    "sourceVersion": "7fa79ec4",
     "license": "NOASSERTION",
-    "contentHash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
-    "lastHarvestedAt": "2026-11-27T01:25:31.721Z",
+    "contentHash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
+    "lastHarvestedAt": "2026-11-27T10:43:11.604Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "b830b0cd",
+    "sourceVersion": "8425467c",
     "license": "Apache-2.0",
-    "contentHash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
-    "lastHarvestedAt": "2026-11-26T16:21:27.188Z",
+    "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
+    "lastHarvestedAt": "2026-11-27T10:43:16.098Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

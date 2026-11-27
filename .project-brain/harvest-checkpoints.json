@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T10:34:23.903Z",
+  "last_updated": "2026-11-27T10:43:16.112Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
-      "verified_at": "2026-11-27T01:25:31.743Z",
+      "content_hash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
+      "verified_at": "2026-11-27T10:43:11.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T01:25:31.743Z"
+      "last_updated": "2026-11-27T10:43:11.617Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
-      "verified_at": "2026-11-26T16:21:27.215Z",
+      "content_hash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
+      "verified_at": "2026-11-27T10:43:16.111Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T16:21:27.215Z"
+      "last_updated": "2026-11-27T10:43:16.111Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",

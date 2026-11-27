@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T19:36:18.545Z",
+  "timestamp": "2026-11-27T10:43:21.087Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-milvus-io-milvus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [milvus-io-milvus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T19:36:18.545Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:43:21.087Z`  
 > **Learning ID**: `LEARN-EVO-milvus-io-milvus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), C (Market & Business Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io-milvus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `e5152348`  
+> **Source Version**: `8425467c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T19:36:12.699Z  
+> **Timestamp**: 2026-11-27T10:43:14.829Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:36:12.693Z  
+> **Harvest Timestamp**: 2026-11-27T10:43:14.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46733 stars
+- **Stars / Engagement**: 46751 stars
 
 ---
 
@@ -1575,14 +1575,17 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55914** (2026-11-24): **fix: [3.0] default OpenBLAS to one thread in runtime images**
-  *Symptoms*: Cherry-pick from master pr: #55650 issue: #50892  Backport 08d5f216f56390828c9e416433b22580f88b19b5 to 3.0.  Concurrent Knowhere tasks can call BLAS while OpenBLAS also starts internal workers. #50892 covers ARM Neoverse-V2 PQ loading and amd64 HNSW_PQ loading / IVF_RABITQ searches alongside compaction. This backport supplies the recommended temporary default, OPENBLAS_NUM_THREADS=1, in all six final CPU/GPU runtime images. Deployments can override it through their container environment.
+- **Issue #56130** (2026-11-27): **enhance: [3.0] Propagate caller context in console metadata handlers**
+  *Symptoms*: issue: #56127 pr: #56128  ### Summary  Cherry-pick #56128 to `3.0`: align caller context propagation in the console metadata HTTP handlers (`listCollection`, `listDatabase`, `describeDatabase`) with regular Proxy RPC paths:  - Add `consoleMetadataContext` in `internal/proxy/http_req_impl.go` to construct request metadata context from the authenticated user when business authorization is enabled, while preserving the existing management view for verified admin requests and when authorization is disabled. - Forward caller metadata in `listCollection` (via `AppendUserInfoForRPC` for `ShowCollections` and passing the derived context to `ShowLoadCollections`) and `listDatabase`. - Apply `PrivilegeInterceptor` on the target database request in `describeDatabase` for non-admin requests, mapping `PermissionDenied` to HTTP `403`. - Add unit tests in `internal/proxy/http_req_impl_test.go` (`TestConsoleMetadataAuthorization`) covering caller context propagation, missing caller rejection, target database checks, and management view handling.  ### Verification  - Clean cherry-pick of `8439b17fd9` onto `3.0` (`git diff --check` passed). - Targeted Go unit tests in `./internal/proxy` passed on `master` (10/10 subtests in `TestConsoleMetadataAuthorization`); CI will verify on `3.0`.
   **Post-Mortem & Fix Analysis**:
-  > /kind bug /area compilation /milestone 3.0.7 /refresh-label 
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/milvus-io/milvus/pull/55914#pullrequestreview-6039080591" title="LGTM">foxspy</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[build/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/build/OWNERS)~~ [foxspy]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
+  > [INFO] PR Label Summary by Default [FAILED] PR #56128 not merged - Title: enhance: Propagate caller context in console metadata handlers - Status: OPEN - Link: https://github.com/milvus-io/milvus/pull/56128   [WARNING] Milestone not set - PR: #56130 - Title: enhance: [3.0] Propagate caller context in console metadata handlers Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
 
-- **Issue #55907** (2026-11-24): **fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds**
-  *Symptoms*: ## What changed  Backport #55906 to `3.0`: move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile` inside the `ifeq ($(USE_TSAN), ON)` branch (matching `scripts/build_plan_parser.sh`), and add `make -n build-go` regression checks in `scripts/sanitizer_env_test.sh`.  ### Why  PR #55130 backported #53895 to `3.0`, which unconditionally set `CGO_CXXFLAGS` from `$(shell $(GO) env CGO_CXXFLAGS)` (`-O2 -g`) and passed `CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo` (`go version -m`), ordinary (`USE_TSAN=OFF`) `3.0` builds started recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is empty or unset).  This broke downstream Go plugin artifact verification comparing `go version -m` build settings between `milvus` and plugin `.so` artifacts (`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).  Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when `USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes `CGO_CXXFLAGS` non-empty and would otherwise drop Go's default `-O2`).  issue: #53763 pr: #55906  ## Verification  - Full `bash scripts/sanitizer_env_test.sh` passed, including the 4 new `make -n build-go` assertions (`USE_TSAN=OFF` unset/overridden and `USE_TSAN=ON` unset/overridden). - Verified with `go build -a -x` and `go version -m` that `CGO_CXXFLAGS=""` preserves 
+- **Issue #56124** (2026-11-27): **test: Fix Parquet array validation and snapshot backfill waits**
+  *Symptoms*: ## Summary  Two CI failures on #56113 exposed assumptions shared by the master and 3.0 E2E tests.  - Give the Parquet file a neutral name and assert the specific rejection for NaN, positive infinity, negative infinity and NULL. A filename containing `nan` could satisfy the old check for every input. Keep the Arrow validity check and verify that a failed import exposes zero rows. - Before taking the new snapshot in the deferred field binding test, wait until every eligible source segment reports the collection's current schema version. Background schema backfill can own an old segment while a manual compaction request returns no plan. Reuse the same physical backfill check in the mapped nullable field test.  3.0 backport in #56123. Related to #55966.  ## Verification  - Ran all four master REST cases against an isolated 3.0 standalone server with Import V3 enabled. All four passed. - Compiled the master Go SDK test package. The corresponding 3.0 Go E2E passed against that server with warmup enabled and disabled. - Ruff lint and format, gofmt and git diff checks passed. 
+  **Post-Mortem & Fix Analysis**:
+  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+  > <!-- ciloop-result-7612 --> ### :white_check_mark: CI Loop Results  `0966985`  | Stage | Result | Duration | Tests | |-------|--------|----------|-------| | :white_check_mark: Build | SUCCESS | 8.9min | - | | :white_check_mark: Code-Check | SUCCESS | 6.0min | - | | :white_check_mark: UT-Integration | SUCCESS | 26.0min | - | | :white_check_mark: UT-GO | SUCCESS | 27.4min | - | | :white_check_mark: UT-CPP-Cov | SUCCESS | 32.5min | 23335 total, 23335 passed, 0 failed |  **Total:** 53min | [Pipeline](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/pipeline-overview/) | [Artifacts](https://jenkins-milvus-ci.milvus.io/job/MILVUS-CI-V2-PR-PIPELINES/job/milvus-build-ut-ciloop-pipeline-for-tcus/7612/artifact) **C++ coverage phases:** Compile 6.5min · UT 21.8min · LCOV 4.1min  **Overall Coverage:** 79.9%  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1599,576 +1602,979 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08d5f216` (2026-11-24)
-**Commit Message**: fix: default OpenBLAS to one thread in runtime images (#55650)
+### Incident Patch 1: `3b35b67b` (2026-11-26)
+**Commit Message**: enhance: Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module (#55851)
 
-issue: #50892
-
-Concurrent Knowhere tasks can invoke BLAS while OpenBLAS also uses
-internal worker threads. #50892 first reported crashes during PQ index
-loading on ARM Neoverse-V2; later reports cover HNSW_PQ loading on amd64
-and IVF_RABITQ searches alongside compaction. The discussion recommends
-single-threaded OpenBLAS as an immediate mitigation, but the runtime
-images do not currently provide that default.
-
-Set `ENV OPENBLAS_NUM_THREADS=1` in all six final CPU/GPU runtime
-Dockerfiles. This supplies the recommended default for both
-architectures and allows deployments to override it through their
-container environment. Set it in the final GPU Ubuntu 20.04 image as
-well, so the mitigation does not depend on rebuilding its pinned base
-image.
-
-This is a temporary default for BLAS internal threading. Broader
-OpenMP/thread-pool changes remain separate follow-up work, and workloads
-relying on BLAS internal parallelism may need to override the default.
-
-Validation:
-
-- `git diff --check` passes; all six final runtime Dockerfiles contain
-the default after their final `FROM`, with no later override.
-- On this amd64 host, built
-
-**File**: `build/docker/milvus/amazonlinux2023/Dockerfile` (modified, +2/-0)
-```diff
-@@ -57,6 +57,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/gpu/ubuntu20.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -48,6 +48,8 @@ ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
- ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- 
- # Run as milvus by default; downstream images may select another user at build time.
- USER ${MILVUS_RUNTIME_USER}
-```
-
-**File**: `build/docker/milvus/gpu/ubuntu22.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -49,6 +49,8 @@ ENV PATH=/milvus/bin:$PATH
- ENV LD_LIBRARY_PATH=/milvus/lib:$LD_LIBRARY_PATH:/usr/lib
- ENV LD_PRELOAD=/milvus/lib/libjemalloc.so
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/rockylinux9/Dockerfile` (modified, +2/-0)
-```diff
-@@ -59,6 +59,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
-**File**: `build/docker/milvus/ubuntu20.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- 
- # protobuf 5.x RepeatedField adds container annotations that trigger ASAN
- # container-overflow false positives during static initialization, disable it.
-```
-
-**File**: `build/docker/milvus/ubuntu22.04/Dockerfile` (modified, +2/-0)
-```diff
-@@ -66,6 +66,8 @@ ENV LD_PRELOAD=${MILVUS_ASAN_LIB}:${MILVUS_JEMALLOC_LIB}
- ENV TSAN_OPTIONS=${MILVUS_TSAN_OPTIONS}
- ENV OMP_TOOL_LIBRARIES=${MILVUS_ARCHER_LIB}
- ENV MALLOC_CONF=background_thread:true
-+# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-+ENV OPENBLAS_NUM_THREADS=1
- ENV OPENSSL_MODULES=/milvus/lib/ossl-modules
- 
- # Generate fipsmodule.cnf for FIPS module integrity self-test.
-```
-
----
-
-### Incident Patch 2: `4e7326e0` (2026-11-24)
-**Commit Message**: fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (#55906)
+Issue: #55850. Design: [FIPS builds on the Go Cryptographic
+Module](https://github.com/milvus-io/milvus/blob/814ca9da80c7773a5f3dd4c4f9bbc62ccb77d67f/docs/design-docs/design_docs/20261123-fips-go-cryptographic-module.md).
 
 ## What changed
 
-Move `CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)` in `Makefile`
-inside the `ifeq ($(USE_TSAN), ON)` branch (matching
-`scripts/build_plan_parser.sh`), and add `make -n build-go` regression
-checks in `scripts/sanitizer_env_test.sh`.
+- `make ... MILVUS_FIPS_ENABLED=ON` pins `GOFIPS140=v1.0.0` and adds the
+required `milvus_fips` tag, including when the caller supplies custom
+tags. Go 1.26.10 resolves this to `v1.0.0-c2097c7c`, covered by [CMVP
+certificate
+#5247](https://csrc.nist.gov/projects/cryptographic-module-validation-program/certificate/5247).
+External builds can read the selector with `make -s
+MILVUS_FIPS_ENABLED=ON print-fips-go-module`. Go plugins must match the
+host toolchain, snapshot and shared-package build settings.
+- Before it reads remote configuration, which opens the process's first
+etcd connection, the tagged binary checks its recorded module snapshot
+and Go FIPS mode. Before starting a service, it checks them again and
+loads the OpenSSL configuration. It checks the default FIPS properties
+and the providers of the shared primary and current thread's public and
+private random generator
 
-### Why
-
-PR #53895 initialized `CGO_CXXFLAGS` unconditionally from `$(shell $(GO)
-env CGO_CXXFLAGS)` (`-O2 -g`) and passed
-`CGO_CXXFLAGS="$(CGO_CXXFLAGS)"` to `go build`. Because Go stamps the
-raw `CGO_CXXFLAGS` environment variable into `runtime/debug.BuildInfo`
-(`go version -m`), ordinary (`USE_TSAN=OFF`) Milvus builds started
-recording `build CGO_CXXFLAGS="-O2 -g"` instead of `<empty>` (even
-though Go already applies `-O2 -g` by default when `CGO_CXXFLAGS` is
-empty or unset).
-
-This broke downstream Go plugin artifact verification comparing `go
-version -m` build settings between `milvus` and plugin `.so` artifacts
-(`MISMATCH build setting CGO_CXXFLAGS: milvus="-O2 -g" plugin=<empty>`).
-
-Preserving `$(shell $(GO) env CGO_CXXFLAGS)` is only needed when
-`USE_TSAN=ON` appends `-fsanitize=thread ...` (which makes
-`CGO_CXXFLAGS` non-empty and would otherwise drop 
-
-**File**: `Makefile` (modified, +3/-2)
+**File**: `Makefile` (modified, +27/-8)
 ```diff
-@@ -57,8 +57,6 @@ endif
+@@ -52,7 +52,7 @@ ifeq ($(USE_ASAN), ON)
+ 	use_asan = ${USE_ASAN}
+ 	CGO_LDFLAGS += -fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address
+ 	CGO_CFLAGS += -fno-stack-protector -fno-omit-frame-pointer -fno-var-tracking -fsanitize=address
+-	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),use_asan
++	asan_go_tag := ,use_asan
+ endif
  
  USE_TSAN ?= OFF
- export USE_TSAN
--# Preserve Go's default C++ flags when the caller did not provide an override.
--CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
- ifneq ($(USE_TSAN),ON)
- ifneq ($(USE_TSAN),OFF)
- $(error USE_TSAN must be ON or OFF)
-@@ -76,6 +74,9 @@ endif
- ifneq ($(filter -race -race=true,$(GOFLAGS) $(shell $(GO) env GOFLAGS)),)
- $(error USE_TSAN cannot be combined with Go -race)
+@@ -116,11 +116,6 @@ ifdef WITH_CRT
+ 	with_crt = ${WITH_CRT}
  endif
-+# Preserve Go's default C++ flags before appending TSan flags so ordinary
-+# builds do not stamp CGO_CXXFLAGS="-O2 -g" into Go buildinfo.
-+	CGO_CXXFLAGS ?= $(shell $(GO) env CGO_CXXFLAGS)
- 	override CGO_CFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
- 	override CGO_CXXFLAGS += -fsanitize=thread -g -fno-omit-frame-pointer
- 	override CGO_LDFLAGS += -fsanitize=thread -shared-libsan
-```
-
-**File**: `scripts/sanitizer_env_test.sh` (modified, +33/-0)
-```diff
-@@ -139,6 +139,39 @@ for target in build-cpp build-cpp-with-unittest build-cpp-with-coverage; do
-     grep -q 'TANTIVY_ANALYZER_REMOTE_TLS=OFF .*core_build.sh .* -T ON .* -G OFF ' "${test_root}/make.log"
- done
  
-+# Ordinary Go builds must not materialize Go's default CGO_CXXFLAGS into the
-+# environment (which stamps CGO_CXXFLAGS="-O2 -g" into Go buildinfo and breaks
-+# plugin artifact verification), while TSan builds must preserve it before
-+# appending sanitizer flags.
-+mkdir -p "${test_root}/make-bin"
-+cat > "${test_root}/make-bin/go" <<'EOF'
-+#!/usr/bin/env bash
-+if [[ "${1:-}" == env ]]; then
-+    case "${2:-}" in
-+        CGO_CXXFLAGS) printf '%s\n' '-O2 -g' ;;
-+        GOPATH) printf '%s\n' '/tmp/gopath' ;;
-+        GOFLAGS) ;;
-+    esac
-+fi
-+EOF
-+chmod +x "${test_root}/make-bin/go"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=OFF CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O1" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O2 -g -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
-+env -u CGO_CFLAGS -u CGO_CXXFLAGS -u CGO_LDFLAGS \
-+    GIT_CONFIG_GLOBAL=/dev/null make -C "${scripts_dir}/.." -n \
-+    GO="${test_root}/make-bin/go" OS=Linux USE_TSAN=ON CGO_CXXFLAGS=-O1 build-go > "${test_root}/make.log" 2>&1
-+grep -q 'CGO_CXXFLAGS="-O1 -fsanitize=thread -g -fno-omit-frame-pointer" ' "${test_root}/make.log"
+-# FIPS: default OFF. Set MILVUS_FIPS_ENABLED=ON to enable BoringCrypto.
+-GOEXPERIMENT_FLAG :=
+-ifeq ($(MILVUS_FIPS_ENABLED),ON)
+-	GOEXPERIMENT_FLAG := GOEXPERIMENT=boringcrypto
+-endif
+ # golangci-lint
+ GOLANGCI_LINT_VERSION := 2.11.3
+ GOLANGCI_LINT_OUTPUT := $(shell $(INSTALL_PATH)/golangci-lint --version 2>/dev/null)
+@@ -159,10 +154,29 @@ ifneq ($(filter ON on TRUE True true 1,$(WITH_GPU)),)
+         $(error USE_TSAN does not support GPU builds)
+     endif
+     ifneq ($(index_engine),cardinal)
+-        MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),cuda
++        cuda_go_tag := ,cuda
+     endif
+ endif
+ 
++# All Go artifacts loaded into the same process must use the same snapshot.
++# Go 1.26.10 resolves v1.0.0 to the certified v1.0.0-c2097c7c (CMVP #5247).
++ifeq ($(MILVUS_FIPS_ENABLED),ON)
++ifneq ($(findstring ',$(MILVUS_GO_BUILD_TAGS))$(findstring ",$(MILVUS_GO_BUILD_TAGS)),)
++$(error FIPS build tags must not contain literal quote characters)
++endif
++	override GOFIPS140 := v1.0.0
++	export GOFIPS140
++	# Go accepts whitespace-separated or comma-separated tags. Normalize custom
++	# lists before adding a required tag so the Go tool sees it as its own tag.
++	empty :=
++	space := $(empty) $(empty)
++	comma := ,
++	fips_go_tags := $(subst $(comma), ,$(MILVUS_GO_BUILD_TAGS)$(asan_go_tag)$(cuda_go_tag))
++	override MILVUS_GO_BUILD_TAGS := $(subst $(space),$(comma),$(strip $(filter-out milvus_fips,$(fips_go_tags)) milvus_fips))
++else
++	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS)$(asan_go_tag)$(cuda_go_tag)
++endif
 +
- # Exercise the parser's Go and handwritten C++ commands without compiling. This
- # also protects the non-TSan path on systems whose /bin/bash is still Bash 3.2.
- mkdir -p "${test_root}/repo/scripts" "${test_root}/bin" \
-```
-
----
-
-### Incident Patch 3: `8f5bd72b` (2026-11-24)
-**Commit Message**: fix: resolve segment schema at WAL append (#55821)
-
-issue: #55626
-
-- Resolve the collection schema version and TEXT storage requirement
-when CreateSegment holds the data VChannel lock, so the WAL record and
-segment registration agree with schema DDL ordering.
-- Keep schema-dependent decisions out of the asynchronous segment
-allocation worker.
-
-Signed-off-by: chyezh <[REDACTED_EMAIL]>
-
-**File**: `docs/agent_guides/streaming-system/wal/shard-management.md` (modified, +5/-0)
-```diff
-@@ -10,6 +10,11 @@ source/spec. Only the `schema` mask flushes/fences segment allocation; ordinary
- metadata updates keep SchemaVersion unchanged. RecoveryStorage applies the same
- mask semantics. `collection.on.truncating` remains coordinator/DataCoord state.
+ # Ensure git works inside containers where .git is owned by a different user.
+ # Must use git config --global: git without 2.38's protected config reads
+ # safe.directory only from system/global config, ignoring -c and
+@@ -183,11 +197,16 @@ endif
  
-+The CreateSegment append interceptor sets the encoding SchemaVersion and applies
-+the schema's storage format requirements while holding the VChannel lock.
-+An asynchronous allocation started before a schema DDL therefore uses the
-+schema in effect when its CreateSegment enters the WAL.
+ milvus: build-cpp print-build-info build-go build-pyudf-runtime-wheel
+ 
++# Expose the server's Go module selection to external packaging builds.
++.PHONY: print-fips-go-module
++print-fips-go-module:
++	@printf '%s\n' "$$GOFIPS140"
 +
- ## Seal Policies
+ build-go:
+ 	@echo "Building Milvus ..."
+ 	@source $(PWD)/scripts/setenv.sh && \
+ 		mkdir -p $(INSTALL_PATH) && go env -w CGO_ENABLED="1" && \
+-		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(TSAN_GO_LDFLAGS) $(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
++		CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(TSAN_GO_LDFLAGS) $(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
+ 		-tags "$(MILVUS_GO_BUILD_TAGS)" -o $(INSTALL_PATH)/milvus $(PWD)/cmd/main.go 1>/dev/null
  
- Growing segments are sealed when any registered policy triggers. See `internal/streamingnode/server/wal/interceptors/shard/policy/seal_policy.go` for the full list of policies.
+ get-build-deps:
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor.go` (modified, +11/-0)
+**File**: `cmd/milvus/boring_disabled.go` (removed, +0/-13)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 
- 	"github.com/cockroachdb/errors"
- 
-+	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/redo"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
-@@ -19,6 +20,7 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message/messageutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/funcutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
+@@ -1,13 +0,0 @@
+-//go:build !boringcrypto
+-
+-package milvus
+-
+-import "github.com/milvus-io/milvus/pkg/v3/util/fips"
+-
+-func boringEnabled() bool {
+-	return false
+-}
+-
+-func maybeEnableOpenSSLFIPS() bool {
+-	return fips.MaybeEnableOpenSSLFIPS()
+-}
+```
+
+**File**: `cmd/milvus/boring_enabled.go` (removed, +0/-17)
+```diff
+@@ -1,17 +0,0 @@
+-//go:build boringcrypto
+-
+-package milvus
+-
+-import (
+-	"crypto/boring"
+-
+-	"github.com/milvus-io/milvus/pkg/v3/util/fips"
+-)
+-
+-func boringEnabled() bool {
+-	return boring.Enabled()
+-}
+-
+-func maybeEnableOpenSSLFIPS() bool {
+-	return fips.MaybeEnableOpenSSLFIPS()
+-}
+```
+
+**File**: `cmd/milvus/main_entry.go` (modified, +17/-8)
+```diff
+@@ -32,12 +32,9 @@ import (
  )
  
- const interceptorName = "shard"
-@@ -390,6 +392,15 @@ func (impl *shardInterceptor) handleCreateSegment(ctx context.Context, msg messa
- 		return nil, status.NewUnrecoverableError(err.Error())
+ // Main is the process entry point, exported so a distribution can build its own
+-// main package around it instead of duplicating the startup preamble. The body
+-// is the former cmd/main.go moved unchanged apart from three adaptations: it
+-// reads args instead of the os.Args global (with the inner slice renamed to
+-// subArgs), the original if/else became an if block that always returns
+-// followed by an unconditional tail call, and the subprocess marker is
+-// stripped into a copy of args rather than in place.
++// main package around it instead of duplicating the startup preamble.
++// When supervising a service, it propagates a nonzero exit status from the child
++// after session cleanup has finished.
+ //
+ // args is the full argument vector, program name first, as os.Args is. Main
+ // does not modify the caller's slice: the subprocess branch deletes an element,
+@@ -48,11 +45,17 @@ import (
+ // (pkg/extension) before calling Main; nothing runs earlier than the first
+ // line here except package initialization.
+ func Main(args []string) {
++	if code := runMain(args); code != 0 {
++		os.Exit(code)
++	}
++}
++
++func runMain(args []string) int {
+ 	defer asan.LsanDoLeakCheck()
+ 	args, profileEnv, err := prepareNativeProfile(args, os.Environ())
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(1)
++		return 1
  	}
  
-+	// The worker can start before a schema DDL. The outer VChannel lock
-+	// serializes this append (including registration) with the DDL.
-+	schema := impl.shardManager.GetCollectionSchemaSnapshot(h.GetCollectionId())
-+	h.SchemaVersion = schema.GetVersion()
-+	if typeutil.HasTextField(schema) {
-+		h.StorageVersion = storage.StorageV3
-+	}
-+	createSegmentMsg.OverwriteHeader(h)
-+
- 	msgID, err := appendOp(ctx, msg)
- 	if err != nil {
- 		return nil, err
+ 	// execute command as a subprocess if the command contains "--run-with-subprocess"
+@@ -107,15 +110,21 @@ func Main(args []string) {
+ 
+ 				if err != nil {
+ 					log.Println("subprocess exit, ", err.Error())
++					// A run child can reject startup before creating any sessions,
++					// including when its FIPS checks fail. Report its status to the caller.
++					if code := cmd.ProcessState.ExitCode(); code > 0 && len(subArgs) > 1 && subArgs[1] == RunCmd {
++						return code
++					}
+ 				} else {
+ 					log.Println("exit code:", cmd.ProcessState.ExitCode())
+ 				}
+-				return
++				return 0
+ 			}
+ 		}
+ 	}
+ 
+ 	RunMilvus(args)
++	return 0
+ }
+ 
+ // subprocessArgs returns args with the --run-with-subprocess marker removed,
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shard_interceptor_test.go` (modified, +88/-0)
+**File**: `cmd/milvus/main_entry_test.go` (modified, +19/-0)
 ```diff
-@@ -3,6 +3,7 @@ package shard
+@@ -19,6 +19,7 @@ package milvus
  import (
  	"context"
+ 	"os"
++	"path/filepath"
+ 	"strconv"
  	"testing"
-+	"time"
  
- 	"github.com/bytedance/mockey"
- 	"github.com/cockroachdb/errors"
-@@ -16,11 +17,14 @@ import (
- 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
- 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/mock_wal"
- 	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
-+	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/shards"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/interceptors/shard/stats"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/moduleapi"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/recovery"
- 	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/utility"
-@@ -1001,3 +1005,87 @@ func TestDropPartitionUpdatesManagerAfterAppend(t *testing.T) {
+@@ -101,3 +102,21 @@ func TestMainSubprocessReturnsAndPreservesArgs(t *testing.T) {
  		})
  	}
  }
 +
-+func TestCreateSegmentSchemaDDLOrdering(t *testing.T) {
-+	paramtable.Init()
-+	resource.InitForTest(t)
-+	cfg := paramtable.Get()
-+	cfg.Save(cfg.CommonCfg.UseLoonFFI.Key, "false")
-+	defer cfg.Reset(cfg.CommonCfg.UseLoonFFI.Key)
-+
-+	// Control when each worker's request reaches the interceptor.
-+	pending := make(chan message.MutableMessage, 1)
-+	appended := make(chan uint64)
-+	transport := mock_wal.NewMockWAL(t)
-+	patch := mockey.Mock((*mock_wal.MockWAL).Append).To(func(_ *mock_wal.MockWAL, _ context.Context, msg message.MutableMessage) (*wal.AppendResult, error) {
-+		pending <- msg
-+		tick := <-appended
-+		return &wal.AppendResult{MessageID: rmq.NewRmqID(int64(tick)), TimeTick: tick}, nil
++func TestSupervisedRunPropagatesStartupFailureAfterCleanup(t *testing.T) {
++	child := filepath.Join(t.TempDir(), "milvus")
++	require.NoError(t, os.WriteFile(child, []byte("#!/bin/sh\nexit 1\n"), 0o700)) // #nosec G306 -- The temporary test child must be executable.
++	// A failed startup has not registered a session yet.
++	sessions := mockey.Mock(sessionutil.GetSessions).Return([]string(nil)).Build()
++	defer sessions.UnPatch()
++	cleaned := false
++	cleanup := mockey.Mock(CleanSession).To(func(_ string, _ []string, suffixes []string) error {
++		assert.Empty(t, suffixes)
++		cleaned = true
++		return nil
 +	}).Build()
-+	defer patch.UnPatch()
-+	defer close(appended)
-+	future := syncutil.NewFuture[wal.WAL]()
-+	future.Set(transport)
-+	old := &schemapb.CollectionSchema{Version: 5, Fields: []*schemapb.FieldSchema{{FieldID: 100, IsPrimaryKey: true, DataType: schemapb.DataType_Int64}}}
-+	const channel = "p0_1v0"
-+	manager := shards.RecoverShardManager(&shards.ShardManagerRecoverParam{
-+		ChannelInfo: types.PChannelInfo{Name: "p0", Term: 1}, WAL: future,
-+		InitialRecoverSnapshot: &recovery.RecoverySnapshot{
-+			Checkpoint: &recovery.WALCheckpoint{TimeTick: 1},
-+			WritePathRecovery: &moduleapi.WritePathRecoveryModuleSnapshot{VChannels: map[string]moduleapi.VChannelWritePathRecoveryState{
-+				channel: {VChannel: channel, CollectionID: 1, PartitionIDs: []int64{10, 11}, Schema: old},
-+			}},
-+		},
-+	})
-+	defer manager.Close()
-+	i := NewInterceptorBuilder().Build(&interceptors.InterceptorBuildParam{ShardManager: manager})
-+	defer i.Close()
++	defer cleanup.UnPatch()
 +
-+	beginAllocation := func(partition int64) message.MutableMessage {
-+		t.Helper()
-+		_, err := manager.AssignSegment(&shards.AssignSegmentRequest{CollectionID: 1, PartitionID: partition, TimeTick: 20, ModifiedMetrics: stats.ModifiedMetrics{Rows: 1, BinarySize: 16}})
-+		require.ErrorIs(t, err, shards.ErrWaitForNewSegment)
-+		select {
-+		case msg := <-pending:
-+			return msg
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("allocation worker did not submit CreateSegment")
-+			return nil
++	assert.Equal(t, 1, runMain([]string{child, "run", "standalone", "--run-with-subprocess"}))
++	assert.True(t, cleaned)
++}
+```
+
+**File**: `cmd/milvus/run.go` (modified, +7/-2)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/common"
+ 	"github.com/milvus-io/milvus/pkg/v3/metrics"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
++	"github.com/milvus-io/milvus/pkg/v3/util/fips"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/hardware"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
+ )
+@@ -36,7 +37,11 @@ func (c *run) execute(args []string, flags *flag.FlagSet) {
+ 	runtimeDir := createRuntimeDir(serverType)
+ 	filename := getPidFileName(serverType, roles.Alias)
+ 
+-	maybeEnableOpenSSLFIPS()
++	// A MILVUS_FIPS_ENABLED=ON build must not run outside FIPS 140-3 mode.
++	if err := fips.Require(); err != nil {
++		fmt.Fprintln(os.Stderr, "Milvus cannot start:", err)
++		os.Exit(1)
++	}
+ 	c.printBanner(flags.Output())
+ 	c.injectVariablesToEnv()
+ 	c.printHardwareInfo(flags.Output())
+@@ -60,7 +65,7 @@ func (c *run) printBanner(w io.Writer) {
+ 	fmt.Fprintln(w, "Built:     "+BuildTime)
+ 	fmt.Fprintln(w, "GitCommit: "+GitCommit)
+ 	fmt.Fprintln(w, "GoVersion: "+GoVersion)
+-	fmt.Fprintf(w, "Milvus FIPS in Go: BoringCrypto %v\n", boringEnabled())
++	fmt.Fprintln(w, "FIPS:      "+fips.Status())
+ 	fmt.Fprintln(w)
+ 	metrics.BuildInfo.WithLabelValues(getEffectiveVersion(), BuildTime, GitCommit).Set(1)
+ }
+```
+
+**File**: `configs/milvus.yaml` (modified, +1/-1)
+```diff
+@@ -1426,7 +1426,7 @@ common:
+     # Large numeric passwords require double quotes to avoid yaml parsing precision issues.
+     defaultRootPassword: Milvus
+     # Algorithm used to hash newly created or updated passwords: bcrypt or pbkdf2-sha512.
+-    # pbkdf2-sha512 is a FIPS-approved key derivation function. On a build with MILVUS_FIPS_ENABLED=ON it runs on BoringCrypto.
++    # pbkdf2-sha512 is a FIPS-approved key derivation function. On a build with MILVUS_FIPS_ENABLED=ON it runs in the FIPS 140-3 Go Cryptographic Module.
+     # Existing hashes keep working after a change and are rehashed only when the password is updated, including the root hash created at first startup.
+     # Upgrade every node, and every cluster in a CDC topology, before selecting pbkdf2-sha512: older versions cannot verify these hashes, and they stop verifying after a downgrade.
+     passwordHashAlgorithm: bcrypt
+```
+
+**File**: `docs/design-docs/design_docs/20261123-fips-go-cryptographic-module.md` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++# FIPS builds on the Go Cryptographic Module
++
++Related issue: #55850.
++
++`MILVUS_FIPS_ENABLED=ON` used BoringCrypto (`GOEXPERIMENT=boringcrypto`) for
++Go cryptography and loaded OpenSSL's FIPS provider for C++. This change moves
++the Go side to Go's native FIPS 140-3 module and makes a FIPS build refuse to
++start outside FIPS mode.
++
++## Why
++
++- **The module is validated.** The Go Cryptographic Module v1.0.0 has CMVP
++  certificate #5247, and its approved algorithms include PBKDF. When
++  BoringCrypto was adopted (#48331), the native module was not yet validated.
++- **BoringCrypto is on its way out.** Go documents it as an unsupported
++  mechanism that will be removed in a future release.
++- **BoringCrypto runs hashing through cgo.** PBKDF2 makes hundreds of
++  thousands of cgo calls into BoringSSL assembly per password. A signal that
++  lands in that assembly makes cgosymbolizer unwind through code without unwind
++  information, and Milvus segfaults (#55557). The native module is Go code, so
++  hashing makes no cgo calls.
++- **A FIPS build could run without FIPS.** When OpenSSL's FIPS provider failed
++  to load, Milvus logged it and started anyway.
++
++## Design
++
++**Build.** `MILVUS_FIPS_ENABLED=ON` pins `GOFIPS140=v1.0.0` for all Go
++commands run by Make and adds `milvus_fips` to the server build tags, including
++custom tag lists. Go 1.26.10 resolves this selector to the certified snapshot
++`v1.0.0-c2097c7c`. External Go plugins must use the server's Go toolchain,
++module snapshot, and matching tags (including `milvus_fips`). External packaging
++builds can query the selector with
++`make -s --no-print-directory MILVUS_FIPS_ENABLED=ON print-fips-go-module`.
++
++**OpenSSL.** `pkg/util/fips` enables the OpenSSL FIPS provider under the
++`milvus_fips` tag. After loading the configuration, it checks the default
++`fips=yes` property and the provider backing the shared primary random generator
++and the startup thread's public and private generators. Both public and private
++random generation must succeed. Embedding hosts must configure FIPS before
++initializing the OpenSSL random generators, since OpenSSL retains generators
++across changes to default properties. `MaybeEnableOpenSSLFIPS` still drives
++CRC32C for S3.
++
++**Startup.** `milvus run` calls `fips.Require` before starting service roles. In a `milvus_fips`
++build it returns an error, and Milvus exits with status 1, when:
++
++- Go build metadata is missing or its resolved `GOFIPS140` value differs
++  from `v1.0.0-c2097c7c`;
++- Go FIPS mode is off at run time (`GODEBUG=fips140=off`);
++- the OpenSSL FIPS provider could not be enabled.
++
++With `--run-with-subprocess`, the supervisor finishes session cleanup and
++propagates an explicit nonzero exit status from the run child in both build
++modes. A FIPS startup failure therefore reaches the caller as exit status 1.
++Outside a `milvus_fips` build, `fips.Require` returns nil.
++
++**PBKDF2.** `pkg/util/crypto` uses `crypto/pbkdf2` instead of its own HMAC
++loop. The loop existed only because `crypto/pbkdf2` bypasses BoringCrypto.
++Stored hashes are unchanged; the RFC known-answer tests still pass.
++
++## Behaviour changes for MILVUS_FIPS_ENABLED=ON
++
++- **Startup is fail-closed.** A deployment whose OpenSSL FIPS configuration
++  does not load now fails to start instead of running without it.
++- **Go TLS is restricted.** In FIPS mode `crypto/tls` negotiates only approved
++  versions, cipher suites and key exchanges. Peers that offer only TLS 1.0 or
++  1.1, only ChaCha20-Poly1305, or only X25519 key exchange fail the handshake,
++  and TLS 1.2 peers must support Extended Master Secret. This covers etcd,
++  object storage, the SDK and gRPC between components. `etcd.ssl.tlsMinVersion`
++  and `minio.ssl.tlsMinVersion` values of `1.0` or `1.1` act as `1.2`.
++- **The banner line changes** from `Milvus FIPS in Go: BoringCrypto <bool>` to
++  `FIPS: on (Go Cryptographic Module v1.0.0, OpenSSL FIPS provider)`.
++
++Default builds continue to use Go's standard cryptography with their existing FIPS mode defaults.
++
++## Not covered
++
++- OpenSSL's FIPS provider is still built from Conan's OpenSSL 3.3.2, which is
++  not a validated version, and `openssl-fips.cnf` still activates the default
++  provider. The C++ part of #55086 addresses both.
++- Rust crates and other libraries in the image that bundle their own
++  cryptography (#55083 and related issues).
++- Go tools built from this repository (`binlog`, `meta-migration`, ...) now
++  use the Go module but do not enable OpenSSL's FIPS provider.
++- bcrypt stays the default password hash; FIPS deployments should select
++  `pbkdf2-sha512`.
+```
+
+---
+
+### Incident Patch 2: `e8cda3c2` (2026-11-27)
+**Commit Message**: fix: reject external specs that set one key twice (#56051)
+
+issue: #56049
+
+## What this fixes
+
+#51897 (3dafbf4e47) added case folding to `NormalizeExternalSpec`. With
+it, a lone non-canonical top-level key such as `"Format"` or `"EXTFS"`
+is read as `format` / `extfs` by Go, and by native code after
+normalization. Go and native code agree on such a spec. This PR keeps
+that behaviour.
+
+What #51897 does not cover is a spec that sets one key twice.
+`encoding/json` matches `ExternalSpec` fields ignoring case and merges
+repeated objects. So `{"extfs":{...},"Extfs":{...}}` is validated and
+normalized as one merged `extfs` map. A layer in front of Milvus that
+replaces only the exact `extfs` key (and `cloud_extra`, and `format` on
+the snapshot path) and keeps the caller's other top-level keys therefore
+leaves the caller's `"Extfs"` in place, and its keys are merged into the
+extfs passed to native code.
+
+**Why lone spellings stay folded:** a lone spelling is one setting, and
+every reader resolves it the same way. Existing collections may also use
+one.
+
+**Why collisions are rejected:** nothing about the spelling says which
+of the two values should win, and the merge is exactly how caller keys
+
+**File**: `internal/datacoord/externalrefresh/manager_test.go` (modified, +113/-0)
+```diff
+@@ -1038,6 +1038,119 @@ func TestExploreExternalFiles_UsesUniqueAttemptDirectories(t *testing.T) {
+ 	}, baseDirs)
+ }
+ 
++// Refresh revalidates the job's source and spec before exploring. A spec that
++// sets one key twice fails with an error naming the keys; a lone other
++// spelling of a key is still accepted.
++func TestExploreExternalFiles_RejectsCollidingSpecKeys(t *testing.T) {
++	paramtable.Init()
++	ms := metacache.NewMetaStore(nil)
++	ms.PutCollection(&meta.CollectionInfo{
++		ID: 100,
++		Schema: &schemapb.CollectionSchema{Fields: []*schemapb.FieldSchema{{
++			FieldID:       100,
++			Name:          "id",
++			ExternalField: "id",
++		}}},
++	})
++	mgr := &Manager{
++		mt:        &meta.Meta{MetaStore: ms},
++		allocator: &stubAllocator{nextID: 300},
++	}
++	explored := 0
++	mockExplore := mockey.Mock(packed.ExploreFilesReturnManifestPath).
++		To(func(_ []string, _ string, _, _ string, _ *indexpb.StorageConfig, _ packed.ExternalSpecContext) ([]packed.FileInfo, string, error) {
++			explored++
++			return []packed.FileInfo{{FilePath: "f.parquet", NumRows: 1}}, "manifest", nil
++		}).Build()
++	defer mockExplore.UnPatch()
++
++	newJob := func(spec string) *datapb.ExternalCollectionRefreshJob {
++		return &datapb.ExternalCollectionRefreshJob{
++			JobId:          42,
++			CollectionId:   100,
++			ExternalSource: "s3://bucket/path",
++			ExternalSpec:   spec,
 +		}
 +	}
-+	appendCreate := func(msg message.MutableMessage, tick uint64, version int32, format int64) int64 {
-+		t.Helper()
-+		var segmentID int64
-+		_, err := i.DoAppend(t.Context(), msg.WithTimeTick(tick).WithLastConfirmedUseMessageID(), func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+			h := message.MustAsMutableCreateSegmentMessageV2(msg).Header()
-+			require.Equal(t, version, h.GetSchemaVersion())
-+			require.Equal(t, format, h.GetStorageVersion())
-+			segmentID = h.GetSegmentId()
-+			return rmq.NewRmqID(int64(tick)), nil
-+		})
-+		require.NoError(t, err)
-+		appended <- tick
-+		return segmentID
++	const extfs = `{"cloud_provider":"aws","region":"us-west-2","access_key_id":"ak","access_key_value":"sk"}`
++	for _, tc := range []struct{ spec, wantErr string }{
++		{`{"format":"parquet","extfs":` + extfs + `,"Extfs":{"role_arn":"arn:aws:iam::123456789012:role/other"}}`, `external spec keys "extfs" and "Extfs" differ only in case`},
++		{`{"format":"parquet","Format":"vortex","extfs":` + extfs + `}`, `external spec keys "format" and "Format" differ only in case`},
++		{`{"format":"parquet","extfs":` + extfs + `,"extfs":` + extfs + `}`, `external spec key "extfs" appears more than once`},
++		{`{"format":"parquet","extfs":{"cloud_provider":"aws","region":"us-west-2","access_key_id":"ak","access_key_value":"sk","Region":"eu-west-1"}}`, `extfs keys "region" and "Region" differ only in case`},
++	} {
++		_, _, err := mgr.exploreExternalFiles(context.Background(), newJob(tc.spec))
++		require.ErrorIs(t, err, merr.ErrParameterInvalid, tc.spec)
++		require.ErrorContains(t, err, "external source/spec failed revalidation", tc.spec)
++		require.ErrorContains(t, err, tc.wantErr, tc.spec)
 +	}
++	require.Zero(t, explored)
 +
-+	before := appendCreate(beginAllocation(10), 25, 5, storage.StorageV2)
-+	pendingAtDDL := beginAllocation(11)
-+	updated := proto.CloneOf(old)
-+	updated.Version = 6
-+	updated.Fields = append(updated.Fields, &schemapb.FieldSchema{FieldID: 125, DataType: schemapb.DataType_Text})
-+	ddl := message.NewAlterCollectionMessageBuilderV2().WithVChannel(channel).
-+		WithHeader(&message.AlterCollectionMessageHeader{CollectionId: 1, UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{message.FieldMaskCollectionSchema}}}).
-+		WithBody(&message.AlterCollectionMessageBody{Updates: &message.AlterCollectionMessageUpdates{Schema: updated}}).
-+		MustBuildMutable().WithTimeTick(30)
-+	_, err := i.DoAppend(t.Context(), ddl, func(_ context.Context, msg message.MutableMessage) (message.MessageID, error) {
-+		require.Equal(t, []int64{before}, message.MustAsMutableAlterCollectionMessageV2(msg).Header().GetFlushedSegmentIds())
-+		return rmq.Ne
++	for _, spec := range []string{
++		`{"format":"parquet","extfs":` + extfs + `}`,
++		`{"Format":"parquet","EXTFS":` + extfs + `}`,
++	} {
++		_, _, err := mgr.exploreExternalFiles(context.Background(), newJob(spec))
++		require.NoError(t, err, spec)
++	}
++	require.Equal(t, 2, explored)
++}
++
++// When the collection already has segments, refresh parses the collection's
++// persisted spec to read the baseline manifests. That parse is strict, so a
++// persisted spec that sets one key twice fails every refresh.
++func TestCreateTasksForJob_CollidingBaselineSpecKeys(t *testing.T) {
++	ctx := context.Background()
++	collectionID := int64(100)
++	jobID := int64(1001)
++
++	for _, tc := range []struct{ baselineSpec, wantErr string }{
++		{`{"format":"parquet","extfs":{"region":"us-west-2"},"Extfs":{"use_ssl":"true"}}`, `external spec keys "extfs" and "Extfs" differ only in case`},
++		// A lone other spelling parses, so planning gets as far as reading
++		// the baseline manifests.
++		{`{"Format":"parquet","EXTFS":{"region":"us-west-2"}}`, "read external refresh baseline manifests"},
++	} {
++		ms := metacache.NewMetaStore(nil)
++		ms.PutCollection(&meta.CollectionInfo{ID: collectionID, Schema: &schemapb.CollectionSchema{ExternalSpec: tc.baselineSpec}})
++		segments := meta.NewSegmentsInfo(ms)
++		segments.SetSegment(10, &meta.SegmentInfo{SegmentInfo: &datapb.SegmentInfo{
++			ID:           10,
++			CollectionID: collectionID,
++			State:        commonpb.SegmentState_Flushed,
++			ManifestPath: "baseline-manifest",
++		}})
++		mt := &meta.Meta{MetaStore: ms, Segments: segments}
++		refreshMeta := createTestRefreshMetaWithJobs(t, nil, nil)
++		mgr := NewExternalCollectionRefreshManager(
++			ctx, mt, nil, newStubScheduler(), &stubAllocator{nextID: 2000},
++			refreshMeta, nil, testCollectionGetter(mt), nil, nil, nil).(*Manager)
++
++		mockExplore := mockey.Mock((*Manager).exploreExternalFiles).
++			Return([]packed.FileInfo{{FilePath: "s3://bucket/path/a.parquet", NumRows: 10}}, "manifest-path", nil).
++			Build()
++		mockRead := mockey.Mock(packed.ReadFragmentsFromManifest).
++			Return(nil, errors.New("manifest read failed")).
++			Build()
++
++		job := &datapb.ExternalCollectionRefreshJob{
++			JobId:        jobID,
++			CollectionId: collectionID,
++			State:        indexpb.JobState_JobStateInit,
++			ExternalSpec: `{"format":"parquet"}`,
++		}
++		require.NoError(t, refreshMeta.AddJob(job))
++		tasks, err := mgr.createTasksForJob(ctx, job)
++		mockRead.UnPatch()
++		mockExplore.UnPatch()
++		require.ErrorContains(t, 
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager.go` (modified, +1/-2)
+**File**: `internal/snapshotio/storage/validator.go` (modified, +6/-0)
 ```diff
-@@ -89,7 +89,6 @@ func (m *partitionManager) GetSegmentManager(segmentID int64) *segmentAllocManag
- }
+@@ -23,6 +23,7 @@ import (
  
- // AssignSegment assigns a segment for a assign segment request.
--// req.SchemaVersion must be set by the caller before invoking.
- func (m *partitionManager) AssignSegment(req *AssignSegmentRequest) (*AssignSegmentResult, error) {
- 	// !!! We have promised that the fencedAssignTimeTick is always less than new incoming insert request by Barrier TimeTick of ManualFlush.
- 	// So it's just a promise check here.
-@@ -210,6 +209,6 @@ func (m *partitionManager) assignSegment(req *AssignSegmentRequest) (*AssignSegm
- 
- 	// There is no segment can be allocated for the insert request.
- 	// Ask a new pending segment to insert.
--	m.asyncAllocSegment(req.SchemaVersion, req.RequiresStorageV3)
-+	m.asyncAllocSegment()
- 	return nil, ErrWaitForNewSegment
- }
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/partition_manager_test.go` (modified, +2/-2)
-```diff
-@@ -61,7 +61,7 @@ func TestPartitionManagerLogging(t *testing.T) {
- 	}
- 	for _, manager := range managers {
- 		require.Same(t, parent, manager.Logger())
--		manager.asyncAllocSegment(0, false)
-+		manager.asyncAllocSegment()
- 		manager.asyncFlushSegment(ctx, segment)
- 	}
- 	for range 4 {
-@@ -75,7 +75,7 @@ func TestPartitionManagerLogging(t *testing.T) {
- 	canceledCtx, cancel := context.WithCancel(ctx)
- 	cancel()
- 	for _, manager := range managers {
--		manager.asyncAllocSegment(0, false)
-+		manager.asyncAllocSegment()
- 		manager.wal = syncutil.NewFuture[wal.WAL]()
- 		manager.asyncFlushSegment(canceledCtx, segment)
- 	}
-```
-
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_alloc_worker.go` (modified, +11/-20)
-```diff
-@@ -17,7 +17,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/objectstorage"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/externalspec"
++	"github.com/milvus-io/milvus/pkg/v3/util/externalspec/specutil"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
  )
  
- // asyncAllocSegment allocates a new growing segment asynchronously.
--func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorageV3 bool) {
-+func (m *partitionManager) asyncAllocSegment() {
- 	if m.onAllocating != nil {
- 		m.Logger().Debug(m.ctx, "segment alloc worker is already on allocating",
- 			mlog.FieldVChannel(m.vchannel),
-@@ -29,13 +29,11 @@ func (m *partitionManager) asyncAllocSegment(schemaVersion int32, requiresStorag
- 	// Create a notifier to notify the waiter when the allocation is done.
- 	m.onAllocating = make(chan struct{})
- 	w := &segmentAllocWorker{
--		ctx:               m.ctx,
--		collectionID:      m.collectionID,
--		partitionID:       m.partitionID,
--		vchannel:          m.vchannel,
--		wal:               m.wal.Get(),
--		schemaVersion:     schemaVersion,
--		requiresStorageV3: requiresStorageV3,
-+		ctx:          m.ctx,
-+		collectionID: m.collectionID,
-+		partitionID:  m.partitionID,
-+		vchannel:     m.vchannel,
-+		wal:          m.wal.Get(),
+@@ -355,6 +356,11 @@ func parseSnapshotExternalSpec(externalSpec string) (*externalspec.ExternalSpec,
+ 	if err := json.Unmarshal([]byte(externalSpec), &snapshotSpec); err != nil {
+ 		return nil, merr.WrapErrParameterInvalidErr(err, "invalid external spec JSON")
  	}
- 	w.SetLogger(m.Logger().With(
- 		mlog.FieldVChannel(m.vchannel),
-@@ -56,11 +54,9 @@ type segmentAllocWorker struct {
- 	wal          wal.WAL
- 	// The following fields are preserved across retries to ensure the same segment
- 	// configuration is used when rebuilding the message after a failed append.
--	segmentID         uint64            // allocated segment ID
--	storageVersion    int64             // storage version determined at first attempt
--	limitation        segmentLimitation // segment limitation determined at first attempt
--	schemaVersion     int32
--	requiresStorageV3 bool
-+	segmentID      uint64            // allocated segment ID
-+	storageVersion int64             // storage version determined at first attempt
-+	limitation     segmentLimitation // segment limitation determined at first attempt
- }
- 
- // do is the main loop of the segment allocation worker.
-@@ -106,10 +102,6 @@ func (w *segmentAllocWorker) doOnce() error {
- 	// Build a fresh message each time to avoid reusing a contaminated message.
- 	// After a failed WAL append, the message may have internal state set (e.g., WAL term)
- 	// that would cause a panic if reused.
--	// TODO: include SchemaVersion in CreateSegmentMessageHeader so that the flusher
--	// can propagate it to DataCoord's AllocSegment RPC. Currently streaming-created
--	// segments get SchemaVersion=0, causing unnecessary backfill triggers.
--	// Tracked in companion PR: https://github.com/milvus-io/milvus/pull/48865
- 	msg := message.NewCreateSegmentMessageBuilderV2().
- 		WithVChannel(w.vchannel).
- 		WithHeader(&message.CreateSegmentMessageHeader{
-@@ -120,7 +112,6 @@ func (w *segmentAllocWorker) doOnce() error {
- 			MaxRows:        w.limitation.SegmentRows,
- 			MaxSegmentSize: w.limitation.SegmentSize,
- 			Level:          datapb.SegmentLevel_L1,
--			SchemaVersion:  w.schemaVersion,
- 		}).
- 		WithBody(&message.CreateSegmentMessageBody{}).
- 		MustBuildMutable()
-@@ -151,9 +142,9 @@ func (w *segmentAllocWorker) initSegmentConfig() error {
- 	}
- 	w.segmentID = segmentID
- 
--	// Determine storage version.
-+	// Capture the configured default across retries. CreateSegment applies schema requirements at append.
- 	w.storageVersion = storage.StorageV2
--	if w.requiresStorageV3 || paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
-+	if paramtable.Get().CommonCfg.UseLoonFFI.GetAsBool() {
- 		w.storageVersion = storage.StorageV3
- 	}
- 
++	// The re-marshal below would turn "Format" next to "format", or "Extfs"
++	// next to "extfs", into one merged key, so check the keys first.
++	if err := specutil.ValidateExternalSpecKeys(externalSpec); err != nil {
++		return nil, err
++	}
+ 	snapshotOnly := make(map[string]string)
+ 	for key := range snapshotExtfsOnlyKeys {
+ 		if value, ok := snapshotSpec.Extfs[key]; ok {
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/segment_workers_test.go` (modified, +8/-11)
+**File**: `internal/snapshotio/storage/validator_test.go` (modified, +29/-0)
 ```diff
-@@ -296,30 +296,27 @@ func TestSegmentAllocWorker_InitSegmentConfig(t *testing.T) {
- 	assert.Equal(t, firstLimitation, w.limitation)
+@@ -31,6 +31,7 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/objectstorage"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/externalspec"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ )
+ 
+ func validateSnapshotForeignStorageForTest(
+@@ -110,6 +111,34 @@ func TestValidateSnapshotForeignStorageRestoreGCPServiceAccountJSONAllowed(t *te
+ 	assert.False(t, cfg.UseIAM)
  }
  
--func TestSegmentAllocWorkerStorageVersionFollowsRequirements(t *testing.T) {
-+func TestSegmentAllocWorkerUsesConfiguredStorageVersion(t *testing.T) {
- 	paramtable.Init()
- 	resource.InitForTest(t)
- 	param := paramtable.Get()
- 	defer param.Reset(param.CommonCfg.UseLoonFFI.Key)
++// A spec with snapshot-only extfs keys is re-marshaled before the generic
++// parser sees it, and the re-marshal would merge two spellings of one key, so
++// the caller's keys are checked first.
++func TestParseSnapshotExternalSpecRejectsCollidingKeys(t *testing.T) {
++	const extfs = `{"cloud_provider":"gcpnative","credential_json":"{}"}`
++	for _, spec := range []string{
++		`{"extfs":` + extfs + `}`,
++		`{"FORMAT":"parquet","EXTFS":` + extfs + `}`,
++	} {
++		parsed, err := parseSnapshotExternalSpec(spec)
++		require.NoError(t, err, spec)
++		assert.Equal(t, "parquet", parsed.Format, spec)
++		assert.Equal(t, "{}", parsed.Extfs[snapshotExtfsKeyCredentialJSON], spec)
++	}
++	for _, tc := range []struct{ spec, wantErr string }{
++		{`{"extfs":` + extfs + `,"Extfs":{"use_iam":"true"}}`, `external spec keys "extfs" and "Extfs" differ only in case`},
++		{`{"format":"parquet","Format":"vortex","extfs":` + extfs + `}`, `external spec keys "format" and "Format" differ only in case`},
++		{`{"extfs":` + extfs + `,"extfs":` + extfs + `}`, `external spec key "extfs" appears more than once`},
++		{`{"extfs":{"cloud_provider":"gcpnative","credential_json":"{}","Credential_Json":"{}"}}`, `extfs keys "credential_json" and "Credential_Json" differ only in case`},
++		// Without snapshot-only keys the spec goes straight to the generic parser.
++		{`{"format":"parquet","FORMAT":"vortex"}`, `external spec keys "format" and "FORMAT" differ only in case`},
++	} {
++		_, err := parseSnapshotExternalSpec(tc.spec)
++		require.ErrorIs(t, err, merr.ErrParameterInvalid, tc.spec)
++		require.ErrorContains(t, err, tc.wantErr, tc.spec)
++	}
++}
++
+ func TestApplySnapshotExternalSpecUseIAMClearsInheritedCredentials(t *testing.T) {
+ 	cfg := objectstorage.NewDefaultConfig()
+ 	cfg.AccessKeyID = "instance-ak"
+```
+
+**File**: `internal/storagev2/packed/exttable_test.go` (modified, +25/-1)
+```diff
+@@ -1792,13 +1792,37 @@ func TestInjectExternalSpecProperties_LegacyKeys(t *testing.T) {
+ 	props, err := MakePropertiesFromStorageConfig(config, nil)
+ 	require.NoError(t, err)
+ 	defer FreeProperties(props)
+-	const spec = `{"FORMAT":"paimon-table","Snapshot_Id":9007199254740993,"SCAN_MODE":"auto","scan_mode":"data-split","EXTFS":{"cloud_provider":"aws","region":"us-east-1","use_iam":"true"}}`
++	const spec = `{"FORMAT":"paimon-table","Snapshot_Id":9007199254740993,"SCAN_MODE":"data-split","EXTFS":{"cloud_provider":"aws","region":"us-east-1","use_iam":"true"}}`
+ 	require.NoError(t, injectExternalSpecProperties(props, 42, "s3://bucket/table", spec))
+ 	require.Equal(t, "data-split", loonPropertyString(props, "paimon.scan_mode"))
+ 	require.Equal(t, "9007199254740993", loonPropertyString(props, "reader.exttable.snapshot_id"))
+ 	require.Equal(t, "us-east-1", loonPropertyString(props, ExtfsPrefixForCollection(42)+"region"))
+ }
  
- 	for name, tc := range map[string]struct {
--		useLoonFFI        string
--		requiresStorageV3 bool
--		expected          int64
-+		useLoonFFI string
-+		expected   int64
- 	}{
- 		"v2_without_requirement": {useLoonFFI: "false", expected: storage.StorageV2},
--		"v3_required_by_schema":  {useLoonFFI: "false", requiresStorageV3: true, expected: storage.StorageV3},
- 		"v3_with_ffi":            {useLoonFFI: "true", expected: storage.StorageV3},
++// A persisted spec that sets one key twice stops at the Go boundary instead of
++// reaching native code as a merge of both values.
++func TestInjectExternalSpecProperties_RejectsCollidingKeys(t *testing.T) {
++	paramtable.Init()
++	config := &indexpb.StorageConfig{StorageType: "local", RootPath: t.TempDir()}
++	props, err := MakePropertiesFromStorageConfig(config, nil)
++	require.NoError(t, err)
++	defer FreeProperties(props)
++	for _, tc := range []struct{ spec, wantErr string }{
++		{`{"FORMAT":"paimon-table","SCAN_MODE":"auto","scan_mode":"data-split"}`, `external spec keys "SCAN_MODE" and "scan_mode" differ only in case`},
++		{`{"extfs":{"cloud_provider":"gcp","use_iam":"true"},"Extfs":{"gcp_target_service_account":"other@project.iam.gserviceaccount.com"}}`, `external spec keys "extfs" and "Extfs" differ only in case`},
++		{`{"extfs":{"cloud_provider":"aws","region":"us-east-1","region":"eu-west-1"}}`, `extfs key "region" appears more than once`},
++	} {
++		err := injectExternalSpecProperties(props, 42, "s3://bucket/table", tc.spec)
++		require.ErrorIs(t, err, merr.ErrParameterInvalid, tc.spec)
++		require.ErrorContains(t, err, tc.wantErr, tc.spec)
++		source, cSpec, cleanup, err := newCExternalContext("s3://bucket/table", tc.spec)
++		require.ErrorIs(t, err, merr.ErrParameterInvalid, tc.spec)
++		require.Nil(t, source)
++		require.Nil(t, cSpec)
++		require.Nil(t, cleanup)
++	}
++}
++
+ func TestNewCExternalContextRejectsMalformedSpec(t *testing.T) {
+ 	source, spec, cleanup, err := newCExternalContext("s3://bucket/table", `{"Format":"paimon-table","Scan_Mode":true}`)
+ 	require.ErrorIs(t, err, merr.ErrParameterInvalid)
+```
+
+**File**: `internal/util/indexcgowrapper/external_spec_test.go` (modified, +4/-0)
+```diff
+@@ -42,4 +42,8 @@ func TestMarshalBuildIndexInfoNormalizesHistoricalSpec(t *testing.T) {
+ func TestMarshalBuildIndexInfoRejectsInvalidSpec(t *testing.T) {
+ 	_, err := marshalBuildIndexInfo(&indexcgopb.BuildIndexInfo{ExternalSpec: `{"Scan_Mode":true}`})
+ 	require.ErrorIs(t, err, merr.ErrParameterInvalid)
++
++	_, err = marshalBuildIndexInfo(&indexcgopb.BuildIndexInfo{ExternalSpec: `{"extfs":{"region":"us-east-1"},"EXTFS":{"use_ssl":"true"}}`})
++	require.ErrorIs(t, err, merr.ErrParameterInvalid)
++	require.ErrorContains(t, err, `external spec keys "extfs" and "EXTFS" differ only in case`)
+ }
+```
+
+**File**: `pkg/util/externalspec/external_spec.go` (modified, +16/-3)
+```diff
+@@ -920,15 +920,28 @@ var awsFamilyScheme = map[string]bool{
+ // are preserved as extension metadata. Because unknown pre-validation fields
+ // may themselves be sensitive, external-collection request logging uses
+ // RedactExternalSpecForLog. On parse failure this returns "<invalid spec>"
+-// rather than the raw input.
++// rather than the raw input, as it does for a spec that sets a key twice (see
++// specutil.ValidateExternalSpecKeys). A lone other spelling of a known key,
++// such as "EXTFS", is read under its canonical name, as Go and native readers
++// read it.
+ func RedactExternalSpec(specStr string) string {
+ 	if specStr == "" {
+ 		return ""
+ 	}
+-	var spec map[string]json.RawMessage
+-	if err := json.Unmarshal([]byte(specStr), &spec); err != nil {
++	if specutil.ValidateExternalSpecKeys(specStr) != nil {
++		return "<invalid spec>"
++	}
++	var raw map[string]json.RawMessage
++	if err := json.Unmarshal([]byte(specStr), &raw); err != nil {
+ 		return "<invalid spec>"
+ 	}
++	var spec map[string]json.RawMessage
++	if raw != nil {
++		spec = make(map[string]json.RawMessage, len(raw))
++		for key, value := range raw {
++			spec[specutil.CanonicalSpecKey(key)] = value
++		}
++	}
+ 	if err := normalizeInt64Field(spec, "snapshot_id"); err != nil {
+ 		return "<invalid spec>"
+ 	}
+```
+
+**File**: `pkg/util/externalspec/external_spec_test.go` (modified, +42/-0)
+```diff
+@@ -53,6 +53,12 @@ func TestMarshalCollectionSchemaNormalizesHistoricalSpec(t *testing.T) {
+ 	_, err = MarshalCollectionSchema(schema)
+ 	require.ErrorIs(t, err, merr.ErrParameterInvalid)
+ 
++	// A persisted spec that sets one key twice is not sent to native code.
++	schema.ExternalSpec = `{"format":"paimon-table","Format":"parquet"}`
++	_, err = MarshalCollectionSchema(schema)
++	require.ErrorIs(t, err, merr.ErrParameterInvalid)
++	require.ErrorContains(t, err, `external spec keys "format" and "Format" differ only in case`)
++
+ 	schema.ExternalSpec = ""
+ 	blob, err = MarshalCollectionSchema(schema)
+ 	require.NoError(t, err)
+@@ -65,6 +71,26 @@ func TestValidateSourceAndSpecLegacyKeys(t *testing.T) {
+ 		`{"Format":"paimon-table","SNAPSHOT_ID":"7","Scan_Mode":"data-split","EXTFS":{"cloud_provider":"aws","region":"us-east-1","anonymous":"true"}}`))
+ }
+ 
++// Create in Proxy and RootCoord, Proxy refresh and DataCoord refresh
++// revalidation all call ValidateSourceAndSpec.
++func TestValidateSourceAndSpecRejectsCollidingKeys(t *testing.T) {
++	const extfs = `{"cloud_provider":"aws","region":"us-east-1","anonymous":"true"}`
++	require.NoError(t, ValidateSourceAndSpec("s3://bucket/table", `{"format":"parquet","extfs":`+extfs+`}`))
++	for _, tc := range []struct{ spec, wantErr string }{
++		{`{"extfs":` + extfs + `,"Extfs":{"role_arn":"arn:aws:iam::123456789012:role/other"}}`, `external spec keys "extfs" and "Extfs" differ only in case`},
++		{`{"EXTFS":` + extfs + `,"Extfs":{"role_arn":"arn:aws:iam::123456789012:role/other"}}`, `external spec keys "EXTFS" and "Extfs" differ only in case`},
++		{`{"format":"parquet","Format":"vortex","extfs":` + extfs + `}`, `external spec keys "format" and "Format" differ only in case`},
++		{`{"cloud_extra":{},"Cloud_Extra":{},"extfs":` + extfs + `}`, `external spec keys "cloud_extra" and "Cloud_Extra" differ only in case`},
++		{`{"extfs":` + extfs + `,"extfs":` + extfs + `}`, `external spec key "extfs" appears more than once`},
++		{`{"extfs":{"cloud_provider":"aws","region":"us-east-1","anonymous":"true","Region":"eu-west-1"}}`, `extfs keys "region" and "Region" differ only in case`},
++		{`{"extfs":{"cloud_provider":"aws","region":"us-east-1","anonymous":"true","region":"eu-west-1"}}`, `extfs key "region" appears more than once`},
++	} {
++		err := ValidateSourceAndSpec("s3://bucket/table", tc.spec)
++		require.ErrorIs(t, err, merr.ErrParameterInvalid, tc.spec)
++		require.ErrorContains(t, err, tc.wantErr, tc.spec)
++	}
++}
++
+ func TestParseExternalSpec_Empty(t *testing.T) {
+ 	spec, err := ParseExternalSpec("")
+ 	require.NoError(t, err)
+@@ -640,6 +666,22 @@ func TestRedactExternalSpec(t *testing.T) {
+ 		assert.Equal(t, "<invalid spec>", RedactExternalSpec(`{"format":"iceberg-table","snapshot_id":{}}`))
+ 	})
+ 
++	t.Run("lone_key_spelling_redacted_under_canonical_name", func(t *testing.T) {
++		out := RedactExternalSpec(`{"Format":"parquet","EXTFS":{"region":"us-east-1","access_key_value":"SEC"},"Snapshot_Id":7}`)
++		assert.NotContains(t, out, "SEC")
++		assert.JSONEq(t, `{"format":"parquet","extfs":{"region":"us-east-1","access_key_value":"***"},"snapshot_id":"7"}`, out)
++	})
++
++	t.Run("key_set_twice_returns_placeholder", func(t *testing.T) {
++		for _, spec := range []string{
++			`{"format":"parquet","extfs":{"access_key_value":"SEC"},"Extfs":{"access_key_value":"SEC2"}}`,
++			`{"format":"parquet","extfs":{"access_key_value":"SEC"},"extfs":{}}`,
++			`{"format":"parquet","extfs":{"access_key_value":"SEC","Access_Key_Value":"SEC2"}}`,
++		} {
++			assert.Equal(t, "<invalid spec>", RedactExternalSpec(spec), spec)
++		}
++	})
++
+ 	t.Run("preserves_unknown_top_level_fields", func(t *testing.T) {
+ 		out := RedactExternalSpec(`{
+ 			"format":"parquet",
+```
+
+**File**: `pkg/util/externalspec/specutil/normalize_test.go` (modified, +20/-10)
+```diff
+@@ -21,6 +21,8 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
++
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ )
+ 
+ func TestNormalizeExternalSpec(t *testing.T) {
+@@ -32,18 +34,13 @@ func TestNormalizeExternalSpec(t *testing.T) {
+ 		{"extfs", `{"EXTFS":{"region":"US-East-1"}}`, `{"extfs":{"region":"US-East-1"}}`},
+ 		{"snapshot precision", `{"Snapshot_Id":5320540205222981137}`, `{"snapshot_id":"5320540205222981137"}`},
+ 		{"unicode fold", `{"Format":"paimon-table","ſnapshot_id":"7","ſcan_mode":"data-split"}`, `{"format":"paimon-table","snapshot_id":"7","scan_mode":"data-split"}`},
+-		{"last variant", `{"format":"parquet","FORMAT":"vortex"}`, `{"format":"vortex"}`},
+-		{"last canonical", `{"FORMAT":"vortex","format":"parquet"}`, `{"format":"parquet"}`},
+-		{"identical keys", `{"format":"vortex","format":"parquet"}`, `{"format":"parquet"}`},
+-		{"null string keeps value", `{"format":"vortex","FORMAT":null}`, `{"format":"vortex"}`},
+-		{"null snapshot clears value", `{"snapshot_id":7,"SNAPSHOT_ID":null}`, `{"snapshot_id":null}`},
+-		{"duplicate maps merge", `{"extfs":{"region":"us-east-1"},"EXTFS":{"use_ssl":"true"}}`, `{"extfs":{"region":"us-east-1","use_ssl":"true"}}`},
+-		{"null map clears value", `{"extfs":{"region":"us-east-1"},"EXTFS":null}`, `{"extfs":null}`},
+-		{"duplicate arrays replace", `{"columns":["a"],"COLUMNS":["b"]}`, `{"columns":["b"]}`},
+-		{"null array clears value", `{"columns":["a"],"COLUMNS":null}`, `{"columns":null}`},
++		{"null string", `{"FORMAT":null}`, `{"format":""}`},
++		{"null snapshot", `{"SNAPSHOT_ID":null}`, `{"snapshot_id":null}`},
++		{"null map", `{"EXTFS":null}`, `{"extfs":null}`},
++		{"null array", `{"COLUMNS":null}`, `{"columns":null}`},
++		{"escaped key names", `{"form\u0061t":"paimon-table","\u0045XTFS":{"r\u0065gion":"us-east-1"}}`, `{"format":"paimon-table","extfs":{"region":"us-east-1"}}`},
+ 		{"scan mode missing", `{"Format":"paimon-table"}`, `{"format":"paimon-table"}`},
+ 		{"scan mode null", `{"Format":"paimon-table","Scan_Mode":null}`, `{"format":"paimon-table","scan_mode":""}`},
+-		{"scan mode duplicate", `{"Format":"paimon-table","SCAN_MODE":"data-split","scan_mode":"direct-file"}`, `{"format":"paimon-table","scan_mode":"direct-file"}`},
+ 		{"unknown values", `{"Format":"parquet","CUSTOM":{"Format":"untouched","n":9007199254740993,"f":1.2300},"custom":null}`, `{"format":"parquet","CUSTOM":{"Format":"untouched","n":9007199254740993,"f":1.2300},"custom":null}`},
  	} {
- 		t.Run(name, func(t *testing.T) {
- 			param.Save(param.CommonCfg.UseLoonFFI.Key, tc.useLoonFFI)
- 			w := &segmentAllocWorker{
--				ctx:               context.Background(),
--				collectionID:      1,
--				partitionID:       2,
--				vchannel:          "v1",
--				wal:               mock_wal.NewMockWAL(t),
--				requiresStorageV3: tc.requiresStorageV3,
-+				ctx:          context.Background(),
-+				collectionID: 1,
-+				partitionID:  2,
-+				vchannel:     "v1",
-+				wal:          mock_wal.NewMockWAL(t),
- 			}
- 			w.SetLogger(mlog.With())
- 
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -80,3 +77,16 @@ func TestNormalizeExternalSpecInvalidTypes(t *testing.T) {
+ 		require.Equal(t, input, got)
+ 	}
+ }
++
++// NormalizeExternalSpec is the last Go step before native readers, so a
++// persisted spec that sets one key twice fails here instead of reaching native
++// code as a merge of both values.
++func TestNormalizeExternalSpecRejectsCollidingKeys(t *testing.T) {
++	for _, tc := range collidingKeySpecs {
++		t.Run(tc.name, func(t *testing.T) {
++			_, err := NormalizeExternalSpec(tc.spec)
++			require.ErrorIs(t, err, merr.ErrParameterInvalid)
++			require.ErrorContains(t, err, tc.wantErr)
++		})
++	}
++}
 ```
 
-**File**: `internal/streamingnode/server/wal/interceptors/shard/shards/shard_manager.go` (modified, +0/-11)
+---
+
+### Incident Patch 3: `8425467c` (2026-11-27)
+**Commit Message**: fix: persist segment transform coverage for empty WAL positions (#56054)
+
+issue: #54417
+
+- DataCoord: persist the first Insert's Transform cursor before
+filtering physical StartPosition, so Woodpecker's valid empty-encoded
+`0/0` ID cannot leave L1 flush publication blocked. Preserve existing
+cursors and catalog-before-ack ordering.
+- Design: clarify that durable Segment Transform coverage is independent
+of the physical seek ID.
+
+Signed-off-by: chyezh <[REDACTED_EMAIL]>
+
+**File**: `docs/design-docs/design_docs/qviews/transform_start_after_timetick.md` (modified, +6/-0)
 ```diff
-@@ -275,17 +275,6 @@ func (c *CollectionInfo) AllowGrowingSourceFlush() bool {
- 		paramtable.Get().CommonCfg.EnableGrowingSourceFlush.GetAsBool())
+@@ -54,6 +54,12 @@ only deletes rows with `insert_ts < delete_ts`. A Delete at or before the
+ earliest Insert cannot delete any row in that Segment. Transactions use their
+ effective outer commit time. Imported rows use their per-VChannel commit time.
+ 
++The first data pack persists this logical cursor in SegmentInfo independently
++of accepting its physical StartPosition. An empty serialized seek ID does not
++invalidate the cursor: Woodpecker's valid `0/0` ID encodes as empty bytes. The
++catalog write must succeed before SN acknowledges that pack; retries preserve
++an already initialized cursor, including after recovery.
++
+ External collections reject Insert/Delete/Upsert and WAL L1 Flush. Their persisted
+ W therefore remains the business VChannel creation origin B across refreshes
+ and recovery. New refresh broadcasts reach every target business VChannel and
+```
+
+**File**: `internal/datacoord/meta/meta.go` (modified, +7/-4)
+```diff
+@@ -1626,20 +1626,23 @@ func UpdateStartPosition(startPositions []*datapb.SegmentStartPosition) UpdateOp
+ 			if s == nil {
+ 				continue
+ 			}
++			startPosition := pos.GetStartPosition()
++			// Transform coverage is a logical timestamp, independent of the
++			// physical seek ID (Woodpecker 0/0 serializes to empty bytes).
++			// Persist it with the first data pack even if its seek ID is empty.
++			if s.GetLevel() != datapb.SegmentLevel_L0 && !s.GetIsImporting() && s.GetTransformStartAfterTimetick() == 0 {
++				s.TransformStartAfterTimetick = startPosition.GetTimestamp()
++			}
+ 			// L0 segments materialized from WALSummary have no physical WAL
+ 			// position. Their timestamp-only StartPosition is a valid delete
+ 			// retention boundary used by QueryCoord/delegators, not a WAL seek
+ 			// position. Dropping it would allow live L0 deletes to be evicted.
+-			startPosition := pos.GetStartPosition()
+ 			if len(startPosition.GetMsgID()) == 0 &&
+ 				(s.GetLevel() != datapb.SegmentLevel_L0 || startPosition.GetTimestamp() == 0) {
+ 				continue
+ 			}
+ 
+ 			s.StartPosition = startPosition
+-			if s.GetLevel() != datapb.SegmentLevel_L0 && !s.GetIsImporting() && s.GetTransformStartAfterTimetick() == 0 {
+-				s.TransformStartAfterTimetick = startPosition.GetTimestamp()
+-			}
+ 		}
+ 		return true
+ 	}
+```
+
+**File**: `internal/datacoord/meta/segment_operator_test.go` (modified, +62/-0)
+```diff
+@@ -20,14 +20,18 @@ import (
+ 	"context"
+ 	"testing"
+ 
++	"github.com/bytedance/mockey"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/stretchr/testify/suite"
+ 	"google.golang.org/protobuf/proto"
+ 
++	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/msgpb"
+ 	"github.com/milvus-io/milvus/internal/metacache"
++	catalogkv "github.com/milvus-io/milvus/internal/metastore/kv/datacoord"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
+ )
+ 
+ type TestSegmentOperatorSuite struct {
+@@ -66,6 +70,8 @@ func TestUpdateStartPosition(t *testing.T) {
+ 		{"L0 missing position", datapb.SegmentLevel_L0, nil, false},
+ 		{"L0 empty position", datapb.SegmentLevel_L0, &msgpb.MsgPosition{}, false},
+ 		{"L1 timestamp only", datapb.SegmentLevel_L1, &msgpb.MsgPosition{Timestamp: 100}, false},
++		{"L1 Woodpecker zero ID", datapb.SegmentLevel_L1, &msgpb.MsgPosition{Timestamp: 100, WALName: commonpb.WALName_WoodPecker}, false},
++		{"L1 missing position", datapb.SegmentLevel_L1, nil, false},
+ 		{"L1 WAL position", datapb.SegmentLevel_L1, &msgpb.MsgPosition{MsgID: []byte{1}, Timestamp: 100}, true},
+ 		{"L1 message ID only", datapb.SegmentLevel_L1, &msgpb.MsgPosition{MsgID: []byte{1}}, true},
+ 	} {
+@@ -86,6 +92,11 @@ func TestUpdateStartPosition(t *testing.T) {
+ 				want = tc.position
+ 			}
+ 			require.True(t, proto.Equal(want, segment.GetStartPosition()))
++			if tc.level != datapb.SegmentLevel_L0 {
++				require.Equal(t, tc.position.GetTimestamp(), segment.GetTransformStartAfterTimetick())
++			} else {
++				require.Zero(t, segment.GetTransformStartAfterTimetick())
++			}
+ 		})
+ 	}
+ 
+@@ -101,6 +112,57 @@ func TestUpdateStartPosition(t *testing.T) {
+ 	})
  }
  
--func (c *CollectionInfo) RequiresStorageV3() bool {
--	return c.HasTextField()
--}
--
--func (c *CollectionInfo) HasTextField() bool {
--	if c == nil || c.Schema == nil || c.Schema.GetSchema() == nil {
--		return false
--	}
--	return typeutil.HasTextField(c.Schema.GetSchema())
--}
--
- // RuntimeFlushSize estimates the in-memory footprint used by flush pressure decisions.
- func (c *CollectionInfo) RuntimeFlushSize(modified stats.ModifiedMetrics) uint64 {
- 	if modified.Rows == 0 || modified.BinarySize == 0 {
++func TestFirstPackTransformCoveragePersistence(t *testing.T) {
++	ctx := context.Background()
++	m, err := NewMemoryMeta(t)
++	require.NoError(t, err)
++	require.NoError(t, m.AddSegment(ctx, NewSegmentInfo(&datapb.SegmentInfo{
++		ID: 1, CollectionID: 100, PartitionID: 10, InsertChannel: "ch",
++		Level: datapb.SegmentLevel_L1, State: commonpb.SegmentState_Growing,
++	})))
++	first := UpdateStartPosition([]*datapb.SegmentStartPosition{{
++		SegmentID: 1, StartPosition: &msgpb.MsgPosition{
++			ChannelName: "ch", Timestamp: 100, WALName: commonpb.WALName_WoodPecker,
++		},
++	}})
++	// A failed catalog write must leave both persisted and in-memory coverage
++	// unknown, so the caller retries before acknowledging the first data pack.
++	failure := mockey.Mock((*catalogkv.Catalog).AlterSegments).Return(merr.ErrServiceUnavailable).Build()
++	t.Cleanup(func() { failure.UnPatch() })
++	require.ErrorIs(t, m.UpdateSegmentsInfo(ctx, first), merr.ErrServiceUnavailable)
++	require.Zero(t, m.GetSegment(ctx, 1).GetTransformStartAfterTimetick())
++	stored, err := m.Catalog.ListSegments(ctx, 100)
++	require.NoError(t, err)
++	require.Len(t, stored, 1)
++	require.Zero(t, stored[0].GetTransformStartAfterTimetick())
++	failure.UnPatch()
++
++	require.NoError(t, m.UpdateSegmentsInfo(ctx, first))
++	require.NoError(t, m.UpdateSegmentsInfo(ctx, first), "first-pack replay is idempotent")
++	stored, err = m.Catalog.ListSegments(ctx, 100)
++	require.NoError(t, err)
++	require.Len(t, stored, 1)
++	require.Equal(t, uint64(100), stored[0].GetTransformStartAfterTimetick())
++
++	// Reload through the real metadata loader. Final publication must resolve
++	// coverage from the persisted field even without a physical StartPosition.
++	recovered, err := NewMeta(ctx, m.Catalog, nil, NewMetaStoreWithCollections(m.Catalog, 100), nil, NoDomainMetas)
++	require.NoError(t, err)
++	t.Cleanup(recovered.CloseManifestCommitExecutor)
++	segment := recovered.GetSegment(ctx, 1)
++	require.NotNil(t, segment)
++	require.Nil(t, segment.GetStartPosition())
++	require.Equal(t, uint64(100), SegmentTransformStart(segment))
++	require.NoError(t, recovered.UpdateSegmentsInfo(ctx, UpdateStartPosition([]*datapb.SegmentStartPosition{{
++		SegmentID: 1, StartPosition: &msgpb.MsgPosition{Timestamp: 200, MsgID: []byte{1}},
++	}})))
++	require.Equal(t, uint64(100), SegmentTransformStart(recovered.GetSegment(ctx, 1)), "later positions cannot skip earlier transforms")
++
++	importing := &SegmentInfo{SegmentInfo: &datapb.SegmentInfo{ID: 1, Level: datapb.SegmentLevel_L1, IsImporting: true}}
++	require.True(t, first(&UpdateSegmentPack{Segments: map[int64]*SegmentInfo{1: importing}}))
++	require.Zero(t, importing.GetTransformStartAfterTimetick(), "import coverage comes from its commit")
++}
++
+ func TestUpdateImportSegmentPosition(t *testing.T) {
+ 	t.Run("segment not found", func(t *testing.T) {
+ 		// Create a meta with empty segments to properly test the "not found" case
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55914** (2026-11-24): fix: [3.0] default OpenBLAS to one thread in runtime images (@CLiqing)
-- **PR #55907** (2026-11-24): fix: [3.0] scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
-- **PR #55906** (2026-11-24): fix: scope default CGO_CXXFLAGS preservation to USE_TSAN builds (@zhuwenxing)
-- **PR #55894** (2026-11-24): fix: sort partition-mode namespace segments by primary key (@sunby)
-- **PR #55889** (2026-11-24): fix: [2.6] Reject unknown storage versions during recovery (@congqixia)
-- **PR #55888** (2026-11-24): fix: [3.0] Reject unknown storage versions during recovery (@congqixia)
+- **PR #56130** (2026-11-27): enhance: [3.0] Propagate caller context in console metadata handlers (@weiliu1031)
+- **PR #56124** (2026-11-27): test: Fix Parquet array validation and snapshot backfill waits (@yanliang567)
+- **PR #56120** (2026-11-27): build(deps): bump milvus-storage for Talon Broker routing (@jiaqizho)
+- **PR #56119** (2026-11-27): build(deps): [3.0] bump milvus-storage for Talon Broker routing (@jiaqizho)
+- **PR #56113** (2026-11-27): enhance: Bump milvus & proto version to v3.0.7 (@congqixia)
+- **PR #56109** (2026-11-27): enhance: [3.0] Support business-version conditional upserts in the Go SDK (@weiliu1031)
 
 ---
 
@@ -2188,32 +2594,64 @@ Signed-off-by: chyezh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. default OpenBLAS to one thread in runtime images
+## X. enhance: Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module
 
 **RULE**:
-When implementing operations in `build/docker/milvus/amazonlinux2023/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08d5f216`: default OpenBLAS to one thread in runtime images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b35b67b`: enhance: Build MILVUS_FIPS_ENABLED=ON on Go's FIPS 140-3 module. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/docker/milvus/amazonlinux2023/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Milvus provides task-level parallelism; keep BLAS calls single-threaded by default.
-ENV OPENBLAS_NUM_THREADS=1
+	asan_go_tag := ,use_asan
+        cuda_go_tag := ,cuda
+# All Go artifacts loaded into the same process must use the same snapshot.
+# Go 1.26.10 resolves v1.0.0 to the certified v1.0.0-c2097c7c (CMVP #5247).
+ifeq ($(MILVUS_FIPS_ENABLED),ON)
+ifneq ($(findstring ',$(MILVUS_GO_BUILD_TAGS))$(findstring ",$(MILVUS_GO_BUILD_TAGS)),)
+$(error FIPS build tags must not contain literal quote characters)
+endif
+	override GOFIPS140 := v1.0.0
+	export GOFIPS140
+	# Go accepts whitespace-separated or comma-separated tags. Normalize custom
+	# lists before adding a required tag so the Go tool sees it as its own tag.
+	empty :=
+	space := $(empty) $(empty)
+	comma := ,
+	fips_go_tags := $(subst $(comma), ,$(MILVUS_GO_BUILD_TAGS)$(asan_go_tag)$(cuda_go_tag))
+	override MILVUS_GO_BUILD_TAGS := $(subst $(space),$(comma),$(strip $(filter-out milvus_fips,$(fips_go_tags)) milvus_fips))
+else
+	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS)$(asan_go_tag)$(cuda_go_tag)
+endif
+
+# Expose the server's Go module selection to external packaging builds.
+.PHONY: print-fips-go-module
+print-fips-go-module:
+	@printf '%s\n' "$$GOFIPS140"
+
+		CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),use_asan
+# FIPS: default OFF. Set MILVUS_FIPS_ENABLED=ON to enable BoringCrypto.
+GOEXPERIMENT_FLAG :=
+ifeq ($(MILVUS_FIPS_ENABLED),ON)
+	GOEXPERIMENT_FLAG := GOEXPERIMENT=boringcrypto
+endif
+        MILVUS_GO_BUILD_TAGS := $(MILVUS_GO_BUILD_TAGS),cuda
+		$(GOEXPERIMENT_FLAG) CGO_LDFLAGS="$(CGO_LDFLAGS)" CGO_CFLAGS="$(CGO_CFLAGS)" CGO_CXXFLAGS="$(CGO_CXXFLAGS)" GO111MODULE=on $(GO) build -pgo=$(PGO_PATH)/default.pgo -ldflags="$(TSAN_GO_LDFLAGS) $(SONIC_PLUGIN_SYNC_LDFLAG) -r $${RPATH} -X '$(OBJPREFIX).BuildTags=$(BUILD_TAGS)' -X '$(OBJPREFIX).BuildTime=$(BUILD_TIME)' -X '$(OBJPREFIX).GitCommit=$(GIT_COMMIT)' -X '$(OBJPREFIX).GoVersion=$(GO_VERSION)' -X '$(OBJPREFIX).MilvusVersion=$(MILVUS_VERSION)'" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08d5f216` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b35b67b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,22 +4,22 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "f1ef04b9",
+  "source_version": "7fa79ec4",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T01:25:31.985Z",
+  "timestamp": "2026-11-27T10:43:11.858Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `f1ef04b9`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T01:25:31.985Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `7fa79ec4`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T10:43:11.858Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `freenet/freenet-core` (Commit: `f1ef04b9`)
+- **Target Repository**: `freenet/freenet-core` (Commit: `7fa79ec4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T01:25:30.448Z  
+> **Harvest Timestamp**: 2026-11-27T10:43:10.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1755,8 +1755,8 @@ pub mod streaming_buffer;
   > Closing without merge: plan changed. Demotion will be removed rather than guarded (decision for Phase D; whether to remove it already before D is being evaluated from the 0.2.167 settled read). The branch stays for reference.
   > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md, transport.md **Files reviewed:** 5  - **Regression test:** The `fix:` PR adds tests that exercise the new guard.   - They cover the exact 30% boundary: 3 of 10 demotes and 3 of 11 does not.   - They cover a node with no successes at all.   - They cover a share that rises after a spared streak.   - They cover outcomes at the window edge, just inside it and just outside it.   - They cover the ring bound and eviction.   - They cover both roles through `NativeConnectState`.   - They cover the metrics snapshot, its JSON field and its reset. - **Cleanup bounds:** The new `outcomes` ring is bounded by age (`STRIKE_WINDOW`) and by size (`DEMOTION_OUTCOME_RING`). It adds no unbounded exemption. - **Docs:** `.claude/rules/transport.md` and `docs/architecture/transport/rules-reference.md` were updated in the same PR, so no stale documentation. - **Time and ra
 
-- **Issue #6405** (2026-11-26): **chore(put): log each PUT hop decision at INFO**
-  *Symptoms*: ## Problem A gateway logging at INFO printed "PUT relay: processing Request" and nothing after it, because the forward was logged at DEBUG (compiled out in release builds). That read as "the PUT never left the node" and misled an investigation. Probe answers of holder_found=true for brand-new keys also left no record of why the peer counted as a holder.  ## Approach One INFO line per hop decision, emitted from `operations/put/path_log.rs` using fields already computed at each site: - `put_hop_forwarded`: next hop, its distance to the key, this node's distance, and that the router chose it. - `put_hop_finalized`: the reason (terminus guard, no next hop, HTL 0, below the streaming threshold) and whether a replicate copy was sent, and to whom. - `put_summary_first_outcome`: holder found or not, the probed peer and its distance, and whether the full-state PUT followed. - `put_probe_answered`: which source made the answering node count as receiving updates (subscription lease, local subscription, or both), with lease age.  These replace the DEBUG `relay_put_forward` line, the streaming "piped stream forwarding" line, the two bootstrap-gateway lines, the #4363 terminus line and the `relay_put_complete` line. A grep of the repos, skills, dashboards and the telemetry collector found no consumer of the removed text. Each line fires once per hop per PUT and is subject to the existing per-callsite rate limit.  One non-logging change: `drive_relay_probe` now takes its holder decision fro
+- **Issue #6406** (2026-11-27): **feat(transport): split short_dropped by cause**
+  *Symptoms*: ## Problem `quic_data_send_short_dropped` was 21,489 of 65.7M sends on the v0.2.167 floor release, and about 21k of those had no cause label: the give-up arm of `QuicPath::settle` (other stop codes, native sends that cannot fall back to UDP) counted a drop without saying why. The next release needs to show why Shorts are dropped.  ## Approach Telemetry only; no behaviour change. Every Short counted dropped now also counts exactly one `quic_short_dropped_<cause>` (uploaded only when non-zero, like `quic_pipe_dropped_*`).  `QuicPathStats::record_short_dropped(cause)` is the only way a Short is counted dropped, so the causes sum to `short_dropped` by construction. `record_send` asserts (debug) that a dropped Short never takes the uncaused path, and `only_record_short_dropped_counts_a_dropped_short` pins the call sites in source. The cause is chosen where the drop is decided: `route::short_drop_cause(outcome)` in `settle`, `DataRoute::queue_short`, and the route worker's `send_elsewhere` (its caller names the reason). Nothing is derived by subtraction.  Causes, and whether each can occur on a path with a UDP session (from the code: a path with a session sends these on UDP instead of giving up):  | cause | meaning | UDP-session path? | |---|---|---| | `not_opened_exhausted` | no stream opened in the deadline, native retries used up | native only | | `timed_out` | send deadline ran out | native only | | `paced` | pacer refused | native only | | `connection_lost` | connection lost /
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1773,475 +1773,425 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f1ef04b9` (2026-11-26)
-**Commit Message**: chore(put): log each PUT hop decision at INFO (#6405)
+### Incident Patch 1: `7fa79ec4` (2026-11-27)
+**Commit Message**: fix(test): do not await a heal's stream inside the simulation event loop (#6121)
 
-**File**: `crates/core/src/operations/put.rs` (modified, +1/-0)
+**File**: `.claude/rules/operations.md` (modified, +4/-3)
 ```diff
-@@ -10,6 +10,7 @@
- //! consume them.
+@@ -749,9 +749,10 @@ module doc.
+ Do not hook it anywhere but `update_contract`'s `ClientLocal` +
+ `state_changed` branch, and keep the escalation decision in the `Summaries`
+ arm BEFORE `emit_stale_peer_syncs`: the force mark must exist when that heal's
+-leg is built. In simulations the forced leg is spawned rather than awaited
+-(`spawn_forced_leg`): the simulation sends heals inline on the event loop,
+-and a stream leg awaits a completion signal that loop has to drive.
++leg is built. In simulations every full-state leg, a heal's or a forced one, is spawned
++rather than awaited (`spawn_leg`): a stream leg awaits a completion signal
++that the event loop has to drive, so awaiting it on the loop stalls the node
++until `STREAM_COMPLETION_TIMEOUT`.
  
- pub(crate) mod op_ctx_task;
-+mod path_log;
- pub(crate) mod stream_admission;
- 
- pub(crate) use self::messages::{PutMsg, PutStreamingPayload};
+ The INFO summary's per-contract lines are the top 8 by update activity, so a
+ contract can fall into the "...and N others" rollup behind busier ones; the
 ```
 
-**File**: `crates/core/src/operations/put/op_ctx_task.rs` (modified, +306/-60)
+**File**: `crates/core/src/config.rs` (modified, +15/-0)
 ```diff
-@@ -991,6 +991,16 @@ async fn try_summary_first_put(
-     let reply = match round_trip {
-         Ok(Ok(reply)) => reply,
-         Ok(Err(err)) => {
-+            super::path_log::log_summary_first_outcome(
-+                client_tx,
-+                key,
-+                "probe_failed",
-+                None,
-+                Some(target_addr),
-+                target.location(),
-+                crate::ring::Location::from(&key),
-+                true,
-+            );
-             tracing::debug!(
-                 tx = %client_tx,
-                 probe_tx = %probe_tx,
-@@ -1029,6 +1039,16 @@ async fn try_summary_first_put(
-             ..
-         })) => (holder_found, hop_count, holder_summary, reverse_delta),
-         _other => {
-+            super::path_log::log_summary_first_outcome(
-+                client_tx,
-+                key,
-+                "unexpected_reply",
-+                None,
-+                Some(target_addr),
-+                target.location(),
-+                crate::ring::Location::from(&key),
-+                true,
-+            );
-             tracing::debug!(
-                 tx = %client_tx,
-                 probe_tx = %probe_tx,
-@@ -1041,6 +1061,16 @@ async fn try_summary_first_put(
-     };
- 
-     if !holder_found {
-+        super::path_log::log_summary_first_outcome(
-+            client_tx,
-+            key,
-+            "new_contract",
-+            Some(false),
-+            Some(target_addr),
-+            target.location(),
-+            crate::ring::Location::from(&key),
-+            true,
-+        );
-         tracing::debug!(
-             tx = %client_tx,
-             contract = %key,
-@@ -1060,6 +1090,16 @@ async fn try_summary_first_put(
-         // Wire invariant violation (`holder_found` without `holder_summary`)
-         // — treat defensively as a probe failure rather than trust a
-         // malformed/unexpected reply.
-+        super::path_log::log_summary_first_outcome(
-+            client_tx,
-+            key,
-+            "missing_holder_summary",
-+            Some(true),
-+            Some(target_addr),
-+            target.location(),
-+            crate::ring::Location::from(&key),
-+            true,
-+        );
-         tracing::warn!(
-             tx = %client_tx,
-             contract = %key,
-@@ -1131,6 +1171,16 @@ async fn try_summary_first_put(
-     // instead — the same recovery the delta-computation-failure arm uses.
-     // See `crate::ring::delta_incompat`.
-     if op_manager.ring.delta_incompat.suppress_deltas(key.id()) {
-+        super::path_log::log_summary_first_outcome(
-+            client_tx,
-+            key,
-+            "delta_suppressed_incompat",
-+            Some(true),
-+            Some(target_addr),
-+            target.location(),
-+            crate::ring::Location::from(&key),
-+            true,
-+        );
-         tracing::debug!(
-             tx = %client_tx,
-             contract = %key,
-@@ -1156,6 +1206,16 @@ async fn try_summary_first_put(
-     {
-         Ok(delta) => delta,
-         Err(err) => {
-+            super::path_log::log_summary_first_outcome(
-+                client_tx,
-+                key,
-+                "delta_failed",
-+                Some(true),
-+                Some(target_addr),
-+                target.location(),
-+                crate::ring::Location::from(&key),
-+                true,
-+            );
-             tracing::debug!(
-                 tx = %client_tx,
-                 contract = %key,
-@@ -1210,6 +1270,16 @@ async fn try_summary_first_put(
-     };
- 
-     record_put_probe_outcome(false, delta_bytes);
-+    super::path_log::log_summary_first_outcome(
-+        client_tx,
-+        key,
-+        "reconciled_existing",
-+        Some(true),
-+        Some(target_addr),
-+        target.location(),
-+        crate::ring::Location::from(&key),
-+        false,
-+    );
- 
-     SummaryFirstOutcome::ReconciledExisting {
-         target: target.clone(),
-@@ -2153,6 +2223,7 @@ where
-         None
-     };
- 
-+    let mut hop_source = super::path_log::HopSource::Router;
-     let (next_peer, next_addr) = match next_hop {
-         Some(peer) => {
-             // Greedy-routing terminus guard (#4363): finalize here only
-@@ -2184,21 +2255,14 @@ where
-                 .and_then(|p| p.location());
-             let next_hop_loc = peer.location();
-             if put_routing_should_terminate(upstream_loc, own_loc, next_hop_loc, target) {
--                tracing::info!(
--                    tx = %incoming_tx,
--                    contract = %key,
--                    upstream_location = ?upstream_loc.map(|l| l.as_f64()),
--                    own_location = ?own_loc.map(|l| l.as_f64()),
--                    next_hop_location = ?next_hop_loc.map(|l| l.as_f64()),
--                    target_location = %target.as_f64(),
--                    phase = "relay_put_terminus",
--                    "PUT relay: chain descended here and next hop moves away; finalizing here (#4363)"
--                );
-                 // Finalize the operation at t
-```
-
-**File**: `crates/core/src/operations/put/path_log.rs` (added, +344/-0)
-```diff
-@@ -0,0 +1,344 @@
-+//! One INFO line per PUT hop decision.
-+//!
-+//! Why: a relay's PUT forward used to be logged at DEBUG only, which release
-+//! builds compile out, and a gateway logging at INFO therefore showed the
-+//! request arriving and nothing after it. That reads exactly like "the PUT
-+//! never left this node" and led an investigation to the wrong conclusion.
-+//! These lines make each hop's decision visible at INFO.
-+//!
-+//! Volume: each helper is called at most once per hop per PUT (a decision, not
-+//! a message or a fragment), the same cadence as the existing
-+//! `PUT relay: processing Request` line. These helpers add no limiter of their
-+//! own, but the process-wide per-callsite limiter (`util/rate_limit_layer.rs`,
-+//! 30 events/s per callsite by default) still applies, and `log_forwarded` is one
-+//! callsite shared by the streaming and non-streaming drivers, so a node past
-+//! 30 forwarded PUT hops a second drops the excess (counted in the limiter's
-+//! periodic summary line).
-+//!
-+//! Fields are limited to values the drivers already hold. The geometrically
-+//! closest candidate is not logged: finding it needs a second routing pass over
-+//! the ring, which this hot path does not do.
-+
-+use std::net::SocketAddr;
-+
-+use freenet_stdlib::prelude::ContractKey;
-+
-+use crate::message::Transaction;
-+use crate::ring::Location;
-+
-+/// Ring distance from `loc` to `target`, or `None` when the location is unknown.
-+fn distance_to(loc: Option<Location>, target: Location) -> Option<f64> {
-+    loc.map(|l| l.distance(target).as_f64())
-+}
-+
-+fn loc_f64(loc: Option<Location>) -> Option<f64> {
-+    loc.map(|l| l.as_f64())
-+}
-+
-+/// Where a forwarded PUT's next hop came from.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum HopSource {
-+    /// `Ring::closest_potentially_hosting`, the router's pick.
-+    Router,
-+    /// Empty ring: a configured bootstrap gateway.
-+    BootstrapGateway,
-+}
-+
-+impl HopSource {
-+    fn label(self) -> &'static str {
-+        match self {
-+            HopSource::Router => "router_closest_potentially_hosting",
-+            HopSource::BootstrapGateway => "bootstrap_gateway",
-+        }
-+    }
-+}
-+
-+/// Why a PUT stopped at this node.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum FinalizeReason {
-+    /// Greedy-routing terminus guard (#4363): the chain descended here and the
-+    /// best next hop moves away from the key.
-+    TerminusGuard,
-+    /// No candidate next hop and no bootstrap gateway.
-+    NoNextHop,
-+    /// The hop budget is spent.
-+    HtlZero,
-+    /// A next hop exists but the payload is under the streaming threshold, so
-+    /// the streaming driver does not pipe it.
-+    BelowStreamingThreshold,
-+}
-+
-+impl FinalizeReason {
-+    fn label(self) -> &'static str {
-+        match self {
-+            FinalizeReason::TerminusGuard => "terminus_guard",
-+            FinalizeReason::NoNextHop => "no_next_hop",
-+            FinalizeReason::HtlZero => "htl_zero",
-+            FinalizeReason::BelowStreamingThreshold => "below_streaming_threshold",
-+        }
-+    }
-+
-+    /// The reason for a hop with no next hop to forward to.
-+    pub(super) fn for_missing_next_hop(htl: usize) -> Self {
-+        if htl == 0 {
-+            FinalizeReason::HtlZero
-+        } else {
-+            FinalizeReason::NoNextHop
-+        }
-+    }
-+}
-+
-+/// This hop forwarded the PUT.
-+#[allow(clippy::too_many_arguments)]
-+pub(super) fn log_forwarded(
-+    tx: Transaction,
-+    key: ContractKey,
-+    streaming: bool,
-+    new_htl: usize,
-+    next_hop_addr: SocketAddr,
-+    next_hop_loc: Option<Location>,
-+    own_loc: Option<Location>,
-+    target: Location,
-+    source: HopSource,
-+) {
-+    tracing::info!(
-+        tx = %tx,
-+        contract = %key,
-+        streaming,
-+        htl = new_htl,
-+        next_hop = %next_hop_addr,
-+        next_hop_location = ?loc_f64(next_hop_loc),
-+        next_hop_distance = ?distance_to(next_hop_loc, target),
-+        own_location = ?loc_f64(own_loc),
-+        own_distance = ?distance_to(own_loc, target),
-+        target_location = %target.as_f64(),
-+        hop_source = source.label(),
-+        phase = "put_hop_forwarded",
-+        "PUT hop: forwarded"
-+    );
-+}
-+
-+/// This hop finalized the PUT instead of forwarding it.
-+///
-+/// `replicate_to` is the peer a terminus replication copy was addressed to and
-+/// `replicate_sent` whether that copy went out (it is skipped for payloads that
-+/// need streaming and can fail to dispatch).
-+#[allow(clippy::too_many_arguments)]
-+pub(super) fn log_finalized(
-+    tx: Transaction,
-+    key: ContractKey,
-+    streaming: bool,
-+    reason: FinalizeReason,
-+    htl: usize,
-+    upstream_loc: Option<Location>,
-+    own_loc: Option<Location>,
-+    next_hop_loc: Option<Location>,
-+    target: Location,
-+    replicate_to: Option<SocketAddr>,
-+    replicate_sent: bool,
-+) {
-+    tracing::info!(
-+        tx = %tx,
-+        contract = %key,
-+        streaming,
-+        reason = reason.label(),
-```
-
-**File**: `crates/core/src/ring.rs` (modified, +9/-0)
-```diff
-@@ -135,6 +135,7 @@ pub(crate) use hosting::MAX_DEFAULT_HOSTING_BUDGET_BYTES;
- pub(crate) use hosting::MIN_DEFAULT_HOSTING_BUDGET_BYTES;
- #[cfg(test)]
- pub(crate) use hosting::PROVISIONAL_RETRY_INTERVAL;
-+pub(crate) use hosting::ReceivingUpdatesSource;
- /// Single source of truth for the default hosted-contract-state budget.
- /// `config::default_max_hosting_storage()` resolves to this so the
- /// operator-facing default and the in-code fallback can never drift. The
-@@ -5164,6 +5165,14 @@ impl Ring {
-         self.hosting_manager.is_receiving_updates(contract)
+@@ -6104,6 +6104,7 @@ std::thread_local! {
+     static GLOBAL_FULL_STATE_SEND_BYTES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+     static GLOBAL_PENDING_OP_INSERTS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+     static GLOBAL_PENDING_OP_REMOVES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
++    static GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+     static GLOBAL_PENDING_OP_HWM: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+     static GLOBAL_PENDING_OP_SKIPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+     static GLOBAL_NEIGHBOR_HOSTING_UPDATES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+@@ -6221,6 +6222,7 @@ impl GlobalTestMetrics {
+         GLOBAL_PENDING_OP_INSERTS.with(|c| c.set(0));
+         GLOBAL_PENDING_OP_SKIPS.with(|c| c.set(0));
+         GLOBAL_PENDING_OP_REMOVES.with(|c| c.set(0));
++        GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.set(0));
+         GLOBAL_PENDING_OP_HWM.with(|c| c.set(0));
+         GLOBAL_NEIGHBOR_HOSTING_UPDATES.with(|c| c.set(0));
+         GLOBAL_NOTIFICATION_COHOSTS_SKIPPED.with(|c| c.set(0));
+@@ -6502,6 +6504,19 @@ impl GlobalTestMetrics {
+         GLOBAL_PENDING_OP_INSERTS.with(|c| c.get())
      }
  
-+    /// Diagnostic breakdown of [`Self::is_receiving_updates`].
-+    pub(crate) fn receiving_updates_source(
-+        &self,
-+        contract: &ContractKey,
-+    ) -> ReceivingUpdatesSource {
-+        self.hosting_manager.receiving_updates_source(contract)
++    /// Records how long a node's event loop spent handling one event, keeping
++    /// the longest. Every node's event loop on this thread shares the figure.
++    pub fn record_event_loop_event(elapsed: std::time::Duration) {
++        let nanos = u64::try_from(elapsed.as_nanos()).unwrap_or(u64::MAX);
++        GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.set(c.get().max(nanos)));
 +    }
 +
-     /// Get contracts that need subscription renewal.
-     ///
-     /// Returns contracts where:
++    /// The longest time any node's event loop on this thread spent on one event
++    /// since the last reset. A loop busy that long received nothing else.
++    pub fn longest_event_loop_event() -> std::time::Duration {
++        std::time::Duration::from_nanos(GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.get()))
++    }
++
+     pub fn record_pending_op_remove() {
+         GLOBAL_PENDING_OP_REMOVES.with(|c| c.set(c.get() + 1));
+     }
 ```
 
-**File**: `crates/core/src/ring/hosting.rs` (modified, +106/-0)
+**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +1/-1)
 ```diff
-@@ -616,6 +616,42 @@ impl LocalSubscribers {
+@@ -7625,7 +7625,7 @@ mod tests {
+         let at = body
+             .find(call)
+             .expect("the heal handler resolves its peer here");
+-        let first_send = [".enqueue(", "broadcast_to_single_peer("]
++        let first_send = [".enqueue(", "Self::spawn_leg(", "broadcast_to_single_peer("]
+             .iter()
+             .filter_map(|send| body.find(send))
+             .min()
+```
+
+**File**: `crates/core/src/node/network_bridge/broadcast_spacing.rs` (modified, +55/-3)
+```diff
+@@ -263,6 +263,26 @@ mod tests {
+     const SIM_SRC: &str = include_str!("p2p_protoc/broadcast.rs");
+     const HANDLER_SRC: &str = include_str!("../../contract.rs");
+ 
++    /// The body of the block that `opener` (ending in its `{`) starts in `src`,
++    /// by brace matching, so a line moved out of the block is not in it.
++    fn spawned_block<'a>(src: &'a str, opener: &str) -> Option<&'a str> {
++        let start = src.find(opener)? + opener.len();
++        let mut depth = 1usize;
++        for (i, byte) in src.bytes().enumerate().skip(start) {
++            match byte {
++                b'{' => depth += 1,
++                b'}' => {
++                    depth -= 1;
++                    if depth == 0 {
++                        return Some(&src[start..i]);
++                    }
++                }
++                _ => {}
++            }
++        }
++        None
++    }
++
+     /// #5842: BOTH fan-out paths apply the per-pair spacing. The simulation
+     /// runs only its inline copy and the production binary only the queue, so
+     /// a behavioural test of one says nothing about the other.
+@@ -299,6 +319,16 @@ mod tests {
+             );
+         }
+ 
++        // The fan-out runs on the event loop too, so it must not await a send
++        // that waits for its stream's completion: it enqueues streams without
++        // a completion (`send_stream`) and hands forced legs to `spawn_leg`.
++        for awaited in ["broadcast_to_single_peer(", "send_stream_with_completion("] {
++            assert!(
++                !sim.contains(awaited),
++                "the simulation fan-out must not await `{awaited}` on the event loop"
++            );
++        }
++
+         // The targeted heal shares the queue in production; the simulation
+         // calls the send directly, so it must take the same claim.
+         let heal = region(
+@@ -308,9 +338,31 @@ mod tests {
+         );
+         assert!(
+             heal.contains("op_manager.broadcast_spacing.try_begin(key.id(), &peer_key)")
+-                && heal.contains("Ok(_claim) =>"),
+-            "the simulation heal path must apply the spacing and hold the claim \
+-             across its send"
++                && heal.contains("Ok(claim) =>"),
++            "the simulation heal path must apply the spacing"
++        );
++        // The send runs in a spawned task, not on the event loop: it waits for
++        // its stream's completion, which only the event loop dispatches. So the
++        // heal hands its claim to `spawn_leg` and never calls the send itself
++        // (the production arm enqueues instead)...
++        assert!(
++            heal.contains("Self::spawn_leg("),
++            "the simulation heal must send through `spawn_leg`"
++        );
++        assert!(
++            !heal.contains("broadcast_to_single_peer("),
++            "the simulation heal must not await the send on the event loop"
++        );
++        // ...and the claim moves into that task and is bound there before the
++        // send, so it stays held until the send ends.
++        let leg = region(SIM_SRC, "    fn spawn_leg(", "\n    }\n");
++        let task = spawned_block(&leg, "GlobalExecutor::spawn(async move {")
++            .expect("`spawn_leg` sends from a spawned task");
++        let held = task.find("let _claim = claim;");
++        let sent = task.find("broadcast_to_single_peer(");
++        assert!(
++            matches!((held, sent), (Some(held), Some(sent)) if held < sent),
++            "the spawned leg must hold the claim across its send, both inside the task"
+         );
+     }
+ 
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +18/-0)
+```diff
+@@ -1979,6 +1979,10 @@ impl P2pConnManager {
+             // for a frame (`HeldNative`); a no-op when none is held.
+             ctx.expire_held_native(Instant::now());
+ 
++            // How long this event holds the loop, for tests: nothing else the
++            // node receives is handled until it ends.
++            #[cfg(any(test, feature = "testing"))]
++            let _event_timer = EventLoopTimer(tokio::time::Instant::now());
+             match event {
+                 EventResult::Continue => continue,
+                 EventResult::Event(event) => {
+@@ -4484,6 +4488,20 @@ fn extract_sender_from_message_mut(msg: &mut NetMessage) -> Option<&mut PeerKeyL
+ 
+ // TODO: add testing for the network loop, now it should be possible to do since we don't depend upon having real connections
+ 
++/// Records, when dropped, how long the event loop spent on one event
++/// (`GlobalTestMetrics::longest_event_loop_event`).
++/// Reads `tokio::time::Instant` on purpose, not `TimeSource`: the simulation
++/// runs on tokio's virtual clock, and that is the time a held loop is measured in.
++#[cfg(any(test, feature = "testing"))]
++struct EventLoopTimer(tokio::time::Instant);
++
++#[cfg(any(test, feature = "testing"))]
++impl Drop for EventLoopTimer {
++    fn drop(&mut self) {
++        crate::config::GlobalTestMetrics::record_event_loop_event(self.0.elapsed());
++    }
++}
++
+ #[cfg(test)]
+ mod ring_transport_desync_tests {
+     use super::ring_transport_desync;
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/broadcast.rs` (modified, +16/-26)
+```diff
+@@ -739,14 +739,15 @@ impl P2pConnManager {
+             // interval is handed to the held-legs timer instead.
+             let peer_key = crate::ring::PeerKey::from(target.pub_key().clone());
+             match op_manager.broadcast_spacing.try_begin(key.id(), &peer_key) {
+-                Ok(claim)
+-                    if op_manager.verify_soon.has_forced(
+-                        &key,
+-                        &peer_key,
+-                        op_manager.ring.time_source.now(),
+-                    ) =>
+-                {
+-                    Self::spawn_forced_leg(
++                Ok(claim) => {
++                    // Detached, as production's queue worker is: the send waits
++                    // for its stream's completion (up to
++                    // `stream_completion_timeout`), and that stream is handed to
++                    // the event loop through the bridge, so awaiting it here, on
++                    // the event loop, would hold both until the timeout. Unlike
++                    // production's queue lanes, nothing limits how many heals run
++                    // at once.
++                    Self::spawn_leg(
+                         self.bridge.clone(),
+                         op_manager.clone(),
+                         key,
+@@ -755,18 +756,6 @@ impl P2pConnManager {
+                         claim,
+                     );
+                 }
+-                Ok(_claim) => {
+-                    super::super::broadcast_queue::broadcast_to_single_peer(
+-                        &self.bridge,
+-                        op_manager,
+-                        key,
+-                        new_state,
+-                        target,
+-                        None,
+-                        super::super::broadcast_queue::no_fanout(),
+-                    )
+-                    .await;
+-                }
+                 Err(wait) => {
+                     crate::config::GlobalTestMetrics::record_broadcast_leg_spaced();
+                     let held = crate::operations::update::BroadcastTargetResult {
+@@ -792,15 +781,16 @@ impl P2pConnManager {
+         }
+     }
+ 
+-    /// Send a verify-soon forced full-state leg (#6143) on its own task.
++    /// Send one full-state leg (a stale-peer heal, or a verify-soon forced leg,
++    /// #6143) on its own task.
+     ///
+     /// Simulation only. Production sends every leg from the broadcast queue's
+-    /// tasks; the simulation sends heals inline on the event loop, and a stream
+-    /// leg awaits its completion signal, which this same event loop has to
+-    /// drive. Awaiting it here would stall the node. The task holds the pair's
++    /// tasks; a stream leg awaits its completion signal, which the node's event
++    /// loop has to drive, so awaiting the send on the event loop would stall the
++    /// node until `stream_completion_timeout`. The task holds the pair's
+     /// spacing `claim` until the send ends, as an inline send would.
+     #[cfg(feature = "simulation_tests")]
+-    fn spawn_forced_leg(
++    fn spawn_leg(
+         bridge: P2pBridge,
+         op_manager: Arc<OpManager>,
+         key: freenet_stdlib::prelude::ContractKey,
+@@ -967,7 +957,7 @@ impl P2pConnManager {
+                 .verify_soon
+                 .has_forced(&key, &peer_key, op_manager.ring.time_source.now())
+             {
+-                Self::spawn_forced_leg(
++                Self::spawn_leg(
+                     bridge.clone(),
+                     op_manager.clone(),
+                     key,
+```
+
+**File**: `crates/core/src/operations/update/verify_soon.rs` (modified, +1/-1)
+```diff
+@@ -1090,7 +1090,7 @@ pub mod test_switch {
+ 
+ /// Whether this node holds or is sending a leg for (`key`, `peer`). Production
+ /// asks the broadcast queue; the simulation, which has no queue, asks the
+-/// spacing claim its inline sends hold.
++/// spacing claim its spawned sends hold.
+ fn pair_busy(op_manager: &crate::node::OpManager, key: &ContractKey, peer: &PeerKey) -> bool {
+     #[cfg(feature = "simulation_tests")]
+     if op_manager.broadcast_spacing.is_in_flight(key.id(), peer) {
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +245/-1)
+```diff
+@@ -24786,7 +24786,13 @@ fn test_quic_native_without_frames_keeps_udp() {
+ #[test_log::test]
+ fn test_quic_native_symmetric_nat_pairs_fail_and_nodes_still_join() {
+     use freenet::dev_tool::{NatFiltering, SimNat};
+-    const SEED: u64 = 0x0059_40A5_00E1;
++    // The premise below (a UDP dial connected after a native failure) holds
++    // for some trajectories and not others: on main, seeds 3 and 7 of 1..=8
++    // fail it and the rest pass. Any change that reorders simulation tasks
++    // (the heal send moving off the event loop did) moves this run to another
++    // trajectory, so the seed is one for which it holds on both sides of that
++    // change.
++    const SEED: u64 = 4;
+     let name = "native-nat-symmetric";
+     let nat = SimNat {
+         classes: vec![NatFiltering::Symmetric, NatFiltering::PortRestricted],
+@@ -26261,3 +26267,241 @@ fn run_get_at_htl_zero_sim(ring_max_htl: usize, demandless: bool) -> GetAtHtlZer
+             as usize,
      }
  }
- 
-+/// Why a node counts as receiving updates for a contract (see
-+/// [`HostingManager::receiving_updates_source`]).
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) struct ReceivingUpdatesSource {
-+    /// Age of the live network subscription lease (since its first subscribe,
-+    /// preserved across renewals), or `None` when there is no live lease.
-+    pub lease_age: Option<Duration>,
-+    /// Time until the live lease expires unless renewed.
-+    pub lease_remaining: Option<Duration>,
-+    /// The live lease is provisional (empty-ring bootstrap-gateway answer).
-+    pub lease_provisional: bool,
-+    /// Local WebSocket clients subscribed to the contract.
-+    pub local_clients: usize,
-+    /// Local delegate subscriptions, counted as local demand (#4669).
-+    pub local_delegates: usize,
-+}
 +
-+impl ReceivingUpdatesSource {
-+    pub(crate) fn is_receiving(&self) -> bool {
-+        self.lease_age.is_some() || self.local_clients + self.local_delegates > 0
-+    }
++/// A subscriber that misses a 1 MiB contract's update (crashed while it was
++/// broadcast) is healed by anti-entropy, and the heal never holds a node's event
++/// loop. Before the fix, the simulation build awaited the heal's send inside the
++/// event loop, and that send waits for its stream's completion, which the blocked
++/// loop could not dispatch: each heal held the loop for `stream_completion_timeout`
++/// (270 s for this state), and every message the node received waited behind it.
++#[test_log::test]
++fn test_heal_of_a_streamed_state_does_not_block_the_event_loop() {
++    use freenet::dev_tool::{
++        NodeLabel, ScheduledOperation, SimOperation, register_crdt_contract,
++        stale_peer_heal_observations,
++    };
++    const NETWORK: &str = "heal-event-loop";
++    const SEED: u64 = 0x5842_E5B9_0001;
++    const STATE_LEN: usize = 1024 * 1024;
++    setup_deterministic_state(SEED);
++    let contract = SimOperation::create_test_contract(0x91);
++    let key = contract.key();
++    register_crdt_contract(*key.id());
++    stale_peer_heal_observations::clear(&key);
++    let state = |version: u64| {
++        let mut bytes = version.to_le_bytes().to_vec();
++        bytes.extend((0..STATE_LEN).map(|i| (i % 251) as u8 ^ version as u8));
++        bytes
++    };
++    let (initial, updated) = (state(1), state(2));
 +
-+    /// Which condition fired: a network lease, local demand, both, or neither.
-+    pub(crate) fn label(&self) -> &'static str {
-+        match (
-+            self.lease_age.is_some(),
-+            self.local_clients + self.local_delegates > 0,
-+        ) {
-+            (true, true) => "lease_and_local_subscription",
-+            (true, false) => "subscription_lease",
-+            (false, true) => "local_subscription",
-+            (false, false) => "none",
-+        }
-+    }
-+}
-+
- /// Manages contract hosting and subscription state.
- ///
- /// # Subscription Model
-@@ -3173,6 +3209,40 @@ impl HostingManager {
-         self.is_subscribed(contract) || self.has_client_subscriptions(contract.id())
-     }
- 
-+    /// Which of the conditions behind [`Self::is_receiving_updates`] hold, for
-+    /// diagnostics. Read-only: [`Self::is_receiving_updates`] does not use it,
-+    /// so its behaviour is unchanged. `is_receiving()` on the result agrees with
-+    /// it (pinned by `receiving_updates_source_agrees_with_is_receiving_updates`).
-+    pub(crate) fn receiving_updates_source(
-+        &self,
-+        contract: &ContractKey,
-+    ) -> ReceivingUpdatesSource {
-+        let now = self.time_source.now();
-+        let lease = self
-+            .active_subscriptions
-+            .get(contract)
-+            .filter(|lease| lease.expires_at > now)
-+            .map(|lease| {
-+                (
-+                    now.saturating_duration_since(lease.subscribed_since),
-+                    lease.expires_at.saturating_duration_since(now),
-+                    lease.provisional,
-+                )
-+            });
-+        let (local_clients, local_delegates) = self
-+            .client_subscriptions
-+            .get(contract.id())
-+            .map(|s| (s.clients.len(), s.delegates))
-+            .unwrap_or((0, 0));
-+        ReceivingUpdatesSource {
-+            lease_age: lease.map(|l| l.0),
-+            lease_remaining: lease.map(|l| l.1),
-+            lease_provisional: lease.is_some_and(|l| l.2),
-+            local_clients,
-+            local_delegates,
-+        }
-+    }
-+
-     /// Mark a contract as accessed by a local client (HTTP/WebSocket).
-     ///
-     /// Only contracts with this flag get subscription renewal and trusted
-@@ -5043,6 +5113,42 @@ mod tests {
-         assert!(manager.is_receiving_updates(&contract));
-     }
- 
-+    /// `receiving_updates_source` is a diagnostic view of `is_receiving_updates`
-+    /// and must agree with it in every state.
-+    #[test]
-+    fn receiving_updates_source_agrees_with_is_receiving_updates() {
-+        let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
-+        let contract = make_contract_key(1);
-+        let check = |m: &HostingManager, label: &str| {
-+            let src = m.receiving_updates_source(&contract);
-+            assert_eq!(
-+                src.is_receiving(),
-+                m.is_receiving_updates(&contract),
-+                "{label}"
-+            );
-+            src
-+        };
-+        assert_eq!(check(&manager, "idle").label(), "none");
-+        manager.record_contract_access(contract, 1000, AccessType::Put, HostingCause::Other);
-+        assert_eq!(check(&manager, "cache only").label(), "none");
-+        manager.subscribe(contract);
-+        let src = check(&manager, "lease");
-+        assert_eq!(src.label(), "subscription_lease");
-+        assert!(src.lease_age.is_some() && src.lease_remaining.is_some());
-+        let client_id = crate::client_events::ClientId::next();
-+        manager.add_client_subscription(contract.id(), client_id);
-+        assert_eq!(
-+            check(&manager, "both").label(),
-+            "lease_and_local_subscription"
-+        );
-+        let other = make_contract_key(2);
-+        manager.add_client_subscription(other.id(), crate::client_events::ClientId::next());
-+        let src = manager.receiving_updates_source(&other);
-+        assert_eq!(src.label(), "local_subscription");
-+    
++    let rt = create_runtime();
++    let sim = rt.block_on(async {
++        let mut sim = SimNetwork::new(NETWORK, 1, 2, 7, 3, 10, 2, SEED).await;
++        sim.with_streaming_threshold(64 * 1024);
++        sim.with_controlled_op_interval(Duration::from_secs(10));
++        sim.wait_for_join_convergence_before_ops(1.0, Duration::from_secs(60));
++        sim
++    });
++    drop(rt);
++    let gateway = NodeLabel::gateway(NETWORK, 0);
++    let stale = NodeLabel::node(NETWORK, 1);
++    let other = NodeLabel::node(NETWORK, 2);
++    let subscribe = |label: &NodeLabel| {
++        ScheduledOperation::new(
++            label.clone(),
++            SimOperation::Get {
++                contract_id: *key.id(),
++                return_contract_code: true,
++                subscribe: true,
++            },
++        )
++    };
++    let operations = vec![
++        ScheduledOperation::new(
++            gateway.clone(),
++            SimOperation::Put {
++                contract: contract.clone(),
++                state: initial,
++                subscribe: true,
++            },
++        ),
++        subscribe(&stale),
++        subscribe(&other),
++        ScheduledOperation::new(stale.clone(), SimOperation::CrashNode),
++        ScheduledOperation::new(
++            gateway.clone(),
++            SimOperation::Update {
++                key,
++                data: updated.clone(),
++            },
++        ),
++        ScheduledOperation::new(stale.clone(), SimOperation::RecoverNode),
++    ];
++    // Long enough for anti-entropy (about 5 minutes) to find and heal the
++    // stale copy.
++    let result = sim.run_controlled_simulation(
++        SEED,
++        operations,
++        Duration::from_secs(1200),
++        Duration::from_secs(600),
++    );
++    assert!(
++        result.turmoil_result.is_ok(),
++        "simulation failed: {:?}",
++        result.turmoil_result.err()
++    );
++    let longest = GlobalTestMetrics::longest_event_loop_event();
++    let heals = stale_peer_heal_observations::get(&key).heals_emitted;
++    stale_peer_heal_observations::clear(&key);
++    let stored = |label: &NodeLabel| {
++        result
++            .node_storages
++            .get(label)
++            .and_then(|storage| storage.get_stored_state(&key))
++            .map(|state| state.as_ref().to_vec())
++    };
++    assert!(
++        stored(&other).as_deref() == Some(updated.as_slice()),
++        "premise: the subscriber that stayed up got the update"
++    );
++    assert!(
++        heals >= 1,
++        "premise: anti-entropy emitted a heal, so the path under test ran"
++    );
++    assert!(
++        stored(&stale).as_deref() == Some(updated.as_slice()),
++        "the crashed subscriber was h
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6408** (closed): fix: demote a native role only when rescues are a real share of its outcomes (@sanity)
+- **PR #6406** (2026-11-27): feat(transport): split short_dropped by cause (@sanity)
 - **PR #6405** (2026-11-26): chore(put): log each PUT hop decision at INFO (@sanity)
 - **PR #6404** (2026-11-26): build: sync main to 0.2.167 after release (@sanity)
 - **PR #6403** (2026-11-26): fix(get): a relay holding the contract serves it at HTL 0 (@sanity)
 - **PR #6401** (2026-11-26): test: default simulations to QUIC data (prefer, 100%) (@sanity)
-- **PR #6400** (2026-11-26): ci: bump freenet-git mirror-repo.yml pin 61d5fea -> 7a85b99 (@sanity)
 
 ---
 
@@ -2261,31 +2211,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. put): log each PUT hop decision at INFO
+## X. test): do not await a heal's stream inside the simulation event loop
 
 **RULE**:
-When implementing operations in `crates/core/src/operations/put.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/operations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f1ef04b9`: put): log each PUT hop decision at INFO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7fa79ec4`: test): do not await a heal's stream inside the simulation event loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/put.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/operations.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-mod path_log;
+leg is built. In simulations every full-state leg, a heal's or a forced one, is spawned
+rather than awaited (`spawn_leg`): a stream leg awaits a completion signal
+that the event loop has to drive, so awaiting it on the loop stalls the node
+until `STREAM_COMPLETION_TIMEOUT`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+leg is built. In simulations the forced leg is spawned rather than awaited
+(`spawn_forced_leg`): the simulation sends heals inline on the event loop,
+and a stream leg awaits a completion signal that loop has to drive.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f1ef04b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7fa79ec4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13794,3 +13794,5 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `d82a8a7b` | Multi-dimensional audit evidence | 2026-11-27T10:34:17.797Z |
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-27T10:34:22.416Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T10:34:23.853Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `7fa79ec4` | Multi-dimensional audit evidence | 2026-11-27T10:43:11.604Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `8425467c` | Multi-dimensional audit evidence | 2026-11-27T10:43:16.098Z |
