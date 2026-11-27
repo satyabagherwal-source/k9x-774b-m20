@@ -13671,3 +13671,5 @@
 | `CYCLE-20261127-CSAN` | `2026-11-27T04:27:24.863Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10827` | Yes (`160b41f5...`) |
 | `CYCLE-20261127-OU8B` | `2026-11-27T04:36:47.243Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`b777387a...`) |
 | `CYCLE-20261127-OUNY` | `2026-11-27T04:36:47.806Z` | `GeoPortApp/GeoPort` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/geoportapp-geoport-learnings.md` | Yes (`63a53dd5...`) |
+| `CYCLE-20261127-ZSCI` | `2026-11-27T04:45:18.018Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`a440c86e...`) |
+| `CYCLE-20261127-00M4` | `2026-11-27T04:45:28.732Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10828` | Yes (`863ed10f...`) |

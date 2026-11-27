@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "8a61b67f",
+    "sourceVersion": "e13e8b4d",
     "license": "Apache-2.0",
-    "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
-    "lastHarvestedAt": "2026-11-25T11:30:12.589Z",
+    "contentHash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
+    "lastHarvestedAt": "2026-11-27T04:45:28.748Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -12965,8 +12965,8 @@
     "sourceUrl": "https://huggingface.co/RadixArk/DaisyRose-27B",
     "sourceVersion": "hf-radixark-daisyrose-27b",
     "license": "Open-Source",
-    "contentHash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
-    "lastHarvestedAt": "2026-11-23T19:26:07.939Z",
+    "contentHash": "a440c86ee656d3327b205d49815d76e2caf76b9e543f37627f3176dc250b9915",
+    "lastHarvestedAt": "2026-11-27T04:45:18.024Z",
     "learningId": "learn-huggingface-radixark-daisyrose-27b"
   },
   "xevrion-hatchzip": {

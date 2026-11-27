@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:36:47.888Z",
-  "total_cycles_completed": 12977,
-  "total_learnings_persisted": 12977,
-  "total_rules_promoted": 11737,
+  "last_updated": "2026-11-27T04:45:28.759Z",
+  "total_cycles_completed": 12979,
+  "total_learnings_persisted": 12979,
+  "total_rules_promoted": 11738,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:30:47.684Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:30:49.717Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:30:52.964Z",
       "repository": "krakend/krakend-ce",
@@ -1403,6 +1389,20 @@
       "repository": "GeoPortApp/GeoPort",
       "learningId": "learn-github-geoportapp-geoport",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:45:18.038Z",
+      "repository": "RadixArk/DaisyRose-27B",
+      "learningId": "learn-huggingface-radixark-daisyrose-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:45:28.759Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

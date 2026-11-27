@@ -4,24 +4,24 @@
 {
   "source_repository": "kubeedge/kubeedge",
   "source_url": "https://github.com/kubeedge/kubeedge",
-  "source_version": "8a61b67f",
+  "source_version": "e13e8b4d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T11:30:12.911Z",
+  "timestamp": "2026-11-27T04:45:29.003Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kubeedge-kubeedge",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `8a61b67f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T11:30:12.911Z`  
+> **Provenance**: Harvested from [kubeedge/kubeedge](https://github.com/kubeedge/kubeedge) (Revision: `e13e8b4d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T04:45:29.003Z`  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kubeedge/kubeedge:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:30:11.115Z  
+> **Harvest Timestamp**: 2026-11-27T04:45:27.459Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7646 stars
+- **Stars / Engagement**: 7647 stars
 
 ---
 
@@ -1226,11 +1226,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7476** (2026-11-20): **metamanager: key edge device edits by device name**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  The metaserver PUT handler for devices sends the edited device to metamanager with the resource `<namespace>/device/updated`, and metamanager uses that resource as the meta key. The device delete path removes `<namespace>/device/<name>`, so the literal `updated` row survived a cloud delete, and `initDeviceInfoFromDB` loaded it again on the next edgecore restart, bringing a deleted device back on the node.  The handler now builds the resource from the device name, so an edge edit updates the same row that the delete path removes.  **Which issue(s) this PR fixes**:  Fixes #7319  **Special notes for your reviewer**:  `TestUpdateEdgeDeviceResourceKey` captures the message sent to metamanager and asserts the resource. It fails on master with `default/device/updated`. The tests patch `beehiveContext.SendSync` with gomonkey, so they need the `-gcflags "all=-N -l"` used by `make test`.  Check: `go test -gcflags "all=-N -l" ./edge/pkg/metamanager/...`  **Does this PR introduce a user-facing change?**:  ```release-note An edge edit of a device is now stored under the device's own meta key, so a device no longer reappears on the node after it is deleted in the cloud and edgecore restarts. 
+- **Issue #7485** (2026-11-27): **keadm: report a failed device update in ctl edit device**
+  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it**: `DeviceRequest.UpdateDevice`, used by `keadm ctl edit device`, sends the edited device with `RESTClient().Put()...Do(ctx)` and returned `&res, nil`. `Request.Do` doesn't return the request error; it keeps it in the `rest.Result`, so it has to be read with `res.Error()`. Without that, an update the server rejected (422 invalid, 409 conflict, 403 forbidden) came back with a nil error: the command logged "Send update message to DeviceTwin", exited 0, and the edit was lost.  This returns the result's error, wrapped with the device name. `edit/device.go` already handles an error from `UpdateDevice` by failing and telling the user where the edited copy was saved, so that path now works. The other ctl commands (`confirm`, `unhold`, `restart pod`) already check `result.Error()`.  The `client` package had no tests; this adds `device_test.go`, with a test server for the PUT: - `TestUpdateDeviceReturnsTheServerError`: the server answers 422, and `UpdateDevice` returns an error with the server's message. It fails without the change. - `TestUpdateDeviceSucceeds`: the server answers 200, and there is no error.  **Which issue(s) this PR fixes**: Fixes #7484  **Special notes for your reviewer**: The tests patch `metaclient.VersionedKubeClient` with gomonkey, like the other ctl tests, so they need the `-gcflags "all=-N -l"` used by `make test`. `go vet` reports nothing for the package. The change is only in `clien
 
-- **Issue #7458** (2026-11-20): **nodegroup: add and remove the finalizer with a patch**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  The NodeGroup controller adds and removes its finalizer with a full `Client.Update`. That re-sends the whole spec as Go marshals it, so every `omitempty` zero value is dropped from the stored NodeGroup: - `matchLabels: {}` (selects every node) is stored as no `matchLabels`, which selects none (`getNodesByLabels` returns no nodes for a nil map); - an explicit `topologyEnabled: false` is dropped, so a CRD default for that field would turn it back into `true`.  `Reconcile` and `removeFinalizer` now write the finalizer with a `client.MergeFrom` patch, which carries only `metadata.finalizers`. The patch uses `MergeFromWithOptimisticLock`: a merge patch replaces the whole finalizers list, so the `resourceVersion` lock keeps a stale read from dropping or re-adding another finalizer. It gets a conflict and a requeue, as the Update did.  **Which issue(s) this PR fixes**:  None filed.  **Special notes for your reviewer**:  New tests (fake client with an interceptor), on a NodeGroup with `topologyEnabled: false` and `matchLabels: {}`: - `TestFinalizerIsPatched`: each finalizer patch sets only `metadata.finalizers` and `metadata.resourceVersion`, the stored finalizers are right, and no full Update of a NodeGroup happens. The fake client stores Go types, so it cannot show a dropped value itself; the test checks the write that would drop one. - `TestFinalizerPatchConflictsOnStaleRead`: `removeFinalizer` on a 
+- **Issue #7484** (2026-11-27): **keadm ctl edit device reports success when the update is rejected**
+  *Symptoms*: **What happened**:  `keadm ctl edit device` reports success even when the server rejects the edited device. `DeviceRequest.UpdateDevice` in `keadm/cmd/keadm/app/cmd/ctl/client/device.go` does the PUT with `RESTClient()...Do(ctx)` and returns `&res, nil`. `Do` doesn't return the request error; it is kept in the result and has to be read with `res.Error()`, which nobody does. So an update the server answers with 422 (invalid), 409 (conflict) or 403 returns a nil error, the command logs "Send update message to DeviceTwin", and the edit is lost. The other ctl commands (`confirm`, `unhold`, `restart pod`) do check `result.Error()`.  **What you expected to happen**:  The command fails with the server's error, and the edited temp file is kept (the `preservedFile` path in `edit/device.go` already does that when `UpdateDevice` returns an error).  **How to reproduce it (as minimally and precisely as possible)**:  Run `keadm ctl edit device <name>` on an edge node and save an edit that the server rejects, for example an invalid field value. The command exits 0. In a unit test, a server answering the PUT with 422 makes `UpdateDevice` return a nil error.  **Environment**: - KubeEdge version: master 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1247,29 +1247,28 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a61b67f` (2026-11-25)
-**Commit Message**: Merge pull request #7453 from arshil42/fix/synckeeper-buffered-channel
+### Incident Patch 1: `e13e8b4d` (2026-11-27)
+**Commit Message**: Merge pull request #7485 from arshil42/fix/keadm-edit-device-update-error
 
-viaduct: keep sync responses that arrive before the wait starts
+keadm: report a failed device update in ctl edit device
 
-**File**: `pkg/viaduct/pkg/keeper/synckeeper.go` (modified, +3/-1)
+**File**: `keadm/cmd/keadm/app/cmd/ctl/client/device.go` (modified, +4/-0)
 ```diff
-@@ -36,7 +36,9 @@ func (k *SyncKeeper) sendToKeepChannel(msg model.Message) error {
- }
- 
- func (k *SyncKeeper) addKeepChannel(msgID string) chan model.Message {
--	channel := make(chan model.Message)
-+	// sendToKeepChannel does not block, so the channel holds one message for a
-+	// response that arrives before WaitResponse starts receiving.
-+	channel := make(chan model.Message, 1)
- 	k.keeper.Store(msgID, channel)
- 	return channel
+@@ -91,5 +91,9 @@ func (deviceRequest *DeviceRequest) UpdateDevice(ctx context.Context, device *v1
+ 		VersionedParams(&metaV1.UpdateOptions{}, scheme.ParameterCodec).
+ 		Body(device).
+ 		Do(ctx)
++	// Do does not return the request error; it is kept in the result.
++	if err := res.Error(); err != nil {
++		return nil, fmt.Errorf("failed to update device %s/%s: %w", deviceRequest.Namespace, device.Name, err)
++	}
+ 	return &res, nil
  }
 ```
 
-**File**: `pkg/viaduct/pkg/keeper/synckeeper_test.go` (added, +79/-0)
+**File**: `keadm/cmd/keadm/app/cmd/ctl/client/device_test.go` (added, +86/-0)
 ```diff
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,86 @@
 +/*
 +Copyright 2026 The KubeEdge Authors.
 +
@@ -1286,245 +1285,85 @@ viaduct: keep sync responses that arrive before the wait starts
 +limitations under the License.
 +*/
 +
-+package keeper
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+)
-+
-+func TestMatchAndNotifyBeforeReceive(t *testing.T) {
-+	k := NewSyncKeeper()
-+	request := model.NewMessage("")
-+	channel := k.addKeepChannel(request.GetID())
-+
-+	// The response arrives before anyone receives from the channel.
-+	response := model.NewMessage(request.GetID())
-+	require.True(t, k.MatchAndNotify(*response))
-+
-+	select {
-+	case got := <-channel:
-+		assert.Equal(t, response.GetID(), got.GetID())
-+	default:
-+		t.Fatal("the response was dropped because nobody was receiving yet")
-+	}
-+}
-+
-+func TestMatchAndNotifyWithoutWaiter(t *testing.T) {
-+	k := NewSyncKeeper()
-+	response := model.NewMessage("unknown-request-id")
-+
-+	assert.False(t, k.Match(*response))
-+	assert.False(t, k.MatchAndNotify(*response))
-+}
-+
-+func TestWaitResponse(t *testing.T) {
-+	k := NewSyncKeeper()
-+	request := model.NewMessage("")
-+	response := model.NewMessage(request.GetID())
-+
-+	go func() {
-+		// Notify as soon as WaitResponse has registered the request.
-+		for !k.MatchAndNotify(*response) {
-+			time.Sleep(time.Millisecond)
-+		}
-+	}()
-+
-+	got, err := k.WaitResponse(request, time.Now().Add(10*time.Second))
-+	require.NoError(t, err)
-+	assert.Equal(t, response.GetID(), got.GetID())
-+	assert.False(t, k.Match(*response), "the request should be removed after the response")
-+}
-+
-+func TestWaitResponseTimeout(t *testing.T) {
-+	k := NewSyncKeeper()
-+	request := model.NewMessage("")
-+
-+	_, err := k.WaitResponse(request, time.Now().Add(10*time.Millisecond))
-+	require.ErrorContains(t, err, "wait response timeout")
-+	assert.False(t, k.Match(*model.NewMessage(request.GetID())), "the request should be removed after the timeout")
-+}
-```
-
----
-
-### Incident Patch 2: `5250c989` (2026-11-25)
-**Commit Message**: Merge pull request #7296 from adity1raut/fix/held-pod-unhold-update
-
-edged: replay held pods from pod list as UPDATE instead of SET
-
-**File**: `edge/pkg/edged/edged.go` (modified, +1/-1)
-```diff
-@@ -517,7 +517,7 @@ func (e *edged) handlePodListFromMetaManager(content []byte, updatesChan chan<-
- 		if filterPodByNodeName(&pod, e.nodeName) {
- 			if pod.Annotations[holdUpgradeLabel] == "true" && pod.Status.Phase == v1.PodPending {
- 				key := fmt.Sprintf("%s/%s", pod.Namespace, pod.Name)
--				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.SET, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
-+				e.heldPodUpdates[key] = append(e.heldPodUpdates[key], kubelettypes.PodUpdate{Op: kubelettypes.UPDATE, Pods: []*v1.Pod{&pod}, Source: kubelettypes.ApiserverSource})
- 				continue
- 			}
- 
-```
-
-**File**: `edge/pkg/edged/edged_test.go` (added, +219/-0)
-```diff
-@@ -0,0 +1,219 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+   http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package edged
++package client
 +
 +import (
 +	"context"
 +	"encoding/json"
-+	"fmt"
++	"net/http"
++	"net/http/httptest"
 +	"testing"
-+	"time"
 +
-+	v1 "k8s.io/api/core/v1"
++	"github.com/agiledragon/gomonkey/v2"
++	"github.com/stretchr/testify/assert"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/tools/record"
-+	"k8s.io/kubernetes/pkg/kubelet/config"
-+	kubelettypes "k8s.io/kubernetes/pkg/kubelet/types"
-+	kubeletutil "k8s.io/kubernetes/pkg/kubelet/util"
++	"k8s.io/client-go/rest"
++
++	"github.com/kubeedge/api/apis/devices/v1beta1"
++	"github.com/kubeedge/api/client/clientset/versioned"
++	"github.com/kubeedge/kubeedge/keadm/cmd/keadm/app/cmd/util/metaclient"
 +)
 +
-+const testNodeName = "test-node"
-+
-+func newTestPod(namespace, name, uid string, phase v1.PodPhase, hold bool) v1.Pod {
-+	pod := v1.Pod{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Namespace: namespace,
-+			Name:      name,
-+			UID:       types.UID(uid),
-+		},
-+		Spec: v1.PodSpec{
-+			NodeName: testNodeName,
-+			Containers: []v1.Container{{
-+				Name:  "c",
-+				Image: "busybox",
-+			}},
-+		},
-+		Status: v1.PodStatus{Phase: phase},
-+	}
-+	if hold {
-+		pod.Annotations = map[string]string{holdUpgradeLabel: "true"}
-+	}
-+	return pod
-+}
-+
-+func marshalPodList(t *testing.T, pods ...v1.Pod) []byte {
-+	t.Helper()
-+
-+	lists := make([]string, 0, len(pods))
-+	for _, pod := range pods {
-+		data, err := json.Marshal(pod)
-+		if err != nil {
-+			t.Fatalf("failed to marshal pod %s/%s: %v", pod.Namespace, pod.Name, err)
++// patchVersionedClient points metaclient.VersionedKubeClient at a test server that answers
++// the device update with the given status code.
++func patchVersionedClient(t *testing.T, code int) *gomonkey.Patches {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		w.WriteHeader(code)
++		if code == http.StatusOK {
++			_ = json.NewEncoder(w).Encode(&v1beta1.Device{ObjectMeta: metav1.ObjectMeta{Name: "dev", Namespace: "default"}})
++			return
 +		}
-+		lists = append(lists, string(data))
-+	}
++		_ = json.NewEncoder(w).Encode(&metav1.Status{
++			TypeMeta: metav1.TypeMeta{Kind: "Status", APIVersion: "v1"},
++			Status:   metav1.StatusFailure,
++			Message:  "device dev is invalid",
++			Reason:   metav1.StatusReasonInvalid,
++			Code:     int32(code),
++		})
++	}))
++	t.Cleanup(server.Close)
 +
-+	content, err := json.Marshal(lists)
-+	if err != nil {
-+		t.Fatalf("failed to marshal pod list: %v", err)
-+	}
-+	return content
++	client, err := versioned.NewForConfig(&rest.Config{Host: server.URL})
++	assert.NoError(t, err)
++	return gomonkey.ApplyFunc(metaclient.VersionedKubeClient, func() (versioned.Interface, error) {
++		return client, nil
++	})
 +}
 +
-+// TestHandlePodListFromMetaManagerHoldsPodAsUpdate makes sure a held pod is kept out of the
-+// pod list snapshot and is queued as an UPDATE, like the holdUpgrade path does.
-+func TestHandlePodListFromMetaManagerHoldsPodAsUpdate(t *testing.T) {
-+	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
-+	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
-+	otherNodePod := newTestPod("default", "other", "other-uid", v1.PodRunning, false)
-+	otherNodePod.Spec.NodeName = "another-node"
++func TestUpdateDeviceReturnsTheServerError(t *testing.T) {
++	patches := patchVersionedClient(t, http.StatusUnprocessableEntity)
++	defer patches.Reset()
 +
-+	e := &edged{
-+		nodeName:       testNodeName,
-+		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
-+	}
++	request := &DeviceRequest{Namespace: "default", DeviceName: "dev"}
++	device := &v1beta1.Device{ObjectMeta: metav1.ObjectMeta{Name: "dev", Namespace: "default"}}
++	res, err := request.UpdateDevice(context.Background(), device)
 +
-+	updatesChan := make(chan interface{}, 1)
-+	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod, otherNodePod), updatesChan); err != nil {
-+		t.Fatalf("handlePodListFromMetaManager failed: %v", err)
-+	}
-+
-+	update := (<-updatesChan).(kubelettypes.PodUpdate)
-+	if update.Op != kubelettypes.SET {
-+		t.Errorf("expected the pod list to be sent as SET, got %s", opName(update.Op))
-+	}
-+	if len(update.Pods) != 1 || update.Pods[0].Name != runningPod.Name {
-+		t.Errorf("expected the pod list to contain only %q, got %v", runningPod.Name, podNames(update.Pods))
-+	}
-+
-+	held, exists := e.heldPodUpdates["default/held"]
-+	if !exists {
-+		t.Fatal("expected the held pod to be cached in heldPodUpdates")
-+	}
-+	if len(held) != 1 {
-+		t.Fatalf("expected 1 held update, got %d", len(held))
-+	}
-+	if held[0].Op != kubelettypes.UPDATE {
-+		t.Errorf("expected the held pod to be queued as UPDATE, got %s, kubelet reads a SET as the full pod list of the source", opName(held[0].Op))
-+	}
-+	if held[0].Source != kubelettypes.ApiserverSource {
-+		t.Errorf("expected source %q, got %q", kubelettypes.ApiserverSource, held[0].Source)
-+	}
-+	if len(held[0].Pods) != 1 || held[0].Pods[0].Name != heldPod.Name {
-+		t.Errorf("expected the held update to carry %q, got %v", heldPod.Name, podNames(held[0].Pods))
-+	}
++	assert.Nil(t, res)
++	assert.ErrorContains(t, err, "failed to update device default/dev")
++	assert.ErrorContains(t, err, "device dev is invalid")
 +}
 +
-+// TestUnholdHeldPodFromPodListKeepsOtherPods replays a held pod through kubelet's PodConfig,
-+// the way the unhold-upgrade path does, and makes sure the pods already known to kubelet are
-+// not removed while the held pod is still delivered.
-+func TestUnholdHeldPodFromPodListKeepsOtherPods(t *testing.T) {
-+	heldPod := newTestPod("default", "held", "held-uid", v1.PodPending, true)
-+	runningPod := newTestPod("default", "running", "running-uid", v1.PodRunning, false)
++func TestUpdateDeviceSucceeds(t *testing.T) {
++	patches := patchVersionedClient(t, http.StatusOK)
++	defer patches.Reset()
 +
-+	podCfg := config.NewPodConfig(config.PodConfigNotificationIncremental,
-+		record.NewFakeRecorder(100), kubeletutil.NewPodStartupLatencyTracker())
++	request := &DeviceRequest{Namespace: "default", DeviceName: "dev"}
++	device := &v1beta1.Device{ObjectMeta: metav1.ObjectMeta{Name: "dev", Namespace: "default"}}
++	res, err := request.UpdateDevice(context.Background(), device)
 +
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+	rawUpdateChan := podCfg.Channel(ctx, kubelettypes.ApiserverSource)
-+
-+	e := &edged{
-+		nodeName:       testNodeName,
-+		heldPodUpdates: make(map[string][]kubelettypes.PodUpdate),
-+	}
-+
-+	if err := e.handlePodListFromMetaManager(marshalPodList(t, heldPod, runningPod), rawUpdateChan); err != nil {
-+		t.Fatalf("handlePodListFromMetaManager failed:
++	assert.NoError(t, err)
++	assert.NotNil(t, res)
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7485** (2026-11-27): keadm: report a failed device update in ctl edit device (@arshil42)
 - **PR #7476** (closed): metamanager: key edge device edits by device name (@codeafridi)
 - **PR #7458** (2026-11-20): nodegroup: add and remove the finalizer with a patch (@mkhon)
 - **PR #7454** (2026-11-19): metaserver: keep retrying when getting the CA fails (@arshil42)
 - **PR #7453** (2026-11-25): viaduct: keep sync responses that arrive before the wait starts (@arshil42)
 - **PR #7432** (2026-11-16): Upgrade docker dependency to v28.0.0 (@Shelley-BaoYue)
-- **PR #7431** (2026-11-16): Upgrade golang.org/x/crypto to v0.52.0 (@Shelley-BaoYue)
 
 ---
 
@@ -1544,33 +1383,34 @@ edged: replay held pods from pod list as UPDATE instead of SET
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in synckeeper.go
+## X. Empirical Invariant Guard in device.go
 
 **RULE**:
-When implementing operations in `pkg/viaduct/pkg/keeper/synckeeper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `keadm/cmd/keadm/app/cmd/ctl/client/device.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a61b67f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e13e8b4d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/viaduct/pkg/keeper/synckeeper.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `keadm/cmd/keadm/app/cmd/ctl/client/device.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// sendToKeepChannel does not block, so the channel holds one message for a
-	// response that arrives before WaitResponse starts receiving.
-	channel := make(chan model.Message, 1)
+	// Do does not return the request error; it is kept in the result.
+	if err := res.Error(); err != nil {
+		return nil, fmt.Errorf("failed to update device %s/%s: %w", deviceRequest.Namespace, device.Name, err)
+	}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	channel := make(chan model.Message)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a61b67f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e13e8b4d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

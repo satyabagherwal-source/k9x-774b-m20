@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-MXV5",
-    "timestamp": "2026-11-25T23:11:42.833Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-N7MI",
-    "timestamp": "2026-11-25T23:11:55.482Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "c771ab7a789d144aff6a3e5cb712e375f5eeeacd8b800191eacc6de562fe1581",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-N98G",
     "timestamp": "2026-11-25T23:11:57.568Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "63a53dd5580ee342a6ea8fca09bcad582f9b60b1bd54720ab996238dbb364099",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ZSCI",
+    "timestamp": "2026-11-27T04:45:18.018Z",
+    "repository": "RadixArk/DaisyRose-27B",
+    "learningId": "learn-huggingface-radixark-daisyrose-27b",
+    "contentHash": "a440c86ee656d3327b205d49815d76e2caf76b9e543f37627f3176dc250b9915",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-00M4",
+    "timestamp": "2026-11-27T04:45:28.732Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

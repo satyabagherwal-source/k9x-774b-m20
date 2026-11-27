@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:37:04.353Z",
+  "last_updated": "2026-11-27T04:45:34.933Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T04:37:02.932Z",
+      "processed_at": "2026-11-27T04:45:33.796Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1538,7 +1538,7 @@
       "staged_for_review": 0
     },
     "kubeedge-kubeedge-learnings.md": {
-      "processed_at": "2026-11-25T11:30:54.268Z",
+      "processed_at": "2026-11-27T04:45:32.853Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3508,7 +3508,7 @@
       "staged_for_review": 1
     },
     "hf-radixark-daisyrose-27b-learnings.md": {
-      "processed_at": "2026-11-23T19:26:21.151Z",
+      "processed_at": "2026-11-27T04:45:32.331Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4023,7 +4023,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4812,
+  "total_dossiers_evaluated": 4815,
   "total_canonical_promoted": 572,
-  "total_staged_for_review": 3603
+  "total_staged_for_review": 3605
 }

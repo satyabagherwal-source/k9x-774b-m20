@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T04:36:58.694Z",
-    "lastVerified": "2026-11-27T04:36:58.694Z",
+    "lastChecked": "2026-11-27T04:45:32.171Z",
+    "lastVerified": "2026-11-27T04:45:32.171Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T04:09:57.958Z",
+    "lastChecked": "2026-11-27T04:45:29.561Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T04:09:57.958Z"
+    "lastVerified": "2026-11-27T04:45:29.561Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -665,9 +665,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-27T00:24:35.961Z",
+    "lastChecked": "2026-11-27T04:45:24.504Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-27T00:24:35.961Z"
+    "lastVerified": "2026-11-27T04:45:24.504Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2414,22 +2414,21 @@
     "lastVerified": "2026-11-26T19:07:36.433Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge",
+    "name": "kubeedge/kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T11:49:29.355Z",
-    "lastVerified": "2026-11-26T11:49:29.355Z",
+    "lastChecked": "2026-11-27T04:45:27.459Z",
+    "lastVerified": "2026-11-27T04:45:27.459Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
+    "contentHash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8a61b67f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "aleo-labs-protocol/snarkOS",
@@ -6157,12 +6156,12 @@
     "revisionIdentifier": "420f2bab"
   },
   "citusdata-citus": {
-    "name": "citusdata/citus",
+    "name": "citus",
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-26T10:41:04.106Z",
-    "lastVerified": "2026-11-26T10:41:04.106Z",
+    "lastChecked": "2026-11-27T04:45:27.003Z",
+    "lastVerified": "2026-11-27T04:45:27.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -6171,7 +6170,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5290ba9e"
   },
   "gotham-rs-gotham": {
     "name": "gotham",
@@ -6332,9 +6332,9 @@
   "gkd-kit-gkd": {
     "name": "gkd",
     "officialUrl": "https://github.com/gkd-kit/gkd",
-    "lastChecked": "2026-11-24T20:12:44.921Z",
+    "lastChecked": "2026-11-27T04:45:19.528Z",
     "revisionIdentifier": "301e7e0a",
-    "lastVerified": "2026-11-24T20:12:44.922Z"
+    "lastVerified": "2026-11-27T04:45:19.528Z"
   },
   "architect-architect": {
     "name": "architect",
@@ -7304,9 +7304,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-26T03:55:01.555Z",
+    "lastChecked": "2026-11-27T04:45:14.470Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-26T03:55:01.555Z"
+    "lastVerified": "2026-11-27T04:45:14.470Z"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "name": "mudler/locate-anything.cpp-gguf",
@@ -8074,12 +8074,12 @@
     "officialUrl": "https://huggingface.co/RadixArk/DaisyRose-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T19:26:04.257Z",
-    "lastVerified": "2026-11-23T19:26:04.257Z",
+    "lastChecked": "2026-11-27T04:45:17.270Z",
+    "lastVerified": "2026-11-27T04:45:17.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-radixark-daisyrose-27b",
-    "contentHash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
+    "contentHash": "a440c86ee656d3327b205d49815d76e2caf76b9e543f37627f3176dc250b9915",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

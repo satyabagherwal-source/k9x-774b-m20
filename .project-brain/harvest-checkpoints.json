@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T04:36:47.899Z",
+  "last_updated": "2026-11-27T04:45:28.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
-      "verified_at": "2026-11-25T11:30:12.608Z",
+      "content_hash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
+      "verified_at": "2026-11-27T04:45:28.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:30:12.608Z"
+      "last_updated": "2026-11-27T04:45:28.761Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -19536,14 +19536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-radixark-daisyrose-27b",
-      "content_hash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
-      "verified_at": "2026-11-23T19:26:07.947Z",
+      "content_hash": "a440c86ee656d3327b205d49815d76e2caf76b9e543f37627f3176dc250b9915",
+      "verified_at": "2026-11-27T04:45:18.040Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:26:07.947Z"
+      "last_updated": "2026-11-27T04:45:18.040Z"
     },
     "xevrion/hatchzip": {
       "repository": "xevrion/hatchzip",

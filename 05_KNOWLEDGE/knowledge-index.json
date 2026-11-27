@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T04:37:04.118Z",
+  "last_updated": "2026-11-27T04:45:34.749Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26360,
+  "total_items": 26362,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "be578cc0de3d865af6ac1411d4eca9023c7164e6d1b0b8a944a7a805d6678846",
+      "content_hash": "b7650cfa4333e76f9e89d43f3d459b845d776c4f19d9d98ca2fd6d715778d8e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:37:04.118Z"
+      "persisted_at": "2026-11-27T04:45:34.749Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -267692,8 +267692,8 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "8a61b67f",
-      "content_hash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
+      "source_version": "e13e8b4d",
+      "content_hash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
@@ -267726,6 +267726,11 @@
           "number": 10513,
           "title": "Empirical Invariant Guard in synckeeper.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10828,
+          "title": "Empirical Invariant Guard in device.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -267733,7 +267738,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:30:12.267Z",
+      "verified_at": "2026-11-27T04:45:28.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267775,10 +267780,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "repository": "kubeedge/kubeedge",
-      "source_version": "8a61b67f",
-      "content_hash": "88350705383c6ced04e3cdba95bb859c403087184c12f61e68b14cda0ba08ec5",
+      "source_version": "e13e8b4d",
+      "content_hash": "cc3a0a1a0d7972caa5eb3afd9fe13f176a95f5ab2c5bc61d723a457cc457a614",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:30:13.211Z"
+      "persisted_at": "2026-11-27T04:45:29.237Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge",
@@ -267787,10 +267792,10 @@
       "relative_path": "08_VERIFICATION/kubeedge-kubeedge-verification-protocol-empirical-defect-shield-for-kubeedge-kub.md",
       "title": "Verification Protocol: Empirical Defect Shield for kubeedge/kubeedge",
       "repository": "kubeedge/kubeedge",
-      "source_version": "8a61b67f",
-      "content_hash": "cfa8267e1030b5a9f4cc1791a24459ac91e37f06c148d2f3ffdb20e2fe718453",
+      "source_version": "e13e8b4d",
+      "content_hash": "55609a55a6d970a46f8873cbebbad19b07d63c6c81d16005d48eef2f909dcfd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:30:13.467Z"
+      "persisted_at": "2026-11-27T04:45:29.451Z"
     },
     "rule-8817": {
       "learning_id": "rule-8817",
@@ -267912,9 +267917,9 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "repository": "kubeedge-kubeedge-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfcc08720d632257391e77caa9d2ad969173f068cf335eeeeb8dd6bb6a083f8f",
+      "content_hash": "1c2ca3bc2cd3e053c42ec407314c3c6a6b4d4c7a864f47564b2e4161aee06039",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:30:54.936Z"
+      "persisted_at": "2026-11-27T04:45:33.372Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubeedge-kubeedge-learnings",
@@ -267924,9 +267929,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubeedge-kubeedge-learnings",
       "repository": "kubeedge-kubeedge-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e1460a8a8d7055aca9199ce2a382aa905f5aaf5c8d2f3af32f63ffe8bba1688",
+      "content_hash": "55b52fca484966e5ef895392c296c77344f98a259d2573364f8c5959efaa5706",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:30:55.226Z"
+      "persisted_at": "2026-11-27T04:45:33.586Z"
     },
     "rule-8819": {
       "learning_id": "rule-8819",
@@ -300549,7 +300554,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/RadixArk/DaisyRose-27B",
       "source_version": "hf-radixark-daisyrose-27b",
-      "content_hash": "ba74cb3354d7df28074e0182de1f7ad9b5cef66b87cf0274528b0cf0e718eed7",
+      "content_hash": "a440c86ee656d3327b205d49815d76e2caf76b9e543f37627f3176dc250b9915",
       "dossier_path": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
       "promoted_rules": [],
@@ -300558,7 +300563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:26:07.720Z",
+      "verified_at": "2026-11-27T04:45:17.733Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -300575,9 +300580,9 @@
       "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
       "repository": "RadixArk/DaisyRose-27B",
       "source_version": "hf-radixark-daisyrose-27b",
-      "content_hash": "7d9bc3548acfe9a952824eca16b9e5184ff85600b1ee69730c8ab10e6c3c2659",
+      "content_hash": "7dd126ba9683e28b025b05c9e63ae8dbde527cde2d4ef5651c6a4ad09c11b160",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:26:08.147Z"
+      "persisted_at": "2026-11-27T04:45:18.268Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-radixark-daisyrose-27b-learnings-core-invaria",
@@ -300587,9 +300592,9 @@
       "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
       "repository": "hf-radixark-daisyrose-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "65c17fa1b7e05211da696a997b507ac69b8c7570d6ea72832c7f50c6cd2c9eea",
+      "content_hash": "7b3ee85a9feb42a4e32e690ae4894b56f60be75b49c51967ae3e9ccb4710e48b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:26:21.350Z"
+      "persisted_at": "2026-11-27T04:45:32.604Z"
     },
     "rule-9369": {
       "learning_id": "rule-9369",
@@ -357910,13 +357915,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-P6TE-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-04WT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "eabda8a626650a04f4a75afb86772830e1ca90a8369d461957ff5c7607ba569b",
+      "content_hash": "23ba1d73e63102cc0bbde4b617fe995faaa95eefa5074da12c16a2ffae32a6f8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T04:37:03.560Z"
+      "persisted_at": "2026-11-27T04:45:34.305Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357926,9 +357931,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf8ad31f2a4999b87fa8468e6522e9d148ab804c9b90784272c4ceb341de9155",
+      "content_hash": "cbc626d11f76b1f3944280a44273945a44ac4d53261abfa08d0269c53f252bfd",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T04:37:03.828Z"
+      "persisted_at": "2026-11-27T04:45:34.520Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361631,6 +361636,32 @@
       "content_hash": "bf5e5e70665eedf9fda710b9a3c3ae3cf1f42f886019ced858b850d0bfd1fa85",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T04:37:02.040Z"
+    },
+    "rule-10828": {
+      "learning_id": "rule-10828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10828,
+      "title": "Empirical Invariant Guard in device.go",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "e13e8b4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:45:28.461Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-device-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-device-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-040Z-empirical-invariant-guard-in-device-go.md",
+      "title": "Empirical Invariant Guard in device.go",
+      "repository": "kubeedge-kubeedge-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df20b88e5a03e59007e6ac8248069d97a559cb6eb9f6a0f0f3cef7341e08ca3b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T04:45:33.156Z"
     }
   },
   "ai-builder-brain": {

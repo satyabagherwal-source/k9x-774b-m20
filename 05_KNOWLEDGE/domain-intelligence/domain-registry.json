@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T04:37:03.828Z",
+  "last_updated": "2026-11-27T04:45:34.520Z",
   "total_records": 2804,
   "domains": {
     "A": {
@@ -25671,8 +25671,8 @@
       "title": "Architecture Intelligence: kubeedge/kubeedge Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-architecture-intelligence-kubeedge-kubeedge-core-invariants.md",
       "repository": "kubeedge/kubeedge",
-      "content_hash": "88350705383c6ced04e3cdba95bb859c403087184c12f61e68b14cda0ba08ec5",
-      "created_at": "2026-11-25T11:30:13.211Z"
+      "content_hash": "cc3a0a1a0d7972caa5eb3afd9fe13f176a95f5ab2c5bc61d723a457cc457a614",
+      "created_at": "2026-11-27T04:45:29.237Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-learnings-core-invariants",
@@ -25698,8 +25698,8 @@
       "title": "Architecture Intelligence: kubeedge-kubeedge-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubeedge-kubeedge-learnings-architecture-intelligence-kubeedge-kubeedge-learning.md",
       "repository": "kubeedge-kubeedge-learnings",
-      "content_hash": "dfcc08720d632257391e77caa9d2ad969173f068cf335eeeeb8dd6bb6a083f8f",
-      "created_at": "2026-11-25T11:30:54.936Z"
+      "content_hash": "1c2ca3bc2cd3e053c42ec407314c3c6a6b4d4c7a864f47564b2e4161aee06039",
+      "created_at": "2026-11-27T04:45:33.372Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-core-invariants",
@@ -33865,8 +33865,8 @@
       "title": "Research & Knowledge Intelligence: RadixArk/DaisyRose-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-research-knowledge-intelligence-radixark-daisyrose-27b.md",
       "repository": "RadixArk/DaisyRose-27B",
-      "content_hash": "7d9bc3548acfe9a952824eca16b9e5184ff85600b1ee69730c8ab10e6c3c2659",
-      "created_at": "2026-11-23T19:26:08.147Z"
+      "content_hash": "7dd126ba9683e28b025b05c9e63ae8dbde527cde2d4ef5651c6a4ad09c11b160",
+      "created_at": "2026-11-27T04:45:18.268Z"
     },
     "DOM-D-14D059C0": {
       "record_id": "DOM-D-14D059C0",
@@ -33916,8 +33916,8 @@
       "title": "Research & Knowledge Intelligence: hf-radixark-daisyrose-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-radixark-daisyrose-27b-learnings-research-knowledge-intelligence-hf-radixark-.md",
       "repository": "hf-radixark-daisyrose-27b-learnings",
-      "content_hash": "65c17fa1b7e05211da696a997b507ac69b8c7570d6ea72832c7f50c6cd2c9eea",
-      "created_at": "2026-11-23T19:26:21.350Z"
+      "content_hash": "7b3ee85a9feb42a4e32e690ae4894b56f60be75b49c51967ae3e9ccb4710e48b",
+      "created_at": "2026-11-27T04:45:32.604Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -46751,8 +46751,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "bf8ad31f2a4999b87fa8468e6522e9d148ab804c9b90784272c4ceb341de9155",
-      "created_at": "2026-11-27T04:37:03.828Z"
+      "content_hash": "cbc626d11f76b1f3944280a44273945a44ac4d53261abfa08d0269c53f252bfd",
+      "created_at": "2026-11-27T04:45:34.520Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

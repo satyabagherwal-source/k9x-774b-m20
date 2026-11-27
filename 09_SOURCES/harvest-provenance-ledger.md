@@ -13704,3 +13704,5 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `039ba60f` | Multi-dimensional audit evidence | 2026-11-27T04:27:24.879Z |
 | `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T04:36:47.248Z |
 | `learn-github-geoportapp-geoport` | `https://github.com/GeoPortApp/GeoPort` | `461e76bc` | Multi-dimensional audit evidence | 2026-11-27T04:36:47.811Z |
+| `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-27T04:45:18.024Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `e13e8b4d` | Multi-dimensional audit evidence | 2026-11-27T04:45:28.748Z |
