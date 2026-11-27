@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T03:25:00.950Z",
-    "lastVerified": "2026-11-27T03:25:00.950Z",
+    "lastChecked": "2026-11-27T03:35:25.050Z",
+    "lastVerified": "2026-11-27T03:35:25.050Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:58:26.536Z",
-    "lastVerified": "2026-11-27T02:58:26.536Z",
+    "lastChecked": "2026-11-27T03:35:18.944Z",
+    "lastVerified": "2026-11-27T03:35:18.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1769,9 +1769,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-26T10:30:55.187Z",
+    "lastChecked": "2026-11-27T03:35:11.554Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-26T10:30:55.187Z"
+    "lastVerified": "2026-11-27T03:35:11.554Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -2430,22 +2430,21 @@
     "revisionIdentifier": "8a61b67f"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T23:24:07.492Z",
-    "lastVerified": "2026-11-26T23:24:07.492Z",
+    "lastChecked": "2026-11-27T03:35:19.527Z",
+    "lastVerified": "2026-11-27T03:35:19.527Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
+    "contentHash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f2c57796"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "paradedb-paradedb": {
     "name": "paradedb",
@@ -5687,9 +5686,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-26T09:12:27.761Z",
+    "lastChecked": "2026-11-27T03:35:16.910Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-26T09:12:27.761Z"
+    "lastVerified": "2026-11-27T03:35:16.910Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5849,9 +5848,9 @@
   "rcbyr-keen-slider": {
     "name": "keen-slider",
     "officialUrl": "https://github.com/rcbyr/keen-slider",
-    "lastChecked": "2026-11-24T19:09:47.167Z",
+    "lastChecked": "2026-11-27T03:35:09.120Z",
     "revisionIdentifier": "520c757a",
-    "lastVerified": "2026-11-24T19:09:47.167Z"
+    "lastVerified": "2026-11-27T03:35:09.120Z"
   },
   "aquasecurity-tfsec": {
     "name": "tfsec",
@@ -6814,9 +6813,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-11-26T03:04:22.955Z",
+    "lastChecked": "2026-11-27T03:35:03.900Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-11-26T03:04:22.955Z"
+    "lastVerified": "2026-11-27T03:35:03.900Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -7661,12 +7660,12 @@
     "officialUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T18:23:47.000Z",
-    "lastVerified": "2026-11-23T18:23:47.000Z",
+    "lastChecked": "2026-11-27T03:35:06.731Z",
+    "lastVerified": "2026-11-27T03:35:06.731Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "104ed466d44e6a5808ec6647fba5fae9b5a84e7a29632fa5dc94ca907492ae71",
+    "contentHash": "26a0968c1518a4affb5a026184771e10ad79d4528f228f92eee8ad45702e81b3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

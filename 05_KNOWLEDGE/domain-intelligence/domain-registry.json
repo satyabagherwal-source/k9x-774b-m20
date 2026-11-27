@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T03:25:03.547Z",
+  "last_updated": "2026-11-27T03:35:28.720Z",
   "total_records": 2799,
   "domains": {
     "A": {
@@ -8905,8 +8905,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "23409ae79a34fe6f4c982717e4b696135f7e1dd35d889ac7680e1f564581b659",
-      "created_at": "2026-11-26T14:44:42.522Z"
+      "content_hash": "54becfedc2d1bb1543fcaf89065a0d7ce0779e85e4bf4251a69a8ad9f1aae7b2",
+      "created_at": "2026-11-27T03:35:21.800Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9532,8 +9532,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f62411028847f73b5cefed642f60ce045a8f9b64e1a769d834f9cb867a686130",
-      "created_at": "2026-11-27T03:16:28.799Z"
+      "content_hash": "c0dc79f3919e68faf554a005ad3ad52818d739ad3fdad1f4b50db78e8365018b",
+      "created_at": "2026-11-27T03:35:28.720Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17672,8 +17672,8 @@
       "title": "Research & Knowledge Intelligence: canberkkkkkk/ema-lightning Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-research-knowledge-intelligence-canberkkkkkk-ema-l.md",
       "repository": "canberkkkkkk/ema-lightning",
-      "content_hash": "2799af20d6e537516dd90b4e85c309f9acdcbc2a9aa21bce13f0f6817be5b698",
-      "created_at": "2026-11-23T18:23:47.932Z"
+      "content_hash": "2884d857aec2b77d31d160ad78016d541175e52bb6405f74298611fe979ca47b",
+      "created_at": "2026-11-27T03:35:08.068Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
@@ -17750,8 +17750,8 @@
       "title": "Research & Knowledge Intelligence: hf-canberkkkkkk-ema-lightning-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-learnings-research-knowledge-intelligence-hf-canbe.md",
       "repository": "hf-canberkkkkkk-ema-lightning-learnings",
-      "content_hash": "4842a8aa6ff20632c05348d277bfbe8efc8e8ad5cd769ab93cf50a52e02d65a9",
-      "created_at": "2026-11-23T18:24:07.572Z"
+      "content_hash": "9a8288e20e643919df9d5ae8c98471388a05fb30bb426fa473fc37e90d4f7441",
+      "created_at": "2026-11-27T03:35:25.629Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
@@ -24321,8 +24321,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "a483622e5a77e20d9961bc69ae705603757f611f60219605375e3a475a95e95d",
-      "created_at": "2026-11-26T14:44:48.401Z"
+      "content_hash": "b5ab838852220f55e5ac58a268cabc57644e09f43b259baebe918eca463803d0",
+      "created_at": "2026-11-27T03:35:27.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

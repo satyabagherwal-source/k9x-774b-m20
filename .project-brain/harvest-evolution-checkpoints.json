@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T03:25:03.956Z",
+  "last_updated": "2026-11-27T03:35:29.236Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T02:27:08.788Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-26T14:44:47.631Z",
+      "processed_at": "2026-11-27T03:35:25.936Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-27T03:16:28.314Z",
+      "processed_at": "2026-11-27T03:35:28.010Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2678,7 +2678,7 @@
       "staged_for_review": 0
     },
     "hf-canberkkkkkk-ema-lightning-learnings.md": {
-      "processed_at": "2026-11-23T18:24:07.354Z",
+      "processed_at": "2026-11-27T03:35:25.278Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4018,7 +4018,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4791,
+  "total_dossiers_evaluated": 4794,
   "total_canonical_promoted": 571,
-  "total_staged_for_review": 3589
+  "total_staged_for_review": 3591
 }

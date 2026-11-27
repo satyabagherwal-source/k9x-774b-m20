@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "104ed466d44e6a5808ec6647fba5fae9b5a84e7a29632fa5dc94ca907492ae71",
-    "lastHarvestedAt": "2026-11-23T18:23:47.722Z",
+    "contentHash": "26a0968c1518a4affb5a026184771e10ad79d4528f228f92eee8ad45702e81b3",
+    "lastHarvestedAt": "2026-11-27T03:35:07.737Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "f2c57796",
+    "sourceVersion": "27da81ce",
     "license": "Apache-2.0",
-    "contentHash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
-    "lastHarvestedAt": "2026-11-26T14:44:41.996Z",
+    "contentHash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
+    "lastHarvestedAt": "2026-11-27T03:35:21.187Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {

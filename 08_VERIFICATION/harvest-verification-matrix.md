@@ -13651,3 +13651,5 @@
 | `CYCLE-20261127-TA0A` | `2026-11-27T03:16:15.466Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`363442bb...`) |
 | `CYCLE-20261127-49TI` | `2026-11-27T03:24:48.438Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`3c0bf75f...`) |
 | `CYCLE-20261127-4GU3` | `2026-11-27T03:24:57.531Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10817` | Yes (`1bccdef6...`) |
+| `CYCLE-20261127-HJO4` | `2026-11-27T03:35:07.732Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`26a0968c...`) |
+| `CYCLE-20261127-HU1D` | `2026-11-27T03:35:21.169Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10818` | Yes (`5d3832c8...`) |

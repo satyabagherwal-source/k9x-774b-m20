@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T03:24:57.560Z",
+  "last_updated": "2026-11-27T03:35:21.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -815,14 +815,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "content_hash": "104ed466d44e6a5808ec6647fba5fae9b5a84e7a29632fa5dc94ca907492ae71",
-      "verified_at": "2026-11-23T18:23:47.730Z",
+      "content_hash": "26a0968c1518a4affb5a026184771e10ad79d4528f228f92eee8ad45702e81b3",
+      "verified_at": "2026-11-27T03:35:07.756Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:23:47.730Z"
+      "last_updated": "2026-11-27T03:35:07.756Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "5527c92c32c24896e10268d88ace457014665aef42881a4a067d52f26db32a0f",
-      "verified_at": "2026-11-26T14:44:42.016Z",
+      "content_hash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
+      "verified_at": "2026-11-27T03:35:21.205Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:44:42.016Z"
+      "last_updated": "2026-11-27T03:35:21.205Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
