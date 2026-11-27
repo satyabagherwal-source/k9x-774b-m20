@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T05:39:58.138Z",
+  "last_updated": "2026-11-27T05:48:27.966Z",
   "total_records": 2811,
   "domains": {
     "A": {
@@ -14269,8 +14269,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "8c53438736f0e81b50a89e25efd13f000817bf3c2bd958ff7bda166caa1049a5",
-      "created_at": "2026-11-26T04:56:04.706Z"
+      "content_hash": "abb800a0b6839a6cb036b5d803a1698938d67a1866521a16425e7dd8f26e101e",
+      "created_at": "2026-11-27T05:48:16.110Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -14346,8 +14346,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "83fe6d354ef942f62acb2fedd7c7d860e5f3526d1bcf925b463d8ba538b5cae1",
-      "created_at": "2026-11-26T04:56:45.361Z"
+      "content_hash": "565afac42dd507e0ec2c062f62c9f78db97e33fcb9baa9badaa7595e9a4eaf60",
+      "created_at": "2026-11-27T05:48:26.423Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -18837,8 +18837,8 @@
       "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-research-knowledge-intelligence-francisring-prism-core-inva.md",
       "repository": "FrancisRing/Prism",
-      "content_hash": "76245cace615641ac98ee3d8b7914235f860775c9af765a5e21131d23727eb26",
-      "created_at": "2026-11-23T20:38:45.429Z"
+      "content_hash": "cd21395cb32e4abc51b5ae19d619465d1240a25939c2dce1c7778e3ecbe805fd",
+      "created_at": "2026-11-27T05:48:14.860Z"
     },
     "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
@@ -18897,8 +18897,8 @@
       "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-learnings-research-knowledge-intelligence-hf-francisring-pr.md",
       "repository": "hf-francisring-prism-learnings",
-      "content_hash": "a4b574345cdd9942f77e873c6a45ef4eaf8129f14d4019116e4a1adef1a3a590",
-      "created_at": "2026-11-23T20:39:04.200Z"
+      "content_hash": "ea71eb39be9545d2986647c9a50e0ce02449a948d2c9505140ddaf5075bce8f3",
+      "created_at": "2026-11-27T05:48:27.062Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
@@ -46758,8 +46758,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "cbc626d11f76b1f3944280a44273945a44ac4d53261abfa08d0269c53f252bfd",
-      "created_at": "2026-11-27T04:45:34.520Z"
+      "content_hash": "195ee1a45c400eefec1da5b1fa867c3b4b0bf45af7e0219fd9ac4b19f3131a2f",
+      "created_at": "2026-11-27T05:48:27.966Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

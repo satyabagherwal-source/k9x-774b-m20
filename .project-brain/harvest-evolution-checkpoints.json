@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:39:58.662Z",
+  "last_updated": "2026-11-27T05:48:28.331Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T04:45:33.796Z",
+      "processed_at": "2026-11-27T05:48:27.287Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1273,9 +1273,9 @@
       "staged_for_review": 1
     },
     "restatedev-restate-learnings.md": {
-      "processed_at": "2026-11-26T04:56:44.382Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T05:48:25.800Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "dubzzz-fast-check-learnings.md": {
       "processed_at": "2026-11-25T02:02:11.773Z",
@@ -2763,7 +2763,7 @@
       "staged_for_review": 0
     },
     "hf-francisring-prism-learnings.md": {
-      "processed_at": "2026-11-23T20:39:03.983Z",
+      "processed_at": "2026-11-27T05:48:26.834Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4023,7 +4023,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4833,
+  "total_dossiers_evaluated": 4836,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3618
+  "total_staged_for_review": 3620
 }

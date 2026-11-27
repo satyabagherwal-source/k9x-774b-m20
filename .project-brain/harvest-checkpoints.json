@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T05:39:51.381Z",
+  "last_updated": "2026-11-27T05:48:15.677Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
-      "verified_at": "2026-11-23T20:38:45.237Z",
+      "content_hash": "5c88eb66457aaeadebb9881b217466da8d7b3f879dfd8cef7e5069fd6cc97026",
+      "verified_at": "2026-11-27T05:48:14.616Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:38:45.237Z"
+      "last_updated": "2026-11-27T05:48:14.616Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
-      "verified_at": "2026-11-26T04:56:04.284Z",
+      "content_hash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
+      "verified_at": "2026-11-27T05:48:15.677Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T04:56:04.284Z"
+      "last_updated": "2026-11-27T05:48:15.677Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",

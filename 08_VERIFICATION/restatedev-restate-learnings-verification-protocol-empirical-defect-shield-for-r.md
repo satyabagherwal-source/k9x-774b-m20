@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T04:56:45.007Z",
+  "timestamp": "2026-11-27T05:48:26.084Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-restatedev-restate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [restatedev-restate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T04:56:45.007Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:48:26.084Z`  
 > **Learning ID**: `LEARN-EVO-restatedev-restate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `40ec0264`  
+> **Source Version**: `a2d478d0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T04:56:03.106Z  
+> **Timestamp**: 2026-11-27T05:48:14.418Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:56:03.099Z  
+> **Harvest Timestamp**: 2026-11-27T05:48:14.412Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4746 stars
+- **Stars / Engagement**: 4751 stars
 
 ---
 
@@ -1663,46 +1663,232 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40ec0264` (2026-11-25)
-**Commit Message**: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.9/ui-v1.1.9.tar (#6051)
+### Incident Patch 1: `c36866b1` (2026-11-26)
+**Commit Message**: [PartitionStore] Build entry indexes and statistics only after the vqueues migration
 
-Co-authored-by: restatedev-web-ui[bot] <350330018+restatedev-web-ui[bot]@users.noreply.github.com>
+The entry indexes (`entry_by_created/1`, `entry_by_status_created/1`,
+`entry_by_status_transitioned/1`) and the status gauges behind the statistics
+tables are computed from the virtual queues' entries. Those hold every
+invocation only once the partition has fully migrated to vqueues, the
+`vqueues` state-machine feature, applied by the processor at a log position.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+Until now `experimental-enable-indexes` alone decided. A partition opened
+before its migration, for example an old partition catching up, registered
+the indexes and gauges, walked an empty entry table and marked them Complete.
+Invocation reads through the entry indexes already refused such a partition,
+but the statistics tables didn't: they summed only the entries that existed and
+silently undercounted, and `/version` reported `stats_tables: true`.
+
+Now:
+
+- **The registry stays tied to the option.** With `experimental-enable-indexes`
+  on, opening a partition fences the store and pins its 1.8.2 version floor,
+  even before anything registers. A fenced store always has a registry record,
+  and every open flushes it, so a retry after a fai
+
+**File**: `crates/admin-rest-model/src/version.rs` (modified, +3/-2)
 ```diff
-@@ -9449,8 +9449,8 @@ dependencies = [
- 
- [[package]]
- name = "restate-web-ui"
--version = "1.1.8"
--source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8#0e3cce8c1d13619f7401681d033cfa102e4286d2"
-+version = "1.1.9"
-+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.9#bc109ac99b7906168173ced877648b3b66f6b96b"
- 
- [[package]]
- name = "restate-worker"
+@@ -106,8 +106,9 @@ pub struct QueryEngineInformation {
+     /// Whether the statistics tables (`sys_service_stats`, `sys_deployment_stats` and
+     /// `sys_virtual_object_stats`) answer queries. `false` while queries don't read indexes,
+     /// because the tables aren't shown then. Otherwise `true`, from the admin node's start, unless
+-    /// its last check found a partition whose leader answered and lacks a complete status gauge.
+-    /// Partitions without a known leader, leaders that are down or don't answer, and leaders whose
++    /// its last check found a partition whose leader answered with its store open and lacks a
++    /// complete status gauge, as before the partition has fully migrated to vqueues. Partitions
++    /// without a known leader, leaders that are down or don't answer, and leaders whose
+     /// partition store isn't open (no registry rows) don't count. The admin node checks every
+     /// `admin.query-engine.index-catalog-refresh-interval`.
+     pub stats_tables: bool,
 ```
 
-**File**: `crates/admin/Cargo.toml` (modified, +1/-1)
+**File**: `crates/distributed-datafusion/src/catalog/tests.rs` (modified, +6/-4)
 ```diff
-@@ -40,7 +40,7 @@ restate-util-time = { workspace = true }
- restate-types = { workspace = true }
- restate-util-string = { workspace = true }
- restate-wal-protocol = { workspace = true }
--restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.8", tag = "v1.1.8" }
-+restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.9", tag = "v1.1.9" }
+@@ -641,6 +641,7 @@ async fn migration_tables_serve_the_default_engine_rows() {
+             .open(&Partition::new(PartitionId::from(id), KeyRange::FULL), None)
+             .await
+             .unwrap();
++        store.mark_fully_migrated_to_vqueues().await;
+         store
+             .verify_and_run_migrations(Default::default(), &config)
+             .await
+@@ -694,14 +695,15 @@ async fn migration_tables_serve_the_default_engine_rows() {
+             ..Default::default()
+         })
+         .unwrap();
+-    for (sql, expected) in [
+-        ("SELECT * FROM cluster.registry", &legacy[0]),
+-        ("SELECT * FROM cluster.migration_jobs", &legacy[1]),
++    // The registry has one more row per replica: the registry's own.
++    for (sql, expected, len) in [
++        ("SELECT * FROM cluster.registry", &legacy[0], 14),
++        ("SELECT * FROM cluster.migration_jobs", &legacy[1], 12),
+     ] {
+         let mut actual = rows(session.as_ref(), sql).await;
+         actual.sort();
+         assert_eq!(&actual, expected, "{sql}");
+-        assert_eq!(actual.len(), 12, "{sql}");
++        assert_eq!(actual.len(), len, "{sql}");
+     }
+     // Index sizes are estimated when the query selects them; completed jobs
+     // aren't blocked.
+```
+
+**File**: `crates/distributed-datafusion/src/distributed/index_access_tests.rs` (modified, +1/-0)
+```diff
+@@ -379,6 +379,7 @@ async fn workflow_page_reads_the_entry_index_across_partitions_and_owners() {
+         } else {
+             &tracking
+         };
++        store.mark_fully_migrated_to_vqueues().await;
+         store
+             .verify_and_run_migrations(Default::default(), config)
+             .await
+```
+
+**File**: `crates/distributed-datafusion/src/distributed/stats_tests.rs` (modified, +1/-0)
+```diff
+@@ -70,6 +70,7 @@ pub(super) fn register_scanners(
+ async fn reopen(store: &mut PartitionStore, configure: impl FnOnce(&mut Configuration)) {
+     let mut config = Configuration::pinned().as_ref().clone();
+     configure(&mut config);
++    store.mark_fully_migrated_to_vqueues().await;
+     store
+         .verify_and_run_migrations(Default::default(), &config)
+         .await
+```
+
+**File**: `crates/distributed-datafusion/src/tables/invocation_status/tests.rs` (modified, +11/-0)
+```diff
+@@ -263,10 +263,19 @@ async fn invocations_read_through_the_entry_index_match_v1() {
+         .unwrap();
+     let mut config = Configuration::default();
+     config.common.experimental.set_indexes(true);
++    // The indexes register on a migrated partition; the read checks the
++    // migration again in its own snapshot, which the test then takes back to
++    // show the scan.
++    store.mark_fully_migrated_to_vqueues().await;
+     store
+         .verify_and_run_migrations(CancellationToken::new(), &config)
+         .await
+         .unwrap();
++    let mut tx = store.transaction();
++    tx.put_state_machine_features(&PersistedFeatures::default())
++        .unwrap();
++    tx.commit().await.unwrap();
++    drop(tx);
+     // The planner reads the index only where it's maintained.
+     Configuration::set(config.clone());
  
- ahash = { workspace = true }
- anyhow = { workspace = true }
+@@ -1117,6 +1126,7 @@ async fn status_follows_the_entry() {
+         .unwrap();
+     let mut config = Configuration::default();
+     config.common.experimental.set_indexes(true);
++    store.mark_fully_migrated_to_vqueues().await;
+     store
+         .verify_and_run_migrations(CancellationToken::new(), &config)
+         .await
+@@ -1421,6 +1431,7 @@ async fn partitions_sharing_a_lane_bound_their_fallback() {
+     let mut page = Vec::new();
+     for ((_, partition), (count, migrated)) in partitions.iter().zip([(61u64, false), (30, true)]) {
+         let mut store = manager.open(partition, None).await.unwrap();
++        store.mark_fully_migrated_to_vqueues().await;
+         store
+             .verify_and_run_migrations(CancellationToken::new(), &config)
+             .await
+```
+
+**File**: `crates/distributed-datafusion/src/tables/stats/tests.rs` (modified, +1/-0)
+```diff
+@@ -158,6 +158,7 @@ async fn stats_tables_aggregate_filter_and_follow_lifecycle_across_stores() {
+     let mut stores = Vec::new();
+     for (_, partition) in &partitions.0 {
+         let mut store = manager.open(partition, None).await.unwrap();
++        store.mark_fully_migrated_to_vqueues().await;
+         store
+             .verify_and_run_migrations(Default::default(), &config)
+             .await
+```
+
+**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +2/-0)
+```diff
+@@ -656,6 +656,7 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
+         .unwrap();
+     let mut config = Configuration::default();
+     config.common.experimental.set_indexes(true);
++    store.mark_fully_migrated_to_vqueues().await;
+     store
+         .verify_and_run_migrations(CancellationToken::new(), &config)
+         .await
+@@ -1176,6 +1177,7 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
+         .unwrap();
+     let mut config = Configuration::default();
+     config.common.experimental.set_indexes(true);
++    store.mark_fully_migrated_to_vqueues().await;
+     store
+         .verify_and_run_migrations(CancellationToken::new(), &config)
+         .await
+```
+
+**File**: `crates/partition-store/README.md` (modified, +21/-5)
+```diff
+@@ -91,7 +91,16 @@ key kind (`src/registry/records.rs`), so a slice writes only the records it
+ changes.
+ 
+ **Definition families.** Definitions released together are grouped in a
+-*family*, switched on by the same configuration options.
++*family*, switched on by the same configuration options. A family over the
++virtual queues' entries registers only once the partition has fully migrated
++to vqueues: the `vqueues` state-machine feature, applied by the processor at a
++log position; a migration that skipped completed invocations is not enough.
++Until then the entries don't hold every invocation, so no walk starts and no
++index exists to read. The store registers such a family at the open after the
++migration, or when the processor applies the migration: the version barrier
++asks for it (`PartitionDb::request_vqueue_indexes`), which wakes the walk
++driver, and the driver's next step, after the barrier's batch is committed,
++registers the family and starts its walk.
+ 
+ **Migration job.** The general unit of maintenance work: building an index or
+ running a one-time migration. Each index and each migration in progress has a
+@@ -143,11 +152,13 @@ are their foundation.
+    change meaning. The registry, walks and jobs are stored under `rg` keys
+    (`src/registry/records.rs`); their key layout and record kinds are
+    append-only too. Rename in code freely; never renumber.
+-9. **The `registry` storage feature fences older binaries.** It is set with
+-   the first index registration and records a minimum Restate version, so an
++9. **The `registry` storage feature fences older binaries.** It is set at
++   open whenever indexes are enabled, even before any family registers, or with
++   the first index registration, and records a minimum Restate version, so an
+    older binary, which doesn't know tokens and index keys, refuses to open the
+-   store because of that version floor rather than ignoring them. Migrations
+-   register only on a store that has it, and never set it.
++   store because of that version floor rather than ignoring them. A fenced store
++   always has a registry record. Migrations register only on a store that has
++   it, and never set it.
+ 10. **Every definition declares the Restate version that introduced it**
+     (`introduced:` next to `definition:`). A node of an older version can't
+     maintain or read the definition's indexes, so a query coordinator must
+@@ -162,6 +173,11 @@ are their foundation.
+     never visits rows written behind its cursor or after its end. Each replica
+     migrates at its own pace, so what a command does must never depend on
+     whether a row is migrated yet.
++12. **Indexes over the vqueue entries wait for the full vqueues migration.**
++    Their families register only on a partition whose `vqueues` feature is
++    applied, and a read of invocations through them also checks it in its own
++    snapshot (`ReadSnapshot::fully_migrated_to_vqueues`): before the migration,
++    an invocation has no entry, and an index would silently miss it.
+ 
+ ## Don'ts
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6051** (2026-11-25): [Restate UI] Update to v1.1.9 (@restatedev-web-ui[bot])
-- **PR #6049** (2026-11-25): Update connection pool readme to match implementation (@muhamadazmy)
-- **PR #6048** (2026-11-25): [PartitionStore] Keep only the entry indexes in use (@AhmedSoliman)
-- **PR #6047** (2026-11-24): [QueryEngineV2] Move the leader at admission in the stale-owner tests (@AhmedSoliman)
-- **PR #6046** (2026-11-24): [QueryEngineV2] Name indexes after their storage definitions (@AhmedSoliman)
-- **PR #6045** (2026-11-24): [Admin] Report in /version whether the statistics tables can answer (@AhmedSoliman)
+- **PR #6060** (2026-11-26): [QueryEngineV2] Narrow invocation status indexes by stage and effective status (@AhmedSoliman)
+- **PR #6059** (2026-11-26): [QueryEngineV2] Read the newest entries through the creation index (@AhmedSoliman)
+- **PR #6058** (2026-11-26): [PartitionStore] Expire dropped indexes from the registry after the job retention (@AhmedSoliman)
+- **PR #6057** (2026-11-26): [QueryEngine] Add a switch to turn off index reads (@AhmedSoliman)
+- **PR #6055** (2026-11-26): [PartitionStore] Group the partition's shared registry state (@AhmedSoliman)
+- **PR #6054** (2026-11-26): [PartitionStore] Build entry indexes and statistics only after the vqueues migration (@AhmedSoliman)
 
 ---
 
@@ -1722,33 +1908,34 @@ Co-authored-by: restatedev-web-ui[bot] <350330018+restatedev-web-ui[bot]@users.n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re
+## X. [PartitionStore] Build entry indexes and statistics only after the vqueues migra
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/admin-rest-model/src/version.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40ec0264`: [UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.9/ui-v1.1.9.tar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c36866b1`: [PartitionStore] Build entry indexes and statistics only after the vqueues migration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/admin-rest-model/src/version.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.9"
-source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.9#bc109ac99b7906168173ced877648b3b66f6b96b"
+    /// its last check found a partition whose leader answered with its store open and lacks a
+    /// complete status gauge, as before the partition has fully migrated to vqueues. Partitions
+    /// without a known leader, leaders that are down or don't answer, and leaders whose
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.1.8"
-source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8#0e3cce8c1d13619f7401681d033cfa102e4286d2"
+    /// its last check found a partition whose leader answered and lacks a complete status gauge.
+    /// Partitions without a known leader, leaders that are down or don't answer, and leaders whose
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40ec0264` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c36866b1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

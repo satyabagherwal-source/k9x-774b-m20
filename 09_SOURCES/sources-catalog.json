@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
-    "lastHarvestedAt": "2026-11-23T20:38:45.230Z",
+    "contentHash": "5c88eb66457aaeadebb9881b217466da8d7b3f879dfd8cef7e5069fd6cc97026",
+    "lastHarvestedAt": "2026-11-27T05:48:14.600Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "40ec0264",
+    "sourceVersion": "a2d478d0",
     "license": "NOASSERTION",
-    "contentHash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
-    "lastHarvestedAt": "2026-11-26T04:56:04.267Z",
+    "contentHash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
+    "lastHarvestedAt": "2026-11-27T05:48:15.665Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {

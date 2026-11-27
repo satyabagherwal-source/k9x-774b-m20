@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:39:57.865Z",
+  "last_updated": "2026-11-27T05:48:27.747Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-04WT",
+      "id": "CD-90IN",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-04WT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-90IN-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -68944,6 +68944,35 @@
       "source_repo": "ydb-platform-ydb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6810F8-some-changes-for-bridge-ui.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-8ZC9",
+      "directive_title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
+      "source_repo": "restatedev-restate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8ZC9-partitionstore-build-entry-indexes-and-statistics-only-after-the-vqueues-migra.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-73AB77",
+      "directive_title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "restatedev-restate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-73AB77--partitionstore-build-entry-indexes-and-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-0501C6",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0501C6-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
     }
   ]

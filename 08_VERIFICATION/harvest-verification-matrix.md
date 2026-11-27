@@ -13691,3 +13691,5 @@
 | `CYCLE-20261127-XM44` | `2026-11-27T05:39:35.860Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`0c5e699c...`) |
 | `CYCLE-20261127-XV87` | `2026-11-27T05:39:47.671Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10837` | Yes (`38384991...`) |
 | `CYCLE-20261127-XY21` | `2026-11-27T05:39:51.337Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10838` | Yes (`8274743d...`) |
+| `CYCLE-20261127-8QDF` | `2026-11-27T05:48:14.595Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`5c88eb66...`) |
+| `CYCLE-20261127-8R6T` | `2026-11-27T05:48:15.653Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10839` | Yes (`085e0684...`) |

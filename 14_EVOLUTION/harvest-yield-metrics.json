@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:39:51.374Z",
-  "total_cycles_completed": 12995,
-  "total_learnings_persisted": 12995,
-  "total_rules_promoted": 11748,
+  "last_updated": "2026-11-27T05:48:15.674Z",
+  "total_cycles_completed": 12997,
+  "total_learnings_persisted": 12997,
+  "total_rules_promoted": 11749,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:15:00.149Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:15:05.399Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:22:56.650Z",
       "repository": "open-wa/wa-automate-nodejs",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T05:39:51.374Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:48:14.613Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:48:15.674Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

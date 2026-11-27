@@ -13724,3 +13724,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-27T05:39:35.865Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `aa0282b2` | Multi-dimensional audit evidence | 2026-11-27T05:39:47.687Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `8194d077` | Multi-dimensional audit evidence | 2026-11-27T05:39:51.355Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-27T05:48:14.600Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `a2d478d0` | Multi-dimensional audit evidence | 2026-11-27T05:48:15.665Z |

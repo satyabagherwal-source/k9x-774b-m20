@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T05:39:58.408Z",
+  "last_updated": "2026-11-27T05:48:28.165Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26393,
+  "total_items": 26395,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7650cfa4333e76f9e89d43f3d459b845d776c4f19d9d98ca2fd6d715778d8e4",
+      "content_hash": "691d261d35e815926c3d4bd355f76d74e41d61009c02bfd56a4158f037f203d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:45:34.749Z"
+      "persisted_at": "2026-11-27T05:48:28.165Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -226612,8 +226612,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "40ec0264",
-      "content_hash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
+      "source_version": "a2d478d0",
+      "content_hash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -226671,6 +226671,11 @@
           "number": 10600,
           "title": "[UI] Updating Restate UI to v1.1.9 published at https://github.com/restatedev/re",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10839,
+          "title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226678,7 +226683,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:56:04.040Z",
+      "verified_at": "2026-11-27T05:48:15.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226772,10 +226777,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "40ec0264",
-      "content_hash": "8c53438736f0e81b50a89e25efd13f000817bf3c2bd958ff7bda166caa1049a5",
+      "source_version": "a2d478d0",
+      "content_hash": "abb800a0b6839a6cb036b5d803a1698938d67a1866521a16425e7dd8f26e101e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T04:56:04.706Z"
+      "persisted_at": "2026-11-27T05:48:16.110Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -226796,10 +226801,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "40ec0264",
-      "content_hash": "1d25e57dd89811175462787eb760b80074dc778d00126c18f087f7937607fa98",
+      "source_version": "a2d478d0",
+      "content_hash": "5a38ba9c63194ff44f74d27beefe2a341c027eb1fe722bc2851558615611fd5c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:56:04.907Z"
+      "persisted_at": "2026-11-27T05:48:16.305Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -226809,9 +226814,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "83fe6d354ef942f62acb2fedd7c7d860e5f3526d1bcf925b463d8ba538b5cae1",
+      "content_hash": "565afac42dd507e0ec2c062f62c9f78db97e33fcb9baa9badaa7595e9a4eaf60",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T04:56:45.361Z"
+      "persisted_at": "2026-11-27T05:48:26.423Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -226833,9 +226838,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d20906b6a60c27a6f3c3cd6377d2bd1abcc8c37a686f584b6c771fb5e5d923f",
+      "content_hash": "d10ea9738c2f6b40c39622f442db13553b8aee38b04554891858c8068433a13f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:56:45.583Z"
+      "persisted_at": "2026-11-27T05:48:26.632Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -241257,7 +241262,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "7e0ee4ebff94a1d1acef4e3223f38b76324df5f6817d2712f079f4e892f28b6a",
+      "content_hash": "5c88eb66457aaeadebb9881b217466da8d7b3f879dfd8cef7e5069fd6cc97026",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [],
@@ -241266,7 +241271,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:38:44.975Z",
+      "verified_at": "2026-11-27T05:48:14.309Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241283,9 +241288,9 @@
       "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
       "repository": "FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "76245cace615641ac98ee3d8b7914235f860775c9af765a5e21131d23727eb26",
+      "content_hash": "cd21395cb32e4abc51b5ae19d619465d1240a25939c2dce1c7778e3ecbe805fd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:38:45.429Z"
+      "persisted_at": "2026-11-27T05:48:14.860Z"
     },
     "learn-github-gocd-gocd": {
       "learning_id": "learn-github-gocd-gocd",
@@ -241551,9 +241556,9 @@
       "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
       "repository": "hf-francisring-prism-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4b574345cdd9942f77e873c6a45ef4eaf8129f14d4019116e4a1adef1a3a590",
+      "content_hash": "ea71eb39be9545d2986647c9a50e0ce02449a948d2c9505140ddaf5075bce8f3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:39:04.200Z"
+      "persisted_at": "2026-11-27T05:48:27.062Z"
     },
     "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails": {
       "item_id": "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails",
@@ -357965,13 +357970,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-04WT-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-90IN-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "23ba1d73e63102cc0bbde4b617fe995faaa95eefa5074da12c16a2ffae32a6f8",
+      "content_hash": "bb47cbf6a10c425a52a1f1d120628fcf8c806fe70b7baf5de8fb1d9cf0690e01",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T04:45:34.305Z"
+      "persisted_at": "2026-11-27T05:48:27.747Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357981,9 +357986,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbc626d11f76b1f3944280a44273945a44ac4d53261abfa08d0269c53f252bfd",
+      "content_hash": "195ee1a45c400eefec1da5b1fa867c3b4b0bf45af7e0219fd9ac4b19f3131a2f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T04:45:34.520Z"
+      "persisted_at": "2026-11-27T05:48:27.966Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362104,6 +362109,32 @@
       "content_hash": "3455dab2c98b0f409dc767a9b0955665280e835d6ab42da301d7c0737430652a",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T05:39:57.865Z"
+    },
+    "rule-10839": {
+      "learning_id": "rule-10839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10839,
+      "title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "a2d478d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:48:15.392Z"
+    },
+    "candidate_directive-partitionstore-build-entry-indexes-and-statistics-only-after-the-vqueues-migra": {
+      "item_id": "candidate_directive-partitionstore-build-entry-indexes-and-statistics-only-after-the-vqueues-migra",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8ZC9-partitionstore-build-entry-indexes-and-statistics-only-after-the-vqueues-migra.md",
+      "title": "[PartitionStore] Build entry indexes and statistics only after the vqueues migra",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8be66c63e8c6bb6260260cef489f144e2e7219282f1f7697a9f5d528de653c6b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:48:26.221Z"
     }
   },
   "ai-builder-brain": {

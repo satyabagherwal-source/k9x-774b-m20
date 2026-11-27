@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-P9ZJ",
-    "timestamp": "2026-11-26T00:09:31.087Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "a8640c3f42bb8b18e54abe332be6feebd2e48cdbf52c10d2d7633d671e83dee7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-PBP6",
-    "timestamp": "2026-11-26T00:09:33.306Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "8268516e92726b2bbd9aabd439c81bb0970062faca9317922a107e345096424f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-ZZAW",
     "timestamp": "2026-11-26T00:17:50.456Z",
     "repository": "ricursiveAI/Ripple-65B-Preview",
@@ -7490,6 +7460,36 @@
     "repository": "ydb-platform/ydb",
     "learningId": "learn-github-ydb-platform-ydb",
     "contentHash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-8QDF",
+    "timestamp": "2026-11-27T05:48:14.595Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "5c88eb66457aaeadebb9881b217466da8d7b3f879dfd8cef7e5069fd6cc97026",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-8R6T",
+    "timestamp": "2026-11-27T05:48:15.653Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
