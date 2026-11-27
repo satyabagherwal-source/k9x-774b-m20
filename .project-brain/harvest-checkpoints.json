@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T03:44:02.720Z",
+  "last_updated": "2026-11-27T03:55:10.735Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -155,14 +155,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "content_hash": "2bf8d7b58a29c8980467b44673412d53d16c387027ddaa55625bc90ff77bf9ff",
-      "verified_at": "2026-11-23T18:40:43.923Z",
+      "content_hash": "5cf680370e6242ab85a1cd120935e6a032beabe9f5a3cf07b91af2fe57c1dc15",
+      "verified_at": "2026-11-27T03:54:55.384Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:40:43.923Z"
+      "last_updated": "2026-11-27T03:54:55.384Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
-      "verified_at": "2026-11-26T09:35:50.004Z",
+      "content_hash": "6f3d05cec33c2cc087bc19c549b0571cd28eb7462bc1a9d9f95c4a0d9ea8261a",
+      "verified_at": "2026-11-27T03:55:10.734Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:35:50.004Z"
+      "last_updated": "2026-11-27T03:55:10.734Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
-      "verified_at": "2026-11-26T10:50:40.179Z",
+      "content_hash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
+      "verified_at": "2026-11-27T03:55:06.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:50:40.179Z"
+      "last_updated": "2026-11-27T03:55:06.410Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

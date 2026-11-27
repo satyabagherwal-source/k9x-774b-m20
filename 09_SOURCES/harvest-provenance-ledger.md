@@ -13691,3 +13691,6 @@ Every entry in this ledger must capture:
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `78f21ee0` | Multi-dimensional audit evidence | 2026-11-27T03:43:58.311Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ace4d4f2` | Multi-dimensional audit evidence | 2026-11-27T03:44:02.659Z |
 | `learn-dom-h-a566253f` | `project://react-native-webrtc-react-native-webrtc` | `0e4f5be1` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-27T03:44:38.941Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T03:54:55.364Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `e97111d2` | Multi-dimensional audit evidence | 2026-11-27T03:55:06.392Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `0f54e1f8` | Multi-dimensional audit evidence | 2026-11-27T03:55:10.716Z |

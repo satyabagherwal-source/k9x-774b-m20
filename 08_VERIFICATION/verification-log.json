@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-RYNG",
-    "timestamp": "2026-11-25T15:47:43.276Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-4I4M",
-    "timestamp": "2026-11-25T15:57:28.390Z",
-    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "10f99a189d45b344da723428065bdf69f51af6288db5a570e3031255ee441662",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-4NJ5",
-    "timestamp": "2026-11-25T15:57:35.393Z",
-    "repository": "JuulLabs/kable",
-    "learningId": "learn-github-juullabs-kable",
-    "contentHash": "d4957df8466fb61335df1cb5a1d3ab31b536f56a7682004322915ab7457bf979",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-FDGO",
     "timestamp": "2026-11-25T16:05:55.560Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7492,6 +7447,51 @@
     "contentHash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-701R",
+    "timestamp": "2026-11-27T03:54:55.359Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "5cf680370e6242ab85a1cd120935e6a032beabe9f5a3cf07b91af2fe57c1dc15",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-78JR",
+    "timestamp": "2026-11-27T03:55:06.375Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7BVU",
+    "timestamp": "2026-11-27T03:55:10.698Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "6f3d05cec33c2cc087bc19c549b0571cd28eb7462bc1a9d9f95c4a0d9ea8261a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

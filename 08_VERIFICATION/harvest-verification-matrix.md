@@ -13658,3 +13658,6 @@
 | `CYCLE-20261127-SX2A` | `2026-11-27T03:43:58.306Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10820` | Yes (`a607c532...`) |
 | `CYCLE-20261127-T0F2` | `2026-11-27T03:44:02.654Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | Yes (`08fc35df...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T03:44:38.941Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A566253F` [Domain H] | Yes (`e0adec49...`) |
+| `CYCLE-20261127-701R` | `2026-11-27T03:54:55.359Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`5cf68037...`) |
+| `CYCLE-20261127-78JR` | `2026-11-27T03:55:06.375Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10821` | Yes (`9a6aaf1d...`) |
+| `CYCLE-20261127-7BVU` | `2026-11-27T03:55:10.698Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10822` | Yes (`6f3d05ce...`) |

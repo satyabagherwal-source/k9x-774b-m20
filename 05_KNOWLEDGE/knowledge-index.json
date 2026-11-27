@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T03:44:41.247Z",
+  "last_updated": "2026-11-27T03:55:18.119Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26335,
+  "total_items": 26340,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223743,8 +223743,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "9ced8eeb",
-      "content_hash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
+      "source_version": "e97111d2",
+      "content_hash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -223802,6 +223802,11 @@
           "number": 10655,
           "title": "support BGP graceful restart helper mode per neighbor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10821,
+          "title": "type runAsMaxID as uint32 to fix 32-bit builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223809,7 +223814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T10:50:39.926Z",
+      "verified_at": "2026-11-27T03:55:06.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223851,10 +223856,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "9ced8eeb",
-      "content_hash": "ccca3a2c2b76573a268ed3348f9c2d231250e0f421f12aa8755cf72a0e403812",
+      "source_version": "e97111d2",
+      "content_hash": "9b5e9ecf6a5a64df9645210480d75e734b79f82798034ce8b900095556d32711",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T10:50:40.602Z"
+      "persisted_at": "2026-11-27T03:55:07.027Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -223863,10 +223868,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "9ced8eeb",
-      "content_hash": "1e6e6f95668937919ad4b16893149d3793c8c3cdc49671407e0d85c84c3f6e23",
+      "source_version": "e97111d2",
+      "content_hash": "0ddf218d45bfaba632e4a768d2b22431a4e96670569dea495ed19a0252f6a8b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T10:50:40.791Z"
+      "persisted_at": "2026-11-27T03:55:07.293Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -224344,9 +224349,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "9669221a428a20bb147e3c570de80ceb5ec504919c9389a3ef8da582d6370c70",
+      "content_hash": "9174f4fc780585f89da461cd458cd9181edcf4cebbb431d45ca0b895ad158e5b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:35:29.977Z"
+      "persisted_at": "2026-11-27T03:55:15.895Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -224356,9 +224361,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "71b9d91f303db63fce2fb5bcb57a7fa9adf8dcf335cbb7584cadc5e9d7fcd6a5",
+      "content_hash": "6c521bce3267826e14889139580efed51545d77450b106de940da4ca552d542e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:35:30.158Z"
+      "persisted_at": "2026-11-27T03:55:16.158Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -233761,8 +233766,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "5ca337e7",
-      "content_hash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
+      "source_version": "0f54e1f8",
+      "content_hash": "6f3d05cec33c2cc087bc19c549b0571cd28eb7462bc1a9d9f95c4a0d9ea8261a",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -233805,6 +233810,11 @@
           "number": 9302,
           "title": "Update CHANGELOG.md",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10822,
+          "title": "set PR number for /debug/vars change",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233812,7 +233822,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T09:35:49.719Z",
+      "verified_at": "2026-11-27T03:55:10.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233854,10 +233864,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "5ca337e7",
-      "content_hash": "c79c4b7cfcff11650c5628ec9b4db105fabed5d02e9da5afaa4e532a0179280d",
+      "source_version": "0f54e1f8",
+      "content_hash": "f616df6412b9de1b256d0e8b6e42fc0e1e75a944e7e324b46c14ad1390aa50e8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:35:50.453Z"
+      "persisted_at": "2026-11-27T03:55:11.322Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -233866,10 +233876,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "5ca337e7",
-      "content_hash": "232beac790949cb83cb6cc5ad378653f13fdce2b397346742d17c0ec6629cf69",
+      "source_version": "0f54e1f8",
+      "content_hash": "0d8304e5186131286ae8b9a0327a510592905e5eb144f9baf23acdbcf6465f4a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:35:50.655Z"
+      "persisted_at": "2026-11-27T03:55:11.582Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -237545,7 +237555,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "2bf8d7b58a29c8980467b44673412d53d16c387027ddaa55625bc90ff77bf9ff",
+      "content_hash": "5cf680370e6242ab85a1cd120935e6a032beabe9f5a3cf07b91af2fe57c1dc15",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [],
@@ -237554,7 +237564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:40:43.682Z",
+      "verified_at": "2026-11-27T03:54:55.004Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237571,9 +237581,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "9578fa3edbdfbac30a3965cb1ff86f5b4b6bd780f12da3e6d5b47157e67ee826",
+      "content_hash": "6840bdfcb2a040a4a76618b056e8e9d6ce6a5fccfefb434a43e712d203e779e9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:40:44.129Z"
+      "persisted_at": "2026-11-27T03:54:55.696Z"
     },
     "learn-github-meta-folly": {
       "learning_id": "learn-github-meta-folly",
@@ -237936,9 +237946,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
       "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1fc294fc465460a26ef9219bcb1d664caea0af84fb471306d2e5e33568afe2f",
+      "content_hash": "ed9be1a7c120e755b7c5819548bc57518d6524db74a8ae26eb2da74513844bd2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:41:06.695Z"
+      "persisted_at": "2026-11-27T03:55:14.931Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
@@ -256485,9 +256495,9 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "20507091b8165b9bb01d0cc4bb136c2bd6744c01de2319655076576ef1c75e03",
+      "content_hash": "47cf047d3105c3ae7a14ef3ce91abfac7a01319fe926fb0e923d848bddc5a6dc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T09:37:51.954Z"
+      "persisted_at": "2026-11-27T03:55:17.857Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings",
@@ -256497,9 +256507,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "725a5199fd450ed8393e29642751350d53dee5041a7744100c0cc77eb93de70e",
+      "content_hash": "840e0ddbb4a39103d1150b59c572e5bc237319b92ea7674b9832346be1e690df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:37:52.149Z"
+      "persisted_at": "2026-11-27T03:55:18.119Z"
     },
     "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
@@ -361282,6 +361292,70 @@
       "content_hash": "1a7466e0eb28ebdf3216903bfd64c523057eee68228f8a27852006758d22019e",
       "domain_letter": "L",
       "persisted_at": "2026-11-27T03:44:40.754Z"
+    },
+    "rule-10821": {
+      "learning_id": "rule-10821",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10821,
+      "title": "type runAsMaxID as uint32 to fix 32-bit builds",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "e97111d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T03:55:06.025Z"
+    },
+    "candidate_directive-type-runasmaxid-as-uint32-to-fix-32-bit-builds": {
+      "item_id": "candidate_directive-type-runasmaxid-as-uint32-to-fix-32-bit-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7FOI-type-runasmaxid-as-uint32-to-fix-32-bit-builds.md",
+      "title": "type runAsMaxID as uint32 to fix 32-bit builds",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e84f887546737adfdab77ca4ac60e17977f5309444bafc6928bf6e188f623938",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T03:55:15.622Z"
+    },
+    "rule-10822": {
+      "learning_id": "rule-10822",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10822,
+      "title": "set PR number for /debug/vars change",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "0f54e1f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T03:55:10.364Z"
+    },
+    "candidate_directive-set-pr-number-for-debug-vars-change": {
+      "item_id": "candidate_directive-set-pr-number-for-debug-vars-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7C5Q-set-pr-number-for-debug-vars-change.md",
+      "title": "set PR number for /debug/vars change",
+      "repository": "rqlite/rqlite",
+      "source_version": "0f54e1f8",
+      "content_hash": "90dc0453d345fb11a08bd52066d4e1cb4910f38d063429938e45eca9e62600d0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T03:55:11.055Z"
+    },
+    "candidate_directive-changelog-set-pr-number-for-debug-vars-change": {
+      "item_id": "candidate_directive-changelog-set-pr-number-for-debug-vars-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7H77-changelog-set-pr-number-for-debug-vars-change.md",
+      "title": "CHANGELOG: set PR number for /debug/vars change",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "74f3d201d46b823ecbfeaa0a799fbd80150509a2056c8d21a67937ab2b5d0957",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T03:55:17.591Z"
     }
   },
   "ai-builder-brain": {

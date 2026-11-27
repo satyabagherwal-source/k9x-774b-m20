@@ -4,22 +4,22 @@
 {
   "source_repository": "siderolabs/talos",
   "source_url": "https://github.com/siderolabs/talos",
-  "source_version": "9ced8eeb",
+  "source_version": "e97111d2",
   "license": "MPL-2.0",
-  "timestamp": "2026-11-26T10:50:40.409Z",
+  "timestamp": "2026-11-27T03:55:06.742Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-siderolabs-talos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [siderolabs/talos](https://github.com/siderolabs/talos) (Revision: `9ced8eeb`).  
-> **License**: MPL-2.0 | **Timestamp**: `2026-11-26T10:50:40.409Z`  
+> **Provenance**: Harvested from [siderolabs/talos](https://github.com/siderolabs/talos) (Revision: `e97111d2`).  
+> **License**: MPL-2.0 | **Timestamp**: `2026-11-27T03:55:06.742Z`  
 > **Learning ID**: `learn-github-siderolabs-talos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `siderolabs/talos` (Commit: `9ced8eeb`)
+- **Target Repository**: `siderolabs/talos` (Commit: `e97111d2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:50:39.005Z  
+> **Harvest Timestamp**: 2026-11-27T03:55:04.757Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11598 stars
+- **Stars / Engagement**: 11600 stars
 
 ---
 
@@ -2148,11 +2148,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15096** (2026-11-26): **refactor: align ctr `runAs` types with OCI (uint32)**
-  *Symptoms*: `ContainerRunAs` took `uid` and `gid` as `int32`, so technically half of the valid ID range could not be configured. Values were rejected only when negative and then cast to `uint32` for the OCI spec, which defines both as `uint32`.  This aligns both before we release 1.15, helps simplify validation a bit. 
+- **Issue #15105** (2026-11-26): **chore: refactor bgp tests**
+  *Symptoms*: Refactor BGP test to drop export_test.go semantics Also use proto.Equal to compare bgp messages
 
-- **Issue #15095** (2026-11-26): **release(v1.13.13): prepare release**
-  *Symptoms*: This is the official v1.13.13 release. 
+- **Issue #15103** (2026-11-26): **release(v1.15.0-beta.1): prepare release**
+  *Symptoms*: This is the official v1.15.0-beta.1 release. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2169,561 +2169,402 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d98a8122` (2026-11-25)
-**Commit Message**: feat: support BGP graceful restart helper mode per neighbor
+### Incident Patch 1: `b788950c` (2026-11-26)
+**Commit Message**: fix: type runAsMaxID as uint32 to fix 32-bit builds
 
-Add an opt-in `gracefulRestart` block to BGPInstanceConfig neighbors that
-enables RFC 4724 graceful restart in helper-only mode (with the RFC 8538
-N-bit by default), so routes of a restarting neighbor are retained as stale,
-installed and imported until End-of-RIB or restart time expiry.
+runAsMaxID was an untyped constant (4294967294). Passing it to
+fmt.Errorf made it an int, and that overflows on 32-bit targets. As a
+result, talosctl failed to build for linux/armv7.
 
-BGPPeerStatus reports whether graceful restart was negotiated and whether
-the peer is restarting. The QEMU fabric peer advertises graceful restart.
-
-Fixes #14857
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `api/resource/definitions/network/network.proto` (modified, +11/-0)
-```diff
-@@ -45,6 +45,11 @@ message BGPBFDConfigSpec {
-   uint32 detect_multiplier = 3;
- }
- 
-+// BGPGracefulRestartConfigSpec contains BGP graceful restart helper parameters for a BGP neighbor.
-+message BGPGracefulRestartConfigSpec {
-+  bool notification = 1;
-+}
-+
- // BGPImportRouteSpec selects routes learned by another BGP instance for one-way import.
- message BGPImportRouteSpec {
-   string bgp_instance = 1;
-@@ -77,6 +82,8 @@ message BGPNeighborConfigSpec {
-   bool passive = 7;
-   string auth_password = 8;
-   uint32 ebgp_multi_hop = 9;
-+  // GracefulRestart enables graceful restart helper mode when set.
-+  BGPGracefulRestartConfigSpec graceful_restart = 10;
- }
- 
- // BGPPeerStatusSpec describes the status of a BGP peering session.
-@@ -92,6 +99,10 @@ message BGPPeerStatusSpec {
-   uint32 accepted = 9;
-   string bfd_state = 10;
-   string instance = 11;
-+  // GracefulRestart is true when graceful restart was negotiated for at least one address family.
-+  bool graceful_restart = 12;
-+  // PeerRestarting is true while routes learned from the restarting peer are retained as stale.
-+  bool peer_restarting = 13;
- }
- 
- // BondMasterSpec describes bond settings if Kind == "bond".
-```
-
-**File**: `cmd/talosctl/cmd/mgmt/bgp_launch.go` (modified, +18/-0)
-```diff
-@@ -95,6 +95,7 @@ var bgpLaunchCmd = &cobra.Command{
- 					bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP),
- 					bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP6),
- 				},
-+				GracefulRestart: bgpLaunchGracefulRestart(),
- 			},
- 		}); err != nil {
- 			return fmt.Errorf("error adding peer group: %w", err)
-@@ -203,6 +204,7 @@ func runUnnumberedFabricPeer(ctx context.Context) error {
- 				bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP),
- 				bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP6),
- 			},
-+			GracefulRestart: bgpLaunchGracefulRestart(),
- 			// enable BFD so the node's BFD-enabled neighbor brings up a session (BFD needs both ends).
- 			// 300ms tx/rx, multiplier 3 — matches the node-side test config; BFD negotiates the rest.
- 			Bfd: &gobgpapi.BfdPeerConfig{
-@@ -259,6 +261,21 @@ func bgpLaunchAfiSafi(afi gobgpapi.Family_Afi) *gobgpapi.AfiSafi {
- 			Family:  &gobgpapi.Family{Afi: afi, Safi: gobgpapi.Family_SAFI_UNICAST},
- 			Enabled: true,
- 		},
-+		// list the family in the Graceful Restart Capability, so a Talos neighbor in helper mode retains its routes
-+		MpGracefulRestart: &gobgpapi.MpGracefulRestart{
-+			Config: &gobgpapi.MpGracefulRestartConfig{Enabled: true},
-+		},
-+	}
-+}
-+
-+// bgpLaunchGracefulRestart advertises graceful restart like a GR-capable fabric router, with the N-bit (RFC 8538).
-+//
-+// It has no effect on Talos neighbors that do not enable graceful restart themselves.
-+func bgpLaunchGracefulRestart() *gobgpapi.GracefulRestart {
-+	return &gobgpapi.GracefulRestart{
-+		Enabled:             true,
-+		RestartTime:         120,
-+		NotificationEnabled: true,
- 	}
- }
- 
-@@ -272,6 +289,7 @@ func bgpLaunchActivePeer(address netip.Addr, peerASN uint32) *gobgpapi.Peer {
- 			bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP),
- 			bgpLaunchAfiSafi(gobgpapi.Family_AFI_IP6),
- 		},
-+		GracefulRestart: bgpLaunchGracefulRestart(),
- 		Timers: &gobgpapi.Timers{
- 			Config: &gobgpapi.TimersConfig{
- 				// The peer starts before the integration test configures the reserved guest address.
-```
-
-**File**: `cmd/talosctl/cmd/mgmt/bgp_launch_test.go` (modified, +7/-0)
-```diff
-@@ -26,6 +26,13 @@ func TestBGPLaunchActivePeer(t *testing.T) {
- 	require.Len(t, peer.GetAfiSafis(), 2)
- 	assert.Equal(t, api.Family_AFI_IP, peer.GetAfiSafis()[0].GetConfig().GetFamily().GetAfi())
- 	assert.Equal(t, api.Family_AFI_IP6, peer.GetAfiSafis()[1].GetConfig().GetFamily().GetAfi())
-+	assert.True(t, peer.GetGracefulRestart().GetEnabled())
-+	assert.False(t, peer.GetGracefulRestart().GetHelperOnly(), "the fabric must list its families for Talos to retain them")
-+	assert.True(t, peer.GetGracefulRestart().GetNotificationEnabled())
-+
-+	for _, family := range peer.GetAfiSafis() {
-+		assert.True(t, family.GetMpGracefulRestart().GetConfig().GetEnabled())
-+	}
- }
- 
- func TestBGPLaunchHostRouteEligible(t *testing.T) {
-```
-
-**File**: `hack/release.toml` (modified, +30/-0)
-```diff
-@@ -1202,6 +1202,36 @@ Routes learned over BGP are now installed with metric 20, the same as FRR uses,
- daemon or from Talos (e.g. a static IPv6 default route).
- Routes with a metric below 20 for the same destination, including IPv4 routes installed without a metric, now take
- precedence over the learned ones.
-+"""
-+
-+    [notes.bgp_graceful_restart]
-+        title = "BGP Graceful Restart Helper"
-+        description = """\
-+`BGPInstanceConfig` neighbors now accept a `gracefulRestart` block that enables BGP graceful restart (RFC 4724) in helper mode:
-+
-+```yaml
-+apiVersion: v1alpha1
-+kind: BGPInstanceConfig
-+name: workload
-+localASN: 4200000000
-+neighbors:
-+  - address: fda1:b2c3:d4e5:1::
-+    peerASN: 4200000003
-+    passive: true
-+    gracefulRestart:
-+      enabled: true
-+```
-+
-+When a neighbor that also enables graceful restart (e.g. Cilium with `CiliumBGPPeerConfig.spec.gracefulRestart.enabled`) restarts,
-+the routes learned from it are retained as stale, and stay installed and imported into other BGP instances, until the neighbor
-+re-establishes the session and sends End-of-RIB, or until the restart time advertised by the neighbor expires.
-+By default, sessions ended by a NOTIFICATION message other than a hard reset are also handled as a graceful restart (RFC 8538),
-+when the neighbor supports it; set `notification: false` to disable that.
-+A session torn down by BFD still withdraws the routes immediately.
-+
-+`BGPPeerStatus` now reports whether graceful restart was negotiated with the neighbor (`gracefulRestart`) and whether the neighbor is
-+currently restarting (`peerRestarting`).
-+Enabling or disabling graceful restart on a neighbor resets the session with it.
- """
- 
-     [notes.image_layers_sync_fs]
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +32/-10)
-```diff
-@@ -82,6 +82,8 @@ func (ctrl *BGPController) Outputs() []controller.Output {
- }
- 
- // Run implements controller.Controller interface.
-+//
-+//nolint:gocyclo
- func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
- 	ctrl.reconcileCh = make(chan struct{}, 1)
- 	ctrl.instances = map[resource.ID]*internalbgp.Instance{}
-@@ -100,7 +102,7 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 
- 	retryBackoff := backoff.NewExponentialBackOff()
- 
--	var retryCh <-chan time.Time
-+	var retryCh, refreshCh <-chan time.Time
- 
- 	for {
- 		select {
-@@ -110,13 +112,16 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 		case <-ctrl.reconcileCh:
- 		case <-retryCh:
- 			retryCh = nil
-+		case <-refreshCh:
- 		}
- 
--		failed, err := ctrl.reconcile(ctx, r, logger)
-+		failed, restarting, err := ctrl.reconcile(ctx, r, logger)
- 		if err != nil {
- 			return err
- 		}
- 
-+		refreshCh = restartRefresh(restarting)
-+
- 		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
- 		//
- 		// Other wakeups reconcile a failed instance too, so only a fired retry may advance the backoff.
-@@ -134,6 +139,21 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 	}
- }
- 
-+// bgpRestartRefreshInterval is how often the peer status is refreshed while a peer is restarting.
-+const bgpRestartRefreshInterval = 2 * time.Second
-+
-+// restartRefresh returns a channel which triggers a reconcile while a peer is gracefully restarting.
-+//
-+// GoBGP emits no event when a peer's graceful restart ends at End-of-RIB without a best path change,
-+// so the peer status is refreshed until no peer is restarting.
-+func restartRefresh(restarting bool) <-chan time.Time {
-+	if !restarting {
-+		return nil
-+	}
-+
-+	return time.After(bgpRestartRefreshInterval)
-+}
-+
- // signal triggers a reconcile from a gobgp watch callback (non-blocking).
- func (ctrl *BGPController) signal() {
- 	select {
-@@ -175,32 +195,30 @@ func instanceOutputs(ctx context.Context, name resource.ID, instance *internalbg
- 	}
- }
- 
--// reconcile reports whether an instance failed and needs a retry.
-+// reconcile reports whether an instance failed and needs a retry, and whether a peer is gracefully restarting.
- //
- //nolint:gocyclo,cyclop
--func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (bool, error) {
-+func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime, logger *zap.Logger) (failed, restarting bool, err error) {
- 	configs, err := safe.ReaderListAll[*network.BGPInstanceConfig](ctx, r)
- 	if err != nil {
--		return false, fmt.Errorf("error listing BGP instance configs: %w", err)
-+		return false, false, fmt.Errorf("error listing BGP instance configs: %w", err)
- 	}
- 
- 	linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
- 	if err != nil {
--		return false, fmt.Errorf("error listing link statuses: %w", err)
-+		return false, false, fmt.Errorf("error listing link statuses: %w", err)
- 	}
- 
- 	addressStatuses, err := safe.ReaderListAll[*network.AddressStatus](ctx, r)
- 	if err != nil {
--		return false, fmt.Errorf("error listing address statuses: %w", err)
-+		return false, false, fmt.Errorf("error listing address statuses: %w", err)
- 	}
- 
- 	runtimeState := internalbgp.NewRuntimeStateFromResources(linkStatuses.All(), addressStatuses.All())
- 	neighborResolver := internalbgp.NewNeighborResolver(internalbgp.ReadNeighbors)
- 
- 	desired := map[resource.ID]struct{}{}
- 
--	var failed bool
--
- 	for configResource := range configs.All() {
- 		name := configResource.Metadata().ID()
- 		desired[name] = struct{}{}
-@@ -328,6 +346,10 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 		output := instanceOutputs(ctx, name, instance)
- 		outputs = append(outputs, output)
- 
-+		restarting = restarting || slices.ContainsFunc(output.peerStatuses, func(status network.BGPPeerStatusSpec) bool {
-+			return status.PeerRestarting
-+		})
-+
- 		logger.Debug(
- 			"prepared BGP instance outputs",
- 			zap.String("instance", name),
-@@ -338,7 +360,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 		)
- 	}
- 
--	return failed, ctrl.writeOutputs(ctx, r, outputs)
-+	return failed, restarting, ctrl.writeOutputs(ctx, r, outputs)
- }
- 
- func (ctrl *BGPController) effectiveListenPort() int32 {
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config.go` (modified, +6/-0)
-```diff
-@@ -296,6 +296,12 @@ func buildBGPInstanceConfigSpec(cfg talosconfig.NetworkBGPInstanceConfig) networ
- 			}
- 		}
- 
-+		if gr := neighbor.GracefulRestart(); gr != nil {
-+			neighborSpec.GracefulRestart = &network.BGPGracefulRestartConfigSpec{
-+				Notification: gr.Notification(),
-+			}
-+		}
-+
- 		spec.Neighbors = append(spec.Neighbors, neighborSpec)
- 	}
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config_test.go` (modified, +6/-0)
-```diff
-@@ -56,6 +56,10 @@ func newFabricConfig(holdTime time.Duration) *networkcfg.BGPInstanceConfigV1Alph
- 			NeighborHoldTime:      15 * time.Second,
- 			NeighborAuthPassword:  "secret",
- 			NeighborEBGPMultiHop:  2,
-+			NeighborGracefulRestartConfig: &networkcfg.BGPGracefulRestartConfig{
-+				GracefulRestartEnabled:      true,
-+				GracefulRestartNotification: new(false),
-+			},
- 		},
- 	}
- 
-@@ -93,6 +97,8 @@ func (suite *BGPInstanceConfigSuite) TestRenderInlineBehaviorAndPreserveConfigur
- 		assertions.Equal("secret", spec.Neighbors[1].AuthPassword)
- 		assertions.Empty(spec.Neighbors[0].EBGPMultiHop)
- 		assertions.Equal(uint32(2), spec.Neighbors[1].EBGPMultiHop)
-+		assertions.Nil(spec.Neighbors[0].GracefulRestart)
-+		assertions.Equal(&network.BGPGracefulRestartConfigSpec{Notification: false}, spec.Neighbors[1].GracefulRestart)
- 	}, rtestutils.WithNamespace(network.NamespaceName))
- 
- 	updatedInstance := newFabricConfig(12 * time.Second)
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +21/-0)
-```diff
-@@ -70,6 +70,16 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
- 		}
- 	}
- 
-+	if peer.Config.GracefulRestart != nil {
-+		// Helper-only mode: the paths of a restarting peer are retained as stale, but Talos does not
-+		// claim the restart capability itself, so no per-family MpGracefulRestart is needed.
-+		result.GracefulRestart = &gobgpapi.GracefulRestart{
-+			Enabled:             true,
-+			HelperOnly:          true,
-+			NotificationEnabled: peer.Config.GracefulRestart.Notification,
-+		}
-+	}
-+
- 	if peer.Config.BFD != nil {
- 		result.Bfd = &gobgpapi.BfdPeerConfig{
- 			Enabled:                  true,
-@@ -333,8 +343,14 @@ func PeerStatus(peer *gobgpapi.Peer, localASN uint32) network.BGPPeerStatusSpec
- 		spec.Received += uint32(family.GetState().GetReceived())
- 		spec.Accepted += uint32(family.GetState().GetAccepted())
- 		spec.Advertised += uint32(family.GetState().GetAdvertised())
-+
-+		// a family is retained across a restart only when graceful restart is enabled locally and the
-+		// peer listed the family in its Graceful Restart Capability
-+		spec.GracefulRestart = spec.GracefulRestart || family.GetMpGracefulRestart().GetState().GetEnabled()
- 	}
- 
-+	spec.PeerRestarting = peer.GetGracefulRestart().GetPeerRestarting()
-+
- 	if bfd := state.GetBfdState(); bfd != nil && bfd.GetSessionState() != gobgpapi.BfdSessionState_BFD_SESSION_STATE_UNSPECIFIED {
- 		spec.BFDState = strings.ToLower(strings.TrimPrefix(bfd.GetSessionState().String(), "BFD_SESSION_STATE_"))
- 	}
-@@ -398,6 +414,11 @@ func PeerKey(peer Peer) string {
- 		fmt.Fprintf(&builder, "auth[%x]", sha256.Sum256([]byte(peer.Config.AuthPassword)))
- 	}
- 
-+	if peer.Config.GracefulRestart != nil {
-+		// GoBGP resets the session itself when the advertised capabilities change.
-+		fmt.Fprintf(&builder, "gr[%t]", peer.Config.GracefulRestart.Notification)
-+	}
-+
- 	if peer.Config.BFD != nil {
- 		fmt.Fprintf(
- 			&builder,
-```
-
----
-
-### Incident Patch 2: `74034bd5` (2026-11-25)
-**Commit Message**: fix: keep wakeups from stretching the BGP retry backoff
-
-Every reconcile of a failed instance armed a new retry timer with the
-next backoff interval. Unrelated wakeups, like neighbor table changes,
-reconcile failed instances too, so a burst of them pushed the retry
-far out: eleven failures in a second put it about 30 seconds away.
-TestBGPControllerRetrySuite timed out on this in CI.
-
-Advance the backoff only when the retry timer fires.
-
-Also wait for the passive peer to leave Idle before the router ID
-test dials it: GoBGP closes connections accepted in Idle, and the
-test never redials.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +6/-1)
-```diff
-@@ -109,6 +109,7 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 		case <-r.EventCh():
- 		case <-ctrl.reconcileCh:
- 		case <-retryCh:
-+			retryCh = nil
- 		}
- 
- 		failed, err := ctrl.reconcile(ctx, r, logger)
-@@ -117,8 +118,12 @@ func (ctrl *BGPController) Run(ctx context.Context, r controller.Runtime, logger
- 		}
- 
- 		// failed instances and peers are retried here: a controller restart would also stop the healthy ones
-+		//
-+		// Other wakeups reconcile a failed instance too, so only a fired retry may advance the backoff.
- 		if failed {
--			retryCh = time.After(retryBackoff.NextBackOff())
-+			if retryCh == nil {
-+				retryCh = time.After(retryBackoff.NextBackOff())
-+			}
- 		} else {
- 			retryBackoff.Reset()
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp_controller_test.go` (modified, +8/-2)
-```diff
-@@ -5,6 +5,7 @@
- package network_test
- 
- import (
-+	"fmt"
- 	"net"
- 	"net/netip"
- 	"testing"
-@@ -276,8 +277,13 @@ func (suite *BGPControllerRetrySuite) TestFailedInstanceIsRetried() {
- 
- 	suite.Create(fabric)
- 
--	// the server can not start while the listen port is taken
--	time.Sleep(time.Second)
-+	// the server can not start while the listen port is taken, and unrelated wakeups (here input
-+	// events, on a busy host also neighbor table churn) keep reconciling the failed instance meanwhile
-+	for i := range 20 {
-+		suite.Create(network.NewLinkStatus(network.NamespaceName, fmt.Sprintf("churn%d", i)))
-+
-+		time.Sleep(50 * time.Millisecond)
-+	}
- 
- 	rtestutils.AssertNoResource[*network.BGPPeerStatus](suite.Ctx(), suite.T(), suite.State(), "fabric/192.0.2.1", rtestutils.WithNamespace(network.NamespaceName))
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +4/-0)
-```diff
-@@ -556,6 +556,10 @@ func TestDerivedRouterIDIsKeptWhilePeerIsEstablished(t *testing.T) {
- 
- 			if test.openOnly {
- 				// a peer which sends its OPEN but never a KEEPALIVE holds the session in OpenConfirm
-+				//
-+				// The peer closes connections accepted before its FSM leaves Idle, and this one is never redialed.
-+				require.Eventually(t, inState(gobgpapi.PeerState_SESSION_STATE_ACTIVE), 5*time.Second, 10*time.Millisecond, "BGP peer did not become active")
-+
- 				conn, err := (&net.Dialer{LocalAddr: &net.TCPAddr{IP: net.ParseIP("127.0.0.2")}}).DialContext(ctx, "tcp", net.JoinHostPort("127.0.0.1", strconv.Itoa(int(instancePort))))
- 				require.NoError(t, err)
- 				t.Cleanup(func() { conn.Close() }) //nolint:errcheck
-```
-
----
-
-### Incident Patch 3: `d2dc9410` (2026-11-25)
-**Commit Message**: test: fix race in empty vm drive outage test
-
-Aims to mitigate the following flake of
-TestObservationOutageRejectsMediaInAnEmptyDrive: https://github.com/siderolabs/talos/actions/runs/45668603396/job/139421837361
-
-Repeat the edit and the wake-up until the controller stops the VM,
-putting the media back whenever a pass has overwritten it. The final
-checks are unchanged: the VM is stopped and the stop mode is forced.
+Fixes regression introduced in 3ad7cc32e ("refactor: align ctr.runas with OCI - use uint32")
 
 Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/hypervisor/virtual_machine_domain_spec_test.go` (modified, +47/-14)
+**File**: `pkg/machinery/config/types/container/runas.go` (modified, +1/-1)
 ```diff
-@@ -2024,25 +2024,58 @@ func (suite *VirtualMachineStaleDiskSuite) TestObservationOutageRejectsMediaInAn
- 	f := completedCDROM(&suite.DefaultSuite, "media-in-empty", spare)
- 	loseCopyObservation(&suite.DefaultSuite, f)
+@@ -53,7 +53,7 @@ type ContainerRunAs struct {
+ // runAsMaxID is the highest user or group ID a container can run as.
+ //
+ // 4294967295 ((uid_t)-1) is not a valid ID: the kernel reads it as "leave unchanged".
+-const runAsMaxID = 4294967294
++const runAsMaxID uint32 = 4294967294
  
--	domain, err := safe.StateGetByID[*hypervisor.VirtualMachineDomainSpec](suite.Ctx(), suite.State(), "media-in-empty")
--	suite.Require().NoError(err)
-+	const (
-+		emptyDrive = "<disk device=\"cdrom\">\n"
-+		mediaDrive = "<disk type=\"block\" device=\"cdrom\">\n      <source dev=\"/dev/sr0\"></source>\n"
-+	)
+ // Check interfaces.
+ var _ config.ContainerRunAsConfig = &ContainerRunAs{}
+```
+
+---
+
+### Incident Patch 2: `b8163762` (2026-11-26)
+**Commit Message**: fix: stop a DNS upstream health check in flight on close
+
+Closing a proxy stopped the health check loop only after the check
+in progress returned. A check against an upstream that doesn't
+answer blocks in the read for up to a second, because miekg/dns
+takes only the deadline from the context. The goroutine outlived
+Close, and TestHealthcheck failed goleak in CI when Close landed
+during a query.
+
+Close now cancels a context which closes the health check
+connection, so the read returns right away.
+
+The test now waits for a query to reach the silent upstream before
+closing, so a check is always in flight.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/pkg/dns/dns_test.go` (modified, +2/-2)
+```diff
+@@ -34,8 +34,8 @@ import (
  
--	const emptyDrive = "<disk device=\"cdrom\">\n"
-+	spareStatus := hypervisor.NewVirtualMachineDiskStatus(hypervisor.NamespaceName, hypervisor.VirtualMachineDiskStatusID("media-in-empty", spare))
-+	errNotCleanRender := errors.New("domain spec is not the running render with an empty drive")
+ func TestDNS(t *testing.T) {
+ 	t.Cleanup(func() {
+-		// Failed upstreams kick off health checks: stopping the proxy doesn't abort
+-		// the health check in flight, so wait for it to terminate on its own.
++		// Failed upstreams kick off health checks: the probe loop notices the stopped
++		// proxy only after its sleep between checks, so wait for it to terminate.
+ 		for range 50 {
+ 			if goleak.Find() == nil {
+ 				break
+```
+
+**File**: `internal/pkg/dns/proxy/proxy.go` (modified, +24/-8)
+```diff
+@@ -56,7 +56,9 @@ var ErrClosed = errors.New("proxy is closed")
+ type Proxy struct {
+ 	tlsConfig *tls.Config
  
--	suite.Require().Contains(domain.TypedSpec().DomainXML, emptyDrive)
--	ctest.UpdateWithConflicts(suite, domain, func(current *hypervisor.VirtualMachineDomainSpec) error {
--		current.TypedSpec().DomainXML = strings.Replace(current.TypedSpec().DomainXML, emptyDrive,
--			"<disk type=\"block\" device=\"cdrom\">\n      <source dev=\"/dev/sr0\"></source>\n", 1)
-+	// A reconcile in flight when the outage began renders from ready disks and may overwrite the
-+	// edit; the next one sees the outage. Put the media back until the controller acts on it.
-+	deadline := time.Now().Add(10 * time.Second)
+-	stop chan struct{}
++	// stop is canceled by Close, also interrupting a health check in progress.
++	stop       context.Context //nolint:containedctx
++	cancelStop context.CancelFunc
  
--		return nil
--	}, state.WithUpdateOwner("hypervisor.VirtualMachineDomainSpecController"))
-+	for {
-+		domain, err := safe.StateGetByID[*hypervisor.VirtualMachineDomainSpec](suite.Ctx(), suite.State(), "media-in-empty")
-+		suite.Require().NoError(err)
- 
--	spareStatus := hypervisor.NewVirtualMachineDiskStatus(hypervisor.NamespaceName, hypervisor.VirtualMachineDiskStatusID("media-in-empty", spare))
--	ctest.UpdateWithConflicts(suite, spareStatus, func(current *hypervisor.VirtualMachineDiskStatus) error {
--		current.TypedSpec().Size++ // only to wake the controller
-+		if domain.TypedSpec().PowerState == "stopped" {
-+			// The stop keeps the definition it refused, so the media must still be there.
-+			suite.Require().Contains(domain.TypedSpec().DomainXML, mediaDrive, "virtual machine stopped without media in its empty drive")
- 
--		return nil
--	})
-+			break
-+		}
+ 	idle   map[string][]*idleConn
+ 	addr   string
+@@ -78,11 +80,14 @@ type idleConn struct {
+ // If tlsConfig is not nil, the queries are sent over DNS-over-TLS, otherwise over plain DNS
+ // using the protocol the query was received over (UDP or TCP).
+ func New(addr string, tlsConfig *tls.Config) *Proxy {
++	stop, cancelStop := context.WithCancel(context.Background())
 +
-+		suite.Require().True(time.Now().Before(deadline), "virtual machine was not stopped with media in its empty drive")
+ 	return &Proxy{
+-		addr:      addr,
+-		tlsConfig: tlsConfig,
+-		idle:      map[string][]*idleConn{},
+-		stop:      make(chan struct{}),
++		addr:       addr,
++		tlsConfig:  tlsConfig,
++		idle:       map[string][]*idleConn{},
++		stop:       stop,
++		cancelStop: cancelStop,
+ 	}
+ }
+ 
+@@ -121,7 +126,7 @@ func (p *Proxy) Close() {
+ 	}
+ 
+ 	p.closed = true
+-	close(p.stop)
++	p.cancelStop()
+ 
+ 	idle := p.idle
+ 	p.idle = nil
+@@ -370,7 +375,7 @@ func (p *Proxy) cleanupLoop() {
+ 
+ 	for {
+ 		select {
+-		case <-p.stop:
++		case <-p.stop.Done():
+ 			return
+ 		case <-ticker.C:
+ 			p.cleanup()
+@@ -444,7 +449,18 @@ func (p *Proxy) healthcheck() error {
+ 	ping := new(dns.Msg)
+ 	ping.SetQuestion(".", dns.TypeNS)
+ 
+-	resp, _, err := client.Exchange(ping, p.addr)
++	conn, err := client.DialContext(p.stop, p.addr)
++	if err != nil {
++		return err
++	}
 +
-+		if !strings.Contains(domain.TypedSpec().DomainXML, mediaDrive) {
-+			suite.Require().Contains(domain.TypedSpec().DomainXML, emptyDrive)
++	defer conn.Close() //nolint:errcheck
 +
-+			_, err = safe.StateUpdateWithConflicts(suite.Ctx(), suite.State(), domain.Metadata(), func(current *hypervisor.VirtualMachineDomainSpec) error {
-+				if current.TypedSpec().PowerState != "running" || !strings.Contains(current.TypedSpec().DomainXML, emptyDrive) {
-+					return errNotCleanRender
-+				}
++	// the read deadline ignores cancellation, so close the connection to end a check stuck on a dead upstream
++	stopClose := context.AfterFunc(p.stop, func() { conn.Close() }) //nolint:errcheck
++	defer stopClose()
 +
-+				current.TypedSpec().DomainXML = strings.Replace(current.TypedSpec().DomainXML, emptyDrive, mediaDrive, 1)
++	resp, _, err := client.ExchangeWithConnContext(p.stop, ping, conn)
+ 	if err != nil && resp != nil && (resp.Response || resp.Opcode == dns.OpcodeQuery) {
+ 		// any response from the upstream means it's alive
+ 		err = nil
+```
+
+**File**: `internal/pkg/dns/proxy/proxy_test.go` (modified, +25/-4)
+```diff
+@@ -24,7 +24,6 @@ import (
+ 	"go.uber.org/goleak"
+ 
+ 	"github.com/siderolabs/talos/internal/pkg/dns/proxy"
+-	"github.com/siderolabs/talos/internal/pkg/testport"
+ )
+ 
+ // testServer is a DNS server answering with A records, counting the queries and connections.
+@@ -347,16 +346,38 @@ func TestHealthcheck(t *testing.T) {
+ 	assert.Zero(t, healthy.Fails())
+ 
+ 	// nothing answers on the port: the health check times out and fails
+-	dead := proxy.New(testport.UnansweredUDPAddress(t), nil)
++	silent, err := (&net.ListenConfig{}).ListenPacket(t.Context(), "udp4", "127.0.0.1:0")
++	require.NoError(t, err)
 +
-+				return nil
-+			}, state.WithUpdateOwner("hypervisor.VirtualMachineDomainSpecController"))
-+			if errors.Is(err, errNotCleanRender) {
-+				continue // a newer revision landed; reread it
++	t.Cleanup(func() { silent.Close() }) //nolint:errcheck
++
++	var queries atomic.Int32
++
++	go func() {
++		buf := make([]byte, dns.MinMsgSize)
++
++		for {
++			if _, _, err := silent.ReadFrom(buf); err != nil {
++				return
 +			}
 +
-+			suite.Require().NoError(err)
-+
-+			ctest.UpdateWithConflicts(suite, spareStatus, func(current *hypervisor.VirtualMachineDiskStatus) error {
-+				current.TypedSpec().Size++ // only to wake the controller
-+
-+				return nil
-+			})
++			queries.Add(1)
 +		}
++	}()
 +
-+		time.Sleep(10 * time.Millisecond)
-+	}
++	dead := proxy.New(silent.LocalAddr().String(), nil)
+ 	dead.Start(10 * time.Millisecond)
  
- 	ctest.AssertResource(suite, "media-in-empty", func(domain *hypervisor.VirtualMachineDomainSpec, a *assert.Assertions) {
- 		a.Equal("stopped", domain.TypedSpec().PowerState)
+ 	dead.Healthcheck()
+ 
++	// the third query waits for the read timeout
+ 	require.EventuallyWithT(t, func(collect *assert.CollectT) {
+-		assert.GreaterOrEqual(collect, dead.Fails(), uint32(2))
++		assert.GreaterOrEqual(collect, queries.Load(), int32(3))
+ 	}, 10*time.Second, 10*time.Millisecond)
+ 
+-	// the health check is retried until it succeeds, stopped by Close
++	assert.GreaterOrEqual(t, dead.Fails(), uint32(2))
++
++	// the health check is retried until it succeeds, stopped by Close even in the middle of a query
+ 	dead.Close()
+ }
+ 
+```
+
+**File**: `internal/pkg/testport/testport_linux.go` (modified, +0/-13)
+```diff
+@@ -46,19 +46,6 @@ func ClosedAddress(t *testing.T) string {
+ 	return net.JoinHostPort("127.0.0.1", strconv.FormatUint(uint64(Closed(t)), 10))
+ }
+ 
+-// UnansweredUDPAddress returns a loopback UDP address, as host:port, which nothing answers on until
+-// the test ends.
+-func UnansweredUDPAddress(t *testing.T) string {
+-	t.Helper()
+-
+-	conn, err := (&net.ListenConfig{}).ListenPacket(t.Context(), "udp4", "127.0.0.1:0")
+-	require.NoError(t, err)
+-
+-	t.Cleanup(func() { conn.Close() }) //nolint:errcheck
+-
+-	return conn.LocalAddr().String()
+-}
+-
+ // Listenable returns a port which the code under test can listen on for TCP, on any address, and
+ // which stays reserved until the test ends.
+ //
+```
+
+---
+
+### Incident Patch 3: `b4f81860` (2026-11-26)
+**Commit Message**: fix: stop the DNS health check loop without waiting out the interval
+
+After a failed check, the probe loop slept the full interval (500ms
+by default) before it noticed Stop, so the goroutine outlived the
+proxy's Close. TestExchangeTLS failed goleak in CI when its health
+check failed as the test tore down: goleak gives up after about
+450ms.
+
+Stop now closes a channel which ends the wait between checks.
+
+TestDNS no longer needs to poll for the health check goroutines to
+exit before checking for leaks.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/pkg/dns/dns_test.go` (modified, +1/-13)
+```diff
+@@ -33,19 +33,7 @@ import (
+ )
+ 
+ func TestDNS(t *testing.T) {
+-	t.Cleanup(func() {
+-		// Failed upstreams kick off health checks: the probe loop notices the stopped
+-		// proxy only after its sleep between checks, so wait for it to terminate.
+-		for range 50 {
+-			if goleak.Find() == nil {
+-				break
+-			}
+-
+-			time.Sleep(100 * time.Millisecond)
+-		}
+-
+-		goleak.VerifyNone(t)
+-	})
++	t.Cleanup(func() { goleak.VerifyNone(t) })
+ 
+ 	tests := []struct {
+ 		name         string
+```
+
+**File**: `internal/pkg/dns/internal/probe/probe.go` (modified, +24/-10)
+```diff
+@@ -25,11 +25,22 @@ const (
+ //
+ // At most one health check loop runs at a time.
+ type Probe struct {
++	// stop is closed by Stop, created on first use so that the zero value is ready to use.
++	stop     chan struct{}
+ 	mu       sync.Mutex
+ 	state    state
+ 	interval time.Duration
+ }
+ 
++// stopCh returns the channel closed by Stop; p.mu must be held.
++func (p *Probe) stopCh() chan struct{} {
++	if p.stop == nil {
++		p.stop = make(chan struct{})
++	}
++
++	return p.stop
++}
++
+ // Do starts running the check in the background every interval until it returns nil.
+ //
+ // If the check is already running, or the probe is stopped, Do is a no-op.
+@@ -43,6 +54,7 @@ func (p *Probe) Do(check func() error) {
+ 	}
+ 
+ 	p.state = active
++	stop := p.stopCh()
+ 
+ 	interval := p.interval
+ 	if interval <= 0 {
+@@ -53,14 +65,10 @@ func (p *Probe) Do(check func() error) {
+ 
+ 	go func() {
+ 		for check() != nil {
+-			time.Sleep(interval)
+-
+-			p.mu.Lock()
+-			stop := p.state == stopped
+-			p.mu.Unlock()
+-
+-			if stop {
++			select {
++			case <-stop:
+ 				return
++			case <-time.After(interval):
+ 			}
+ 		}
+ 
+@@ -81,9 +89,15 @@ func (p *Probe) Start(interval time.Duration) {
+ 	p.mu.Unlock()
+ }
+ 
+-// Stop stops the running check loop (after the check in progress finishes), and prevents new ones.
++// Stop stops the running check loop without waiting for the next interval, and prevents new ones.
++//
++// A check in progress runs to completion.
+ func (p *Probe) Stop() {
+ 	p.mu.Lock()
+-	p.state = stopped
+-	p.mu.Unlock()
++	defer p.mu.Unlock()
++
++	if p.state != stopped {
++		p.state = stopped
++		close(p.stopCh())
++	}
+ }
+```
+
+**File**: `internal/pkg/dns/internal/probe/probe_test.go` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package probe_test
++
++import (
++	"errors"
++	"sync/atomic"
++	"testing"
++	"testing/synctest"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/goleak"
++
++	"github.com/siderolabs/talos/internal/pkg/dns/internal/probe"
++)
++
++func TestStopInterruptsInterval(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		ignore := goleak.IgnoreCurrent()
++
++		var (
++			p      probe.Probe
++			checks atomic.Int32
++		)
++
++		p.Start(time.Hour)
++
++		p.Do(func() error {
++			checks.Add(1)
++
++			return errors.New("upstream down")
++		})
++
++		synctest.Wait()
++
++		p.Stop()
++		p.Stop()
++
++		synctest.Wait()
++
++		// goleak waits well below the interval, so a loop sleeping out the interval is reported
++		require.NoError(t, goleak.Find(ignore), "Stop must not leave the loop waiting for the next check")
++		assert.EqualValues(t, 1, checks.Load())
++
++		// a stopped probe starts no new checks
++		p.Do(func() error {
++			checks.Add(1)
++
++			return nil
++		})
++
++		synctest.Wait()
++
++		assert.EqualValues(t, 1, checks.Load())
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15096** (2026-11-26): refactor: align ctr `runAs` types with OCI (uint32) (@majabojarska)
-- **PR #15095** (2026-11-26): release(v1.13.13): prepare release (@smira)
-- **PR #15094** (2026-11-26): test: keep listen ports reserved until the test ends (@frezbo)
-- **PR #15093** (2026-11-25): test: fix race in empty vm drive outage test (@majabojarska)
-- **PR #15091** (2026-11-26): backports: for v1.13.13 (@smira)
-- **PR #15088** (2026-11-26): feat: protect and repair ESP on RAID1  (@smira)
+- **PR #15105** (2026-11-26): chore: refactor bgp tests (@frezbo)
+- **PR #15103** (2026-11-26): release(v1.15.0-beta.1): prepare release (@smira)
+- **PR #15101** (2026-11-26): fix: flaky dns tests (@frezbo)
+- **PR #15100** (2026-11-26): fix: make the user volume ID limit fit 32-bit builds (@majabojarska)
+- **PR #15099** (2026-11-26): feat: update Linux to 7.3.6 (@smira)
+- **PR #15097** (2026-11-26): fix: type `runAsMaxID` as uint32 to fix 32-bit builds (@majabojarska)
 
 ---
 
@@ -2743,41 +2584,31 @@ Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support BGP graceful restart helper mode per neighbor
+## X. type runAsMaxID as uint32 to fix 32-bit builds
 
 **RULE**:
-When implementing operations in `api/resource/definitions/network/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/machinery/config/types/container/runas.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d98a8122`: support BGP graceful restart helper mode per neighbor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b788950c`: type runAsMaxID as uint32 to fix 32-bit builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/resource/definitions/network/network.proto`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/container/runas.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// BGPGracefulRestartConfigSpec contains BGP graceful restart helper parameters for a BGP neighbor.
-message BGPGracefulRestartConfigSpec {
-  bool notification = 1;
-}
-
-  // GracefulRestart enables graceful restart helper mode when set.
-  BGPGracefulRestartConfigSpec graceful_restart = 10;
-  // GracefulRestart is true when graceful restart was negotiated for at least one address family.
-  bool graceful_restart = 12;
-  // PeerRestarting is true while routes learned from the restarting peer are retained as stale.
-  bool peer_restarting = 13;
+const runAsMaxID uint32 = 4294967294
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+const runAsMaxID = 4294967294
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d98a8122` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b788950c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

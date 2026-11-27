@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "2bf8d7b58a29c8980467b44673412d53d16c387027ddaa55625bc90ff77bf9ff",
-    "lastHarvestedAt": "2026-11-23T18:40:43.915Z",
+    "contentHash": "5cf680370e6242ab85a1cd120935e6a032beabe9f5a3cf07b91af2fe57c1dc15",
+    "lastHarvestedAt": "2026-11-27T03:54:55.364Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "5ca337e7",
+    "sourceVersion": "0f54e1f8",
     "license": "MIT",
-    "contentHash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
-    "lastHarvestedAt": "2026-11-26T09:35:49.985Z",
+    "contentHash": "6f3d05cec33c2cc087bc19c549b0571cd28eb7462bc1a9d9f95c4a0d9ea8261a",
+    "lastHarvestedAt": "2026-11-27T03:55:10.716Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "9ced8eeb",
+    "sourceVersion": "e97111d2",
     "license": "MPL-2.0",
-    "contentHash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
-    "lastHarvestedAt": "2026-11-26T10:50:40.159Z",
+    "contentHash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
+    "lastHarvestedAt": "2026-11-27T03:55:06.392Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

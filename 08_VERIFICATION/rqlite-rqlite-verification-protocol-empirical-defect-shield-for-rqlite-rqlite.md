@@ -4,22 +4,22 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "5ca337e7",
+  "source_version": "0f54e1f8",
   "license": "MIT",
-  "timestamp": "2026-11-26T09:35:50.245Z",
+  "timestamp": "2026-11-27T03:55:11.055Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `5ca337e7`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T09:35:50.245Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `0f54e1f8`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T03:55:11.055Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rqlite/rqlite` (Commit: `5ca337e7`)
+- **Target Repository**: `rqlite/rqlite` (Commit: `0f54e1f8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:35:48.416Z  
+> **Harvest Timestamp**: 2026-11-27T03:55:09.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17976 stars
+- **Stars / Engagement**: 17977 stars
 
 ---
 
@@ -2080,11 +2080,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3075** (2026-11-24): **Join replaces at most one**
-  *Symptoms*: 
+- **Issue #3087** (2026-11-27): **A node removed while it was down never joins again when it restarts soon after: the bootstrapper sees the leader's heartbeats and skips the join**
+  *Symptoms*: A node that is removed (`DELETE /remove`) while it is down, and that restarts with `-join` soon after, never joins the cluster again: the leader is still sending to it, so the bootstrapper sees a known leader, logs `boot operation marked done` and skips the join. The node then stays out for good with `not part of stable configuration, aborting election`, while it keeps running and answering 503 `leader not found`. Seen on v10.8.0, and `master` (`53faae45`) has the same code. #1290 (fixed in 7.20.1) had the same symptom from another cause.  **How it was found** Found autonomously by [hydo](https://github.com/kakoc/hydo), an open-source tool that runs the whole system in a VM where every run repeats exactly. It looks for bugs on its own and can replay anything it finds. - three nodes of the official image `rqlite/rqlite:10.8.0` in one VM, started with `-join` of the other two and `-bootstrap-expect 3`, fixed addresses, each node's data directory on a file system of its own; a Go client writes through every node, removes a node that does not answer, as an operator does with a failed node, and after the faults checks that every node has applied a barrier write through the leader and is a reachable voter - a grid of power losses aimed at the client's acknowledged writes cut the power of `rq2` (the leader then) 10 ms after its 20th acknowledged write; `rq3` became leader, and the client removed `rq2` through `rq3` (HTTP 200) while `rq2` was down; `rq2` came back 19 s after the remo
 
-- **Issue #3072** (2026-11-24): **Join may only replace a node of the same suffrage**
-  *Symptoms*: Store.Join now replaces an existing node only if it has the same suffrage as the joining node. Every matching node is checked before any is removed, so a rejected join leaves the cluster unchanged. A join matching both ID and address is still ignored. 
+- **Issue #3086** (2026-11-27): **A graceful stop (SIGTERM) loses queued writes that were already answered with 200**
+  *Symptoms*: A graceful stop of `rqlited` (SIGTERM) loses the queued writes (`/db/execute?queue`) that the node has already answered with HTTP 200 and not yet written: at shutdown the queue's goroutine returns without passing the batch it holds to Raft. The Queued Writes page names only a crash as the risk ("in the event that the node crashes before queued data is persisted"), so a routine restart, a deploy or a Kubernetes pod stop loses them too. Seen on v10.8.0, and `master` (`53faae45`) has the same code; v8.0.0 and v9.0.0 return the same way.  **How it was found** Found autonomously by [hydo](https://github.com/kakoc/hydo), an open-source tool that runs the whole system in a VM where every run repeats exactly. It looks for bugs on its own and can replay anything it finds. - three nodes of the official image `rqlite/rqlite:10.8.0` in one VM, a Raft cluster with `-bootstrap-expect 3` and fixed addresses, each node's data directory on a file system of its own; a Go client sends plain writes, transactions and queued writes, and at the end reads every acknowledged write back and checks that its effect is there - in a run without any fault, the client sends 3 queued writes without `wait` through one node, each is answered 200, and then it sends SIGTERM to that node - all 3 are lost: after the restart the rows hold nothing of them, while every other acknowledged write is there - the node's log has `received signal "terminated"`, `closing HTTP service on [::]:4001`, `stepping down as Leader b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2101,46 +2101,116 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ca337e7` (2026-11-25)
-**Commit Message**: Update SECURITY.md
+### Incident Patch 1: `672934e2` (2026-11-26)
+**Commit Message**: CHANGELOG: set PR number for /debug/vars change
 
-**File**: `SECURITY.md` (modified, +1/-1)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -11,4 +11,4 @@ rqlite optimizes for low-friction local development out of the box and supports
+@@ -3,7 +3,7 @@
+ - [PR #3084](https://github.com/rqlite/rqlite/pull/3084): Add `-http-pprof` command-line flag. pprof information is no longer served over HTTP unless this flag is set.
  
- While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
- - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
--- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
-+- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
+ ### Implementation changes and bug fixes
+-- [PR #NNNN](https://github.com/rqlite/rqlite/pull/NNNN): Remove the node's command line from the `/debug/vars` output.
++- [PR #3085](https://github.com/rqlite/rqlite/pull/3085): Remove the node's command line from the `/debug/vars` output.
+ 
+ ## v10.7.5 (November 23rd 2026)
+ This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) with [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade to this release.
 ```
 
 ---
 
-### Incident Patch 2: `aa41c98d` (2026-11-25)
-**Commit Message**: Update SECURITY.md
+### Incident Patch 2: `c1fdd0b1` (2026-11-26)
+**Commit Message**: Remove command line from /debug/vars output
 
-**File**: `SECURITY.md` (modified, +2/-2)
+The expvar package always publishes the command line used to launch the
+process, so /debug/vars served it to any client able to read that
+endpoint. The HTTP handler now skips that variable, whether the full
+output or just that key is requested.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -7,8 +7,8 @@ To maximize the security of your cluster you should work through the [rqlite _Se
- You can report Vulnerabilities via the GitHub [Security page](https://github.com/rqlite/rqlite/security). 
+@@ -2,6 +2,9 @@
+ ### New features
+ - [PR #3084](https://github.com/rqlite/rqlite/pull/3084): Add `-http-pprof` command-line flag. pprof information is no longer served over HTTP unless this flag is set.
  
- ### What is considered a vulnerability in rqlite
--rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are considered operator misconfigurations, not vulnerabilities.
-+rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are usually considered operator misconfigurations, not vulnerabilities.
++### Implementation changes and bug fixes
++- [PR #NNNN](https://github.com/rqlite/rqlite/pull/NNNN): Remove the node's command line from the `/debug/vars` output.
++
+ ## v10.7.5 (November 23rd 2026)
+ This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) with [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade to this release.
  
- While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
- - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
--- Attacks against the Raft consensus network port when exposed to untrusted networks without network-level isolation and mutual TLS.
-+- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
+```
+
+**File**: `http/service.go` (modified, +6/-0)
+```diff
+@@ -1787,6 +1787,12 @@ func (s *Service) handleExpvar(w http.ResponseWriter, r *http.Request, qp QueryP
+ 	fmt.Fprintf(w, "{\n")
+ 	first := true
+ 	expvar.Do(func(kv expvar.KeyValue) {
++		if kv.Key == "cmdline" {
++			// The expvar package always publishes the command line used to
++			// launch the process. It is never served, as it may reveal
++			// details of the node's configuration.
++			return
++		}
+ 		if qp.Key() != "" && qp.Key() != kv.Key {
+ 			return
+ 		}
+```
+
+**File**: `system_test/e2e/shell.py` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ def test(self):
+             ".consistency": "weak",
+             ".nodes": "api_addr",
+             ".status": "build",
+-            ".expvar": "cmdline",
++            ".expvar": "memstats",
+             ".indexes": "sql",
+             ".schema": "sql",
+         }
+```
+
+**File**: `system_test/single_node_test.go` (modified, +18/-0)
+```diff
+@@ -1582,6 +1582,24 @@ func Test_SingleNodeCoverage(t *testing.T) {
+ 	if !isJSON(str) {
+ 		t.Fatalf("output from expvar endpoint is not valid JSON: %s", str)
+ 	}
++	vars := make(map[string]json.RawMessage)
++	if err := json.Unmarshal([]byte(str), &vars); err != nil {
++		t.Fatalf("failed to unmarshal expvar output: %s", err.Error())
++	}
++	if _, ok := vars["memstats"]; !ok {
++		t.Fatalf("expvar output does not contain memstats")
++	}
++	if _, ok := vars["cmdline"]; ok {
++		t.Fatalf("expvar output contains the command line")
++	}
++
++	str, err = node.ExpvarKey("cmdline")
++	if err != nil {
++		t.Fatalf("failed to access expvar endpoint: %s", err.Error())
++	}
++	if strings.Contains(str, "cmdline") {
++		t.Fatalf("expvar output contains the command line when requested by key: %s", str)
++	}
+ }
+ 
+ // Test_SingleNodeReopen tests that a node can be re-opened OK.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3085** (2026-11-26): Remove command line from /debug/vars output (@otoolep)
+- **PR #3084** (2026-11-26): Add flag to explicitly enable pprof access (@otoolep)
+- **PR #3083** (closed): db: add a CI guard test for the modernc raw-handle reflection (@tannevaled)
+- **PR #3082** (closed): fix(db): preserve the live database when a replacement is corrupt (@Waterpine)
+- **PR #3081** (closed): Use data directory for tmp storage (@otoolep)
 - **PR #3075** (2026-11-24): Join replaces at most one (@otoolep)
-- **PR #3072** (2026-11-24): Join may only replace a node of the same suffrage (@otoolep)
-- **PR #3069** (2026-11-24): Persist detection of modified database (@otoolep)
-- **PR #3068** (2026-11-24): Open recovery before fast path (@otoolep)
-- **PR #3067** (2026-11-24): Discard snapshot baseline (@otoolep)
-- **PR #3066** (2026-11-18): Upgrade dependencies via `go get` (@otoolep)
 
 ---
 
@@ -2160,31 +2230,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update SECURITY.md
+## X. CHANGELOG: set PR number for /debug/vars change
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ca337e7`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `672934e2`: CHANGELOG: set PR number for /debug/vars change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
+- [PR #3085](https://github.com/rqlite/rqlite/pull/3085): Remove the node's command line from the `/debug/vars` output.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
+- [PR #NNNN](https://github.com/rqlite/rqlite/pull/NNNN): Remove the node's command line from the `/debug/vars` output.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ca337e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `672934e2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

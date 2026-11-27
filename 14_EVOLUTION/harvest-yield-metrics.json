@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T03:44:02.712Z",
-  "total_cycles_completed": 12964,
-  "total_learnings_persisted": 12964,
-  "total_rules_promoted": 11730,
+  "last_updated": "2026-11-27T03:55:10.731Z",
+  "total_cycles_completed": 12967,
+  "total_learnings_persisted": 12967,
+  "total_rules_promoted": 11732,
   "history": [
-    {
-      "timestamp": "2026-11-26T15:50:22.485Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:00:04.591Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:00:09.001Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:00:14.747Z",
       "repository": "appwrite/appwrite",
@@ -1403,6 +1382,27 @@
       "repository": "apache/shardingsphere",
       "learningId": "learn-github-apache-shardingsphere",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:54:55.380Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:55:06.407Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:55:10.731Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

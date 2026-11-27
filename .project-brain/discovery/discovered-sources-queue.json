@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T03:35:26.450Z",
+  "updated_at": "2026-11-27T03:55:17.082Z",
   "stats": {
-    "total_discovered": 10123,
-    "approved_pending_harvest": 9599,
+    "total_discovered": 10127,
+    "approved_pending_harvest": 9603,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9602,
+      "COMMUNITY_AND_EXPERT": 9606,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -219065,6 +219065,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-2BCA872CB3A1": {
+      "id": "SRC-2BCA872CB3A1",
+      "url": "https://github.com/kakoc/hydo",
+      "title": "https://github.com/kakoc/hydo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:55:16.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-C5FDCBF89FBE": {
+      "id": "SRC-C5FDCBF89FBE",
+      "url": "https://github.com/rqlite/rqlite/pull/3084",
+      "title": "https://github.com/rqlite/rqlite/pull/3084",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:55:16.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-3C9CD3B0E5A2": {
+      "id": "SRC-3C9CD3B0E5A2",
+      "url": "https://github.com/rqlite/rqlite/pull/NNNN",
+      "title": "https://github.com/rqlite/rqlite/pull/NNNN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:55:16.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-9D6F05B27E63": {
+      "id": "SRC-9D6F05B27E63",
+      "url": "https://github.com/rqlite/rqlite/pull/3085",
+      "title": "https://github.com/rqlite/rqlite/pull/3085",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:55:17.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
       }
     }
   }

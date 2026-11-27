@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T03:44:41.012Z",
+  "last_updated": "2026-11-27T03:55:17.857Z",
   "total_records": 2800,
   "domains": {
     "A": {
@@ -13505,8 +13505,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "ccca3a2c2b76573a268ed3348f9c2d231250e0f421f12aa8755cf72a0e403812",
-      "created_at": "2026-11-26T10:50:40.602Z"
+      "content_hash": "9b5e9ecf6a5a64df9645210480d75e734b79f82798034ce8b900095556d32711",
+      "created_at": "2026-11-27T03:55:07.027Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -13627,8 +13627,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "9669221a428a20bb147e3c570de80ceb5ec504919c9389a3ef8da582d6370c70",
-      "created_at": "2026-11-25T10:35:29.977Z"
+      "content_hash": "9174f4fc780585f89da461cd458cd9181edcf4cebbb431d45ca0b895ad158e5b",
+      "created_at": "2026-11-27T03:55:15.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -16677,8 +16677,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "c79c4b7cfcff11650c5628ec9b4db105fabed5d02e9da5afaa4e532a0179280d",
-      "created_at": "2026-11-26T09:35:50.453Z"
+      "content_hash": "f616df6412b9de1b256d0e8b6e42fc0e1e75a944e7e324b46c14ad1390aa50e8",
+      "created_at": "2026-11-27T03:55:11.322Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -17865,8 +17865,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-research-knowledge-intelligence-autotru.md",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "content_hash": "9578fa3edbdfbac30a3965cb1ff86f5b4b6bd780f12da3e6d5b47157e67ee826",
-      "created_at": "2026-11-23T18:40:44.129Z"
+      "content_hash": "6840bdfcb2a040a4a76618b056e8e9d6ce6a5fccfefb434a43e712d203e779e9",
+      "created_at": "2026-11-27T03:54:55.696Z"
     },
     "domain_intelligence-architecture-intelligence-meta-folly-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
@@ -17952,8 +17952,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnings-research-knowledge-intelligen.md",
       "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
-      "content_hash": "c1fc294fc465460a26ef9219bcb1d664caea0af84fb471306d2e5e33568afe2f",
-      "created_at": "2026-11-23T18:41:06.695Z"
+      "content_hash": "ed9be1a7c120e755b7c5819548bc57518d6524db74a8ae26eb2da74513844bd2",
+      "created_at": "2026-11-27T03:55:14.931Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
@@ -23677,8 +23677,8 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
       "repository": "rqlite-rqlite-learnings",
-      "content_hash": "20507091b8165b9bb01d0cc4bb136c2bd6744c01de2319655076576ef1c75e03",
-      "created_at": "2026-11-26T09:37:51.954Z"
+      "content_hash": "47cf047d3105c3ae7a14ef3ce91abfac7a01319fe926fb0e923d848bddc5a6dc",
+      "created_at": "2026-11-27T03:55:17.857Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
