@@ -13673,3 +13673,5 @@
 | `CYCLE-20261127-OUNY` | `2026-11-27T04:36:47.806Z` | `GeoPortApp/GeoPort` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/geoportapp-geoport-learnings.md` | Yes (`63a53dd5...`) |
 | `CYCLE-20261127-ZSCI` | `2026-11-27T04:45:18.018Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`a440c86e...`) |
 | `CYCLE-20261127-00M4` | `2026-11-27T04:45:28.732Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10828` | Yes (`863ed10f...`) |
+| `CYCLE-20261127-ATU9` | `2026-11-27T04:53:53.169Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`6da1ef7e...`) |
+| `CYCLE-20261127-B5EC` | `2026-11-27T04:54:08.148Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10829` | Yes (`61087e51...`) |

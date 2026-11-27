@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:45:28.759Z",
-  "total_cycles_completed": 12979,
-  "total_learnings_persisted": 12979,
-  "total_rules_promoted": 11738,
+  "last_updated": "2026-11-27T04:54:08.170Z",
+  "total_cycles_completed": 12981,
+  "total_learnings_persisted": 12981,
+  "total_rules_promoted": 11739,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:30:52.964Z",
-      "repository": "krakend/krakend-ce",
-      "learningId": "learn-github-krakend-krakend-ce",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:30:57.313Z",
-      "repository": "VectifyAI/PageIndex",
-      "learningId": "learn-github-vectifyai-pageindex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:40:30.803Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T04:45:28.759Z",
       "repository": "kubeedge/kubeedge",
       "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:53:53.183Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:54:08.170Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

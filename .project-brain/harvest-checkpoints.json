@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T04:45:28.762Z",
+  "last_updated": "2026-11-27T04:54:08.173Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -275,14 +275,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
-      "verified_at": "2026-11-23T19:34:24.720Z",
+      "content_hash": "6da1ef7eaf63f662b379e14ae3f225839833b95aa3c686b9a594ee7d7666c695",
+      "verified_at": "2026-11-27T04:53:53.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:34:24.720Z"
+      "last_updated": "2026-11-27T04:53:53.186Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
-      "verified_at": "2026-11-26T10:50:45.335Z",
+      "content_hash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
+      "verified_at": "2026-11-27T04:54:08.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:50:45.335Z"
+      "last_updated": "2026-11-27T04:54:08.173Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

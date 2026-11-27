@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T04:45:34.520Z",
+  "last_updated": "2026-11-27T04:54:13.812Z",
   "total_records": 2804,
   "domains": {
     "A": {
@@ -15595,8 +15595,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "25c8c27e5aef52eb6c2c7648db210d93cb0c40246a5201310807446e231c1202",
-      "created_at": "2026-11-27T04:10:01.724Z"
+      "content_hash": "6ff08309d60467dc5a8a62587d28ee09cdedebaa9bd1474fd3daffe1f2f22129",
+      "created_at": "2026-11-27T04:54:13.812Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17365,8 +17365,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "8ab6d0e5a1df9a272a6875679008fef90919e4262ff08a46593fc5ef831dc387",
-      "created_at": "2026-11-26T10:50:45.735Z"
+      "content_hash": "08e5f59f89f11db77aff1bc999a0456bc2f2b4247b49aa3fec0ca9443e64d524",
+      "created_at": "2026-11-27T04:54:08.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -17443,8 +17443,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "96f8bd6245a30620b28a94217080f04631eadaadeec1474d10cd75d13571de5c",
-      "created_at": "2026-11-25T09:08:12.973Z"
+      "content_hash": "63379516578b76370d5b64939812093e6d6545426a04326aa9f883274d23f820",
+      "created_at": "2026-11-27T04:54:12.843Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -18298,8 +18298,8 @@
       "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-research-knowledge-intellig.md",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "content_hash": "129241f9861ea1845edb7010ef939f762fc87ce760e6f6b74d29945715176c0c",
-      "created_at": "2026-11-23T19:34:24.966Z"
+      "content_hash": "98352a841824a59790acbae32ea28883d1b8718edcb1f15ca8bff68f1a4479e3",
+      "created_at": "2026-11-27T04:53:53.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
@@ -18307,8 +18307,8 @@
       "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-learnings-research-knowledg.md",
       "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
-      "content_hash": "b47019b869b0c9d44d07cbcb4ce1a7c6792c00d19bc2d8ce3560b5bdb69784dc",
-      "created_at": "2026-11-23T19:34:48.364Z"
+      "content_hash": "dfb6418cd8d6762202846cd497b5e2787627fcff8f622b442707f180d9e60d26",
+      "created_at": "2026-11-27T04:54:11.875Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",

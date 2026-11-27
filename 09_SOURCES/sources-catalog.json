@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "e4370c088aa1cb57a622047cdb77daa7fcc3c3893cac88727b1ddfa9daf59b39",
-    "lastHarvestedAt": "2026-11-23T19:34:24.709Z",
+    "contentHash": "6da1ef7eaf63f662b379e14ae3f225839833b95aa3c686b9a594ee7d7666c695",
+    "lastHarvestedAt": "2026-11-27T04:53:53.173Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "95ccbc34",
+    "sourceVersion": "e183bb1f",
     "license": "Apache-2.0",
-    "contentHash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
-    "lastHarvestedAt": "2026-11-26T10:50:45.317Z",
+    "contentHash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
+    "lastHarvestedAt": "2026-11-27T04:54:08.161Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

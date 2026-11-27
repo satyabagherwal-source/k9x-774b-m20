@@ -13706,3 +13706,5 @@ Every entry in this ledger must capture:
 | `learn-github-geoportapp-geoport` | `https://github.com/GeoPortApp/GeoPort` | `461e76bc` | Multi-dimensional audit evidence | 2026-11-27T04:36:47.811Z |
 | `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-27T04:45:18.024Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `e13e8b4d` | Multi-dimensional audit evidence | 2026-11-27T04:45:28.748Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-27T04:53:53.173Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `e183bb1f` | Multi-dimensional audit evidence | 2026-11-27T04:54:08.161Z |

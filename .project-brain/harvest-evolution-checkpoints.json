@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:45:34.933Z",
+  "last_updated": "2026-11-27T04:54:14.149Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T04:45:33.796Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-27T04:10:00.869Z",
+      "processed_at": "2026-11-27T04:54:13.240Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -793,7 +793,7 @@
       "staged_for_review": 1
     },
     "starrocks-starrocks-learnings.md": {
-      "processed_at": "2026-11-25T09:08:11.967Z",
+      "processed_at": "2026-11-27T04:54:12.088Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2723,7 +2723,7 @@
       "staged_for_review": 1
     },
     "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md": {
-      "processed_at": "2026-11-23T19:34:48.129Z",
+      "processed_at": "2026-11-27T04:54:11.642Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4023,7 +4023,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4815,
+  "total_dossiers_evaluated": 4818,
   "total_canonical_promoted": 572,
-  "total_staged_for_review": 3605
+  "total_staged_for_review": 3608
 }

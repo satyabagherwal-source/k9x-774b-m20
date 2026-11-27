@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-N98G",
-    "timestamp": "2026-11-25T23:11:57.568Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d02f523e0044f7b17f6f8769f75821f263916ce20521c0b9476389da2e193514",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-2QSW",
-    "timestamp": "2026-11-25T23:24:00.176Z",
-    "repository": "Qwen/Qwen3-Embedding-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "eb63a9ca4ff68c2569786c855b6aef7d28b7eaa24be9809669373d2e376a2343",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-2SQO",
     "timestamp": "2026-11-25T23:24:02.688Z",
     "repository": "embassy-rs/embassy",
@@ -7490,6 +7460,36 @@
     "repository": "kubeedge/kubeedge",
     "learningId": "learn-github-kubeedge-kubeedge",
     "contentHash": "863ed10fae8817ea6cf9baabd336de7d2a4b573c18d0a9d0096a60f666b04121",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ATU9",
+    "timestamp": "2026-11-27T04:53:53.169Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "6da1ef7eaf63f662b379e14ae3f225839833b95aa3c686b9a594ee7d7666c695",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-B5EC",
+    "timestamp": "2026-11-27T04:54:08.148Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
