@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T20:01:21.373Z",
+  "last_updated": "2026-11-27T20:10:10.645Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26735,
+  "total_items": 26739,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -250679,8 +250679,8 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "93091516",
-      "content_hash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
+      "source_version": "1c8de458",
+      "content_hash": "12630ab1bea36f4eede3f6f1b14d0898b337f04c3367339a7385a17c5ed128de",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
@@ -250713,6 +250713,11 @@
           "number": 10766,
           "title": "A declined deploy never leaves an agent deploying or overwrites a status changed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10959,
+          "title": "open the Authenticator app page in one load, with a way back to Settings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250720,7 +250725,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:04:19.511Z",
+      "verified_at": "2026-11-27T20:09:51.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250762,10 +250767,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "93091516",
-      "content_hash": "35b9f8e4bb4699b361bfd68553de5490b1b2f1f5b4a0bbe3375699db68bf001d",
+      "source_version": "1c8de458",
+      "content_hash": "14d48adfe0bac13095c998b8b7e2ef0f869eb9173260008aeebe04ed668fc7ea",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T20:04:20.525Z"
+      "persisted_at": "2026-11-27T20:09:52.478Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko",
@@ -250774,10 +250779,10 @@
       "relative_path": "08_VERIFICATION/nasiko-labs-nasiko-verification-protocol-empirical-defect-shield-for-nasiko-labs.md",
       "title": "Verification Protocol: Empirical Defect Shield for Nasiko-Labs/nasiko",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "93091516",
-      "content_hash": "7e351949c79f51ea34ad79b497ff35121e81fe03a7c0a89378d603992fcfdc61",
+      "source_version": "1c8de458",
+      "content_hash": "fb57b524ece2c5470fbdc47fb2148434527d3ba7a268246dd0eb1ba1fef785aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:04:20.873Z"
+      "persisted_at": "2026-11-27T20:09:52.712Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -250787,9 +250792,9 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "40d95c51a247042d0bce902c0e5a49723ef25b4804b0c77ad4a0fd5babda2c22",
+      "content_hash": "fdeb5bacbdb3b6a0f0d756d93484a6e9d9d1b87f86ffddd76f227bc57d76c782",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T20:04:39.756Z"
+      "persisted_at": "2026-11-27T20:10:08.828Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings",
@@ -250799,9 +250804,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nasiko-labs-nasiko-learnings",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "fcb96221f1e9d1ab7e6971b70815c27b5fb7a5f5afef4293c7bc0662f87a5126",
+      "content_hash": "478181a395be880c67f026e6709e8ee8bfc3f78b9340b4d16e5ddeebbdf494fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:04:40.029Z"
+      "persisted_at": "2026-11-27T20:10:09.052Z"
     },
     "rule-8612": {
       "learning_id": "rule-8612",
@@ -289369,8 +289374,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "0eb63838",
-      "content_hash": "314ffdfb420dad613902a7ae46f3ce3aae1576ad4acdd143d4c63488b448fd18",
+      "source_version": "f5c3a834",
+      "content_hash": "c0b1297b39700c4f6827cfffffa3075ce990375c4ad336ee0cd7d82db807e4cd",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -289405,7 +289410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T00:59:04.651Z",
+      "verified_at": "2026-11-27T20:10:04.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289445,10 +289450,10 @@
       "relative_path": "08_VERIFICATION/trailbaseio-trailbase-verification-protocol-empirical-defect-shield-for-trailbas.md",
       "title": "Verification Protocol: Empirical Defect Shield for trailbaseio/trailbase",
       "repository": "trailbaseio/trailbase",
-      "source_version": "0eb63838",
-      "content_hash": "4c88442dae3161a29dc897b5dc5c8586e7abbc3e2b7e4d740a3ab26f7840077d",
+      "source_version": "f5c3a834",
+      "content_hash": "63f902bc68ae5fa8f0d594d5b15cb77f349260b81e03e5df239dcc1548b43acd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:59:05.696Z"
+      "persisted_at": "2026-11-27T20:10:05.033Z"
     },
     "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o": {
       "item_id": "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o",
@@ -297173,10 +297178,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
       "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
       "repository": "trailbaseio/trailbase",
-      "source_version": "0eb63838",
-      "content_hash": "f93e5af5203856b1add1046a5f87ba470da1af6dcbfeed2caa892074a0ca401f",
+      "source_version": "f5c3a834",
+      "content_hash": "0fe5b2fbf082ef2bc3d97a3ac723f801d81e90cc5a2a81e3022dca4131af3a91",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T00:59:05.475Z"
+      "persisted_at": "2026-11-27T20:10:04.826Z"
     },
     "candidate_directive-deny-ignore-the-unmaintained-chrono-advisory": {
       "item_id": "candidate_directive-deny-ignore-the-unmaintained-chrono-advisory",
@@ -297198,9 +297203,9 @@
       "title": "Architecture Intelligence: trailbaseio-trailbase-learnings Core Invariants",
       "repository": "trailbaseio-trailbase-learnings",
       "source_version": "HEAD",
-      "content_hash": "08ec46644c4db66595e28155a3ee74f9cdf4ae77d9dd316641ca9cc761da38d3",
+      "content_hash": "1ab9f9e0e63781c2542cbba5b2166563fac0d676e3ca4ef7a8917992c3bee9da",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T00:59:11.009Z"
+      "persisted_at": "2026-11-27T20:10:10.426Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trailbaseio-trailbase-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trailbaseio-trailbase-learning",
@@ -297210,9 +297215,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trailbaseio-trailbase-learnings",
       "repository": "trailbaseio-trailbase-learnings",
       "source_version": "HEAD",
-      "content_hash": "c71d370f2bc2e214ef9a123d33a1fc34c6dc4708527a0a4fc2709f95c4e88171",
+      "content_hash": "08587a690d3cc3a6a5b7e1fb0ece925e40180e22ee76f539a5272e50a8355cef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:59:11.230Z"
+      "persisted_at": "2026-11-27T20:10:10.645Z"
     },
     "learn-github-malisper-pgrust": {
       "learning_id": "learn-github-malisper-pgrust",
@@ -339131,7 +339136,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
       "source_version": "hf-nari-labs-qwen3.8-27b-nariq-gguf",
-      "content_hash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
+      "content_hash": "8f3a7cf4813327f1048f2b4c7473d9e5d3b6188d79c70128695ca76f6ed24cbe",
       "dossier_path": "07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md",
       "promoted_rules": [],
@@ -339140,7 +339145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T12:18:19.321Z",
+      "verified_at": "2026-11-27T20:09:49.278Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -339157,9 +339162,9 @@
       "title": "Research & Knowledge Intelligence: nari-labs/Qwen3.8-27B-NariQ-GGUF Core Invariants",
       "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
       "source_version": "hf-nari-labs-qwen3.8-27b-nariq-gguf",
-      "content_hash": "37b94b1d88aa7660311837deeb2694fc68d6a69bd953c6cf3fd9a505e821782e",
+      "content_hash": "a85aa74dcb433e74c07fc813a1a497f90d89b7b7fb70d659542a14619876c2de",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:18:19.784Z"
+      "persisted_at": "2026-11-27T20:09:49.812Z"
     },
     "rule-10252": {
       "learning_id": "rule-10252",
@@ -339195,9 +339200,9 @@
       "title": "Research & Knowledge Intelligence: hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings Core Invariants",
       "repository": "hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "5dac5dbc4dc186bfefe7651d9d62234ba81c9c85e0e9b161aa38384e1a761e12",
+      "content_hash": "04616df51f5e6450510f9c47b1e8bcd468aa15043d0b0ee1ecad9ce5527550a0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T12:19:01.781Z"
+      "persisted_at": "2026-11-27T20:10:09.514Z"
     },
     "rule-10253": {
       "learning_id": "rule-10253",
@@ -367143,6 +367148,56 @@
       "content_hash": "b376d410a9dca00ba4672e6f4e020cce813c428a29007db5c306ea118e5e69ae",
       "domain_letter": "L",
       "persisted_at": "2026-11-27T20:01:18.856Z"
+    },
+    "rule-10959": {
+      "learning_id": "rule-10959",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10959,
+      "title": "open the Authenticator app page in one load, with a way back to Settings",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "1c8de458",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:09:51.734Z"
+    },
+    "candidate_directive-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings": {
+      "item_id": "candidate_directive-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0SJR-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings.md",
+      "title": "open the Authenticator app page in one load, with a way back to Settings",
+      "repository": "Nasiko-Labs/nasiko",
+      "source_version": "1c8de458",
+      "content_hash": "9682eba5e57241228eb80919ad24d996c9be4469ac0866f62400b88b5c5b3d32",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:09:52.267Z"
+    },
+    "candidate_directive-prepare-new-release-v0-37-2": {
+      "item_id": "candidate_directive-prepare-new-release-v0-37-2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-16EG-prepare-new-release-v0-37-2.md",
+      "title": "Prepare new release v0.37.2.",
+      "repository": "trailbaseio-trailbase-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64734682faa953fd334d22a3f5b94518334c32af9268d1d4ff8d0fb7bcc128d0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:10:10.217Z"
+    },
+    "candidate_directive-mt-ui-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings": {
+      "item_id": "candidate_directive-mt-ui-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1561-mt-ui-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings.md",
+      "title": "mt-ui): open the Authenticator app page in one load, with a way back to Settings",
+      "repository": "nasiko-labs-nasiko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ae60800fa515301346350d5ab139664bd647261b4b3c0d0905d56eb4df92965",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:10:08.621Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:01:20.953Z",
+  "last_updated": "2026-11-27T20:10:10.217Z",
   "directives": [
     {
       "id": "CD-001",
@@ -72311,6 +72311,48 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8FDC8D-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-0SJR",
+      "directive_title": "open the Authenticator app page in one load, with a way back to Settings",
+      "source_repo": "Nasiko-Labs/nasiko",
+      "source_commit": "1c8de458",
+      "staged_file": "11_INBOX/candidate-directives/CD-0SJR-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-16EG",
+      "directive_title": "Prepare new release v0.37.2.",
+      "source_repo": "trailbaseio-trailbase-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-16EG-prepare-new-release-v0-37-2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-1561",
+      "directive_title": "mt-ui): open the Authenticator app page in one load, with a way back to Settings",
+      "source_repo": "nasiko-labs-nasiko-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1561-mt-ui-open-the-authenticator-app-page-in-one-load-with-a-way-back-to-settings.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DF2982",
+      "directive_title": "Prepare new release v0.37.2.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trailbaseio-trailbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DF2982-prepare-new-release-v0-37-2-.md",
       "staged_date": "2026-11-27"
     }
   ]

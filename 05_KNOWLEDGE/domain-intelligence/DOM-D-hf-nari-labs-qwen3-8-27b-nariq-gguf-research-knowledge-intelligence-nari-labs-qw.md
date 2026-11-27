@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
   "source_version": "hf-nari-labs-qwen3.8-27b-nariq-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T12:18:19.784Z",
+  "timestamp": "2026-11-27T20:09:49.811Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nari-labs/Qwen3.8-27B-NariQ-GGUF](https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF) (Revision: `hf-nari-la`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T12:18:19.784Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T20:09:49.811Z`  
 > **Learning ID**: `learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF](https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T12:18:18.879Z  
+> **Harvest Timestamp**: 2026-11-27T20:09:48.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8795 downloads | 82 likes
+- **Stars / Engagement**: 30849 downloads | 247 likes
 
 ---
 

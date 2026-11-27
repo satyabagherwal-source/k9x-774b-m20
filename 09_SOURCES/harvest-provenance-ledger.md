@@ -13893,3 +13893,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-27T19:52:09.825Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fa74d5c6` | Multi-dimensional audit evidence | 2026-11-27T19:52:27.433Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `0964b4f9` | Multi-dimensional audit evidence | 2026-11-27T20:01:14.501Z |
+| `learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf` | `https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF` | `hf-nari-la` | Multi-dimensional audit evidence | 2026-11-27T20:09:49.572Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `1c8de458` | Multi-dimensional audit evidence | 2026-11-27T20:09:52.017Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f5c3a834` | Multi-dimensional audit evidence | 2026-11-27T20:10:04.323Z |

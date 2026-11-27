@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:01:14.509Z",
-  "total_cycles_completed": 13153,
-  "total_learnings_persisted": 13153,
-  "total_rules_promoted": 11872,
+  "last_updated": "2026-11-27T20:10:04.368Z",
+  "total_cycles_completed": 13156,
+  "total_learnings_persisted": 13156,
+  "total_rules_promoted": 11873,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:07:45.428Z",
-      "repository": "goharbor/harbor",
-      "learningId": "learn-github-goharbor-harbor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T03:07:50.454Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T03:16:15.479Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:24:48.458Z",
       "repository": "google/embeddinggemma-2",
@@ -1403,6 +1382,27 @@
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:09:49.578Z",
+      "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",
+      "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:09:52.023Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:10:04.368Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

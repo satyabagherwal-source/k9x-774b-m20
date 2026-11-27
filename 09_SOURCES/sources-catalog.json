@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "0eb63838",
+    "sourceVersion": "f5c3a834",
     "license": "OSL-3.0",
-    "contentHash": "314ffdfb420dad613902a7ae46f3ce3aae1576ad4acdd143d4c63488b448fd18",
-    "lastHarvestedAt": "2026-11-27T00:59:04.963Z",
+    "contentHash": "c0b1297b39700c4f6827cfffffa3075ce990375c4ad336ee0cd7d82db807e4cd",
+    "lastHarvestedAt": "2026-11-27T20:10:04.323Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "93091516",
+    "sourceVersion": "1c8de458",
     "license": "NOASSERTION",
-    "contentHash": "a6168fa492ce778c933741fd75eee30dfd0ef1c4acecc8ade4cb9a3e0069178f",
-    "lastHarvestedAt": "2026-11-26T20:04:19.851Z",
+    "contentHash": "12630ab1bea36f4eede3f6f1b14d0898b337f04c3367339a7385a17c5ed128de",
+    "lastHarvestedAt": "2026-11-27T20:09:52.017Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -13335,8 +13335,8 @@
     "sourceUrl": "https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF",
     "sourceVersion": "hf-nari-labs-qwen3.8-27b-nariq-gguf",
     "license": "Open-Source",
-    "contentHash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
-    "lastHarvestedAt": "2026-11-24T12:18:19.562Z",
+    "contentHash": "8f3a7cf4813327f1048f2b4c7473d9e5d3b6188d79c70128695ca76f6ed24cbe",
+    "lastHarvestedAt": "2026-11-27T20:09:49.572Z",
     "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf"
   },
   "nihildigit-piko": {

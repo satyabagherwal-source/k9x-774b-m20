@@ -13860,3 +13860,6 @@
 | `CYCLE-20261127-E0RB` | `2026-11-27T19:52:09.815Z` | `thejagstudio/tessera-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | Yes (`6a083e43...`) |
 | `CYCLE-20261127-EECF` | `2026-11-27T19:52:27.423Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10957` | Yes (`8cd086e9...`) |
 | `CYCLE-20261127-PP0Z` | `2026-11-27T20:01:14.483Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10958` | Yes (`0022859c...`) |
+| `CYCLE-20261127-0QGO` | `2026-11-27T20:09:49.560Z` | `nari-labs/Qwen3.8-27B-NariQ-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md` | Yes (`8f3a7cf4...`) |
+| `CYCLE-20261127-0SCL` | `2026-11-27T20:09:52.005Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10959` | Yes (`12630ab1...`) |
+| `CYCLE-20261127-11UD` | `2026-11-27T20:10:04.309Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | Yes (`c0b1297b...`) |
