@@ -13729,3 +13729,5 @@
 | `CYCLE-20261127-W6AS` | `2026-11-27T07:58:26.788Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10858` | Yes (`fb8e8b51...`) |
 | `CYCLE-20261127-WCMT` | `2026-11-27T07:58:34.997Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10859` | Yes (`83b85f00...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T07:59:17.499Z` | `necolas-react-native-web` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BDBEDA9A` [Domain H] | Yes (`2e3d9d9d...`) |
+| `CYCLE-20261127-GUXC` | `2026-11-27T08:14:31.824Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`bdffe863...`) |
+| `CYCLE-20261127-H52B` | `2026-11-27T08:14:44.963Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10860` | Yes (`880fcba3...`) |

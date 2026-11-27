@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:58:35.035Z",
+  "last_updated": "2026-11-27T08:14:45.000Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2361,14 +2361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "content_hash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
-      "verified_at": "2026-11-23T22:42:44.484Z",
+      "content_hash": "bdffe863124d299b587dbd5bddf5568a427e997c2dec04fc56182141f7a166f6",
+      "verified_at": "2026-11-27T08:14:31.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:42:44.484Z"
+      "last_updated": "2026-11-27T08:14:31.850Z"
     },
     "amplifthq/openmeld": {
       "repository": "amplifthq/openmeld",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
-      "verified_at": "2026-11-26T17:15:00.152Z",
+      "content_hash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
+      "verified_at": "2026-11-27T08:14:44.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:15:00.152Z"
+      "last_updated": "2026-11-27T08:14:44.999Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

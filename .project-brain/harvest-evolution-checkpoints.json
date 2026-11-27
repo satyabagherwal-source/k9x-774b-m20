@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:59:18.865Z",
+  "last_updated": "2026-11-27T08:14:52.175Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T06:55:11.382Z",
+      "processed_at": "2026-11-27T08:14:50.787Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2588,7 +2588,7 @@
       "staged_for_review": 0
     },
     "dosco-graphjin-learnings.md": {
-      "processed_at": "2026-11-26T15:22:18.889Z",
+      "processed_at": "2026-11-27T08:14:49.562Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2848,7 +2848,7 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md": {
-      "processed_at": "2026-11-23T22:43:06.520Z",
+      "processed_at": "2026-11-27T08:14:48.893Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4878,
+  "total_dossiers_evaluated": 4881,
   "total_canonical_promoted": 575,
-  "total_staged_for_review": 3650
+  "total_staged_for_review": 3652
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-ZSS9",
-    "timestamp": "2026-11-26T02:09:40.473Z",
-    "repository": "duongductrong/Snapzy",
-    "learningId": "learn-github-duongductrong-snapzy",
-    "contentHash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-ZV0T",
-    "timestamp": "2026-11-26T02:09:43.373Z",
-    "repository": "bridgecrewio/checkov",
-    "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "9bd277d4866ba5645cac89e38bfd470a24d323974ef9d2b68e6cc119f89d29ae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-B80R",
     "timestamp": "2026-11-26T02:18:33.435Z",
     "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
@@ -7490,6 +7460,36 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GUXC",
+    "timestamp": "2026-11-27T08:14:31.824Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "bdffe863124d299b587dbd5bddf5568a427e997c2dec04fc56182141f7a166f6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-H52B",
+    "timestamp": "2026-11-27T08:14:44.963Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

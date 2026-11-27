@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:58:35.029Z",
-  "total_cycles_completed": 13032,
-  "total_learnings_persisted": 13032,
-  "total_rules_promoted": 11770,
+  "last_updated": "2026-11-27T08:14:44.996Z",
+  "total_cycles_completed": 13034,
+  "total_learnings_persisted": 13034,
+  "total_rules_promoted": 11771,
   "history": [
-    {
-      "timestamp": "2026-11-26T18:58:46.435Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T18:58:47.792Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T18:58:56.996Z",
       "repository": "aws/aws-cdk",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T07:58:35.029Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:14:31.846Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:14:44.996Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

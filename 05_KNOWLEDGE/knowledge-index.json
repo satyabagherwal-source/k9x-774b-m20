@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T07:59:18.618Z",
+  "last_updated": "2026-11-27T08:14:51.966Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26452,
+  "total_items": 26454,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4533b666a4a5f93f6f6c4ecc87186b5baff18c56afa46e13ee133679bf4549d",
+      "content_hash": "7f83b064522e88d81872e646582386342946014af6e153e64ff0f896691114f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:55:12.229Z"
+      "persisted_at": "2026-11-27T08:14:51.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -233042,9 +233042,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdc3337c24b2cbad53980e0bf03a0f76592d20076ae73b20ccdf06ae459e72ea",
+      "content_hash": "02f028e0b0a49c7e8c6c332b7b41a69ca286040cfee03e94da9a157d90cdd9de",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T15:22:20.371Z"
+      "persisted_at": "2026-11-27T08:14:50.211Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -233054,9 +233054,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "aeb68eaf8dc0cc9a8f8f1dd9272c97ad759d5e87ad12338ffb3b5c17991ac6f1",
+      "content_hash": "d251405245e94ad555fcf8221ffa20968349f695daa214191fde33a548d8eabd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:22:20.672Z"
+      "persisted_at": "2026-11-27T08:14:50.529Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -245131,7 +245131,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
+      "content_hash": "bdffe863124d299b587dbd5bddf5568a427e997c2dec04fc56182141f7a166f6",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -245151,7 +245151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:42:44.165Z",
+      "verified_at": "2026-11-27T08:14:31.506Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -302316,9 +302316,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "794e6beca054eabe5d742732d1d4730a8a81b308c049e3e4416beebbe4eb309d",
+      "content_hash": "25f3fae49cfcd28079bb85816ab2b6a4571fa17449e22ec1bdd44ed777f59eaa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:42:44.767Z"
+      "persisted_at": "2026-11-27T08:14:32.138Z"
     },
     "rule-9406": {
       "learning_id": "rule-9406",
@@ -302392,9 +302392,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "79b4bb5ecb3a6787f30eb21532f57ec9aacac7f655733f7ae8ddd338b86a64c4",
+      "content_hash": "74412becf165716217e293d8cce37a9afcff782729886627030022e8abbacee0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:43:06.789Z"
+      "persisted_at": "2026-11-27T08:14:49.245Z"
     },
     "rule-9408": {
       "learning_id": "rule-9408",
@@ -315103,13 +315103,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "c57c1b1c",
-      "content_hash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "91c1df80",
+      "content_hash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -315145,6 +315145,11 @@
           "number": 10715,
           "title": "keep the account table out of GraphQL",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10860,
+          "title": "a server install is healthy before setup and the image is reachable; add the Set",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -315152,7 +315157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T17:14:59.856Z",
+      "verified_at": "2026-11-27T08:14:44.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315165,25 +315170,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-graphjin-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "c57c1b1c",
-      "content_hash": "38235f640c4323f1eb2890cd99016e4cbc0f04f286b19e0dc9add1a8a656b660",
+      "source_version": "91c1df80",
+      "content_hash": "d69986d49fa7a070e3e8db07b194c938c1c529e9e7ec0c00b7c869b31c3b8682",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:15:00.602Z"
+      "persisted_at": "2026-11-27T08:14:45.558Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "c57c1b1c",
-      "content_hash": "a4d6182c07914e966b96a4945b4643798b8f20781b570727063d99b2b0e5b7ab",
+      "source_version": "91c1df80",
+      "content_hash": "2cc04bdbd239c5afa1cfaf19f505e1d2e33c1b99d80371a3c50f20a53772f1cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:15:00.809Z"
+      "persisted_at": "2026-11-27T08:14:45.810Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -358060,13 +358065,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MU3F-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HA1X-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd58e985578c47044551fbe6baf221d0ed961098d4ad1ef1c6dd69e2b204d279",
+      "content_hash": "e3aab8df27d3b95a827d479a6775aca2d65faeee30224416879a6dfab443422e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:55:11.838Z"
+      "persisted_at": "2026-11-27T08:14:51.433Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358076,9 +358081,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b3e65030b460447437a1920183a532b96c57b90f6509cb1268416cd3f0a9884c",
+      "content_hash": "45cb771a79c7d315456aa2b5acdeb424cb5da396d9b8e5a98f4492302016a993",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:55:12.034Z"
+      "persisted_at": "2026-11-27T08:14:51.706Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362991,6 +362996,32 @@
       "content_hash": "92a8088e5059fe34957575cb136436ea45f344950d2f354524540777de4fbc0d",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T07:58:39.512Z"
+    },
+    "rule-10860": {
+      "learning_id": "rule-10860",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10860,
+      "title": "a server install is healthy before setup and the image is reachable; add the Set",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "91c1df80",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T08:14:44.576Z"
+    },
+    "candidate_directive-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set": {
+      "item_id": "candidate_directive-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-H8WW-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
+      "title": "a server install is healthy before setup and the image is reachable; add the Set",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "931d709d2e7b63e6e2bb5685dc0dd2d06ab4491f5c90c568af3c0038f092fd00",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T08:14:49.956Z"
     }
   },
   "ai-builder-brain": {

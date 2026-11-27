@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
-    "lastHarvestedAt": "2026-11-23T22:42:44.474Z",
+    "contentHash": "bdffe863124d299b587dbd5bddf5568a427e997c2dec04fc56182141f7a166f6",
+    "lastHarvestedAt": "2026-11-27T08:14:31.830Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "7e3f05c1",
+    "sourceVersion": "91c1df80",
     "license": "Apache-2.0",
-    "contentHash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
-    "lastHarvestedAt": "2026-11-26T15:22:12.299Z",
+    "contentHash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
+    "lastHarvestedAt": "2026-11-27T08:14:44.981Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {

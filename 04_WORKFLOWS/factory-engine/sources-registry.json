@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T07:30:41.464Z",
-    "lastVerified": "2026-11-27T07:30:41.464Z",
+    "lastChecked": "2026-11-27T08:14:35.702Z",
+    "lastVerified": "2026-11-27T08:14:35.702Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T07:58:38.685Z",
-    "lastVerified": "2026-11-27T07:58:38.685Z",
+    "lastChecked": "2026-11-27T08:14:48.653Z",
+    "lastVerified": "2026-11-27T08:14:48.653Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -173,9 +173,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-27T03:55:01.635Z",
+    "lastChecked": "2026-11-27T08:14:30.651Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-27T03:55:01.635Z"
+    "lastVerified": "2026-11-27T08:14:30.651Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -3920,14 +3920,14 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T15:22:10.743Z",
-    "lastVerified": "2026-11-26T15:22:10.743Z",
+    "lastChecked": "2026-11-27T08:14:35.118Z",
+    "lastVerified": "2026-11-27T08:14:35.118Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
+    "contentHash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7595,9 +7595,9 @@
   "libsql-libsql": {
     "name": "libsql",
     "officialUrl": "https://github.com/libsql/libsql",
-    "lastChecked": "2026-11-26T14:13:38.551Z",
+    "lastChecked": "2026-11-27T08:14:33.497Z",
     "revisionIdentifier": "a1d031cb",
-    "lastVerified": "2026-11-26T14:13:38.551Z"
+    "lastVerified": "2026-11-27T08:14:33.497Z"
   },
   "domcyrus-rustnet": {
     "name": "domcyrus/rustnet",
@@ -7771,9 +7771,9 @@
   "jetbrains-kotlinconf-app": {
     "name": "kotlinconf-app",
     "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "lastChecked": "2026-11-25T00:08:17.376Z",
+    "lastChecked": "2026-11-27T08:14:25.688Z",
     "revisionIdentifier": "146e891c",
-    "lastVerified": "2026-11-25T00:08:17.376Z"
+    "lastVerified": "2026-11-27T08:14:25.688Z"
   },
   "tickernelz-opencode-mem": {
     "name": "opencode-mem",
@@ -8519,9 +8519,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-26T07:18:54.958Z",
+    "lastChecked": "2026-11-27T08:14:20.806Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-26T07:18:54.958Z"
+    "lastVerified": "2026-11-27T08:14:20.806Z"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
     "name": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -8908,12 +8908,12 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T22:42:43.552Z",
-    "lastVerified": "2026-11-23T22:42:43.552Z",
+    "lastChecked": "2026-11-27T08:14:23.391Z",
+    "lastVerified": "2026-11-27T08:14:23.391Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "90b2d8d0023597f98e765f84a7e1a79c23140dfa718b99ef99f551c208e0661a",
+    "contentHash": "bdffe863124d299b587dbd5bddf5568a427e997c2dec04fc56182141f7a166f6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

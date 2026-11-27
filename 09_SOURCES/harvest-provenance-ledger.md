@@ -13762,3 +13762,5 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c28f8fb6` | Multi-dimensional audit evidence | 2026-11-27T07:58:26.807Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `78fb5256` | Multi-dimensional audit evidence | 2026-11-27T07:58:35.016Z |
 | `learn-dom-h-bdbeda9a` | `project://necolas-react-native-web` | `95edda41` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | 2026-11-27T07:59:17.499Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T08:14:31.830Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T08:14:44.981Z |

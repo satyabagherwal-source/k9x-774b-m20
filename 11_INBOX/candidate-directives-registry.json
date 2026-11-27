@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:59:18.032Z",
+  "last_updated": "2026-11-27T08:14:51.433Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-MU3F",
+      "id": "CD-HA1X",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-MU3F-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-HA1X-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69480,6 +69480,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-H8WW",
+      "directive_title": "a server install is healthy before setup and the image is reachable; add the Set",
+      "source_repo": "dosco-graphjin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-H8WW-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-CB81E6",
+      "directive_title": "a server install is healthy before setup and the image is reachable; add the Set",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-graphjin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB81E6-a-server-install-is-healthy-before-setup.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-60ECCE",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-60ECCE-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }
