@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-AJ22",
-    "timestamp": "2026-11-25T23:02:03.770Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "84124866142efc4662260418b627d6ddf6a0562df833b765f41239c88d13821d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-MWEI",
-    "timestamp": "2026-11-25T23:11:40.938Z",
-    "repository": "microsoft/Mage-VL-Cowork",
-    "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-    "contentHash": "0b6a39ad24f0b8ddf51ead0f02607a3eb21459c4249d77fc1847148969374b9e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-MXV5",
     "timestamp": "2026-11-25T23:11:42.833Z",
     "repository": "grpc/grpc-rust",
@@ -7492,6 +7462,36 @@
     "contentHash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OU8B",
+    "timestamp": "2026-11-27T04:36:47.243Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "b777387a3eb20d189fe333f988f27936c2a1d83615e5b11e2653d0d4f014e470",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OUNY",
+    "timestamp": "2026-11-27T04:36:47.806Z",
+    "repository": "GeoPortApp/GeoPort",
+    "learningId": "learn-github-geoportapp-geoport",
+    "contentHash": "63a53dd5580ee342a6ea8fca09bcad582f9b60b1bd54720ab996238dbb364099",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

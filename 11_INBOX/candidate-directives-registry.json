@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:27:32.550Z",
+  "last_updated": "2026-11-27T04:37:03.560Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-24SD",
+      "id": "CD-P6TE",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-24SD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-P6TE-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -68638,6 +68638,35 @@
       "source_repo": "trinodb-trino",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EE68AB-flaky-join-operator-yield-tests.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-P523",
+      "directive_title": "docs(readme): add Desktop Modern & Classic UI screenshots, iOS breakthrough teas",
+      "source_repo": "geoportapp-geoport-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-P523-docs-readme-add-desktop-modern-classic-ui-screenshots-ios-breakthrough-teas.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-0E0890",
+      "directive_title": "docs(readme): add Desktop Modern & Classic UI screenshots, iOS breakthrough teas",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "geoportapp-geoport",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0E0890-docs-readme-add-desktop-modern-classic-u.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-0961CD",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0961CD-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
     }
   ]

@@ -13669,3 +13669,5 @@
 | `CYCLE-20261127-CGZI` | `2026-11-27T04:27:10.206Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`7a0933f5...`) |
 | `CYCLE-20261127-CIQU` | `2026-11-27T04:27:12.486Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10826` | Yes (`5f4bbc3b...`) |
 | `CYCLE-20261127-CSAN` | `2026-11-27T04:27:24.863Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10827` | Yes (`160b41f5...`) |
+| `CYCLE-20261127-OU8B` | `2026-11-27T04:36:47.243Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`b777387a...`) |
+| `CYCLE-20261127-OUNY` | `2026-11-27T04:36:47.806Z` | `GeoPortApp/GeoPort` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/geoportapp-geoport-learnings.md` | Yes (`63a53dd5...`) |

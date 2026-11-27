@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T04:27:33.020Z",
+  "last_updated": "2026-11-27T04:37:04.118Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26353,
+  "total_items": 26360,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dc4a5d0c921dd38ff54c6db52480d92a94510bbe3a43ca81f776a2349add06c",
+      "content_hash": "be578cc0de3d865af6ac1411d4eca9023c7164e6d1b0b8a944a7a805d6678846",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:27:09.879Z"
+      "persisted_at": "2026-11-27T04:37:04.118Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -238955,7 +238955,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
+      "content_hash": "b777387a3eb20d189fe333f988f27936c2a1d83615e5b11e2653d0d4f014e470",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -238964,7 +238964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:17:46.863Z",
+      "verified_at": "2026-11-27T04:36:46.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238981,9 +238981,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "78429f36beb617780afa11ce905a489f2d35b46d4b23ac79a430074ebd89d54f",
+      "content_hash": "40655938cc684605a26c9b308596ae435bab481c334c745b224e249bc4118bb1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:17:47.311Z"
+      "persisted_at": "2026-11-27T04:36:47.619Z"
     },
     "learn-github-pulumi-pulumi": {
       "learning_id": "learn-github-pulumi-pulumi",
@@ -239249,9 +239249,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
       "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
       "source_version": "HEAD",
-      "content_hash": "12be404deaaba60d2e6d7f1f46682b76dbfaf32277afb9b6f2c0c53f18d1a11b",
+      "content_hash": "d0dcf4fcb94e4fc9995e64a91c7930b20beacefc50919c632017e64eccf60775",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:18:01.353Z"
+      "persisted_at": "2026-11-27T04:37:02.612Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
@@ -357910,13 +357910,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-24SD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P6TE-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "be9a49c96d83086be6647bdbc8950ca45dc316bc0afe2f6c0b9d8eeafad886ef",
+      "content_hash": "eabda8a626650a04f4a75afb86772830e1ca90a8369d461957ff5c7607ba569b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T02:27:09.379Z"
+      "persisted_at": "2026-11-27T04:37:03.560Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357926,9 +357926,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "998f95f5dd0d3b7d276536cea990b6964e30aa827b0bc87851dc1d75bac19f31",
+      "content_hash": "bf8ad31f2a4999b87fa8468e6522e9d148ab804c9b90784272c4ceb341de9155",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T02:27:09.634Z"
+      "persisted_at": "2026-11-27T04:37:03.828Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361547,6 +361547,90 @@
       "content_hash": "e52fd1afe3d9a92174b29bcbd999f4bda6f9ae2d49c7b7c16838a5401b116bd7",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T04:27:32.550Z"
+    },
+    "candidate_directive-docs-readme-add-desktop-modern-classic-ui-screenshots-ios-breakthrough-teas": {
+      "item_id": "candidate_directive-docs-readme-add-desktop-modern-classic-ui-screenshots-ios-breakthrough-teas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P523-docs-readme-add-desktop-modern-classic-ui-screenshots-ios-breakthrough-teas.md",
+      "title": "docs(readme): add Desktop Modern & Classic UI screenshots, iOS breakthrough teas",
+      "repository": "geoportapp-geoport-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5004b63424b722b0c990da817ac8741ac71685ce64a817f6c3d09c8bc0d2851a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T04:37:01.276Z"
+    },
+    "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-geoportapp-geoport-content-information-intelligence-geoportapp-geoport-core-inva.md",
+      "title": "Content & Information Intelligence: GeoPortApp/GeoPort Core Invariants",
+      "repository": "GeoPortApp/GeoPort",
+      "source_version": "461e76bc",
+      "content_hash": "d063153d9d1baa216f2c2587a7a333e9792dce7c229d75367b7f8c7d697ec363",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T04:36:48.568Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-geoportapp-geoport": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-geoportapp-geoport",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/geoportapp-geoport-skill-operational-integration-playbook-for-geoportapp-geoport.md",
+      "title": "Skill: Operational & Integration Playbook for GeoPortApp/GeoPort",
+      "repository": "GeoPortApp/GeoPort",
+      "source_version": "461e76bc",
+      "content_hash": "c79d9189c8cdafbed8e5070f0b7d319cddcda1a215d3858830c6ee55ec5e22f1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T04:36:48.882Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-geoportapp-geoport": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-geoportapp-geoport",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/geoportapp-geoport-verification-protocol-empirical-defect-shield-for-geoportapp-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for GeoPortApp/GeoPort",
+      "repository": "GeoPortApp/GeoPort",
+      "source_version": "461e76bc",
+      "content_hash": "68eb39f5711749687bf3b3d57f7c3c230e342a74b98b40cd13cd17ff91b5324f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:36:49.130Z"
+    },
+    "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-geoportapp-geoport-learnings-content-information-intelligence-geoportapp-geoport.md",
+      "title": "Content & Information Intelligence: geoportapp-geoport-learnings Core Invariants",
+      "repository": "geoportapp-geoport-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a65ebe6406c415612b58e0da91b06ff23e7748dca3b088235489012e2cdbdcde",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T04:37:01.543Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-geoportapp-geoport-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-geoportapp-geoport-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/geoportapp-geoport-learnings-skill-operational-integration-playbook-for-geoporta.md",
+      "title": "Skill: Operational & Integration Playbook for geoportapp-geoport-learnings",
+      "repository": "geoportapp-geoport-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6be66dc77ce34256b858aacbf7f02ecbcdc1dfc97d81361b0df1c203a5d6d221",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T04:37:01.811Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-geoportapp-geoport-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-geoportapp-geoport-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/geoportapp-geoport-learnings-verification-protocol-empirical-defect-shield-for-g.md",
+      "title": "Verification Protocol: Empirical Defect Shield for geoportapp-geoport-learnings",
+      "repository": "geoportapp-geoport-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf5e5e70665eedf9fda710b9a3c3ae3cf1f42f886019ced858b850d0bfd1fa85",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:37:02.040Z"
     }
   },
   "ai-builder-brain": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T04:27:30.486Z",
+  "updated_at": "2026-11-27T04:37:00.907Z",
   "stats": {
-    "total_discovered": 10150,
-    "approved_pending_harvest": 9622,
+    "total_discovered": 10172,
+    "approved_pending_harvest": 9644,
     "harvested_count": 0,
     "rejected_count": 528,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9629,
+      "COMMUNITY_AND_EXPERT": 9651,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -219631,6 +219631,490 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
         "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-C50FBFB7CBA1": {
+      "id": "SRC-C50FBFB7CBA1",
+      "url": "https://github.com/GeoPortApp/GeoPort",
+      "title": "https://github.com/GeoPortApp/GeoPort",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:58.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-E64FDCB00DD1": {
+      "id": "SRC-E64FDCB00DD1",
+      "url": "https://projectzerothree.info/api.php?format=json",
+      "title": "https://projectzerothree.info/api.php?format=json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-A597D3815015": {
+      "id": "SRC-A597D3815015",
+      "url": "https://raw.githubusercontent.com/davesc63/GeoPort/main/images/buy-me-a-beer.png",
+      "title": "https://raw.githubusercontent.com/davesc63/GeoPort/main/images/buy-me-a-beer.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-DA23D68FA45B": {
+      "id": "SRC-DA23D68FA45B",
+      "url": "https://geoport.me/",
+      "title": "https://geoport.me/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-DB9842BB1156": {
+      "id": "SRC-DB9842BB1156",
+      "url": "https://geoport.me/ios.html",
+      "title": "https://geoport.me/ios.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-AAD0852457F4": {
+      "id": "SRC-AAD0852457F4",
+      "url": "https://geoport.me/guide.html",
+      "title": "https://geoport.me/guide.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-F2EB440B35CD": {
+      "id": "SRC-F2EB440B35CD",
+      "url": "https://github.com/davesc63/GeoPort/releases/latest",
+      "title": "https://github.com/davesc63/GeoPort/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-F30919C90E71": {
+      "id": "SRC-F30919C90E71",
+      "url": "https://img.shields.io/github/v/release/davesc63/GeoPort?style=for-the-badge&label=Latest+Release&color=0ea5e9",
+      "title": "https://img.shields.io/github/v/release/davesc63/GeoPort?style=for-the-badge&label=Latest+Release&color=0ea5e9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-CEE23753300B": {
+      "id": "SRC-CEE23753300B",
+      "url": "https://img.shields.io/github/v/release/davesc63/GeoPort?style=for-the-badge&label=Desktop+Release&color=0ea5e9",
+      "title": "https://img.shields.io/github/v/release/davesc63/GeoPort?style=for-the-badge&label=Desktop+Release&color=0ea5e9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-C9E32D040858": {
+      "id": "SRC-C9E32D040858",
+      "url": "https://discord.gg/genRca55Nb",
+      "title": "https://discord.gg/genRca55Nb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-6054D45CE0D1": {
+      "id": "SRC-6054D45CE0D1",
+      "url": "https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white&style=for-the-badge",
+      "title": "https://img.shields.io/badge/Discord-Join%20Us-5865F2?logo=discord&logoColor=white&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.880Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-96906D2F48CF": {
+      "id": "SRC-96906D2F48CF",
+      "url": "https://img.shields.io/badge/iOS%20Untethered-Register%20Waitlist-14b8a6?style=for-the-badge",
+      "title": "https://img.shields.io/badge/iOS%20Untethered-Register%20Waitlist-14b8a6?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:36:59.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-0DCFE792297C": {
+      "id": "SRC-0DCFE792297C",
+      "url": "https://github.com/davesc63/GeoPort/blob/main/FAQ.md",
+      "title": "https://github.com/davesc63/GeoPort/blob/main/FAQ.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.056Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-B1D7308E6570": {
+      "id": "SRC-B1D7308E6570",
+      "url": "https://img.shields.io/badge/Docs-FAQ%20%26%20Help-10b981?style=for-the-badge",
+      "title": "https://img.shields.io/badge/Docs-FAQ%20%26%20Help-10b981?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-9FCBE035CC96": {
+      "id": "SRC-9FCBE035CC96",
+      "url": "https://img.shields.io/badge/Docs-Instruction%20Guide-38bdf8?style=for-the-badge",
+      "title": "https://img.shields.io/badge/Docs-Instruction%20Guide-38bdf8?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-E0175CF477F9": {
+      "id": "SRC-E0175CF477F9",
+      "url": "https://www.surveymonkey.com/r/BLQ8M75",
+      "title": "https://www.surveymonkey.com/r/BLQ8M75",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-50F2492DE5B0": {
+      "id": "SRC-50F2492DE5B0",
+      "url": "https://img.shields.io/badge/Feedback-User%20Survey-f59e0b?style=for-the-badge",
+      "title": "https://img.shields.io/badge/Feedback-User%20Survey-f59e0b?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-4C4C4B927659": {
+      "id": "SRC-4C4C4B927659",
+      "url": "https://github.com/davesc63/GeoPort/releases/tag/v5.0.4-ios",
+      "title": "https://github.com/davesc63/GeoPort/releases/tag/v5.0.4-ios",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-D37F1249AA08": {
+      "id": "SRC-D37F1249AA08",
+      "url": "https://stadiamaps.com/",
+      "title": "https://stadiamaps.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.634Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-A97A362CC6A0": {
+      "id": "SRC-A97A362CC6A0",
+      "url": "https://github.com/davesc63/GeoPort/blob/main/MAP_LAYERS.json",
+      "title": "https://github.com/davesc63/GeoPort/blob/main/MAP_LAYERS.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.729Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-36EA6217AB68": {
+      "id": "SRC-36EA6217AB68",
+      "url": "https://tile.openstreetmap.org/%7Bz",
+      "title": "https://tile.openstreetmap.org/%7Bz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-A40BD128A02A": {
+      "id": "SRC-A40BD128A02A",
+      "url": "https://github.com/davesc63/Geo",
+      "title": "https://github.com/davesc63/Geo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:37:00.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
+        "fileName": "geoportapp-geoport-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T04:27:24.923Z",
+  "last_updated": "2026-11-27T04:36:47.899Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
-      "verified_at": "2026-11-23T19:17:47.104Z",
+      "content_hash": "b777387a3eb20d189fe333f988f27936c2a1d83615e5b11e2653d0d4f014e470",
+      "verified_at": "2026-11-27T04:36:47.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:17:47.104Z"
+      "last_updated": "2026-11-27T04:36:47.268Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -20519,6 +20519,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-27T01:54:53.525Z"
+    },
+    "GeoPortApp/GeoPort": {
+      "repository": "GeoPortApp/GeoPort",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-geoportapp-geoport",
+      "content_hash": "63a53dd5580ee342a6ea8fca09bcad582f9b60b1bd54720ab996238dbb364099",
+      "verified_at": "2026-11-27T04:36:47.898Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-27T04:36:47.898Z"
     }
   },
   "repos": {

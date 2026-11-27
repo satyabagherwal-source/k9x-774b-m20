@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T04:27:32.795Z",
-  "total_records": 2802,
+  "last_updated": "2026-11-27T04:37:03.828Z",
+  "total_records": 2804,
   "domains": {
     "A": {
       "total": 23,
@@ -2415,7 +2415,7 @@
       ]
     },
     "I": {
-      "total": 165,
+      "total": 167,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2581,7 +2581,9 @@
         "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants",
         "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-zulip-zulip-core-invariants",
-        "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants",
+        "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants"
       ]
     },
     "J": {
@@ -18200,8 +18202,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-research-knowledge-intelligence-autotrust-gev-.md",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "content_hash": "78429f36beb617780afa11ce905a489f2d35b46d4b23ac79a430074ebd89d54f",
-      "created_at": "2026-11-23T19:17:47.311Z"
+      "content_hash": "40655938cc684605a26c9b308596ae435bab481c334c745b224e249bc4118bb1",
+      "created_at": "2026-11-27T04:36:47.619Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
@@ -18269,8 +18271,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
-      "content_hash": "12be404deaaba60d2e6d7f1f46682b76dbfaf32277afb9b6f2c0c53f18d1a11b",
-      "created_at": "2026-11-23T19:18:01.353Z"
+      "content_hash": "d0dcf4fcb94e4fc9995e64a91c7930b20beacefc50919c632017e64eccf60775",
+      "created_at": "2026-11-27T04:37:02.612Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
@@ -46749,8 +46751,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "998f95f5dd0d3b7d276536cea990b6964e30aa827b0bc87851dc1d75bac19f31",
-      "created_at": "2026-11-27T02:27:09.634Z"
+      "content_hash": "bf8ad31f2a4999b87fa8468e6522e9d148ab804c9b90784272c4ceb341de9155",
+      "created_at": "2026-11-27T04:37:03.828Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -47297,6 +47299,24 @@
       "repository": "callstack-agent-device-learnings",
       "content_hash": "8014fac58c243c3cabe232b24a6f205823f5aea8b2402ebbcece25cdd6fdc03f",
       "created_at": "2026-11-27T04:18:38.089Z"
+    },
+    "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: GeoPortApp/GeoPort Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-geoportapp-geoport-content-information-intelligence-geoportapp-geoport-core-inva.md",
+      "repository": "GeoPortApp/GeoPort",
+      "content_hash": "d063153d9d1baa216f2c2587a7a333e9792dce7c229d75367b7f8c7d697ec363",
+      "created_at": "2026-11-27T04:36:48.568Z"
+    },
+    "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: geoportapp-geoport-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-geoportapp-geoport-learnings-content-information-intelligence-geoportapp-geoport.md",
+      "repository": "geoportapp-geoport-learnings",
+      "content_hash": "a65ebe6406c415612b58e0da91b06ff23e7748dca3b088235489012e2cdbdcde",
+      "created_at": "2026-11-27T04:37:01.543Z"
     }
   }
 }

@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "4e319837218a37d4b36c5cf9db10d054576ecbfafdcdff975c8b88198ab68890",
-    "lastHarvestedAt": "2026-11-23T19:17:47.096Z",
+    "contentHash": "b777387a3eb20d189fe333f988f27936c2a1d83615e5b11e2653d0d4f014e470",
+    "lastHarvestedAt": "2026-11-27T04:36:47.248Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -13598,5 +13598,15 @@
     "contentHash": "72039c2c06df9f61ea2f0ce87557066c1e692910a8cb5c1577faae30b969eaf1",
     "lastHarvestedAt": "2026-11-27T01:54:53.511Z",
     "learningId": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf"
+  },
+  "geoportapp-geoport": {
+    "repository": "GeoPortApp/GeoPort",
+    "platform": "github",
+    "sourceUrl": "https://github.com/GeoPortApp/GeoPort",
+    "sourceVersion": "461e76bc",
+    "license": "GPL-3.0",
+    "contentHash": "63a53dd5580ee342a6ea8fca09bcad582f9b60b1bd54720ab996238dbb364099",
+    "lastHarvestedAt": "2026-11-27T04:36:47.811Z",
+    "learningId": "learn-github-geoportapp-geoport"
   }
 }

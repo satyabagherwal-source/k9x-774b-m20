@@ -22483,5 +22483,20 @@
     "downloads": 0,
     "qualityScore": 1110,
     "discoveredAt": "2026-11-27T01:52:39.167Z"
+  },
+  {
+    "name": "GeoPort",
+    "fullName": "GeoPortApp/GeoPort",
+    "url": "https://github.com/GeoPortApp/GeoPort",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Location Simulation Suite for macOS, Windows, Linux & Untethered Standalone iOS (iOS 17 – iOS 26+)",
+    "stars": 3127,
+    "forks": 262,
+    "openIssues": 58,
+    "language": "HTML",
+    "qualityScore": 2008,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-27T04:34:53.183Z"
   }
 ]

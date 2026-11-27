@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:27:24.919Z",
-  "total_cycles_completed": 12975,
-  "total_learnings_persisted": 12975,
+  "last_updated": "2026-11-27T04:36:47.888Z",
+  "total_cycles_completed": 12977,
+  "total_learnings_persisted": 12977,
   "total_rules_promoted": 11737,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:21:27.204Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:30:42.650Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:30:47.684Z",
       "repository": "unhappychoice/gitlogue",
@@ -1403,6 +1389,20 @@
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:36:47.264Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:36:47.888Z",
+      "repository": "GeoPortApp/GeoPort",
+      "learningId": "learn-github-geoportapp-geoport",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

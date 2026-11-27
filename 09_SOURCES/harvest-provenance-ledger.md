@@ -13702,3 +13702,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-27T04:27:10.210Z |
 | `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `8741327f` | Multi-dimensional audit evidence | 2026-11-27T04:27:12.501Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `039ba60f` | Multi-dimensional audit evidence | 2026-11-27T04:27:24.879Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T04:36:47.248Z |
+| `learn-github-geoportapp-geoport` | `https://github.com/GeoPortApp/GeoPort` | `461e76bc` | Multi-dimensional audit evidence | 2026-11-27T04:36:47.811Z |
