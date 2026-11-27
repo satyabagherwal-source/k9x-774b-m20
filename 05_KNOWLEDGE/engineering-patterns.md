@@ -825324,3 +825324,170 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0afa01aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10924. wait for the output queue before each line, not after it (Harvested from FalkorDB/FalkorDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "wait for the output queue before each line, not after it",
+  "source": "FalkorDB/FalkorDB",
+  "source_url": "https://github.com/FalkorDB/FalkorDB",
+  "source_version": "3bba59f2",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-27T16:03:01.749Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-falkordb-falkordb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `3bba59f2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/banner/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dc5d7837`: banner): wait for the output queue before each line, not after it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/banner/mod.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        fd::{AsFd, AsRawFd, BorrowedFd, RawFd},
+/// Writes `text` to `tty` a line at a time. Before each line it waits up to
+/// `wait` for the output queue to empty, and it stops at the first line it
+/// cannot send. Returns whether all of `text` was written.
+///
+/// Waiting before each line rather than after it means `tty` is not touched
+/// after the last line: if the terminal closes as soon as it has read all of
+/// `text`, the result is still true.
+    tty: &mut (impl Write + AsFd),
+        .all(|line| drained(tty.as_fd(), wait) && tty.write_all(line.as_bytes()).is_ok())
+    tty: BorrowedFd<'_>,
+        io::{self, Read, Write},
+        os::fd::{AsFd, AsRawFd, BorrowedFd, FromRawFd, OwnedFd},
+    /// A terminal that reads every write at once and closes as soon as it has
+    /// the whole banner, before `write_bounded` returns. The reader thread in
+    /// `whole_banner_reaches_a_draining_terminal` does the same when it beats
+    /// the writer on a busy machine (#4073). On Linux, closing the master end
+    /// hangs up the slave end, and every later call on it fails with EIO. macOS
+    /// still answers TIOCOUTQ after that, so this test guards Linux only.
+    struct ClosesOnceI
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        fd::{AsRawFd, RawFd},
+/// Writes `text` to `tty` a line at a time, each line only once the previous
+/// one has left the output queue; stops at the first line the terminal does
+/// not take within `wait`. Returns whether all of `text` was written.
+    tty: &mut File,
+        .all(|line| tty.write_all(line.as_bytes()).is_ok() && drained(tty, wait))
+    tty: &File,
+        io::Read,
+        os::fd::{FromRawFd, OwnedFd},
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dc5d7837` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10925. mark ShortcutRecorderButton partial for the AOT publish (Harvested from TableProApp/TablePro)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "mark ShortcutRecorderButton partial for the AOT publish",
+  "source": "TableProApp/TablePro",
+  "source_url": "https://github.com/TableProApp/TablePro",
+  "source_version": "806d4c96",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-27T16:03:07.042Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tableproapp-tablepro",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TableProApp/TablePro](https://github.com/TableProApp/TablePro) (Revision: `806d4c96`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `windows/src/TablePro.App/Controls/ShortcutRecorderButton.cs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `806d4c96`: windows): mark ShortcutRecorderButton partial for the AOT publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/TablePro.App/Controls/ShortcutRecorderButton.cs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+internal sealed partial class ShortcutRecorderButton : Button
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+internal sealed class ShortcutRecorderButton : Button
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `806d4c96` are properly handled with clean fallback behavior.

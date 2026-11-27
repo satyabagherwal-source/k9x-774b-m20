@@ -13812,3 +13812,5 @@
 | `CYCLE-20261127-L0DE` | `2026-11-27T15:45:39.362Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10921` | Yes (`f55b7801...`) |
 | `CYCLE-20261127-WBMM` | `2026-11-27T15:54:27.166Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10922` | Yes (`a5ef16a2...`) |
 | `CYCLE-20261127-WD40` | `2026-11-27T15:54:29.088Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10923` | Yes (`9121c377...`) |
+| `CYCLE-20261127-7D67` | `2026-11-27T16:03:02.383Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10924` | Yes (`964805e7...`) |
+| `CYCLE-20261127-7H9B` | `2026-11-27T16:03:07.679Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10925` | Yes (`98801262...`) |

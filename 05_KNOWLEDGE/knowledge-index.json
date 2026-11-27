@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:54:35.714Z",
+  "last_updated": "2026-11-27T16:03:14.463Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26633,
+  "total_items": 26639,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4268c6b2f3c42e5c9f9cf1cf7e99d95bfb72dca3d927c1b326d05607e4de6409",
+      "content_hash": "e0f54073b5b37b2fa15f6aab381544fd41bcca8ff529978a64066d8cf6a87aaf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:53.339Z"
+      "persisted_at": "2026-11-27T16:03:14.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7953bafddc47e214c25a7997fb81c723db9ce5e89496ad505a1d4ae98a0901b5",
+      "content_hash": "fa798855705bef8e7e837c797c3b37a43da38c7ec94e9a8b219ccc5d6043c077",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:36:53.551Z"
+      "persisted_at": "2026-11-27T16:03:14.463Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -244245,8 +244245,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "2720220a",
-      "content_hash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
+      "source_version": "3bba59f2",
+      "content_hash": "964805e790a0ea9933df1670fc3c1e93be883fe22a84b1d0a95941abeb3e302b",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -244294,6 +244294,11 @@
           "number": 10717,
           "title": "pr_impact.py no longer blames a fn for attributes above the next one",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10924,
+          "title": "wait for the output queue before each line, not after it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244301,7 +244306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:00:08.661Z",
+      "verified_at": "2026-11-27T16:03:02.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244343,10 +244348,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "2720220a",
-      "content_hash": "fcdd05cca40f27b3ae160260e81a0fecf1b167f6be0679feeabdde9a9ed7c1fd",
+      "source_version": "3bba59f2",
+      "content_hash": "85bba4b6eb26b22ec7a0d0f79acde6dd2175a4be3cb56e5c192c0aea491f5605",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:00:09.597Z"
+      "persisted_at": "2026-11-27T16:03:02.889Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb",
@@ -244355,10 +244360,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "2720220a",
-      "content_hash": "5ff56a6bd867f179bbed8cd4b713a5dfa36bf823824b36c46d500a257c3b1632",
+      "source_version": "3bba59f2",
+      "content_hash": "3529233d352e32d31527c184a1c80d5e3c2abaf68a82293ee04514b143276ae8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:00:09.897Z"
+      "persisted_at": "2026-11-27T16:03:03.104Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -244464,9 +244469,9 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4fe4892a1ace424b269897a74e9dcc249598099481a983dad0f128397afb086",
+      "content_hash": "e72cab0c11a1c66375dcc0d2514c930daeaf2517613842a0d09a5f10a36fa055",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:00:19.616Z"
+      "persisted_at": "2026-11-27T16:03:12.284Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings",
@@ -244476,9 +244481,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "86bb383d6361a9cc742d83bbd45665af0a578d19278532ffb0456a76b2998fcf",
+      "content_hash": "b225462ca8511b353323e8952bed7db0838dc536ed912b639a98e7ea4af50554",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:00:19.888Z"
+      "persisted_at": "2026-11-27T16:03:12.513Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -251973,8 +251978,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "e2b0999a",
-      "content_hash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
+      "source_version": "806d4c96",
+      "content_hash": "98801262b1d34e9ec59771db0503b71bf5fadcc0cd0f89d6e2a1ddc4d19cf78c",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -251997,6 +252002,11 @@
           "number": 10471,
           "title": "keep the sidebar selection accent and the keyboard when a window opens o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10925,
+          "title": "mark ShortcutRecorderButton partial for the AOT publish",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252004,7 +252014,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T06:39:20.437Z",
+      "verified_at": "2026-11-27T16:03:07.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252046,10 +252056,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
       "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
       "repository": "TableProApp/TablePro",
-      "source_version": "e2b0999a",
-      "content_hash": "19affe38b7a586dd7b73269a7ae608605c4e6a5a9b0b340e7c2f3bdf75f09eef",
+      "source_version": "806d4c96",
+      "content_hash": "2e8ee23ec81642f466a0ebcd8720dd29a335349e5d78069241be5dcf2586e324",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:39:21.092Z"
+      "persisted_at": "2026-11-27T16:03:08.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro",
@@ -252058,10 +252068,10 @@
       "relative_path": "08_VERIFICATION/tableproapp-tablepro-verification-protocol-empirical-defect-shield-for-tableproa.md",
       "title": "Verification Protocol: Empirical Defect Shield for TableProApp/TablePro",
       "repository": "TableProApp/TablePro",
-      "source_version": "e2b0999a",
-      "content_hash": "1268476bace6472a2c27fcf830a8aa844247f75874282c07b52fe572fadbff6a",
+      "source_version": "806d4c96",
+      "content_hash": "9604e8d89d090d6dce76eb3d6b970f1bb0ccfa7cfe9831b7d122d149176ef9a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:39:21.344Z"
+      "persisted_at": "2026-11-27T16:03:08.425Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
@@ -252095,9 +252105,9 @@
       "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d63d186fe95646135ae9fcb7d4191509076cc8e1b6a12a2c8a1c550d902d80f",
+      "content_hash": "a0296ca52ed3a619fc544eb8e9241b783b304bae8032af3964aa949d6f59eda4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:39:31.935Z"
+      "persisted_at": "2026-11-27T16:03:13.274Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings",
@@ -252107,9 +252117,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tableproapp-tablepro-learnings",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "dba09b21eeb7ad1e0528b8beb8dcbfa498af989b7c9cd65f05a0baf5f680493a",
+      "content_hash": "6a374114622bf8367c72082e9e8f2f08aebd19b285c20f4267aea369e7c71936",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T06:39:32.106Z"
+      "persisted_at": "2026-11-27T16:03:13.499Z"
     },
     "learn-github-jarvis322-macos-sysdata": {
       "learning_id": "learn-github-jarvis322-macos-sysdata",
@@ -361278,13 +361288,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9QBM-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7M5R-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bef339fd272720c7d98fb6f87c865cb2484fd354ae823c4c312f41329e2d8f1f",
+      "content_hash": "78e6c850a36d46ca8f637102a5417bad20265fd7c2231f79f032ac1837d317f4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:53.125Z"
+      "persisted_at": "2026-11-27T16:03:14.034Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365659,6 +365669,82 @@
       "content_hash": "350a4486aaa8440f707778a5051eb0bfb7a20315ee44fbd49e36447b68f61556",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T15:54:34.183Z"
+    },
+    "rule-10924": {
+      "learning_id": "rule-10924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10924,
+      "title": "wait for the output queue before each line, not after it",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "3bba59f2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:03:02.110Z"
+    },
+    "candidate_directive-wait-for-the-output-queue-before-each-line-not-after-it": {
+      "item_id": "candidate_directive-wait-for-the-output-queue-before-each-line-not-after-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7DDZ-wait-for-the-output-queue-before-each-line-not-after-it.md",
+      "title": "wait for the output queue before each line, not after it",
+      "repository": "FalkorDB/FalkorDB",
+      "source_version": "3bba59f2",
+      "content_hash": "51a637258e2bb4a7a2b873f89a4ac9137583fc3f341ed12282784a249933de61",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:03:02.667Z"
+    },
+    "rule-10925": {
+      "learning_id": "rule-10925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10925,
+      "title": "mark ShortcutRecorderButton partial for the AOT publish",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "806d4c96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:03:07.409Z"
+    },
+    "candidate_directive-mark-shortcutrecorderbutton-partial-for-the-aot-publish": {
+      "item_id": "candidate_directive-mark-shortcutrecorderbutton-partial-for-the-aot-publish",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7HGY-mark-shortcutrecorderbutton-partial-for-the-aot-publish.md",
+      "title": "mark ShortcutRecorderButton partial for the AOT publish",
+      "repository": "TableProApp/TablePro",
+      "source_version": "806d4c96",
+      "content_hash": "e9258b4b325b1337dd65d96ae8c8301b259f00a2532463cf364c5ec982022cd9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T16:03:07.955Z"
+    },
+    "candidate_directive-banner-wait-for-the-output-queue-before-each-line-not-after-it": {
+      "item_id": "candidate_directive-banner-wait-for-the-output-queue-before-each-line-not-after-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7KN3-banner-wait-for-the-output-queue-before-each-line-not-after-it.md",
+      "title": "banner): wait for the output queue before each line, not after it",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dd6e5cd2989d4a90e2c6552e371bddd786c754b0c83093584cebb07b88044f0a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:03:12.067Z"
+    },
+    "candidate_directive-windows-mark-shortcutrecorderbutton-partial-for-the-aot-publish": {
+      "item_id": "candidate_directive-windows-mark-shortcutrecorderbutton-partial-for-the-aot-publish",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7LER-windows-mark-shortcutrecorderbutton-partial-for-the-aot-publish.md",
+      "title": "windows): mark ShortcutRecorderButton partial for the AOT publish",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d64d4e5f4124ee28b5071a1fdb394b6924bde1f44a66789bd042477e6db7b330",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T16:03:13.062Z"
     }
   },
   "ai-builder-brain": {

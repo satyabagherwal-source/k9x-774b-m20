@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1SKF",
-    "timestamp": "2026-11-26T07:19:09.279Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1UZL",
-    "timestamp": "2026-11-26T07:19:12.417Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-DXTW",
     "timestamp": "2026-11-26T07:28:35.972Z",
     "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
@@ -7490,6 +7460,36 @@
     "repository": "giancarloerra/SocratiCode",
     "learningId": "learn-github-giancarloerra-socraticode",
     "contentHash": "9121c377013b07a6e1eacf3790bf2f862b783e928edfbdeb3681354baefb290a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7D67",
+    "timestamp": "2026-11-27T16:03:02.383Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "964805e790a0ea9933df1670fc3c1e93be883fe22a84b1d0a95941abeb3e302b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7H9B",
+    "timestamp": "2026-11-27T16:03:07.679Z",
+    "repository": "TableProApp/TablePro",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "98801262b1d34e9ec59771db0503b71bf5fadcc0cd0f89d6e2a1ddc4d19cf78c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

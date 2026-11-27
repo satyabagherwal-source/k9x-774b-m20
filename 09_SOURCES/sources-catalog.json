@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "2720220a",
+    "sourceVersion": "3bba59f2",
     "license": "NOASSERTION",
-    "contentHash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
-    "lastHarvestedAt": "2026-11-26T16:00:08.985Z",
+    "contentHash": "964805e790a0ea9933df1670fc3c1e93be883fe22a84b1d0a95941abeb3e302b",
+    "lastHarvestedAt": "2026-11-27T16:03:02.396Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "e2b0999a",
+    "sourceVersion": "806d4c96",
     "license": "AGPL-3.0",
-    "contentHash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
-    "lastHarvestedAt": "2026-11-25T06:39:20.649Z",
+    "contentHash": "98801262b1d34e9ec59771db0503b71bf5fadcc0cd0f89d6e2a1ddc4d19cf78c",
+    "lastHarvestedAt": "2026-11-27T16:03:07.695Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

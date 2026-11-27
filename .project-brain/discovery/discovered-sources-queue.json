@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T15:54:32.991Z",
+  "updated_at": "2026-11-27T16:03:11.781Z",
   "stats": {
-    "total_discovered": 10469,
-    "approved_pending_harvest": 9937,
+    "total_discovered": 10474,
+    "approved_pending_harvest": 9942,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9943,
+      "COMMUNITY_AND_EXPERT": 9948,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226621,6 +226621,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
         "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-4B85C06F7980": {
+      "id": "SRC-4B85C06F7980",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/45669084732",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/45669084732",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:03:11.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-DBACD2967823": {
+      "id": "SRC-DBACD2967823",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/45673763066",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/45673763066",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:03:11.540Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-2F53DD35D356": {
+      "id": "SRC-2F53DD35D356",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/45766849139",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/45766849139",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:03:11.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-830D835F9620": {
+      "id": "SRC-830D835F9620",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/45847356345",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/45847356345",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:03:11.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-2C9DCEF0BAD3": {
+      "id": "SRC-2C9DCEF0BAD3",
+      "url": "https://github.com/FalkorDB/FalkorDB/pull/4008",
+      "title": "https://github.com/FalkorDB/FalkorDB/pull/4008",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:03:11.781Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
       }
     }
   }

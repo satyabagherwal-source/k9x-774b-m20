@@ -4,22 +4,22 @@
 {
   "source_repository": "TableProApp/TablePro",
   "source_url": "https://github.com/TableProApp/TablePro",
-  "source_version": "e2b0999a",
+  "source_version": "806d4c96",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-25T06:39:20.909Z",
+  "timestamp": "2026-11-27T16:03:07.954Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tableproapp-tablepro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [TableProApp/TablePro](https://github.com/TableProApp/TablePro) (Revision: `e2b0999a`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-25T06:39:20.909Z`  
+> **Provenance**: Harvested from [TableProApp/TablePro](https://github.com/TableProApp/TablePro) (Revision: `806d4c96`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-27T16:03:07.954Z`  
 > **Learning ID**: `learn-github-tableproapp-tablepro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `TableProApp/TablePro` (Commit: `e2b0999a`)
+- **Target Repository**: `TableProApp/TablePro` (Commit: `806d4c96`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T06:39:19.558Z  
+> **Harvest Timestamp**: 2026-11-27T16:03:06.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6533 stars
+- **Stars / Engagement**: 6548 stars
 
 ---
 
@@ -1312,12 +1312,17 @@ public enum KeywordUppercaseHelper {
         (ch >= 0x30 && ch <= 0x39) || ch == 0x5F
     }
 
-    // Read from the start of the text with the session's grammar: a literal can open any distance back, and where it
-    // ends is the engine's rule.
-    static func isInsideProtectedContext(_ text: NSString, at position: Int, grammar: SQLLexicalGrammar) -> Bool {
+    // Read with the session's grammar from `codeStart`, a point known to sit in code such as the start of the statement:
+    // a literal can open any distance back, and where it ends is the engine's rule.
+    static func isInsideProtectedContext(
+        _ text: NSString,
+        at position: Int,
+        from codeStart: Int = 0,
+        grammar: SQLLexicalGrammar
+    ) -> Bool {
         let length = text.length
         let runsExecutableComments = grammar.contains(.executableComments)
-        var index = 0
+        var index = min(max(0, codeStart), position)
         while index < position {
             // The server runs the body of `/*! ... */`, so it is code.
             if runsExecutableComments, let opener = SqlLexer.executableCommentOpenerLength(text, at: index, length: length) {
@@ -1335,10 +1340,13 @@ public enum KeywordUppercaseHelper {
     }
 
     // Nil when the word is not a keyword, sits in a comment, a literal or a quoted name, or is already in the target case.
+    // `codeStart` is where reading for a literal or comment may begin: a statement start the scanner found, or the top.
+    // Finding it can cost a scan, so it is asked for only once the word is a keyword that would change.
     public static func keywordBeforePosition(
         _ text: NSString,
         at position: Int,
         uppercase: Bool = true,
+        codeStart: @autoclosure () -> Int = 0,
         grammar: SQLLexicalGrammar
     ) -> (word: String, folded: String, range: NSRange)? {
         var wordStart = position
@@ -1353,10 +1361,10 @@ public enum KeywordUppercaseHelper {
 
         let word = text.substring(with: NSRange(location: wordStart, length: wordLength))
         guard SQLKeywords.keywordSet.contains(word.lowercased()) else { return nil }
-        guard !isInsideProtectedContext(text, at: wordStart, grammar: grammar) else { return nil }
 
         let folded = uppercase ? word.uppercased() : word.lowercased()
         guard folded != word else { return nil }
+        guard !isInsideProtectedContext(text, at: wordStart, from: codeStart(), grammar: grammar) else { return nil }
 
         return (word: word, folded: folded, range: NSRange(location: wordStart, length: wordLength))
     }
@@ -1799,11 +1807,11 @@ public enum MongoVocabulary {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4389** (2026-11-21): **sqlite:// URL reads its query parameters as part of the file path**
-  *Symptoms*: ### What happened?  Opening a `sqlite://` URL with query parameters reads the parameters as part of the file path. `sqlite:///path/to/shop.sqlite?name=Shop` opens `/path/to/shop.sqlite?name=Shop`, a file that does not exist, so the driver creates an empty database under that name. The window title reads `SQLite //path/to/shop.sqlite?name=Shop`.  Without parameters the title is still `SQLite //path/to/shop.sqlite`. `duckdb://` and `beancount://` file URLs behave the same.  ### Steps to reproduce  1. Run `open 'sqlite:///path/to/shop.sqlite?name=Shop'`. 2. Click Connect. 3. The window title shows `SQLite //path/to/shop.sqlite?name=Shop` and the sidebar shows an empty database.  ### Expected behavior  The URL's path is the file, and `name` and the other documented parameters apply the way they do on server URLs. The window is titled `Shop`, or the file name when the URL has no `name`, as when the file itself is opened.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
+- **Issue #4635** (2026-11-27): **fix(theme): stop a themed window covering the sidebar in full screen**
+  *Symptoms*: ## Summary  - Content windows keep an opaque titlebar in full screen. Transparent under a theme's window color (macOS 26+), AppKit's full-screen toolbar window draws an opaque system backstop under one titlebar section: the sidebar's when the window has an inspector (main, Data File), over the workspace rail, Tables/Favorites and Filter. Handing the color back at `willEnterFullScreen` is too late to remove it. - The full-screen toolbar is now the system material in every theme, as it already was with the default theme. - The titlebar policy no longer reads toolbar visibility: drop the `toggleToolbarShown` override and the re-apply after the toolbar attaches. - A refused full-screen entry (`windowDidFailToEnterFullScreen`) restores the transparent titlebar in the main, Data File and Compare & Sync windows. - An opaque titlebar makes its accessories vibrant, where the selected editor tab drew below the track (76 over 88; One Dark 76 over 25). A vibrant tab strip now resolves its fills in its window's appearance, and its track takes the theme only while not vibrant. This also changes the strip before macOS 26, where every titlebar is opaque; not measured there. - `apple/scripts/probes/check-fullscreen-titlebar-backstop.sh` measures the backstop and the vibrant accessory. - `.claude/rules/theme.md`, Windows: the full-screen titlebar, the vibrant strip and the failed-entry forward. - `ContentWindowTitlebarTests` pinned a transparent titlebar in full screen with a toolbar; updated 
 
-- **Issue #4388** (2026-11-21): **SQLite export suggests the database file's full path as the file name**
-  *Symptoms*: ### What happened?  Exporting tables from a SQLite connection suggests the database file's full path as the file name. With `/path/to/shop.sqlite` open, the save panel's name field reads `/path/to/shop.sqlite.csv`. The export dialog also lists the database row under its full path.  It happens whenever the export does not start from exactly one table: no table or several tables selected in the sidebar. Every format is affected.  ### Steps to reproduce  1. Open a SQLite file, for example `/path/to/shop.sqlite`. 2. Make sure no table is selected in the sidebar. 3. File > Export > Export Tables…, keep CSV, click Export. 4. The save panel suggests `/path/to/shop.sqlite.csv`.  ### Expected behavior  A short name, the way a server database gets its database name: `shop.csv`.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
+- **Issue #4629** (2026-11-27): **Oracle 11.2.0.4 (SID): sidebar table list spins forever, session stuck at "SQL*Net more data from client"**
+  *Symptoms*: ### What happened?  Environment - TablePro 0.88.0 (880099), macOS - Oracle Database 11g Enterprise Edition 11.2.0.4.0, Linux - Connection Type: SID (equivalent JDBC URL: jdbc:oracle:thin:@host:1521:orcl)  Problem After connecting, the left sidebar never loads the table list. It spins until the query timeout, then shows: "The query did not finish within the configured timeout, so the connection was reset." Raising the timeout from 60s to 600s does not help.  Running queries in the SQL editor works fine and returns instantly (e.g. select * from dual; select table_name from user_tables).  Server-side observation While the sidebar is spinning, v$session shows no active SQL from TablePro. The TablePro session sits INACTIVE with event "SQL*Net more data from client" and last_call_et grows continuously. The server appears to be waiting for the rest of a request that the client never finishes sending. The editor connection is normal ("SQL*Net message from client"). Each retry leaves another stuck session behind.  Other clients (PL/SQL Developer, JDBC thin) against the same database work fine.  Expected: sidebar loads the table list.   Additional info from Console logs (subsystem com.TablePro):  16:33:36 Connected to Oracle ...:1521 16:33:36 [schema] activation action=load 16:34:26 OracleCoreConnection: Closed the Oracle connection: the query timeout fired 16:34:38 OracleCoreConnection: Oracle query timed out after 60s; the connection was closed to recover 16:34:38 SchemaService: [sch
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1820,626 +1828,127 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32dc16b7` (2026-11-25)
-**Commit Message**: fix(focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection (#4478)
+### Incident Patch 1: `806d4c96` (2026-11-27)
+**Commit Message**: fix(windows): mark ShortcutRecorderButton partial for the AOT publish (#4640)
 
-**File**: `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift` (modified, +4/-0)
+**File**: `windows/src/TablePro.App/Controls/ShortcutRecorderButton.cs` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,7 @@ extension DataGridModel {
-             find.showsReplace = true
+@@ -16,7 +16,7 @@ namespace TablePro.App.Controls;
+ // while armed it rides its own key events, swallows them before any accelerator fires, reads the modifier state, maps
+ // the key through EditorKey and reports the chord; Delete removes the binding, Esc or losing focus cancels, and plain
+ // Tab is let through so focus can move on.
+-internal sealed class ShortcutRecorderButton : Button
++internal sealed partial class ShortcutRecorderButton : Button
+ {
+     private bool _armed;
+     private bool _swallowing;
+```
+
+---
+
+### Incident Patch 2: `ddafb121` (2026-11-27)
+**Commit Message**: test(core-storage): the report test builds its profile without serde_json::json! (#4641)
+
+**File**: `core/crates/storage/src/connections/library/mod.rs` (modified, +3/-2)
+```diff
+@@ -93,8 +93,9 @@ impl ConnectionStore {
+             // Nothing written, so the file must still be the one it answers for.
+             return Err(StorageError::LibraryChanged.into());
          }
-         let wasVisible = find.isVisible
-+        find.requestsFieldFocus = true
-         find.isVisible = true
-         if !wasVisible {
-             refreshFind()
-@@ -73,6 +74,7 @@ extension DataGridModel {
-         if replace, canReplaceInFind {
-             find.showsReplace = true
+-        // The write has landed, so a cleanup that cannot be written stays listed for the next write, and the host still
+-        // gets the digest the file holds; an error here would leave it a tag for bytes the file no longer has.
++        // The write has landed, so a cleanup that cannot be written stays listed for the next write and the host still
++        // gets the landed write's digest. One that fails after its rename leaves bytes the host is not given, so its
++        // next write is refused as a change: bytes read back from the file are never vouched for.
+         if let Err(error) = self.settle_secrets(&mut state, delete) {
+             tracing::warn!(%error, "the secrets a library write took out stay listed for the next write");
          }
-+        find.requestsFieldFocus = true
-         find.isVisible = true
-         findQueryDidChange()
-     }
-@@ -82,6 +84,7 @@ extension DataGridModel {
-         find.reset()
-         find.options.columnScope = nil
-         find.showsReplace = false
-+        find.requestsFieldFocus = false
-         find.isVisible = false
-         focus()
-     }
-@@ -179,6 +182,7 @@ extension DataGridModel {
-             : storedText(in: row, column: active.column)
-         guard let text = shown else { return }
-         find.term = find.options.usesRegularExpression ? NSRegularExpression.escapedPattern(for: text) : text
-+        find.requestsFieldFocus = true
-         find.isVisible = true
-         findQueryDidChange()
-     }
 ```
 
-**File**: `apple/TablePro/Core/DataGrid/GridFindState.swift` (modified, +2/-0)
+**File**: `core/crates/storage/src/connections/store_tests.rs` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,8 @@ final class GridFindState: ObservableObject {
-     }
- 
-     @Published var isVisible = false
-+    // Set when Find is invoked and taken by the bar's field, so a bar rebuilt by a tab switch leaves the keyboard alone.
-+    var requestsFieldFocus = false
-     @Published var showsReplace = false
-     @Published var term = ""
-     @Published var replacement = ""
-```
-
-**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController+DatabaseMenuActions.swift` (modified, +0/-2)
-```diff
-@@ -14,7 +14,6 @@ extension MainSplitViewController {
- 
-     // The window owns switching because a disconnected workspace has no command actions.
-     func openConnectionSwitcher() {
--        view.window?.makeFirstResponder(nil)
-         switcherPresenter.present(
-             from: view.window,
-             anchoredTo: MainWindowToolbar.connection,
-@@ -50,7 +49,6 @@ extension MainSplitViewController {
-         else { return }
-         let sourceConnectionId = source.connectionId
-         let title = tab.title
--        view.window?.makeFirstResponder(nil)
-         switcherPresenter.present(
-             from: view.window,
-             anchoredTo: MainWindowToolbar.connection,
-```
-
-**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController+Focus.swift` (modified, +20/-9)
-```diff
-@@ -17,19 +17,30 @@ import TableProTextEngine
- /// a window hosting several connections has several editors registered at once, and a window-wide
- /// registry cannot tell them apart.
- internal extension MainSplitViewController {
--    /// What the window names as its `initialFirstResponder`: the container the selected tab's content
--    /// is shown in.
--    ///
--    /// AppKit picks a first responder once, as the window is first placed on screen, and only from
--    /// the views that exist at that moment. The editor, the grid and the object list are SwiftUI and
--    /// do not exist yet, so left to itself AppKit took the first key view it could find, which was
--    /// the connections strip, and Command W then closed the connection instead of the tab. The
--    /// container takes no focus itself, so the window keeps it, and the content adopts it once it is
--    /// built (`SQLEditorCoordinator`, `SidebarOutlineView`), whatever else the window holds by then.
-+    // AppKit picks a first responder once, at first show, from the views that exist then, and the editor, the grid
-+    // and the object list are SwiftUI that arrives later. This container takes no focus and names no key view after
-+    // it until the window is on screen (`WorkspacePaneHost`), so the window stays vacant and the content adopts it
-+    // once built (`SQLEditorCoordinator`, `SidebarOutlineView`). Left to AppKit, the pick was the connections strip
-+    // (Command W closed the connection) or the sidebar filter.
-     var initialFirstResponderContainer: NSView {
-         detailPaneHost.view
-     }
- 
-+    var detailPaneHoldsKeyboard: Bool {
-+        guard let responder = view.window?.firstResponder as? NSView else { return false }
-+        return responder.isDescendant(of: detailPaneHost.view)
-+    }
-+
-+    // A connection switch takes the outgoing editor or grid out of the window. The keyboard follows into the incoming
-+    // connection's editor or grid; with neither built yet, its object list adopts the empty window (`SidebarOutlineView`).
-+    func keepKeyboardInDetailPane(detailHeldKeyboard: Bool) {
-+        guard detailHeldKeyboard, let window = view.window, window.firstResponder === window,
-+              let selected = workspaces.selected, selected.detailMode == .browse else { return }
-+        guard !focusQueryEditor() else { return }
-+        // Not the Focus Results command: a switch must not expand a results pane the user collapsed.
-+        _ = selected.sessionState?.coordinator.focusActiveGrid()
-+    }
-+
-     @discardableResult
-     func focusQueryEditor() -> Bool {
-         guard let textView = mountedQueryEditor, let window = view.window else { return false }
-```
-
-**File**: `apple/TablePro/Core/Services/Infrastructure/MainSplitViewController.swift` (modified, +2/-0)
-```diff
-@@ -687,8 +687,10 @@ internal final class MainSplitViewController: NSSplitViewController {
-         /// hands one over with a live session and no phase change to follow, so its panes still
-         /// held the empty view they were constructed with and the connection opened blank. This
-         /// costs a key comparison when nothing has moved, which is what the record is for.
-+        let detailHeldKeyboard = detailPaneHoldsKeyboard
-         syncSelectedPanes()
-         showSelectedPanes()
-+        keepKeyboardInDetailPane(detailHeldKeyboard: detailHeldKeyboard)
- 
-         /// A workspace put into Agent mode while another connection was on screen never reached
-         /// the branch that reveals its columns, because that branch only ever touched the selected
-```
-
-**File**: `apple/TablePro/Core/Services/Infrastructure/WorkspacePaneHost.swift` (modified, +12/-1)
-```diff
-@@ -23,7 +23,7 @@ internal final class WorkspacePaneHost: NSViewController {
-     private(set) var shown: NSViewController?
- 
-     override internal func loadView() {
--        view = NSView()
-+        view = PaneContainerView()
-     }
- 
-     /// A pane can publish a height, which the editor tab strip does when it wraps onto more rows.
-@@ -81,3 +81,14 @@ internal final class WorkspacePaneHost: NSViewController {
-         show(nil)
-     }
+@@ -556,7 +556,7 @@ fn journaled(root: &TempDir) -> (ConnectionStore, Arc<Recording>) {
+     (store, journal)
  }
-+
-+// A window names a pane container its initial first responder (`MainSplitViewController.initialFirstResponderContainer`)
-+// so the tab content can take the first focus once SwiftUI builds it. The container refuses focus, and AppKit's
-+// first-show pick then walks on to the next key view, the sidebar filter of a window that opens already connected.
-+// Naming none until the window is on screen stops that walk; once it is, Tab from the empty window follows the loop.
-+private final class PaneContainerView: NSView {
-+    override var nextValidKeyView: NSView? {
-+        guard window?.isVisible == true else { return nil }
-+        return super.nextValidKeyView
-+    }
-+}
+ 
+-fn ssh_profile() -> SshProfile {
++pub(super) fn ssh_profile() -> SshProfile {
+     SshProfile {
+         id: Uuid::new_v4(),
+         name: "p".to_owned(),
 ```
 
-**File**: `apple/TablePro/Views/DataGrid/DataGridFindBar.swift` (modified, +6/-2)
+**File**: `core/crates/storage/src/connections/written_tests.rs` (modified, +5/-8)
 ```diff
-@@ -34,9 +34,13 @@ struct DataGridFindBar: View {
-         }
-         // The search field clears on the first Escape and hands the second on, which closes the bar.
-         .onExitCommand { model.hideFind() }
-+        // Read by the field as it is built; a later rebuild of the bar, as on a tab switch, takes no focus.
-+        .onAppear { find.requestsFieldFocus = false }
-         // Find while the bar is already open moves focus back to its field.
-         .onReceive(find.$isVisible.dropFirst()) { isVisible in
--            if isVisible { focusRequest += 1 }
-+            guard isVisible else { return }
-+            find.requestsFieldFocus = false
-+            focusRequest += 1
-         }
-         // Configuration changes bump this revision; the bar observes nothing else on the model.
-         .onReceive(model.$editabilityRevision) { _ in
-@@ -53,7 +57,7 @@ struct DataGridFindBar: View {
-                 text: termBinding,
-                 placeholder: String(localized: "Find"),
-                 onSubmit: { step(forward: NSApp.currentEvent?.modifierFlags.contains(.shift) != true) },
--                focusOnAppear: true,
-+                focusOnAppear: find.requestsFieldFocus,
-                 focusTrigger: focusRequest,
-                 accessibilityIdentifier: "grid-find-field"
-             )
-```
-
-**File**: `apple/TablePro/Views/Main/Extensions/MainContentCommandActions+Switchers.swift` (modified, +0/-2)
-```diff
-@@ -22,8 +22,6 @@ internal extension MainContentCommandActions {
-     /// mean.
-     func openScopeSwitcher(_ target: ContainerSwitchTarget?) {
-         guard let coordinator, canSwitchContainer(target, on: coordinator) else { return }
--        /// Clearing first responder is what lets the popover's search field take focus.
--        coordinator.contentWindow?.makeFirstResponder(nil)
-         presentDatabaseSwitcher(on: coordinator, target: target)
-     }
+@@ -2,12 +2,11 @@ use std::path::Path;
+ 
+ use secrecy::SecretString;
+ use tempfile::TempDir;
+-use uuid::Uuid;
+ 
+-use super::super::store_tests::plain;
++use super::super::store_tests::{plain, ssh_profile};
+ use super::*;
+ use crate::StoragePaths;
+-use crate::connections::{LibraryChange, LibraryWrite, SshProfile};
++use crate::connections::{LibraryChange, LibraryWrite};
+ 
+ fn paths(root: &TempDir) -> StoragePaths {
+     StoragePaths::under(root.path(), "tablepro", "app.tablepro.TablePro")
+@@ -66,10 +65,8 @@ fn a_pull_reports_what_it_wrote_once() {
+ fn a_host_write_is_not_reported() {
+     let root = TempDir::new().expect("tempdir");
+     let store = reporting(&root);
+-    let profile: SshProfile = serde_json::from_value(serde_json::json!({
+-        "id": Uuid::from_u128(7), "name": "edge", "host": "edge.example.com", "auth": {"kind": "agent"},
+-    }))
+-    .expect("a profile");
++    let profile = ssh_profile();
++    let profile_id = profile.id;
+ 
+     let with_profile = store
+         .replace_library_blocking::<StorageError>(
+@@ -110,7 +107,7 @@ fn a_host_write_is_not_reported() {
+         .expect("a rebuild");
+ 
+     assert!(written.is_some());
+-    assert_eq!(deleted, [Uuid::from_u128(7)]);
++    assert_eq!(deleted, [profile_id]);
+     assert!(store.take_written_blocking().expect("take").is_empty());
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `78ec49e7` (2026-11-24)
-**Commit Message**: fix(mcp): bind approvals to the scope they showed and harden scope rules (#4440)
+### Incident Patch 3: `dc152430` (2026-11-27)
+**Commit Message**: fix(windows): make the command palette's commit event args a class (#4638)
 
-**File**: `apple/Configs/PluginKit.xcconfig` (modified, +1/-1)
+**File**: `windows/src/TablePro.App/Views/CommandPalette.xaml.cs` (modified, +6/-1)
 ```diff
-@@ -1,3 +1,3 @@
- // When to raise each, and how the build stamps them: .claude/rules/plugin-system.md, ABI.
--TABLEPRO_PLUGINKIT_VERSION = 46
-+TABLEPRO_PLUGINKIT_VERSION = 47
- TABLEPRO_PLUGINKIT_MINIMUM_VERSION = 19
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSQLGrammar/SQLSessionStateClassifier.swift` (modified, +142/-0)
-```diff
-@@ -521,6 +521,148 @@ extension SQLSessionStateClassifier {
-     }
- }
+@@ -11,7 +11,12 @@
  
-+// MARK: - Current database
-+
-+extension SQLSessionStateClassifier {
-+    // The MySQL statements that cannot leave a session in another database: reads and writes of rows, definitions, a
-+    // plain variable assignment, transaction control, locks, table maintenance and privileges. Everything else may: a
-+    // `USE`, `SET STATEMENT ... FOR`, `HANDLER`, `LOAD`, `DO`, code run by `EXECUTE` or `CALL`, a block, an unknown word.
-+    private static let mySQLStayHeads: Set<String> = [
-+        "SELECT", "WITH", "TABLE", "VALUES", "INSERT", "REPLACE", "UPDATE", "DELETE", "SHOW", "CREATE", "ALTER", "DROP",
-+        "TRUNCATE", "RENAME", "SET", "START", "BEGIN", "COMMIT", "ROLLBACK", "SAVEPOINT", "RELEASE", "XA", "LOCK", "UNLOCK",
-+        "ANALYZE", "OPTIMIZE", "CHECK", "CHECKSUM", "REPAIR", "GRANT", "REVOKE", "FLUSH", "KILL", "HELP",
-+    ]
-+    private static let mySQLExplainHeads: Set<String> = ["EXPLAIN", "DESCRIBE", "DESC"]
-+    private static let mySQLExplainModifiers: Set<String> = [
-+        "ANALYZE", "EXTENDED", "PARTITIONS", "FORMAT", "JSON", "TREE", "TRADITIONAL",
-+    ]
-+    // An explained subject that opens a statement of its own rather than naming a table or a query.
-+    private static let mySQLStatementWords: Set<String> = ["USE", "CALL", "EXECUTE", "DO", "HANDLER", "LOAD", "PREPARE"]
-+
-+    // T-SQL runs a batch's statements with no `;` between them, so these count anywhere in one as code. A batch that
-+    // opens with a word not listed below calls a procedure by its name, or is read as one.
-+    private static let sqlServerMoveWords: Set<String> = ["USE", "EXEC", "EXECUTE", "SP_EXECUTESQL"]
-+    private static let sqlServerStayHeads: Set<String> = [
-+        "SELECT", "WITH", "INSERT", "UPDATE", "DELETE", "MERGE", "CREATE", "ALTER", "DROP", "TRUNCATE", "DECLARE", "SET",
-+        "BEGIN", "COMMIT", "ROLLBACK", "SAVE", "PRINT", "IF", "ELSE", "WHILE", "RETURN", "GRANT", "REVOKE", "DENY",
-+        "BACKUP", "RESTORE", "DBCC", "RAISERROR", "THROW", "WAITFOR", "OPEN", "FETCH", "CLOSE", "DEALLOCATE", "BULK",
-+        "CHECKPOINT", "KILL", "GOTO", "BREAK", "CONTINUE", "END", "ENABLE", "DISABLE", "REVERT", "RECONFIGURE",
-+    ]
-+
-+    // Whether the statements may leave the session in another database, which a host that pins its own driver cannot
-+    // see. Only MySQL's and SQL Server's sessions move, and only a statement known to stay is ruled out. Text it cannot
-+    // read whole, too long, with more executable-comment versions than the reader takes, or with a T-SQL move word
-+    // behind a literal or comment that never closes, is not ruled out.
-+    public static func mayChangeDatabase(
-+        ofStatements statements: [String],
-+        dialect: SQLSessionDialect,
-+        grammar: SQLLexicalGrammar
-+    ) -> Bool {
-+        guard dialect == .mySQL || dialect == .sqlServer else { return false }
-+        return statements.contains { text in
-+            guard (text as NSString).length <= classifiedPrefixLength else { return true }
-+            if dialect == .sqlServer {
-+                // T-SQL reads a word glued to a number on its own, so `SELECT 1USE x` runs a USE: only its tokens say.
-+                if holdsWord(of: sqlServerMoveWords, in: text), leavesSpanOpen(text, grammar: grammar) { return true }
-+            } else if opensWithStayHead(text) {
-+                return false
-+            }
-+            return SQLStatementClassifier.statements(of: text, grammar: grammar).contains { statement in
-+                guard let readings = SQLExecutableCommentReadings.texts(of: statement, grammar: grammar) else { return true }
-+                return Array(readings).contains { reading in
-+                    SQLStatementClassifier.runnableStatements(of: reading, grammar: grammar).contains {
-+                        mayMove($0, dialect: dialect, grammar: grammar)
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    // One plain MySQL statement whose first word is known to stay, read without the grammar: no `;`, comment or
-+    // backslash can hide a second statement. SET, BEGIN and the explain words need the word after them, so they take
-+    // the full read, and so does a word MySQL reads on into a digit, `$` or a letter outside ASCII, as in `SELECT1`.
-+    private static func opensWithStayHead(_ text: String) -> Bool {
-+        guard !text.contains(";"), !text.contains("/*"), !text.contains("--"), !text.contains("#"), !text.contains("\\")
-+        else { return false }
-+        let opening = text.drop { $0.isWhitespace || $0 == "(" }
-+        let head = opening.prefix { $0.isASCII && ($0.isLetter || $0 == "_") }
-+        if let next = opening.dropFirst(head.count).first, next.isLetter || next.isNumber || next == "$" { return false }
-+        let word = head.uppercased()
-+        guard word != "SET", word != "BEGIN" else { return false }
-+        return mySQLStayHeads.contains(word)
-+   
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProPluginKitTests/DriverPluginSchemaSwitchScopeTests.swift` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+import Foundation
-+import TableProPluginKit
-+import Testing
-+
-+private final class LabelOnlySchemaPlugin: NSObject, TableProPlugin, DriverPlugin {
-+    static let pluginName = "Label Only"
-+    static let pluginVersion = "1.0.0"
-+    static let pluginDescription = "Switches schemas without declaring where names resolve"
-+    static let capabilities: [PluginCapability] = [.databaseDriver]
-+
-+    static let databaseTypeId = "LabelOnlyDB"
-+    static let databaseDisplayName = "Label Only"
-+    static let iconName = "cylinder"
-+    static let defaultPort = 1
-+    static let supportsSchemaSwitching = true
-+
-+    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
-+        fatalError("Not used in tests")
-+    }
-+}
-+
-+private final class SearchPathSchemaPlugin: NSObject, TableProPlugin, DriverPlugin {
-+    static let pluginName = "Search Path"
-+    static let pluginVersion = "1.0.0"
-+    static let pluginDescription = "Moves the session's name resolution on a schema switch"
-+    static let capabilities: [PluginCapability] = [.databaseDriver]
-+
-+    static let databaseTypeId = "SearchPathDB"
-+    static let databaseDisplayName = "Search Path"
-+    static let iconName = "cylinder"
-+    static let defaultPort = 2
-+    static let supportsSchemaSwitching = true
-+    static let schemaSwitchScopesUnqualifiedNames = true
-+
-+    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
-+        fatalError("Not used in tests")
-+    }
-+}
-+
-+struct DriverPluginSchemaSwitchScopeTests {
-+    @Test("A driver that declares nothing reads as a label-only schema switch")
-+    func defaultIsLabelOnly() {
-+        let pluginType: any DriverPlugin.Type = LabelOnlySchemaPlugin.self
-+        let scoped = pluginType.schemaSwitchScopesUnqualifiedNames
-+        #expect(!scoped)
-+    }
-+
-+    @Test("A driver's own declaration is what it reports")
-+    func overrideIsReported() {
-+        let pluginType: any DriverPlugin.Type = SearchPathSchemaPlugin.self
-+        let scoped = pluginType.schemaSwitchScopesUnqualifiedNames
-+        #expect(scoped)
-+    }
-+}
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProPluginKitTests/DriverPluginStatementSwitchTests.swift` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+import Foundation
-+import TableProPluginKit
-+import Testing
-+
-+private final class SessionDatabasePlugin: NSObject, TableProPlugin, DriverPlugin {
-+    static let pluginName = "Session Database"
-+    static let pluginVersion = "1.0.0"
-+    static let pluginDescription = "Keeps its database on the session, where a statement can move it"
-+    static let capabilities: [PluginCapability] = [.databaseDriver]
-+
-+    static let databaseTypeId = "SessionDB"
-+    static let databaseDisplayName = "Session Database"
-+    static let iconName = "cylinder"
-+    static let defaultPort = 1
-+
-+    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
-+        fatalError("Not used in tests")
-+    }
-+}
-+
-+private final class PerRequestDatabasePlugin: NSObject, TableProPlugin, DriverPlugin {
-+    static let pluginName = "Per Request"
-+    static let pluginVersion = "1.0.0"
-+    static let pluginDescription = "Names its database on every request"
-+    static let capabilities: [PluginCapability] = [.databaseDriver]
-+
-+    static let databaseTypeId = "PerRequestDB"
-+    static let databaseDisplayName = "Per Request"
-+    static let iconName = "cylinder"
-+    static let defaultPort = 2
-+    static let statementsCanSwitchDatabase = false
-+
-+    func createDriver(config: DriverConnectionConfig) -> any PluginDatabaseDriver {
-+        fatalError("Not used in tests")
-+    }
-+}
-+
-+struct DriverPluginStatementSwitchTests {
-+    @Test("A driver that declares nothing can have its database moved by a statement")
-+    func defaultIsTrue() {
-+        let pluginType: any DriverPlugin.Type = SessionDatabasePlugin.self
-+        let switches = pluginType.statementsCanSwitchDatabase
-+        #expect(switches)
-+    }
-+
-+    @Test("A driver's own declaration is what it reports")
-+    func overrideIsReported() {
-+        let pluginType: any DriverPlugin.Type = PerRequestDatabasePlugin.self
-+        let switches = pluginType.statementsCanSwitchDatabase
-+        #expect(!switches)
-+    }
-+}
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSQLGrammarTests/SQLSessionStateClassifierTests.swift` (modified, +131/-0)
-```diff
-@@ -406,4 +406,135 @@ struct SQLSessionStateClassifierTests {
-     func quickCheckKeepsEveryRule(sql: String, dialect: SQLSessionDialect) {
-         #expect(SQLSessionStateQuickCheck.mayChangeSession(sql, dialect: dialect))
-     }
-+
-+    // MARK: - Current database
-+
-+    private func movesDatabase(_ sql: String, _ dialect: SQLSessionDialect) -> Bool {
-+        SQLSessionStateClassifier.mayChangeDatabase(
-+            ofStatements: [sql], dialect: dialect, grammar: Self.grammar(Self.engines[dialect] ?? "")
-+        )
-+    }
-+
-+    @Test("USE moves a MySQL or SQL Server session to another database, in any spelling the server reads", arguments: [
-+        ("USE production", SQLSessionDialect.mySQL),
-+        ("use `production`;", .mySQL),
-+        ("SELECT 1; USE production", .mySQL),
-+        ("/*!40000 USE production */", .mySQL),
-+        ("\\u production", .mySQL),
-+        ("USE [production]", .sqlServer),
-+        ("SELECT 1\nUSE production", .sqlServer),
-+    ])
-+    func useMovesTheDatabase(sql: String, dialect: SQLSessionDialect) {
-+        #expect(movesDatabase(sql, dialect))
-+    }
-+
-+    // Past the reader's version limit it reads nothing, and the text as written blanks every executable comment.
-+    @Test("A USE behind more executable-comment versions than the reader takes is not ruled out")
-+    func useBehindTooManyVersionsMoves() {
-+        let versions = (10_000...10_032).map { "/*!\($0) */" }.joined(separator: " ")
-+        #expect(movesDatabase("/*! USE production */ \(versions)", .mySQL))
-+    }
-+
-+    @Test("Code the reader cannot see into may switch the database too", arguments: [
-+        ("EXECUTE IMMEDIATE 'USE production'", SQLSessionDialect.mySQL),
-+        ("PREPARE s FROM 'SELECT 1'; EXECUTE s", .mySQL),
-+        ("CALL archive_orders()", .mySQL),
-+        ("BEGIN NOT ATOMIC USE production; END", .mySQL),
-+        ("outer: BEGIN NOT ATOMIC SELECT 1; END", .mySQL),
-+        ("EXEC('USE production')", .sqlServer),
-+        ("EXECUTE sp_executesql N'USE production'", .sqlServer),
-+        ("sp_executesql N'USE production'", .sqlServer),
-+        ("EXEC dbo.archive_orders", .sqlServer),
-+    ])
-+    func opaqueCodeMovesTheDatabase(sql: String, dialect: SQLSessionDialect) {
-+        #expect(movesDatabase(sql, dialect))
-+    }
-+
-+    @Test("Only a statement known to stay is ruled out: a wrapped USE, HANDLER, DO, LOAD or an unknown word may move", arguments: [
-+        ("SET STATEMENT max_statement_time=1 FOR USE production", SQLSessionDialect.mySQL),
-+        ("HANDLER orders OPEN", .mySQL),
-+        ("DO SLEEP(0)", .mySQL),
-+        ("LOAD DATA INFILE 'rows.csv' INTO TABLE orders", .mySQL),
-+        ("FROBNICATE production", .mySQL),
-+        ("EXPLAIN USE production", .mySQL),
-+        ("archive_orders 1", .sqlServer),
-+    ])
-+    func unknownOrWrappedStatementsMove(sql: String, dialect: SQLSessionDialect) {
-+        #expect(movesDatabase(sql, dialect))
-+    }
-+
-+    @Test("A statement on the stay list moves nothing, alone or among others", arguments: [
-+        "SELECT 1", "WITH a AS (SELECT 1) SELECT * FROM a", "INSERT INTO t VALUES (1)", "REPLACE INTO t VALUES (1)",
-+        "UPDATE t SET a = 1", "DELETE FROM t", "SHOW TABLES", "DESCRIBE orders", "DESC orders", "EXPLAIN SELECT 1",
-+        "EXPLAIN FORMAT=JSON SELECT 1", "CREATE TABLE t (a INT)", "ALTER TABLE t ADD b INT", "DROP TABLE t",
-+        "TRUNCATE TABLE t", "RENAME TABLE a TO b", "SET @x = 1", "SET NAMES utf8mb4", "START TRANSACTION", "BEGIN",
-+        "COMMIT", "ROLLBACK", "SAVEPOINT s", "RELEASE SAVEPOINT s", "LOCK TABLES t READ", "UNLOCK TABLES",
-+        "ANALYZE TABLE t", "OPTIMIZE TABLE t", "CHECK TABLE t", "REPAIR TABLE t", "GRANT SELECT ON app.* TO reader",
-+        "REVOKE SELECT ON app.* FROM reader", "SELECT 1; UPDATE t SET a = 1; COMMIT",
-+    ])
-+    func stayListMovesNothing(sql: String) {
-+        #expect(!movesDatabase(sql, .mySQL))
-+    }
-+
-+    @Test("A T-SQL batch of statements that stay moves nothing, temporary tables included")
-+    func tsqlStayBatchMovesNothing() {
-+        #expect(!movesDatabase("SELECT * FROM #orders\nDECLARE @n int = 1\nIF @n > 0 PRINT 'x'", .sqlServer))
-+    }
-+
-+    @Test("A T-SQL move word in a literal, a quoted name or a comment moves nothing", arguments: [
-+        "SELECT N'use'", "SELECT [exec]", "-- use x", "SELECT \"execute\" FROM t /* sp_executesql */",
-+    ])
-+    func tsqlMoveWordOutsideCodeMovesNothing(sql: String) {
-+        #expect(!movesDatabase(sql, .sqlServer))
-+    }
-+
-+    @Test("A T-SQL move word read as code moves, and one behind a literal or comment that never closes is not ruled out", arguments: [
-+        "USE x", "EXEC p", "SELECT 1 EXEC p", "SELECT 'unclosed USE x", "SELECT 1 /* USE x",
-+    ])
-+    func tsqlMoveWordAsCodeMoves(sql: String) {
-+        #expect(movesDatabase(sql, .sqlServer))
-+    }
-+
-+    @Test("T-SQL reads a move word glued to a number on its own, so the batch moves", arguments: [
-+        "SELECT 1USE production", "SELECT 1e1USE x", 
-```
-
-**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/Extensions/TextView+/TextView+TextFormation.swift` (modified, +2/-0)
-```diff
-@@ -39,6 +39,8 @@ extension TextView: @retroactive TextInterface {
-     /// - Parameter mutation: The mutation to apply.
-     public func applyMutation(_ mutation: TextMutation) {
-         guard !mutation.isEmpty else { return }
-+        // A filter's edit skips `replaceCharacters`, so the delegate hears of it here: Vim's marks and `.` track every edit.
-+        delegate?.textView(self, willReplaceContentsIn: mutation.range, with: mutation.string)
-         editorUndoManager?.registerMutation(mutation)
-         textStorage.replaceCharacters(in: mutation.range, with: mutation.string)
-         selectionManager.didReplaceCharacters(
-```
-
-**File**: `apple/Plugins/BeancountDriverPlugin/BeancountPluginDriver.swift` (modified, +2/-0)
-```diff
-@@ -171,6 +171,8 @@ final class BeancountPluginDriver: PluginDatabaseDriver, @unchecked Sendable {
-     }
+ namespace TablePro.App.Views;
  
-     var currentSchema: String? { nil }
-+    // The ledger it opened, as the connection names it, so the host can tell a caller naming it from one naming another.
-+    var currentDatabase: String? { config.database }
-     var serverVersion: String? { lock.withLock { activeBackendVersion } }
-     var supportsSchemas: Bool { false }
-     var supportsTransactions: Bool { false }
-```
-
-**File**: `apple/Plugins/BigQueryDriverPlugin/BigQueryPlugin.swift` (modified, +1/-0)
-```diff
-@@ -38,6 +38,7 @@ final class BigQueryPlugin: NSObject, TableProPlugin, DriverPlugin {
-     static let supportsSchemaEditing = false
-     static let supportsDatabaseSwitching = false
-     static let supportsSchemaSwitching = true
-+    static let schemaSwitchScopesUnqualifiedNames = true
-     static let postConnectActions: [PostConnectAction] = [.selectSchemaFromLastSession]
-     static let supportsImport = false
-     static let supportsExport = true
-```
-
----
-
-### Incident Patch 3: `3eb0d7bc` (2026-11-24)
-**Commit Message**: docs(core): ADR 0046, a monthly self-hosted license has 7 days' grace (#4469)
-
-**File**: `core/docs/decisions/0045-perpetual-monthly-and-multi-year-licenses.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # 0045: A self-hosted license can be perpetual, monthly or prepaid for several years
+-public sealed record PaletteCommitEventArgs(PaletteItem Item, PaletteCommitIntent Intent) : System.EventArgs;
++public sealed class PaletteCommitEventArgs(PaletteItem item, PaletteCommitIntent intent) : EventArgs
++{
++    public PaletteItem Item { get; } = item;
++
++    public PaletteCommitIntent Intent { get; } = intent;
++}
  
--- **Status**: Accepted; amends 0044
-+- **Status**: Accepted; amends 0044; the grace of a monthly file superseded by 0046
- - **Date**: 2026-11-24
- 
- ## Context
-```
-
-**File**: `core/docs/decisions/0046-a-monthly-license-has-7-days-grace.md` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+# 0046: A monthly self-hosted license has 7 days' grace
-+
-+- **Status**: Accepted
-+- **Date**: 2026-11-24
-+
-+## Context
-+
-+[0044](0044-sync-through-one-service-run-by-us-or-on-premises.md) gives a license file 30 days' grace after `exp`, and [0045](0045-perpetual-monthly-and-multi-year-licenses.md) kept that for every type, monthly included. On 2026-11-24 the maintainer set a monthly file's grace to 7 days and kept 30 for the others. With 30 days, a monthly install that stopped paying would push for about another month.
-+
-+## Decision
-+
-+A license file states the end of its grace in a new `grace_until` claim: 7 days after `exp` on a monthly file, 30 days after `exp` on every other file that has one.
-+
-+- `grace_until` is a NumericDate (RFC 7519 section 2), a private claim beside `maintenance_until`.
-+- A file with `exp` has `grace_until`, later than its `exp`. A perpetual file has neither. The server, `license install` and the apps refuse a file that breaks this.
-+- Past `grace_until`, pushes are refused with `license_expired`, and pulls and administration keep working, as 0044 says for the end of the grace.
-+- The apps take the grace from the same claim, so a Mac and its server agree on when pushes stop.
-+- Nothing else in 0045 changes: the 3 days past the paid period, the renewal fetch, the banner and the log events.
-+
-+## Rationale
-+
-+- The issuer knows the type it sold. The server and the apps compare one date and hold no table of types and days, as no plan or price lives in their code.
-+- A date, like `exp` and `maintenance_until`, needs no arithmetic in the verifiers.
-+
-+## Consequences
-+
-+- A monthly install that stops paying keeps pushing for 10 days after its paid month ends: the 3 days of 0045, then 7 days' grace.
-+- A missed renewal fetch on a monthly install has 10 days to succeed, not 33. The server logs each failed fetch (0045), and the banner starts at `exp`.
-+- tablepro-cloud's issuer writes `grace_until`, and its verifier and the core's read it in place of `exp` plus 30 days.
-+
-+## Alternatives considered
-+
-+- **A `license_type` of `monthly`, mapped to 7 days in the server and the apps.** Each verifier would carry a table of types and days.
-+- **A grace length in days.** Each verifier would add it to `exp`, where a date is compared as it stands.
-+- **Working out monthly from `exp` minus `nbf`.** A rule that guesses the type from the dates, and an evaluation file is about a month long too.
-```
-
-**File**: `core/docs/decisions/README.md` (modified, +2/-1)
-```diff
-@@ -50,4 +50,5 @@ The format, the statuses and how a later ADR changes an earlier one follow [the
- | [0042](0042-a-mysql-result-can-be-wider-than-4096-columns.md) | A MySQL result can be wider than 4,096 columns | Accepted | sqlx-mysql 0.9.1 refuses a result set past 4,096 columns, the limit for a table, not a SELECT; sqlx-mysql and sqlx-core come from `TableProApp/sqlx`, the v0.9.1 tag with the refusal dropped and the claimed count's reservation capped at 4,096, until a release has the fix. |
- | [0043](0043-macos-later-slices-importers-mcp-ssh.md) | Importers, the MCP server and SSH move with the macOS app's later slices | Accepted | Importers after slices 2 and 3 through `ForeignImportReview`, the MCP server after the last engine of slice 5 with an `McpAppHost`, SSH with each engine on the in-process transport reading the app's own `known_hosts`; each Swift copy goes with its slice. |
- | [0044](0044-sync-through-one-service-run-by-us-or-on-premises.md) | Sync goes through one TablePro service, run by us or entirely on a customer's servers | Accepted; the license types and the calls to tablepro.app amended by 0045 | Team Library's store becomes one record store with personal, history and team scopes under `/v2/sync`; one tablepro-cloud binary runs as SaaS or fully on-premises under a profile with an offline license; `tablepro-sync` in the core is the client for every app, macOS first; secrets and history sync end to end encrypted with signed key objects, gated by an internal security review; history is kept until deleted. |
--| [0045](0045-perpetual-monthly-and-multi-year-licenses.md) | A self-hosted license can be perpetual, monthly or prepaid for several years | Accepted | A file carries `exp` or `maintenance_until`; a perpetual file covers each release dated on or before its maintenance end, and `migrate up` refuses a later one; an opt-in daily fetch from tablepro.app, with the installed file as the bearer token, renews any type and is required for monthly; signing, claims, seats and grace stay as 0044 set them. |
-+| [0045](0045-perpetual-monthly-and-multi-year-licenses.md) | A self-hosted license can be perpetual, monthly or prepaid for several years | Accepted; the grace of a monthly file superseded by 0046 | A file carries `exp` or `maintenance_until`; a perpetual file covers each release dated on or before its maintenance end, and `migrate up` refuses a later one; an opt-in daily fetch from tablepro.app, with the installed file as the bearer token, renews any type and is required for monthly; signing, claims, seats and grace stay as 0044 set them. |
-+| [0046](0046-a-monthly-license-has-7-days-grace.md) | A monthly self-hosted license has 7 days' grace | Accepted | A file with `exp` carries `grace_until`, 7 days after `exp` on a monthly file and 30 days on the others; past it pushes are refused with `license_expired`, and the server and the apps read the claim instead of adding 30 days. |
+ // The command palette overlay: a Popup over the owning window's Root, a search box, a scope bar and the ranked list the
+ // PaletteModel feeds. It mirrors the macOS QuickSwitcher panel, which WinUI has no borderless NSPanel for.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4483** (2026-11-25): docs(core): ADR 0055, managed policies for the sync provider and tablepro.app traffic (@datlechin)
-- **PR #4480** (2026-11-25): docs(core): ADR 0050, a self-hosted license renewal is requested by tablepro.app and signed by the operator (@datlechin)
-- **PR #4479** (2026-11-25): feat(filter): list the filter column picker alphabetically on request (@datlechin)
-- **PR #4478** (2026-11-25): fix(focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection (@datlechin)
-- **PR #4477** (2026-11-25): feat(ai): read models from each provider and a shared catalog (@datlechin)
-- **PR #4476** (2026-11-24): perf(dashboard): publish one board per Server Dashboard refresh (@datlechin)
+- **PR #4641** (2026-11-27): test(core-storage): the report test builds its profile without serde_json::json! (@datlechin)
+- **PR #4640** (2026-11-27): fix(windows): mark ShortcutRecorderButton partial for the AOT publish (@datlechin)
+- **PR #4639** (2026-11-27): fix(linux): read the assistant message text through ChatMessage::text() (@datlechin)
+- **PR #4638** (2026-11-27): fix(windows): make the command palette's commit event args a class (@datlechin)
+- **PR #4637** (2026-11-27): feat(core): end-to-end sync engine, accounts and keys (ADR 0044, 0056) (@datlechin)
+- **PR #4636** (2026-11-27): fix(theme): make selections visible in every built-in theme (@datlechin)
 
 ---
 
@@ -2459,34 +1968,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. focus): keep the sidebar selection accent and the keyboard when a window opens o
+## X. windows): mark ShortcutRecorderButton partial for the AOT publish
 
 **RULE**:
-When implementing operations in `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `windows/src/TablePro.App/Controls/ShortcutRecorderButton.cs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32dc16b7`: focus): keep the sidebar selection accent and the keyboard when a window opens or switches connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `806d4c96`: windows): mark ShortcutRecorderButton partial for the AOT publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/TablePro/Core/DataGrid/DataGridModel+Find.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/TablePro.App/Controls/ShortcutRecorderButton.cs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        find.requestsFieldFocus = true
-        find.requestsFieldFocus = true
-        find.requestsFieldFocus = false
-        find.requestsFieldFocus = true
+internal sealed partial class ShortcutRecorderButton : Button
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+internal sealed class ShortcutRecorderButton : Button
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32dc16b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `806d4c96` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

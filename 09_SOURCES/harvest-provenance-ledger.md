@@ -13845,3 +13845,5 @@ Every entry in this ledger must capture:
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `7036495c` | Multi-dimensional audit evidence | 2026-11-27T15:45:39.375Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `f89d6750` | Multi-dimensional audit evidence | 2026-11-27T15:54:27.181Z |
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `0afa01aa` | Multi-dimensional audit evidence | 2026-11-27T15:54:29.102Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `3bba59f2` | Multi-dimensional audit evidence | 2026-11-27T16:03:02.396Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `806d4c96` | Multi-dimensional audit evidence | 2026-11-27T16:03:07.695Z |

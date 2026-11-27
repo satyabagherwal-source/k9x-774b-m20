@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T15:54:32.432Z",
-    "lastVerified": "2026-11-27T15:54:32.432Z",
+    "lastChecked": "2026-11-27T16:03:11.232Z",
+    "lastVerified": "2026-11-27T16:03:11.232Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T15:27:17.801Z",
+    "lastChecked": "2026-11-27T16:03:11.223Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T15:27:17.801Z"
+    "lastVerified": "2026-11-27T16:03:11.223Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1559,9 +1559,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-27T11:14:32.392Z",
+    "lastChecked": "2026-11-27T16:03:06.155Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-27T11:14:32.392Z"
+    "lastVerified": "2026-11-27T16:03:06.155Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2022,14 +2022,14 @@
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T16:00:07.470Z",
-    "lastVerified": "2026-11-26T16:00:07.470Z",
+    "lastChecked": "2026-11-27T16:03:00.949Z",
+    "lastVerified": "2026-11-27T16:03:00.949Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "1e5ae53caba1ec5855aa9f03a7ed303d33599a090d8191584b188006523d72e1",
+    "contentHash": "964805e790a0ea9933df1670fc3c1e93be883fe22a84b1d0a95941abeb3e302b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2945,9 +2945,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-26T20:49:47.160Z",
+    "lastChecked": "2026-11-27T16:03:08.957Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-26T20:49:47.160Z"
+    "lastVerified": "2026-11-27T16:03:08.957Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -6639,9 +6639,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-26T22:02:09.557Z",
+    "lastChecked": "2026-11-27T16:03:03.820Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-26T22:02:09.557Z"
+    "lastVerified": "2026-11-27T16:03:03.820Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -9547,14 +9547,14 @@
     "officialUrl": "https://github.com/TableProApp/TablePro",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-25T06:39:19.558Z",
-    "lastVerified": "2026-11-25T06:39:19.558Z",
+    "lastChecked": "2026-11-27T16:03:06.404Z",
+    "lastVerified": "2026-11-27T16:03:06.404Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "855d1580f0cddfe6392c867364203b7df91d0336c115afdd632ba1bd6bb22a9f",
+    "contentHash": "98801262b1d34e9ec59771db0503b71bf5fadcc0cd0f89d6e2a1ddc4d19cf78c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10030,9 +10030,9 @@
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",
     "officialUrl": "https://github.com/janreges/siteone-crawler",
-    "lastChecked": "2026-11-24T06:30:03.930Z",
+    "lastChecked": "2026-11-27T16:02:58.534Z",
     "revisionIdentifier": "f3d967b190",
-    "lastVerified": "2026-11-24T06:30:03.930Z"
+    "lastVerified": "2026-11-27T16:02:58.534Z"
   },
   "swiftwebui-swiftwebui": {
     "name": "SwiftWebUI",

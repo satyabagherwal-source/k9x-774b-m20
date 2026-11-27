@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:54:29.112Z",
-  "total_cycles_completed": 13110,
-  "total_learnings_persisted": 13110,
-  "total_rules_promoted": 11836,
+  "last_updated": "2026-11-27T16:03:07.706Z",
+  "total_cycles_completed": 13112,
+  "total_learnings_persisted": 13112,
+  "total_rules_promoted": 11838,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:49:34.047Z",
-      "repository": "margelo/react-native-mmkv",
-      "learningId": "learn-github-margelo-react-native-mmkv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T23:49:36.684Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:58:33.189Z",
       "repository": "TenStrip/10Eros-Max",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T15:54:29.112Z",
       "repository": "giancarloerra/SocratiCode",
       "learningId": "learn-github-giancarloerra-socraticode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:03:02.406Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:03:07.706Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
