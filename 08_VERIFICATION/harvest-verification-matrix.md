@@ -13696,3 +13696,6 @@
 | `CYCLE-20261127-KPNE` | `2026-11-27T05:57:33.530Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`67064cae...`) |
 | `CYCLE-20261127-VKZK` | `2026-11-27T06:06:00.704Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`1d7d1c26...`) |
 | `CYCLE-20261127-VRUH` | `2026-11-27T06:06:09.593Z` | `litmuschaos/litmus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10840` | Yes (`0120c6fd...`) |
+| `CYCLE-20261127-6KLX` | `2026-11-27T06:14:33.429Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`84ed3098...`) |
+| `CYCLE-20261127-6M1L` | `2026-11-27T06:14:35.289Z` | `oracle-devrel/oracle-ai-developer-hub` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10841` | Yes (`dca85962...`) |
+| `CYCLE-20261127-6YCJ` | `2026-11-27T06:14:51.235Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10842` | Yes (`1f343814...`) |

@@ -22498,5 +22498,20 @@
     "qualityScore": 2008,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-27T04:34:53.183Z"
+  },
+  {
+    "name": "oracle-ai-developer-hub",
+    "fullName": "oracle-devrel/oracle-ai-developer-hub",
+    "url": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Reference apps, notebooks, and workshops for RAG, vector and hybrid search, AI agents, and agent memory on Oracle AI Database and OCI Generative AI, with LangChain and LangGraph examples.",
+    "stars": 4495,
+    "forks": 859,
+    "openIssues": 27,
+    "language": "Jupyter Notebook",
+    "qualityScore": 2659,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-27T06:14:01.504Z"
   }
 ]

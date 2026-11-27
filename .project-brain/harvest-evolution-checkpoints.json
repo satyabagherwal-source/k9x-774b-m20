@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:06:15.660Z",
+  "last_updated": "2026-11-27T06:15:02.254Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T06:06:14.667Z",
@@ -2718,7 +2718,7 @@
       "staged_for_review": 0
     },
     "ytsaurus-ytsaurus-learnings.md": {
-      "processed_at": "2026-11-25T10:58:05.570Z",
+      "processed_at": "2026-11-27T06:15:01.050Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2783,7 +2783,7 @@
       "staged_for_review": 0
     },
     "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-23T21:05:00.846Z",
+      "processed_at": "2026-11-27T06:15:00.606Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4026,9 +4026,14 @@
       "processed_at": "2026-11-27T06:06:13.551Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "oracle-devrel-oracle-ai-developer-hub-learnings.md": {
+      "processed_at": "2026-11-27T06:14:54.734Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4842,
+  "total_dossiers_evaluated": 4845,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3625
+  "total_staged_for_review": 3628
 }

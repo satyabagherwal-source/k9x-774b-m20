@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-0AFC",
-    "timestamp": "2026-11-26T00:18:04.872Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "ae71faba075db48f2cd5690ed5a965fa193c585fc152425ace7787ef741e0909",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-AYDR",
-    "timestamp": "2026-11-26T00:26:22.479Z",
-    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "ac9e97bda3f636e3dd4abd52fb3f43122095093ec2e3720f007f3ff463259d39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LQ3W",
-    "timestamp": "2026-11-26T00:34:44.972Z",
-    "repository": "microsoft/Florence-2-base",
-    "learningId": "learn-huggingface-microsoft-florence-2-base",
-    "contentHash": "2beed75feacc704af399219a77dc3124bb23ee7e679f7a3a28b1ca462b6493e7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-LRFE",
     "timestamp": "2026-11-26T00:34:46.682Z",
     "repository": "indexable-inc/blaze",
@@ -7490,6 +7445,51 @@
     "repository": "litmuschaos/litmus",
     "learningId": "learn-github-litmuschaos-litmus",
     "contentHash": "0120c6fd87062857e97592d0fa2e8fe47f9820f45278794272aa94ddff018fe7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6KLX",
+    "timestamp": "2026-11-27T06:14:33.429Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "84ed3098eed3661c7789da94dacea90ef07c09600106f30bce0f144d0ae2ff83",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6M1L",
+    "timestamp": "2026-11-27T06:14:35.289Z",
+    "repository": "oracle-devrel/oracle-ai-developer-hub",
+    "learningId": "learn-github-oracle-devrel-oracle-ai-developer-hub",
+    "contentHash": "dca859621fec710ac8b2565a298756d4c40a6f3ddd3372631fb30212c59b2eca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6YCJ",
+    "timestamp": "2026-11-27T06:14:51.235Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -5470,3 +5470,7 @@ https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-27T04:36:37.793Z] ---
 # [MOBILE-CROSS-PLATFORM] GeoPortApp/GeoPort (2008 score) - Location Simulation Suite for macOS, Windows, Linux & Untethered Standalone iOS 
 https://github.com/GeoPortApp/GeoPort
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-27T06:14:24.756Z] ---
+# [DATABASE-STORAGE-ENGINES] oracle-devrel/oracle-ai-developer-hub (2659 score) - Reference apps, notebooks, and workshops for RAG, vector and hybrid search, AI a
+https://github.com/oracle-devrel/oracle-ai-developer-hub

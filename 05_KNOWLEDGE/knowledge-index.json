@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T06:06:15.484Z",
-  "total_verified_learnings": 9140,
+  "last_updated": "2026-11-27T06:15:02.074Z",
+  "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26403,
+  "total_items": 26412,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -239151,8 +239151,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "4fc0fe7e",
-      "content_hash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
+      "source_version": "ee4f1331",
+      "content_hash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -239210,6 +239210,11 @@
           "number": 10675,
           "title": "Allow toggling network throttler IPC via node dynamic config",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10842,
+          "title": "Fix Arrow writer crashes on optional<yson> nested in composite types",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239217,7 +239222,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:20:15.263Z",
+      "verified_at": "2026-11-27T06:14:51.004Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239271,10 +239276,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "4fc0fe7e",
-      "content_hash": "c1fd41f524bc67b172514ee5637b06e63b5134079886e06033d08765524b7e5f",
+      "source_version": "ee4f1331",
+      "content_hash": "2b717f533092e80bff5d5f08458e9bdbf9a6ec45f4c6cd4898a6d90b730df61d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:20:16.168Z"
+      "persisted_at": "2026-11-27T06:14:51.854Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -239332,9 +239337,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5a3efbee4d95c6fdf4792be66dd3e044164e7e2320305d0636236b6db2262e5",
+      "content_hash": "d5ac297f030853871cdbaa7cdab900705e30567e724819a3d3cff981dc5fbd56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:58:06.479Z"
+      "persisted_at": "2026-11-27T06:15:02.074Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -242073,7 +242078,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
+      "content_hash": "84ed3098eed3661c7789da94dacea90ef07c09600106f30bce0f144d0ae2ff83",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -242082,7 +242087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:04:38.094Z",
+      "verified_at": "2026-11-27T06:14:33.159Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242099,9 +242104,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
-      "content_hash": "d9c758b5a92130a99e4033931a40c96748b2ebf60535ec32aa3a8e5fd8fb692c",
+      "content_hash": "111ee31a65793b5c7eea990f317bd595854cfa49d1d5d03710d79dc2e021cecb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:04:38.626Z"
+      "persisted_at": "2026-11-27T06:14:33.658Z"
     },
     "learn-github-sharkdp-fd": {
       "learning_id": "learn-github-sharkdp-fd",
@@ -242337,9 +242342,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "245eeba4cf5156ff8613b12165514d18442410f235a247ac536aa951ce28669d",
+      "content_hash": "f8575a377aa3735a01e910ce75fb54a1450a33ff9a672dc05e13caef28ea5a7c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:05:01.101Z"
+      "persisted_at": "2026-11-27T06:15:00.840Z"
     },
     "candidate_directive-build-update-gradle-wrapper-to-9-9-1": {
       "item_id": "candidate_directive-build-update-gradle-wrapper-to-9-9-1",
@@ -258632,10 +258637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "597eabf7",
-      "content_hash": "b8b2a89800676f23dfc95f8c91ba0323bf95b21f4ff6acc4616991f1bd2783fc",
+      "source_version": "ee4f1331",
+      "content_hash": "05bd0f37d928a7dc49fa0ce53fe7c269666ce9c16a51a52513a2458843532b35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:58:00.302Z"
+      "persisted_at": "2026-11-27T06:14:51.667Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -258657,9 +258662,9 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab360172660a03fdfc091dbc2c573ce3826a2041c683e5f7a6dc22a168a34af4",
+      "content_hash": "86707b5904df52cb3ffd5957fa8a59c5b4bd43fa83ba0fc25c8d0a71b9a1adc5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:58:06.280Z"
+      "persisted_at": "2026-11-27T06:15:01.887Z"
     },
     "rule-8701": {
       "learning_id": "rule-8701",
@@ -362254,6 +362259,139 @@
       "content_hash": "b165d1b9d4d54a9a75a72de075b8193d317c3e8ed49099f5417b8cff5212558a",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T06:06:14.484Z"
+    },
+    "learn-github-oracle-devrel-oracle-ai-developer-hub": {
+      "learning_id": "learn-github-oracle-devrel-oracle-ai-developer-hub",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "oracle-devrel/oracle-ai-developer-hub",
+      "repository": "oracle-devrel/oracle-ai-developer-hub",
+      "slug": "oracle-devrel-oracle-ai-developer-hub",
+      "platform": "github",
+      "source_url": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+      "source_version": "d9ffc5eb",
+      "content_hash": "dca859621fec710ac8b2565a298756d4c40a6f3ddd3372631fb30212c59b2eca",
+      "dossier_path": "07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10841,
+          "title": "build(deps): bump the security-updates group across 13 directories with 4 update",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-27T06:14:35.038Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10841": {
+      "learning_id": "rule-10841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10841,
+      "title": "build(deps): bump the security-updates group across 13 directories with 4 update",
+      "source_url": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+      "source_version": "d9ffc5eb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T06:14:35.039Z"
+    },
+    "candidate_directive-build-deps-bump-the-security-updates-group-across-13-directories-with-4-update": {
+      "item_id": "candidate_directive-build-deps-bump-the-security-updates-group-across-13-directories-with-4-update",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-754J-build-deps-bump-the-security-updates-group-across-13-directories-with-4-update.md",
+      "title": "build(deps): bump the security-updates group across 13 directories with 4 update",
+      "repository": "oracle-devrel-oracle-ai-developer-hub-learnings",
+      "source_version": "HEAD",
+      "content_hash": "231c70261c8ce310fbf72730cd26a8c0a966ee2b3e1fb3f177e2b0345fe25c5d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:15:00.022Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oracle-devrel-oracle-ai-developer-hub-technical-construction-intelligence-oracle.md",
+      "title": "Technical Construction Intelligence: oracle-devrel/oracle-ai-developer-hub Core Invariants",
+      "repository": "oracle-devrel/oracle-ai-developer-hub",
+      "source_version": "d9ffc5eb",
+      "content_hash": "b471c3d6d1e2e3b6f96acc010648d714994a5a81b9bb3e184c83553f22c486f3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:14:35.723Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-oracle-devrel-oracle-ai-develo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-oracle-devrel-oracle-ai-develo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/oracle-devrel-oracle-ai-developer-hub-learnings-verification-protocol-empirical-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for oracle-devrel-oracle-ai-developer-hub-learnings",
+      "repository": "oracle-devrel-oracle-ai-developer-hub-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28522da4d02da627a93ef1de98db206133b8cb449e756e9f7dfff0a1de15fbdf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T06:15:00.421Z"
+    },
+    "rule-10842": {
+      "learning_id": "rule-10842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10842,
+      "title": "Fix Arrow writer crashes on optional<yson> nested in composite types",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "ee4f1331",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T06:14:51.004Z"
+    },
+    "candidate_directive-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types": {
+      "item_id": "candidate_directive-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6YJB-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types.md",
+      "title": "Fix Arrow writer crashes on optional<yson> nested in composite types",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "ee4f1331",
+      "content_hash": "663b6953b65bd1d4e8c5fc5f532a4f32d728d23116e003b7e8200de9b3a16f4e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:14:51.483Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oracle-devrel-oracle-ai-developer-hub-learnings-technical-construction-intellige.md",
+      "title": "Technical Construction Intelligence: oracle-devrel-oracle-ai-developer-hub-learnings Core Invariants",
+      "repository": "oracle-devrel-oracle-ai-developer-hub-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd6527427ddd0f7448ec8bc41a3efadfa367e50d9b6c5559a2bfb4d2433da3c7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:15:00.227Z"
+    },
+    "candidate_directive-yt-30225-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types": {
+      "item_id": "candidate_directive-yt-30225-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-76EV-yt-30225-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types.md",
+      "title": "YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e2d5d512bb89bcec2293822aefe252cfbabbadd3351873ac1f9bd0eb0e96b8d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:15:01.690Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T10:58:05.906Z",
+  "timestamp": "2026-11-27T06:15:01.556Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ytsaurus-ytsaurus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ytsaurus-ytsaurus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T10:58:05.906Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T06:15:01.556Z`  
 > **Learning ID**: `LEARN-EVO-ytsaurus-ytsaurus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus-ytsaurus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `597eabf7`  
+> **Source Version**: `ee4f1331`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T10:57:58.558Z  
+> **Timestamp**: 2026-11-27T06:14:50.116Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:57:58.553Z  
+> **Harvest Timestamp**: 2026-11-27T06:14:50.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2326 stars
+- **Stars / Engagement**: 2328 stars
 
 ---
 
@@ -1223,260 +1223,713 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e0724d5` (2026-11-25)
-**Commit Message**: crash aware capture for facade runners
+### Incident Patch 1: `97403463` (2026-11-26)
+**Commit Message**: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
 
-#### Crash-aware capture for facade runners ✎
+- {% cut "ai summary" %}
 
-A new `--qstorage-crash-aware` option makes QStorage capture flush each recorded metadata entry and its index immediately after every write, instead of buffering until the query commits. This allows replaying records that were written before a crash or forced termination. The option requires `--capture` or `--capture-full` and is rejected with an error otherwise.
+  - Crash fix. With enable_complex_types=%true, read_table could crash the proxy when an optional<yson> inside a struct, list, or dict held a value such as \{\}. These values now round-trip through Arrow.
+  - Wire-format change. The YtType=yson marker moves from the enclosing Arrow column to the nullable binary field that holds the value. A nested YSON string such as "abc" used to produce the three raw bytes abc. It now produces a complete binary YSON string.
+  - Arrow input. For a yson target, write_table now decodes and validates marked nested fields, including dictionary-encoded ones. For example, marked b"\[1;2;\]" becomes the list \[1, 2\]. An unmarked field or an explicit string target preserves the literal bytes. Malformed YSON is rejected when decoding.
+  - Omitted struct fields. On export, omitted trailing optional fields now appear as Arrow nulls.
 
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:195fac9cd80bae24f674847d77e3ad306696bca7
+  {% endcut %}
+* Changelog entry
+  Type: fix
+  Component: proxy
+commit_hash:2c968dfd2a935bc4e96fe213a178b7e9c660aeb8
 
-**File**: `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp` (modified, +14/-6)
+**File**: `yt/yt/library/formats/arrow_parser.cpp` (modified, +70/-31)
 ```diff
-@@ -205,6 +205,8 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
+@@ -2,6 +2,8 @@
+ #include "arrow_metadata_constants.h"
+ #include "arrow_helpers.h"
+ 
++#include <yt/yt/core/yson/pull_parser.h>
++
+ #include <yt/yt/client/formats/parser.h>
+ 
+ #include <yt/yt/client/table_client/helpers.h>
+@@ -21,6 +23,7 @@
+ #include <util/generic/buffer.h>
+ 
+ #include <util/stream/buffer.h>
++#include <util/stream/mem.h>
+ 
+ #include <contrib/libs/apache/arrow_next/cpp/src/arrow/api.h>
+ #include <contrib/libs/apache/arrow_next/cpp/src/arrow/type_fwd.h>
+@@ -793,27 +796,27 @@ class TArraySimpleVisitor
+     // String types.
+     arrow20::Status Visit(const arrow20::StringType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::StringArray>();
++        return VisitStringLike<arrow20::StringArray>();
      }
  
-     THashSet<TString> sqlFlags;
-+    TString qstorageDir = ".";
-+    bool qstorageCrashAware = false;
- 
-     NLastGetopt::TOpts opts = NLastGetopt::TOpts::Default();
- 
-@@ -418,9 +420,10 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
-             });
-     }
-     if (EnableQPlayer) {
--        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
--            QPlayerStorage_ = MakeFileQStorage(dir);
--        });
-+        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
-+        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
-+            .NoArgument()
-+            .SetFlag(&qstorageCrashAware);
-         opts.AddLongOption("op-id", "QStorage operation id").StoreResult(&OperationId).DefaultValue("dummy_op");
-         opts.AddLongOption("capture", "Write query metadata to QStorage").NoArgument().Handler0([this]() {
-             if (EQPlayerMode::None != QPlayerMode) {
-@@ -485,10 +488,15 @@ void TFacadeRunOptions::Parse(int argc, const char** argv) {
-         LangVer = *ProjectSettings.LangVer;
+     arrow20::Status Visit(const arrow20::LargeStringType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::LargeStringArray>();
++        return VisitStringLike<arrow20::LargeStringArray>();
      }
  
-+    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
-+        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
+     arrow20::Status Visit(const arrow20::BinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::BinaryArray>();
++        return VisitStringLike<arrow20::BinaryArray>();
+     }
+ 
+     arrow20::Status Visit(const arrow20::LargeBinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
++        return VisitStringLike<arrow20::LargeBinaryArray>();
+     }
+ 
+     arrow20::Status Visit(const arrow20::FixedSizeBinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
++        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
+     }
+ 
+     // Boolean type.
+@@ -830,14 +833,14 @@ class TArraySimpleVisitor
+ 
+     arrow20::Status Visit(const arrow20::Decimal128Type& type) override
+     {
+-        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
++        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+             return MakeDecimalBinaryValue<TDecimal::TValue128>(value, columnId, type.precision());
+         });
+     }
+ 
+     arrow20::Status Visit(const arrow20::Decimal256Type& type) override
+     {
+-        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
++        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+             return MakeDecimalBinaryValue<TDecimal::TValue256>(value, columnId, type.precision());
+         });
+     }
+@@ -1009,7 +1012,7 @@ class TArraySimpleVisitor
+     }
+ 
+     template <typename ArrayType>
+-    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
++    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
+     {
+         auto array = std::static_pointer_cast<ArrayType>(Array_);
+         YT_VERIFY(array->length() <= std::ssize(*RowValues_));
+@@ -1033,18 +1036,31 @@ class TArraySimpleVisitor
+     }
+ 
+     template <typename ArrayType>
+-    arrow20::Status ParseStringLikeArray()
+-    {
+-        // Note that MakeUnversionedValue actually has third argument in its signature,
+-        // which leads to a "too few arguments" in the point of its invocation if we try to pass
+-        // it directly to ParseStringLikeArray.
+-        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
+-            if (HasYsonTypeInMetadata(SchemaField_)) {
+-                ValidateYsonValue(value);
+-                return MakeUnversionedAnyValue(value, columnId);
+-            } else {
+-                return MakeUnversionedStringValue(value, columnId);
+-            }
++    arrow20::Status VisitStringLike()
++    {
++        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
++            HasYsonTypeInMetadata(SchemaField_))
++        {
++            return ParseYson<ArrayType>();
++        } else {
++            return ParseString<ArrayType>();
++        }
 +    }
-     if (QPlayerMode != EQPlayerMode::None) {
--        if (!QPlayerStorage_) {
--            QPlayerStorage_ = MakeFileQStorage(".");
--        }
-+        const TFileQStorageSettings settings{
-+            .BufferUntilCommit = !qstorageCrashAware,
-+            .AlwaysFlushIndex = qstorageCrashAware,
-+        };
-+        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
-         if (EQPlayerMode::Replay == QPlayerMode) {
-             try {
-                 auto reader = QPlayerStorage_->MakeReader(OperationId, {});
++
++    template <typename ArrayType>
++    arrow20::Status ParseYson()
++    {
++        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
++            ValidateYsonValue(value);
++            return MakeUnversionedAnyValue(value, columnId);
++        });
++    }
++
++    template <typename ArrayType>
++    arrow20::Status ParseString()
++    {
++        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
++            return MakeUnversionedStringValue(value, columnId);
+         });
+     }
+ 
+@@ -1276,31 +1292,31 @@ class TArrayCompositeVisitor
+     arrow20::Status Visit(const arrow20::StringType& type) override
+     {
+         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->type());
+-        return ParseStringLikeArray<arrow20::StringArray>();
++        return VisitStringLike<arrow20::StringArray>();
+     }
+ 
+     arrow20::Status Visit(const arrow20::LargeStringType& type) override
+     {
+         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->
 ```
 
----
-
-### Incident Patch 2: `0db4a5b2` (2026-11-25)
-**Commit Message**: Reject oversized buffered YSON strings and fix style
-commit_hash:22dc5ee5e104027a8e61e98ea0f3966838d650fd
-
-**File**: `yt/yt/core/yson/unittests/buffered_yson_writer_ut.cpp` (modified, +30/-2)
+**File**: `yt/yt/library/formats/arrow_writer.cpp` (modified, +48/-11)
 ```diff
-@@ -6,9 +6,13 @@
- #include <yt/yt/core/yson/stream.h>
- #include <yt/yt/core/yson/writer.h>
+@@ -22,6 +22,9 @@
+ #include <yt/yt/core/misc/blob_output.h>
+ #include <yt/yt/core/misc/error.h>
  
-+#include <library/cpp/yt/coding/varint.h>
++#include <yt/yt/core/yson/pull_parser.h>
++#include <yt/yt/core/yson/token_writer.h>
 +
- #include <util/string/escape.h>
-+#include <util/system/filemap.h>
+ #include <library/cpp/yt/memory/range.h>
  
- #include <array>
-+#include <limits>
- #include <stdexcept>
- #include <vector>
+ #include <util/stream/mem.h>
+@@ -238,11 +241,23 @@ TArrowSchemaType SerializeLeafColumnType(
+             };
  
-@@ -111,6 +115,30 @@ TEST_F(TBufferedYsonWriterTest, EmptyString)
-     TEST_SCALAR(TStringBuf(), String)
+         case ESimpleLogicalValueType::String:
++            return TArrowSchemaType{
++                .Type = flatbuf::Type_Binary,
++                .Offset = flatbuf::CreateBinary(*flatbufBuilder)
++                    .Union(),
++            };
++
+         case ESimpleLogicalValueType::Any:
+             return TArrowSchemaType{
+                 .Type = flatbuf::Type_Binary,
+                 .Offset = flatbuf::CreateBinary(*flatbufBuilder)
+                     .Union(),
++                .CustomMetadata = {
++                    flatbuf::CreateKeyValue(
++                        *flatbufBuilder,
++                        SerializeString(flatbufBuilder, YTTypeMetadataKey),
++                        SerializeString(flatbufBuilder, YTTypeMetadataValueYson)),
++                },
+             };
+ 
+         case ESimpleLogicalValueType::TzDate:
+@@ -1529,6 +1544,25 @@ void AppendSimpleTypeToBuffer(
+ {
+     auto simpleType = CastToV1Type(logicalType).first;
+ 
++    if (simpleType == ESimpleLogicalValueType::Any) {
++        auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
++        TBlob& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
++
++        // TODO(dagorokhov): Use a non-owning blob output adapter (YT-30459).
++        TBlobOutput output;
++        output.Blob() = std::move(valueBuffer);
++        {
++            TCheckedInDebugYsonTokenWriter writer(&output);
++            cursor.TransferComplexValue(&writer);
++            writer.Flush();
++        }
++        valueBuffer = std::move(output.Blob());
++
++        offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
++
++        return;
++    }
++
+     if (IsStringLikeType(simpleType)) {
+         auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
+         auto& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
+@@ -1538,6 +1572,7 @@ void AppendSimpleTypeToBuffer(
+         valueBuffer.Append(string.Data(), string.Size());
+         offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
+ 
++        cursor.Next();
+         return;
+     }
+ 
+@@ -1577,10 +1612,12 @@ void AppendSimpleTypeToBuffer(
+                 YT_ABORT();
+         }
+ 
++        cursor.Next();
+         return;
+     }
+ 
+     if (simpleType == ESimpleLogicalValueType::Null || simpleType == ESimpleLogicalValueType::Void) {
++        cursor.Next();
+         return;
+     }
+ 
+@@ -1636,6 +1673,8 @@ void AppendSimpleTypeToBuffer(
+         default:
+             THROW_ERROR_EXCEPTION("Column has unexpected nested type %Qlv", simpleType);
+     }
++
++    cursor.Next();
  }
  
-+TEST_F(TBufferedYsonWriterTest, BinaryStringLengthLimit)
+ void AppendNullSimpleTypeToBuffer(
+@@ -1794,12 +1833,9 @@ void FillBuffersForComplexType(
+     TYsonPullParserCursor& cursor)
+ {
+     switch (type->GetMetatype()) {
+-        case ELogicalMetatype::Simple: {
++        case ELogicalMetatype::Simple:
+             AppendSimpleTypeToBuffer(type, buffers, currentBufferIndex, cursor);
+-            cursor.Next();
+-
+             break;
+-        }
+ 
+         case ELogicalMetatype::Optional: {
+             // See https://ytsaurus.tech/docs/user-guide/storage/data-types#yson_optional
+@@ -1920,6 +1956,14 @@ void FillBuffersForComplexType(
+                     *cursor);
+             });
+ 
++            for (; fieldIndex < std::ssize(fields); ++fieldIndex) {
++                const auto& field = fields[fieldIndex];
++                FillBuffersForComplexTypeWithNulls(
++                    field.Type,
++                    buffers,
++                    currentBufferIndex);
++            }
++
+             break;
+         }
+ 
+@@ -2787,13 +2831,6 @@ class TArrowWriter
+ 
+             auto [typeType, typeOffset, childrenFields, customMetadata] = SerializeColumnType(&flatbufBuilder, columnSchema.LogicalType(), ArrowConfig_);
+ 
+-            if (CastToV1Type(columnSchema.LogicalType()).first == ESimpleLogicalValueType::Any) {
+-                customMetadata.push_back(flatbuf::CreateKeyValue(
+-                    flatbufBuilder,
+-                    flatbufBuilder.CreateString(YTTypeMetadataKey),
+-                    flatbufBuilder.CreateString(YTTypeMetadataValueYson)));
+-            }
+-
+             flatbuffers::Offset<flatbuf::DictionaryEncoding> dictionaryEncodingOffset;
+             auto indexTypeOffset = flatbuf::CreateInt(flatbufBuilder, /*bitWidth*/ 32, /*is_signed*/ false);
+ 
+```
+
+**File**: `yt/yt/library/formats/unittests/arrow_parser_ut.cpp` (modified, +111/-0)
+```diff
+@@ -1485,6 +1485,117 @@ TEST(TArrowParserTest, InvalidYsonMetadata)
+     }
+ }
+ 
++class TArrowYsonMetadataTest
++    : public ::testing::TestWithParam<bool>
 +{
-+    constexpr size_t MaxStringLength = std::numeric_limits<i32>::max();
-+    constexpr size_t MaxEncodedLength = 1 + MaxVarInt32Size + MaxStringLength;
++protected:
++    TTableSchemaPtr MakeSchema(TLogicalTypePtr type = OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any)))
++    {
++        if (GetParam()) {
++            type = StructLogicalType({{"value", "value", type}}, /*removedFieldStableNames*/ {});
++        }
++        return New<TTableSchema>(std::vector{TColumnSchema("value", type)});
++    }
 +
-+    // Reserve address space without touching the string's pages.
-+    TMappedAllocation allocation(MaxStringLength + 1);
-+    TStringBuf oversizedValue(allocation.Data(), MaxStringLength + 1);
++    std::string MakeInput(std::shared_ptr<arrow20::Array> array)
++    {
++        auto metadata = std::make_shared<arrow20::KeyValueMetadata>(
++            std::vector{YTTypeMetadataKey},
++            std::vector{YTTypeMetadataValueYson});
++        auto field = arrow20::field("value", array->type(), /*nullable*/ true, metadata);
++        if (GetParam()) {
++            auto type = arrow20::struct_({field});
++            array = std::make_shared<arrow20::StructArray>(type, array->length(), arrow20::ArrayVector{array});
++            field = arrow20::field("value", type);
++        }
++        return MakeOutputFromRecordBatch(arrow20::RecordBatch::Make(
++            arrow20::schema({field}),
++            array->length(),
++            {array}));
++    }
++};
 +
-+    TSizeLimitedOutputStream outputStream(/*limit*/ MaxEncodedLength);
-+    TBufferedYsonWriter writer(&outputStream, EYsonFormat::Binary);
-+    EXPECT_THROW_WITH_SUBSTRING(writer.OnStringScalar(oversizedValue), "signed 32-bit limit");
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++TEST_P(TArrowYsonMetadataTest, StringLikeYsonAndDictionaryValues)
++{
++    auto check = [&] (const std::shared_ptr<arrow20::Array>& array) {
++        TCollectingValueConsumer collectedRows(MakeSchema());
++        auto parser = CreateParserForArrow(&collectedRows);
++        parser->Read(MakeInput(array));
++        parser->Finish();
 +
-+    EXPECT_THROW_WITH_SUBSTRING(writer.OnKeyedItem(oversizedValue), "signed 32-bit limit");
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), 0u);
++        ASSERT_EQ(collectedRows.Size(), 1);
++        auto value = collectedRows.GetRowValue(0, "value");
++        if (GetParam()) {
++            EXPECT_EQ(ConvertToYsonTextStringStable(GetComposite(value)), "[42;]");
++        } else {
++            EXPECT_EQ(ConvertTo<i64>(GetAny(value)), 42);
++        }
++    };
++    auto checkBuilder = [&] (auto& builder, std::string_view value = "42") {
++        Verify(builder.Append(value));
++        auto array = builder.Finish().ValueOrDie();
++        check(array);
 +
-+    writer.OnStringScalar(TStringBuf(allocation.Data(), MaxStringLength));
-+    writer.Flush();
-+    EXPECT_EQ(outputStream.GetWrittenSize(), MaxEncodedLength);
++        arrow20::Int32Builder indicesBuilder;
++        Verify(indicesBuilder.Append(0));
++        auto indices = indicesBuilder.Finish().ValueOrDie();
++        check(std::make_shared<arrow20::DictionaryArray>(
++            arrow20::dictionary(arrow20::int32(), array->type()),
++            indices,
++            array));
++    };
++
++    arrow20::BinaryBuilder binaryBuilder;
++    checkBuilder(binaryBuilder);
++    arrow20::LargeBinaryBuilder largeBinaryBuilder;
++    checkBuilder(largeBinaryBuilder);
++    arrow20::StringBuilder stringBuilder;
++    checkBuilder(stringBuilder);
++    arrow20::LargeStringBuilder largeStringBuilder;
++    checkBuilder(largeStringBuilder);
++    arrow20::FixedSizeBinaryBuilder fixedSizeBinaryBuilder(arrow20::fixed_size_binary(3));
++    checkBuilder(fixedSizeBinaryBuilder, "42\0"s);
 +}
 +
- TEST_F(TBufferedYsonWriterTest, Int64)
- {
-     i64 value = 100500424242ll;
-@@ -431,7 +459,7 @@ TEST_F(TBufferedYsonWriterTest, ShortStringEscaping)
-         writer.OnStringScalar(input);
-         writer.Flush();
- 
--        TString expected = "\"";
-+        std::string expected = "\"";
-         expected += ::EscapeC(TStringBuf(input));
-         expected += '"';
-         EXPECT_EQ(expected, outputStream.Str());
-@@ -545,7 +573,7 @@ TEST_F(TBufferedYsonWriterTest, PrettyFormatWithLongIndent)
- 
- TEST_F(TBufferedYsonWriterTest, PrettyFormatDoesNotIndentAtNegativeDepth)
- {
--    TSizeLimitedOutputStream outputStream(64);
-+    TSizeLimitedOutputStream outputStream(/*limit*/ 64);
-     TBufferedYsonWriter writer(&outputStream, EYsonFormat::Pretty);
- 
-     EXPECT_NO_THROW({
-```
-
-**File**: `yt/yt/core/yson/writer.cpp` (modified, +18/-11)
-```diff
-@@ -15,6 +15,7 @@
- #include <array>
- #include <cmath>
- #include <cstring>
-+#include <limits>
- #include <utility>
- 
- namespace NYT::NYson {
-@@ -175,39 +176,39 @@ Y_NO_INLINE size_t EscapeShortStringToBuffer(char* buffer, TStringBuf value, siz
- }
- 
- template <class TOutput>
--void BufferedEscapeC(const char* str, size_t len, TOutput& output)
-+void BufferedEscapeC(const char* str, size_t len, TOutput* output)
- {
-     size_t literalBegin = 0;
-     for (size_t index = 0; index < len; ++index) {
-         if (str[index] != '"' && str[index] != '\\' && IsPrintable(str[index])) {
-             continue;
-         }
- 
--        output.Write(str + literalBegin, index - literalBegin);
-+        output->Write(str + literalBegin, index - literalBegin);
-         literalBegin = index + 1;
- 
--        auto* buffer = output.GetDirectWriteBuffer();
--        output.AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
-+        auto* buffer = output->GetDirectWriteBuffer();
-+        output->AdvanceDirectWrite(EscapeC(str[index], GetNextCharOrZero(str, len, index), buffer));
-     }
- 
--    output.Write(str + literalBegin, len - literalBegin);
-+    output->Write(str + literalBegin, len - literalBegin);
- }
- 
- template <class TOutput>
--void BufferedWriteUtf8String(const char* str, size_t len, TOutput& output)
-+void BufferedWriteUtf8String(const char* str, size_t len, TOutput* output)
- {
-     const auto* ustr = reinterpret_cast<const unsigned char*>(str);
-     for (size_t i = 0; i < len;) {
-         size_t runeLen;
-         YT_VERIFY(RECODE_OK == GetUTF8CharLen(runeLen, ustr + i, ustr + len));
-         if (runeLen > 1) {
--            output.Write(ustr + i, runeLen);
-+            output->Write(ustr + i, runeLen);
-             i += runeLen;
-         } else {
-             YT_ASSERT(1 == runeLen);
-             // #EscapeC() handles single-byte characters, including control ones like `\t` and `\n`.
--            auto* buffer = output.GetDirectWriteBuffer();
--            output.AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
-+            auto* buffer = output->GetDirectWriteBuffer();
-+            output->AdvanceDirectWrite(EscapeC(ustr[i], GetNextCharOrZero(str, len, i), buffer));
-             ++i;
-         }
-     }
-@@ -598,6 +599,12 @@ void TBufferedYsonWriter::EndCollection(char ch)
- void TBufferedYsonWriter::WriteStringScalar(TStringBuf value)
- {
-     if (Format_ == EYsonFormat::Binary) {
-+        if (value.length() > std::numeric_limits<i32>::max()) [[unlikely]] {
-+            THROW_ERROR_EXCEPTION("Binary YSON string length exceeds the signed 32-bit limit")
-+                .With("length", value.length())
-+                .With("limit", std::numeric_limits<i32>::max());
-+        }
++TEST_P(TArrowYsonMetadataTest, MalformedYsonIsRejected)
++{
++    arrow20::BinaryBuilder builder;
++    Verify(builder.Append("{"));
++    TCollectingValueConsumer collectedRows(MakeSchema());
++    auto parser = CreateParserForArrow(&collectedRows);
++    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeInput(builder.Finish().ValueOrDie())), "is not a valid YSON");
++}
 +
-         static_assert(MaxDirectWriteSize >= 1 + MaxVarInt32Size);
-         auto* buffer = Buffer_.GetDirectWriteBuffer();
-         buffer[0] = NDetail::StringMarker;
-@@ -635,9 +642,9 @@ Y_NO_INLINE void TBufferedYsonWriter::WriteTextStringScalarSlow(TStringBuf value
++TEST_P(TArrowYsonMetadataTest, StringTargetPreservesBytes)
++{
++    arrow20::BinaryBuilder builder;
++    Verify(builder.Append("{"));
++    TCollectingValueConsumer collectedRows(MakeSchema(SimpleLogicalType(ESimpleLogicalValueType::String)));
++    auto parser = CreateParserForArrow(&collectedRows);
++    parser->Read(MakeInput(builder.Finish().ValueOrDie()));
++    parser->Finish();
++
++    ASSERT_EQ(collectedRows.Size(), 1);
++    auto value = collectedRows.GetRowValue(0, "value");
++    if (GetParam()) {
++        EXPECT_EQ(ConvertTo<std::vector<std::string>>(GetComposite(value)), std::vector<std::string>{"{"});
++    } else {
++        EXPECT_EQ(GetString(value), "{");
++    }
++}
++
++INSTANTIATE_TEST_SUITE_P(TopLevelAndNested, TArrowYsonMetadataTest, ::testing::Bool());
++
++TEST(TArrowParserTest, BinaryListRejectsMalformedYson)
++{
++    auto schema = New<TTableSchema>(std::vector{
++        TColumnSchema("any", ListLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))),
++    });
++    TCollectingValueConsumer collectedRows(schema);
++    auto parser = CreateParserForArrow(&collectedRows);
++    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeYsonArrow({"["})), "is not a valid YSON");
++}
++
+ TEST(TArrowParserTest, WrongListInput)
  {
-     Buffer_.Write('"');
-     if (PassThroughUtf8Characters_ && IsUtf(value)) {
--        BufferedWriteUtf8String(value.data(), value.length(), Buffer_);
-+        BufferedWriteUtf8String(value.data(), value.length(), &Buffer_);
-     } else {
--        BufferedEscapeC(value.data(), value.length(), Buffer_);
-+        BufferedEscapeC(value.data(), value.length(), &Buffer_);
-     }
-     Buffer_.Write('"');
- }
+     auto tableSchema = New<TTableSchema>(std::vector<TColumnSchema>{
 ```
 
-**File**: `yt/yt/core/yson/writer.h` (modified, +0/-2)
+**File**: `yt/yt/tests/integration/formats/test_arrow_format.py` (modified, +60/-1)
 ```diff
-@@ -95,7 +95,6 @@ class TBufferedYsonWriter
- public:
-     static constexpr int DefaultIndent = 4;
+@@ -2,7 +2,7 @@
  
--    //! Initializes an instance.
-     /*!
-      *  \param stream A stream for writing the YSON data to.
-      *  \param format A format used for encoding the data.
-@@ -111,7 +110,6 @@ class TBufferedYsonWriter
+ from yt_commands import authors, create, read_table, write_table, map, merge, get
  
-     ~TBufferedYsonWriter() override;
+-from yt_type_helpers import optional_type, list_type, struct_type, decimal_type
++from yt_type_helpers import optional_type, list_type, struct_type, decimal_type, dict_type
  
--    // IYsonConsumer overrides.
-     void OnStringScalar(TStringBuf value) override;
-     void OnInt64Scalar(i64 value) override;
-     void OnUint64Scalar(ui64 value) override;
+ import pytest
+ 
+@@ -424,6 +424,34 @@ def test_string_and_any_arrow(self, optimize_for):
+ 
+         assert read_table("//tmp/table1") == read_table("//tmp/table2")
+ 
++    @authors("dagorokhov")
++    @pytest.mark.parametrize("dictionary_encoded", [False, True])
++    def test_write_arrow_mixed_string_and_yson_fields(self, optimize_for, dictionary_encoded):
++        schema = [{
++            "name": "record",
++            "type_v3": struct_type([("text", "string"), ("payload", optional_type("yson")), ("unannotated", optional_type("yson"))]),
++        }]
++        create("table", "//tmp/table", attributes={"schema": schema, "optimize_for": optimize_for})
++
++        text = pa.array([b"[1;2;]", b"#", b"[1;2;]"], type=pa.binary())
++        payload = pa.array([b"[1;2;]", None, b"[1;2;]"], type=pa.binary())
++        if dictionary_encoded:
++            payload = payload.dictionary_encode()
++        fields = [
++            pa.field("text", text.type),
++            pa.field("payload", payload.type, metadata={b"YtType": b"yson"}),
++            pa.field("unannotated", payload.type),
++        ]
++        records = pa.StructArray.from_arrays([text, payload, payload], fields=fields)
++        arrow_table = pa.Table.from_arrays([records], names=["record"])
++        write_table("//tmp/table", serialize_arrow_table(arrow_table), is_raw=True, input_format=ARROW_FORMAT)
++
++        assert read_table("//tmp/table") == [
++            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
++            {"record": {"text": "#", "payload": None, "unannotated": None}},
++            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
++        ]
++
+     @authors("max42")
+     def test_write_arrow_decimal(self, optimize_for):
+         schema = [
+@@ -1218,6 +1246,37 @@ class TestComplexTypesArrowFormat(YTEnvSetup):
+     NUM_SCHEDULERS = 1
+     ENABLE_MULTIDAEMON = True
+ 
++    @authors("dagorokhov")
++    def test_round_trip_nested_yson(self, optimize_for):
++        item = struct_type([("value", optional_type("yson"))])
++        schema = [{"name": "items", "type_v3": optional_type(dict_type("string", list_type(item)))}]
++        create("table", "//tmp/input", attributes={"schema": schema, "optimize_for": optimize_for})
++        create("table", "//tmp/output", attributes={"schema": schema})
++
++        arrow_format = yson.loads(ARROW_FORMAT_COMPLEX_TYPES)
++        field_type = parse_arrow_stream(read_table("//tmp/input", output_format=arrow_format)).schema.field("items").type
++        if pa.types.is_dictionary(field_type):
++            field_type = field_type.value_type
++        assert pa.types.is_map(field_type)
++        assert pa.types.is_list(field_type.item_type)
++        value = field_type.item_type.value_type["value"]
++        assert value.type == pa.binary() and value.nullable
++        assert (value.metadata or {}).get(b"YtType") == b"yson"
++
++        rows = [
++            {"items": None},
++            {"items": [["a", []], ["b", [{"value": None}, {"value": {"x": 1}}]]]},
++        ]
++        write_table("//tmp/input", rows)
++        data = read_table("//tmp/input", output_format=arrow_format)
++        items = parse_arrow_stream(data).column("items").combine_chunks()
++        if pa.types.is_dictionary(items.type):
++            items = items.dictionary_decode()
++        assert items.type == field_type
++        assert items.is_null().to_pylist() == [True, False]
++        write_table("//tmp/output", data, is_raw=True, input_format=ARROW_FORMAT)
++        assert read_table("//tmp/output") == read_table("//tmp/input")
++
+     MAP_CAT_TABLE_DATA = [
+         (
+             struct_type([("a", "int64"), ("b", "string")]),
+```
+
+**File**: `yt/yt/ytlib/unittests/arrow_writer_ut.cpp` (modified, +152/-0)
+```diff
+@@ -32,6 +32,9 @@
+ #include <yt/yt/core/concurrency/async_stream_helpers.h>
+ #include <yt/yt/core/concurrency/scheduler_api.h>
+ 
++#include <yt/yt/core/ytree/convert.h>
++#include <yt/yt/core/ytree/ypath_client.h>
++
+ #include <util/stream/null.h>
+ #include <util/string/hex.h>
+ 
+@@ -57,6 +60,7 @@ using namespace NNamedValue;
+ using namespace NTableClient;
+ using namespace NTzTypes;
+ using namespace NYson;
++using namespace NYTree;
+ using namespace NConcurrency;
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -2586,5 +2590,153 @@ TEST(TArrowWriterComplexTest, ColumnarBatchWithStartIndex)
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+ 
++const std::vector<std::string> NestedYsonValues = {
++    "{}",
++    "{a=1;b=[x;y]}",
++    "[]",
++    "[1;2u;3.5]",
++    "-5",
++    "5u",
++    "2.5",
++    "%true",
++    "%false",
++    "\"str\"",
++    "\"" + std::string(8_KB, 'x') + "\"",
++    "{x=<attr=1>y;z=#}",
++    "[<attr=1>#;#]",
++};
++
++void WriteBatchFromYson(
++    const TLogicalTypePtr& type,
++    const std::vector<std::string>& ysonValues,
++    bool columnar,
++    TStringStream* outputStream)
++{
++    std::vector<std::string> columnNames = {"column"};
++    std::vector<TTableSchemaPtr> tableSchemas = {
++        New<TTableSchema>(std::vector{TColumnSchema(columnNames[0], type)}),
++    };
++
++    auto rows = MakeUnversionedAnyRowsFromYson({ysonValues}, columnNames);
++
++    auto config = New<TArrowFormatConfig>();
++    config->EnableComplexTypes = true;
++
++    auto writer = CreateArrowWriter(rows.NameTable, outputStream, tableSchemas, config);
++
++    bool ready = columnar
++        ? writer->WriteBatch(MakeColumnarRowBatch(rows.Rows, tableSchemas[0]))
++        : writer->Write(rows.Rows);
++    if (!ready) {
++        WaitForFast(writer->GetReadyEvent())
++            .ThrowOnError();
++    }
++
++    WaitForFast(writer->Close())
++        .ThrowOnError();
++
++    EXPECT_EQ(writer->GetEncodedColumnarBatchCount(), columnar ? 1 : 0);
++    EXPECT_EQ(writer->GetEncodedRowBatchCount(), columnar ? 0 : 1);
++}
++
++void ExpectYsonEqual(TStringBuf expected, TStringBuf actual)
++{
++    auto expectedNode = ConvertToNode(TYsonStringBuf(expected));
++    auto actualNode = ConvertToNode(TYsonStringBuf(actual));
++    EXPECT_TRUE(AreNodesEqual(expectedNode, actualNode))
++        << "Expected: " << ConvertToYsonString(expectedNode, EYsonFormat::Pretty).AsStringBuf()
++        << "\nActual: " << ConvertToYsonString(actualNode, EYsonFormat::Pretty).AsStringBuf();
++}
++
++TEST(TArrowWriterComplexTest, YsonInStruct)
++{
++    auto structType = StructLogicalType({
++        TStructField{"before", "before", SimpleLogicalType(ESimpleLogicalValueType::String)},
++        TStructField{"yson", "yson", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any))},
++        TStructField{"after", "after", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++    }, /*removedFieldStableNames*/ {});
++
++    std::vector<std::string> ysonValues;
++    for (const auto& value : NestedYsonValues) {
++        ysonValues.push_back("[foo;" + value + ";42]");
++    }
++    ysonValues.push_back("[foo;#;42]");
++
++    for (bool columnar : {false, true}) {
++        TStringStream arrowData;
++        SCOPED_TRACE(Format("Columnar: %v", columnar));
++        WriteBatchFromYson(structType, ysonValues, columnar, &arrowData);
++        auto batch = MakeBatch(arrowData);
++
++        auto structArray = std::dynamic_pointer_cast<arrow20::StructArray>(batch->column(0));
++        ASSERT_TRUE(structArray);
++
++        EXPECT_EQ(
++            ReadStringArray(structArray->GetFieldByName("before")),
++            std::vector<std::string>(ysonValues.size(), "foo"));
++        EXPECT_EQ(
++            ReadInteger64Array(structArray->GetFieldByName("after")),
++            std::vector<i64>(ysonValues.size(), 42));
++
++        auto ysonField = structArray->struct_type()->GetFieldByName("yson");
++        ASSERT_TRUE(ysonField);
++        EXPECT_TRUE(ysonField->nullable());
++        ASSERT_TRUE(ysonField->metadata());
++        auto metadataValue = ysonField->metadata()->Get(YTTypeMetadataKey);
++        ASSERT_TRUE(metadataValue.ok()) << metadataValue.status().ToString();
++        EXPECT_EQ(*metadataValue, YTTypeMetadataValueYson);
++
++        auto ysonArray = std::dynamic_pointer_cast<arrow20::BinaryArray>(structArray->GetFieldByName("yson"));
++        ASSERT_TRUE(ysonArray);
++        ASSERT_EQ(ysonArray->length(), std::ssize(ysonValues));
++        EXPECT_TRUE(ysonArray->IsNull(ysonArray->length() - 1));
++        for (int index = 0; index < std::ssize(NestedYsonValues); ++index) {
++            ASSERT_TRUE(ysonArray->IsValid(index));
++            auto view = ysonArray->GetView(index);
++            ExpectYsonEqual(NestedYsonValues[index], TStringBuf(view.data(), view.size()));
++        }
++    }
++}
++
++TEST(TArrowWriterComplexTest, OmittedTrailingFieldsAreNull)
++{
++    auto structType = StructLogicalType({
++        TStructField{"a", "a", SimpleLogicalT
 ```
 
 ---
 
-### Incident Patch 3: `8b81ecf9` (2026-11-25)
-**Commit Message**: Fix tablet size calculation for bundles without cells
+### Incident Patch 2: `00ab595d` (2026-11-27)
+**Commit Message**: YT-30595: Revert redundant pending unregistration reset (rXXXXXX)
 
-A table can remain in bundle snapshot after all its cells have been removed. Avoid division by zero when calculating tablet size limits for that table.
-commit_hash:f6f614ab86c7b6024647fdbe6f11f72ebdc363f1
+Revert rXXXXXX (97685f131b235ccd901f7146707ef0db43c2ed4c), introduced by [PR 17437255](https://nda.ya.ru/t/Bs7KmzA37xUyPQ
 
-**File**: `yt/yt/server/lib/tablet_balancer/balancing_helpers.cpp` (modified, +1/-1)
+[PR 16760467](https://nda.ya.ru/t/TNThon6-7xUyPR is merged and now clears HasPendingUnregistration at the start of DoUnregisterNode. Remove the redundant reset immediately before that call in EndNodeHeartbeatProcessing. The call is protected by TForbidContextSwitchGuard; the reset inside DoUnregisterNode remains and preserves the fix for repeated unregistration after a heartbeat.
+
+The diff removes exactly one line from node_shard.cpp. Based on trunk rXXXXXX (a3558a25d0344d5ef80ccc388cdfaa01d07452ac).
+
+Validation: reviewed the staged diff; ya style --check --smart-staged and committed-diff lint passed. No build or tests were run for this one-line cleanup.
+
+Tickets:(https://nda.ya.ru/t/ijmmpb9E7xUyPS,(https://nda.ya.ru/t/l_lUtExX7xUyPT
+commit_hash:d6af743c6d4535f06b564cf3b089919ca174ff5d
+
+**File**: `yt/yt/server/scheduler/node_shard.cpp` (modified, +0/-1)
 ```diff
-@@ -122,7 +122,7 @@ TTabletSizeConfig GetTabletSizeConfig(
+@@ -2278,7 +2278,6 @@ void TNodeShard::EndNodeHeartbeatProcessing(const TExecNodePtr& node)
      }
  
-     // Balancer would not create too many tablets unless desired_tablet_count is set.
--    if (!tableConfig->DesiredTabletCount) {
-+    if (!tableConfig->DesiredTabletCount && !bundle->TabletCells.empty()) {
-         i64 maxTabletCount = std::min<i64>(
-             std::ssize(bundle->TabletCells) * bundle->Config->TabletToCellRatio,
-             MaxTabletCount);
+     if (node->GetHasPendingUnregistration()) {
+-        node->SetHasPendingUnregistration(false);
+         DoUnregisterNode(node);
+     }
+ }
+```
+
+---
+
+### Incident Patch 3: `c88470ec` (2026-11-27)
+**Commit Message**: Add CUDA 13.5 for Linux x86-64
+
+Добавлена поддержка CUDA Toolkit 13.5.0 для сборки YNMT под Linux x86-64.
+
+* Подключён пропатченный Toolkit через описания host- и target-ресурсов, обновлён `CUDA_FAKEID`.
+
+* В инструкцию добавлены ссылки на патч и архив Toolkit в Sandbox.
+
+* Исправлена ошибка компиляции GPU-тестов бэкенда YNMT с CUDA 13.2 и 13.5: вызов `ReinterpretCast<T>()` вынесен в отдельную строку.
+
+* Добавлены CI-проверки backend и моделей YNMT с CUDA 13.5 на H100 и B200, включая подготовку кеша.
+
+* Для совместимости тестов YNMT с CUDA 13.5 на B200 увеличены допуски при сравнении оценок токенов в `NgramSystemPromptReuseInsideChunk` (с `0.002` до `0.03`) и `VLMQwen35MoeBf16` (с `0.001` до `0.005`)
+commit_hash:907afd00c5b051a87afaff930829dbc9712f4dca
+
+**File**: `build/ymake_conf.py` (modified, +10/-1)
+```diff
+@@ -2557,6 +2557,10 @@ class CudaToolkit(object):
+             required_host_version='11.8',
+         ),
+     }
++    # CUDA toolkits available only for Linux x86-64 builds.
++    LINUX_X86_64 = {
++        '13.5': CudaSdk(host_tools_json='cuda_13.5.json', target_sdk_json='cuda_target_13.5.json'),
++    }
+     WINDOWS_X86_64 = {
+         '11.4': CudaSdk(host_tools_json='cuda_11.4.json', target_sdk_json=None),
+     }
+@@ -2576,7 +2580,12 @@ def routes(cls, host, target):
+         if not (host.is_linux_x86_64 or host.is_linux_armv8 or host.is_linux_armv9a):
+             return {}
+         if target.is_linux_x86_64:
+-            return cls.with_aliases(cls.LINUX)
++            sdks = dict(cls.LINUX)
++            # LINUX_X86_64 toolkits ship only x86-64 host tools.
++            # An ARM host needs ARM tools even when cross-compiling for an x86-64 target.
++            if host.is_linux_x86_64:
++                sdks.update(cls.LINUX_X86_64)
++            return cls.with_aliases(sdks)
+         if target.is_linux_armv8 or target.is_linux_armv9a:
+             sdks = dict(cls.LINUX)
+             sdks.update(cls.LEGACY_JETPACK)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1505,49 +1958,78 @@ commit_hash:f6f614ab86c7b6024647fdbe6f11f72ebdc363f1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash aware capture for facade runners
+## X. YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
 
 **RULE**:
-When implementing operations in `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/library/formats/arrow_parser.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e0724d5`: crash aware capture for facade runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97403463`: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/tools/yql_facade_run/yql_facade_run.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/library/formats/arrow_parser.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    TString qstorageDir = ".";
-    bool qstorageCrashAware = false;
-        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").StoreResult(&qstorageDir);
-        opts.AddLongOption("qstorage-crash-aware", "Flush captured QStorage records and index after each write, before commit")
-            .NoArgument()
-            .SetFlag(&qstorageCrashAware);
-    if (qstorageCrashAware && QPlayerMode != EQPlayerMode::Capture) {
-        throw yexception() << "qstorage-crash-aware requires capture or capture-full";
+#include <yt/yt/core/yson/pull_parser.h>
+
+#include <util/stream/mem.h>
+        return VisitStringLike<arrow20::StringArray>();
+        return VisitStringLike<arrow20::LargeStringArray>();
+        return VisitStringLike<arrow20::BinaryArray>();
+        return VisitStringLike<arrow20::LargeBinaryArray>();
+        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
+        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
+    arrow20::Status VisitStringLike()
+    {
+        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
+            HasYsonTypeInMetadata(SchemaField_))
+        {
+            return ParseYson<ArrayType>();
+        } else {
+            return ParseString<ArrayType>();
+        }
     }
-        const TFileQStorageSettings settings{
-            .BufferUntilCommit = !qstorageCrashAware,
-            .AlwaysFlushIndex = qstorageCrashAware,
-        };
-        QPlayerStorage_ = MakeFileQStorage(qstorageDir, settings);
+
+    template <typename ArrayType>
+    arrow20::Status ParseYson()
+    {
+        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
+            ValidateYsonValue(value);
+            return MakeUnversionedAnyValue(value, columnId);
+        });
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        opts.AddLongOption("qstorage-dir", "Directory for QStorage").RequiredArgument("DIR").Handler1T<TString>([this](const TString& dir) {
-            QPlayerStorage_ = MakeFileQStorage(dir);
-        });
-        if (!QPlayerStorage_) {
-            QPlayerStorage_ = MakeFileQStorage(".");
-        }
+        return ParseStringLikeArray<arrow20::StringArray>();
+        return ParseStringLikeArray<arrow20::LargeStringArray>();
+        return ParseStringLikeArray<arrow20::BinaryArray>();
+        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
+        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
+        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
+    arrow20::Status ParseStringLikeArray()
+    {
+        // Note that MakeUnversionedValue actually has third argument in its signature,
+        // which leads to a "too few arguments" in the point of its invocation if we try to pass
+        // it directly to ParseStringLikeArray.
+        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
+            if (HasYsonTypeInMetadata(SchemaField_)) {
+                ValidateYsonValue(value);
+                return MakeUnversionedAnyValue(value, columnId);
+            } else {
+                return MakeUnversionedStringValu
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e0724d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97403463` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

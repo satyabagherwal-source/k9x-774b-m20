@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:06:15.117Z",
+  "last_updated": "2026-11-27T06:15:01.690Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69032,6 +69032,57 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FA370D-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-754J",
+      "directive_title": "build(deps): bump the security-updates group across 13 directories with 4 update",
+      "source_repo": "oracle-devrel-oracle-ai-developer-hub-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-754J-build-deps-bump-the-security-updates-group-across-13-directories-with-4-update.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6YJB",
+      "directive_title": "Fix Arrow writer crashes on optional<yson> nested in composite types",
+      "source_repo": "ytsaurus/ytsaurus",
+      "source_commit": "ee4f1331",
+      "staged_file": "11_INBOX/candidate-directives/CD-6YJB-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-21C110",
+      "directive_title": "build(deps): bump the security-updates group across 13 directories with 4 update",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oracle-devrel-oracle-ai-developer-hub",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-21C110-build-deps-bump-the-security-updates-gro.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-A457B1",
+      "directive_title": "Forensic Learning Record (Deep Inspection): AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A457B1-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-76EV",
+      "directive_title": "YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types",
+      "source_repo": "ytsaurus-ytsaurus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-76EV-yt-30225-fix-arrow-writer-crashes-on-optional-yson-nested-in-composite-types.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
     }
   ]
 }

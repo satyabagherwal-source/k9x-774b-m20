@@ -775,8 +775,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
-    "lastHarvestedAt": "2026-11-23T21:04:38.379Z",
+    "contentHash": "84ed3098eed3661c7789da94dacea90ef07c09600106f30bce0f144d0ae2ff83",
+    "lastHarvestedAt": "2026-11-27T06:14:33.433Z",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "4fc0fe7e",
+    "sourceVersion": "ee4f1331",
     "license": "Apache-2.0",
-    "contentHash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
-    "lastHarvestedAt": "2026-11-26T12:20:15.516Z",
+    "contentHash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
+    "lastHarvestedAt": "2026-11-27T06:14:51.247Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -13608,5 +13608,15 @@
     "contentHash": "63a53dd5580ee342a6ea8fca09bcad582f9b60b1bd54720ab996238dbb364099",
     "lastHarvestedAt": "2026-11-27T04:36:47.811Z",
     "learningId": "learn-github-geoportapp-geoport"
+  },
+  "oracle-devrel-oracle-ai-developer-hub": {
+    "repository": "oracle-devrel/oracle-ai-developer-hub",
+    "platform": "github",
+    "sourceUrl": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+    "sourceVersion": "d9ffc5eb",
+    "license": "PERMISSIVE_OPEN_SOURCE",
+    "contentHash": "dca859621fec710ac8b2565a298756d4c40a6f3ddd3372631fb30212c59b2eca",
+    "lastHarvestedAt": "2026-11-27T06:14:35.301Z",
+    "learningId": "learn-github-oracle-devrel-oracle-ai-developer-hub"
   }
 }

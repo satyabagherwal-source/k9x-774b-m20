@@ -4,22 +4,22 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "4fc0fe7e",
+  "source_version": "ee4f1331",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T12:20:15.761Z",
+  "timestamp": "2026-11-27T06:14:51.482Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `4fc0fe7e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:20:15.761Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `ee4f1331`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T06:14:51.482Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `4fc0fe7e`)
+- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `ee4f1331`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T12:20:14.334Z  
+> **Harvest Timestamp**: 2026-11-27T06:14:50.112Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2327 stars
+- **Stars / Engagement**: 2328 stars
 
 ---
 
@@ -1206,417 +1206,713 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9981fd4e` (2026-11-26)
-**Commit Message**: YT-23401: Allow toggling network throttler IPC via node dynamic config
+### Incident Patch 1: `97403463` (2026-11-26)
+**Commit Message**: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
 
-Data and exec nodes on a host share a network throttling budget through IPC. Add enable_network_throttler_ipc to the node dynamic config (default: true) so they can switch to independent budgets without restarting when their networks are separated.
+- {% cut "ai summary" %}
 
-On a mode change, preserve bucket throttler objects, local quota and debt, accumulation windows, usage and pending requests. Replace only their shared-reserve connection; no initial quota is granted and the old shared reserve is not copied into the new group.
-commit_hash:94822bf018faf7de41a40590e4a4a7f122d0c7fb
+  - Crash fix. With enable_complex_types=%true, read_table could crash the proxy when an optional<yson> inside a struct, list, or dict held a value such as \{\}. These values now round-trip through Arrow.
+  - Wire-format change. The YtType=yson marker moves from the enclosing Arrow column to the nullable binary field that holds the value. A nested YSON string such as "abc" used to produce the three raw bytes abc. It now produces a complete binary YSON string.
+  - Arrow input. For a yson target, write_table now decodes and validates marked nested fields, including dictionary-encoded ones. For example, marked b"\[1;2;\]" becomes the list \[1, 2\]. An unmarked field or an explicit string target preserves the literal bytes. Malformed YSON is rejected when decoding.
+  - Omitted struct fields. On export, omitted trailing optional fields now appear as Arrow nulls.
 
-**File**: `yt/yt/core/concurrency/fair_throttler.cpp` (modified, +95/-63)
+  {% endcut %}
+* Changelog entry
+  Type: fix
+  Component: proxy
+commit_hash:2c968dfd2a935bc4e96fe213a178b7e9c660aeb8
+
+**File**: `yt/yt/library/formats/arrow_parser.cpp` (modified, +70/-31)
 ```diff
-@@ -5,6 +5,8 @@
+@@ -2,6 +2,8 @@
+ #include "arrow_metadata_constants.h"
+ #include "arrow_helpers.h"
  
- #include <yt/yt/core/profiling/timing.h>
- 
-+#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
++#include <yt/yt/core/yson/pull_parser.h>
 +
- #include <util/random/shuffle.h>
+ #include <yt/yt/client/formats/parser.h>
  
- namespace NYT::NConcurrency {
-@@ -257,18 +259,19 @@ class TBucketThrottler
+ #include <yt/yt/client/table_client/helpers.h>
+@@ -21,6 +23,7 @@
+ #include <util/generic/buffer.h>
+ 
+ #include <util/stream/buffer.h>
++#include <util/stream/mem.h>
+ 
+ #include <contrib/libs/apache/arrow_next/cpp/src/arrow/api.h>
+ #include <contrib/libs/apache/arrow_next/cpp/src/arrow/type_fwd.h>
+@@ -793,27 +796,27 @@ class TArraySimpleVisitor
+     // String types.
+     arrow20::Status Visit(const arrow20::StringType& /*type*/) override
      {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         if (amount > available + globalAvailable) {
-             return false;
-         }
- 
-         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
-         Quota_.Acquire(amount - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(amount);
-         Usage_ += amount;
-@@ -280,16 +283,17 @@ class TBucketThrottler
-     {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         auto consumed = std::min(amount, available + globalAvailable);
- 
-         auto globalConsumed = std::clamp<i64>(consumed - available, 0, globalAvailable);
-         Quota_.Acquire(consumed - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(consumed);
-         Usage_ += consumed;
-@@ -301,15 +305,16 @@ class TBucketThrottler
-     {
-         YT_VERIFY(amount >= 0);
- 
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
-         // NB: Shared bucket limit can get below zero because resource acquisition is racy.
-         auto globalAvailable = IsLimited()
-             ? 0
--            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-+            : std::max<i64>(0, sharedBucket->Limit.GetValue());
- 
-         auto globalConsumed = std::clamp<i64>(amount - available, 0, globalAvailable);
-         Quota_.Acquire(amount - globalConsumed);
--        SharedBucket_->Limit.Acquire(globalConsumed);
-+        sharedBucket->Limit.Acquire(globalConsumed);
- 
-         ValueCounter_.Increment(amount);
-         Usage_ += amount;
-@@ -357,8 +362,9 @@ class TBucketThrottler
- 
-     i64 GetAvailable() const override
-     {
-+        auto sharedBucket = SharedBucket_.Acquire();
-         auto available = Quota_.GetValue();
--        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
-+        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
-         return available + globalAvailable;
+-        return ParseStringLikeArray<arrow20::StringArray>();
++        return VisitStringLike<arrow20::StringArray>();
      }
  
-@@ -465,14 +471,19 @@ class TBucketThrottler
-         }
+     arrow20::Status Visit(const arrow20::LargeStringType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::LargeStringArray>();
++        return VisitStringLike<arrow20::LargeStringArray>();
      }
  
-+    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
+     arrow20::Status Visit(const arrow20::BinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::BinaryArray>();
++        return VisitStringLike<arrow20::BinaryArray>();
+     }
+ 
+     arrow20::Status Visit(const arrow20::LargeBinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
++        return VisitStringLike<arrow20::LargeBinaryArray>();
+     }
+ 
+     arrow20::Status Visit(const arrow20::FixedSizeBinaryType& /*type*/) override
+     {
+-        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
++        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
+     }
+ 
+     // Boolean type.
+@@ -830,14 +833,14 @@ class TArraySimpleVisitor
+ 
+     arrow20::Status Visit(const arrow20::Decimal128Type& type) override
+     {
+-        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
++        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+             return MakeDecimalBinaryValue<TDecimal::TValue128>(value, columnId, type.precision());
+         });
+     }
+ 
+     arrow20::Status Visit(const arrow20::Decimal256Type& type) override
+     {
+-        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
++        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+             return MakeDecimalBinaryValue<TDecimal::TValue256>(value, columnId, type.precision());
+         });
+     }
+@@ -1009,7 +1012,7 @@ class TArraySimpleVisitor
+     }
+ 
+     template <typename ArrayType>
+-    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
++    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
+     {
+         auto array = std::static_pointer_cast<ArrayType>(Array_);
+         YT_VERIFY(array->length() <= std::ssize(*RowValues_));
+@@ -1033,18 +1036,31 @@ class TArraySimpleVisitor
+     }
+ 
+     template <typename ArrayType>
+-    arrow20::Status ParseStringLikeArray()
+-    {
+-        // Note that MakeUnversionedValue actually has third argument in its signature,
+-        // which leads to a "too few arguments" in the point of its invocation if we try to pass
+-        // it directly to ParseStringLikeArray.
+-        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
+-            if (HasYsonTypeInMetadata(SchemaField_)) {
+-                ValidateYsonValue(value);
+-                return MakeUnversionedAnyValue(value, columnId);
+-            } else {
+-                return MakeUnversionedStringValue(value, columnId);
+-            }
++    arrow20::Status VisitStringLike()
 +    {
-+        SharedBucket_.Store(sharedBucket);
++        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
++            HasYsonTypeInMetadata(SchemaField_))
++        {
++            return ParseYson<ArrayType>();
++        } else {
++            return ParseString<ArrayType>();
++        }
 +    }
 +
-     bool IsLimited() const
-     {
-         return Limited_.load();
++    template <typename ArrayType>
++    arrow20::Status ParseYson()
++    {
++        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
++            ValidateYsonValue(value);
++            return MakeUnversionedAnyValue(value, columnId);
++        });
++    }
++
++    template <typename ArrayType>
++    arrow20::Status ParseString()
++    {
++        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
++            return MakeUnversionedStringValue(value, columnId);
+         });
      }
  
- private:
-     const NLogging::TLogger Logger;
--    const TSharedBucketPtr SharedBucket_;
-+    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
-     const NProfiling::TProfiler Profiler_;
-     const NProfiling::TCounter ValueCounter_;
-     const NProfiling::TCounter ReleasedCounter_;
-@@ -520,15 +531,12 @@ class TFairThrottler
-         , SharedBucket_(New<TSharedBucket>(
-             Config_->GlobalAccumulationTicks,
-             Profiler_,
--            GetSharedBucketValue()))
-+            GetSharedBucketValue(Ipc_)))
+@@ -1276,31 +1292,31 @@ class TArrayCompositeVisitor
+     arrow20::Status Visit(const arrow20::StringType& type) override
      {
--        if (Ipc_) {
--            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
--                return IsLeader_.load();
--            });
--        } else {
--            IsLeader_ = true;
--        }
-+        IsLeader_ = !Ipc_;
-+        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-+            return IsLeader_.load();
-+        });
+         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->type());
+-        return ParseStringLikeArray<arrow20::StringArray>();
++        return VisitStringLike<arrow20::StringArray>();
+     }
  
-         Profiler_.AddFuncGauge("/total_limit", MakeStrong(this), [this] {
-             auto guard = Guard(Lock_);
-@@ -542,50 +550,44 @@ class TFairThrottler
-         const std::string& name,
-         TFairThrottlerBucketConfigPtr config) final
+     arrow20::Status Visit(const arrow20::LargeStringType& type) override
      {
--        if (!config) {
--            config = New<TFairThrottlerBucketConfig>();
--        }
--
-         auto guard = Guard(Lock_);
--        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
--            it->second.Throttler->Update(Config_, config);
--
--            it->second.Config = std::move(config);
--
--            return it->second.Throttler;
--        }
--
--        auto throttler = New<TBucketThrottler>(
--            Logger().WithTag("Bucket", name),
--            Profiler_.WithTag("bucket", name),
--            SharedBucket_,
--            Config_);
--
--        throttler->Update(Config_, config);
--
--        IFai
+         CheckArrowTypeMatch(YTType_->AsSimpleTypeRef().GetElement(), type.type_name(), Array_->
 ```
 
-**File**: `yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp` (modified, +164/-0)
+**File**: `yt/yt/library/formats/arrow_writer.cpp` (modified, +48/-11)
 ```diff
-@@ -5,6 +5,7 @@
+@@ -22,6 +22,9 @@
+ #include <yt/yt/core/misc/blob_output.h>
+ #include <yt/yt/core/misc/error.h>
  
- #include <library/cpp/testing/common/env.h>
++#include <yt/yt/core/yson/pull_parser.h>
++#include <yt/yt/core/yson/token_writer.h>
++
+ #include <library/cpp/yt/memory/range.h>
  
-+#include <tuple>
- #include <vector>
+ #include <util/stream/mem.h>
+@@ -238,11 +241,23 @@ TArrowSchemaType SerializeLeafColumnType(
+             };
  
- namespace NYT::NConcurrency {
-@@ -329,5 +330,168 @@ TEST_F(TConcurrentFairThrottlerTest, TwoBuckets)
+         case ESimpleLogicalValueType::String:
++            return TArrowSchemaType{
++                .Type = flatbuf::Type_Binary,
++                .Offset = flatbuf::CreateBinary(*flatbufBuilder)
++                    .Union(),
++            };
++
+         case ESimpleLogicalValueType::Any:
+             return TArrowSchemaType{
+                 .Type = flatbuf::Type_Binary,
+                 .Offset = flatbuf::CreateBinary(*flatbufBuilder)
+                     .Union(),
++                .CustomMetadata = {
++                    flatbuf::CreateKeyValue(
++                        *flatbufBuilder,
++                        SerializeString(flatbufBuilder, YTTypeMetadataKey),
++                        SerializeString(flatbufBuilder, YTTypeMetadataValueYson)),
++                },
+             };
+ 
+         case ESimpleLogicalValueType::TzDate:
+@@ -1529,6 +1544,25 @@ void AppendSimpleTypeToBuffer(
+ {
+     auto simpleType = CastToV1Type(logicalType).first;
+ 
++    if (simpleType == ESimpleLogicalValueType::Any) {
++        auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
++        TBlob& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
++
++        // TODO(dagorokhov): Use a non-owning blob output adapter (YT-30459).
++        TBlobOutput output;
++        output.Blob() = std::move(valueBuffer);
++        {
++            TCheckedInDebugYsonTokenWriter writer(&output);
++            cursor.TransferComplexValue(&writer);
++            writer.Flush();
++        }
++        valueBuffer = std::move(output.Blob());
++
++        offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
++
++        return;
++    }
++
+     if (IsStringLikeType(simpleType)) {
+         auto& offsetsBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
+         auto& valueBuffer = std::get<TTypedBlob>(buffers[currentBufferIndex++]);
+@@ -1538,6 +1572,7 @@ void AppendSimpleTypeToBuffer(
+         valueBuffer.Append(string.Data(), string.Size());
+         offsetsBuffer.AppendValue<ui32>(valueBuffer.Size());
+ 
++        cursor.Next();
+         return;
+     }
+ 
+@@ -1577,10 +1612,12 @@ void AppendSimpleTypeToBuffer(
+                 YT_ABORT();
+         }
+ 
++        cursor.Next();
+         return;
+     }
+ 
+     if (simpleType == ESimpleLogicalValueType::Null || simpleType == ESimpleLogicalValueType::Void) {
++        cursor.Next();
+         return;
+     }
+ 
+@@ -1636,6 +1673,8 @@ void AppendSimpleTypeToBuffer(
+         default:
+             THROW_ERROR_EXCEPTION("Column has unexpected nested type %Qlv", simpleType);
+     }
++
++    cursor.Next();
+ }
+ 
+ void AppendNullSimpleTypeToBuffer(
+@@ -1794,12 +1833,9 @@ void FillBuffersForComplexType(
+     TYsonPullParserCursor& cursor)
+ {
+     switch (type->GetMetatype()) {
+-        case ELogicalMetatype::Simple: {
++        case ELogicalMetatype::Simple:
+             AppendSimpleTypeToBuffer(type, buffers, currentBufferIndex, cursor);
+-            cursor.Next();
+-
+             break;
+-        }
+ 
+         case ELogicalMetatype::Optional: {
+             // See https://ytsaurus.tech/docs/user-guide/storage/data-types#yson_optional
+@@ -1920,6 +1956,14 @@ void FillBuffersForComplexType(
+                     *cursor);
+             });
+ 
++            for (; fieldIndex < std::ssize(fields); ++fieldIndex) {
++                const auto& field = fields[fieldIndex];
++                FillBuffersForComplexTypeWithNulls(
++                    field.Type,
++                    buffers,
++                    currentBufferIndex);
++            }
++
+             break;
+         }
+ 
+@@ -2787,13 +2831,6 @@ class TArrowWriter
+ 
+             auto [typeType, typeOffset, childrenFields, customMetadata] = SerializeColumnType(&flatbufBuilder, columnSchema.LogicalType(), ArrowConfig_);
+ 
+-            if (CastToV1Type(columnSchema.LogicalType()).first == ESimpleLogicalValueType::Any) {
+-                customMetadata.push_back(flatbuf::CreateKeyValue(
+-                    flatbufBuilder,
+-                    flatbufBuilder.CreateString(YTTypeMetadataKey),
+-                    flatbufBuilder.CreateString(YTTypeMetadataValueYson)));
+-            }
+-
+             flatbuffers::Offset<flatbuf::DictionaryEncoding> dictionaryEncodingOffset;
+             auto indexTypeOffset = flatbuf::CreateInt(flatbufBuilder, /*bitWidth*/ 32, /*is_signed*/ false);
+ 
+```
+
+**File**: `yt/yt/library/formats/unittests/arrow_parser_ut.cpp` (modified, +111/-0)
+```diff
+@@ -1485,6 +1485,117 @@ TEST(TArrowParserTest, InvalidYsonMetadata)
+     }
+ }
+ 
++class TArrowYsonMetadataTest
++    : public ::testing::TestWithParam<bool>
++{
++protected:
++    TTableSchemaPtr MakeSchema(TLogicalTypePtr type = OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any)))
++    {
++        if (GetParam()) {
++            type = StructLogicalType({{"value", "value", type}}, /*removedFieldStableNames*/ {});
++        }
++        return New<TTableSchema>(std::vector{TColumnSchema("value", type)});
++    }
++
++    std::string MakeInput(std::shared_ptr<arrow20::Array> array)
++    {
++        auto metadata = std::make_shared<arrow20::KeyValueMetadata>(
++            std::vector{YTTypeMetadataKey},
++            std::vector{YTTypeMetadataValueYson});
++        auto field = arrow20::field("value", array->type(), /*nullable*/ true, metadata);
++        if (GetParam()) {
++            auto type = arrow20::struct_({field});
++            array = std::make_shared<arrow20::StructArray>(type, array->length(), arrow20::ArrayVector{array});
++            field = arrow20::field("value", type);
++        }
++        return MakeOutputFromRecordBatch(arrow20::RecordBatch::Make(
++            arrow20::schema({field}),
++            array->length(),
++            {array}));
++    }
++};
++
++TEST_P(TArrowYsonMetadataTest, StringLikeYsonAndDictionaryValues)
++{
++    auto check = [&] (const std::shared_ptr<arrow20::Array>& array) {
++        TCollectingValueConsumer collectedRows(MakeSchema());
++        auto parser = CreateParserForArrow(&collectedRows);
++        parser->Read(MakeInput(array));
++        parser->Finish();
++
++        ASSERT_EQ(collectedRows.Size(), 1);
++        auto value = collectedRows.GetRowValue(0, "value");
++        if (GetParam()) {
++            EXPECT_EQ(ConvertToYsonTextStringStable(GetComposite(value)), "[42;]");
++        } else {
++            EXPECT_EQ(ConvertTo<i64>(GetAny(value)), 42);
++        }
++    };
++    auto checkBuilder = [&] (auto& builder, std::string_view value = "42") {
++        Verify(builder.Append(value));
++        auto array = builder.Finish().ValueOrDie();
++        check(array);
++
++        arrow20::Int32Builder indicesBuilder;
++        Verify(indicesBuilder.Append(0));
++        auto indices = indicesBuilder.Finish().ValueOrDie();
++        check(std::make_shared<arrow20::DictionaryArray>(
++            arrow20::dictionary(arrow20::int32(), array->type()),
++            indices,
++            array));
++    };
++
++    arrow20::BinaryBuilder binaryBuilder;
++    checkBuilder(binaryBuilder);
++    arrow20::LargeBinaryBuilder largeBinaryBuilder;
++    checkBuilder(largeBinaryBuilder);
++    arrow20::StringBuilder stringBuilder;
++    checkBuilder(stringBuilder);
++    arrow20::LargeStringBuilder largeStringBuilder;
++    checkBuilder(largeStringBuilder);
++    arrow20::FixedSizeBinaryBuilder fixedSizeBinaryBuilder(arrow20::fixed_size_binary(3));
++    checkBuilder(fixedSizeBinaryBuilder, "42\0"s);
++}
++
++TEST_P(TArrowYsonMetadataTest, MalformedYsonIsRejected)
++{
++    arrow20::BinaryBuilder builder;
++    Verify(builder.Append("{"));
++    TCollectingValueConsumer collectedRows(MakeSchema());
++    auto parser = CreateParserForArrow(&collectedRows);
++    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeInput(builder.Finish().ValueOrDie())), "is not a valid YSON");
++}
++
++TEST_P(TArrowYsonMetadataTest, StringTargetPreservesBytes)
++{
++    arrow20::BinaryBuilder builder;
++    Verify(builder.Append("{"));
++    TCollectingValueConsumer collectedRows(MakeSchema(SimpleLogicalType(ESimpleLogicalValueType::String)));
++    auto parser = CreateParserForArrow(&collectedRows);
++    parser->Read(MakeInput(builder.Finish().ValueOrDie()));
++    parser->Finish();
++
++    ASSERT_EQ(collectedRows.Size(), 1);
++    auto value = collectedRows.GetRowValue(0, "value");
++    if (GetParam()) {
++        EXPECT_EQ(ConvertTo<std::vector<std::string>>(GetComposite(value)), std::vector<std::string>{"{"});
++    } else {
++        EXPECT_EQ(GetString(value), "{");
++    }
++}
++
++INSTANTIATE_TEST_SUITE_P(TopLevelAndNested, TArrowYsonMetadataTest, ::testing::Bool());
++
++TEST(TArrowParserTest, BinaryListRejectsMalformedYson)
++{
++    auto schema = New<TTableSchema>(std::vector{
++        TColumnSchema("any", ListLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Int64))),
++    });
++    TCollectingValueConsumer collectedRows(schema);
++    auto parser = CreateParserForArrow(&collectedRows);
++    EXPECT_THROW_WITH_SUBSTRING(parser->Read(MakeYsonArrow({"["})), "is not a valid YSON");
++}
++
+ TEST(TArrowParserTest, WrongListInput)
+ {
+     auto tableSchema = New<TTableSchema>(std::vector<TColumnSchema>{
+```
+
+**File**: `yt/yt/tests/integration/formats/test_arrow_format.py` (modified, +60/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ from yt_commands import authors, create, read_table, write_table, map, merge, get
+ 
+-from yt_type_helpers import optional_type, list_type, struct_type, decimal_type
++from yt_type_helpers import optional_type, list_type, struct_type, decimal_type, dict_type
+ 
+ import pytest
+ 
+@@ -424,6 +424,34 @@ def test_string_and_any_arrow(self, optimize_for):
+ 
+         assert read_table("//tmp/table1") == read_table("//tmp/table2")
+ 
++    @authors("dagorokhov")
++    @pytest.mark.parametrize("dictionary_encoded", [False, True])
++    def test_write_arrow_mixed_string_and_yson_fields(self, optimize_for, dictionary_encoded):
++        schema = [{
++            "name": "record",
++            "type_v3": struct_type([("text", "string"), ("payload", optional_type("yson")), ("unannotated", optional_type("yson"))]),
++        }]
++        create("table", "//tmp/table", attributes={"schema": schema, "optimize_for": optimize_for})
++
++        text = pa.array([b"[1;2;]", b"#", b"[1;2;]"], type=pa.binary())
++        payload = pa.array([b"[1;2;]", None, b"[1;2;]"], type=pa.binary())
++        if dictionary_encoded:
++            payload = payload.dictionary_encode()
++        fields = [
++            pa.field("text", text.type),
++            pa.field("payload", payload.type, metadata={b"YtType": b"yson"}),
++            pa.field("unannotated", payload.type),
++        ]
++        records = pa.StructArray.from_arrays([text, payload, payload], fields=fields)
++        arrow_table = pa.Table.from_arrays([records], names=["record"])
++        write_table("//tmp/table", serialize_arrow_table(arrow_table), is_raw=True, input_format=ARROW_FORMAT)
++
++        assert read_table("//tmp/table") == [
++            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
++            {"record": {"text": "#", "payload": None, "unannotated": None}},
++            {"record": {"text": "[1;2;]", "payload": [1, 2], "unannotated": "[1;2;]"}},
++        ]
++
+     @authors("max42")
+     def test_write_arrow_decimal(self, optimize_for):
+         schema = [
+@@ -1218,6 +1246,37 @@ class TestComplexTypesArrowFormat(YTEnvSetup):
+     NUM_SCHEDULERS = 1
+     ENABLE_MULTIDAEMON = True
+ 
++    @authors("dagorokhov")
++    def test_round_trip_nested_yson(self, optimize_for):
++        item = struct_type([("value", optional_type("yson"))])
++        schema = [{"name": "items", "type_v3": optional_type(dict_type("string", list_type(item)))}]
++        create("table", "//tmp/input", attributes={"schema": schema, "optimize_for": optimize_for})
++        create("table", "//tmp/output", attributes={"schema": schema})
++
++        arrow_format = yson.loads(ARROW_FORMAT_COMPLEX_TYPES)
++        field_type = parse_arrow_stream(read_table("//tmp/input", output_format=arrow_format)).schema.field("items").type
++        if pa.types.is_dictionary(field_type):
++            field_type = field_type.value_type
++        assert pa.types.is_map(field_type)
++        assert pa.types.is_list(field_type.item_type)
++        value = field_type.item_type.value_type["value"]
++        assert value.type == pa.binary() and value.nullable
++        assert (value.metadata or {}).get(b"YtType") == b"yson"
++
++        rows = [
++            {"items": None},
++            {"items": [["a", []], ["b", [{"value": None}, {"value": {"x": 1}}]]]},
++        ]
++        write_table("//tmp/input", rows)
++        data = read_table("//tmp/input", output_format=arrow_format)
++        items = parse_arrow_stream(data).column("items").combine_chunks()
++        if pa.types.is_dictionary(items.type):
++            items = items.dictionary_decode()
++        assert items.type == field_type
++        assert items.is_null().to_pylist() == [True, False]
++        write_table("//tmp/output", data, is_raw=True, input_format=ARROW_FORMAT)
++        assert read_table("//tmp/output") == read_table("//tmp/input")
++
+     MAP_CAT_TABLE_DATA = [
+         (
+             struct_type([("a", "int64"), ("b", "string")]),
+```
+
+**File**: `yt/yt/ytlib/unittests/arrow_writer_ut.cpp` (modified, +152/-0)
+```diff
+@@ -32,6 +32,9 @@
+ #include <yt/yt/core/concurrency/async_stream_helpers.h>
+ #include <yt/yt/core/concurrency/scheduler_api.h>
+ 
++#include <yt/yt/core/ytree/convert.h>
++#include <yt/yt/core/ytree/ypath_client.h>
++
+ #include <util/stream/null.h>
+ #include <util/string/hex.h>
+ 
+@@ -57,6 +60,7 @@ using namespace NNamedValue;
+ using namespace NTableClient;
+ using namespace NTzTypes;
+ using namespace NYson;
++using namespace NYTree;
+ using namespace NConcurrency;
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -2586,5 +2590,153 @@ TEST(TArrowWriterComplexTest, ColumnarBatchWithStartIndex)
  
  ////////////////////////////////////////////////////////////////////////////////
  
-+constexpr int LeaderMask = 1;
-+constexpr int FollowerMask = 2;
++const std::vector<std::string> NestedYsonValues = {
++    "{}",
++    "{a=1;b=[x;y]}",
++    "[]",
++    "[1;2u;3.5]",
++    "-5",
++    "5u",
++    "2.5",
++    "%true",
++    "%false",
++    "\"str\"",
++    "\"" + std::string(8_KB, 'x') + "\"",
++    "{x=<attr=1>y;z=#}",
++    "[<attr=1>#;#]",
++};
 +
-+void CheckIpcReconfiguration(int reconfigureMask)
++void WriteBatchFromYson(
++    const TLogicalTypePtr& type,
++    const std::vector<std::string>& ysonValues,
++    bool columnar,
++    TStringStream* outputStream)
 +{
-+    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-+    auto config = New<TFairThrottlerConfig>();
-+    config->IpcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
-+    config->TotalLimit = 100;
-+    auto bucketConfig = New<TFairThrottlerBucketConfig>();
-+
-+    auto leader = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
-+    auto first = leader->CreateBucketThrottler("first", bucketConfig);
-+    // Elect the first throttler before creating its peer.
-+    ASSERT_TRUE(WaitFor(first->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
-+
-+    auto follower = CreateFairThrottler(config, Logger, NProfiling::TProfiler{});
-+    auto second = follower->CreateBucketThrottler("second", bucketConfig);
-+    auto reconfigure = [&] (const TFairThrottlerConfigPtr& newConfig) {
-+        if (reconfigureMask & LeaderMask) {
-+            leader->Reconfigure(newConfig, {});
-+        }
-+        if (reconfigureMask & FollowerMask) {
-+            follower->Reconfigure(newConfig, {});
-+        }
++    std::vector<std::string> columnNames = {"column"};
++    std::vector<TTableSchemaPtr> tableSchemas = {
++        New<TTableSchema>(std::vector{TColumnSchema(columnNames[0], type)}),
 +    };
 +
-+    std::vector<TFuture<void>> firstRequests, secondRequests;
-+    for (int index = 0; index < 1000; ++index) {
-+        firstRequests.push_back(first->Throttle(10));
-+        secondRequests.push_back(second->Throttle(10));
++    auto rows = MakeUnversionedAnyRowsFromYson({ysonValues}, columnNames);
++
++    auto config = New<TArrowFormatConfig>();
++    config->EnableComplexTypes = true;
++
++    auto writer = CreateArrowWriter(rows.NameTable, outputStream, tableSchemas, config);
++
++    bool ready = columnar
++        ? writer->WriteBatch(MakeColumnarRowBatch(rows.Rows, tableSchemas[0]))
++        : writer->Write(rows.Rows);
++    if (!ready) {
++        WaitForFast(writer->GetReadyEvent())
++            .ThrowOnError();
 +    }
 +
-+    auto localConfig = New<TFairThrottlerConfig>();
-+    localConfig->TotalLimit = config->TotalLimit;
-+    for (int iteration = 0; iteration < 2; ++iteration) {
-+        reconfigure(localConfig);
-+        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
-+        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
++    WaitForFast(writer->Close())
++        .ThrowOnError();
 +
-+        auto firstBefore = CountCompleted(firstRequests);
-+        auto secondBefore = CountCompleted(secondRequests);
-+        Sleep(TDuration::Seconds(2));
++    EXPECT_EQ(writer->GetEncodedColumnarBatchCount(), columnar ? 1 : 0);
++    EXPECT_EQ(writer->GetEncodedRowBatchCount(), columnar ? 0 : 1);
++}
 +
-+        // Both throttlers now have independent budgets, including the former IPC peer.
-+        EXPECT_GE(CountCompleted(firstRequests) - firstBefore, 15);
-+        EXPECT_GE(CountCompleted(secondRequests) - secondBefore, 15);
++void ExpectYsonEqual(TStringBuf expected, TStringBuf actual)
++{
++    auto expectedNode = ConvertToNode(TYsonStringBuf(expected));
++    auto actualNode = ConvertToNode(TYsonStringBuf(actual));
++    EXPECT_TRUE(AreNodesEqual(expectedNode, actualNode))
++        << "Expected: " << ConvertToYsonString(expectedNode, EYsonFormat::Pretty).AsStringBuf()
++        << "\nActual: " << ConvertToYsonString(actualNode, EYsonFormat::Pretty).AsStringBuf();
++}
 +
-+        reconfigure(config);
-+        ASSERT_EQ(first, leader->CreateBucketThrottler("first", bucketConfig));
-+        ASSERT_EQ(second, follower->CreateBucketThrottler("second", bucketConfig));
-+        Sleep(TDuration::MilliSeconds(500));
-+        firstBefore = CountCompleted(firstRequests);
-+        secondBefore = CountCompleted(secondRequests);
-+        Sleep(TDuration::Seconds(2));
++TEST(TArrowWriterComplexTest, YsonInStruct)
++{
++    auto structType = StructLogicalType({
++        TStructField{"before", "before", SimpleLogicalType(ESimpleLogicalValueType::String)},
++        TStructField{"yson", "yson", OptionalLogicalType(SimpleLogicalType(ESimpleLogicalValueType::Any))},
++        TStructField{"after", "after", SimpleLogicalType(ESimpleLogicalValueType::Int64)},
++    }, /*removedFieldStableNames*/ {});
 +
-+        // Rejoining IPC restores a single budget shared between both throttlers.
-+        auto firstCompleted = CountCompleted(firstRequests) - firstBefore;
-+        auto secondCompleted = CountCompleted(secondRequests) - secondBefore;
-+        EXPECT_GE(firstCompleted, 5);
-+        EXPECT_GE(secondCompleted, 5);
-+        EXPECT_LE(firstCompleted + secondCompleted, 28);
++    std::vector<std::string> ysonValues;
++    for (const auto& value : NestedYsonValues) {
++        ysonValues.push_back("[foo;" + value + ";42]");
 +    }
++    ysonValues.push_back("[foo;#;42]");
 +
-+    for (const auto& request : firstRequests) {
-+        request.Cancel(TError("Test finished"));
-+    }
-+    for (const auto& request : secondRequests) {
-+        request.Cancel(TError("Test finished"));
++    for (bool columnar : {false, true}) {
++        TStringStream arrowData;
++        SCOPED_TRACE(Format("Columnar: %v", columnar));
++        WriteBatchFromYson(structType, ysonValues, columnar, &arrowData);
++        auto batch = MakeBatch(arrowData);
++
++        auto structArray = std::dynamic_pointer_cast<arrow20::StructArray>(batch->column(0));
++        ASSERT_TRUE(structArray);
++
++        EXPECT_EQ(
++            ReadStringArray(structArray->GetFieldByName("before")),
++            std::vector<std::string>(ysonValues.size(), "foo"));
++        EXPECT_EQ(
++            ReadInteger64Array(structArray->GetFieldByName("after")),
++            std::vector<i64>(ysonValues.size(), 42));
++
++        auto ysonField = structArray->struct_type()->GetFieldByName("yson");
++        ASSERT_TRUE(ysonField);
++        EXPECT_TRUE(ysonField->nullable());
++        ASSERT_TRUE(ysonField->metadata());
++        auto metadataValue = ysonField->metadata()->Get(YTTypeMetadataKey);
++        ASSERT_TRUE(metadataValue.ok()) << metadataValue.status().ToString();
++        EXPECT_EQ(*metadataValue, YTTypeMetadataValueYson);
++
++        auto ysonArray = std::dynamic_pointer_cast<arrow20::BinaryArray>(structArray->GetFieldByName("yson"));
++        ASSERT_TRUE(ysonArray);
++        ASSERT_EQ(ysonArray->length(), std::ssize(ysonValues));
++        EXPECT_TRUE(ysonArray->IsNull(ysonArray->length() - 1));
++        for (int index = 0; index < std::ssize(NestedYsonValues); ++index) {
++            ASSERT_TRUE(ysonArray->IsValid(index));
++            auto view = ysonArray->GetView(index);
++            ExpectYsonEqual(NestedYsonValues[index], TStringBuf(view.data(), view.size()));
++        }
 +    }
 +}
 +
-+class TFairThrottlerIpcReconfigurationTest
-+    : public ::testing::TestWithParam<int>
-+{ };
-+
-+TEST_P(TFairThrottlerIpcReconfigurationTest, IpcReconfiguration)
++TEST(TArrowWriterComplexTest, OmittedTrailingFieldsAreNull)
 +{
-+    CheckIpcReconfiguration(GetParam());
-+}
-+
-+INSTANTIATE_TEST_SUITE_P(
-+    TFairThrottlerIpcReconfigurationTest,
-+    TFairThrottlerIpcReconfigurationTest,
-+    ::testing::Values(FollowerMask, LeaderMask, LeaderMask | FollowerMask));
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+void CheckLocalStatePreservation(bool useIpcBefore, bool useIpcAfter)
-+{
-+    std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-+    auto ipcPath = (GetOutputPath() / (testName + ".throttler")).GetPath();
-+    auto oldConfig = New<TFairThrottlerConfig>();
-+    oldConfig->TotalLimit = 100;
-+    oldConfig->DistributionPeriod = TDuration::Hours(1);
-+    if (useIpcBefore) {
-+        oldConfig->IpcPath = ipcPath;
-+    }
-+
-+    auto throttler = CreateFairThrottler(oldConfig, Logger, NProfiling::TProfiler{});
-+    auto probe = throttler->CreateBucketThrottler("probe", New<TFairThrottlerBucketConfig>());
-+    // Wait for the initial tick. The next tick is an hour away, so it cannot mask a reset.
-+    ASSERT_TRUE(WaitFor(probe->Throttle(1).WithTimeout(TDuration::Seconds(5))).IsOK());
-+
-+    auto bucketConfig = New<TFairThrottlerBucketConfig>();
-+    bucketConfig->Limit = 100;
-+    auto bucket = throttler->CreateBucketThrottler("main", bucketConfig);
-+    // A limited bucket cannot draw from th
-```
-
-**File**: `yt/yt/server/node/cluster_node/bootstrap.cpp` (modified, +8/-2)
-```diff
-@@ -1399,8 +1399,11 @@ class TBootstrap
-         std::optional<i64> netRxLimit)
-     {
-         {
--            auto throttlerConfig = New<TFairThrottlerConfig>();
-+            auto throttlerConfig = CloneYsonStruct(Config_->InThrottler);
-             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netRxLimit);
-+            if (!newConfig->EnableNetworkThrottlerIpc) {
-+                throttlerConfig->IpcPath.reset();
-+            }
- 
-             THashMap<std::string, TFairThrottlerBucketConfigPtr> inBucketsConfig;
-             for (const auto& bucket : EnabledInThrottlers_) {
-@@ -1412,8 +1415,11 @@ class TBootstrap
-             InThrottler_->Reconfigure(throttlerConfig, inBucketsConfig);
-         }
-         {
--            auto throttlerConfig = New<TFairThrottlerConfig>();
-+            auto throttlerConfig = CloneYsonStruct(Config_->OutThrottler);
-             throttlerConfig->TotalLimit = GetNetworkThrottlerLimit(newConfig, netTxLimit);
-+            if (!newConfig->EnableNetworkThrottlerIpc) {
-+                throttlerConfig->IpcPath.reset();
-+            }
-             THashMap<std::string, TFairThrottlerBucketConfigPtr> outBucketsConfig;
-             for (const auto& bucket : EnabledOutThrottlers_) {
-                 outBucketsConfig[bucket] = Config_->OutThrottlers[bucket];
-```
-
-**File**: `yt/yt/server/node/cluster_node/config.cpp` (modified, +2/-0)
-```diff
-@@ -521,6 +521,8 @@ void TClusterNodeDynamicConfig::Register(TRegistrar registrar)
-         .DefaultNew();
-     registrar.Parameter("master_connector", &TThis::MasterConnector)
-         .DefaultNew();
-+    registrar.Parameter("enable_network_throttler_ipc", &TThis::EnableNetworkThrottlerIpc)
-+        .Default(true);
-     registrar.Parameter("in_throttlers", &TThis::InThrottlers)
-         .Default();
-     registrar.Parameter("out_throttlers", &TThis::OutThrottlers)
-```
-
-**File**: `yt/yt/server/node/cluster_node/config.h` (modified, +3/-0)
-```diff
-@@ -463,6 +463,9 @@ struct TClusterNodeDynamicConfig
-     //! Master connector configuration.
-     TMasterConnectorDynamicConfigPtr MasterConnector;
- 
-+    //! Whether network fair throttlers share quota with other processes via IPC.
-+    bool EnableNetworkThrottlerIpc;
-+
-     //! Bucket configuration for in network throttlers.
-     THashMap<std::string, NConcurrency::TFairThrottlerBucketConfigPtr> InThrottlers;
- 
++    auto structType = StructLogicalType({
++        TStructField{"a", "a", SimpleLogicalT
 ```
 
 ---
 
-### Incident Patch 2: `dc31b68d` (2026-11-26)
-**Commit Message**: YTFLOW: Fix the key-visitor scan-all description in docs
-commit_hash:4055ab9c76cdc17aeae95aa8a2be54e6da0f188b
+### Incident Patch 2: `00ab595d` (2026-11-27)
+**Commit Message**: YT-30595: Revert redundant pending unregistration reset (rXXXXXX)
 
-**File**: `yt/docs/en/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@ To make a computation accept a visit stream, you must fill the `key_visitor_stre
- 
- - `names`: a list of internal-state names to count keys from. If unspecified or empty, all keys from all internal states of the computation are used.
- - `weak_external_names`: a list of visitor-driven external-state joiners scanned in step with the visit stream without contributing keys. Such a joiner is read over the same key ranges as the other sources, so its row is available in `ProcessVisit` for the visit key, but a key present only in the joiner produces no visit (a left join against the keys of `names`/`external_names`). Must not overlap with `external_names`; the "at most one visit stream per joiner" rule covers both lists. See [Static table joiner](#static-table-joiner).
--- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states are scanned, but external state and joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
-+- `external_names`: a list of [external-state managers](../../../flow/concepts/glossary.md#state) and visitor-driven external-state joiners (see [Static table joiner](#static-table-joiner)) for the computation, whose tables are used to count keys. This lets the visitor scan the external state (including that of companion computations) and evict outdated records via `clear()` in the visit handler. If only `external_names` is specified (without `names`), only the listed external state is scanned; internal states aren’t scanned. If neither `names` nor `external_names` is specified, all internal states and all external-state managers of the computation are scanned, but joiners aren’t; a joiner is scanned only if explicitly listed in `external_names`, and in no more than one visit stream of the computation (checked at spec submit time).
- - `upstream_streams`: which of the computation’s input and source streams the visitor follows, that is, whose completion it waits for before the final pass (see [Pass lifecycle](#pass-lifecycle)). When unspecified, all input and source streams of the computation. Only meaningful with `finite=%true` (see [Dynamic spec parameters](#dynamic-params)). For when the list needs narrowing, see [`streams_dependency`](#deps).
- 
- ### Dynamic spec parameters {#dynamic-params}
-```
+Revert rXXXXXX (97685f131b235ccd901f7146707ef0db43c2ed4c), introduced by [PR 17437255](https://nda.ya.ru/t/Bs7KmzA37xUyPQ
 
-**File**: `yt/docs/ru/_includes/flow/concepts/key_visitor.md` (modified, +1/-1)
+[PR 16760467](https://nda.ya.ru/t/TNThon6-7xUyPR is merged and now clears HasPendingUnregistration at the start of DoUnregisterNode. Remove the redundant reset immediately before that call in EndNodeHeartbeatProcessing. The call is protected by TForbidContextSwitchGuard; the reset inside DoUnregisterNode remains and preserves the fix for repeated unregistration after a heartbeat.
+
+The diff removes exactly one line from node_shard.cpp. Based on trunk rXXXXXX (a3558a25d0344d5ef80ccc388cdfaa01d07452ac).
+
+Validation: reviewed the staged diff; ya style --check --smart-staged and committed-diff lint passed. No build or tests were run for this one-line cleanup.
+
+Tickets:(https://nda.ya.ru/t/ijmmpb9E7xUyPS,(https://nda.ya.ru/t/l_lUtExX7xUyPT
+commit_hash:d6af743c6d4535f06b564cf3b089919ca174ff5d
+
+**File**: `yt/yt/server/scheduler/node_shard.cpp` (modified, +0/-1)
 ```diff
-@@ -75,7 +75,7 @@ Key-visitor-стрим решает эту задачу: фоновая зада
- ### Параметры статической спеки {#static-params}
+@@ -2278,7 +2278,6 @@ void TNodeShard::EndNodeHeartbeatProcessing(const TExecNodePtr& node)
+     }
  
- - `names` — список имён internal-стейтов, по которым считать ключи. Если не задан или пустой — все ключи всех internal-стейтов компьютейшена.
--- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты, а external-стейт и джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
-+- `external_names` — список имён [external-стейт-менеджеров](../../../flow/concepts/glossary.md#state) и visitor-driven external-стейт-джойнеров (см. [Джойн внешней статической таблицы](#static-table-joiner)) компьютейшена, по таблицам которых считать ключи. Позволяет визитору обходить external-стейт (в том числе у companion-компьютейшенов) и эвиктить устаревшие записи через `clear()` в обработчике визита. Если задан только `external_names` (без `names`) — обходится только перечисленный external-стейт, internal-стейты не сканируются. Если не заданы ни `names`, ни `external_names`, обходятся все internal-стейты и все external-стейт-менеджеры компьютейшена, а джойнеры — нет; джойнер обходится только при явном перечислении в `external_names`, и не более чем в одном visit-стриме компьютейшена (проверяется при submit'е спеки).
- - `weak_external_names` — список visitor-driven external-стейт-джойнеров, которые обходятся синхронно с visit-стримом, но ключей в него не поставляют: джойнер читается по тем же диапазонам, что и остальные источники, и его строка доступна в `ProcessVisit` для ключа визита, а ключ, который есть только в джойнере, визита не порождает (left join по ключам `names`/`external_names`). Не пересекается с `external_names`; ограничение «не более одного visit-стрима на джойнер» действует для обоих списков. См. [Джойн внешней статической таблицы](#static-table-joiner).
- - `upstream_streams` — какие входные и source-стримы компьютейшена визитор отслеживает, то есть завершения каких из них ждёт перед финальным pass'ом (см. [Жизненный цикл прохода](#pass-lifecycle)). Если не задан — все входные и source-стримы компьютейшена. Имеет смысл только при `finite=%true` (см. [Параметры динамической спеки](#dynamic-params)). Когда список нужно сужать — см. [`streams_dependency`](#deps).
- 
+     if (node->GetHasPendingUnregistration()) {
+-        node->SetHasPendingUnregistration(false);
+         DoUnregisterNode(node);
+     }
+ }
 ```
 
 ---
 
-### Incident Patch 3: `5bdc9082` (2026-11-26)
-**Commit Message**: Fix partial type annotation
+### Incident Patch 3: `c88470ec` (2026-11-27)
+**Commit Message**: Add CUDA 13.5 for Linux x86-64
 
-Here are fixes for 2 bugs. One is trivial, but the second is interesting. `COALESCE(T?, Universal)` returned `T`. It seems that any `COALESCE` with `Universal`s should return `Universal`, because the type inference rule uses common type and a common type with any unknown type is obviously unknown.
-commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
+Добавлена поддержка CUDA Toolkit 13.5.0 для сборки YNMT под Linux x86-64.
 
-**File**: `yql/essentials/core/type_ann/type_ann_core.cpp` (modified, +6/-0)
+* Подключён пропатченный Toolkit через описания host- и target-ресурсов, обновлён `CUDA_FAKEID`.
+
+* В инструкцию добавлены ссылки на патч и архив Toolkit в Sandbox.
+
+* Исправлена ошибка компиляции GPU-тестов бэкенда YNMT с CUDA 13.2 и 13.5: вызов `ReinterpretCast<T>()` вынесен в отдельную строку.
+
+* Добавлены CI-проверки backend и моделей YNMT с CUDA 13.5 на H100 и B200, включая подготовку кеша.
+
+* Для совместимости тестов YNMT с CUDA 13.5 на B200 увеличены допуски при сравнении оценок токенов в `NgramSystemPromptReuseInsideChunk` (с `0.002` до `0.03`) и `VLMQwen35MoeBf16` (с `0.001` до `0.005`)
+commit_hash:907afd00c5b051a87afaff930829dbc9712f4dca
+
+**File**: `build/ymake_conf.py` (modified, +10/-1)
 ```diff
-@@ -6174,6 +6174,12 @@ IGraphTransformer::TStatus CoalesceWrapper(const TExprNode::TPtr& input, TExprNo
-     const auto leftType = input->Head().GetTypeAnn();
-     const auto rightType = input->Tail().GetTypeAnn();
- 
-+    if (leftType->GetKind() == ETypeAnnotationKind::Universal ||
-+        (rightType->GetKind() == ETypeAnnotationKind::Universal && leftType->IsOptionalOrNull())) {
-+        input->SetTypeAnn(ctx.Expr.MakeType<TUniversalExprType>());
-+        return IGraphTransformer::TStatus::Ok;
+@@ -2557,6 +2557,10 @@ class CudaToolkit(object):
+             required_host_version='11.8',
+         ),
+     }
++    # CUDA toolkits available only for Linux x86-64 builds.
++    LINUX_X86_64 = {
++        '13.5': CudaSdk(host_tools_json='cuda_13.5.json', target_sdk_json='cuda_target_13.5.json'),
 +    }
-+
-     auto leftItemType = leftType;
-     if (leftType->GetKind() == ETypeAnnotationKind::Optional) {
-         leftItemType = leftType->Cast<TOptionalExprType>()->GetItemType();
-```
-
-**File**: `yql/essentials/core/type_ann/type_ann_list.cpp` (modified, +2/-1)
-```diff
-@@ -3381,7 +3381,8 @@ namespace {
-                 return nullptr;
-             }
-             const auto itemType = input.GetTypeAnn()->Cast<TListExprType>()->GetItemType();
--            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct) {
-+            if (itemType->GetKind() == ETypeAnnotationKind::UniversalStruct ||
-+                itemType->GetKind() == ETypeAnnotationKind::Universal) {
-                 isUniversal = true;
-                 return nullptr;
-             }
+     WINDOWS_X86_64 = {
+         '11.4': CudaSdk(host_tools_json='cuda_11.4.json', target_sdk_json=None),
+     }
+@@ -2576,7 +2580,12 @@ def routes(cls, host, target):
+         if not (host.is_linux_x86_64 or host.is_linux_armv8 or host.is_linux_armv9a):
+             return {}
+         if target.is_linux_x86_64:
+-            return cls.with_aliases(cls.LINUX)
++            sdks = dict(cls.LINUX)
++            # LINUX_X86_64 toolkits ship only x86-64 host tools.
++            # An ARM host needs ARM tools even when cross-compiling for an x86-64 target.
++            if host.is_linux_x86_64:
++                sdks.update(cls.LINUX_X86_64)
++            return cls.with_aliases(sdks)
+         if target.is_linux_armv8 or target.is_linux_armv9a:
+             sdks = dict(cls.LINUX)
+             sdks.update(cls.LEGACY_JETPACK)
 ```
 
 #### Recent Merged Pull Requests:
@@ -1645,85 +1941,78 @@ commit_hash:494c85b85dfabae384157bc2acc2fabc24b70782
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-23401: Allow toggling network throttler IPC via node dynamic config
+## X. YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types
 
 **RULE**:
-When implementing operations in `yt/yt/core/concurrency/fair_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/library/formats/arrow_parser.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9981fd4e`: YT-23401: Allow toggling network throttler IPC via node dynamic config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97403463`: YT-30225: Fix Arrow writer crashes on optional<yson> nested in composite types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/core/concurrency/fair_throttler.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/library/formats/arrow_parser.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <library/cpp/yt/memory/atomic_intrusive_ptr.h>
+#include <yt/yt/core/yson/pull_parser.h>
 
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-            : std::max<i64>(0, sharedBucket->Limit.GetValue());
-        sharedBucket->Limit.Acquire(globalConsumed);
-        auto sharedBucket = SharedBucket_.Acquire();
-        auto globalAvailable = IsLimited() ? 0 : sharedBucket->Limit.GetValue();
-    void SetSharedBucket(const TSharedBucketPtr& sharedBucket)
+#include <util/stream/mem.h>
+        return VisitStringLike<arrow20::StringArray>();
+        return VisitStringLike<arrow20::LargeStringArray>();
+        return VisitStringLike<arrow20::BinaryArray>();
+        return VisitStringLike<arrow20::LargeBinaryArray>();
+        return VisitStringLike<arrow20::FixedSizeBinaryArray>();
+        return ParseStringLike<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+        return ParseStringLike<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+    arrow20::Status ParseStringLike(auto makeUnversionedValueFunc)
+    arrow20::Status VisitStringLike()
     {
-        SharedBucket_.Store(sharedBucket);
+        if ((!ColumnType_ || *ColumnType_ == ESimpleLogicalValueType::Any) &&
+            HasYsonTypeInMetadata(SchemaField_))
+        {
+            return ParseYson<ArrayType>();
+        } else {
+            return ParseString<ArrayType>();
+        }
     }
 
-    TAtomicIntrusivePtr<TSharedBucket> SharedBucket_;
-            GetSharedBucketValue(Ipc_)))
-        IsLeader_ = !Ipc_;
-        Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-            return IsLeader_.load();
+    template <typename ArrayType>
+    arrow20::Status ParseYson()
+    {
+        return ParseStringLike<ArrayType>([] (TStringBuf value, i64 columnId) {
+            ValidateYsonValue(value);
+            return MakeUnversionedAnyValue(value, columnId);
         });
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-            : std::max<i64>(0, SharedBucket_->Limit.GetValue());
-        SharedBucket_->Limit.Acquire(globalConsumed);
-        auto globalAvailable = IsLimited() ? 0 : SharedBucket_->Limit.GetValue();
-    const TSharedBucketPtr SharedBucket_;
-            GetSharedBucketValue()))
-        if (Ipc_) {
-            Profiler_.AddFuncGauge("/leader", MakeStrong(this), [this] {
-                return IsLeader_.load();
-            });
-        } else {
-            IsLeader_ = true;
-        }
-        if (!config) {
-            config = New<TFairThrottlerBucketConfig>();
-        }
-
-        if (auto it = Buckets_.find(name); it != Buckets_.end()) {
-            it->second.Throttler->Update(Config_, config);
-
-            it->second.Config = std::move(config);
-
-            return it->second.Throttler;
-        }
-
-        auto throttler = New<TBucketThrottler>(
-            Logger().WithTag("Bucket", name),
-            Profiler_.WithTag("bucket", name),
-            S
+        return ParseStringLikeArray<arrow20::StringArray>();
+        return ParseStringLikeArray<arrow20::LargeStringArray>();
+        return ParseStringLikeArray<arrow20::BinaryArray>();
+        return ParseStringLikeArray<arrow20::LargeBinaryArray>();
+        return ParseStringLikeArray<arrow20::FixedSizeBinaryArray>();
+        return ParseStringLikeArray<arrow20::Decimal128Array>([&] (TStringBuf value, i64 columnId) {
+        return ParseStringLikeArray<arrow20::Decimal256Array>([&] (TStringBuf value, i64 columnId) {
+    arrow20::Status ParseStringLikeArray(auto makeUnversionedValueFunc)
+    arrow20::Status ParseStringLikeArray()
+    {
+        // Note that MakeUnversionedValue actually has third argument in its signature,
+        // which leads to a "too few arguments" in the point of its invocation if we try to pass
+        // it directly to ParseStringLikeArray.
+        return ParseStringLikeArray<ArrayType>([this] (TStringBuf value, i64 columnId) {
+            if (HasYsonTypeInMetadata(SchemaField_)) {
+                ValidateYsonValue(value);
+                return MakeUnversionedAnyValue(value, columnId);
+            } else {
+                return MakeUnversionedStringValu
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9981fd4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97403463` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

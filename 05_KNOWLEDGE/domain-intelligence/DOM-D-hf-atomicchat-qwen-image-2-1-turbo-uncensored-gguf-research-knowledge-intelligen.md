@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
   "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:04:38.625Z",
+  "timestamp": "2026-11-27T06:14:33.657Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF](https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF) (Revision: `hf-atomicc`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:04:38.625Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T06:14:33.657Z`  
 > **Learning ID**: `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF](https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:04:37.590Z  
+> **Harvest Timestamp**: 2026-11-27T06:14:32.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 624779 downloads | 890 likes
+- **Stars / Engagement**: 604876 downloads | 908 likes
 
 ---
 

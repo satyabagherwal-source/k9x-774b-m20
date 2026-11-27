@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T06:06:13.842Z",
+  "updated_at": "2026-11-27T06:15:01.378Z",
   "stats": {
-    "total_discovered": 10181,
-    "approved_pending_harvest": 9653,
+    "total_discovered": 10255,
+    "approved_pending_harvest": 9726,
     "harvested_count": 0,
-    "rejected_count": 528,
+    "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9658,
+      "COMMUNITY_AND_EXPERT": 9731,
       "OFFICIAL_DOCUMENTATION": 288,
-      "STANDARDS_AND_SPECIFICATIONS": 162,
+      "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
       "LEGAL_AND_REGULATORY": 2,
@@ -220313,6 +220313,1627 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
         "fileName": "litmuschaos-litmus-learnings.md"
+      }
+    },
+    "SRC-8C22953CBD4C": {
+      "id": "SRC-8C22953CBD4C",
+      "url": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+      "title": "https://github.com/oracle-devrel/oracle-ai-developer-hub",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:54.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-B16A8D90BBD8": {
+      "id": "SRC-B16A8D90BBD8",
+      "url": "http://localhost:3000,http://localhost:5173",
+      "title": "http://localhost:3000,http://localhost:5173",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T06:14:54.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-B519906EB5FB": {
+      "id": "SRC-B519906EB5FB",
+      "url": "https://fittrack.com/errors/internal",
+      "title": "https://fittrack.com/errors/internal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:54.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-951F282A8C4B": {
+      "id": "SRC-951F282A8C4B",
+      "url": "https://fittrack.com/errors/not-found",
+      "title": "https://fittrack.com/errors/not-found",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:54.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-3711CF0735FA": {
+      "id": "SRC-3711CF0735FA",
+      "url": "https://fittrack.com/errors/validation",
+      "title": "https://fittrack.com/errors/validation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-204AD5595C7D": {
+      "id": "SRC-204AD5595C7D",
+      "url": "https://fittrack.com/errors/conflict",
+      "title": "https://fittrack.com/errors/conflict",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-8C116869E22C": {
+      "id": "SRC-8C116869E22C",
+      "url": "https://fittrack.com/errors/unauthorized",
+      "title": "https://fittrack.com/errors/unauthorized",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-48B459CFD99B": {
+      "id": "SRC-48B459CFD99B",
+      "url": "https://fittrack.com/errors/forbidden",
+      "title": "https://fittrack.com/errors/forbidden",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-778D4C54904F": {
+      "id": "SRC-778D4C54904F",
+      "url": "https://fittrack.com/errors/insufficient-points",
+      "title": "https://fittrack.com/errors/insufficient-points",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-AD0E1B53ED72": {
+      "id": "SRC-AD0E1B53ED72",
+      "url": "https://fittrack.com/errors/drawing-closed",
+      "title": "https://fittrack.com/errors/drawing-closed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.395Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-ABB85E930820": {
+      "id": "SRC-ABB85E930820",
+      "url": "https://fittrack.com/errors/ineligible",
+      "title": "https://fittrack.com/errors/ineligible",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-2AE010C434CD": {
+      "id": "SRC-2AE010C434CD",
+      "url": "https://fittrack.com/errors/database",
+      "title": "https://fittrack.com/errors/database",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-831AD9A393F6": {
+      "id": "SRC-831AD9A393F6",
+      "url": "https://fittrack.com/errors/optimistic-lock",
+      "title": "https://fittrack.com/errors/optimistic-lock",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-86BDDBBEE3FD": {
+      "id": "SRC-86BDDBBEE3FD",
+      "url": "https://fittrack.com/errors/http-%7Bexc.status_code",
+      "title": "https://fittrack.com/errors/http-%7Bexc.status_code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.651Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-5D29C8718B92": {
+      "id": "SRC-5D29C8718B92",
+      "url": "https://github.com/expressjs/body-parser",
+      "title": "https://github.com/expressjs/body-parser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-D5A52DDF7029": {
+      "id": "SRC-D5A52DDF7029",
+      "url": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+      "title": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-5F90BCD53742": {
+      "id": "SRC-5F90BCD53742",
+      "url": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
+      "title": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-0D305CB4CED6": {
+      "id": "SRC-0D305CB4CED6",
+      "url": "https://registry.npmjs.org/@babel/core/-/core-7.29.7.tgz",
+      "title": "https://registry.npmjs.org/@babel/core/-/core-7.29.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:55.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-65B1364780A0": {
+      "id": "SRC-65B1364780A0",
+      "url": "https://registry.npmjs.org/@babel/core/-/core-7.29.13.tgz",
+      "title": "https://registry.npmjs.org/@babel/core/-/core-7.29.13.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-C26A5B0C28C8": {
+      "id": "SRC-C26A5B0C28C8",
+      "url": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.8.tgz",
+      "title": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-C8656765BC8C": {
+      "id": "SRC-C8656765BC8C",
+      "url": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.14.tgz",
+      "title": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.14.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F1CF2EE2C8D1": {
+      "id": "SRC-F1CF2EE2C8D1",
+      "url": "https://registry.npmjs.org/@babel/types/-/types-7.29.8.tgz",
+      "title": "https://registry.npmjs.org/@babel/types/-/types-7.29.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-563F0DA86420": {
+      "id": "SRC-563F0DA86420",
+      "url": "https://registry.npmjs.org/@babel/types/-/types-7.29.14.tgz",
+      "title": "https://registry.npmjs.org/@babel/types/-/types-7.29.14.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-C11F472DBB89": {
+      "id": "SRC-C11F472DBB89",
+      "url": "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz",
+      "title": "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-9AFBE876349B": {
+      "id": "SRC-9AFBE876349B",
+      "url": "https://registry.npmjs.org/semver/-/semver-6.3.2.tgz",
+      "title": "https://registry.npmjs.org/semver/-/semver-6.3.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F43E5363048A": {
+      "id": "SRC-F43E5363048A",
+      "url": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.8.tgz",
+      "title": "https://registry.npmjs.org/@babel/generator/-/generator-7.29.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-DAB892839DF4": {
+      "id": "SRC-DAB892839DF4",
+      "url": "https://github.com/BerriAI/litellm",
+      "title": "https://github.com/BerriAI/litellm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-A3DEBDA18872": {
+      "id": "SRC-A3DEBDA18872",
+      "url": "https://github.com/python-pillow/Pillow",
+      "title": "https://github.com/python-pillow/Pillow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F7B0402AD287": {
+      "id": "SRC-F7B0402AD287",
+      "url": "https://github.com/facelessuser/soupsieve",
+      "title": "https://github.com/facelessuser/soupsieve",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-642743AD9061": {
+      "id": "SRC-642743AD9061",
+      "url": "https://github.com/langchain-ai/langgraph",
+      "title": "https://github.com/langchain-ai/langgraph",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-66F18949658A": {
+      "id": "SRC-66F18949658A",
+      "url": "https://github.com/authlib/authlib",
+      "title": "https://github.com/authlib/authlib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:56.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-FE540CEB7DF6": {
+      "id": "SRC-FE540CEB7DF6",
+      "url": "https://files.pythonhosted.org/packages/f1/51/bc1729d3cfdc214b4935f4e886e4dd443c3065fd8e1e66423fe84b490f81/authlib-1.8.0.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/f1/51/bc1729d3cfdc214b4935f4e886e4dd443c3065fd8e1e66423fe84b490f81/authlib-1.8.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.029Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-DF82518D757A": {
+      "id": "SRC-DF82518D757A",
+      "url": "https://files.pythonhosted.org/packages/c9/dc/087c08741a98d234c9b98beef8a28d3c309f814d14b6156422c5815bf6d6/authlib-1.9.1.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/c9/dc/087c08741a98d234c9b98beef8a28d3c309f814d14b6156422c5815bf6d6/authlib-1.9.1.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-B4134FD6C5E6": {
+      "id": "SRC-B4134FD6C5E6",
+      "url": "https://files.pythonhosted.org/packages/b8/c6/6f124bcfbbfb20fba22c939b4e43a06dccfc0e1ca20e5634ca573cb1e271/authlib-1.8.0-py2.py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/b8/c6/6f124bcfbbfb20fba22c939b4e43a06dccfc0e1ca20e5634ca573cb1e271/authlib-1.8.0-py2.py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-866B88D71ABC": {
+      "id": "SRC-866B88D71ABC",
+      "url": "https://files.pythonhosted.org/packages/39/44/a46089266de32a0d809023b6bf31b80a1f26a46954446a7ce695a565cbea/authlib-1.9.1-py2.py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/39/44/a46089266de32a0d809023b6bf31b80a1f26a46954446a7ce695a565cbea/authlib-1.9.1-py2.py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.220Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-EA88ECEEAE4B": {
+      "id": "SRC-EA88ECEEAE4B",
+      "url": "https://files.pythonhosted.org/packages/8c/8b/57666417c0f90f08bcafa776861060426765fdb422eb10212086fb811d26/dnspython-2.8.0.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/8c/8b/57666417c0f90f08bcafa776861060426765fdb422eb10212086fb811d26/dnspython-2.8.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F010F244D0EC": {
+      "id": "SRC-F010F244D0EC",
+      "url": "https://files.pythonhosted.org/packages/76/49/900383b471c645a3c397f47b3211d1fcecb3a540c98f683494cdf86b33de/dnspython-2.9.2.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/76/49/900383b471c645a3c397f47b3211d1fcecb3a540c98f683494cdf86b33de/dnspython-2.9.2.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-87111E3F8729": {
+      "id": "SRC-87111E3F8729",
+      "url": "https://files.pythonhosted.org/packages/ba/5a/18ad964b0086c6e62e2e7500f7edc89e3faa45033c71c1893d34eed2b2de/dnspython-2.8.0-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/ba/5a/18ad964b0086c6e62e2e7500f7edc89e3faa45033c71c1893d34eed2b2de/dnspython-2.8.0-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-37846F048A7F": {
+      "id": "SRC-37846F048A7F",
+      "url": "https://files.pythonhosted.org/packages/1e/0c/5346358b3a20275d256978c35203ddc2c8617f78c1b23795b79ba22ced6d/dnspython-2.9.2-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/1e/0c/5346358b3a20275d256978c35203ddc2c8617f78c1b23795b79ba22ced6d/dnspython-2.9.2-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-351E66771DD2": {
+      "id": "SRC-351E66771DD2",
+      "url": "https://files.pythonhosted.org/packages/19/94/80fea1514b7c6d7d37804d3fe9ca81455f633347fc98731bd71ffe1faa17/joserfc-1.7.5.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/19/94/80fea1514b7c6d7d37804d3fe9ca81455f633347fc98731bd71ffe1faa17/joserfc-1.7.5.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-381E865E7D56": {
+      "id": "SRC-381E865E7D56",
+      "url": "https://files.pythonhosted.org/packages/cd/db/ec5b5fe07a7bda62cd2c2d619daf160eb7442b979c7cd61bbe0262108de9/joserfc-1.7.6.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/cd/db/ec5b5fe07a7bda62cd2c2d619daf160eb7442b979c7cd61bbe0262108de9/joserfc-1.7.6.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F0DD2F6D08AB": {
+      "id": "SRC-F0DD2F6D08AB",
+      "url": "https://files.pythonhosted.org/packages/67/c5/82addfd375e5ee6520644e0553e4aadde92d668c4fc99cc716d337fe7bb3/joserfc-1.7.5-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/67/c5/82addfd375e5ee6520644e0553e4aadde92d668c4fc99cc716d337fe7bb3/joserfc-1.7.5-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.666Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-7624228E6F75": {
+      "id": "SRC-7624228E6F75",
+      "url": "https://files.pythonhosted.org/packages/98/40/63886ba742c6fd9e6dd222e20b8d54012fbc933465350c7747c4ed5b31e4/joserfc-1.7.6-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/98/40/63886ba742c6fd9e6dd222e20b8d54012fbc933465350c7747c4ed5b31e4/joserfc-1.7.6-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-AF1C938C4EDC": {
+      "id": "SRC-AF1C938C4EDC",
+      "url": "https://files.pythonhosted.org/packages/ee/8b/aa9e2d8b8dfa7c946f7dec5d1f8f6ba8eca062f43509a06bdb5ce93d26c0/opentelemetry_api-1.44.0.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/ee/8b/aa9e2d8b8dfa7c946f7dec5d1f8f6ba8eca062f43509a06bdb5ce93d26c0/opentelemetry_api-1.44.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-040ADF3A4175": {
+      "id": "SRC-040ADF3A4175",
+      "url": "https://files.pythonhosted.org/packages/19/14/cf3a6b6448849656e1e5f4e2101f3988dc6789724050096aba1bc5ccf592/open",
+      "title": "https://files.pythonhosted.org/packages/19/14/cf3a6b6448849656e1e5f4e2101f3988dc6789724050096aba1bc5ccf592/open",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-EED29E3C9E1C": {
+      "id": "SRC-EED29E3C9E1C",
+      "url": "https://files.pythonhosted.org/packages/e6/dc/be6cbe99670cd6e4ad387123647cb08e0c32975e223f82551e914c5568a6/filelock-3.29.4.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/e6/dc/be6cbe99670cd6e4ad387123647cb08e0c32975e223f82551e914c5568a6/filelock-3.29.4.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-1372B46BF2C3": {
+      "id": "SRC-1372B46BF2C3",
+      "url": "https://files.pythonhosted.org/packages/d5/98/771d8ca889f220d7d7e352addf500666368f0fd081c6080a83767580c6e4/filelock-4.2.1.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/d5/98/771d8ca889f220d7d7e352addf500666368f0fd081c6080a83767580c6e4/filelock-4.2.1.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:57.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-D6EC7309FC38": {
+      "id": "SRC-D6EC7309FC38",
+      "url": "https://files.pythonhosted.org/packages/13/37/a065dc3bd6e49423a6532c642ca7378d3f467b1ef44c2800c937af7f9739/filelock-3.29.4-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/13/37/a065dc3bd6e49423a6532c642ca7378d3f467b1ef44c2800c937af7f9739/filelock-3.29.4-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-7692BF888540": {
+      "id": "SRC-7692BF888540",
+      "url": "https://files.pythonhosted.org/packages/28/00/db89d339bc4ecdc8087fa7b8607ba22ffc27bf96286f340c9620bea428b3/filelock-4.2.1-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/28/00/db89d339bc4ecdc8087fa7b8607ba22ffc27bf96286f340c9620bea428b3/filelock-4.2.1-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-E0CE43F1CF7D": {
+      "id": "SRC-E0CE43F1CF7D",
+      "url": "https://files.pythonhosted.org/packages/77/9d/7c9ebd17b95569122e2d2e641f535cf086c870d66bb8e59be33cdba856b3/langgraph-1.2.5.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/77/9d/7c9ebd17b95569122e2d2e641f535cf086c870d66bb8e59be33cdba856b3/langgraph-1.2.5.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-11E027605F70": {
+      "id": "SRC-11E027605F70",
+      "url": "https://files.pythonhosted.org/packages/49/3f/6e60789eab2c5ceaf34ba2c626ac345df93b026bbe7385018aa4b9c30397/langgraph-1.2.14.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/49/3f/6e60789eab2c5ceaf34ba2c626ac345df93b026bbe7385018aa4b9c30397/langgraph-1.2.14.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.235Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-42EB33B66213": {
+      "id": "SRC-42EB33B66213",
+      "url": "https://files.pythonhosted.org/packages/a2/03/187281cf61845c5a9c397ae6cd9cd73bb54b39435e5575a7b83c853e5b76/langgraph-1.2.5-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/a2/03/187281cf61845c5a9c397ae6cd9cd73bb54b39435e5575a7b83c853e5b76/langgraph-1.2.5-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-26ACFBF23C67": {
+      "id": "SRC-26ACFBF23C67",
+      "url": "https://files.pythonhosted.org/packages/ec/4a/f976df0d3cf7fb7986dc39f656c6b7b5655834430e9bdfaef1e1e4fffaba/langgraph-1.2.14-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/ec/4a/f976df0d3cf7fb7986dc39f656c6b7b5655834430e9bdfaef1e1e4fffaba/langgraph-1.2.14-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-2F56D433FE21": {
+      "id": "SRC-2F56D433FE21",
+      "url": "https://files.pythonhosted.org/packages/b4/2b/bd8ac26d4e97f6df88ef05ce5b6a38945a3903e1025d926f4752aa88aa97/langgraph_sdk-0.4.2.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/b4/2b/bd8ac26d4e97f6df88ef05ce5b6a38945a3903e1025d926f4752aa88aa97/langgraph_sdk-0.4.2.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-F4B051AD404A": {
+      "id": "SRC-F4B051AD404A",
+      "url": "https://files.pythonhosted.org/packages/28/4d/d26d0393fa9a305199ebc4fbc2550b9b5b4fd33603bd8bd149ad6b84616f/langgraph_sdk-0.4.14.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/28/4d/d26d0393fa9a305199ebc4fbc2550b9b5b4fd33603bd8bd149ad6b84616f/langgraph_sdk-0.4.14.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.487Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-C8D22B0D6496": {
+      "id": "SRC-C8D22B0D6496",
+      "url": "https://files.pythonhosted.org/packages/a0/05/aac507337cceae773c2cc9ab91eb6301963af7aeeb55b4217a00e15aff17/langgraph_sdk-0.4.2-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/a0/05/aac507337cceae773c2cc9ab91eb6301963af7aeeb55b4217a00e15aff17/langgraph_sdk-0.4.2-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-42211C938DE6": {
+      "id": "SRC-42211C938DE6",
+      "url": "https://files.pythonhosted.org/packages/14/f1/3db4776fb3673dbae57b0ad2e9f14d9a2c44bde8932df7df0f7671572ed3/langgraph_sdk-0.4.14-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/14/f1/3db4776fb3673dbae57b0ad2e9f14d9a2c44bde8932df7df0f7671572ed3/langgraph_sdk-0.4.14-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-DFF35A390665": {
+      "id": "SRC-DFF35A390665",
+      "url": "https://github.com/postcss/postcss-selector-parser",
+      "title": "https://github.com/postcss/postcss-selector-parser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.678Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-8FF82FB2ABF7": {
+      "id": "SRC-8FF82FB2ABF7",
+      "url": "https://gi/",
+      "title": "https://gi/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-3E96CB93A333": {
+      "id": "SRC-3E96CB93A333",
+      "url": "https://registry.npmjs.org/vite/-/vite-6.4.2.tgz",
+      "title": "https://registry.npmjs.org/vite/-/vite-6.4.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.859Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-4655D4DA7C0D": {
+      "id": "SRC-4655D4DA7C0D",
+      "url": "https://registry.npmjs.org/vite/-/vite-6.4.6.tgz",
+      "title": "https://registry.npmjs.org/vite/-/vite-6.4.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-93114AE15F46": {
+      "id": "SRC-93114AE15F46",
+      "url": "https://registry.npmjs.org/@emnapi/core/-/core-1.10.0.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/core/-/core-1.10.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:58.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-D90B2CBF3950": {
+      "id": "SRC-D90B2CBF3950",
+      "url": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.10.0.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.10.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-7A10B7F69F90": {
+      "id": "SRC-7A10B7F69F90",
+      "url": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.1.tgz",
+      "title": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.174Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-136F6E0535F2": {
+      "id": "SRC-136F6E0535F2",
+      "url": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.5.tgz",
+      "title": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-70C157542C62": {
+      "id": "SRC-70C157542C62",
+      "url": "https://registry.npmjs.org/@oxc-project/types/-/types-0.133.0.tgz",
+      "title": "https://registry.npmjs.org/@oxc-project/types/-/types-0.133.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-8D1EB84B4C01": {
+      "id": "SRC-8D1EB84B4C01",
+      "url": "https://registry.np/",
+      "title": "https://registry.np/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-115FE371E711": {
+      "id": "SRC-115FE371E711",
+      "url": "https://registry.npmjs.org/vite/-/vite-8.3.1.tgz",
+      "title": "https://registry.npmjs.org/vite/-/vite-8.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.639Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-0EFC3C3612AA": {
+      "id": "SRC-0EFC3C3612AA",
+      "url": "https://registry.npmjs.org/vite/-/vite-8.3.3.tgz",
+      "title": "https://registry.npmjs.org/vite/-/vite-8.3.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-7488A78E4E0F": {
+      "id": "SRC-7488A78E4E0F",
+      "url": "https://www.rfc-editor.org/rfc/rfc7807",
+      "title": "IETF RFC 7807",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:14:59.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oracle-devrel-oracle-ai-developer-hub-learnings.md",
+        "fileName": "oracle-devrel-oracle-ai-developer-hub-learnings.md"
+      }
+    },
+    "SRC-01EE5EBA0F83": {
+      "id": "SRC-01EE5EBA0F83",
+      "url": "https://ytsaurus.tech/docs/user-guide/storage/data-types",
+      "title": "https://ytsaurus.tech/docs/user-guide/storage/data-types",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:15:01.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-25D3A9D044EC": {
+      "id": "SRC-25D3A9D044EC",
+      "url": "https://nda.ya.ru/t/Bs7KmzA37xUyPQ",
+      "title": "https://nda.ya.ru/t/Bs7KmzA37xUyPQ",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:15:01.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-9105245E9546": {
+      "id": "SRC-9105245E9546",
+      "url": "https://nda.ya.ru/t/TNThon6-7xUyPR",
+      "title": "https://nda.ya.ru/t/TNThon6-7xUyPR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:15:01.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-F7A8F8517232": {
+      "id": "SRC-F7A8F8517232",
+      "url": "https://nda.ya.ru/t/ijmmpb9E7xUyPS,(https://nda.ya.ru/t/l_lUtExX7xUyPT",
+      "title": "https://nda.ya.ru/t/ijmmpb9E7xUyPS,(https://nda.ya.ru/t/l_lUtExX7xUyPT",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:15:01.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T06:06:09.628Z",
+  "last_updated": "2026-11-27T06:14:51.260Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1924,14 +1924,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "content_hash": "65e9c13cd32f1466802ebf8f042dfea28e68772c5dc10285d58099ea4574b345",
-      "verified_at": "2026-11-23T21:04:38.388Z",
+      "content_hash": "84ed3098eed3661c7789da94dacea90ef07c09600106f30bce0f144d0ae2ff83",
+      "verified_at": "2026-11-27T06:14:33.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:04:38.388Z"
+      "last_updated": "2026-11-27T06:14:33.441Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
-      "verified_at": "2026-11-26T12:20:15.536Z",
+      "content_hash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
+      "verified_at": "2026-11-27T06:14:51.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:20:15.536Z"
+      "last_updated": "2026-11-27T06:14:51.259Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -20549,6 +20549,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-27T05:11:13.887Z"
+    },
+    "oracle-devrel/oracle-ai-developer-hub": {
+      "repository": "oracle-devrel/oracle-ai-developer-hub",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-oracle-devrel-oracle-ai-developer-hub",
+      "content_hash": "dca859621fec710ac8b2565a298756d4c40a6f3ddd3372631fb30212c59b2eca",
+      "verified_at": "2026-11-27T06:14:35.314Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-27T06:14:35.314Z"
     }
   },
   "repos": {

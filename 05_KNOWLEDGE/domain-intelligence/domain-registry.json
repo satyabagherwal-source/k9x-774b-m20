@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T06:06:15.304Z",
-  "total_records": 2813,
+  "last_updated": "2026-11-27T06:15:01.887Z",
+  "total_records": 2815,
   "domains": {
     "A": {
       "total": 23,
@@ -1734,7 +1734,7 @@
       ]
     },
     "H": {
-      "total": 683,
+      "total": 685,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2418,7 +2418,9 @@
         "DOM-H-E3FDDFF0",
         "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-",
         "DOM-H-A566253F",
-        "DOM-H-B8E42626"
+        "DOM-H-B8E42626",
+        "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i",
+        "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni"
       ]
     },
     "I": {
@@ -19064,8 +19066,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-research-knowledge-intelligen.md",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "content_hash": "d9c758b5a92130a99e4033931a40c96748b2ebf60535ec32aa3a8e5fd8fb692c",
-      "created_at": "2026-11-23T21:04:38.626Z"
+      "content_hash": "111ee31a65793b5c7eea990f317bd595854cfa49d1d5d03710d79dc2e021cecb",
+      "created_at": "2026-11-27T06:14:33.658Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -19109,8 +19111,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-learnings-research-knowledge-.md",
       "repository": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings",
-      "content_hash": "245eeba4cf5156ff8613b12165514d18442410f235a247ac536aa951ce28669d",
-      "created_at": "2026-11-23T21:05:01.101Z"
+      "content_hash": "f8575a377aa3735a01e910ce75fb54a1450a33ff9a672dc05e13caef28ea5a7c",
+      "created_at": "2026-11-27T06:15:00.840Z"
     },
     "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
@@ -24072,8 +24074,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "b8b2a89800676f23dfc95f8c91ba0323bf95b21f4ff6acc4616991f1bd2783fc",
-      "created_at": "2026-11-25T10:58:00.302Z"
+      "content_hash": "05bd0f37d928a7dc49fa0ce53fe7c269666ce9c16a51a52513a2458843532b35",
+      "created_at": "2026-11-27T06:14:51.667Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -24090,8 +24092,8 @@
       "title": "Technical Construction Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-learnings-technical-construction-intelligence-ytsaurus-ytsauru.md",
       "repository": "ytsaurus-ytsaurus-learnings",
-      "content_hash": "ab360172660a03fdfc091dbc2c573ce3826a2041c683e5f7a6dc22a168a34af4",
-      "created_at": "2026-11-25T10:58:06.280Z"
+      "content_hash": "86707b5904df52cb3ffd5957fa8a59c5b4bd43fa83ba0fc25c8d0a71b9a1adc5",
+      "created_at": "2026-11-27T06:15:01.887Z"
     },
     "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cilium-cilium-core-invariants",
@@ -47473,6 +47475,24 @@
       "repository": "litmuschaos-litmus-learnings",
       "content_hash": "fa3542bcbe861791d93cbc29c69b18a3316fede15ec8faf597ca88a0ccfa6ce4",
       "created_at": "2026-11-27T06:06:14.301Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: oracle-devrel/oracle-ai-developer-hub Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oracle-devrel-oracle-ai-developer-hub-technical-construction-intelligence-oracle.md",
+      "repository": "oracle-devrel/oracle-ai-developer-hub",
+      "content_hash": "b471c3d6d1e2e3b6f96acc010648d714994a5a81b9bb3e184c83553f22c486f3",
+      "created_at": "2026-11-27T06:14:35.723Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: oracle-devrel-oracle-ai-developer-hub-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oracle-devrel-oracle-ai-developer-hub-learnings-technical-construction-intellige.md",
+      "repository": "oracle-devrel-oracle-ai-developer-hub-learnings",
+      "content_hash": "bd6527427ddd0f7448ec8bc41a3efadfa367e50d9b6c5559a2bfb4d2433da3c7",
+      "created_at": "2026-11-27T06:15:00.227Z"
     }
   }
 }
