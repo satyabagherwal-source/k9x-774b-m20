@@ -13648,3 +13648,4 @@
 | `CYCLE-20261127-I54M` | `2026-11-27T03:07:35.926Z` | `Reson8/Rumble-2-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | Yes (`005619c6...`) |
 | `CYCLE-20261127-ICFQ` | `2026-11-27T03:07:45.398Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10815` | Yes (`aaf4e39f...`) |
 | `CYCLE-20261127-IGB9` | `2026-11-27T03:07:50.421Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10816` | Yes (`f072771f...`) |
+| `CYCLE-20261127-TA0A` | `2026-11-27T03:16:15.466Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`363442bb...`) |

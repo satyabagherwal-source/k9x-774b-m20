@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-MX4H",
-    "timestamp": "2026-11-25T15:15:48.401Z",
-    "repository": "xiaomi-research/Xiaomi-OCR-0",
-    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-    "contentHash": "3c3610c3b905ac60b23f86d172449fb89543470c7b9561588c01938ce91d9934",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-U719",
     "timestamp": "2026-11-25T15:21:27.837Z",
     "repository": "sensenova/SenseNova-Loop-9B-Preview",
@@ -7492,6 +7477,21 @@
     "contentHash": "f072771fc5dafcb1f09a896ab909de98640e3076e376bfdf892be29bf26e526c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-TA0A",
+    "timestamp": "2026-11-27T03:16:15.466Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "363442bb345d9bcb967fdd0a7a0dfe8f8f96ffceac077cf3a86d1798bb7ef20d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T03:07:57.880Z",
+  "last_updated": "2026-11-27T03:16:28.984Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f986df9f63c11829658ed954f4a111a21c7d0e92e5281ddbee6edfa91ed052f",
+      "content_hash": "f62411028847f73b5cefed642f60ce045a8f9b64e1a769d834f9cb867a686130",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:41:05.916Z"
+      "persisted_at": "2026-11-27T03:16:28.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "62ef38cea5309aa1c9e9f359a9328cf91d48bc6bedf39feb6c170d9770fc408e",
+      "content_hash": "6037315c7b2115aff115712cff84340fdc93b45c19cb0175e50c6e38589b905c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:41:06.139Z"
+      "persisted_at": "2026-11-27T03:16:28.984Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219677,9 +219677,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad3069ea54417792395052932c878c3a3d235a9ded421a05feb2deec83bc59f5",
+      "content_hash": "b2d5927e7480ec7db2f66a989731ae51b24d92f799d30e9aae53171682669347",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:58:28.767Z"
+      "persisted_at": "2026-11-27T03:16:27.954Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219689,9 +219689,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4df2788396ae7bb962e1b3f9cb4652f8e2476ed2d159fb9eef176903ae61949d",
+      "content_hash": "6b0646478df56283c77ac905d2cd1e323984a35d772e7fe664a60ef9507e1ad4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:58:28.975Z"
+      "persisted_at": "2026-11-27T03:16:28.135Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -236225,7 +236225,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "bdc04db740557364283ed2bc5da9e0835f1955a49d021e90ee88acfcb5c0b59e",
+      "content_hash": "363442bb345d9bcb967fdd0a7a0dfe8f8f96ffceac077cf3a86d1798bb7ef20d",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [],
@@ -236234,7 +236234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:03:08.275Z",
+      "verified_at": "2026-11-27T03:16:15.219Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236251,9 +236251,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
       "repository": "autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "5759b99ed01cb28b58fad80b6f953c1e0bdd9ec5de8607b9b193f7da45c10380",
+      "content_hash": "661a6d5d174496b297e6ffd6e007000f3f084d255fffefa49c969dacd2a67dcc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:03:08.840Z"
+      "persisted_at": "2026-11-27T03:16:15.687Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
@@ -236287,9 +236287,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
       "repository": "hf-autotrust-gev-26b-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bd6b5e3f2e2c7c685d9761d8df805c6d56ad220d15c20d4ab0af6b9e2898838",
+      "content_hash": "62437abbe36b520de7e16dfd0cbbf1e661b6a49aa54506dd5d740f3f5f68e810",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:03:27.939Z"
+      "persisted_at": "2026-11-27T03:16:27.231Z"
     },
     "learn-huggingface-google-embeddinggemma-2": {
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
@@ -349854,13 +349854,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6ERU-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TJHZ-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ee45045a7f8eb4865a91c6890a1859e8389cfec1a4e80547b8047190805232b",
+      "content_hash": "e7e860139a459b046163f3bd4f9bd6c0e941d1f940adc373c7c98bdcd17e450b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:58:28.554Z"
+      "persisted_at": "2026-11-27T03:16:27.768Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -360762,13 +360762,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K23G-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TK5B-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a90194faf2a8eeb3efb7c08778573cde44c28658dad4fb271baef5759098f908",
+      "content_hash": "b374be0de275bfafef3974d619be51abfcd0f449533466db6a2b9b61f7a6634e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:41:05.697Z"
+      "persisted_at": "2026-11-27T03:16:28.610Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T03:07:50.454Z",
-  "total_cycles_completed": 12955,
-  "total_learnings_persisted": 12955,
+  "last_updated": "2026-11-27T03:16:15.479Z",
+  "total_cycles_completed": 12956,
+  "total_learnings_persisted": 12956,
   "total_rules_promoted": 11726,
   "history": [
-    {
-      "timestamp": "2026-11-26T15:11:47.335Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T15:11:55.184Z",
       "repository": "apache/pinot",
@@ -1403,6 +1396,13 @@
       "repository": "sfu-db/connector-x",
       "learningId": "learn-github-sfu-db-connector-x",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:16:15.479Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

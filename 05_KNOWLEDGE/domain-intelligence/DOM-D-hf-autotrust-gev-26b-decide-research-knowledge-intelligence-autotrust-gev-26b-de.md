@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
   "source_version": "hf-autotrust-gev-26b-decide",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T18:03:08.838Z",
+  "timestamp": "2026-11-27T03:16:15.686Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T18:03:08.838Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:16:15.686Z`  
 > **Learning ID**: `learn-huggingface-autotrust-gev-26b-decide`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:03:07.701Z  
+> **Harvest Timestamp**: 2026-11-27T03:16:14.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 139930 downloads | 354 likes
+- **Stars / Engagement**: 111986 downloads | 354 likes
 
 ---
 

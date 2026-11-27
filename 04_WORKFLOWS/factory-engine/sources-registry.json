@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T03:07:54.111Z",
-    "lastVerified": "2026-11-27T03:07:54.111Z",
+    "lastChecked": "2026-11-27T03:16:26.860Z",
+    "lastVerified": "2026-11-27T03:16:26.860Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:40:55.702Z",
-    "lastVerified": "2026-11-27T02:40:55.702Z",
+    "lastChecked": "2026-11-27T03:16:26.852Z",
+    "lastVerified": "2026-11-27T03:16:26.852Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1587,8 +1587,8 @@
     "officialUrl": "https://github.com/go-kratos/kratos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T10:08:18.875Z",
-    "lastVerified": "2026-11-26T10:08:18.875Z",
+    "lastChecked": "2026-11-27T03:16:19.314Z",
+    "lastVerified": "2026-11-27T03:16:19.314Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-go-kratos-kratos",
@@ -2257,8 +2257,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T22:59:54.511Z",
-    "lastVerified": "2026-11-26T22:59:54.511Z",
+    "lastChecked": "2026-11-27T03:16:21.834Z",
+    "lastVerified": "2026-11-27T03:16:21.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -5542,12 +5542,12 @@
     "revisionIdentifier": "af8beda6"
   },
   "sqlpage-sqlpage": {
-    "name": "sqlpage/SQLPage",
+    "name": "SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T08:36:39.330Z",
-    "lastVerified": "2026-11-26T08:36:39.330Z",
+    "lastChecked": "2026-11-27T03:16:24.454Z",
+    "lastVerified": "2026-11-27T03:16:24.454Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
@@ -5556,7 +5556,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "75fe8688"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -5717,9 +5718,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-11-24T18:51:49.570Z",
+    "lastChecked": "2026-11-27T03:16:16.935Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-11-24T18:51:49.570Z"
+    "lastVerified": "2026-11-27T03:16:16.935Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -6671,9 +6672,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-26T02:46:35.306Z",
+    "lastChecked": "2026-11-27T03:16:11.787Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-26T02:46:35.306Z"
+    "lastVerified": "2026-11-27T03:16:11.787Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -7528,12 +7529,12 @@
     "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T18:03:07.701Z",
-    "lastVerified": "2026-11-23T18:03:07.701Z",
+    "lastChecked": "2026-11-27T03:16:14.800Z",
+    "lastVerified": "2026-11-27T03:16:14.800Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "bdc04db740557364283ed2bc5da9e0835f1955a49d021e90ee88acfcb5c0b59e",
+    "contentHash": "363442bb345d9bcb967fdd0a7a0dfe8f8f96ffceac077cf3a86d1798bb7ef20d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
