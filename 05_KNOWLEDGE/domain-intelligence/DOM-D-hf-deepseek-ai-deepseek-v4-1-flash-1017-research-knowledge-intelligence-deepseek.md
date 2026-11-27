@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
   "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T00:31:36.945Z",
+  "timestamp": "2026-11-27T10:16:41.239Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017) (Revision: `hf-deepsee`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T00:31:36.945Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:16:41.239Z`  
 > **Learning ID**: `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:31:36.134Z  
+> **Harvest Timestamp**: 2026-11-27T10:16:40.310Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 524232 downloads | 6617 likes
+- **Stars / Engagement**: 550396 downloads | 6775 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T10:01:40.359Z",
+  "last_updated": "2026-11-27T10:16:50.587Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "1c088cd51b50607a0715a99545fb93ab693cab117638576f01aa16ecc8589ae2",
-      "verified_at": "2026-11-24T00:31:36.753Z",
+      "content_hash": "d0067ed0c998aa3426bee92cc7086fa8a61645f605ab095e58699432061d2c21",
+      "verified_at": "2026-11-27T10:16:41.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:31:36.753Z"
+      "last_updated": "2026-11-27T10:16:41.018Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
-      "verified_at": "2026-11-25T01:26:59.636Z",
+      "content_hash": "2b731e981673a018139d3b83ae11c601e5cabcc006378801fb364568f560dfaf",
+      "verified_at": "2026-11-27T10:16:50.587Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:26:59.636Z"
+      "last_updated": "2026-11-27T10:16:50.587Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "4743a21c9f63ffeb47bd7205e77bc43b4c74b6bd50491fd13874da88953973c2",
-      "verified_at": "2026-11-26T09:22:00.791Z",
+      "content_hash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
+      "verified_at": "2026-11-27T10:16:43.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:22:00.791Z"
+      "last_updated": "2026-11-27T10:16:43.489Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

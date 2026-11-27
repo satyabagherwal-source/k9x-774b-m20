@@ -13753,3 +13753,6 @@
 | `CYCLE-20261127-P3FU` | `2026-11-27T09:44:54.954Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10873` | Yes (`a4557fcb...`) |
 | `CYCLE-20261127-AN05` | `2026-11-27T10:01:40.085Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`7dc81e54...`) |
 | `CYCLE-20261127-AN6S` | `2026-11-27T10:01:40.324Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10874` | Yes (`cebc4fe4...`) |
+| `CYCLE-20261127-TY5J` | `2026-11-27T10:16:40.999Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`d0067ed0...`) |
+| `CYCLE-20261127-U01Y` | `2026-11-27T10:16:43.462Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10875` | Yes (`d06cbac2...`) |
+| `CYCLE-20261127-U5J7` | `2026-11-27T10:16:50.563Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10876` | Yes (`2b731e98...`) |

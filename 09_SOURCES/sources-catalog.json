@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "1c088cd51b50607a0715a99545fb93ab693cab117638576f01aa16ecc8589ae2",
-    "lastHarvestedAt": "2026-11-24T00:31:36.739Z",
+    "contentHash": "d0067ed0c998aa3426bee92cc7086fa8a61645f605ab095e58699432061d2c21",
+    "lastHarvestedAt": "2026-11-27T10:16:41.003Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "e4c26444",
+    "sourceVersion": "5371c772",
     "license": "MIT",
-    "contentHash": "659e620f1c19b992a2a41750f7f88fa181d83d5c3605d22222481af93545ddd9",
-    "lastHarvestedAt": "2026-11-25T01:26:59.619Z",
+    "contentHash": "2b731e981673a018139d3b83ae11c601e5cabcc006378801fb364568f560dfaf",
+    "lastHarvestedAt": "2026-11-27T10:16:50.575Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "cde61b53",
+    "sourceVersion": "8f0189e0",
     "license": "MIT",
-    "contentHash": "4743a21c9f63ffeb47bd7205e77bc43b4c74b6bd50491fd13874da88953973c2",
-    "lastHarvestedAt": "2026-11-26T09:22:00.771Z",
+    "contentHash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
+    "lastHarvestedAt": "2026-11-27T10:16:43.477Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

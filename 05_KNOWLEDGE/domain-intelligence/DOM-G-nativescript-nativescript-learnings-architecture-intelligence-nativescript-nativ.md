@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T01:27:04.043Z",
+  "timestamp": "2026-11-27T10:16:55.838Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nativescript-nativescript-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nativescript-nativescript-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T01:27:04.043Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:16:55.838Z`  
 > **Learning ID**: `LEARN-EVO-nativescript-nativescript-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nativescript-nativescript-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `e4c26444`  
+> **Source Version**: `5371c772`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T01:26:58.394Z  
+> **Timestamp**: 2026-11-27T10:16:49.392Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:26:58.212Z  
+> **Harvest Timestamp**: 2026-11-27T10:16:49.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25708 stars
+- **Stars / Engagement**: 25709 stars
 
 ---
 
@@ -951,11 +951,11 @@ export function getTimeInFrameBase(): number;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11526** (2026-11-12): **Android openWindow uses an undeclared Activity class after the original Activity finishes**
-  *Symptoms*: ### Observed behavior  On Android, `Application.openWindow()` can throw `ActivityNotFoundException` after the original/primary Activity has finished, even while another NativeWindow from the app remains open.  Observed with NativeScript core/runtime 9.1.1 on an Android 15/API 35 arm64 emulator, using `com.tns.NativeScriptActivity` and `launchMode="standard"`. The remaining secondary window could still navigate, but requesting another window attempted to launch `org.nativescript.NativeScriptActivity`, which was not declared in the manifest.  ### Reproduction  1. Configure a multi-instance launch Activity and a window content resolver. 2. Launch the primary window and open a secondary one with `Application.openWindow()`. 3. Finish the original Activity while leaving the secondary window alive. 4. From the remaining window, call `Application.openWindow()` again.  Observed exception:  ```text android.content.ActivityNotFoundException: Unable to find explicit activity class {org.nativescript.vuerouterns/org.nativescript.NativeScriptActivity}; have you declared this activity in your AndroidManifest.xml ...? ```  ### Expected behavior  Use a valid NativeScript Activity class from a surviving owned window (or the application's configured launch component) when the initial Activity no longer exists. Closing one document window should not prevent another from opening further windows.  ### Suspected cause  `AndroidApplication.openWindow()` uses `this.startActivity` to select the target 
+- **Issue #11591** (2026-11-26): **Android: Frame navigation stalls after activity.recreate()**
+  *Symptoms*: ### Environment  - `@nativescript/core` 9.1.1, `@nativescript/android` 9.1.1 - Reproduced on Android emulators running API 35 and API 37  ### Describe the bug  After the activity is recreated programmatically with `activity.recreate()`, the root Frame stops processing navigation. `frame.goBack()` and `frame.navigate()` add an entry to the navigation queue, but it never runs. The system back button then finishes the activity: the queued back entries count against `canGoBack()`, so the frame reports nothing to go back to.  Activity recreation caused by a system configuration change (for example, a font scale change) does not have this problem.  ### Cause  The recreated activity attaches the Frame's new native view while its lifecycle is still `INITIALIZED`, before `onCreate` has returned. `Frame._onAttachedToWindow` returns early in that state:  ```ts const lifecycleState = activity?.getLifecycle?.()?.getCurrentState() || androidx.lifecycle.Lifecycle.State.CREATED; if ((this._manager && this._manager.isDestroyed()) || !lifecycleState.isAtLeast(androidx.lifecycle.Lifecycle.State.CREATED)) { 	return; } this._attachedToWindow = true; this._isReset = false; this._processNextNavigationEntry(); ```  No other attach event follows, so `_isReset` stays `true` and `_attachedToWindow` stays `false`. `_processNextNavigationEntry` then returns early on `this._isReset && !this._attachedToWindow` for every later navigation.  Trace from wrapping the Frame methods (`activity` is the window's ac
 
-- **Issue #11238** (2026-06-08): **When making use of axios CancelToken, `ReferenceError: exports is not defined at xhr.onabort` error occurs**
-  *Symptoms*: ### Issue Description  When making use of axios' `CancelToken`, `ReferenceError: exports is not defined at xhr.onabort` error occurs.  In my code base I've had this issue due to a production issue and fixed it via patching the `packages/core/fetch/index.mjs` file. I replaced `exports.DOMException` with `DOMException` in these two instances:  https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs#L457-L463  https://github.com/NativeScript/NativeScript/blob/71d2203e1c95d009fd1daa1a15c52b9e8c10db8b/packages/core/fetch/index.mjs#L492-L496  I believe with the changes done here: https://github.com/NativeScript/NativeScript/commit/cc0b5034c4042418aa5b54f0b1f448430a9d0297, `DOMException` can be accessed from the exported classes.  If it helps I have a branch ready with the changes which I can push too :)  ### Reproduction  Sample code:  ```js // service.js let requestSource;  getData() {   if (requestSource) {     requestSource.cancel('Request cancelled!');   }    const currentSource = axios.CancelToken.source();   requestSource = currentSource;    const config = {     cancelToken: requestSource.token   };    return axios.get('api/get-data', undefined, config).finally(() => {     if (requestSource === currentSource) {       requestSource = undefined;     }   }); } ``` ```js // somewhere in app call function try {   getData(); } catch (e) {   console.log('Error ::', e); // results in ReferenceError: exports is not defin
+- **Issue #11572** (2026-11-25): **[Android] After exiting with Back, reopening the app in the same process never fires launch again (9.1 regression, Angular apps stay dead and unstyled)**
+  *Symptoms*: ### Issue Description  [Android] After exiting with Back, reopening the app in the same process never fires launch again (9.1 regression, Angular apps stay dead and unstyled)     Environment    - CLI: 9.1.1    - @nativescript/core: 9.1.2 (also checked in 9.1.3)    - @nativescript/android: 9.1.1    - @nativescript/angular: 18.0.1 (21.2.0 relies on the same launch / exit events)    - Device: Android 11 (any Android 10 or 11 device, where Back on the root activity finishes it)    - Works in: @nativescript/core 9.0.17 + @nativescript/android 9.0.2  If the user leaves the app with the Back button and reopens it while the process is still alive, the Angular app never starts again. The last screen stays visible but has lost all component styles, and taps do nothing. Only killing the process brings it back.  What happens in core: 1. Back on the root activity finishes it. Since this is the last window, exit fires (application.android.js, activity destroyed callback). 2. @nativescript/angular handles exit by destroying the app module. During teardown it calls removeTaggedAdditionalCSS(styleTag), which removes every component style. 3. On reopen, a new activity is created and setActivityContent resolves content through Application._resolveWindowContent → resolveWindowContent. 4. resolveWindowContent only fires the legacy launch event while _launchBridgeConsumed is false. That flag is set to true the first time (and in notifyLaunch) and never reset, so launch doesn't fire again in this p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -972,417 +972,188 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a6f0ca8` (2026-11-22)
-**Commit Message**: fix(android): hold Button and ActionBar from their native listeners weakly (#11658)
+### Incident Patch 1: `d64da45b` (2026-11-25)
+**Commit Message**: fix(webpack): keep a newline before downleveled native classes (#11683)
 
-The button's native view holds its ClickListenerImpl, and the toolbar
-holds its MenuItemClickListenerImpl; each listener held its view in a
-strong owner property, which only disposeNativeView cleared. A view
-whose native view is never disposed, such as the previous root after
-Application.resetRootView(), was kept alive by that cycle once wrapper
-resurrection no longer broke it. The listeners now hold their owner
-through a WeakRef, as the iOS handlers and the Android TabView and
-EditableTextBase listeners already do.
+ts.transpileModule drops the snippet's leading newline, so a statement
+without a semicolon before a native class ran into the downleveled code.
 
-**File**: `apps/automated/src/ui/action-bar/action-bar-tests.android.ts` (modified, +25/-1)
+Closes #11681
+
+[skip-ci]
+
+Co-authored-by: Nathan Walker <[REDACTED_EMAIL]>
+
+**File**: `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts` (modified, +19/-0)
 ```diff
-@@ -1,11 +1,35 @@
- ﻿import * as TKUnit from '../../tk-unit';
- import { createPageAndNavigate } from './action-bar-tests-common';
- import { ActionItem } from '@nativescript/core/ui/action-bar';
--import { CoreTypes } from '@nativescript/core';
-+import { CoreTypes, Utils } from '@nativescript/core';
- import { Button } from '@nativescript/core/ui/button';
- 
- export * from './action-bar-tests-common';
- 
-+function collectJsAndJavaGarbage() {
-+	for (let i = 0; i < 3; i++) {
-+		Utils.GC();
-+		java.lang.System.gc();
-+		java.lang.System.runFinalization();
-+		TKUnit.wait(0.05);
-+	}
-+}
+@@ -72,4 +72,23 @@ export class FooImpl extends NSObject {
+ 			INPUT_TS,
+ 		);
+ 	});
 +
-+export function test_actionItem_tap_after_garbage_collection() {
-+	const actionItem = new ActionItem();
-+	actionItem.text = 'Test';
-+	let tapped = false;
-+	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
-+	const page = createPageAndNavigate();
-+	page.actionBar.actionItems.addItem(actionItem);
-+
-+	collectJsAndJavaGarbage();
-+	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
-+	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
-+
-+	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
-+}
-+
- export function test_actionItem_visibility() {
- 	const actionItem = new ActionItem();
- 	actionItem.text = 'Test';
-```
-
-**File**: `apps/automated/src/ui/button/button-tests.ts` (modified, +25/-1)
-```diff
-@@ -1,6 +1,6 @@
- import * as TKUnit from '../../tk-unit';
- import * as helper from '../../ui-helper';
--import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span } from '@nativescript/core';
-+import { View, EventData, Button, Observable, Color, Page, FormattedString, BindingOptions, Span, Utils } from '@nativescript/core';
- import * as buttonTestsNative from './button-tests-native';
- 
- export function test_recycling() {
-@@ -15,6 +15,30 @@ export var testOnClick = function () {
- 	helper.buildUIAndRunTest(_createButtonFunc(), _testOnClick);
- };
- 
-+function collectJsAndJavaGarbage() {
-+	for (let i = 0; i < 3; i++) {
-+		Utils.GC();
-+		if (__ANDROID__) {
-+			java.lang.System.gc();
-+			java.lang.System.runFinalization();
-+		}
-+		TKUnit.wait(0.05);
-+	}
-+}
-+
-+export function testOnClickAfterGarbageCollection() {
-+	helper.buildUIAndRunTest(_createButtonFunc(), function (views: Array<View>) {
-+		const button = <Button>views[0];
-+		let tapped = false;
-+		button.on(Button.tapEvent, () => (tapped = true));
-+
-+		collectJsAndJavaGarbage();
-+		buttonTestsNative.performNativeClick(button);
-+
-+		TKUnit.assertTrue(tapped, 'tap should fire after a garbage collection');
++	it('keeps a statement without semicolon apart from the downleveled class', async () => {
++		const input = `const a = 1
++/*__NativeClass__*/
++class Foo extends NSObject {}
++`;
++		const output = await new Promise<string>((resolve) =>
++			downlevelLoader.call(createDownlevelContext(resolve), input),
++		);
++		const { diagnostics } = ts.transpileModule(output, {
++			fileName: '/check.js',
++			reportDiagnostics: true,
++		});
++		const errors = diagnostics.map((d) =>
++			ts.flattenDiagnosticMessageText(d.messageText, '\n'),
++		);
++		expect(errors).toEqual([]);
++		expect(output).toMatch(/const a = 1\s*\n\s*var /);
 +	});
-+}
-+
- export var testBindTextDirectlyToModel = function () {
- 	helper.buildUIAndRunTest(_createButtonFunc(), _testBindTextDirectlyToModel);
- };
+ });
 ```
 
-**File**: `packages/core/ui/action-bar/index.android.ts` (modified, +8/-3)
+**File**: `packages/webpack5/src/loaders/native-class-downlevel-loader/index.ts` (modified, +4/-1)
 ```diff
-@@ -66,14 +66,19 @@ function initializeMenuItemClickListener(): void {
- 	@NativeClass
- 	@Interfaces([androidx.appcompat.widget.Toolbar.OnMenuItemClickListener])
- 	class MenuItemClickListenerImpl extends java.lang.Object implements androidx.appcompat.widget.Toolbar.OnMenuItemClickListener {
--		constructor(public owner: ActionBar) {
-+		// Weak: the toolbar holds this listener, so a strong owner would be a cycle that
-+		// only disposeNativeView breaks.
-+		public owner: WeakRef<ActionBar>;
-+
-+		constructor(owner: ActionBar) {
- 			super();
-+			this.owner = new WeakRef(owner);
- 		}
+@@ -22,7 +22,7 @@ interface Candidate {
+ interface DownleveledClass {
+ 	code: string;
+ 	map: any;
+-	// Lines added in front of the transpiled class (the IIFE wrapper).
++	// Lines added in front of the transpiled class (separator newline and IIFE wrapper).
+ 	leadingLines: number;
+ }
  
- 		onMenuItemClick(item: android.view.MenuItem): boolean {
--			const itemId = item.getItemId();
-+			const owner = this.owner?.deref();
- 
--			return this.owner._onAndroidItemSelected(itemId);
-+			return owner ? owner._onAndroidItemSelected(item.getItemId()) : false;
- 		}
+@@ -106,6 +106,9 @@ function downlevelClass(
+ 	} catch (e) {
+ 		// ignore parsing safety guard failures – fallback to raw transpiled
  	}
- 
-```
-
-**File**: `packages/core/ui/button/index.android.ts` (modified, +7/-2)
-```diff
-@@ -25,12 +25,17 @@ function initializeClickListener(): void {
- 	@NativeClass
- 	@Interfaces([android.view.View.OnClickListener])
- 	class ClickListenerImpl extends java.lang.Object implements android.view.View.OnClickListener {
--		constructor(public owner: Button) {
-+		// Weak: the button's native view holds this listener, so a strong owner would be
-+		// a cycle that only disposeNativeView breaks.
-+		public owner: WeakRef<Button>;
-+
-+		constructor(owner: Button) {
- 			super();
-+			this.owner = new WeakRef(owner);
- 		}
- 
- 		public onClick(v: android.view.View): void {
--			const owner = this.owner;
-+			const owner = this.owner?.deref();
- 			if (owner) {
- 				owner._emit(ButtonBase.tapEvent);
- 			}
++	// transpileModule drops the leading newline; keep statements apart.
++	transpiled = `\n${transpiled}`;
++	leadingLines += 1;
+ 	if (process.env.NATIVECLASS_DEBUG) {
+ 		loader.emitWarning(
+ 			new Error(
 ```
 
 ---
 
-### Incident Patch 2: `a3833596` (2026-11-22)
-**Commit Message**: fix(android): hold the SegmentedBar from its tab content factory weakly (#11657)
+### Incident Patch 2: `6b0790f3` (2026-11-25)
+**Commit Message**: fix(core): fire launch again for the first window after exit (#11573)
 
-SegmentedBar keeps its TabContentFactoryImpl in _tabContentFactory, and
-the factory kept the bar in a strong owner property, which
-disposeNativeView never cleared. Wrapper resurrection used to break
-this cycle; a runtime that keeps a JS-implemented object's state for as
-long as Java holds the object cannot, so every SegmentedBar and its view
-subtree stayed alive. The factory now holds the bar through a WeakRef
-and falls back to the application context once the bar is gone.
+Both platforms now raise exit through an internal notifyExit(), which resets the launch bridge before notifying. This keeps the flag's lifecycle next to notifyLaunch() and stops Application.off('exit') or a manually notified exit from affecting it.
 
-**File**: `apps/automated/src/ui/segmented-bar/segmented-bar-tests.ts` (modified, +26/-1)
+---------
+
+Co-authored-by: Eduardo Speroni <[REDACTED_EMAIL]>
+
+**File**: `packages/core/application/application-common.ts` (modified, +18/-3)
 ```diff
-@@ -1,7 +1,7 @@
- import * as TKUnit from '../../tk-unit';
- import * as segmentedBarTestsNative from './segmented-bar-tests-native';
- import { buildUIAndRunTest } from '../../ui-helper';
--import { Color, Observable, BindingOptions, View } from '@nativescript/core';
-+import { Color, Observable, BindingOptions, View, Utils } from '@nativescript/core';
- import * as helper from '../../ui-helper';
- 
- // >> article-require-segmentedbar-module
-@@ -34,6 +34,31 @@ function _createItems(count: number): Array<segmentedBarModule.SegmentedBarItem>
- 	return items;
- }
- 
-+function collectJsAndJavaGarbage() {
-+	for (let i = 0; i < 3; i++) {
-+		Utils.GC();
-+		if (__ANDROID__) {
-+			java.lang.System.gc();
-+			java.lang.System.runFinalization();
-+		}
-+		TKUnit.wait(0.05);
-+	}
-+}
-+
-+export function test_SelectingTabsAfterGarbageCollection_CreatesTheirContent() {
-+	const segmentedBar = _createSegmentedBar();
-+	segmentedBar.items = _createItems(3);
-+	buildUIAndRunTest(segmentedBar, function (views: Array<View>) {
-+		const bar = <segmentedBarModule.SegmentedBar>views[0];
-+		collectJsAndJavaGarbage();
-+		bar.selectedIndex = 2;
-+		collectJsAndJavaGarbage();
-+		bar.selectedIndex = 1;
-+		TKUnit.assertEqual(bar.selectedIndex, 1, 'selectedIndex');
-+		TKUnit.assertEqual(segmentedBarTestsNative.getNativeItemsCount(bar), 3, 'native items');
-+	});
-+}
-+
- export var testWhenSegmentedBarIsCreatedItemsAreUndefined = function () {
- 	buildUIAndRunTest(_createSegmentedBar(), function (views: Array<View>) {
- 		var segmentedBar = <segmentedBarModule.SegmentedBar>views[0];
-```
-
-**File**: `packages/core/ui/segmented-bar/index.android.ts` (modified, +10/-4)
-```diff
-@@ -3,7 +3,7 @@ import { SegmentedBarItemBase, SegmentedBarBase, selectedIndexProperty, itemsPro
- import { AndroidHelper, isEnabledProperty } from '../core/view';
- import { colorProperty, fontInternalProperty, fontSizeProperty } from '../styling/style-properties';
- import { Color } from '../../color';
--import { layout } from '../../utils';
-+import { android as androidUtils, layout } from '../../utils';
- import { SDK_VERSION } from '../../utils/constants';
- import { Trace } from '../../trace';
- import { CoreTypes } from '../../core-types';
-@@ -65,13 +65,19 @@ function initializeNativeClasses(): void {
- 	@NativeClass
- 	@Interfaces([android.widget.TabHost.TabContentFactory])
- 	class TabContentFactoryImpl extends java.lang.Object implements android.widget.TabHost.TabContentFactory {
--		constructor(public owner: SegmentedBar) {
-+		// Weak: the bar holds this factory, so a strong owner would be a cycle
-+		// through the factory's native counterpart.
-+		private owner: WeakRef<SegmentedBar>;
-+
-+		constructor(owner: SegmentedBar) {
- 			super();
-+			this.owner = new WeakRef(owner);
- 		}
- 
- 		createTabContent(tag: string): android.view.View {
--			const tv = new android.widget.TextView(this.owner._context);
--			const isRtl = this.owner.direction === CoreTypes.LayoutDirection.rtl;
-+			const owner = this.owner.deref();
-+			const tv = new android.widget.TextView(owner ? owner._context : androidUtils.getApplicationContext());
-+			const isRtl = owner?.direction === CoreTypes.LayoutDirection.rtl;
- 
- 			// This is collapsed by default and made visible
- 			// by android when TabItem becomes visible/selected.
-```
-
----
-
-### Incident Patch 3: `4f92046e` (2026-11-22)
-**Commit Message**: fix(android): hold the TextBase from its text transformation weakly (#11662)
-
-A TextView holds the TextTransformationImpl that text-transform and a
-Button's formatted text install (TextView.mTransformation), and the
-transformation held its TextBase in a strong textBase property, which
-reaches the TextView again through the view's native view. Only tearing
-the view down broke that cycle, so a view that is never torn down, such
-as the previous root after Application.resetRootView(), stayed alive
-once wrapper resurrection no longer collected it. The transformation
-now holds the TextBase through a WeakRef and returns the text unchanged
-once it is gone.
-
-**File**: `apps/automated/src/ui/root-view/reset-root-view-tests.ts` (modified, +26/-1)
-```diff
-@@ -1,6 +1,6 @@
- import * as TKUnit from '../../tk-unit';
- import * as helper from '../../ui-helper';
--import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem } from '@nativescript/core';
-+import { Page, isAndroid, Frame, NavigationEntry, Application, TabView, TabViewItem, Label, Button, StackLayout, FormattedString, Span } from '@nativescript/core';
- 
- function waitUntilTabViewReady(page: Page, action: Function) {
- 	helper.waitUntilNavigatedTo(page, action);
-@@ -144,6 +144,31 @@ export function test_reset_during_tab_index_change() {
- 	TKUnit.assertTrue(true);
- }
- 
-+export function test_reset_layout_with_transformed_text_to_frame() {
-+	const label = new Label();
-+	label.text = 'label';
-+	label.textTransform = 'uppercase';
-+
-+	const formattedText = new FormattedString();
-+	const span = new Span();
-+	span.text = 'button';
-+	formattedText.spans.push(span);
-+	const button = new Button();
-+	button.formattedText = formattedText;
-+
-+	const layoutRoot = new StackLayout();
-+	layoutRoot.addChild(label);
-+	layoutRoot.addChild(button);
-+
-+	Application.resetRootView({ create: () => layoutRoot });
-+	TKUnit.waitUntilReady(() => layoutRoot.isLoaded);
-+	TKUnit.assertEqual(Application.getRootView(), layoutRoot);
-+
-+	const testFrameRoot = createTestFrameRootEntry();
-+	helper.waitUntilNavigatedTo(testFrameRoot.page, () => Application.resetRootView(testFrameRoot.entry));
-+	TKUnit.assertEqual(Application.getRootView(), testFrameRoot.root);
-+}
-+
- export function tearDownModule() {
- 	// reset the root to frame for other tests
- 	const resetFrameRoot = createTestFrameRootEntry();
-```
-
-**File**: `apps/automated/src/ui/text-base/text-base-tests.ts` (modified, +49/-1)
-```diff
-@@ -1,6 +1,6 @@
- import * as TKUnit from '../../tk-unit';
- import * as helper from '../../ui-helper';
--import { FormattedString, Label, Span, StackLayout } from '@nativescript/core';
-+import { Button, FormattedString, Label, Span, StackLayout, Utils } from '@nativescript/core';
- 
- export function test_native_font_size_with_a11y_font_scale() {
- 	if (__APPLE__) {
-@@ -21,3 +21,51 @@ export function test_native_font_size_with_a11y_font_scale() {
- 		TKUnit.assertEqual(nativeFontSize, expectedNativeFontSize, 'View font size does not respect a11y font scaling');
+@@ -154,7 +154,8 @@ export class ApplicationCommon {
+ 	 * so it also fires on a background launch where no window is created.
+ 	 *
+ 	 * Guaranteed ordering: `ready` -> `windowOpen` -> raw connect/create events -> content
+-	 * resolution (the legacy `launch` bridge runs here, for the first window only) ->
++	 * resolution (the legacy `launch` bridge runs here, for the first window and the first
++	 * one after `exit`) ->
+ 	 * `contentLoaded` -> `activate`/`displayed`.
+ 	 */
+ 	readonly readyEvent = 'ready';
+@@ -732,12 +733,26 @@ export class ApplicationCommon {
+ 		});
  	}
- }
+ 
++	/**
++	 * @internal - raises `exit` and re-arms the legacy `launch` bridge, since the process
++	 * can outlive the exit and open a new first window.
++	 */
++	notifyExit(data?: Partial<ApplicationEventData>): void {
++		this._launchBridgeConsumed = false;
 +
-+function collectJsAndJavaGarbage() {
-+	for (let i = 0; i < 3; i++) {
-+		Utils.GC();
-+		java.lang.System.gc();
-+		java.lang.System.runFinalization();
-+		TKUnit.wait(0.05);
-+	}
-+}
-+
-+function displayedText(view: Label | Button): string {
-+	const nativeView = <android.widget.TextView>view.nativeTextViewProtected;
-+
-+	return nativeView.getTransformationMethod().getTransformation(nativeView.getText(), nativeView).toString();
-+}
-+
-+export function test_android_text_transform_survives_garbage_collection() {
-+	if (!__ANDROID__) {
-+		return;
++		this.notify(<ApplicationEventData>{
++			eventName: this.exitEvent,
++			object: this,
++			...data,
++		});
 +	}
 +
-+	const label = new Label();
-+	label.text = 'label';
-+	label.textTransform = 'uppercase';
-+
-+	const span = new Span();
-+	span.text = 'button';
-+	const formattedText = new FormattedString();
-+	formattedText.spans.push(span);
-+	const button = new Button();
-+	button.formattedText = formattedText;
-+
-+	const layout = new StackLayout();
-+	layout.addChild(label);
-+	layout.addChild(button);
-+	helper.getCurrentPage().content = layout;
-+	TKUnit.waitUntilReady(() => layout.isLoaded);
-+
-+	collectJsAndJavaGarbage();
-+	label.text = 'changed';
-+	span.text = 'span changed';
-+	label.nativeViewProtected.requestLayout();
-+	button.nativeViewProtected.requestLayout();
-+	TKUnit.wait(0.05);
-+
-+	TKUnit.assertEqual(displayedText(label), 'CHANGED', 'label text-transform after garbage collection');
-+	TKUnit.assertEqual(displayedText(button), 'span changed', 'button formatted text after garbage collection');
-+}
+ 	/**
+ 	 * @internal - produces the content for a window that has none.
+ 	 *
+ 	 * Resolution order: the window content resolver, then the legacy `launch` event
+-	 * (offered to the first window that asks for content and to no other), then the
+-	 * application main entry. A resolver or a `launch` handler returning `null` takes
++	 * (offered to the first window that asks for content, and again to the first one after
++	 * `exit`), then the application main entry. A resolver or a `launch` handler returning `null` takes
+ 	 * ownership of the content, so nothing else is tried. A missing main entry leaves
+ 	 * the window empty instead of throwing, because content can still arrive later
+ 	 * through `run()`/`resetRootView()`.
 ```
 
-**File**: `packages/core/ui/text-base/index.android.ts` (modified, +15/-5)
+**File**: `packages/core/application/application.android.ts` (modified, +1/-5)
 ```diff
-@@ -32,20 +32,30 @@ function initializeTextTransformation(): void {
- 	@NativeClass
- 	@Interfaces([android.text.method.TransformationMethod])
- 	class TextTransformationImpl extends java.lang.Object implements android.text.method.TransformationMethod {
--		constructor(public textBase: TextBase) {
-+		// Weak: the native text view holds this transformation, so a strong owner would be
-+		// a cycle that only tearing down the view breaks.
-+		public textBase: WeakRef<TextBase>;
-+
-+		constructor(textBase: TextBase) {
- 			super();
-+			this.textBase = new WeakRef(textBase);
- 		}
- 
- 		public getTransformation(charSeq: any, view: android.view.View): any {
-+			const textBase = this.textBase.deref();
-+			if (!textBase) {
-+				return charSeq;
-+			}
-+
- 			// NOTE: Do we need to transform the new text here?
--			const formattedText = this.textBase.formattedText;
-+			const formattedText = textBase.formattedText;
- 			if (formattedText) {
--				return this.textBase.createFormattedTextNative(formattedText);
-+				return textBase.createFormattedTextNative(formattedText);
- 			} else {
--				const text = this.textBase.text;
-+				const text = textBase.text;
- 				const stringValue = isNullOrUndefined(text) ? '' : text.toString();
- 
--				return getTransformedText(stringValue, this.textBase.textTransform);
-+				return getTransformedText(stringValue, textBase.textTransform);
+@@ -188,11 +188,7 @@ function initNativeScriptLifecycleCallbacks() {
+ 			// This callback runs for every activity in the process, not just NativeScript ones,
+ 			// so an empty registry here means the app really has no window left.
+ 			if (activity.isFinishing() && Application.android._getWindows().length === 0) {
+-				Application.android.notify({
+-					eventName: Application.exitEvent,
+-					object: Application.android,
+-					android: activity,
+-				});
++				Application.android.notifyExit({ android: activity });
  			}
- 		}
  
+ 			// TODO: This is a temporary workaround to force the V8's Garbage Collector, which will force the related Java Object to be collected.
+```
+
+**File**: `packages/core/application/application.ios.ts` (modified, +1/-5)
+```diff
+@@ -1369,11 +1369,7 @@ export class iOSApplication extends ApplicationCommon implements IiOSApplication
+ 	}
+ 
+ 	private willTerminate(notification: NSNotification) {
+-		this.notify(<ApplicationEventData>{
+-			eventName: this.exitEvent,
+-			object: this,
+-			ios: this.ios,
+-		});
++		this.notifyExit({ ios: this.ios });
+ 
+ 		// const rootView = this._rootView;
+ 		// if (rootView && rootView.isLoaded) {
+```
+
+**File**: `packages/core/application/window-content-resolver.spec.ts` (modified, +13/-0)
+```diff
+@@ -270,6 +270,19 @@ describe('window content resolution', () => {
+ 			expect(launched).toHaveBeenCalledTimes(1);
+ 		});
+ 
++		it('fires again for the next window after the app exits', () => {
++			const launched = vi.fn();
++			app.on('launch', launched);
++			const reopened = new TestWindow('window-2', true);
++
++			app._resolveWindowContent(window, request);
++			app.notifyExit();
++			app._resolveWindowContent(reopened, { window: reopened, isPrimary: true });
++
++			expect(launched).toHaveBeenCalledTimes(2);
++			expect(reopened.rootView).toBe(mainEntryView);
++		});
++
+ 		it('never fires once a resolver has answered the first window', () => {
+ 			const launched = vi.fn();
+ 			app.on('launch', launched);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11683** (2026-11-25): fix(webpack): keep a newline before downleveled native classes (@mrichtsfeld)
 - **PR #11669** (2026-11-24): fix(vite): apply plugins from dependency nativescript.vite.mjs configs (@NathanWalker)
 - **PR #11666** (2026-11-23): chore(ci): pin checkout and setup-node by commit SHA in release workflow (@NathanWalker)
 - **PR #11665** (2026-11-22): chore(ci): add org-wide GitHub Actions CLA workflow (@NathanWalker)
 - **PR #11663** (2026-11-21): fix(windows): send content headers with the request body (@triniwiz)
 - **PR #11662** (2026-11-22): fix(android): hold the TextBase from its text transformation weakly (@edusperoni)
-- **PR #11661** (2026-11-22): fix(android): keep TabView and ListPicker child views off their native views (@edusperoni)
 
 ---
 
@@ -1402,55 +1173,49 @@ once it is gone.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): hold Button and ActionBar from their native listeners weakly
+## X. webpack): keep a newline before downleveled native classes
 
 **RULE**:
-When implementing operations in `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a6f0ca8`: android): hold Button and ActionBar from their native listeners weakly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d64da45b`: webpack): keep a newline before downleveled native classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/action-bar/action-bar-tests.android.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { CoreTypes, Utils } from '@nativescript/core';
-function collectJsAndJavaGarbage() {
-	for (let i = 0; i < 3; i++) {
-		Utils.GC();
-		java.lang.System.gc();
-		java.lang.System.runFinalization();
-		TKUnit.wait(0.05);
-	}
-}
 
-export function test_actionItem_tap_after_garbage_collection() {
-	const actionItem = new ActionItem();
-	actionItem.text = 'Test';
-	let tapped = false;
-	actionItem.on(ActionItem.tapEvent, () => (tapped = true));
-	const page = createPageAndNavigate();
-	page.actionBar.actionItems.addItem(actionItem);
-
-	collectJsAndJavaGarbage();
-	const toolbar = <androidx.appcompat.widget.Toolbar>page.actionBar.nativeViewProtected;
-	toolbar.getMenu().performIdentifierAction((<any>actionItem)._getItemId(), 0);
-
-	TKUnit.assertTrue(tapped, 'action item tap should fire after a garbage collection');
-}
-
+	it('keeps a statement without semicolon apart from the downleveled class', async () => {
+		const input = `const a = 1
+/*__NativeClass__*/
+class Foo extends NSObject {}
+`;
+		const output = await new Promise<string>((resolve) =>
+			downlevelLoader.call(createDownlevelContext(resolve), input),
+		);
+		const { diagnostics } = ts.transpileModule(output, {
+			fileName: '/check.js',
+			reportDiagnostics: true,
+		});
+		const errors = diagnostics.map((d) =>
+			ts.flattenDiagnosticMessageText(d.messageText, '\n'),
+		);
+		expect(errors).toEqual([]);
+		expect(output).toMatch(/const a = 1\s*\n\s*var /);
+	});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { CoreTypes } from '@nativescript/core';
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a6f0ca8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d64da45b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

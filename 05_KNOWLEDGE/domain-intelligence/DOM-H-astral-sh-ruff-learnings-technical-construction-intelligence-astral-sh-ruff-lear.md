@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T09:22:13.556Z",
+  "timestamp": "2026-11-27T10:16:54.423Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-ruff-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-ruff-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T09:22:13.556Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:16:54.423Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-ruff-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 77%
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from astral-sh-ruff-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `cde61b53`  
+> **Source Version**: `8f0189e0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T09:21:59.587Z  
+> **Timestamp**: 2026-11-27T10:16:42.256Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:21:59.581Z  
+> **Harvest Timestamp**: 2026-11-27T10:16:42.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51547 stars
+- **Stars / Engagement**: 51585 stars
 
 ---
 
@@ -1095,16 +1095,14 @@ impl StyledBuffer {
 
         for (i, line) in self.lines.iter().enumerate() {
             let mut current_style = stylesheet.none;
-            for StyledChar { ch, style } in line {
-                let ch_style = style.color_spec(level, stylesheet);
-                if ch_style != current_style {
-                    if !line.is_empty() {
-                        write!(str, "{current_style:#}")?;
-                    }
-                    current_style = ch_style;
+            for run in line.chunk_by(|a, b| a.style == b.style) {
+                let style = run[0].style.color_spec(level, stylesheet);
+                if style != current_style {
+                    write!(str, "{current_style:#}")?;
+                    current_style = style;
                     write!(str, "{current_style}")?;
                 }
-                str.push(*ch);
+                str.extend(run.iter().map(|c| c.ch));
             }
             write!(str, "{current_style:#}")?;
             if i != self.lines.len() - 1 {
@@ -2238,243 +2236,58 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `807e61fe` (2026-11-25)
-**Commit Message**: Update Rust crate quick-xml to 0.42.0 (#30926)
-
-This PR contains the following updates:
-
-| Package | Type | Update | Change |
-|---|---|---|---|
-| [quick-xml](https://redirect.github.com/tafia/quick-xml) |
-workspace.dependencies | minor | `0.41.0` → `0.42.0` |
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/10578) for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>tafia/quick-xml (quick-xml)</summary>
-
-###
-[`v0.42.0`](https://redirect.github.com/tafia/quick-xml/blob/HEAD/Changelog.md#0420----2026-08-22)
-
-[Compare
-Source](https://redirect.github.com/tafia/quick-xml/compare/v0.41.0...v0.42.0)
-
-This is a large release. The primary change is an ergonomic improvement
-across the entire API -
-quick_xml now makes use of `&str` and `String` types where possible
-instead of
-`&[u8]` and `Vec<u8>`. This requires significant refactoring of
-downstream code,
-but should result in a net simplification as well as potential
-performance improvements,
-and opens up additional opportunities in future releases.
-
-The MSRV has been raised to 1.86. We now use Rust 2024 Edition.
-
-##### Breaking Changes
-
-- [#&#8203;963]: Reader now validate
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -2786,9 +2786,9 @@ dependencies = [
- 
- [[package]]
- name = "quick-xml"
--version = "0.41.0"
-+version = "0.42.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
-+checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
- dependencies = [
-  "memchr",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ pep440_rs = { version = "0.7.1", default-features = false }
- pretty_assertions = { version = "1.3.0", default-features = false, features = ["std"] }
- proc-macro2 = { version = "1.0.79", default-features = false, features = ["proc-macro"] }
- pyproject-toml = { version = "0.13.4", default-features = false }
--quick-xml = { version = "0.41.0", default-features = false }
-+quick-xml = { version = "0.42.0", default-features = false }
- quickcheck = { version = "1.0.3", default-features = false }
- quickcheck_macros = { version = "1.0.0", default-features = false }
- quote = { version = "1.0.23", default-features = false, features = ["proc-macro"] }
-```
-
-**File**: `crates/ruff_db/src/diagnostic/render/junit.rs` (modified, +6/-5)
-```diff
-@@ -156,18 +156,19 @@ fn write_failure_case<W: std::io::Write>(
-                     .write_empty()?;
-                 Ok(())
-             })?;
-+        let message = xml_string(case.message);
-         let description = if let Some(location) = case.location {
-             Cow::Owned(format!(
--                "line {}, col {}, {}",
--                location.line, location.column, case.message
-+                "line {}, col {}, {message}",
-+                location.line, location.column
-             ))
-         } else {
--            Cow::Borrowed(case.message)
-+            Cow::Borrowed(message.as_str())
-         };
-         writer
-             .create_element("failure")
--            .with_attribute(("message", xml_string(case.message).as_str()))
--            .write_text_content(BytesText::new(&xml_string(&description)))?;
-+            .with_attribute(("message", message.as_str()))
-+            .write_text_content(BytesText::new(&description))?;
-         Ok(())
-     })?;
-     Ok(())
-```
-
----
-
-### Incident Patch 2: `fe4df0c6` (2026-11-25)
-**Commit Message**: [ty] Share repeated scope types with a fixed-size cache (#30895)
+### Incident Patch 1: `cee3b19a` (2026-11-26)
+**Commit Message**: [ty] Avoid a panic when interrupting watch mode after a save (#29976)
 
 ## Summary
 
-When we finish inferring a scope, we use a hash table to assign an index
-to each distinct type. We then throw the table away.
+If a file changes just before Ctrl+C, `ty check --watch` can exit with a
+Rust panic and status 101 instead of the usual interrupt status 130. The
+file watcher can finish debouncing a save after the main loop has
+already dropped its receiver. We now discard that final notification.
 
-We now use 1 KiB of temporary storage to remember the last index in each
-of 256 hash buckets. We only reuse an index if the types match. This
-avoids allocating and growing a hash table per scope, at the cost of
-occasionally storing a type more than once. During cycle recovery, we
-still update each node separately.
+## Test Plan
 
-<!-- ty-pinned-project-instructions:start -->
+In an empty directory, this Bash repro waits for the first check,
+replaces the file as an editor would, and interrupts the watcher.
 
-In an earlier benchmark, the cache reduced instruction counts on all 28
-projects below, by 0.31% on average. The tables compare the same
-revision with and without the cache.
+```bash
+printf 'count = 1\n' > app.py
+coproc CHECK { exec ty check --watch app.py; }
+pid=$CHECK_PID
+read -r line <&"${CHECK[0]}"
+printf 'count = 2\n' > app.py.tmp
+mv app.py.tmp app.py
+kill -INT "$pid"
+wait "$pid"
+```
 
-<details>
-<summary>Instructions</summary>
+On ty 0.0.96, the watcher panics with `SendError`. With this fix, `wait`
+returns 130.
 
-Counts are medians of four single-worker Cachegrind runs. The change and
-range are calculated from the four paired percentages.
-
-| Project | [Without
-cache](https://github.com/astral-sh/ruff/commit/8c6fa3be8b0188e2f7aa0e7e69e93451fee52bfe)
-| [With
-cache](https://github.com/astral-sh/ruff/commit/083bdc421969a1c538425802d725b57fc7b2e0c8)
-| Change | Paired range |
-| --- | ---: | ---: | ---: | ---: |
-|
-[Black](htt
-
-**File**: `crates/ty_python_core/src/frozen.rs` (modified, +48/-9)
+**File**: `crates/ty/src/lib.rs` (modified, +4/-1)
 ```diff
-@@ -1,7 +1,7 @@
--use std::hash::Hash;
-+use std::hash::{BuildHasher, Hash};
- 
- use ruff_index::{FrozenIndexVec, IndexVec, newtype_index};
--use rustc_hash::FxHashMap;
-+use rustc_hash::FxBuildHasher;
- 
- /// A slice of 32-bit IDs stored at the narrowest width that fits every entry.
- #[derive(Debug, PartialEq, Eq, get_size2::GetSize)]
-@@ -173,7 +173,7 @@ fn sort_and_deduplicate<K: Ord, V>(mut entries: Vec<(K, V)>) -> Vec<(K, V)> {
-     entries
- }
- 
--/// Compact immutable key-value entries that deduplicate repeated values.
-+/// Compact immutable key-value entries that can share repeated values.
- #[derive(Debug, Eq, PartialEq, get_size2::GetSize, salsa::SalsaValue)]
- pub struct FrozenValueMap<K, V> {
-     entries: FrozenMap<K, FrozenValueIndex>,
-@@ -188,14 +188,24 @@ impl<K, V> FrozenValueMap<K, V> {
-         K: Ord,
-         V: Copy + Eq + Hash,
-     {
--        let mut values = IndexVec::new();
--        let mut value_indices = FxHashMap::default();
-+        // Keep only the most recent index per hash bucket. This costs 1 KiB of
-+        // scratch space and avoids allocating and growing a hash table per scope.
-+        // A collision can leave extra copies of a value in the finished map.
-+        let mut recent = [None; 256];
-+        let entries = entries.into_iter();
-+        let mut values = IndexVec::with_capacity(entries.size_hint().0.min(16));
-         let entries = entries
--            .into_iter()
-             .map(|(key, value)| {
--                let index = *value_indices
--                    .entry(value)
--                    .or_insert_with(|| values.push(value));
-+                let bucket = FxBuildHasher.hash_one(value).to_le_bytes()[0];
-+                let slot = &mut recent[usize::from(bucket)];
-+                let index = match *slot {
-+                    Some(index) if values[index] == value => index,
-+                    _ => {
-+                        let index = values.push(value);
-+                        *slot = Some(index);
-+                        index
-+                    }
-+                };
-                 (key, index)
-             })
-             .collect();
-@@ -352,6 +362,35 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn frozen_value_map_preserves_values_on_hash_collisions() {
-+        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-+        struct Value(u8);
-+
-+        impl std::hash::Hash for Value {
-+            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-+                state.write_u8(0);
+@@ -360,7 +360,10 @@ impl MainLoop {
+         tracing::debug!("Starting watch mode");
+         let sender = self.sender.clone();
+         let watcher = watch::directory_watcher(move |event| {
+-            sender.send(MainLoopMessage::ApplyChanges(event)).unwrap();
++            // A final batch of file changes can arrive after Ctrl+C has closed the receiver.
++            if sender.send(MainLoopMessage::ApplyChanges(event)).is_err() {
++                tracing::debug!("Ignoring file changes after the main loop exited");
 +            }
-+        }
-+
-+        let a = Value(1);
-+        let b = Value(2);
-+        let entries = [(0, a), (1, a), (2, b), (3, a)];
-+        let mut map = FrozenValueMap::from_sorted(entries);
-+        assert_eq!(map.values.len(), 3);
-+        assert!(map.iter().eq(entries));
-+        for (key, value) in entries {
-+            assert_eq!(map.get(&key), Some(&value));
-+        }
-+
-+        // Cycle normalization can assign different types to nodes that shared a value.
-+        map.map_values(|key, value| if key == 1 { b } else { value });
-+        assert_eq!(
-+            map,
-+            FrozenValueMap::from_sorted([(0, a), (1, b), (2, b), (3, a)])
-+        );
-+    }
-+
-     #[test]
-     fn frozen_value_map_preserves_last_value_for_duplicate_keys() {
-         let map = FrozenValueMap::from_iter([(2, 20), (1, 10), (1, 11)]);
+         })?;
+ 
+         self.watcher = Some(ProjectWatcher::new(watcher, db));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30943** (closed): Skip per-character style lookups when rendering plain diagnostics (@charliermarsh)
-- **PR #30940** (2026-11-26): [ty] Skip union comparisons when tuple elements are disjoint (@charliermarsh)
-- **PR #30936** (closed): [refurb] Preserve parentheses in FURB181 auto-fix (@aloneangel45)
-- **PR #30932** (2026-11-25): [ty] attrs: Add mdtests for unannotated field discovery (@sharkdp)
-- **PR #30929** (2026-11-25): [ty] Prefer `reveal_type` for inferred types in mdtests (@carljm)
-- **PR #30928** (2026-11-25): Update Rust crate uuid to v1.29.0 (@renovate[bot])
+- **PR #30978** (closed): [ty] Reuse interned sequent constraints within each builder (@MichaReiser)
+- **PR #30975** (2026-11-26): [ty] Remove the redundant value scope from unpacking assignments (@MichaReiser)
+- **PR #30974** (closed): [ty] Trim the last candidate in the overload filter cache key (@MichaReiser)
+- **PR #30973** (closed): [ty] Share a revision between the AST references on each expression (@MichaReiser)
+- **PR #30969** (closed): [ty] Share scope inference across workers for large files (@charliermarsh)
+- **PR #30968** (2026-11-26): [ty] Avoid a second interner lookup in type relation queries (@MichaReiser)
 
 ---
 
@@ -2494,33 +2307,34 @@ cache](https://github.com/astral-sh/ruff/commit/083bdc421969a1c538425802d725b57f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate quick-xml to 0.42.0
+## X. [ty] Avoid a panic when interrupting watch mode after a save
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `807e61fe`: Update Rust crate quick-xml to 0.42.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cee3b19a`: [ty] Avoid a panic when interrupting watch mode after a save. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.42.0"
-checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
+            // A final batch of file changes can arrive after Ctrl+C has closed the receiver.
+            if sender.send(MainLoopMessage::ApplyChanges(event)).is_err() {
+                tracing::debug!("Ignoring file changes after the main loop exited");
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.41.0"
-checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
+            sender.send(MainLoopMessage::ApplyChanges(event)).unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `807e61fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cee3b19a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

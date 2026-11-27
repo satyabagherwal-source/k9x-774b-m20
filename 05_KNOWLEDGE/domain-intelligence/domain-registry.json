@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:01:45.900Z",
+  "last_updated": "2026-11-27T10:16:56.163Z",
   "total_records": 2827,
   "domains": {
     "A": {
@@ -20173,8 +20173,8 @@
       "title": "Architecture Intelligence: NativeScript/NativeScript Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-architecture-intelligence-nativescript-nativescript-co.md",
       "repository": "NativeScript/NativeScript",
-      "content_hash": "f56ddb4c471baa995072323fe926369da63ac3f91372fdfa1c527cc9e0401533",
-      "created_at": "2026-11-25T01:27:00.135Z"
+      "content_hash": "bc9258d3dcbc80517cab582e9534274d743466122d92241452af48e547e078b7",
+      "created_at": "2026-11-27T10:16:51.002Z"
     },
     "DOM-J-6AB1B121": {
       "record_id": "DOM-J-6AB1B121",
@@ -20239,8 +20239,8 @@
       "title": "Architecture Intelligence: nativescript-nativescript-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nativescript-nativescript-learnings-architecture-intelligence-nativescript-nativ.md",
       "repository": "nativescript-nativescript-learnings",
-      "content_hash": "d04028fbd46e1e7f6908eed03e8876c36193febe3025f5f605409d0d3b8a552b",
-      "created_at": "2026-11-25T01:27:04.450Z"
+      "content_hash": "7713a32ae4d7dbf30bcb8cb6d6a5815c235db9bcb0cf0aece2f6923c7c59677e",
+      "created_at": "2026-11-27T10:16:56.163Z"
     },
     "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
@@ -20647,8 +20647,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash-1017 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-research-knowledge-intelligence-deepseek.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "content_hash": "883ae4526a948a4c5b3c9737a2c87241a5fb9b3a7c8a83d940da8511f6527309",
-      "created_at": "2026-11-24T00:31:36.946Z"
+      "content_hash": "68c035c8409ee41a478e00b112cd2b1f5131cf71867372b9ced1b3b38e2405d6",
+      "created_at": "2026-11-27T10:16:41.239Z"
     },
     "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants",
@@ -20707,8 +20707,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings",
-      "content_hash": "535bbbab619056f9b5d8f5d0140dc60a92a134b101ac6e2920fb168e720038f7",
-      "created_at": "2026-11-24T00:31:55.665Z"
+      "content_hash": "308f4fdefcdf7a4a599eb2dab32daba508803290cd10cf8318d7ab81fbf7165c",
+      "created_at": "2026-11-27T10:16:55.409Z"
     },
     "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -24526,8 +24526,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "946ae6ff628f3640c474d36429de95f1567c2a371525c0c50ee819a67abbbdc1",
-      "created_at": "2026-11-26T09:22:01.228Z"
+      "content_hash": "cd0a8d5a1ca8c10a9eed8ca1190ac59393273a473ebe286fb69532cf8b6eccca",
+      "created_at": "2026-11-27T10:16:43.927Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -24535,8 +24535,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "881722fd60e058f2a9fe21bee20ff249f9fa94815d023a66a4090224a74e0ad7",
-      "created_at": "2026-11-26T09:22:13.896Z"
+      "content_hash": "3434a2ad4312c34983bcc827aeb425ccabe8cd4822be88e8d86705e6ca478a9c",
+      "created_at": "2026-11-27T10:16:54.760Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",

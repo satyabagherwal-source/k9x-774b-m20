@@ -821268,3 +821268,164 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b47d9288` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10875. [ty] Avoid a panic when interrupting watch mode after a save (Harvested from astral-sh/ruff)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[ty] Avoid a panic when interrupting watch mode after a save",
+  "source": "astral-sh/ruff",
+  "source_url": "https://github.com/astral-sh/ruff",
+  "source_version": "8f0189e0",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T10:16:42.863Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-astral-sh-ruff",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [astral-sh/ruff](https://github.com/astral-sh/ruff) (Revision: `8f0189e0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/ty/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cee3b19a`: [ty] Avoid a panic when interrupting watch mode after a save. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty/src/lib.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            // A final batch of file changes can arrive after Ctrl+C has closed the receiver.
+            if sender.send(MainLoopMessage::ApplyChanges(event)).is_err() {
+                tracing::debug!("Ignoring file changes after the main loop exited");
+            }
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            sender.send(MainLoopMessage::ApplyChanges(event)).unwrap();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cee3b19a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10876. keep a newline before downleveled native classes (Harvested from NativeScript/NativeScript)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep a newline before downleveled native classes",
+  "source": "NativeScript/NativeScript",
+  "source_url": "https://github.com/NativeScript/NativeScript",
+  "source_version": "5371c772",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T10:16:49.986Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nativescript-nativescript",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NativeScript/NativeScript](https://github.com/NativeScript/NativeScript) (Revision: `5371c772`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d64da45b`: webpack): keep a newline before downleveled native classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+
+	it('keeps a statement without semicolon apart from the downleveled class', async () => {
+		const input = `const a = 1
+/*__NativeClass__*/
+class Foo extends NSObject {}
+`;
+		const output = await new Promise<string>((resolve) =>
+			downlevelLoader.call(createDownlevelContext(resolve), input),
+		);
+		const { diagnostics } = ts.transpileModule(output, {
+			fileName: '/check.js',
+			reportDiagnostics: true,
+		});
+		const errors = diagnostics.map((d) =>
+			ts.flattenDiagnosticMessageText(d.messageText, '\n'),
+		);
+		expect(errors).toEqual([]);
+		expect(output).toMatch(/const a = 1\s*\n\s*var /);
+	});
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d64da45b` are properly handled with clean fallback behavior.

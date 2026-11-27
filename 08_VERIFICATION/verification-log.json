@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-5POS",
-    "timestamp": "2026-11-26T03:38:15.244Z",
-    "repository": "Zyphra/ZONOS3-Mini",
-    "learningId": "learn-huggingface-zyphra-zonos3-mini",
-    "contentHash": "47b697125ec47875099ea838d89a2340d9a5e892db2bd5b3373c1828a24ff949",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-GJXI",
-    "timestamp": "2026-11-26T03:46:40.998Z",
-    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-    "contentHash": "c5e9fbd79af6da5ae7645cb225c0c1e9a8221820f0ac3d330c0fc3549eb84420",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-RCNO",
-    "timestamp": "2026-11-26T03:55:04.788Z",
-    "repository": "facebook/sam-3d-body-dinov3",
-    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-    "contentHash": "f1f58e8ec23aff876cbd693d4def997a3eabbc8c93720402ac71a86359866206",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-RNN3",
     "timestamp": "2026-11-26T03:55:19.023Z",
     "repository": "matrixorigin/matrixone",
@@ -7490,6 +7445,51 @@
     "repository": "zed-industries/zed",
     "learningId": "learn-github-zed-industries-zed",
     "contentHash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-TY5J",
+    "timestamp": "2026-11-27T10:16:40.999Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "d0067ed0c998aa3426bee92cc7086fa8a61645f605ab095e58699432061d2c21",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-U01Y",
+    "timestamp": "2026-11-27T10:16:43.462Z",
+    "repository": "astral-sh/ruff",
+    "learningId": "learn-github-astral-sh-ruff",
+    "contentHash": "d06cbac20d6f79706856fbd3c1c6253c77f8cdc506c3c437375d72b53ef996de",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-U5J7",
+    "timestamp": "2026-11-27T10:16:50.563Z",
+    "repository": "NativeScript/NativeScript",
+    "learningId": "learn-github-nativescript-nativescript",
+    "contentHash": "2b731e981673a018139d3b83ae11c601e5cabcc006378801fb364568f560dfaf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

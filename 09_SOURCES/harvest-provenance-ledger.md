@@ -13786,3 +13786,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f176c30a` | Multi-dimensional audit evidence | 2026-11-27T09:44:54.970Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-27T10:01:40.089Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `46375fbf` | Multi-dimensional audit evidence | 2026-11-27T10:01:40.344Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-27T10:16:41.003Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `8f0189e0` | Multi-dimensional audit evidence | 2026-11-27T10:16:43.477Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `5371c772` | Multi-dimensional audit evidence | 2026-11-27T10:16:50.575Z |

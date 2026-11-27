@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:01:45.717Z",
+  "last_updated": "2026-11-27T10:16:55.974Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69802,6 +69802,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8EE80D-bump-version-number.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-U8M1",
+      "directive_title": "[ty] Avoid a panic when interrupting watch mode after a save",
+      "source_repo": "astral-sh-ruff-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-U8M1-ty-avoid-a-panic-when-interrupting-watch-mode-after-a-save.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-U5PZ",
+      "directive_title": "keep a newline before downleveled native classes",
+      "source_repo": "NativeScript/NativeScript",
+      "source_commit": "5371c772",
+      "staged_file": "11_INBOX/candidate-directives/CD-U5PZ-keep-a-newline-before-downleveled-native-classes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-02D7AF",
+      "directive_title": "[ty] Avoid a panic when interrupting watch mode after a save",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-02D7AF--ty-avoid-a-panic-when-interrupting-watc.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-U9PH",
+      "directive_title": "webpack): keep a newline before downleveled native classes",
+      "source_repo": "nativescript-nativescript-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-U9PH-webpack-keep-a-newline-before-downleveled-native-classes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
     }
   ]
 }

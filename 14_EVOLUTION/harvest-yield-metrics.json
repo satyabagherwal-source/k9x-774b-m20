@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:01:40.356Z",
-  "total_cycles_completed": 13053,
-  "total_learnings_persisted": 13053,
-  "total_rules_promoted": 11785,
+  "last_updated": "2026-11-27T10:16:50.584Z",
+  "total_cycles_completed": 13056,
+  "total_learnings_persisted": 13056,
+  "total_rules_promoted": 11787,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:04:34.615Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:13:54.296Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:14:08.126Z",
-      "repository": "CaviraOSS/LongMemory",
-      "learningId": "learn-github-caviraoss-longmemory",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:22:50.954Z",
       "repository": "openai/gpt-oss-20b",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T10:01:40.356Z",
       "repository": "zed-industries/zed",
       "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:16:41.015Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:16:43.487Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:16:50.584Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
