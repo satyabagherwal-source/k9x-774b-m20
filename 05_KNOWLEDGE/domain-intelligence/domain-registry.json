@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:16:56.163Z",
+  "last_updated": "2026-11-27T10:26:05.950Z",
   "total_records": 2827,
   "domains": {
     "A": {
@@ -15618,8 +15618,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "3001026af624d4b619ff20c1bcd3e6f85b18b6908f23de89c7e28c86ead7f557",
-      "created_at": "2026-11-27T10:01:45.900Z"
+      "content_hash": "6feb05161dd2ab7dea97a4569162f9faab8df787b686d64048be05de56875067",
+      "created_at": "2026-11-27T10:26:05.950Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17379,8 +17379,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "87b537ca3dc2464b106aa7ba52ae2d7c64132e10030e6c718b25f718bfd27ca5",
-      "created_at": "2026-11-25T02:20:14.108Z"
+      "content_hash": "f6ef1dc194366b845f260164365805313b9686dc0027e8acc6b4bc7b53fcb9ab",
+      "created_at": "2026-11-27T10:25:53.958Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -17406,8 +17406,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "83919aa753793f51e68b394ba03d9f72707a675ad022b32c2a60c0d6e13cea01",
-      "created_at": "2026-11-25T02:20:32.001Z"
+      "content_hash": "ae806d4c79e8b5322569724078204d3af207d0c131ac61b9bfa59f4b39e92f8d",
+      "created_at": "2026-11-27T10:26:04.375Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -20854,8 +20854,8 @@
       "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-research-knowledge-intelligence-datalab-to-indra-ocr-cor.md",
       "repository": "datalab-to/indra-ocr",
-      "content_hash": "d001045cebf360f9df0304ed250cd9f8008c6f7e35fedf38225b3b3009cd665c",
-      "created_at": "2026-11-24T00:39:58.388Z"
+      "content_hash": "0fe195d499b0f73822c265d4894a910bc0180e564229102151b71e0e23fac97a",
+      "created_at": "2026-11-27T10:25:52.051Z"
     },
     "DOM-D-1138A8F2": {
       "record_id": "DOM-D-1138A8F2",
@@ -20905,8 +20905,8 @@
       "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-datalab-to-indra-ocr-learnings-research-knowledge-intelligence-hf-datalab-to-.md",
       "repository": "hf-datalab-to-indra-ocr-learnings",
-      "content_hash": "a0f9712fe40beb932b32fe17b13278aa7c6bb85dc240a4836cf1285405041576",
-      "created_at": "2026-11-24T00:40:21.046Z"
+      "content_hash": "e0e558a3e7d28109815dce6530e6ac70365f7a618e01ee10dc14f3c3e64c42b0",
+      "created_at": "2026-11-27T10:26:05.073Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-learnings-core-invariants",

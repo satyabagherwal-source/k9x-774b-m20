@@ -13789,3 +13789,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-27T10:16:41.003Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `8f0189e0` | Multi-dimensional audit evidence | 2026-11-27T10:16:43.477Z |
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `5371c772` | Multi-dimensional audit evidence | 2026-11-27T10:16:50.575Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-27T10:25:51.800Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `2b11b056` | Multi-dimensional audit evidence | 2026-11-27T10:25:53.470Z |

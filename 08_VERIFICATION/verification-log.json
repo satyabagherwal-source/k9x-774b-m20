@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-RNN3",
-    "timestamp": "2026-11-26T03:55:19.023Z",
-    "repository": "matrixorigin/matrixone",
-    "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-42P1",
-    "timestamp": "2026-11-26T04:04:58.405Z",
-    "repository": "Lakonik/pi-H3",
-    "learningId": "learn-huggingface-lakonik-pi-h3",
-    "contentHash": "f90b08524fa0bdde4ba72bbfc00c893c5fa6138516242b17bc4e6a1f68a96b60",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-EUFL",
     "timestamp": "2026-11-26T04:13:20.913Z",
     "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "NativeScript/NativeScript",
     "learningId": "learn-github-nativescript-nativescript",
     "contentHash": "2b731e981673a018139d3b83ae11c601e5cabcc006378801fb364568f560dfaf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-5R5G",
+    "timestamp": "2026-11-27T10:25:51.796Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "9426618718d6347d042244d7da5aac4d6ff41f166310a75f9e84b55d6a45d8ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-5SFI",
+    "timestamp": "2026-11-27T10:25:53.454Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

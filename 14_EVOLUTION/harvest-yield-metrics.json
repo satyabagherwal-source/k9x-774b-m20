@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:16:50.584Z",
-  "total_cycles_completed": 13056,
-  "total_learnings_persisted": 13056,
-  "total_rules_promoted": 11787,
+  "last_updated": "2026-11-27T10:25:53.483Z",
+  "total_cycles_completed": 13058,
+  "total_learnings_persisted": 13058,
+  "total_rules_promoted": 11788,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:22:50.954Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:22:53.026Z",
-      "repository": "vi/websocat",
-      "learningId": "learn-github-vi-websocat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:23:05.845Z",
       "repository": "crate/crate",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T10:16:50.584Z",
       "repository": "NativeScript/NativeScript",
       "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:25:51.813Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:25:53.483Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

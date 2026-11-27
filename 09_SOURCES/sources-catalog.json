@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "83e51aa5b787ea82cd29b4ada58a87f534f3ce9ad478cae3b579d069620a1a66",
-    "lastHarvestedAt": "2026-11-24T00:39:58.176Z",
+    "contentHash": "9426618718d6347d042244d7da5aac4d6ff41f166310a75f9e84b55d6a45d8ce",
+    "lastHarvestedAt": "2026-11-27T10:25:51.800Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "854013a8",
+    "sourceVersion": "2b11b056",
     "license": "MIT",
-    "contentHash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
-    "lastHarvestedAt": "2026-11-25T02:20:13.514Z",
+    "contentHash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
+    "lastHarvestedAt": "2026-11-27T10:25:53.470Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {
