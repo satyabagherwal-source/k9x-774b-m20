@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T16:21:47.284Z",
+  "last_updated": "2026-11-27T16:30:33.701Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26645,
+  "total_items": 26651,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212837,8 +212837,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "7674bd86",
-      "content_hash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
+      "source_version": "e375c609",
+      "content_hash": "01cb142dc3d18354ac90a6735ec1aaa63647d19a62ea9c6f992e11f5e83ddbc9",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -212896,6 +212896,11 @@
           "number": 10785,
           "title": "meta/redis: avoid deadlock in batched readdir attribute fetches",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10928,
+          "title": "omit DSNs from SQL initialization errors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212903,7 +212908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T22:30:22.619Z",
+      "verified_at": "2026-11-27T16:30:23.840Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212931,10 +212936,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "repository": "juicedata/juicefs",
-      "source_version": "7674bd86",
-      "content_hash": "67d256e3c0c596628fa7ca670f025d5ac9f68c735aef327014cb1284b5c09d43",
+      "source_version": "e375c609",
+      "content_hash": "7f729321c7e66b77b570aec5a42a8641d93539010b3b631804d2cad9377fbd33",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T22:30:23.329Z"
+      "persisted_at": "2026-11-27T16:30:24.585Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs",
@@ -212955,10 +212960,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "7674bd86",
-      "content_hash": "8cc569750ba2f79cffe7597278694c1a7a4ca74d527d7513036b0c0f2a78dd63",
+      "source_version": "e375c609",
+      "content_hash": "90beb612ddb5ca82eeb5109a40458d0c5de19930c6d7010eb8a2b39c0ff59cd0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:30:23.543Z"
+      "persisted_at": "2026-11-27T16:30:24.798Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -213601,8 +213606,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "d0d659bf",
-      "content_hash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
+      "source_version": "977e617f",
+      "content_hash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213700,6 +213705,11 @@
           "number": 10889,
           "title": "add scalar min max out of range edge case tests and handle more corner cas",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10929,
+          "title": "!: split CRT and make it experimental",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213707,7 +213717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T11:44:32.432Z",
+      "verified_at": "2026-11-27T16:30:27.058Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213749,10 +213759,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "d0d659bf",
-      "content_hash": "bd9bd00ee2c4f8c48a6e8c6cff62f12d79e618accd413360f20c41fb4ba3b380",
+      "source_version": "977e617f",
+      "content_hash": "2455f65adf21e978959de50bb1c8702073083b9f30445c3d6e9caeb4de5b3434",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:44:33.231Z"
+      "persisted_at": "2026-11-27T16:30:27.808Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213761,10 +213771,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "d0d659bf",
-      "content_hash": "9682e604895d59f5694015254beae671ca81fc67f75801737172c3cc59cca2f5",
+      "source_version": "977e617f",
+      "content_hash": "4bbaee44bc955bcec653a825b843fe92d65d3ed4ac97f3e97532170cb1c02267",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:44:33.452Z"
+      "persisted_at": "2026-11-27T16:30:28.021Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -219742,9 +219752,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce90a24acb382c0df71b42c0e8178af1a70d793a9976ae5e9735901043f266cd",
+      "content_hash": "0e41fc9c1a09820218c02332b54919b73499a7423e2468265b12c8d67b103004",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:09:22.546Z"
+      "persisted_at": "2026-11-27T16:30:33.482Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219754,9 +219764,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "71cab29a02afeb0f8daf5fe469b2d79f30fd21586a035dcb5be0065e1e01895e",
+      "content_hash": "68976db6030e6fe56e5f843b80a8414077a07f0303bc78465928088a1f085a20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:09:22.750Z"
+      "persisted_at": "2026-11-27T16:30:33.701Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -261279,9 +261289,9 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "851d5229426eeaa48d0e724eb31e2c985427e136451e72934fe1815676576f0f",
+      "content_hash": "db405a3652d9ffb5f1c09a968f1fd908954fd87837a7fb3a4882f872c7e9eb6e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T22:30:28.352Z"
+      "persisted_at": "2026-11-27T16:30:31.547Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings",
@@ -261303,9 +261313,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "a517da48cb9406836ad0392f86fcf15dad5e1b0d1f076318a0f958f89e4e5576",
+      "content_hash": "1e8bf1de9d7bf1b5d4ae7f0b5692f30527c9729145d8098aab76cdb3de7fd43c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:30:28.535Z"
+      "persisted_at": "2026-11-27T16:30:31.759Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -277857,9 +277867,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "804f1b624e7e4e6e67837720aa970bb1013dc90c184f8fef0ecf60642114e1c8",
+      "content_hash": "0959425cc133352c5fcb588e7877e05029ce0b1a7532b54422f71a9a9a825046",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:44:36.988Z"
+      "persisted_at": "2026-11-27T16:30:32.498Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -277869,9 +277879,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b9e74505f9ab6eee7a6f3ba3847d576e5a1d657fbff4b7a396263f7e0973063",
+      "content_hash": "678f4a343dac734761c16b59385e4e0253a31bee1aca6e2c7106fa9eec199b52",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:44:37.230Z"
+      "persisted_at": "2026-11-27T16:30:32.708Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -350385,13 +350395,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ACKA-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6QZY-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "05eb39bd01456ec03e963842f64b6a86a3d40325fccfe38280514594e5da7d24",
+      "content_hash": "0e0704d87397d5158eb24f7ef36c6331f6a78dfb73086963e230beb877489a7a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:09:22.330Z"
+      "persisted_at": "2026-11-27T16:30:33.263Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -365831,6 +365841,82 @@
       "content_hash": "3a33fe8ecc395ed7b97f2af6d37b95f23f0cbdfe42212e211e09866ced7f9eee",
       "domain_letter": "A",
       "persisted_at": "2026-11-27T16:21:45.701Z"
+    },
+    "rule-10928": {
+      "learning_id": "rule-10928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10928,
+      "title": "omit DSNs from SQL initialization errors",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "e375c609",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:30:23.840Z"
+    },
+    "candidate_directive-omit-dsns-from-sql-initialization-errors": {
+      "item_id": "candidate_directive-omit-dsns-from-sql-initialization-errors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6K50-omit-dsns-from-sql-initialization-errors.md",
+      "title": "omit DSNs from SQL initialization errors",
+      "repository": "juicedata/juicefs",
+      "source_version": "e375c609",
+      "content_hash": "07d24cd725613fc9af1b2ab1e640f29b148a8960163e4c26d7db0fdb84f2a03d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T16:30:24.373Z"
+    },
+    "rule-10929": {
+      "learning_id": "rule-10929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10929,
+      "title": "!: split CRT and make it experimental",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "977e617f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:30:27.058Z"
+    },
+    "candidate_directive-split-crt-and-make-it-experimental": {
+      "item_id": "candidate_directive-split-crt-and-make-it-experimental",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6MMG-split-crt-and-make-it-experimental.md",
+      "title": "!: split CRT and make it experimental",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "977e617f",
+      "content_hash": "1912e22db8d6001b204e655fb07f0a3ee60cfc43b80b8e478f35ea524c009167",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:30:27.596Z"
+    },
+    "candidate_directive-object-omit-dsns-from-sql-initialization-errors": {
+      "item_id": "candidate_directive-object-omit-dsns-from-sql-initialization-errors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6PIB-object-omit-dsns-from-sql-initialization-errors.md",
+      "title": "object: omit DSNs from SQL initialization errors",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1eb7abe3970542c0704476fd68bce83e0d297e1081aa72a5675b9b64bd48bc4c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T16:30:31.333Z"
+    },
+    "candidate_directive-integer-split-crt-and-make-it-experimental": {
+      "item_id": "candidate_directive-integer-split-crt-and-make-it-experimental",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6Q8X-integer-split-crt-and-make-it-experimental.md",
+      "title": "integer)!: split CRT and make it experimental",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28ea63a3cc0e43d209afe13d881ac02446c7dc38a17681e7e347bd00fb620192",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:30:32.292Z"
     }
   },
   "ai-builder-brain": {

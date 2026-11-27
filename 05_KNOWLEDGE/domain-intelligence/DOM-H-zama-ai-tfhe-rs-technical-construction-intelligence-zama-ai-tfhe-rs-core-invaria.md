@@ -4,24 +4,24 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "d0d659bf",
+  "source_version": "977e617f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T11:44:33.000Z",
+  "timestamp": "2026-11-27T16:30:27.592Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `d0d659bf`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T11:44:33.000Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `977e617f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T16:30:27.592Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 90%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 89%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai/tfhe-rs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T11:44:27.539Z  
+> **Harvest Timestamp**: 2026-11-27T16:30:26.067Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1685 stars
+- **Stars / Engagement**: 1684 stars
 
 ---
 
@@ -1952,623 +1952,363 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0d659bf` (2026-11-27)
-**Commit Message**: fix(gpu): add scalar min max out of range edge case tests and handle more corner case (#4213)
+### Incident Patch 1: `977e617f` (2026-11-27)
+**Commit Message**: refactor(integer)!: split CRT and make it experimental
 
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h` (modified, +24/-9)
+* refactor(integer)!: split CRT and make it experimental
+
+CRT operations used the same ServerKey as radix ones,
+built with a different max degree, different assumptions on
+message modulus, carry modulus and other things.
+
+So now they are separated as they should always have been
+
+Make things related to CRT gated behing experimental feature
+
+* chore: remove IntegerKeyKind
+
+* refactor(integer): drop the redundant crt from CRT op files and methods
+
+**File**: `tfhe-benchmark/benches/integer/aes.rs` (modified, +3/-3)
 ```diff
-@@ -3,6 +3,14 @@
- #include "cmux.h"
- #include "integer_utilities.h"
+@@ -12,7 +12,7 @@ pub mod cuda {
+     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use tfhe::integer::gpu::CudaServerKey;
+     use tfhe::integer::keycache::KEY_CACHE;
+-    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
++    use tfhe::integer::RadixClientKey;
+     use tfhe::keycache::NamedParam;
+     use tfhe::shortint::AtomicPatternParameters;
  
-+/// @brief Number of blocks left after packing adjacent pairs of blocks. The
-+/// last block of an odd count is kept alone.
-+/// @param num_blocks Number of blocks before packing.
-+/// @return ceil(num_blocks / 2).
-+inline uint32_t num_packed_pairs(uint32_t num_blocks) {
-+  return num_blocks / 2 + num_blocks % 2;
-+}
-+
- template <typename Torus> struct int_are_all_block_true_buffer {
-   COMPARISON_TYPE op;
-   int_radix_params params;
-@@ -311,10 +319,12 @@ template <typename Torus> struct int_comparison_diff_buffer {
-       }
+@@ -35,7 +35,7 @@ pub mod cuda {
+         let param_name = param.name();
+ 
+         let streams = CudaStreams::new_multi_gpu();
+-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+         let sks = CudaServerKey::new(&cpu_cks, &streams);
+         let cks = RadixClientKey::from((cpu_cks, 1));
+ 
+@@ -118,7 +118,7 @@ pub mod cuda {
+             let bench_id = spec.to_string();
+ 
+             let streams = CudaStreams::new_multi_gpu();
+-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+             let sks = CudaServerKey::new(&cpu_cks, &streams);
+             let cks = RadixClientKey::from((cpu_cks, 1));
+ 
+```
+
+**File**: `tfhe-benchmark/benches/integer/aes256.rs` (modified, +3/-3)
+```diff
+@@ -12,7 +12,7 @@ pub mod cuda {
+     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use tfhe::integer::gpu::CudaServerKey;
+     use tfhe::integer::keycache::KEY_CACHE;
+-    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
++    use tfhe::integer::RadixClientKey;
+     use tfhe::keycache::NamedParam;
+     use tfhe::shortint::AtomicPatternParameters;
+ 
+@@ -38,7 +38,7 @@ pub mod cuda {
+         let param_name = param.name();
+ 
+         let streams = CudaStreams::new_multi_gpu();
+-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+         let sks = CudaServerKey::new(&cpu_cks, &streams);
+         let cks = RadixClientKey::from((cpu_cks, 1));
+ 
+@@ -122,7 +122,7 @@ pub mod cuda {
+             let bench_id = spec.to_string();
+ 
+             let streams = CudaStreams::new_multi_gpu();
+-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+             let sks = CudaServerKey::new(&cpu_cks, &streams);
+             let cks = RadixClientKey::from((cpu_cks, 1));
+ 
+```
+
+**File**: `tfhe-benchmark/benches/integer/bench.rs` (modified, +26/-31)
+```diff
+@@ -30,7 +30,7 @@ use std::cmp::max;
+ use std::env;
+ use tfhe::integer::keycache::KEY_CACHE;
+ use tfhe::integer::prelude::*;
+-use tfhe::integer::{IntegerKeyKind, RadixCiphertext, RadixClientKey, ServerKey, U256};
++use tfhe::integer::{RadixCiphertext, RadixClientKey, ServerKey, U256};
+ use tfhe::keycache::NamedParam;
+ #[cfg(any(feature = "gpu", feature = "hpu"))]
+ use tfhe::{get_pbs_count, reset_pbs_count};
+@@ -78,7 +78,7 @@ fn bench_server_key_binary_function_clean_inputs<F>(
+         match get_bench_type() {
+             BenchmarkType::Latency => {
+                 let bench_data = LazyCell::new(|| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                     let clear_0 = gen_random_u256(&mut rng);
+                     let clear_1 = gen_random_u256(&mut rng);
+@@ -96,7 +96,7 @@ fn bench_server_key_binary_function_clean_inputs<F>(
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                 bench_group
+                     .sample_size(10)
+@@ -183,7 +183,7 @@ fn bench_server_key_unary_function_dirty_inputs<F>(
+     for (param, num_block, bit_size) in ParamsAndNumBlocksIter::default() {
+         let param_name = param.name();
+ 
+-        let keys = LazyCell::new(move || KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix));
++        let keys = LazyCell::new(move || KEY_CACHE.get_from_params(param));
+ 
+         let bits = PrecisionTag::Bits(bit_size);
+         let benchmark_spec = BenchmarkSpec::new_integer_ops(
+@@ -269,7 +269,7 @@ fn bench_server_key_unary_function_clean_inputs<F>(
+         match get_bench_type() {
+             BenchmarkType::Latency => {
+                 let bench_data = LazyCell::new(|| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                     let clear_0 = gen_random_u256(&mut rng);
+ 
+@@ -286,7 +286,7 @@ fn bench_server_key_unary_function_clean_inputs<F>(
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                 bench_group
+                     .sample_size(10)
+@@ -384,8 +384,7 @@ fn bench_server_key_binary_scalar_function_clean_inputs<F, G>(
+ 
+         match get_bench_type() {
+             BenchmarkType::Latency => {
+-                let bench_data =
+-                    LazyCell::new(|| KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix));
++                let bench_data = LazyCell::new(|| KEY_CACHE.get_from_params(param));
+ 
+                 bench_group.bench_function(&bench_id, |b| {
+                     let (cks, sks) = (&bench_data.0, &bench_data.1);
+@@ -406,7 +405,7 @@ fn bench_server_key_binary_scalar_function_clean_inputs<F, G>(
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                 bench_group
+                     .sample_size(10)
+@@ -529,7 +528,7 @@ fn if_then_else_parallelized(c: &mut Criterion) {
+         match get_bench_type() {
+             BenchmarkType::Latency => {
+                 let bench_data = LazyCell::new(|| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                     let clear_0 = gen_random_u256(&mut rng);
+                     let clear_1 = gen_random_u256(&mut rng);
+@@ -550,7 +549,7 @@ fn if_then_else_parallelized(c: &mut Criterion) {
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                 bench_group
+                     .sample_size(10)
+@@ -643,7 +642,7 @@ fn flip_parallelized(c: &mut Criterion) {
+         match get_bench_type() {
+             BenchmarkType::Latency => {
+                 let bench_data = LazyCell::new(|| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+ 
+                     let clear_0 = gen_random_u256(&mut rng);
+                     let clear_1 = gen_random_u256(&mut rng);
+@@ -664,7 +663,7 @@ fn flip_parallelized(c: &mut Criterion) {
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks
+```
+
+**File**: `tfhe-benchmark/benches/integer/glwe_packing_compression_128b.rs` (modified, +1/-2)
+```diff
+@@ -21,7 +21,6 @@ mod cpu {
      };
+     use tfhe::integer::keycache::KEY_CACHE;
+     use tfhe::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
+-    use tfhe::integer::IntegerKeyKind;
+     use tfhe::keycache::NamedParam;
  
-+    // Holds both packed operands
-     tmp_packed = new CudaRadixCiphertextFFI;
-     create_zero_radix_ciphertext_async<Torus>(
--        streams.stream(0), streams.gpu_index(0), tmp_packed, num_radix_blocks,
--        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-+        streams.stream(0), streams.gpu_index(0), tmp_packed,
-+        2 * num_packed_pairs(num_radix_blocks), params.big_lwe_dimension,
-+        size_tracker, allocate_gpu_memory);
- 
-     tree_buffer = new int_tree_sign_reduction_buffer<Torus>(
-         streams, operator_f, params, num_radix_blocks, allocate_gpu_memory,
-@@ -439,12 +449,13 @@ template <typename Torus> struct int_comparison_buffer {
-     diff_borrow_mem = nullptr;
-     lut_borrow_flag_cmp = nullptr;
-     // When we are in the fast path we can avoid calculating the luts for the
--    // tree reduction.
-+    // tree reduction. The borrow propagation needs at least two blocks.
-     use_borrow_fast_path =
-         allow_borrow_fast_path &&
-         (op == COMPARISON_TYPE::GT || op == COMPARISON_TYPE::GE ||
-          op == COMPARISON_TYPE::LT || op == COMPARISON_TYPE::LE) &&
--        !is_signed && params.message_modulus == 4 && params.carry_modulus == 4;
-+        !is_signed && params.message_modulus == 4 &&
-+        params.carry_modulus == 4 && num_radix_blocks >= 2;
-     // Null the sign-tree members so release() can safely skip them.
-     diff_buffer = nullptr;
-     eq_buffer = nullptr;
-@@ -489,13 +500,17 @@ template <typename Torus> struct int_comparison_buffer {
-             2 * num_radix_blocks, params.big_lwe_dimension, size_tracker,
-             allocate_gpu_memory);
- 
--        // Cleaning LUT
--        identity_lut =
--            new int_radix_lut<Torus>(streams, params, 1, num_radix_blocks,
--                                     allocate_gpu_memory, size_tracker);
-+        // Cleaning LUT, applied on both packed operands at once
-+        uint32_t num_packed_operand_blocks =
-+            2 * num_packed_pairs(num_radix_blocks);
-+        identity_lut = new int_radix_lut<Torus>(
-+            streams, params, 1, num_packed_operand_blocks, allocate_gpu_memory,
-+            size_tracker);
- 
-         identity_lut->generate_and_broadcast_lut(
--            active_streams, {0}, {identity_lut_f}, LUT_0_FOR_ALL_BLOCKS);
-+            streams.active_gpu_subset(num_packed_operand_blocks,
-+                                      params.pbs_type()),
-+            {0}, {identity_lut_f}, LUT_0_FOR_ALL_BLOCKS);
- 
-         uint32_t total_modulus = params.message_modulus * params.carry_modulus;
-         auto is_zero_f = [total_modulus](Torus x) -> Torus {
+     fn default_config(lwe_per_glwe: usize, bits_per_block: u32) -> Vec<u32> {
+@@ -68,7 +67,7 @@ mod cpu {
+         if cases.is_empty() {
+             return;
+         }
+-        let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++        let (cks, sks) = KEY_CACHE.get_from_params(param);
+         let squashing_private_key = NoiseSquashingPrivateKey::new(
+             BENCH_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+         );
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/comparison.cu` (modified, +0/-5)
+**File**: `tfhe-benchmark/benches/integer/goldschmidt_division.rs` (modified, +1/-2)
 ```diff
-@@ -102,9 +102,6 @@ void cuda_integer_comparison_64_async(CudaStreamsFFI streams,
-   case GE:
-   case LT:
-   case LE:
--    if (num_radix_blocks % 2 != 0)
--      PANIC("Cuda error (comparisons): the number of radix blocks has to be "
--            "even.")
-     if (buffer->use_borrow_fast_path) {
-       // The borrow-propagation path computes `left < right`. Express each op as
-       // a `<` with the operands possibly swapped (the boolean inversion for
-@@ -125,8 +122,6 @@ void cuda_integer_comparison_64_async(CudaStreamsFFI streams,
-     break;
-   case MAX:
-   case MIN:
--    if (num_radix_blocks % 2 != 0)
--      PANIC("Cuda error (max/min): the number of radix blocks has to be even.")
-     host_maxmin<uint64_t>(CudaStreams(streams), lwe_array_out, lwe_array_1,
-                           lwe_array_2, buffer, bsks, (uint64_t **)(ksks),
-                           num_radix_blocks);
+@@ -19,7 +19,6 @@ pub mod cuda {
+     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use tfhe::integer::gpu::CudaServerKey;
+     use tfhe::integer::keycache::KEY_CACHE;
+-    use tfhe::integer::IntegerKeyKind;
+     use tfhe::keycache::NamedParam;
+     use tfhe::shortint::AtomicPatternParameters;
+ 
+@@ -51,7 +50,7 @@ pub mod cuda {
+         let streams = CudaStreams::new_multi_gpu();
+ 
+         for (atomic_param, param_name) in param_sets() {
+-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+             let sks = CudaServerKey::new(&cpu_cks, &streams);
+ 
+             // Full-width operands: the cost is data independent, but a random
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/comparison.cuh` (modified, +28/-34)
+**File**: `tfhe-benchmark/benches/integer/kreyvium.rs` (modified, +3/-3)
 ```diff
-@@ -408,6 +408,8 @@ compare_radix_blocks(CudaStreams streams, CudaRadixCiphertextFFI *lwe_array_out,
-                      int_comparison_buffer<Torus> *mem_ptr, void *const *bsks,
-                      KSTorus *const *ksks, uint32_t num_radix_blocks) {
+@@ -17,7 +17,7 @@ pub mod cuda {
+     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use tfhe::integer::gpu::CudaServerKey;
+     use tfhe::integer::keycache::KEY_CACHE;
+-    use tfhe::integer::{IntegerKeyKind, RadixCiphertext, RadixClientKey};
++    use tfhe::integer::{RadixCiphertext, RadixClientKey};
+     use tfhe::keycache::NamedParam;
+     use tfhe::shortint::{AtomicPatternParameters, Ciphertext};
  
-+  if (num_radix_blocks == 0)
-+    return;
-   if (lwe_array_out->lwe_dimension != lwe_array_left->lwe_dimension ||
-       lwe_array_out->lwe_dimension != lwe_array_right->lwe_dimension)
-     PANIC("Cuda error: input and output radix ciphertexts should have the same "
-@@ -564,59 +566,52 @@ __host__ void host_difference_check(
-   auto message_modulus = params.message_modulus;
-   auto carry_modulus = params.carry_modulus;
+@@ -91,7 +91,7 @@ pub mod cuda {
+         let iv_bits = vec![0u64; KREYVIUM_KEY_BITS];
  
-+  // tmp_packed holds the packed left operand in its first half and the packed
-+  // right operand in its second half
-+  uint32_t packed_operand_size = num_packed_pairs(num_radix_blocks);
-   uint32_t packed_num_radix_blocks = num_radix_blocks;
-   CudaRadixCiphertextFFI lhs;
-   as_radix_ciphertext_slice<Torus>(&lhs, diff_buffer->tmp_packed, 0,
--                                   num_radix_blocks / 2);
-+                                   packed_operand_size);
-   CudaRadixCiphertextFFI rhs;
-   as_radix_ciphertext_slice<Torus>(&rhs, diff_buffer->tmp_packed,
--                                   num_radix_blocks / 2, num_radix_blocks);
--  if (carry_modulus >= message_modulus) {
--    // Packing is possible
-+                                   packed_operand_size,
-+                                   2 * packed_operand_size);
-+  // A signed ciphertext of one block only has its sign block, which is not
-+  // packed
-+  bool use_packing = carry_modulus >= message_modulus &&
-+                     (!mem_ptr->is_signed || num_radix_blocks >= 2);
-+  if (use_packing) {
-     // Pack inputs
-     // In case the ciphertext is signed, the sign block and the one before it
-     // are handled separately
-     if (mem_ptr->is_signed) {
-       packed_num_radix_blocks -= 2;
-     }
--    // Packs adjacent blocks from lwe_array_left into lhs:
--    // tmp_packed[0..num_radix_blocks/2] = lhs[0..num_radix_blocks/2] <-
-+    // Packs adjacent blocks from lwe_array_left into lhs, the last block of
-+    // an odd count is copied as is:
-+    // lhs <-
-     //     [pack(lwe_array_left[0], lwe_array_left[1]),
-     //      pack(lwe_array_left[2], lwe_array_left[3]),
--    //            ....
--    //      pack(lwe_array_left[num_radix_blocks-2],
--    //      lwe_array_left[num_radix_blocks-1])]
--    // the last pack for num_radix_blocks-2,num_radix_blocks-1 is not performed
--    // for signed inputs
-+    //            ....]
-+    // The sign block and the one before it are not packed for signed inputs
-     pack_blocks<Torus>(streams.stream(0), streams.gpu_index(0), &lhs,
-                        lwe_array_left, packed_num_radix_blocks, message_modulus,
-                        message_modulus, carry_modulus);
--    // tmp_packed[num_radix_blocks/2..num_radix_blocks] =
--    // rhs[0..num_radix_blocks/2] <-
--    //     [pack(lwe_array_right[0], lwe_array_right[1]),
--    //      pack(lwe_array_right[2], lwe_array_right[3]),
--    //            ....
--    //      pack(lwe_array_right[num_radix_blocks-2],
--    //      lwe_array_right[num_radix_blocks-1])]
--    // the last pack for num_radix_blocks-2,num_radix_blocks-1 is not performed
--    // for signed inputs
-+    // Same for lwe_array_right into rhs
-     pack_blocks<Torus>(streams.stream(0), streams.gpu_index(0), &rhs,
-                        lwe_array_right, packed_num_radix_blocks,
-                        message_modulus, message_modulus, carry_modulus);
--    // From this point we have half number of blocks
--    packed_num_radix_blocks /= 2;
-+    packed_num_radix_blocks = num_packed_pairs(packed_num_radix_blocks);
+         let streams = CudaStreams::new_multi_gpu();
+-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+         let sks = CudaServerKey::new(&cpu_cks, &streams);
+         let cks = RadixClientKey::from((cpu_cks, 1));
  
-     // Clean noise
--    // At this point tmp_packed contains num_radix_blocks packed ciphertexts
--    // but the (num_radix_blocks/2-1)th and (num_radix_blocks-1)-th ones may be
--    // 0 for signed inputs To clean the noise all num_radix_blocks must be
--    // cleaned: packed_num_radix_blocks is now equal to (num_radix_blocks-2)/2
--    // in the signed case.
--
-+    // Both operands are cleaned in one batch. For signed inputs the last slot
-+    // of each operand is not a packed block yet: it receives the block before
-+    // the sign block below.
-     auto identity_lut = mem_ptr->identity_lut;
-     integer_radix_apply_univariate_lookup_table<Torus>(
-         streams, diff_buffer->tmp_packed, diff_buffer->tmp_packed, bsks, ksks,
--        identity_lut, num_radix_blocks);
-+        identity_lut, 2 * packed_operand_size);
-   } else {
-     as_radix_ciphertext_slice<Torus>(&lhs, lwe_array_left, 0,
-                                      lwe_array_left->num_radix_blocks);
-@@ -637,9 +632,8 @@ __host__ void host_difference_check(
-                                 ksks, packed_num_radix_blocks);
-     num_comparisons = packed_num_radix_blocks;
-   } else {
--    // Packing is possible
--    if (carry_modulus >= message_modulus) {
--      // Compa
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/integer.cuh` (modified, +5/-5)
-```diff
-@@ -2210,9 +2210,9 @@ __host__ void pack_blocks(cudaStream_t stream, uint32_t gpu_index,
-   if (lwe_array_in->num_radix_blocks < num_radix_blocks)
-     PANIC("Cuda error: the number of blocks to pack should be lower or equal "
-           "to the number of blocks of the input")
--  if (lwe_array_out->num_radix_blocks < num_radix_blocks / 2)
-+  if (lwe_array_out->num_radix_blocks < num_packed_pairs(num_radix_blocks))
-     PANIC("Cuda error: the number of output blocks should be greater or equal "
--          "to the number of blocks to pack / 2")
-+          "to the number of packed blocks")
-   if (num_radix_blocks == 0)
-     return;
-   auto lwe_dimension = lwe_array_in->lwe_dimension;
-@@ -2249,9 +2249,9 @@ __host__ void scalar_pack_blocks(cudaStream_t stream, uint32_t gpu_index,
-                                  CudaRadixCiphertextFFI *lwe_array_out,
-                                  Torus const *scalar_array_in,
-                                  uint32_t num_radix_blocks, uint32_t factor) {
--  if (lwe_array_out->num_radix_blocks < num_radix_blocks / 2)
-+  if (lwe_array_out->num_radix_blocks < num_packed_pairs(num_radix_blocks))
-     PANIC("Cuda error: the number of output blocks should be greater or equal "
--          "to the number of blocks to pack / 2")
-+          "to the number of packed blocks")
-   if (num_radix_blocks == 0)
-     return;
-   cuda_set_device(gpu_index);
-@@ -2351,7 +2351,7 @@ reduce_signs(CudaStreams streams, CudaRadixCiphertextFFI *signs_array_out,
-             num_sign_blocks / 2, num_sign_blocks / 2 + 1, signs_b,
-             num_sign_blocks / 2, num_sign_blocks / 2 + 1);
+@@ -217,7 +217,7 @@ pub mod cuda {
+         let key_bits = vec![0u64; KREYVIUM_KEY_BITS * num_inputs];
+         let iv_bits = vec![0u64; KREYVIUM_KEY_BITS * num_inputs];
  
--      num_sign_blocks = (num_sign_blocks / 2) + (num_sign_blocks % 2);
-+      num_sign_blocks = num_packed_pairs(num_sign_blocks);
-     }
-   }
+-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+         let sks = CudaServerKey::new(&cpu_cks, &streams);
+         let cks = RadixClientKey::from((cpu_cks, 1));
  
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/scalar_comparison.cu` (modified, +0/-6)
+**File**: `tfhe-benchmark/benches/integer/mul_add_fixed_point.rs` (modified, +2/-3)
 ```diff
-@@ -57,9 +57,6 @@ void cuda_integer_scalar_comparison_64_async(
-   case GE:
-   case LT:
-   case LE:
--    if (num_radix_blocks % 2 != 0 && num_radix_blocks != 1)
--      PANIC("Cuda error (scalar comparisons): the number of radix blocks has "
--            "to be even or equal to 1.")
-     host_scalar_difference_check<uint64_t>(
-         CudaStreams(streams), lwe_array_out, lwe_array_in,
-         static_cast<const uint64_t *>(scalar_blocks),
-@@ -69,9 +66,6 @@ void cuda_integer_scalar_comparison_64_async(
-     break;
-   case MAX:
-   case MIN:
--    if (lwe_array_in->num_radix_blocks % 2 != 0)
--      PANIC("Cuda error (scalar max/min): the number of radix blocks has to be "
--            "even.")
-     host_scalar_maxmin<uint64_t>(
-         CudaStreams(streams), lwe_array_out, lwe_array_in,
-         static_cast<const uint64_t *>(scalar_blocks),
+@@ -22,7 +22,6 @@ pub mod cuda {
+     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+     use tfhe::integer::gpu::CudaServerKey;
+     use tfhe::integer::keycache::KEY_CACHE;
+-    use tfhe::integer::IntegerKeyKind;
+     use tfhe::keycache::NamedParam;
+     use tfhe::shortint::AtomicPatternParameters;
+ 
+@@ -64,7 +63,7 @@ pub mod cuda {
+         let streams = CudaStreams::new_multi_gpu();
+ 
+         for (atomic_param, param_name) in param_sets() {
+-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+             let sks = CudaServerKey::new(&cpu_cks, &streams);
+ 
+             for (lhs_blocks, rhs_blocks, rescaling, precision) in fixed_point_shapes() {
+@@ -129,7 +128,7 @@ pub mod cuda {
+         let streams = CudaStreams::new_multi_gpu();
+ 
+         for (atomic_param, param_name) in param_sets() {
+-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
++            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+             let sks = CudaServerKey::new(&cpu_cks, &streams);
+ 
+             // 32 x 32 blocks with the two addends the Goldschmidt remainder needs
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/scalar_comparison.cuh` (modified, +27/-32)
+**File**: `tfhe-benchmark/benches/integer/oprf.rs` (modified, +6/-9)
 ```diff
-@@ -58,8 +58,9 @@ __host__ void scalar_compare_radix_blocks(
-   // space, so (-1) % (4 * 4) = 15 = 1|1111 We then add one and get 0 = 0|0000
+@@ -12,7 +12,6 @@ use std::cmp::max;
+ use std::hint::black_box;
+ use tfhe::integer::keycache::KEY_CACHE;
+ use tfhe::integer::oprf::{OprfPrivateKey, OprfServerKey};
+-use tfhe::integer::IntegerKeyKind;
+ use tfhe::keycache::NamedParam;
+ #[cfg(any(feature = "gpu", feature = "hpu"))]
+ use tfhe::{get_pbs_count, reset_pbs_count};
+@@ -51,7 +50,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
+         match bench_type {
+             BenchmarkType::Latency => {
+                 bench_group.bench_function(&bench_id_oprf, |b| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+                     let oprf_pk = OprfPrivateKey::new(&cks);
+                     let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
  
-   auto subtracted_blocks = mem_ptr->tmp_block_comparisons;
--  copy_radix_ciphertext_async<Torus>(streams.stream(0), streams.gpu_index(0),
--                                     subtracted_blocks, lwe_array_in);
-+  copy_radix_ciphertext_slice_async<Torus>(
-+      streams.stream(0), streams.gpu_index(0), subtracted_blocks, 0,
-+      num_radix_blocks, lwe_array_in, 0, num_radix_blocks);
-   // Subtract
-   // Here we need the true lwe sub, not the one that comes from shortint.
-   host_scalar_subtraction_inplace<Torus>(
-@@ -179,8 +180,8 @@ __host__ void integer_radix_unsigned_scalar_difference_check(
-     // lsb
-     auto lhs = diff_buffer->tmp_packed;
-     CudaRadixCiphertextFFI rhs;
--    as_radix_ciphertext_slice<Torus>(&rhs, lhs, num_radix_blocks / 2,
--                                     lhs->num_radix_blocks);
-+    as_radix_ciphertext_slice<Torus>(
-+        &rhs, lhs, num_packed_pairs(num_radix_blocks), lhs->num_radix_blocks);
+@@ -67,7 +66,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
+                 });
  
-     pack_blocks<Torus>(lsb_streams.stream(0), lsb_streams.gpu_index(0), lhs,
-                        lwe_array_in, num_lsb_radix_blocks, message_modulus,
-@@ -189,9 +190,7 @@ __host__ void integer_radix_unsigned_scalar_difference_check(
-                               &rhs, scalar_blocks, num_scalar_blocks,
-                               message_modulus);
+                 bench_group.bench_function(&bench_id_oprf_bounded, |b| {
+-                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+                     let oprf_pk = OprfPrivateKey::new(&cks);
+                     let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
  
--    // From this point we have half number of blocks
--    num_lsb_radix_blocks /= 2;
--    num_lsb_radix_blocks += (num_scalar_blocks % 2);
-+    num_lsb_radix_blocks = num_packed_pairs(num_lsb_radix_blocks);
+@@ -84,7 +83,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
+                 });
+             }
+             BenchmarkType::Throughput => {
+-                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                let (cks, sks) = KEY_CACHE.get_from_params(param);
+                 let oprf_pk = OprfPrivateKey::new(&cks);
+                 let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
  
-     // comparisons will be assigned
-     // - 0 if lhs < rhs
-@@ -281,8 +280,8 @@ __host__ void integer_radix_unsigned_scalar_difference_check(
+@@ -210,8 +209,7 @@ pub mod cuda {
+                     let streams = CudaStreams::new_multi_gpu();
  
-       auto lhs = diff_buffer->tmp_packed;
-       CudaRadixCiphertextFFI rhs;
--      as_radix_ciphertext_slice<Torus>(&rhs, lhs, num_radix_blocks / 2,
--                                       lhs->num_radix_blocks);
-+      as_radix_ciphertext_slice<Torus>(
-+          &rhs, lhs, num_packed_pairs(num_radix_blocks), lhs->num_radix_blocks);
+                     bench_group.bench_function(&bench_id_oprf, |b| {
+-                        let (cks, _cpu_sks) =
+-                            KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                        let (cks, _cpu_sks) = KEY_CACHE.get_from_params(param);
+                         let gpu_sks = CudaServerKey::new(&cks, &streams);
+                         let oprf_pk = OprfPrivateKey::new(&cks);
+                         let compressed_oprf_sk =
+@@ -232,8 +230,7 @@ pub mod cuda {
+                     });
  
-       pack_blocks<Torus>(streams.stream(0), streams.gpu_index(0), lhs,
-                          lwe_array_in, num_lsb_radix_blocks, message_modulus,
-@@ -291,8 +290,7 @@ __host__ void integer_radix_unsigned_scalar_difference_check(
-                                 scalar_blocks, num_scalar_blocks,
-                                 message_modulus);
- 
--      // From this point we have half number of blocks
--      num_lsb_radix_blocks /= 2;
-+      num_lsb_radix_blocks = num_packed_pairs(num_lsb_radix_blocks);
- 
-       // comparisons will be assigned
-       // - 0 if lhs < rhs
-@@ -440,8 +438,8 @@ __host__ void integer_radix_signed_scalar_difference_check(
-     // lsb
-     auto lhs = diff_buffer->tmp_packed;
-     CudaRadixCiphertextFFI rhs;
--    as_radix_ciphertext_slice<Torus>(&rhs, lhs, num_radix_blocks / 2,
--                                     lhs->num_radix_blocks);
-+    as_radix_ciphertext_slice<Torus>(
-+        &rhs, lhs, num_packed_pairs(num_radix_blocks), lhs->num_radix_blocks);
- 
-     pack_blocks<Torus>(lsb_streams.stream(0), streams.gpu_index(0), lhs,
-                        lwe_array_in, num_lsb_radix_blocks, message_modulus,
-@@ -450,9 +448,7 @@ __host__ void integer_radix_signed_scalar_difference_check(
-                               scalar_blocks, num_scalar_blocks,
-                               message_modulus);
- 
--    // From this point we have half number of blocks
--    num_lsb_radix_blocks /= 2;
--    num_lsb_radix_blocks += (num_scalar_blocks % 2);
-+    num_lsb_radix_blocks = num_packed_pairs(num_lsb_radix_blocks);
- 
-     // comparisons will be assigned
-     // - 0 if lhs < rhs
-@@ -563,7 +559,10 @@ __host__ void integer_radix_signed_scalar_difference_check(
-       // We only have to do the regular comparison
-       // And not the part where we compare most significant blocks with zeros
-       // total_num_radix_blocks == total_num_scalar_blocks
--      uint32_t num_lsb_radix_blocks = num_radix_blocks;
-+      // Every block but the sign block is packed, the sign block is compared
-+      // separately
-+      uint32_t num_lsb_radix_blocks = num_radix_blocks - 1;
-+      uint32_t num_packed_lsb_blocks = num_packed_pairs(num_lsb_radix_blocks);
- 
-       streams.synchronize();
-       auto lsb_streams = mem_ptr->lsb_streams;
-@@ -572,30 +571,27 @@ __host__ void integer_radix_signed_scalar_difference_check(
-       auto lwe_array_ct_out = mem_ptr->tmp_lwe_array_out;
-       CudaRadixCiphertextFFI lwe_array_sign_out;
-       as_radix_ciphertext_slice<Torus>(&lwe_array_sign_out, lwe_array_ct_out,
--                                       num_lsb_radix_blocks / 2,
-+                                       num_packed_lsb_blocks,
-                                        lwe_array_ct_out->num_radix_blocks);
-       auto lhs = diff_buffer->tmp_packed;
-       CudaRadixCiphertextFFI rhs;
--      as_radix_ciphertext_slice<Tor
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_scalar_comparison.rs` (modified, +87/-40)
-```diff
-@@ -3,10 +3,11 @@ use crate::integer::gpu::ciphertext::CudaSignedRadixCiphertext;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
--use crate::integer::gpu::{gen_keys_gpu, CudaServerKey};
-+use crate::integer::gpu::CudaServerKey;
- use crate::integer::server_key::radix_parallel::tests_signed::test_scalar_comparison::{
-     test_signed_default_scalar_function, test_signed_default_scalar_minmax,
--    test_signed_unchecked_scalar_function, test_signed_unchecked_scalar_minmax,
-+    test_signed_scalar_minmax_out_of_range, test_signed_unchecked_scalar_function,
-+    test_signed_unchecked_scalar_minmax,
- };
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
-@@ -105,55 +106,101 @@ create_gpu_parameterized_test!(integer_signed_scalar_min_i128 {
-     PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
- });
- 
--fn integer_signed_scalar_minmax_out_of_range_and_negative_scalar<P>(param: P)
-+fn integer_signed_unchecked_scalar_min_out_of_range<P>(param: P)
- where
-     P: Into<TestParameters>,
- {
--    let streams = CudaStreams::new_multi_gpu();
--    let (cks, sks) = gen_keys_gpu(param, &streams);
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaSignedRadixCiphertext,
-+         scalar: i64,
-+         streams: &CudaStreams| {
-+            sks.unchecked_scalar_min(ct, i8::try_from(scalar).unwrap(), streams)
-+        },
-+    );
-+    test_signed_scalar_minmax_out_of_range::<i8, _, _, _>(param, executor, std::cmp::min::<i128>);
- 
--    let clear = 10i16;
--    let num_blocks = 8;
--    let ct = cks.encrypt_signed_radix(clear, num_blocks);
--    let d_ct = CudaSignedRadixCiphertext::from_signed_radix_ciphertext(&ct, &streams);
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_scalar_min);
-+    test_signed_scalar_minmax_out_of_range::<i64, _, _, _>(param, executor, std::cmp::min::<i128>);
-+}
- 
--    let decrypt = |d_result: CudaSignedRadixCiphertext| -> i16 {
--        cks.decrypt_signed_radix(&d_result.to_signed_radix_ciphertext(&streams))
--    };
-+create_gpu_parameterized_test!(integer_signed_unchecked_scalar_min_out_of_range {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
- 
--    let narrower_negative = -1i8;
--    assert_eq!(
--        decrypt(sks.scalar_max(&d_ct, narrower_negative, &streams)),
--        clear
-+fn integer_signed_unchecked_scalar_max_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaSignedRadixCiphertext,
-+         scalar: i64,
-+         streams: &CudaStreams| {
-+            sks.unchecked_scalar_max(ct, i8::try_from(scalar).unwrap(), streams)
-+        },
-     );
--    assert_eq!(
--        decrypt(sks.scalar_min(&d_ct, narrower_negative, &streams)),
--        i16::from(narrower_negative)
-+    test_signed_scalar_minmax_out_of_range::<i8, _, _, _>(param, executor, std::cmp::max::<i128>);
-+
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_scalar_max);
-+    test_signed_scalar_minmax_out_of_range::<i64, _, _, _>(param, executor, std::cmp::max::<i128>);
-+}
-+
-+create_gpu_parameterized_test!(integer_signed_unchecked_scalar_max_out_of_range {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
-+
-+fn integer_signed_scalar_min_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaSignedRadixCiphertext,
-+         scalar: i64,
-+         streams: &CudaStreams| {
-+            sks.scalar_min(ct, i8::try_from(scalar).unwrap(), streams)
-+        },
-+    );
-+    test_signed_scalar_minmax_out_of_range::<i8, _, _, _>(param, executor, std::cmp::min::<i128>);
-+
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::scalar_min);
-+    test_signed_scalar_minmax_out_of_range::<i64, _, _, _>(param, executor, std::cmp::min::<i128>);
-+}
-+
-+create_gpu_parameterized_test!(integer_signed_scalar_min_out_of_range {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
-+
-+fn integer_signed_scalar_max_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaSignedRadixCiphertext,
-+         scalar: i64,
-+         streams: &CudaStreams| {
-+            sks.scalar_max(ct, i8::try_from(scalar).unwrap(), streams)
-+        },
-     );
-+    test_signed_scalar_minmax_out_of_range::<i8, _, _, _>(param, executor, std::cmp::max::<i128>);
- 
--    for out_of_range in [70000i64, -70
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_scalar_comparison.rs` (modified, +83/-18)
-```diff
-@@ -5,8 +5,8 @@ use crate::integer::gpu::server_key::radix::tests_unsigned::{
- };
- use crate::integer::gpu::{gen_keys_gpu, CudaServerKey};
- use crate::integer::server_key::radix_parallel::tests_unsigned::test_scalar_comparison::{
--    test_default_scalar_function, test_default_scalar_minmax, test_unchecked_scalar_function,
--    test_unchecked_scalar_minmax,
-+    test_default_scalar_function, test_default_scalar_minmax, test_scalar_minmax_out_of_range,
-+    test_unchecked_scalar_function, test_unchecked_scalar_minmax,
- };
- use crate::integer::U256;
- use crate::shortint::parameters::test_params::*;
-@@ -322,28 +322,80 @@ where
-     }
- }
- 
--fn integer_scalar_minmax_wider_out_of_range_scalar<P>(param: P)
-+fn integer_unchecked_scalar_min_out_of_range<P>(param: P)
- where
-     P: Into<TestParameters>,
- {
--    let streams = CudaStreams::new_multi_gpu();
--    let (cks, sks) = gen_keys_gpu(param, &streams);
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaUnsignedRadixCiphertext,
-+         scalar: u64,
-+         streams: &CudaStreams| {
-+            sks.unchecked_scalar_min(ct, u8::try_from(scalar).unwrap(), streams)
-+        },
-+    );
-+    test_scalar_minmax_out_of_range::<u8, _, _, _>(param, executor, std::cmp::min::<u128>);
- 
--    let clear = 3u8;
--    let num_blocks = 4;
--    let ct = cks.encrypt_radix(clear, num_blocks);
--    let d_ct = CudaUnsignedRadixCiphertext::from_radix_ciphertext(&ct, &streams);
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_scalar_min);
-+    test_scalar_minmax_out_of_range::<u64, _, _, _>(param, executor, std::cmp::min::<u128>);
-+}
- 
--    let decrypt = |d_result: CudaUnsignedRadixCiphertext| -> u8 {
--        cks.decrypt_radix(&d_result.to_radix_ciphertext(&streams))
--    };
-+fn integer_unchecked_scalar_max_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaUnsignedRadixCiphertext,
-+         scalar: u64,
-+         streams: &CudaStreams| {
-+            sks.unchecked_scalar_max(ct, u8::try_from(scalar).unwrap(), streams)
-+        },
-+    );
-+    test_scalar_minmax_out_of_range::<u8, _, _, _>(param, executor, std::cmp::max::<u128>);
-+
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_scalar_max);
-+    test_scalar_minmax_out_of_range::<u64, _, _, _>(param, executor, std::cmp::max::<u128>);
-+}
-+
-+fn integer_scalar_min_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaUnsignedRadixCiphertext,
-+         scalar: u64,
-+         streams: &CudaStreams| {
-+            sks.scalar_min(ct, u8::try_from(scalar).unwrap(), streams)
-+        },
-+    );
-+    test_scalar_minmax_out_of_range::<u8, _, _, _>(param, executor, std::cmp::min::<u128>);
-+
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::scalar_min);
-+    test_scalar_minmax_out_of_range::<u64, _, _, _>(param, executor, std::cmp::min::<u128>);
-+}
- 
--    let scalar = 1000u64;
--    assert_eq!(
--        decrypt(sks.scalar_max(&d_ct, scalar, &streams)),
--        scalar as u8
-+fn integer_scalar_max_out_of_range<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let executor = GpuFunctionExecutor::new(
-+        |sks: &CudaServerKey,
-+         ct: &CudaUnsignedRadixCiphertext,
-+         scalar: u64,
-+         streams: &CudaStreams| {
-+            sks.scalar_max(ct, u8::try_from(scalar).unwrap(), streams)
-+        },
-     );
--    assert_eq!(decrypt(sks.scalar_min(&d_ct, scalar, &streams)), clear);
-+    test_scalar_minmax_out_of_range::<u8, _, _, _>(param, executor, std::cmp::max::<u128>);
-+
-+    let executor = GpuFunctionExecutor::new(&CudaServerKey::scalar_max);
-+    test_scalar_minmax_out_of_range::<u64, _, _, _>(param, executor, std::cmp::max::<u128>);
- }
- 
- create_gpu_parameterized_test!(integer_unchecked_scalar_min_u256 {
-@@ -378,6 +430,19 @@ create_gpu_parameterized_test!(integer_unchecked_scalar_comparisons_edge_one_blo
-     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-     PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
- });
--create_gpu_parameterized_test!(integer_scalar_minmax_wider_out_of_range_scalar {
-+create_gpu_parameterized_test!(integer_unchecked_scalar_min_out_of_range {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
-+create_gpu_parameterized_test!(integer_unchecked_scalar_max_out_of_range {
-     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
-+create_gpu_parameterized_test!(integer_scalar_min_out_of_range {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    PARAM_GPU_MULTI_BIT_GROUP_4_MESSAGE_2_CARRY_2_KS_
+                     bench_group.bench_function(&bench_id_oprf_bounded, |b| {
+-                        let (cks, _cpu_sks) =
+-                            KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                        let (cks, _cpu_sks) = KEY_CACHE.get_from_params(param);
+                         let gpu_sks = CudaServerKey::new(&cks, &streams);
+                         let oprf_pk = OprfPrivateKey::new(&cks);
+                         let compressed_oprf_sk =
+@@ -256,7 +253,7 @@ pub mod cuda {
+                     });
+                 }
+                 BenchmarkType::Throughput => {
+-                    let (cks, cpu_sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++                    let (cks, cpu_sks) = KEY_CACHE.get_from_params(param);
+                     let gpu_sks_vec = cuda_local_keys(&cks);
+                     let cpu_oprf_pk = OprfPrivateKey::new(&cks);
+                     let cpu_oprf_sk = OprfServerKey::new(&cpu_oprf_pk, &cks).unwrap();
 ```
 
 #### Recent Merged Pull Requests:
@@ -2597,62 +2337,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): add scalar min max out of range edge case tests and handle more corner cas
+## X. integer)!: split CRT and make it experimental
 
 **RULE**:
-When implementing operations in `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe-benchmark/benches/integer/aes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0d659bf`: gpu): add scalar min max out of range edge case tests and handle more corner case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `977e617f`: integer)!: split CRT and make it experimental. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe-benchmark/benches/integer/aes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// @brief Number of blocks left after packing adjacent pairs of blocks. The
-/// last block of an odd count is kept alone.
-/// @param num_blocks Number of blocks before packing.
-/// @return ceil(num_blocks / 2).
-inline uint32_t num_packed_pairs(uint32_t num_blocks) {
-  return num_blocks / 2 + num_blocks % 2;
-}
-
-    // Holds both packed operands
-        streams.stream(0), streams.gpu_index(0), tmp_packed,
-        2 * num_packed_pairs(num_radix_blocks), params.big_lwe_dimension,
-        size_tracker, allocate_gpu_memory);
-    // tree reduction. The borrow propagation needs at least two blocks.
-        !is_signed && params.message_modulus == 4 &&
-        params.carry_modulus == 4 && num_radix_blocks >= 2;
-        // Cleaning LUT, applied on both packed operands at once
-        uint32_t num_packed_operand_blocks =
-            2 * num_packed_pairs(num_radix_blocks);
-        identity_lut = new int_radix_lut<Torus>(
-            streams, params, 1, num_packed_operand_blocks, allocate_gpu_memory,
-            size_tracker);
-            streams.active_gpu_subset(num_packed_operand_blocks,
-                                      params.pbs_type()),
-            {0}, {identity_lut_f}, LUT_0_FOR_AL
+    use tfhe::integer::RadixClientKey;
+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        streams.stream(0), streams.gpu_index(0), tmp_packed, num_radix_blocks,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-    // tree reduction.
-        !is_signed && params.message_modulus == 4 && params.carry_modulus == 4;
-        // Cleaning LUT
-        identity_lut =
-            new int_radix_lut<Torus>(streams, params, 1, num_radix_blocks,
-                                     allocate_gpu_memory, size_tracker);
-            active_streams, {0}, {identity_lut_f}, LUT_0_FOR_ALL_BLOCKS);
+    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0d659bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `977e617f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

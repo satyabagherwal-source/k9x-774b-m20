@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T16:21:39.318Z",
+  "last_updated": "2026-11-27T16:30:27.348Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
-      "verified_at": "2026-11-27T11:44:32.750Z",
+      "content_hash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
+      "verified_at": "2026-11-27T16:30:27.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T11:44:32.750Z"
+      "last_updated": "2026-11-27T16:30:27.347Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
-      "verified_at": "2026-11-26T22:30:22.892Z",
+      "content_hash": "01cb142dc3d18354ac90a6735ec1aaa63647d19a62ea9c6f992e11f5e83ddbc9",
+      "verified_at": "2026-11-27T16:30:24.135Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T22:30:22.892Z"
+      "last_updated": "2026-11-27T16:30:24.135Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",

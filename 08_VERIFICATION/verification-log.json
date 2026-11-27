@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-SVE6",
-    "timestamp": "2026-11-26T07:40:12.654Z",
-    "repository": "sensenova/SenseNova-Loop-9B",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
-    "contentHash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3GWE",
-    "timestamp": "2026-11-26T07:48:27.086Z",
-    "repository": "nexu-io/openmotion",
-    "learningId": "learn-github-nexu-io-openmotion",
-    "contentHash": "d9960b7a0cecad18e63bb7f31414633ae012a012b281b8abc047033a30a5eee0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3J93",
     "timestamp": "2026-11-26T07:48:30.135Z",
     "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
@@ -7490,6 +7460,36 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "0ccf8ecdde166909b3065e6ecedd4bc20795ed437b7b5c168db52503428a12db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6JXX",
+    "timestamp": "2026-11-27T16:30:24.117Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "01cb142dc3d18354ac90a6735ec1aaa63647d19a62ea9c6f992e11f5e83ddbc9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6MEW",
+    "timestamp": "2026-11-27T16:30:27.320Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

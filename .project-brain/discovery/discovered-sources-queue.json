@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T16:21:45.403Z",
+  "updated_at": "2026-11-27T16:30:31.032Z",
   "stats": {
-    "total_discovered": 10493,
-    "approved_pending_harvest": 9961,
+    "total_discovered": 10494,
+    "approved_pending_harvest": 9962,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9967,
+      "COMMUNITY_AND_EXPERT": 9968,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227149,6 +227149,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-85429D3A3CEE": {
+      "id": "SRC-85429D3A3CEE",
+      "url": "https://github.com/advisories/GHSA-ghc9-756g-vrcv",
+      "title": "https://github.com/advisories/GHSA-ghc9-756g-vrcv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:30:31.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }

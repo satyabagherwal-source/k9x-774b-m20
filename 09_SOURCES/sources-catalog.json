@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "d0d659bf",
+    "sourceVersion": "977e617f",
     "license": "NOASSERTION",
-    "contentHash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
-    "lastHarvestedAt": "2026-11-27T11:44:32.736Z",
+    "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
+    "lastHarvestedAt": "2026-11-27T16:30:27.333Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "7674bd86",
+    "sourceVersion": "e375c609",
     "license": "Apache-2.0",
-    "contentHash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
-    "lastHarvestedAt": "2026-11-26T22:30:22.872Z",
+    "contentHash": "01cb142dc3d18354ac90a6735ec1aaa63647d19a62ea9c6f992e11f5e83ddbc9",
+    "lastHarvestedAt": "2026-11-27T16:30:24.126Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

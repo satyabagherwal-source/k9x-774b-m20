@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T22:30:28.037Z",
+  "timestamp": "2026-11-27T16:30:31.202Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-juicedata-juicefs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juicedata-juicefs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T22:30:28.037Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T16:30:31.202Z`  
 > **Learning ID**: `LEARN-EVO-juicedata-juicefs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `7674bd86`  
+> **Source Version**: `e375c609`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T22:30:21.656Z  
+> **Timestamp**: 2026-11-27T16:30:22.837Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T22:30:21.651Z  
+> **Harvest Timestamp**: 2026-11-27T16:30:22.730Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14787 stars
+- **Stars / Engagement**: 14791 stars
 
 ---
 
@@ -1184,11 +1184,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7924** (2026-11-26): **fs: fix write bounds and chunk sizing**
-  *Symptoms*: ## Problem  The Go SDK's `Write` and `WriteAt` pass the offset and the entire buffer to `pkg/fs.File.Pwrite`. That path reaches the chunk writer without applying the file size check used by the mount path.  - **Out-of-range offsets.** The writer computes the chunk index as `offset / chunkSize` and converts it to `uint32`. Once the index exceeds that type's range, it wraps. The write can then overwrite an earlier chunk in the same file. - **A write that stalls.** The writer converts the remaining buffer length to `uint32` before limiting it to the space left in the current chunk. When 4 GiB remains in one call, the conversion yields zero. A zero-length chunk write can succeed, leaving `data[n:]` unchanged. The loop keeps advancing the chunk index while holding the writer lock and consuming no input.  ## Change  Validate the full write range before opening the writer. Limit each chunk write before converting its length to `uint32`.  ## Validation  - `go test ./sdk/go ./pkg/fs ./pkg/vfs -count=1 -timeout=90s` passed with Redis 7. Regression tests cover invalid offsets, the file size boundary, and the first chunk of a 4 GiB write. - `make test.pkg` could not build the GlusterFS backend because `pkg-config` is missing.  
+- **Issue #7932** (2026-11-27): **meta: reject out-of-range attribute fields in changelog replay**
+  *Symptoms*: AttrFields parsed every field as int64 and narrowed it without checks, so negative or overflowing uid/gid/mode/flags/nsec/acl/tier values were silently truncated during replay. Parse unsigned fields with the bounded Uint32/Uint16/Uint8 helpers and keep the signed second fields as Int64.
 
-- **Issue #7923** (2026-11-26): **ci: use go.mod for cached Go setup**
-  *Symptoms*: ## Problem  Cached builds install Go 1.25.0, while `go.mod` requires Go 1.25.10. Before restoring the cache, `setup-go` runs `go env`, which downloads and extracts the newer toolchain into `GOMODCACHE`. Cache extraction then fails on those existing files, and successful PR jobs save another copy under the PR merge ref. [Example CI job](https://github.com/juicedata/juicefs/actions/runs/45778902560/job/139769253443)  ## Change  Use `go-version-file: go.mod` in the shared build action and the chaos workflow so `setup-go` installs the project's toolchain before restoring the cache. Keep caching enabled and preserve the Go version matrix in `verify`.  ## Validation  - Both YAML files passed the repository's `check-yaml` hook and `git diff --check`. - A local before-and-after check with isolated Go caches confirmed that `go env GOPATH` unpacked the toolchain into `GOMODCACHE` with the old configuration and skipped toolchain extraction with the new configuration. Both configurations ran Go 1.25.10. - GitHub Actions will validate the workflow on the PR. Cross-ref cache reuse can be checked after `main` writes the new cache key. 
+- **Issue #7931** (2026-11-27): **sdk/java: bump org.json to 20260719**
+  *Symptoms*: ## Problem  The Java SDK uses `org.json:json` 20240303, which is affected by the numeric parsing resource-exhaustion issue reported in [CVE-2026-59171](https://github.com/advisories/GHSA-ghc9-756g-vrcv). The optional HTTP node discovery path parses responses with this library.  ## Change  Upgrade `org.json:json` to 20260719, the first patched release.  ## Validation  - Java 8: `mvn -B -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package` passed. The shaded JAR contains `org.json:json` 20260719. - With the shaded JAR on Java 8, YARN, Spark, Spark Thrift, and Presto node discovery all returned the expected hosts from a local HTTP server. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1205,225 +1205,87 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ece6c92c` (2026-11-26)
-**Commit Message**: meta/redis: avoid deadlock in batched readdir attribute fetches (#7920)
+### Incident Patch 1: `e375c609` (2026-11-27)
+**Commit Message**: object: omit DSNs from SQL initialization errors (#7929)
 
-**File**: `pkg/meta/redis.go` (modified, +15/-22)
+Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
+
+**File**: `pkg/object/sql.go` (modified, +2/-2)
 ```diff
-@@ -2922,7 +2922,7 @@ func (m *redisMeta) doLink(ctx Context, inode, parent Ino, name string, attr *At
- 	}, m.inodeKey(parent), m.entryKey(parent), m.inodeKey(inode)))
- }
+@@ -174,7 +174,7 @@ func newSQLStore(driver, addr, user, password string) (ObjectStorage, error) {
  
--func (m *redisMeta) fillAttr(ctx Context, es []*Entry) error {
-+func (m *redisMeta) fillAttr(ctx context.Context, es []*Entry) error {
- 	if len(es) == 0 {
- 		return nil
- 	}
-@@ -2981,30 +2981,23 @@ func (m *redisMeta) doReaddir(ctx Context, inode Ino, plus uint8, entries *[]*En
- 		if nEntries <= batchSize {
- 			err = m.fillAttr(ctx, *entries)
- 		} else {
--			indexCh := make(chan []*Entry, 10)
--			var wg sync.WaitGroup
--			for i := 0; i < 2; i++ {
--				wg.Add(1)
--				go func() {
--					defer wg.Done()
--					for es := range indexCh {
--						e := m.fillAttr(ctx, es)
--						if e != nil {
--							err = e
--							break
--						}
--					}
--				}()
--			}
-+			group, batchCtx := errgroup.WithContext(ctx)
-+			group.SetLimit(2)
- 			for i := 0; i < nEntries; i += batchSize {
--				if i+batchSize > nEntries {
--					indexCh <- (*entries)[i:]
--				} else {
--					indexCh <- (*entries)[i : i+batchSize]
-+				if err = batchCtx.Err(); err != nil {
-+					break
- 				}
-+				batch := (*entries)[i:min(i+batchSize, nEntries)]
-+				group.Go(func() error {
-+					if err := batchCtx.Err(); err != nil {
-+						return err
-+					}
-+					return m.fillAttr(batchCtx, batch)
-+				})
-+			}
-+			if batchErr := group.Wait(); batchErr != nil {
-+				err = batchErr
- 			}
--			close(indexCh)
--			wg.Wait()
- 		}
+ 		parse, err := url.Parse(uri)
  		if err != nil {
- 			return errno(err)
-```
-
----
-
-### Incident Patch 2: `ab0efb17` (2026-11-26)
-**Commit Message**: fs: fix write bounds and chunk sizing (#7924)
-
-**File**: `pkg/fs/fs.go` (modified, +13/-4)
-```diff
-@@ -51,6 +51,8 @@ type Ino = meta.Ino
- type Attr = meta.Attr
- type LogContext = vfs.LogContext
- 
-+const maxFileSize = meta.ChunkSize << 31
-+
- func IsExist(err error) bool {
- 	return err == syscall.EEXIST || err == syscall.EACCES || err == syscall.EPERM
- }
-@@ -1682,6 +1684,13 @@ func (f *File) Pwrite(ctx meta.Context, b []byte, offset int64) (n int, err sysc
- }
- 
- func (f *File) pwrite(ctx meta.Context, b []byte, offset int64) (n int, err syscall.Errno) {
-+	size := len(b)
-+	if offset < 0 {
-+		return 0, syscall.EINVAL
-+	}
-+	if offset >= maxFileSize || int64(size) >= maxFileSize-offset {
-+		return 0, syscall.EFBIG
-+	}
- 	if f.wdata == nil {
- 		f.wdata = f.fs.writer.Open(f.inode, uint64(f.info.Size()), f.info.attr.Tier)
- 	}
-@@ -1691,11 +1700,11 @@ func (f *File) pwrite(ctx meta.Context, b []byte, offset int64) (n int, err sysc
- 		f.wdata = nil
- 		return
- 	}
--	if offset+int64(len(b)) > int64(f.info.attr.Length) {
--		f.info.attr.Length = uint64(offset + int64(len(b)))
-+	if end := offset + int64(size); end > int64(f.info.attr.Length) {
-+		f.info.attr.Length = uint64(end)
- 	}
--	f.fs.writtenSizeHistogram.Observe(float64(len(b)))
--	return len(b), 0
-+	f.fs.writtenSizeHistogram.Observe(float64(size))
-+	return size, 0
- }
- 
- func (f *File) Truncate(ctx meta.Context, length uint64) (err syscall.Errno) {
-```
-
-**File**: `pkg/fs/fs_test.go` (modified, +9/-0)
-```diff
-@@ -99,6 +99,15 @@ func TestFileSystem(t *testing.T) {
- 	if fi, err := f.Stat(); err != nil || fi.Mode() != 0644 {
- 		t.Fatalf("stat: %s %+v", err, fi)
- 	}
-+	if n, err := f.Pwrite(ctx, []byte("x"), -1); n != 0 || err != syscall.EINVAL {
-+		t.Fatalf("pwrite at -1: got (%d, %s), want (0, EINVAL)", n, err)
-+	}
-+	const limit = int64(meta.ChunkSize) << 31
-+	for _, off := range []int64{limit - 1, limit} {
-+		if n, err := f.Pwrite(ctx, []byte("x"), off); n != 0 || err != syscall.EFBIG {
-+			t.Fatalf("pwrite at %d: got (%d, %s), want (0, EFBIG)", off, n, err)
-+		}
-+	}
- 	if n, err := f.Write(ctx, []byte("world")); err != 0 || n != 5 {
- 		t.Fatalf("write 5 bytes: %d %s", n, err)
- 	}
-```
-
-**File**: `pkg/vfs/vfs_test.go` (modified, +31/-0)
-```diff
-@@ -25,6 +25,7 @@ import (
- 	"math/rand"
- 	"reflect"
- 	"slices"
-+	"strconv"
- 	"strings"
- 	"syscall"
- 	"testing"
-@@ -197,6 +198,36 @@ func TestVFSBasic(t *testing.T) {
- 
- }
- 
-+type recordingChunkWriter struct {
-+	chunk.Writer
-+	size int
-+}
-+
-+func (w *recordingChunkWriter) WriteAt(data []byte, _ int64) (int, error) {
-+	w.size = len(data)
-+	return 0, syscall.EIO
-+}
-+
-+func TestWriteChunkSize(t *testing.T) {
-+	if strconv.IntSize < 64 {
-+		t.Skip("a 4 GiB slice requires a 64-bit process")
-+	}
-+	// Reserve an address range. The stub only inspects the first slice's length.
-+	size := int64(1) << 32
-+	data, err := unix.Mmap(-1, 0, int(size), unix.PROT_NONE, unix.MAP_PRIVATE|unix.MAP_ANON)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, unix.Munmap(data)) })
-+
-+	const pos = 1
-+	sink := &recordingChunkWriter{}
-+	f := &fileWriter{w: &dataWriter{store: &blockingChunkStore{}, blockSize: meta.ChunkSize, bufferSize: 1 << 30}}
-+	c := &chunkWriter{file: f}
-+	c.slices = []*sliceWriter{{chunk: c, off: pos, writer: sink}}
-+	f.chunks = map[uint32]*chunkWriter{0: c}
-+	require.Equal(t, syscall.EIO, f.Write(meta.Background(), pos, data))
-+	require.Equal(t, meta.ChunkSize-pos, sink.size)
-+}
-+
- func TestVFSIO(t *testing.T) {
- 	v, _ := createTestVFS(nil, "")
- 	ctx := NewLogContext(meta.Background())
-```
-
-**File**: `pkg/vfs/writer.go` (modified, +1/-4)
-```diff
-@@ -376,10 +376,7 @@ func (f *fileWriter) Write(ctx meta.Context, off uint64, data []byte) syscall.Er
- 	indx := uint32(off / meta.ChunkSize)
- 	pos := uint32(off % meta.ChunkSize)
- 	for len(data) > 0 {
--		n := uint32(len(data))
--		if pos+n > meta.ChunkSize {
--			n = meta.ChunkSize - pos
--		}
-+		n := uint32(min(len(data), int(meta.ChunkSize-pos)))
- 		if st := f.writeChunk(ctx, indx, pos, data[:n]); st != 0 {
- 			return st
+-			return nil, fmt.Errorf("parse url %s failed: %s", uri, err)
++			return nil, errors.New("invalid PostgreSQL object storage address")
  		}
+ 		searchPath = parse.Query().Get("search_path")
+ 		if searchPath != "" {
+@@ -185,7 +185,7 @@ func newSQLStore(driver, addr, user, password string) (ObjectStorage, error) {
+ 	}
+ 	engine, err := xorm.NewEngine(driver, uri)
+ 	if err != nil {
+-		return nil, fmt.Errorf("open %s: %s", uri, err)
++		return nil, fmt.Errorf("open %s: %s", driver, err)
+ 	}
+ 	switch logger.Level { // make xorm less verbose
+ 	case logrus.TraceLevel:
 ```
 
 ---
 
-### Incident Patch 3: `0d98d562` (2026-11-26)
-**Commit Message**: utils: fix data race when setting log levels (#7921)
+### Incident Patch 2: `bc456170` (2026-11-27)
+**Commit Message**: docs/deployment: update wording of go_sdk.md (#7930)
 
-**File**: `pkg/utils/logger.go` (modified, +1/-1)
+**File**: `docs/en/deployment/go_sdk.md` (modified, +30/-29)
 ```diff
-@@ -148,7 +148,7 @@ func SetLogLevel(lvl logrus.Level) {
- 	mu.Lock()
- 	defer mu.Unlock()
- 	for _, logger := range loggers {
--		logger.Level = lvl
-+		logger.SetLevel(lvl)
- 	}
- }
+@@ -1,6 +1,7 @@
+ ---
+ title: Go SDK
+ sidebar_position: 6
++description: Learn how to use the JuiceFS Go SDK to access files directly from Go applications without FUSE, configure the client, run benchmarks, and understand API behavior and limitations.
+ ---
  
+ The Go SDK lets Go programs access a JuiceFS volume directly through the metadata engine and object storage, without a FUSE mount. It suits containerized environments where FUSE is not available, and Go services that want to read and write JuiceFS in process.
+@@ -162,15 +163,15 @@ Logs of JuiceFS are global to the process and shared by all clients. The log lev
+ | Names | `Rename`, `Link`, `Symlink`, `Readlink` |
+ | Attributes | `Stat`, `Lstat`, `Chmod`, `Chown`, `Lchown`, `Chtimes` |
+ 
+-`*File` provides common `*os.File` operations, including `Read`, `ReadAt`, `Write`, `WriteAt`, `Seek`, `Stat`, `Sync`, `Truncate`, `Chmod`, `Chown`, `ReadDir`, `Readdir`, `Readdirnames` and `Close`, and implements `io.Reader`, `io.Writer`, `io.Seeker`, `io.ReaderAt`, `io.WriterAt` and `fs.ReadDirFile`. `OpenFile` supports the flags `O_RDONLY`, `O_WRONLY`, `O_RDWR`, `O_CREATE`, `O_EXCL`, `O_TRUNC` and `O_APPEND`; other flags give `EINVAL`.
++`*File` provides common `*os.File` operations, including `Read`, `ReadAt`, `Write`, `WriteAt`, `Seek`, `Stat`, `Sync`, `Truncate`, `Chmod`, `Chown`, `ReadDir`, `Readdir`, `Readdirnames` and `Close`, and implements `io.Reader`, `io.Writer`, `io.Seeker`, `io.ReaderAt`, `io.WriterAt` and `fs.ReadDirFile`. `OpenFile` supports the flags `O_RDONLY`, `O_WRONLY`, `O_RDWR`, `O_CREATE`, `O_EXCL`, `O_TRUNC` and `O_APPEND`; other flags return `EINVAL`.
+ 
+-The `Sys` method of the `fs.FileInfo` returned by `Stat`, `Lstat` and `File.Stat` returns a `*juicefs.Stat` with the inode, the owner, the link count and the timestamps.
++The `Sys` method of the `fs.FileInfo` returned by `Stat`, `Lstat` and `File.Stat` returns a `*juicefs.Stat` containing the inode, the owner, the link count, and the timestamps.
+ 
+-File system errors are generally `*fs.PathError` or `*os.LinkError` wrapping a `syscall.Errno`; `ListQuota`, `Warmup`, `Status` and `SessionInfo`, which take no single name, return `*os.SyscallError`. Check them with `errors.Is`, for example `errors.Is(err, fs.ErrNotExist)` or `errors.Is(err, syscall.ENOTDIR)`. After `Client.Close`, file system operations generally return errors wrapping `fs.ErrClosed`. `Name`, `FS` and `Gatherer` remain callable; repeated `Client.Close` and `RemoveAll("")` return nil.
++File system errors are generally `*fs.PathError` or `*os.LinkError` wrapping a `syscall.Errno`. Methods such as `ListQuota`, `Warmup`, `Status`, and `SessionInfo`, which do not operate on a single path, return `*os.SyscallError`. Use `errors.Is` to check these errors, for example, `errors.Is(err, fs.ErrNotExist)` or `errors.Is(err, syscall.ENOTDIR)`. After `Client.Close`, file system operations generally return errors wrapping `fs.ErrClosed`. `Name`, `FS` and `Gatherer` remain callable; repeated `Client.Close` and `RemoveAll("")` return nil.
+ 
+ ### io/fs
+ 
+-`Client.FS()` returns an `fs.FS` view of the volume. It opens files for reading, but does not enforce read-only access through all methods of the underlying `*File`; use `Config.ReadOnly` for a read-only client. It also implements `fs.StatFS`, `fs.ReadDirFS`, `fs.ReadFileFS` and `fs.ReadLinkFS`. Its names follow `fs.ValidPath`: no leading `/`, and `"."` is the root of the volume.
++`Client.FS()` returns an `fs.FS` view of the volume. It opens files in read-only mode, but this does not prevent all modification operations through the underlying `*File`. Set `Config.ReadOnly` to create a read-only client. It also implements `fs.StatFS`, `fs.ReadDirFS`, `fs.ReadFileFS` and `fs.ReadLinkFS`. Paths passed to this file system must satisfy `fs.ValidPath`: they must not start with `/`, and `"."` represents the root of the volume.
+ 
+ ```go
+ fsys := c.FS()
+@@ -189,16 +190,16 @@ http.Handle("/", http.FileServerFS(fsys))
+ 
+ | Methods | Description |
+ | --- | --- |
+-| `Getxattr`, `Listxattr`, `Setxattr`, `Removexattr` | Extended attributes, following symbolic links. `Setxattr` takes `0`, `juicefs.XattrCreate` or `juicefs.XattrReplace`. A missing attribute gives `syscall.ENODATA` on Linux and `syscall.ENOATTR` on macOS |
+-| `Clone` | Clone a file or a directory by copying its metadata, as [`juicefs clone`](../reference/command_reference.mdx#clone) |
+-| `Info`, `Summary` | Usage of a file or a directory tree, as [`juicefs info`](../reference/command_reference.mdx#info) and [`juicefs summary`](../reference/command_reference.mdx#summary) |
+-| `SetQuota`, `GetQuota`, `DelQuota`, `ListQuota`, `CheckQuota` | [Quotas](../guide/quota.md) of directories (by path) and of users and groups (`uid:<uid>` and `gid:<gid>`). They run as root, without permission checks |
+-| `Warmup` | Warm up, check or evict the cache of files, as [`juicefs warmup`](../reference/command_reference.mdx#warmup) |
+-| `Status`, `SessionInfo` | Setting, stat
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7932** (2026-11-27): meta: reject out-of-range attribute fields in changelog replay (@zxh326)
+- **PR #7931** (2026-11-27): sdk/java: bump org.json to 20260719 (@myangitzh)
+- **PR #7930** (2026-11-27): docs/deployment: update wording of go_sdk.md (@CaitinChen)
+- **PR #7929** (2026-11-27): object: omit DSNs from SQL initialization errors (@myangitzh)
 - **PR #7924** (2026-11-26): fs: fix write bounds and chunk sizing (@myangitzh)
 - **PR #7923** (2026-11-26): ci: use go.mod for cached Go setup (@jiefenghuang)
-- **PR #7922** (2026-11-26): fs: validate xattr lengths (@myangitzh)
-- **PR #7921** (2026-11-26): utils: fix data race when setting log levels (@jiefenghuang)
-- **PR #7920** (2026-11-26): meta/redis: avoid deadlock in batched readdir attribute fetches (@jiefenghuang)
-- **PR #7919** (2026-11-26): meta: cancel sibling GetSummary scans on error (@jiefenghuang)
 
 ---
 
@@ -1443,66 +1305,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta/redis: avoid deadlock in batched readdir attribute fetches
+## X. object: omit DSNs from SQL initialization errors
 
 **RULE**:
-When implementing operations in `pkg/meta/redis.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/object/sql.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ece6c92c`: meta/redis: avoid deadlock in batched readdir attribute fetches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e375c609`: object: omit DSNs from SQL initialization errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/redis.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/object/sql.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (m *redisMeta) fillAttr(ctx context.Context, es []*Entry) error {
-			group, batchCtx := errgroup.WithContext(ctx)
-			group.SetLimit(2)
-				if err = batchCtx.Err(); err != nil {
-					break
-				batch := (*entries)[i:min(i+batchSize, nEntries)]
-				group.Go(func() error {
-					if err := batchCtx.Err(); err != nil {
-						return err
-					}
-					return m.fillAttr(batchCtx, batch)
-				})
-			}
-			if batchErr := group.Wait(); batchErr != nil {
-				err = batchErr
+			return nil, errors.New("invalid PostgreSQL object storage address")
+		return nil, fmt.Errorf("open %s: %s", driver, err)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-func (m *redisMeta) fillAttr(ctx Context, es []*Entry) error {
-			indexCh := make(chan []*Entry, 10)
-			var wg sync.WaitGroup
-			for i := 0; i < 2; i++ {
-				wg.Add(1)
-				go func() {
-					defer wg.Done()
-					for es := range indexCh {
-						e := m.fillAttr(ctx, es)
-						if e != nil {
-							err = e
-							break
-						}
-					}
-				}()
-			}
-				if i+batchSize > nEntries {
-					indexCh <- (*entries)[i:]
-				} else {
-					indexCh <- (*entries)[i : i+batchSize]
-			close(indexCh)
-			wg.Wait()
+			return nil, fmt.Errorf("parse url %s failed: %s", uri, err)
+		return nil, fmt.Errorf("open %s: %s", uri, err)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ece6c92c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e375c609` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

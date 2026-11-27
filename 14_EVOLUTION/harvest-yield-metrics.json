@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:21:39.315Z",
-  "total_cycles_completed": 13114,
-  "total_learnings_persisted": 13114,
-  "total_rules_promoted": 11840,
+  "last_updated": "2026-11-27T16:30:27.344Z",
+  "total_cycles_completed": 13116,
+  "total_learnings_persisted": 13116,
+  "total_rules_promoted": 11842,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:07:24.747Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:07:31.887Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:15:55.661Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T16:21:39.315Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:30:24.132Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:30:27.344Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

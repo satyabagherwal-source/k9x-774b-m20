@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T16:21:47.075Z",
+  "last_updated": "2026-11-27T16:30:33.482Z",
   "total_records": 2839,
   "domains": {
     "A": {
@@ -10607,8 +10607,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "67d256e3c0c596628fa7ca670f025d5ac9f68c735aef327014cb1284b5c09d43",
-      "created_at": "2026-11-26T22:30:23.329Z"
+      "content_hash": "7f729321c7e66b77b570aec5a42a8641d93539010b3b631804d2cad9377fbd33",
+      "created_at": "2026-11-27T16:30:24.585Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -10688,8 +10688,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "bd9bd00ee2c4f8c48a6e8c6cff62f12d79e618accd413360f20c41fb4ba3b380",
-      "created_at": "2026-11-27T11:44:33.231Z"
+      "content_hash": "2455f65adf21e978959de50bb1c8702073083b9f30445c3d6e9caeb4de5b3434",
+      "created_at": "2026-11-27T16:30:27.808Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -12230,8 +12230,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "ce90a24acb382c0df71b42c0e8178af1a70d793a9976ae5e9735901043f266cd",
-      "created_at": "2026-11-27T15:09:22.546Z"
+      "content_hash": "0e41fc9c1a09820218c02332b54919b73499a7423e2468265b12c8d67b103004",
+      "created_at": "2026-11-27T16:30:33.482Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -24574,8 +24574,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "851d5229426eeaa48d0e724eb31e2c985427e136451e72934fe1815676576f0f",
-      "created_at": "2026-11-26T22:30:28.352Z"
+      "content_hash": "db405a3652d9ffb5f1c09a968f1fd908954fd87837a7fb3a4882f872c7e9eb6e",
+      "created_at": "2026-11-27T16:30:31.547Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
@@ -27835,8 +27835,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "804f1b624e7e4e6e67837720aa970bb1013dc90c184f8fef0ecf60642114e1c8",
-      "created_at": "2026-11-27T11:44:36.988Z"
+      "content_hash": "0959425cc133352c5fcb588e7877e05029ce0b1a7532b54422f71a9a9a825046",
+      "created_at": "2026-11-27T16:30:32.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T16:21:42.752Z",
-    "lastVerified": "2026-11-27T16:21:42.752Z",
+    "lastChecked": "2026-11-27T16:30:30.735Z",
+    "lastVerified": "2026-11-27T16:30:30.735Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T15:54:27.211Z",
-    "lastVerified": "2026-11-27T15:54:27.211Z",
+    "lastChecked": "2026-11-27T16:30:25.718Z",
+    "lastVerified": "2026-11-27T16:30:25.718Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1791,14 +1791,14 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T11:44:27.539Z",
-    "lastVerified": "2026-11-27T11:44:27.539Z",
+    "lastChecked": "2026-11-27T16:30:26.067Z",
+    "lastVerified": "2026-11-27T16:30:26.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "1da26c3d334f46952e3e84321dc09deec9ae77589f28059abfda92fd8cd33818",
+    "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2291,12 +2291,12 @@
     "lastVerified": "2026-11-27T14:25:45.284Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "unhappychoice/gitlogue",
+    "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T16:30:46.495Z",
-    "lastVerified": "2026-11-26T16:30:46.495Z",
+    "lastChecked": "2026-11-27T16:30:10.552Z",
+    "lastVerified": "2026-11-27T16:30:10.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -2305,7 +2305,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0c11c147"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3144,8 +3145,8 @@
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-26T21:17:34.063Z",
-    "lastVerified": "2026-11-26T21:17:34.063Z",
+    "lastChecked": "2026-11-27T16:30:22.998Z",
+    "lastVerified": "2026-11-27T16:30:22.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-liyupi-yu-ai-agent",
@@ -6818,14 +6819,14 @@
     "officialUrl": "https://github.com/juicedata/juicefs",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T22:30:21.651Z",
-    "lastVerified": "2026-11-26T22:30:21.651Z",
+    "lastChecked": "2026-11-27T16:30:22.730Z",
+    "lastVerified": "2026-11-27T16:30:22.730Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
+    "contentHash": "01cb142dc3d18354ac90a6735ec1aaa63647d19a62ea9c6f992e11f5e83ddbc9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9619,9 +9620,9 @@
   "alin23-lunar": {
     "name": "Lunar",
     "officialUrl": "https://github.com/alin23/Lunar",
-    "lastChecked": "2026-11-25T07:04:29.651Z",
+    "lastChecked": "2026-11-27T16:30:15.455Z",
     "revisionIdentifier": "06950e25",
-    "lastVerified": "2026-11-25T07:04:29.651Z"
+    "lastVerified": "2026-11-27T16:30:15.455Z"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -10093,9 +10094,9 @@
   "indexcraft-ai-seo-audit-agent": {
     "name": "ai-seo-audit-agent",
     "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
-    "lastChecked": "2026-11-24T06:55:01.891Z",
+    "lastChecked": "2026-11-27T16:30:12.957Z",
     "revisionIdentifier": "20d2e73081",
-    "lastVerified": "2026-11-24T06:55:01.891Z"
+    "lastVerified": "2026-11-27T16:30:12.957Z"
   },
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",

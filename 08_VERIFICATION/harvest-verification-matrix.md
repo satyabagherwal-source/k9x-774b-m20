@@ -13816,3 +13816,5 @@
 | `CYCLE-20261127-7H9B` | `2026-11-27T16:03:07.679Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10925` | Yes (`98801262...`) |
 | `CYCLE-20261127-V4BK` | `2026-11-27T16:21:30.656Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10926` | Yes (`c7bbcc71...`) |
 | `CYCLE-20261127-VAZE` | `2026-11-27T16:21:39.290Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10927` | Yes (`0ccf8ecd...`) |
+| `CYCLE-20261127-6JXX` | `2026-11-27T16:30:24.117Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10928` | Yes (`01cb142d...`) |
+| `CYCLE-20261127-6MEW` | `2026-11-27T16:30:27.320Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10929` | Yes (`ebd824c3...`) |
