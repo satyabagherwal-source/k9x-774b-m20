@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:20:02.965Z",
-  "total_cycles_completed": 13159,
-  "total_learnings_persisted": 13159,
-  "total_rules_promoted": 11874,
+  "last_updated": "2026-11-27T20:38:15.410Z",
+  "total_cycles_completed": 13160,
+  "total_learnings_persisted": 13160,
+  "total_rules_promoted": 11875,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:35:21.201Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:43:48.240Z",
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T20:20:02.965Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:38:15.410Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

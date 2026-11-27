@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T20:29:44.990Z",
+  "last_updated": "2026-11-27T20:38:23.244Z",
   "total_verified_learnings": 9146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26746,
+  "total_items": 26748,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230416,9 +230416,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b66a9ac7f9dba9ce6f09be34ad8f094be53a3e505ce52db8cbbb37921d28875",
+      "content_hash": "97ece8ccb4a6b9ce98816619379d3cd5831eec189864fedd3d6981bff90aa7b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:29:42.418Z"
+      "persisted_at": "2026-11-27T20:38:23.026Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230428,9 +230428,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "15c07c2ef68042f5e68cb3348ccf4a00ffd694da4682dbe2ea79ba3f9dc5035e",
+      "content_hash": "ec2577a925ca39dbe8b1118c9a6270db06d69e40becb269cda56582ff5a6e8c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:29:42.674Z"
+      "persisted_at": "2026-11-27T20:38:23.244Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -239951,9 +239951,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "8009edea6e681f0d8c3279ebff423392cdc9619e9af18a14a4ba85e92fe1f031",
+      "content_hash": "e4fab369c7471f328104d82741ebe217f58fd0d76baf096dd474a75ecf5a0ec2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:07:51.183Z"
+      "persisted_at": "2026-11-27T20:38:22.165Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -255659,8 +255659,8 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "28488d4b",
-      "content_hash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
+      "source_version": "ca2e7c55",
+      "content_hash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [
@@ -255683,6 +255683,11 @@
           "number": "EXISTING",
           "title": "Update MPVUI",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10961,
+          "title": "Keep connection form footers mounted to fix tvOS keyboard dismissal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -255690,7 +255695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:59:51.196Z",
+      "verified_at": "2026-11-27T20:38:15.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -255732,10 +255737,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jellyfin-swiftfin-technical-construction-intelligence-jellyfin-swiftfin-core-inv.md",
       "title": "Technical Construction Intelligence: jellyfin/Swiftfin Core Invariants",
       "repository": "jellyfin/Swiftfin",
-      "source_version": "28488d4b",
-      "content_hash": "077daa2b598016c0efa1207eabbf5c4a5133c134893923600ff048a6e5ed157e",
+      "source_version": "ca2e7c55",
+      "content_hash": "5a3701ff5c04d4ab490db1d8f2c5d3247b877f417943c43246ae6dc39b384121",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T11:59:51.887Z"
+      "persisted_at": "2026-11-27T20:38:15.849Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin",
@@ -255744,10 +255749,10 @@
       "relative_path": "08_VERIFICATION/jellyfin-swiftfin-verification-protocol-empirical-defect-shield-for-jellyfin-swi.md",
       "title": "Verification Protocol: Empirical Defect Shield for jellyfin/Swiftfin",
       "repository": "jellyfin/Swiftfin",
-      "source_version": "28488d4b",
-      "content_hash": "3d0a57f99fd4222b6e12e063fd6bcf4df1f006cd7a3af637253e02b11023950b",
+      "source_version": "ca2e7c55",
+      "content_hash": "4ff78ce81b501298f2e97ccb7540ecab88bb11fd099c8cae09f98bbbf1e7c044",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:59:52.070Z"
+      "persisted_at": "2026-11-27T20:38:16.045Z"
     },
     "rule-8664": {
       "learning_id": "rule-8664",
@@ -255795,9 +255800,9 @@
       "title": "Technical Construction Intelligence: jellyfin-swiftfin-learnings Core Invariants",
       "repository": "jellyfin-swiftfin-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ef0f73db249463d7f999ec9aee8151b87150793a16149be8d89cdfee0296204",
+      "content_hash": "8d5ee86df6cd5b8a8b22f295373fe9811342a858ec677bf26540db7d2f931983",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:00:30.155Z"
+      "persisted_at": "2026-11-27T20:38:20.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jellyfin-swiftfin-learnings",
@@ -255807,9 +255812,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jellyfin-swiftfin-learnings",
       "repository": "jellyfin-swiftfin-learnings",
       "source_version": "HEAD",
-      "content_hash": "c18bac37f84a672d305b6c3484217a5d199917d07b6a90d1c8388a821f5a3338",
+      "content_hash": "6305b2a5be45f7441e9e09de2899716b4fddea788dcdc4fec8c2058f35b28831",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:00:30.360Z"
+      "persisted_at": "2026-11-27T20:38:20.847Z"
     },
     "learn-github-ataraxy-labs-sem": {
       "learning_id": "learn-github-ataraxy-labs-sem",
@@ -350550,13 +350555,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QBL2-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1GFE-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcfdc7c5c22950f28a75a478bb26bad3c880f7b7ce811fc62e4ef6a38011adba",
+      "content_hash": "1a087a9b10f4b67dad160d57a8dc61476f745932c8b7ae926a016c7f91827b5c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:29:43.334Z"
+      "persisted_at": "2026-11-27T20:38:22.827Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -367304,6 +367309,32 @@
       "content_hash": "784d135e4a88bd2cd1b9dee7cdccc7b70b8d9f87b66f34ecd87d8cb093b42ab6",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T20:20:48.372Z"
+    },
+    "rule-10961": {
+      "learning_id": "rule-10961",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10961,
+      "title": "Keep connection form footers mounted to fix tvOS keyboard dismissal",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "ca2e7c55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:38:15.130Z"
+    },
+    "candidate_directive-keep-connection-form-footers-mounted-to-fix-tvos-keyboard-dismissal": {
+      "item_id": "candidate_directive-keep-connection-form-footers-mounted-to-fix-tvos-keyboard-dismissal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1EKY-keep-connection-form-footers-mounted-to-fix-tvos-keyboard-dismissal.md",
+      "title": "Keep connection form footers mounted to fix tvOS keyboard dismissal",
+      "repository": "jellyfin-swiftfin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b24a79ecf3a50384e5bdc8d3d78e16132b30fab63013fed8b47891c911d0cd5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T20:38:20.435Z"
     }
   },
   "ai-builder-brain": {

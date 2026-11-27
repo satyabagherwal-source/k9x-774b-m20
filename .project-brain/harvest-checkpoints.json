@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T20:20:02.969Z",
+  "last_updated": "2026-11-27T20:38:15.413Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
-      "verified_at": "2026-11-25T11:59:51.470Z",
+      "content_hash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
+      "verified_at": "2026-11-27T20:38:15.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:59:51.470Z"
+      "last_updated": "2026-11-27T20:38:15.412Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

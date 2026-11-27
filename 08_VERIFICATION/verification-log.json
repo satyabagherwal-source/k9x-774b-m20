@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-9E4U",
-    "timestamp": "2026-11-26T10:41:01.134Z",
-    "repository": "loft-sh/vcluster",
-    "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-9HMC",
     "timestamp": "2026-11-26T10:41:05.652Z",
     "repository": "citusdata/citus",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "924b169ad95a4da42f1ef98dced8111ab12a093f925a7d23411eb69c8553e2eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-1AOW",
+    "timestamp": "2026-11-27T20:38:15.392Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

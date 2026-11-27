@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T20:29:41.370Z",
-    "lastVerified": "2026-11-27T20:29:41.370Z",
+    "lastChecked": "2026-11-27T20:38:19.719Z",
+    "lastVerified": "2026-11-27T20:38:19.719Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -402,8 +402,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T20:01:15.123Z",
-    "lastVerified": "2026-11-27T20:01:15.123Z",
+    "lastChecked": "2026-11-27T20:38:19.711Z",
+    "lastVerified": "2026-11-27T20:38:19.711Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1263,8 +1263,8 @@
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-27T02:40:48.106Z",
-    "lastVerified": "2026-11-27T02:40:48.106Z",
+    "lastChecked": "2026-11-27T20:38:12.235Z",
+    "lastVerified": "2026-11-27T20:38:12.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -1716,9 +1716,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-27T16:21:35.109Z",
+    "lastChecked": "2026-11-27T20:38:14.702Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-27T16:21:35.109Z"
+    "lastVerified": "2026-11-27T20:38:14.702Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4089,12 +4089,12 @@
     "revisionIdentifier": "9f03e7de"
   },
   "vi-websocat": {
-    "name": "vi/websocat",
+    "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:22:51.649Z",
-    "lastVerified": "2026-11-26T20:22:51.649Z",
+    "lastChecked": "2026-11-27T20:38:04.735Z",
+    "lastVerified": "2026-11-27T20:38:04.735Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vi-websocat",
@@ -4103,7 +4103,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c8d91850"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -4846,9 +4847,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-27T01:25:29.319Z",
+    "lastChecked": "2026-11-27T20:38:17.337Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-27T01:25:29.319Z"
+    "lastVerified": "2026-11-27T20:38:17.337Z"
   },
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
@@ -10079,12 +10080,12 @@
     "officialUrl": "https://github.com/jellyfin/Swiftfin",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-25T11:59:50.554Z",
-    "lastVerified": "2026-11-25T11:59:50.554Z",
+    "lastChecked": "2026-11-27T20:38:14.004Z",
+    "lastVerified": "2026-11-27T20:38:14.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
+    "contentHash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -10561,9 +10562,9 @@
   "nometria-sitemap-generator": {
     "name": "sitemap-generator",
     "officialUrl": "https://github.com/nometria/sitemap-generator",
-    "lastChecked": "2026-11-24T12:36:17.485Z",
+    "lastChecked": "2026-11-27T20:38:07.385Z",
     "revisionIdentifier": "6d8cae81",
-    "lastVerified": "2026-11-24T12:36:17.485Z"
+    "lastVerified": "2026-11-27T20:38:07.385Z"
   },
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",

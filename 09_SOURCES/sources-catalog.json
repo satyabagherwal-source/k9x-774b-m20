@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "28488d4b",
+    "sourceVersion": "ca2e7c55",
     "license": "MPL-2.0",
-    "contentHash": "ec8be559662d1a264e67b067acb054890de1635aac3f189bae1c0cd019420cf4",
-    "lastHarvestedAt": "2026-11-25T11:59:51.453Z",
+    "contentHash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
+    "lastHarvestedAt": "2026-11-27T20:38:15.404Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {

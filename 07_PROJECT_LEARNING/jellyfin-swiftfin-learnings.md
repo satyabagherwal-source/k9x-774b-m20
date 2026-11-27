@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source**: github ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
-> **Source Version**: `28488d4b`  
+> **Source Version**: `ca2e7c55`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T11:59:50.559Z  
+> **Timestamp**: 2026-11-27T20:38:14.154Z  
 > **Learning ID**: `learn-github-jellyfin-swiftfin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jellyfin/Swiftfin](https://github.com/jellyfin/Swiftfin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:59:50.554Z  
+> **Harvest Timestamp**: 2026-11-27T20:38:14.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Native Jellyfin Client for iOS and tvOS 
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4302 stars
+- **Stars / Engagement**: 4307 stars
 
 ---
 
@@ -636,14 +636,11 @@ extension MediaPlayerQueue {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2463** (2026-11-24): **Mixed libraries not shown in latest**
-  *Symptoms*: ### This issue respects the following points:  - [x] This is a **bug**, not a question or a configuration issue; Please visit our [forum or chat rooms](https://jellyfin.org/contact/) first to troubleshoot with volunteers, before creating a report. - [x] This issue is **not** already reported on [GitHub](https://github.com/jellyfin/Swiftfin/issues?q=is%3Aopen+is%3Aissue). - [x] I have read the [Common Issues](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/common_issues.md) documentation and this issue was not mentioned there. - [x] I'm using an up to date version of Swiftfin; We generally do not support previous older versions. If possible, please update to the latest version before opening an issue. - [x] I agree to follow Jellyfin's [Code of Conduct](https://jellyfin.org/docs/general/community-standards.html#code-of-conduct).  ### Description of the bug  Mixed libraries are not included in “Latest Movies” or “Latest TV Shows” they show up fine in libraries under media but items are not included in latest on home page   ### Reproduction steps  1. Have a mixed library like Anime movies and shows  2. Open Swiftfin and look at home view  3. Latest does not contain movies or shows from the mixed library   ### Platform  tvOS  ### Application version  1.7.1  ### Where did you install the app from?  App Store  ### Device information  Apple TV 4K Gen3  ### OS version  27.2.1  ### Jellyfin server version  12.4  ### Screenshots or videos  _No response_  ### Relevant log o
+- **Issue #2479** (2026-11-27): **Keep connection form footers mounted to fix tvOS keyboard dismissal**
+  *Symptoms*: Fixes #2477   On tvOS, typing in the Name or URL field of the Add/Edit Connection screen closes the keyboard after one character.  The orange footer under each field ("Required" / "Connection already exists") was added or removed with an `if` as you typed. This caused tvOS to re-evaluate focus and the keyboard was dismissed.  The footers now always stay in the layout and are shown or hidden with the existing `.isVisible()` helper, which also hides them from VoiceOver when invisible. The layout no longer changes while typing, so the keyboard stays open.  tvOS after fix:  https://github.com/user-attachments/assets/ab0618bb-1dca-41d1-8019-27a6d2edb3f8  **iOS note** The view is shared, so on iOS a valid field now keeps a small blank space where the hidden footer sits, instead of the form shifting up and down.  iOS before fix: https://github.com/user-attachments/assets/27af0ba0-d26b-46b7-955b-331594e9993a iOS after fix: https://github.com/user-attachments/assets/b10b0ebc-ddfd-45ab-a935-041ec1e08da4
 
-- **Issue #2456** (2026-11-24): **Rewatching on Home**
-  *Symptoms*: ### Summary  Jellyfin-Web handles rewatching in the `Continue Watching` section as just [`PlaybackPositionTicks && PlaybackPositionTicks > 0`](https://github.com/jellyfin/jellyfin-web/blob/d90bba74d2dc03e3cab92789b38b956da6dfd1f2/src/components/listview/List/listHelper.ts#L172-L177) while we check `isResumable` which only shows items that aren't marked as watched.
-  **Post-Mortem & Fix Analysis**:
-  > > This looks a lot more than necessary to just match web, and I'm not convinced with rewatching settings per library. At the same time, I implement layout settings in #2416.  That's fair. I would lean towards just the continue watching change then to mirror web then I can drop everything else.  Where this got away from me, I did the setting for just continue watching and then it was kind of weird having a setting for half of the home view but nothing else. IMO, if it makes sense to you, I can reduce this to just mirror web and no setting for it.
-  > In hindsight, should this just be an issue on server to make isResumable correct?
+- **Issue #2473** (2026-11-25): **Respect Chromecast device / profile maximum bit rate value**
+  *Symptoms*: This PR fixes what appears to be a bug where we were always using the user's maximum bit rate value and not respecting the device/profile's maximum bit rate. The effective maximum bit rate used should be a `min(userPreferredMaxBitrate, deviceProfileMaxBitrate)`. I found this issue in #2468 while debugging why casting was failing. This change only affects the experimental Chromecast support, not local play.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -660,56 +657,48 @@ extension MediaPlayerQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28488d4b` (2026-11-25)
-**Commit Message**: Update MPVUI (#2469)
+### Incident Patch 1: `ca2e7c55` (2026-11-27)
+**Commit Message**: Keep connection form footers mounted to fix tvOS keyboard dismissal (#2479)
 
-**File**: `Swiftfin.xcodeproj/project.pbxproj` (modified, +4/-4)
+**File**: `Shared/Views/EditServerConnectionView.swift` (modified, +6/-8)
 ```diff
-@@ -1635,16 +1635,16 @@
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/LePips/MediaAccessibilityKit";
- 			requirement = {
--				kind = exactVersion;
--				version = 0.4.0;
-+				kind = upToNextMajorVersion;
-+				minimumVersion = 0.4.0;
- 			};
- 		};
- 		E19005010000000000000005 /* XCRemoteSwiftPackageReference "MPVUI" */ = {
- 			isa = XCRemoteSwiftPackageReference;
- 			repositoryURL = "https://github.com/LePips/MPVUI";
- 			requirement = {
--				kind = exactVersion;
--				version = 0.10.0;
-+				kind = upToNextMajorVersion;
-+				minimumVersion = 0.11.0;
- 			};
- 		};
- 		E19010180000000000000003 /* XCRemoteSwiftPackageReference "google-cast-ios-sdk" */ = {
-```
-
-**File**: `Swiftfin.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` (modified, +2/-2)
-```diff
-@@ -177,8 +177,8 @@
-       "kind" : "remoteSourceControl",
-       "location" : "https://github.com/LePips/MPVUI",
-       "state" : {
--        "revision" : "9f15a49dfa04170729047587df81aa0f5ae39ce3",
--        "version" : "0.10.0"
-+        "revision" : "07a68c789fc33c33f1a1d8e8d090467594b7e859",
-+        "version" : "0.11.0"
-       }
-     },
-     {
+@@ -184,10 +184,9 @@ struct EditServerConnectionView: View {
+             } header: {
+                 Text(L10n.name)
+             } footer: {
+-                if isNameEmpty {
+-                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+-                }
++                Label(L10n.required, systemImage: "exclamationmark.circle.fill")
++                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
++                    .isVisible(isNameEmpty)
+             }
+ 
+             Section {
+@@ -200,10 +199,9 @@ struct EditServerConnectionView: View {
+             } header: {
+                 Text(L10n.url)
+             } footer: {
+-                if isDuplicateConnection {
+-                    Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+-                }
++                Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
++                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
++                    .isVisible(isDuplicateConnection)
+             }
+ 
+             #if os(iOS)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2479** (2026-11-27): Keep connection form footers mounted to fix tvOS keyboard dismissal (@liamdty)
+- **PR #2476** (closed): Keep validation footers in the view hierarchy (@liamdty)
+- **PR #2473** (2026-11-25): Respect Chromecast device / profile maximum bit rate value (@gspetrou)
+- **PR #2472** (2026-11-27): Update Header focus style for Poster Library Section (@MaxCilauro)
 - **PR #2469** (2026-11-25): Update MPVUI (@LePips)
 - **PR #2465** (closed): Match tvOS display criteria from stream metadata before loading AVPlayerItem (@awkimball)
-- **PR #2464** (closed): Add Anime4K and ArtCNN upscaling to the MPV player (@fcannizzaro)
-- **PR #2460** (closed): PosterGroup Follows User Preference (@chickdan)
-- **PR #2456** (2026-11-24): Rewatching on Home (@JPKribs)
-- **PR #2455** (2026-11-19): Update collections (@LePips)
 
 ---
 
@@ -729,34 +718,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update MPVUI
+## X. Keep connection form footers mounted to fix tvOS keyboard dismissal
 
 **RULE**:
-When implementing operations in `Swiftfin.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Shared/Views/EditServerConnectionView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jellyfin/Swiftfin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28488d4b`: Update MPVUI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ca2e7c55`: Keep connection form footers mounted to fix tvOS keyboard dismissal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Swiftfin.xcodeproj/project.pbxproj`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Shared/Views/EditServerConnectionView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.0;
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.11.0;
+                Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .isVisible(isNameEmpty)
+                Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .isVisible(isDuplicateConnection)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-				kind = exactVersion;
-				version = 0.4.0;
-				kind = exactVersion;
-				version = 0.10.0;
+                if isNameEmpty {
+                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
+                if isDuplicateConnection {
+                    Label(L10n.connectionAlreadyExists, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28488d4b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ca2e7c55` are properly handled with clean fallback behavior.
