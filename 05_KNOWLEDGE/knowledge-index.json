@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T14:39:39.400Z",
+  "last_updated": "2026-11-27T15:00:15.331Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26614,
+  "total_items": 26617,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "329d8dd1a4b7101804e546a355a3e7ce25d9b0cb25ef6f49692c5e2ff0d77b90",
+      "content_hash": "b7a4dbb53dbb8feb73c9ce8266688dc9ca816d530cdfa5b34430c4fd4a141947",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:39:39.400Z"
+      "persisted_at": "2026-11-27T15:00:15.331Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5df7f43bead000fd96c05e41a9a79b2a6df2e022d95824dc7c5e0398dd70b0c0",
+      "content_hash": "8ab05a8c637aeb6915cd33231a39ad2354b92812f9e8a296a351b92bfbda2b55",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T14:39:38.140Z"
+      "persisted_at": "2026-11-27T15:00:13.536Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "74f3fca502ef2e4ef45cf3a42f8e1b15553b449c428f8bd699615f811acdecb7",
+      "content_hash": "1fb333ce6701c13075ac07fc3559c8bc7e9be6db6451918e58587832249bf055",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:39:38.345Z"
+      "persisted_at": "2026-11-27T15:00:13.823Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -265780,8 +265780,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "c3fe1436",
-      "content_hash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
+      "source_version": "107a23fe",
+      "content_hash": "77052f57c36931b5c382081cb29c8578c51362ed997fc22831579e061870758b",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -265794,6 +265794,11 @@
           "number": 8787,
           "title": "keep automatic cache build progress off stdout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10916,
+          "title": "preserve buffered stdin on TempFile fallback",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -265801,7 +265806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T14:33:39.850Z",
+      "verified_at": "2026-11-27T15:00:03.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265843,10 +265848,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "repository": "sharkdp/bat",
-      "source_version": "c3fe1436",
-      "content_hash": "9c92140f569e66d035fee3e89372d9b713ac1c05618835009a99c41ece4ed4ac",
+      "source_version": "107a23fe",
+      "content_hash": "76a471cdfd991b83dbd14b1b6e113dfda9f4f755f88774a09a55d756b836dcca",
       "domain_letter": "F",
-      "persisted_at": "2026-11-26T14:33:40.849Z"
+      "persisted_at": "2026-11-27T15:00:04.109Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat",
@@ -265855,10 +265860,10 @@
       "relative_path": "08_VERIFICATION/sharkdp-bat-verification-protocol-empirical-defect-shield-for-sharkdp-bat.md",
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp/bat",
       "repository": "sharkdp/bat",
-      "source_version": "c3fe1436",
-      "content_hash": "ec1fdfb1376cf99a2ae7479328f3d3cd05de0f801b0af069a96ed63ebb9bc601",
+      "source_version": "107a23fe",
+      "content_hash": "4a2d7463503a499e64ebea3bac5b83cb7e35873cfd7c02ff7b675676cbb8dc77",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:33:41.138Z"
+      "persisted_at": "2026-11-27T15:00:04.380Z"
     },
     "candidate_directive-release-0-17-0": {
       "item_id": "candidate_directive-release-0-17-0",
@@ -265998,9 +266003,9 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8403e47d423c2639678aff165d9a0f02cd1ea094be241e5a5fa0b2e283fca1d",
+      "content_hash": "7ad30290cc5f1b01d89902c7b17a03e9558120eadbc77c077a5ef5b73dbd529c",
       "domain_letter": "F",
-      "persisted_at": "2026-11-26T14:33:53.671Z"
+      "persisted_at": "2026-11-27T15:00:12.256Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings",
@@ -266010,9 +266015,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp-bat-learnings",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a26626e1ebe3fd1fc4466e0c2c82446622f4f651d0f7dfd9e70e8391b691bda",
+      "content_hash": "9f2d32c4ceb3e6d28497b190714d5f754d5ef91da72d9ae2dbb3ae07ba9e82f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:33:53.945Z"
+      "persisted_at": "2026-11-27T15:00:12.535Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -358331,13 +358336,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-84JH-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YM2L-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c219211915f4c8cc23a18da576bc94d7ea79cf887220068f6df21636b791515b",
+      "content_hash": "7643c69af010d9a1308ff24a839aed2d68c8db19c26ed8fda243a71e6a4b2df6",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T14:39:39.008Z"
+      "persisted_at": "2026-11-27T15:00:14.785Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358347,9 +358352,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "76c14533c0b0095f3cfef8a2f1887272a94bb5324d13ff5ea19c2c2688f390b4",
+      "content_hash": "c79512f2223c9f6be6d132a0b9140b7e49c53dab1f85e40f44921a9e9b64d8fd",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T14:39:39.205Z"
+      "persisted_at": "2026-11-27T15:00:15.055Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361238,13 +361243,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-83PO-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YKWD-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac216e12cddf7174a764940cd1df34689a520ef1decedcac105b3558708c7bbb",
+      "content_hash": "91d00c5036170ae4402afc583c86d7de3f403efcb09f3395c1fb4570979ae369",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T14:39:37.936Z"
+      "persisted_at": "2026-11-27T15:00:13.265Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365375,6 +365380,44 @@
       "content_hash": "69d6b22c0a21e148ba4c5991002255da6f1c3d4d9534eb822770c930051efb24",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T14:39:37.000Z"
+    },
+    "rule-10916": {
+      "learning_id": "rule-10916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10916,
+      "title": "preserve buffered stdin on TempFile fallback",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "107a23fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:00:03.071Z"
+    },
+    "candidate_directive-preserve-buffered-stdin-on-tempfile-fallback": {
+      "item_id": "candidate_directive-preserve-buffered-stdin-on-tempfile-fallback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YDMG-preserve-buffered-stdin-on-tempfile-fallback.md",
+      "title": "preserve buffered stdin on TempFile fallback",
+      "repository": "sharkdp/bat",
+      "source_version": "107a23fe",
+      "content_hash": "a0f77c08b37bccb9efed6c7b7cc9e3080958f685940c69fff2f4d4a79ba96b30",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T15:00:03.833Z"
+    },
+    "candidate_directive-lessopen-preserve-buffered-stdin-on-tempfile-fallback": {
+      "item_id": "candidate_directive-lessopen-preserve-buffered-stdin-on-tempfile-fallback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YJWO-lessopen-preserve-buffered-stdin-on-tempfile-fallback.md",
+      "title": "lessopen): preserve buffered stdin on TempFile fallback",
+      "repository": "sharkdp-bat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1ae87ccc04a9ae5277ee6ba88459fe4e389557a6fd05c2eccd8004a40cddd93",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T15:00:11.977Z"
     }
   },
   "ai-builder-brain": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-SQX9",
-    "timestamp": "2026-11-26T06:44:07.629Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3C6Q",
     "timestamp": "2026-11-26T06:52:21.746Z",
     "repository": "nex-agi/Nex-N2.6",
@@ -7490,6 +7475,21 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YDB3",
+    "timestamp": "2026-11-27T15:00:03.423Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "77052f57c36931b5c382081cb29c8578c51362ed997fc22831579e061870758b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

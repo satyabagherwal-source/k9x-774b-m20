@@ -13802,3 +13802,4 @@
 | `CYCLE-20261127-24DH` | `2026-11-27T14:06:59.237Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10913` | Yes (`5afd887e...`) |
 | `CYCLE-20261127-EUMH` | `2026-11-27T14:16:53.129Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10914` | Yes (`1c8c9664...`) |
 | `CYCLE-20261127-7ZZH` | `2026-11-27T14:39:33.101Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10915` | Yes (`5dda9594...`) |
+| `CYCLE-20261127-YDB3` | `2026-11-27T15:00:03.423Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10916` | Yes (`77052f57...`) |

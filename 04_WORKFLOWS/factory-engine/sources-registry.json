@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T14:39:36.454Z",
-    "lastVerified": "2026-11-27T14:39:36.454Z",
+    "lastChecked": "2026-11-27T15:00:11.333Z",
+    "lastVerified": "2026-11-27T15:00:11.333Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T14:05:07.567Z",
-    "lastVerified": "2026-11-27T14:05:07.567Z",
+    "lastChecked": "2026-11-27T15:00:11.322Z",
+    "lastVerified": "2026-11-27T15:00:11.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -936,9 +936,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-27T10:01:36.096Z",
+    "lastChecked": "2026-11-27T15:00:06.547Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-27T10:01:36.096Z"
+    "lastVerified": "2026-11-27T15:00:06.547Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -1317,14 +1317,14 @@
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T14:33:38.986Z",
-    "lastVerified": "2026-11-26T14:33:38.986Z",
+    "lastChecked": "2026-11-27T15:00:01.498Z",
+    "lastVerified": "2026-11-27T15:00:01.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "3f9306a148303580e8ef3b203a17a52f128da71042f82f850d8653622e1fff26",
+    "contentHash": "77052f57c36931b5c382081cb29c8578c51362ed997fc22831579e061870758b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2465,8 +2465,8 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T19:45:52.673Z",
-    "lastVerified": "2026-11-26T19:45:52.673Z",
+    "lastChecked": "2026-11-27T15:00:08.942Z",
+    "lastVerified": "2026-11-27T15:00:08.942Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
@@ -6166,8 +6166,8 @@
     "officialUrl": "https://github.com/octodns/octodns",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T20:49:42.274Z",
-    "lastVerified": "2026-11-26T20:49:42.274Z",
+    "lastChecked": "2026-11-27T15:00:04.116Z",
+    "lastVerified": "2026-11-27T15:00:04.116Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-octodns-octodns",
@@ -9290,9 +9290,9 @@
   "juanpe-about-swiftui": {
     "name": "About-SwiftUI",
     "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
-    "lastChecked": "2026-11-25T05:37:10.006Z",
+    "lastChecked": "2026-11-27T15:00:01.319Z",
     "revisionIdentifier": "59a740fc",
-    "lastVerified": "2026-11-25T05:37:10.006Z"
+    "lastVerified": "2026-11-27T15:00:01.319Z"
   },
   "mrjackwills-oxker": {
     "name": "oxker",
@@ -9897,9 +9897,9 @@
   "seobserver-crawlobserver": {
     "name": "crawlobserver",
     "officialUrl": "https://github.com/SEObserver/crawlobserver",
-    "lastChecked": "2026-11-24T04:45:05.585Z",
+    "lastChecked": "2026-11-27T14:59:58.799Z",
     "revisionIdentifier": "64b6a78344",
-    "lastVerified": "2026-11-24T04:45:05.585Z"
+    "lastVerified": "2026-11-27T14:59:58.799Z"
   },
   "maziyarpanahi-openmed": {
     "name": "openmed",

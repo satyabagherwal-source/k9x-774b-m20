@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T14:39:33.127Z",
-  "total_cycles_completed": 13101,
-  "total_learnings_persisted": 13101,
-  "total_rules_promoted": 11828,
+  "last_updated": "2026-11-27T15:00:03.464Z",
+  "total_cycles_completed": 13102,
+  "total_learnings_persisted": 13102,
+  "total_rules_promoted": 11829,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:24:01.159Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:24:11.240Z",
       "repository": "linkerd/linkerd2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T14:39:33.127Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:00:03.464Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

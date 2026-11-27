@@ -4,22 +4,22 @@
 {
   "source_repository": "sharkdp/bat",
   "source_url": "https://github.com/sharkdp/bat",
-  "source_version": "c3fe1436",
+  "source_version": "107a23fe",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T14:33:40.565Z",
+  "timestamp": "2026-11-27T15:00:03.832Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sharkdp-bat",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sharkdp/bat](https://github.com/sharkdp/bat) (Revision: `c3fe1436`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:33:40.565Z`  
+> **Provenance**: Harvested from [sharkdp/bat](https://github.com/sharkdp/bat) (Revision: `107a23fe`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T15:00:03.832Z`  
 > **Learning ID**: `learn-github-sharkdp-bat`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sharkdp/bat` (Commit: `c3fe1436`)
+- **Target Repository**: `sharkdp/bat` (Commit: `107a23fe`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:33:38.986Z  
+> **Harvest Timestamp**: 2026-11-27T15:00:01.498Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61519 stars
+- **Stars / Engagement**: 61547 stars
 
 ---
 
@@ -619,10 +619,152 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3fe1436` (2026-11-26)
-**Commit Message**: Merge pull request #4151 from draarivpatel-ui/fix/decorations-auto-piped
+### Incident Patch 1: `e8fbe09f` (2026-11-27)
+**Commit Message**: fix(lessopen): preserve buffered stdin on TempFile fallback
 
-Do not show style decorations when piped with --decorations=auto
+When LESSOPEN preprocesses stdin in temporary-file mode, stdin is
+already drained into stdin_buffer before inspecting the preprocessor
+output. Replay Cursor::new(stdin_buffer) when UTF-8 decoding or
+File::open fails, and strip CRLF as well as LF from the returned path.
+
+**File**: `src/lessopen.rs` (modified, +105/-9)
+```diff
+@@ -61,6 +61,27 @@ fn shell_substitute_two(template: &str, first: &str, second: &str) -> String {
+     out
+ }
+ 
++/// Strip a single trailing LF or CRLF from a temporary file path printed by `$LESSOPEN`.
++fn strip_trailing_newline(s: &str) -> &str {
++    s.strip_suffix("\r\n")
++        .or_else(|| s.strip_suffix('\n'))
++        .unwrap_or(s)
++}
++
++/// Fall back to opening the original input, replaying the buffered stdin payload
++/// when stdin was already drained to feed `$LESSOPEN`.
++fn open_original<'a, R: BufRead + 'a>(
++    input: Input<'a>,
++    stdin: R,
++    stdin_buffer: Option<Vec<u8>>,
++    stdout_identifier: Option<&Identifier>,
++) -> Result<OpenedInput<'a>> {
++    match stdin_buffer {
++        Some(buf) => input.open(Cursor::new(buf), stdout_identifier),
++        None => input.open(stdin, stdout_identifier),
++    }
++}
++
+ /// Preprocess files and/or stdin using $LESSOPEN and $LESSCLOSE
+ pub(crate) struct LessOpenPreprocessor {
+     lessopen: String,
+@@ -127,7 +148,7 @@ impl LessOpenPreprocessor {
+         mut stdin: R,
+         stdout_identifier: Option<&Identifier>,
+     ) -> Result<OpenedInput<'a>> {
+-        let (lessopen_stdout, path_str, kind) = match input.kind {
++        let (lessopen_stdout, path_str, kind, stdin_buffer) = match input.kind {
+             InputKind::OrdinaryFile(ref path) => {
+                 let path_str = match path.to_str() {
+                     Some(str) => str,
+@@ -151,6 +172,7 @@ impl LessOpenPreprocessor {
+                     lessopen_output.stdout,
+                     path_str.to_string(),
+                     OpenedInputKind::OrdinaryFile(path.to_path_buf()),
++                    None,
+                 )
+             }
+             InputKind::StdIn => {
+@@ -190,6 +212,7 @@ impl LessOpenPreprocessor {
+                         lessopen_output.stdout,
+                         "-".to_string(),
+                         OpenedInputKind::StdIn,
++                        Some(stdin_buffer),
+                     )
+                 } else {
+                     return input.open(stdin, stdout_identifier);
+@@ -207,19 +230,16 @@ impl LessOpenPreprocessor {
+                     let lessopen_string = match String::from_utf8(lessopen_stdout) {
+                         Ok(string) => string,
+                         Err(_) => {
+-                            return input.open(stdin, stdout_identifier);
++                            return open_original(input, stdin, stdin_buffer, stdout_identifier);
+                         }
+                     };
+                     // Remove newline at end of temporary file path returned by $LESSOPEN
+-                    let stdout = match lessopen_string.strip_suffix("\n") {
+-                        Some(stripped) => stripped.to_owned(),
+-                        None => lessopen_string,
+-                    };
++                    let stdout = strip_trailing_newline(&lessopen_string);
+ 
+-                    let file = match File::open(PathBuf::from(&stdout)) {
++                    let file = match File::open(PathBuf::from(stdout)) {
+                         Ok(file) => file,
+                         Err(_) => {
+-                            return input.open(stdin, stdout_identifier);
++                            return open_original(input, stdin, stdin_buffer, stdout_identifier);
+                         }
+                     };
+ 
+@@ -228,7 +248,7 @@ impl LessOpenPreprocessor {
+                         lessclose: self
+                             .lessclose
+                             .as_ref()
+-                            .map(|s| shell_substitute_two(s, &path_str, &stdout)),
++                            .map(|s| shell_substitute_two(s, &path_str, stdout)),
+                     }
+                 } else {
+                     Preprocessed {
+@@ -492,4 +512,80 @@ mod tests {
+             "a '%s' b 'second' c"
+         );
+     }
++
++    #[test]
++    fn strip_trailing_newline_handles_lf_and_crlf() {
++        assert_eq!(super::strip_trailing_newline("tmp.txt\n"), "tmp.txt");
++        assert_eq!(super::strip_trailing_newline("tmp.txt\r\n"), "tmp.txt");
++        assert_eq!(super::strip_trailing_newline("tmp.txt"), "tmp.txt");
++        assert_eq!(
++            super::strip_trailing_newline("tmp.txt\r\n\n"),
++            "tmp.txt\r\n"
++        );
++    }
++
++    #[test]
++    #[serial]
++    fn tempfile_stdin_fallback_preserves_stdin_when_file_missing() -> Result<()> {
++        let preprocessor =
++            LessOpenPreprocessor::mock_new(Some("-echo nonexistent_bat_lessopen_path_%s"), None)?;
++        let opened = preprocessor.open(
++            Input::stdin(),
++            Cursor::new(b"hello from stdin\n".to_vec()),
++            None,
++        );
++        reset_env_vars();
++
++        let mut opened = opened?;
++        let mut content = Vec::new();
++        while opened.reader.read_line(&mut content)? {}
++        assert_eq!(content, b"hello from stdin\n");
++        Ok(())
++    }
++
++    #[cfg(unix)]
++    #[test]
++    #[serial]
++    fn tempfile_stdin_f
+```
+
+---
+
+### Incident Patch 2: `032a1f79` (2026-11-21)
+**Commit Message**: fix: keep ANSI reverse video on wrapped lines
+
+Track SGR 7 (on) and SGR 27 (off) in the ANSI style tracker so reverse
+video is re-emitted on every wrapped continuation line, like bold, dim,
+italic, underline, and strikethrough. Add a unit test and a wrapping
+integration test, plus the required CHANGELOG entry.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -630,104 +772,182 @@ Do not show style decorations when piped with --decorations=auto
  
  ## Bugfixes
  
-+- Only show style decorations with `--decorations=auto` when stdout is interactive, so piped `--color=always` output no longer includes the header, grid, or line numbers, see #4151 (@draarivpatel-ui)
- - Fix `bat cache --help` returning exit code 1 instead of 0. Remove `.arg_required_else_help(true)` from the cache subcommand and show help when no arguments are provided. See #3798, #3831 and #3837 (@Amilliox)
- - Fix builtin pager (minus) not responding to search (`/`, `?`, `n`, `N`) and navigation (`PgUp`, `PgDown`, arrows, `g`, `G`) keys. `HashedEventRegister` was overriding all default `minus` bindings instead of extending them. Add `generate_default_bindings()` before custom bindings. See #3831, #3798 and #3837 (@Amilliox)
- - Build the cache automatically on first run when custom themes or syntaxes are in subdirectories, see #4131 (@NotAFlightRisk)
++- Track reverse video (SGR 7 / 27) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first wrapped line when displaying ANSI input, see #XXXX (@BlueX888)
+ - Skip cache metadata validation when `--no-custom-assets` is set so outdated or malformed caches do not block fallback to integrated assets, see #4157 (@xgbtxy)
+ - Only show style decorations with `--decorations=auto` when stdout is interactive, so piped `--color=always` output no longer includes the header, grid, or line numbers, see #4151 (@draarivpatel-ui)
+ - Break `--wrap=word` lines at whitespace in earlier highlighted tokens or before ANSI escape sequences instead of in the middle of a word, closes #4139, see #4140 (@mansur-akhmadi)
 ```
 
-**File**: `src/bin/bat/app.rs` (modified, +24/-0)
+**File**: `src/vscreen.rs` (modified, +33/-1)
 ```diff
-@@ -599,6 +599,30 @@ impl App {
-             ])));
-         }
+@@ -75,6 +75,10 @@ struct Attributes {
+     /// OFF: ^[29m
+     strike: String,
  
-+        // With `--decorations=auto` (the default), decorations may only be shown when
-+        // stdout is an interactive terminal. `-n`/`-b` above and `--decorations=always`
-+        // (including `--force-colorization`, which implies it) are explicit exceptions.
-+        let decorations = self
-+            .matches
-+            .get_one::<String>("decorations")
-+            .map(|s| s.as_str());
-+        if !self.interactive_output
-+            && decorations != Some("always")
-+            && !self.matches.get_flag("force-colorization")
-+        {
-+            let mut components = HashSet::new();
-+            // When --diff is active, preserve change markers and snip separators
-+            // so that diff output remains visually useful.
-+            if self.matches.try_contains_id("diff").unwrap_or_default()
-+                && self.matches.get_flag("diff")
-+            {
-+                #[cfg(feature = "git")]
-+                components.insert(StyleComponent::Changes);
-+                components.insert(StyleComponent::Snip);
-+            }
-+            return Some(StyleComponents(components));
-+        }
++    /// ON:  ^[7m
++    /// OFF: ^[27m
++    reverse: String,
 +
-         // Plain if `--plain` is specified at least once.
-         if self.matches.get_count("plain") > 0 {
-             let mut components = HashSet::from([StyleComponent::Plain]);
+     /// The hyperlink sequence.
+     /// FORMAT: \x1B]8;{ID};{URL}\e\\
+     ///
+@@ -98,6 +102,7 @@ impl Attributes {
+             underline: "".to_owned(),
+             italic: "".to_owned(),
+             strike: "".to_owned(),
++            reverse: "".to_owned(),
+             hyperlink: "".to_owned(),
+         }
+     }
+@@ -156,6 +161,7 @@ impl Attributes {
+         self.underline.clear();
+         self.italic.clear();
+         self.strike.clear();
++        self.reverse.clear();
+     }
+ 
+     fn update_with_sgr(&mut self, parameters: &str) -> bool {
+@@ -173,9 +179,11 @@ impl Attributes {
+                 2 => self.dim = "\x1B[2m".to_owned(),
+                 3 => self.italic = "\x1B[3m".to_owned(),
+                 4 => self.underline = "\x1B[4m".to_owned(),
++                7 => self.reverse = "\x1B[7m".to_owned(),
+                 9 => self.strike = "\x1B[9m".to_owned(),
+                 23 => self.italic.clear(),
+                 24 => self.underline.clear(),
++                27 => self.reverse.clear(),
+                 29 => self.strike.clear(),
+                 22 => {
+                     self.bold.clear();
+@@ -258,7 +266,7 @@ impl Display for Attributes {
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+         write!(
+             f,
+-            "{}{}{}{}{}{}{}{}{}{}",
++            "{}{}{}{}{}{}{}{}{}{}{}",
+             self.foreground,
+             self.background,
+             self.underlined,
+@@ -268,6 +276,7 @@ impl Display for Attributes {
+             self.underline,
+             self.italic,
+             self.strike,
++            self.reverse,
+             self.hyperlink,
+         )
+     }
+@@ -1096,4 +1105,27 @@ mod tests {
+         });
+         assert_eq!(attrs.strike, "");
+     }
++
++    #[test]
++    fn test_sgr_reverse_is_tracked_and_cleared() {
++        let mut attrs = crate::vscreen::Attributes::new();
++
++        // Reverse video on (SGR 7) must be tracked so it can be re-emitted.
++        attrs.update(EscapeSequence::CSI {
++            raw_sequence: "\x1B[7m",
++            parameters: "7",
++            intermediates: "",
++            final_byte: "m",
++        });
++        assert_eq!(attrs.reverse, "\x1B[7m");
++
++        // Reverse video off (SGR 27) must clear it, just like strikethrough (29).
++        attrs.update(EscapeSequence::CSI {
++            raw_sequence: "\x1B[27m",
++            parameters: "27",
++            intermediates: "",
++            final_byte: "m",
++        });
++        assert_eq!(attrs.reverse, "");
++    }
+ }
 ```
 
-**File**: `tests/integration_tests.rs` (modified, +39/-0)
+**File**: `tests/integration_tests.rs` (modified, +19/-0)
 ```diff
-@@ -731,6 +731,45 @@ fn piped_output_with_line_numbers_with_header_grid_style_flag() {
-         .stdout("hello\nworld\n");
+@@ -4358,6 +4358,25 @@ fn ansi_sgr_strike_joins_attributes_when_wrapped() {
+             .stderr("");
  }
  
++// Ensure that reverse video (SGR 7) is tracked like the other attributes, so it is
++// re-emitted (and therefore preserved) across a wrap boundary instead of being dropped.
 +#[test]
-+fn piped_output_with_color_always_and_auto_decorations_is_plain() {
-+    // `--decorations=auto` must not enable decorations when stdout is not a terminal,
-+    // even if `--color=always` forces colorized output.
++fn ansi_sgr_reverse_joins_attributes_when_wrapped() {
 +    bat()
-+        .arg("multiline.txt")
-+        .arg("--color=always")
-+        .arg("--decorations=auto")
-+        .assert()
-+        .success()
-+        .stdout(predicate::str::contains("\u{1b}["))
-+        .stdout(predicate::str::contains("File:").not())
-+        .stdout(predicate::str::contains("\u{2502}").not());
-+}
-+
-+#[test]
-+fn piped_output_with_color_always_ignores_style_decorations_when_auto() {
-+    bat()
-+        .arg("multiline.txt")
-+        .arg("--color=always")
-+        .arg("--decorations=auto")
-+        .arg("--style=full")
-+        .assert()
-+        .success()
-+        .stdout(predicate::str::contains("File:").not())
-+        .stdout(predicate::str::contains("\u{2502}").not());
-+}
-+
-+#[test]
-+fn piped_output_with_color_always_and_always_decorations_keeps_decorations() {
-+    bat()
-+        .arg("multiline.txt")
-+        .arg("--color=always")
-+        .arg("--decorations=always")
-+        .assert()
-+        .success()
-+        .stdout(predicate::str::contains("File:"));
++            .arg("--paging=never")
++            .arg("--color=never")
++            .arg("--terminal-width=20")
++            .arg("--wrap=character")
++            .arg("--decorations=always")
++            .arg("--style=plain")
++            .write_stdin("\x1B[33mColor. \x1B[7mReverse......Reversed+color.\n")
++            .assert()
++            .success()
++            .stdout("\x1B[33m\x1B[33mColor. \x1B[7m\x1B[33m\x1B[7mReverse......\n\x1B[33m\x1B[7mReversed+color.\n")
++            // FIXME:              ~~~~~~~~       ~~~~~~~~~~~~~~~ should not be emitted twice.
++            .stderr("");
 +}
 +
  #[test]
- fn piped_output_with_auto_style() {
+ fn ignored_suffix_arg() {
      bat()
 ```
 
+---
+
+### Incident Patch 3: `0cb75f32` (2026-11-27)
+**Commit Message**: Merge pull request #4155 from draarivpatel-ui/fix-sparse-checkout-diff
+
+Add regression test for sparse checkout diffs
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ 
+ ## Other
+ 
++- Add regression coverage for diff calculation in cone-mode sparse checkouts, see #4155 (@draarivpatel-ui)
+ - Find ANSI escape sequences by scanning bytes, which makes plain-text output up to 13% faster, see #4149 (@g4lb)
+ - Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
+ - Fix anchor case in `doc/assets.md` links, see #4026 (@ump45nose)
+```
+
+**File**: `src/diff.rs` (modified, +15/-0)
+```diff
+@@ -223,6 +223,21 @@ mod tests {
+         assert_eq!(changes.get(&2), Some(&LineChange::Added));
+     }
+ 
++    #[test]
++    fn diff_is_calculated_in_cone_sparse_checkout() {
++        let repo = setup_repo();
++        let file = create_and_track_file(&repo, "file.txt");
++        std::fs::write(&file, "changed\n").expect("can write file");
++
++        git(repo.path(), &["sparse-checkout", "set", "--cone"]);
++        let changes = get_git_diff(&file).expect("one change in sparse checkout");
++        assert_eq!(changes.get(&1), Some(&LineChange::Modified));
++
++        git(repo.path(), &["sparse-checkout", "disable"]);
++        let changes = get_git_diff(&file).expect("one change after sparse checkout");
++        assert_eq!(changes.get(&1), Some(&LineChange::Modified));
++    }
++
+     #[cfg(unix)]
+     #[test]
+     fn filter_from_repository_config_is_not_executed() {
+```
+
 #### Recent Merged Pull Requests:
+- **PR #4160** (2026-11-27): Retry PTY poll/read on EINTR in integration tests (@keith-hall)
+- **PR #4158** (2026-11-27): fix(lessopen): preserve buffered stdin on TempFile fallback (@xgbtxy)
+- **PR #4157** (2026-11-27): fix: skip cache metadata validation when --no-custom-assets is set (@xgbtxy)
+- **PR #4156** (2026-11-27): Map .yamllint, .prettierrc and .eslintrc to YAML syntax highlighting (@yusufemreboyraz)
+- **PR #4155** (2026-11-27): Add regression test for sparse checkout diffs (@draarivpatel-ui)
 - **PR #4151** (2026-11-26): Do not show style decorations when piped with --decorations=auto (@draarivpatel-ui)
-- **PR #4150** (2026-11-25): Map .clang-tidy to YAML syntax highlighting (@yusufemreboyraz)
-- **PR #4143** (2026-11-21): fix: support SHA-256 git repositories in --diff (@BlueX888)
-- **PR #4141** (2026-11-22): fix sanitize config options (@curious-rabbit)
-- **PR #4137** (2026-11-20): Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses (@divya0795)
-- **PR #4132** (2026-11-16): cargo upgrade -i -p gix (@keith-hall)
 
 ---
 
@@ -747,31 +967,66 @@ Do not show style decorations when piped with --decorations=auto
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. lessopen): preserve buffered stdin on TempFile fallback
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/lessopen.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3fe1436`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8fbe09f`: lessopen): preserve buffered stdin on TempFile fallback. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/lessopen.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Only show style decorations with `--decorations=auto` when stdout is interactive, so piped `--color=always` output no longer includes the header, grid, or line numbers, see #4151 (@draarivpatel-ui)
+/// Strip a single trailing LF or CRLF from a temporary file path printed by `$LESSOPEN`.
+fn strip_trailing_newline(s: &str) -> &str {
+    s.strip_suffix("\r\n")
+        .or_else(|| s.strip_suffix('\n'))
+        .unwrap_or(s)
+}
+
+/// Fall back to opening the original input, replaying the buffered stdin payload
+/// when stdin was already drained to feed `$LESSOPEN`.
+fn open_original<'a, R: BufRead + 'a>(
+    input: Input<'a>,
+    stdin: R,
+    stdin_buffer: Option<Vec<u8>>,
+    stdout_identifier: Option<&Identifier>,
+) -> Result<OpenedInput<'a>> {
+    match stdin_buffer {
+        Some(buf) => input.open(Cursor::new(buf), stdout_identifier),
+        None => input.open(stdin, stdout_identifier),
+    }
+}
+
+        let (lessopen_stdout, path_str, kind, stdin_buffer) = match input.kind {
+                    None,
+                        Some(stdin_buffer),
+                            return open_original(input, stdin, stdin_buffer, stdout_identifier);
+                    let stdout = strip_trailing_newline(&lessopen_string);
+                    let file = match File::open(PathBuf::from(stdout)) {
+                            return open_original(input, stdin, stdin_buffer, stdout_identifier
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        let (lessopen_stdout, path_str, kind) = match input.kind {
+                            return input.open(stdin, stdout_identifier);
+                    let stdout = match lessopen_string.strip_suffix("\n") {
+                        Some(stripped) => stripped.to_owned(),
+                        None => lessopen_string,
+                    };
+                    let file = match File::open(PathBuf::from(&stdout)) {
+                            return input.open(stdin, stdout_identifier);
+                            .map(|s| shell_substitute_two(s, &path_str, &stdout)),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3fe1436` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8fbe09f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
