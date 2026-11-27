@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T13:55:26.629Z",
-  "total_cycles_completed": 13097,
-  "total_learnings_persisted": 13097,
-  "total_rules_promoted": 11824,
+  "last_updated": "2026-11-27T14:06:59.271Z",
+  "total_cycles_completed": 13099,
+  "total_learnings_persisted": 13099,
+  "total_rules_promoted": 11826,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:11:34.618Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T23:11:36.404Z",
-      "repository": "EL4CTEO/fast-anything",
-      "learningId": "learn-github-el4cteo-fast-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:11:40.757Z",
       "repository": "BuilderIO/builder",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T13:55:26.629Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T14:05:10.691Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T14:06:59.271Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

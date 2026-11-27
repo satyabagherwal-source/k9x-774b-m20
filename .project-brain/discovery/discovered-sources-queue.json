@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T13:55:30.866Z",
+  "updated_at": "2026-11-27T14:07:03.737Z",
   "stats": {
-    "total_discovered": 10348,
-    "approved_pending_harvest": 9818,
+    "total_discovered": 10353,
+    "approved_pending_harvest": 9823,
     "harvested_count": 0,
     "rejected_count": 530,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9822,
+      "COMMUNITY_AND_EXPERT": 9827,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -223973,6 +223973,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-92F1428A4C39": {
+      "id": "SRC-92F1428A4C39",
+      "url": "https://www.dictionary.com/browse/graining",
+      "title": "https://www.dictionary.com/browse/graining",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T14:07:03.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-030B038A638B": {
+      "id": "SRC-030B038A638B",
+      "url": "https://github.com/user-attachments/assets/61b47d0a-b734-4b14-84cb-8baf022f085c",
+      "title": "https://github.com/user-attachments/assets/61b47d0a-b734-4b14-84cb-8baf022f085c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T14:07:03.419Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-57A25AA3F7E7": {
+      "id": "SRC-57A25AA3F7E7",
+      "url": "https://github.com/user-attachments/assets/86a98360-b527-4718-8103-b318bccc0dce",
+      "title": "https://github.com/user-attachments/assets/86a98360-b527-4718-8103-b318bccc0dce",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T14:07:03.524Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-26CF25C42503": {
+      "id": "SRC-26CF25C42503",
+      "url": "https://writewithharper.com/editor%60",
+      "title": "https://writewithharper.com/editor%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T14:07:03.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-0AF8233286F7": {
+      "id": "SRC-0AF8233286F7",
+      "url": "https://github.com/user-attachments/assets/22c2526d-82af-4bae-b76d-ac53d34b0505",
+      "title": "https://github.com/user-attachments/assets/22c2526d-82af-4bae-b76d-ac53d34b0505",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T14:07:03.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
       }
     }
   }

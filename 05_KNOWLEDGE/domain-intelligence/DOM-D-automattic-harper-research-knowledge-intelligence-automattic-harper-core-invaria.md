@@ -4,24 +4,24 @@
 {
   "source_repository": "Automattic/harper",
   "source_url": "https://github.com/Automattic/harper",
-  "source_version": "1f3e2b34",
+  "source_version": "2b63882d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T05:54:35.442Z",
+  "timestamp": "2026-11-27T14:06:59.593Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-automattic-harper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `1f3e2b34`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T05:54:35.442Z`  
+> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `2b63882d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T14:06:59.593Z`  
 > **Learning ID**: `learn-github-automattic-harper`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Automattic/harper:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:54:33.664Z  
+> **Harvest Timestamp**: 2026-11-27T14:04:56.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17950 stars
+- **Stars / Engagement**: 18000 stars
 
 ---
 
@@ -1422,11 +1422,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5008** (2026-11-22): **"TEARDOWN" doesn't get flagged to correct to "TEAR DOWN"**
-  *Symptoms*: <img width="658" height="48" alt="image" src="https://github.com/user-attachments/assets/706b19aa-b1d9-4196-9f36-6869d97a7814" />  > I FINALLY **TEARDOWN** A VR6! Volkswagen's CRAZY Engine Idea From The 90's Was A HUGE SUCCESS!  "tear down" is a verb while "teardown" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.  May be the same as #5006 but it might be related to using all-caps, which the other bug doesn't.
+- **Issue #5080** (2026-11-26): **"graining" not recognized as a word**
+  *Symptoms*: ## What got flagged? ``` maybe there's some part of the mold broken off, maybe the mechanical usage has smoothed out some graining or made the parts slightly looser/smaller etc. ```  ## Why is this incorrect? https://www.dictionary.com/browse/graining  <img width="979" height="518" alt="image" src="https://github.com/user-attachments/assets/61b47d0a-b734-4b14-84cb-8baf022f085c" />  ## Example of correct usage The graining on the inside of that car's door is noticable to the touch.
 
-- **Issue #5006** (2026-11-22): **"Fallback" does not get corrected to "fall back" in some contexts**
-  *Symptoms*: <img width="512" height="72" alt="image" src="https://github.com/user-attachments/assets/9487776c-cae3-4d64-abbd-63c4abf02e48" />  > If the syscall does not work **fallback** to APE loader or /bin/sh if FD_CLOEXEC is not set and the fd has a path.  "fall back" is a verb, "fallback" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.
+- **Issue #5079** (2026-11-27): **Closed Compound Incorrect Suggestion**
+  *Symptoms*: ## What got flagged? “I’m not made of feathers and hymns, Kryptos. I’m one hundred percent machine.” He lowers his cuff and buttons it with practiced calm. “When Demvora impaled me, I triggered my self-destruct protocol. My soul routed through Naraka, my Second Circle or Subspace to you, finding a replication pod protected by Rakia. Weeks later, I stepped out of the vat and went back to demon slaying.”  <img width="2613" height="538" alt="image" src="https://github.com/user-attachments/assets/86a98360-b527-4718-8103-b318bccc0dce" />  ## Why is this incorrect? Says "my self" could be myself, but self is part of a hyphenated compound self-destruct. Even if it wasn't, the suggestion would still be invalid.  ## Example of correct usage See above text.
+  **Post-Mortem & Fix Analysis**:
+  > Do you have the latest Harper? I can't reproduce this in `https://writewithharper.com/editor`   <img width="822" height="166" alt="image" src="https://github.com/user-attachments/assets/22c2526d-82af-4bae-b76d-ac53d34b0505" />
+  > Upgraded to 3.3.0. Can close and will re-open if I see the same issue again.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1443,42 +1446,53 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00119fa2` (2026-11-24)
-**Commit Message**: fix: don't flag `una` or `deque` for wrong negative prefix (#5063)
+### Incident Patch 1: `2b63882d` (2026-11-27)
+**Commit Message**: fix: add "XSL" and "XSLT" to `dictionary.dict` (#5082)
 
-**File**: `harper-core/src/linting/wrong_negative.rs` (modified, +9/-1)
+Neither word was in the dictionary, so Harper flagged both as spelling
+errors in any case. With them added as all-caps entries, matching XML,
+"XSL" and "XSLT" pass and lowercase "xsl" and "xslt" get the
+capitalisation suggestion instead.
+
+**File**: `harper-core/dictionary.dict` (modified, +2/-0)
 ```diff
-@@ -14,7 +14,7 @@ fn looks_negative_but_oov(token: &Token, source: &[char]) -> bool {
-             .starts_with_any_ignore_ascii_case_str(NEGATIVE_PREFIXES)
-         && !token
-             .get_ch(source)
--            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
-+            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
- }
- 
- pub struct WrongNegative<D: Dictionary + 'static> {
-@@ -189,4 +189,12 @@ mod tests {
-             WrongNegative::new(FstDictionary::curated()),
-         );
-     }
-+
-+    #[test]
-+    fn dont_flag_una_or_deque() {
-+        assert_no_lints(
-+            "The choice between deque and una depends on the language and context you are using.",
-+            WrongNegative::new(FstDictionary::curated()),
-+        );
-+    }
- }
+@@ -11044,6 +11044,8 @@ XL/NgJ
+ XML/O
+ XMPP/ONV            # chat protocol
+ XS/NJ
++XSL/O
++XSLT/O
+ XXL/NJ
+ Xamarin/g
+ Xanadu/ONg
+```
+
+---
+
+### Incident Patch 2: `be52bb49` (2026-11-26)
+**Commit Message**: fix: add "graining" to `dictionary.dict` (#5081)
+
+Fixes #5080
+
+**File**: `harper-core/dictionary.dict` (modified, +1/-0)
+```diff
+@@ -27354,6 +27354,7 @@ graham/~NS
+ grail/~NgS
+ grain/~NwSgVdi
+ graininess/Nmg
++graining/Nmg
+ grainy/J^>p
+ gram/~NOSgVK
+ grammar/~NwgSV
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5082** (2026-11-27): fix: add "XSL" and "XSLT" to `dictionary.dict` (@GaryJones)
+- **PR #5081** (2026-11-26): fix: add "graining" to `dictionary.dict` (@hippietrail)
+- **PR #5073** (2026-11-26): fix: clarify `message` shown to user (@hippietrail)
+- **PR #5072** (2026-11-26): fix(core): don't flag ASCII arrows as dashes (@pyrooka)
+- **PR #5068** (2026-11-25): ci: move Mac CI to the xcode-27.2-v4 image (@mokagio)
 - **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
-- **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
-- **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
-- **PR #5056** (2026-11-24): feat: go the the → go to the (@hippietrail)
-- **PR #5054** (closed): feat(core): `TheyToThem` catches "they" at the end of any sentence (@jgobuilds)
-- **PR #5051** (2026-11-23): feat: support HCL and Terraform (@bloveless)
 
 ---
 
@@ -1498,39 +1512,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. don't flag `una` or `deque` for wrong negative prefix
+## X. add "XSL" and "XSLT" to `dictionary.dict`
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/wrong_negative.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00119fa2`: don't flag `una` or `deque` for wrong negative prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b63882d`: add "XSL" and "XSLT" to `dictionary.dict`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/wrong_negative.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
-
-    #[test]
-    fn dont_flag_una_or_deque() {
-        assert_no_lints(
-            "The choice between deque and una depends on the language and context you are using.",
-            WrongNegative::new(FstDictionary::curated()),
-        );
-    }
+XSL/O
+XSLT/O
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00119fa2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b63882d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T13:55:26.633Z",
+  "last_updated": "2026-11-27T14:06:59.275Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "20044ab61070f3a1924dfeae15231c802824008f632fe6590b8a60e2936827ca",
-      "verified_at": "2026-11-26T13:55:14.004Z",
+      "content_hash": "5afd887e05026cf1161abffc73ec693bda1867149970439c63413f345688037a",
+      "verified_at": "2026-11-27T14:06:59.275Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:55:14.004Z"
+      "last_updated": "2026-11-27T14:06:59.275Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "f60a5d370f63a03f06714579537ae80084aec6a00b9c53b135a5c0057f07512b",
-      "verified_at": "2026-11-26T19:07:49.044Z",
+      "content_hash": "bae4568beb2413778e219431bf7acee92b3aa0cb73b852ae97bd64430251485d",
+      "verified_at": "2026-11-27T14:05:10.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T19:07:49.044Z"
+      "last_updated": "2026-11-27T14:05:10.695Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

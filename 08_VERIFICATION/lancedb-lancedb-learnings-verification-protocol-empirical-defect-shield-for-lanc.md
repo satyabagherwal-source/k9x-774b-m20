@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T19:07:55.588Z",
+  "timestamp": "2026-11-27T14:07:05.323Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lancedb-lancedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lancedb-lancedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T19:07:55.588Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T14:07:05.323Z`  
 > **Learning ID**: `LEARN-EVO-lancedb-lancedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `1c011801`  
+> **Source Version**: `fdc8041b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T19:07:47.710Z  
+> **Timestamp**: 2026-11-27T14:05:09.148Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T19:07:47.704Z  
+> **Harvest Timestamp**: 2026-11-27T14:05:09.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11992 stars
+- **Stars / Engagement**: 11996 stars
 
 ---
 
@@ -1291,8 +1291,8 @@ pub fn rename_column(
 - **Issue #5236** (2026-11-26): **fix(ci): hand off Pages artifact to a separate deploy job**
   *Symptoms*: The docs workflow uploads `github-pages` and deploys in the same job. On `0adfd22`, attempt 1 finished the upload and the deploy immediately found zero artifacts; attempt 2 uploaded again and the deploy found two artifacts with the same name. Four earlier main runs show the same zero-artifact race.  This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes that name as a `build` job output, and deploys from a separate `needs: build` job using the same name. A full workflow re-run gets a fresh name, while a deploy-only retry keeps the original build output and reuses the artifact uploaded by that build.  The existing action pins already expose the required inputs (`name` on `upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this does not bump actions. Workflow triggers, permissions, concurrency, docs build steps, and the Pages environment URL are unchanged.  Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and `git diff --check` pass locally. Hosted checks run on this PR; the actual Pages upload and deploy are verified on main after merge because the workflow only deploys from `main`.  Evidence: - [attempt 1](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139857949931): upload succeeded, deploy logged `Found 0 artifact(s)`. - [attempt 2](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139875545904): upload succeeded, deploy logged `Found 2 artifact(s)` and failed with `Multiple artifacts named "githu
 
-- **Issue #5220** (2026-11-26): **fix(python): preserve the requested package index on Function inspection**
-  *Symptoms*: Python callers inspecting a pinned Function version lose the explicit primary package index URL even when the server includes it. Preserve `runtime.environment.build.index_url` through `get_function` and canonical JSON.  The requested build view contains only the explicit primary URL. Extra indexes, other sources, and service defaults can still apply when that view is absent. Compare the server's `runtime_digest` with the authored runtime's digest for identity. The inspection view can omit inputs to that digest.  Typed registration rejects nonempty build settings before issuing a request. The existing decorator options and `refresh_lock` use the same registration path.  Loopback Flight tests exercised sync and async pinned reads with a primary index plus an extra index, and with only an extra index. They also verified that typed submission rejects unsupported settings before sending a request and still submits ordinary decorator definitions with `refresh_lock`. A separate local replay verified pinned readback against a published version with a credential-free primary index. The focused suites passed 547 Python and 129 Rust tests, with three Rust tests marked ignored.
+- **Issue #5229** (2026-11-27): **fix(sql)!: request JSON for storage integration descriptions**
+  *Symptoms*: BREAKING CHANGE: Enterprise Storage Integration descriptions now explicitly request `DESCRIBE STORAGE INTEGRATION ... FORMAT JSON` and decode a complete JSON metadata document. The client previously decoded separate typed columns; use a server supporting JSON descriptions with this client.  ### TEXT and JSON examples  For interactive SQL, the corresponding human-readable description is shown below. The SDK continues to request `FORMAT JSON`.  ```sql DESCRIBE STORAGE INTEGRATION raw FORMAT TEXT; ```  For a GCP integration using a credential Secret, the complete illustrative `description` value is:  ```text Storage Integration name: raw database: example namespace_path: [] storage_provider: GCP storage_prefix: gs://example-bucket/raw/ aws_role_arn: NULL aws_access_key_id_secret: NULL aws_secret_access_key_secret: NULL aws_region: NULL aws_endpoint: NULL aws_account_id:  aws_iam_principal_arn:  aws_external_id: 00000000-0000-0000-0000-000000000004 created_at_millis: 1795350000000 access_verified: false trust_policy: NULL permissions_policy: NULL configuration_instructions: Store the GCP application credentials JSON in the referenced Secret and grant its identity Cloud Storage object read and write access to gs://example-bucket/raw/. azure_storage_account: NULL azure_tenant_id_secret: NULL azure_client_id_secret: NULL azure_client_secret_secret: NULL gcp_credentials_json_secret:   namespace_path:     [0]: credentials   name: gcp_key huggingface_token_secret: NULL azure_storage_ac
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1309,616 +1309,472 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2806709b` (2026-11-26)
-**Commit Message**: fix(ci): hand off Pages artifact to a separate deploy job (#5236)
+### Incident Patch 1: `0736ef02` (2026-11-27)
+**Commit Message**: fix: reject merge inserts on version-pinned tables (#4851)
 
-The docs workflow uploads `github-pages` and deploys in the same job. On
-`0adfd22`, attempt 1 finished the upload and the deploy immediately
-found zero artifacts; attempt 2 uploaded again and the deploy found two
-artifacts with the same name. Four earlier main runs show the same
-zero-artifact race.
+Local `merge_insert` skipped the mutability check, allowing a
+version-pinned handle to commit onto its branch's latest version. Add
+`ensure_mutable()` at the start of `NativeTable::merge_insert` so it
+returns the same `InvalidInput` error as other writes before processing
+the merge. This shared Rust path serves both Python and TypeScript local
+tables.
 
-This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes
-that name as a `build` job output, and deploys from a separate `needs:
-build` job using the same name. A full workflow re-run gets a fresh
-name, while a deploy-only retry keeps the original build output and
-reuses the artifact uploaded by that build.
+Extend the existing branch-version and time-travel tests to cover pinned
+opens and checkouts on main and named branches. Assert that rejection
+preserves pinned data and the latest version, and that
+`checkout_latest()` restores merge writes.
 
-The existing action pins already expose the required inputs (`name` on
-`upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this
-does not bump actions. Workflow triggers, permissions, concurrency, docs
-build steps, and the Pages environment URL are unchanged.
+Validation:
 
-Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and
-`git diff --check` pass locally. Hosted checks run on this PR; the
-actual Pages upload and deploy are verified on main after merge because
-the workflow only deploys 
+- Both regression tests failed before the fix, reproducing successful
+commits from pinned handles.
+- Table tests: 405 passed (`cargo test --quiet --locked --profile ci
+--features remote -p lancedb --lib table::tests::`).
+- Merge tests: 20 passed (`cargo test --quiet --locked --profile ci
+--features remote -p lancedb --lib table::merge::tests::`).
+- `cargo clippy --quiet --locked --profile ci --features remote -p
+lancedb --tests --examples` passed.
+- `cargo fmt --all` and `git diff --check` passed.
 
-**File**: `.github/workflows/docs.yml` (modified, +20/-4)
+Fixes #4844
+
+<!-- lance-ga
+
+**File**: `rust/lancedb/src/table.rs` (modified, +45/-1)
 ```diff
-@@ -27,12 +27,10 @@ env:
-   PIP_EXTRA_INDEX_URL: "https://pypi.fury.io/lance-format/ https://pypi.fury.io/lancedb/"
+@@ -4805,6 +4805,7 @@ impl BaseTable for NativeTable {
+         params: MergeInsertBuilder,
+         new_data: Box<dyn RecordBatchReader + Send>,
+     ) -> Result<MergeResult> {
++        self.dataset.ensure_mutable()?;
+         let source_schema = arrow_array::RecordBatchReader::schema(&new_data);
+         self.ensure_not_a_view("merge insert into").await?;
+         computed_columns::ensure_not_written(
+@@ -6005,6 +6006,22 @@ mod tests {
  
- jobs:
--  # Single deploy job since we're just deploying
-   build:
--    environment:
--      name: github-pages
--      url: ${{ steps.deployment.outputs.page_url }}
-     runs-on: ubuntu-24.04
-+    outputs:
-+      artifact_name: ${{ steps.artifact-name.outputs.name }}
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v6
-@@ -68,10 +66,28 @@ jobs:
-           PYTHONPATH=. mkdocs build
-       - name: Setup Pages
-         uses: actions/configure-pages@v5
-+      - name: Set artifact name
-+        id: artifact-name
-+        run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
-       - name: Upload artifact
-         uses: actions/upload-pages-artifact@v3
-         with:
-+          name: ${{ steps.artifact-name.outputs.name }}
-           path: "docs/site"
+         // a pinned version is a detached head: writes are rejected
+         assert!(pinned.add(sample_rows(vec![9])).execute().await.is_err());
++        let exp_head = head.version().await.unwrap();
++        for pinned_table in [&pinned, &pinned_direct] {
++            let mut merge = pinned_table.merge_insert(&["i"]);
++            merge
++                .when_matched_update_all(None)
++                .when_not_matched_insert_all();
++            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
++            assert!(matches!(err, Error::InvalidInput { message }
++                if message == "table cannot be modified when a specific version is checked out"));
++            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
++            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
++        }
++        assert_eq!(head.version().await.unwrap(), exp_head);
++        assert_eq!(head.count_rows(None).await.unwrap(), 3);
++        assert_eq!(table.version().await.unwrap(), main_v2);
++        assert_eq!(table.count_rows(None).await.unwrap(), 4);
+ 
+         // version-only (no branch) time-travels main itself: its fork-point
+         // version holds only main's first row, and the shared version number
+@@ -6390,8 +6407,35 @@ mod tests {
+             .unwrap();
+         let version = table.version().await.unwrap();
+         table.add(some_sample_data()).execute().await.unwrap();
++        let latest_version = table.version().await.unwrap();
++        let opened = conn
++            .open_table("my_table")
++            .version(version)
++            .execute()
++            .await
++            .unwrap();
+         table.checkout(version).await.unwrap();
+-        assert!(table.add(some_sample_data()).execute().await.is_err())
++        assert!(table.add(some_sample_data()).execute().await.is_err());
++        for pinned_table in [&table, &opened] {
++            let mut merge = pinned_table.merge_insert(&["i"]);
++            merge
++                .when_matched_update_all(None)
++                .when_not_matched_insert_all();
++            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
++            assert!(matches!(err, Error::InvalidInput { message }
++                if message == "table cannot be modified when a specific version is checked out"));
++            assert_eq!(pinned_table.version().await.unwrap(), version);
++            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 1);
++        }
 +
-+  # Deploy from a separate job so the Pages artifact upload has settled before
-+  # the deploy action looks it up. The per-run name keeps a full workflow
-+  # re-run from accumulating artifacts that share the default name.
-+  deploy:
-+    name: Deploy to GitHub Pages
-+    needs: build
-+    runs-on: ubuntu-24.04
-+    environment:
-+      name: github-pages
-+      url: ${{ steps.deployment.outputs.page_url }}
-+    steps:
-       - name: Deploy to GitHub Pages
-         id: deployment
-         uses: actions/deploy-pages@v4
-+        with:
-+          artifact_name: ${{ needs.build.outputs.artifact_name }}
++        table.checkout_latest().await.unwrap();
++        assert_eq!(table.version().await.unwrap(), latest_version);
++        assert_eq!(table.count_rows(None).await.unwrap(), 2);
++        let mut merge = table.merge_insert(&["i"]);
++        merge.when_not_matched_insert_all();
++        let result = merge.execute(sample_rows(vec![300])).await.unwrap();
++        assert_eq!(result.num_inserted_rows, 1);
++        assert_eq!(table.count_rows(None).await.unwrap(), 3);
+     }
+ 
+     #[tokio::test]
 ```
 
 ---
 
-### Incident Patch 2: `4a5c4a84` (2026-11-26)
-**Commit Message**: fix(python): preserve the requested package index on Function inspection (#5220)
+### Incident Patch 2: `a663417f` (2026-11-27)
+**Commit Message**: fix: validate remote tag checkout branch and version (#4853)
 
-Python callers inspecting a pinned Function version lose the explicit
-primary package index URL even when the server includes it. Preserve
-`runtime.environment.build.index_url` through `get_function` and
-canonical JSON.
+Remote tag checkout discarded the tag's branch and pinned its version on
+the handle's own branch without checking that the version existed. This
+could read a different snapshot or leave the handle pinned to a
+nonexistent version.
 
-The requested build view contains only the explicit primary URL. Extra
-indexes, other sources, and service defaults can still apply when that
-view is absent. Compare the server's `runtime_digest` with the authored
-runtime's digest for identity. The inspection view can omit inputs to
-that digest.
+Resolve the complete tag reference and reject cross-branch tags with an
+error naming both branches. For a tag on the handle's branch, reuse
+numeric checkout to validate the version before committing the selector
+and freshness state. This also protects Python's
+`open_table(version=tag)`, which delegates to tag checkout. To read a
+tag on another branch, obtain that branch's handle first with
+`checkout_branch` in Rust or `table.branches.checkout(...)` in Python.
+The Python checkout docstrings and tag-based versioning guide document
+this requirement.
 
-Typed registration rejects nonempty build settings before issuing a
-request. The existing decorator options and `refresh_lock` use the same
-registration path.
+Add 17 regression cases covering cross-branch tags in both directions,
+main-branch aliases, same-branch reads, and failed validation on
+writable and pinned handles. Twelve cases failed against the original
+implementation. Update the existing freshness and schema-cache tests for
+the validation request.
 
-Loopback Flight tests exercised sync and async pinned reads with a
-primary index plus an extra index, and with only an extra index. They
-also verified that typed submission rejects unsupported settings before
-sending a request and still submits ordinary decorator definitions with
-`refresh_lock`. A separate local replay verified pinned readback against
-a published version with a credential-free primary index. The focused
-suites passed 5
+Validation:
 
-**File**: `docs/src/python/python.md` (modified, +6/-0)
+- `cargo test --locked --profile ci 
+
+**File**: `docs/web/management/table.mdx` (modified, +7/-0)
 ```diff
-@@ -690,6 +690,10 @@ with BlobReader(read_range, len(payload)) as reader:
+@@ -1736,6 +1736,13 @@ page).
+ The tags API supports the standard CRUD operations (create, list, update, delete),
+ plus checking out by tag name.
  
- ::: lancedb.functions.PythonEnvironmentSpec
- 
-+::: lancedb.functions.RequestedPythonEnvironment
++A tag identifies both a branch and a version. On Enterprise tables, a tag must belong
++to the handle's current branch; checking out a tag on another branch raises an
++error without changing the current selection. Obtain a handle for the tag's
++branch first: in Python, use `branch_table = table.branches.checkout("exp")`, then
++`branch_table.checkout("baseline")` to read a tag named `baseline` on `exp`.
++See [Branches](/tables/branching) for more on branch handles.
 +
-+::: lancedb.functions.PythonEnvironmentBuild
-+
- ::: lancedb.functions.function
- 
- ::: lancedb.functions.FunctionDefinition
-@@ -724,6 +728,8 @@ with BlobReader(read_range, len(payload)) as reader:
- 
- ::: lancedb.functions.PythonRuntimeSpec
- 
-+::: lancedb.functions.RequestedPythonRuntime
-+
- ::: lancedb.GpuClass
- 
- ::: lancedb.functions.FunctionVersionRef
+ In Python, `tags.create()` accepts an optional `version`. If you omit it, the
+ tag uses the version the table handle currently shows. That includes a handle
+ checked out to an older version, so pass `version` explicitly when the tag must
 ```
 
-**File**: `python/python/lancedb/functions.py` (modified, +111/-21)
+**File**: `python/python/lancedb/remote/table.py` (modified, +10/-0)
 ```diff
-@@ -405,6 +405,54 @@ class PythonEnvironmentSpec(_RemoteValue):
-     image: Optional[str] = None
-     system_packages: tuple[str, ...] = ()
+@@ -332,6 +332,16 @@ def to_polars(self, batch_size=None) -> "pl.LazyFrame":
+         )
  
-+    @model_validator(mode="before")
-+    @classmethod
-+    def _validate_registration_build(cls, value):
-+        if isinstance(value, Mapping):
-+            build = value.get("build")
-+            if build is not None and (not isinstance(build, Mapping) or build):
-+                raise TypeError(
-+                    "runtime.environment.build is unsupported "
-+                    "in typed Function registration"
-+                )
-+        return value
+     def checkout(self, version: Union[int, str]):
++        """Check out a version number or tag as a read-only view in place.
 +
++        A tag must belong to this handle's current branch. To read a tag on
++        another branch, first obtain that branch's handle with
++        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
++        that handle. A tag on another branch raises an error without changing
++        the current selection.
 +
-+class PythonEnvironmentBuild(_RemoteValue):
-+    """Explicit primary package index URL reported on a Function version."""
-+
-+    index_url: str
-+
-+
-+class RequestedPythonEnvironment(PythonEnvironmentSpec):
-+    """Python environment metadata reported on a Function version.
-+
-+    ``build`` contains only the explicitly requested primary package index URL.
-+    An omitted ``build`` can still accompany extra indexes, other sources, or
-+    service defaults. See
-+    [ResolvedEnvironmentProvenance][lancedb.functions.ResolvedEnvironmentProvenance]
-+    for the sources reported by the build.
-+    """
-+
-+    build: Optional[PythonEnvironmentBuild] = None
-+
-+    @model_validator(mode="before")
-+    @classmethod
-+    def _validate_registration_build(cls, value):
-+        # Inspection accepts an authored model or a wire document with a build field.
-+        if isinstance(value, PythonEnvironmentSpec) and not isinstance(value, cls):
-+            return value._known_dict()
-+        return value
-+
-+    @field_validator("build", mode="before")
-+    @classmethod
-+    def _read_primary_index(cls, build):
-+        if isinstance(build, PythonEnvironmentBuild):
-+            return build
-+        if isinstance(build, Mapping) and isinstance(build.get("index_url"), str):
-+            return {"index_url": build["index_url"]}
-+        return None
-+
- 
- _HUGGING_FACE_MODEL_REPO = re.compile(
-     r"^[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$"
-@@ -543,10 +591,11 @@ def digest(self) -> str:
- 
-         Covers Python version, environment sources, environment variables, and
-         GPU settings. Package and system-package order is ignored; conda channel
--        order is preserved. Compare with ``runtime_digest`` on
--        [FunctionVersion][lancedb.functions.FunctionVersion].
--        This identifies build inputs, not the resolved contents of unpinned
--        dependencies or the deployment's default base image.
-+        order is preserved. Compare an authored runtime's digest with
-+        ``runtime_digest`` on [FunctionVersion][lancedb.functions.FunctionVersion].
-+        A version's projected runtime fields can omit inputs from that digest.
-+        This identity covers declared inputs; the installed contents of unpinned
-+        dependencies and the deployment's default base image can vary.
-         """
-         if self.kind not in {"python", "python_v2"}:
-             raise ValueError(f"cannot digest unknown runtime kind {self.kind!r}")
-@@ -567,6 +616,25 @@ def digest(self) -> str:
-         return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
- 
- 
-+class RequestedPythonRuntime(PythonRuntimeSpec):
-+    """Requested runtime metadata available during Function version inspection.
-+
-+    The build view contains only an explicit primary package index URL. Other
-+    sources can be present even when the build view is absent. Compare the
-+    server's ``FunctionVersion.runtime_digest`` with the digest of an authored
-+    runtime. The inspection view can omit inputs needed to reproduce that digest.
-+    """
-+
-+    environment: Optional[RequestedPythonEnvironment] = None
-+
-+    @model_validator(mode="before")
-+    @classmethod
-+    def _discard_unknown_runtime_payload(cls, value):
-+        if isinstance(value, PythonRuntimeSpec) and not isinstance(value, cls):
-+            value = value._known_dict()
-+        return super()._discard_unknown_runtime_payload(value)
-+
-+
- class FunctionImage(_RemoteValue):
-     """A complete OCI Function image identified by its exact manifest digest.
- 
-@@ -685,12 +753,12 @@ class FunctionEnvironment(NamedTuple):
-     and
-     [FunctionVersion.resolved_environment][lancedb.functions.FunctionVersion.resolved_environment].
-     It adds no wire field and performs no second parse. ``requested`` is the
--    runtime specification supplied at registration; ``resolved`` is measured
--    data and is ``None`` when unknown. For per-platform multiarchitecture
-+    server's view of the runtime requested at registration. ``resolved`` is
-+    measured data and is ``None`` when unknown. For per-platform multiarchitecture
-     measurements, use ``FunctionVersion.environment_report``.
-     """
- 
--    requested: Optional[PythonRuntimeSpec]
-+    requested: Optional[RequestedPythonRuntime]
-     resolved: Optional[ResolvedEnvironment]
- 
- 
-@@ -745,16 +813,16 @@ class FunctionVersion(_RemoteValue):
-     catalog. They are ``N
++        Call `checkout_latest()` to return to the latest version of this branch.
++        """
+         result = LOOP.run(self._table.checkout(version))
+         self._checkout_version = self.version
+         return result
 ```
 
-**File**: `python/python/tests/test_first_class_function_slice2.py` (modified, +47/-0)
+**File**: `python/python/lancedb/table.py` (modified, +12/-0)
 ```diff
-@@ -33,6 +33,7 @@
-     FunctionSignature,
-     FunctionVersion,
-     HuggingFaceModel,
-+    PythonEnvironmentBuild,
-     PythonRuntimeSpec,
-     SecretBinding,
-     SecretReference,
-@@ -2640,6 +2641,52 @@ def test_function_version_reads_requested_and_resolved_environments():
-         FunctionVersion.from_json(json.dumps(invalid))
+@@ -4247,6 +4247,12 @@ def checkout(self, version: Union[int, str]):
+         out state. To return the table to a normal state use
+         `[Self::checkout_latest]`.
  
++        For Enterprise tables, a tag must belong to this handle's current branch.
++        To read a tag on another branch, first obtain that branch's handle with
++        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
++        that handle. A tag on another branch raises an error without changing
++        the current selection.
++
+         Parameters
+         ----------
+         version: int | str,
+@@ -10036,6 +10042,12 @@ async def checkout(self, version: int | str):
+         out state. To return the table to a normal state use
+         `[Self::checkout_latest]`.
  
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "build",
-+    [
-+        {},
-+        {"build": None},
-+        {"build": {}},
-+        {"build": {"index_url": None}},
-+        {"build": {"index_url": 1}},
-+        {"build": "invalid-build"},
-+        {
-+            "build": {
-+                "index_url": "https://requested.example/simple/",
-+                "find_links": ["https://downloads.example/wheels"],
-+            },
-+        },
-+    ],
-+)
-+async def test_get_pinned_function_preserves_only_the_requested_index_url(build):
-+    payload = _function_version_with_resolved_environment()
-+    payload["runtime"]["environment"].update(build)
-+    catalog = _RawFunctionCatalog(payload, encode=True)
-+    connection = AsyncConnection(catalog)
++        For Enterprise tables, a tag must belong to this handle's current branch.
++        To read a tag on another branch, first obtain that branch's handle with
++        `await table.branches.checkout("branch_name")`, then call
++        `await branch_table.checkout(tag)` on that handle. A tag on another
++        branch raises an error without changing the current selection.
 +
-+    version = await connection.get_function(payload["name"], version=1)
-+
-+    assert catalog.requested_versions == ["1"]
-+    assert version.version == "1"
-+    requested = version.runtime.environment.build
-+    raw_build = build.get("build")
-+    index_url = raw_build.get("index_url") if isinstance(raw_build, dict) else None
-+    canonical = version.to_canonical_json()
-+    encoded = json.loads(canonical)["runtime"]["environment"]
-+    if not isinstance(index_url, str):
-+        assert requested is None
-+        assert "build" not in encoded
-+    else:
-+        assert isinstance(requested, PythonEnvironmentBuild)
-+        assert requested.index_url == index_url
-+        assert encoded["build"] == {"index_url": index_url}
-+    assert version.resolved_environment.provenance.configured_index_urls == (
-+        "https://packages.example/simple",
-+    )
-+    assert FunctionVersion.from_json(canonical) == version
-+
-+
- def test_function_version_reads_resolved_environments_by_platform():
-     legacy = json.loads(
-         (FIXTURES / "remote_function_version.canonical.json").read_text()
+         Parameters
+         ----------
+         version: int | str,
 ```
 
-**File**: `python/python/tests/test_function_creation.py` (modified, +125/-13)
+**File**: `rust/lancedb/src/remote/table.rs` (modified, +248/-28)
 ```diff
-@@ -8,20 +8,30 @@
- import pytest
+@@ -1269,7 +1269,7 @@ impl<S: HttpSend> RemoteTable<S> {
+     }
  
- import lancedb
--from lancedb.functions import BlobWriter, function
-+from lancedb.functions import (
-+    BlobWriter,
-+    FunctionDefinition,
-+    FunctionRegistrationRequest,
-+    FunctionVersion,
-+    function,
-+)
- 
- 
--@pytest.mark.asyncio
--@pytest.mark.parametrize("entry", ["sync", "sync_job", "async_job"])
--@pytest.mark.parametrize("exist_ok", [None, False, True])
--async def test_function_exist_ok_forwards_sql_and_keeps_stored_version(entry, exist_ok):
--    flight = pytest.importorskip("pyarrow.flight")
-+def _stored_function_version():
-     fixture = (
-         Path(__file__).parents[3]
-         / "rust/lancedb/tests/fixtures/first_class_functions/v1"
-         / "remote_function_version.canonical.json"
-     )
--    stored = json.loads(fixture.read_text())
-+    return json.loads(fixture.read_text())
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("entry", ["sync", "sync_job", "async_job"])
-+@pytest.mark.parametrize("exist_ok", [None, False, True])
-+async def test_function_exist_ok_forwards_sql_and_keeps_stored_version(entry, exist_ok):
-+    flight = pytest.importorskip("pyarrow.flight")
-+    stored = _stored_function_version()
-     result = pa.table({"definition": [json.dumps(stored)]})
- 
-     @function(name=stored["name"])
-@@ -66,12 +76,7 @@ def do_get(self, context, ticket):
- @pytest.mark.asyncio
- async def test_blob_writer_paths_round_trip_through_function_registration():
-     flight = pytest.importorskip("pyarrow.flight")
--    fixture = (
--        Path(__file__).parents[3]
--        / "rust/lancedb/tests/fixtures/first_class_functions/v1"
--        / "remote_function_version.canonical.json"
--    )
--    stored = json.loads(fixture.read_text())
-+    stored = _stored_function_version()
-     expected_paths = [[{"field": "item"}], [{"field": "variants"}, "item"]]
-     output_schema = pa.schema(
-         [
-@@ -131,3 +136,110 @@ def do_get(self, context, ticket):
-     application = version(text=lancedb.col("text")).rename(columns={"item": "payload"})
-     assert json.loads(application.to_canonical_json())["output"] == expected_output
-     assert application.columns == {"item": "payload"}
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("with_primary", [False, True])
-+async def test_function_index_inspection_is_separate_from_registration(with_primary):
-+    flight = pytest.importorskip("pyarrow.flight")
-+    primary = "https://primary.example/simple/"
-+    extra = "https://extra.example/simple/"
-+    stored = _stored_function_version()
-+    name = stored["name"]
-+
-+    def scale(value: float) -> float:
-+        return 2 * value
-+
-+    authored = function(name=name, pip=["example==1.0"], python_version="3.12")(scale)
-+    request = authored.registration_request
-+    expected_runtime = {
-+        "kind": "python",
-+        "python_version": "3.12",
-+        "environment": {"kind": "pip", "packages": ["example==1.0"]},
-+    }
-+    stored["runtime"] = json.loads(request.runtime.to_canonical_json())
-+    build = {"extra_index_urls": [extra]}
-+    if with_primary:
-+        build["index_url"] = primary
-+    stored["runtime"]["environment"]["build"] = build
-+    stored["runtime_digest"] = "sha256:" + "1" * 64
-+    stored["resolved_environment"] = {
-+        "packages": [],
-+        "provenance": {"configured_index_urls": [extra]},
-+    }
-+
-+    class FunctionServer(flight.FlightServerBase):
-+        def __init__(self):
-+            super().__init__("grpc://127.0.0.1:0")
-+            self.requests = []
-+
-+        def do_get(self, context, ticket):
-+            self.requests.append(ticket.ticket)
-+            return flight.RecordBatchStream(
-+                pa.table({"definition": [json.dumps(stored)]})
-+            )
-+
-+    class IndexedDefinition(FunctionDefinition):
-+        def bind_secrets(self, secrets):
-+            payload = json.loads(super().bind_secrets(secrets).to_canonical_json())
-+            payload["runtime"]["environment"]["build"] = build
-+            return FunctionRegistrationRequest.from_json(json.dumps(payload))
-+
-+    definition = IndexedDefinition(
-+        scale,
-+        name=name,
-+        input_schema=None,
-+        output_schema=None,
-+        pip=("example==1.0",),
-+        env={},
-+        python_version="3.12",
-+    )
-+
-+    with FunctionServer() as server:
-+        options = {
-+            "api_key": "test-key",
-+            "host_override": "http://127.0.0.1:1",
-+            "sql_host_override": f"grpc://127.0.0.1:{server.port}",
+     /// Resolve a tag to its `(branch, version)` coordinate via the `tags/version`
+-    /// endpoint, since the `/branches/create` contract accepts no `from_tag`.
++    /// endpoint.
+     async fn resolve_tag_ref(&self, tag: &str) -> Result<(Option<String>, u64)> {
+         let request = self
+             .client
+@@ -4286,22 +4286,19 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+         // Resolve the tag without attaching freshness headers; a stale
+         // `min_version` from a previous write should not ride along on an
+         // explicit time-travel request.
+-        let request = self
+-            .client
+-            .post(&format!("/v1/table/{}/tags/version/", self.identifier));
+-        let version = self
+-            .resolve_tag_version_with_request(tag, request, false)
+-            .await?;
+-
+-        let mut write_guard = self.version.write().await;
+-        // Commit the selector and its freshness mode while holding the selector
+-        // write lock, with no cancellation point between the two updates.
+-        self.reset_freshness(None, true);
+-        *write_guard = Some(version);
+-        self.invalidate_schema_cache();
+-        drop(write_guard);
++        let (branch, version) = self.resolve_tag_ref(tag).await?;
++        if branch != self.branch {
++            return Err(Error::InvalidInput {
++                message: format!(
++                    "Tag '{tag}' belongs to branch '{}', but this table handle is scoped to branch '{}'. Check out the tag's branch first.",
++                    branch.as_deref().unwrap_or("main"),
++                    self.branch.as_deref().unwrap_or("main"),
++                ),
++            });
 +        }
-+        db = lancedb.connect("db://analytics", **options)
-+        async_db = await lancedb.connect_async("db://analytics", **options)
-+
-+        message = r"runtime\.environment\.build is unsupported"
-+        with pytest.raises(TypeError, match=message):
-+            db.create_function(definition)
-+        with pytest.raises(TypeError, match=message):
-+            await async_db.create_function_async(definition)
-+        assert server.requests == []
-+
-+        version = db.get_function(name, version=1)
-+ 
-```
-
-**File**: `rust/lancedb/src/function.rs` (modified, +145/-6)
-```diff
-@@ -681,6 +681,39 @@ impl<'de> Deserialize<'de> for RowTimeoutSeconds {
+ 
+-        Ok(())
++        // Validate the version before pinning the handle.
++        self.checkout(version).await
      }
- }
- 
-+// Function inspection includes this build setting alongside the SDK's authored
-+// runtime spec. Keep it on the readback model so registration keeps its own wire shape.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+struct RequestedPythonRuntime {
-+    spec: PythonRuntimeSpec,
-+    index_url: Option<String>,
-+}
-+
-+impl<'de> Deserialize<'de> for RequestedPythonRuntime {
-+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
-+        let document = Value::deserialize(deserializer)?;
-+        let index_url = document
-+            .pointer("/environment/build/index_url")
-+            .and_then(Value::as_str)
-+            .map(str::to_owned);
-+        let spec: PythonRuntimeSpec =
-+            serde_json::from_value(document).map_err(de::Error::custom)?;
-+        let index_url = spec.environment().and(index_url);
-+        Ok(Self { spec, index_url })
-+    }
-+}
-+
-+impl Serialize for RequestedPythonRuntime {
-+    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
-+        let Some(index_url) = &self.index_url else {
-+            return self.spec.serialize(serializer);
-+        };
-+        let mut document = serde_json::to_value(&self.spec).map_err(serde::ser::Error::custom)?;
-+        document["environment"]["build"] = serde_json::json!({"index_url": index_url});
-+        document.serialize(serializer)
-+    }
-+}
-+
- /// One immutable Function object revision and its executable artifact.
- ///
- /// The Function is named by its parts, `name` and `namespace_path`, the way a
-@@ -764,7 +797,7 @@ pub struct FunctionVersion {
-     /// [`Self::resolved_environment`] when the caller needs actual package
-     /// versions.
-     #[serde(default, skip_serializing_if = "Option::is_none")]
--    runtime: Option<PythonRuntimeSpec>,
-+    runtime: Option<RequestedPythonRuntime>,
-     /// Actual installed distributions, provenance, and registration warnings.
-     ///
-     /// This is the single-platform compatibility field. `None` on a
-@@ -838,7 +871,8 @@ impl FunctionVersion {
- 
-     /// Digest of canonical runtime inputs, when provided by the server.
-     ///
--    /// Includes Python version, environment sources, variables, and GPU settings.
-+    /// Compare it with the digest of a locally authored runtime. The runtime
-+    /// projection on this version can omit inputs needed to reproduce the digest.
-     /// A missing digest cannot establish that a local runtime matches. Reusing a
-     /// version also requires matching its source and other registration inputs.
-     pub fn runtime_digest(&self) -> Option<&str> {
-@@ -885,12 +919,21 @@ impl FunctionVersion {
-         self.result_stability.as_deref()
-     }
- 
--    /// The runtime specification requested at registration, when exposed by the
--    /// server.
-+    /// Runtime metadata requested at registration and exposed by the server.
-     ///
--    /// This is the requested configuration, not evidence of what was installed.
-+    /// This view can omit input needed to reproduce [`Self::runtime_digest`].
-+    /// Read the explicit primary package index with [`Self::requested_index_url`],
-+    /// and inspect installed distributions with [`Self::resolved_environment`].
-     pub fn runtime(&self) -> Option<&PythonRuntimeSpec> {
--        self.runtime.as_ref()
-+        self.runtime.as_ref().map(|runtime| &runtime.spec)
-+    }
-+
-+    /// Explicit primary package index URL requested for this Function version.
-+    ///
-+    /// An absent value can still accompany extra indexes, other sources, or
-+    /// service defaults. For build provenance, see [`ResolvedEnvironmentProvenance`].
-+    pub fn requested_index_url(&self) -> Option<&str> {
-+        self.runtime.as_ref()?.index_url.as_deref()
-     }
- 
-     /// Actual installed distributions and registration warnings for a
-@@ -1083,6 +1126,7 @@ pub struct FunctionRegistrationRequest {
-     pub name: String,
-     pub artifact: FunctionArtifactRequest,
-     pub signature: FunctionSignature,
-+    #[serde(deserialize_with = "deserialize_registration_runtime")]
-     pub runtime: PythonRuntimeSpec,
-     /// Maximum rows in one execution batch; the executor may use fewer.
-     #[serde(
-@@ -1144,8 +1188,25 @@ pub struct FunctionRegistrationRequest {
-     pub refresh_lock: bool,
- }
- 
-+fn deserialize_registration_runtime<'de, D: Deserializer<'de>>(
-+    deserializer: D,
-+) -> std::result::Result<PythonRuntimeSpec, D::Error> {
-+    let document = Value::deserialize(deserializer)?;
-+    match document.pointer("/environment/build") {
-+        None | Some(Value::Null) => {}
-+        Some(Value::Object(build)) if build.is_empty() => {}
-+        Some(_) => {
-+            return Err(de::Error::custom(
-+                "runtime.environment.build is unsupported in typed Function registration",
-+            ));
-+        }
-+    }
-+    serde_json::from_value(document).map_err(de::Error::custom)
-+}
-+
- impl 
-```
-
-**File**: `rust/lancedb/src/remote/sql_test.rs` (modified, +14/-0)
-```diff
-@@ -3406,6 +3406,11 @@ async fn function_creation_and_description_use_sql_query_handles() {
-         version_json["row_timeout_seconds"] = serde_json::json!(8.0);
-         version_json["result_stability"] = serde_json::json!("input_and_context");
-         version_json["runtime"] = request_json["runtime"].clone();
-+        let requested_index_url = "https://requested.example/simple/";
-+        version_json["runtime"]["environment"]["build"] = serde_json::json!({
-+            "index_url": requested_index_url,
-+            "find_links": ["https://downloads.example/wheels"],
-+        });
-         version_json["resolved_environment"] = serde_json::json!({
-             "packages": [
-                 {
-@@ -3551,6 +3556,7 @@ async fn function_creation_and_description_use_sql_query_handles() {
-         assert_eq!(described.row_timeout_seconds(), Some(8.0));
-         assert_eq!(described.result_stability(), Some("input_and_context"));
-         assert_eq!(described.runtime().unwrap().kind(), "python");
-+        assert_eq!(described.requested_index_url(), Some(requested_index_url));
-         assert_eq!(
-             described
-                 .resolved_environment()
-@@ -3570,6 +3576,14 @@ async fn function_creation_and_description_use_sql_query_handles() {
-         assert_eq!(described_json["max_concurrency"], 4);
-         assert_eq!(described_json["row_timeout_seconds"], 8.0);
-         assert_eq!(described_json["result_stability"], "input_and_context");
-+        assert_eq!(
-+            described_json["runtime"]["environment"]["build"],
-+            serde_json::json!({"index_url": requested_index_url})
-+        );
-+        assert_eq!(
-+            described_json["resolved_environment"]["provenance"]["configured_index_urls"],
-+            serde_json::json!(["https://packages.example/simple"])
-+        );
-         let latest = db
-             .get_function_latest("embed", &["team".into()])
+     /// Only `OptimizeAction::Compact` with supported `options` and no custom
+     /// `remap_options` is supported remotely: it submits a durable
+@@ -16191,12 +16188,13 @@ mod tests {
+             .checkout_tag("v2")
              .await
+             .expect("checkout_tag should succeed");
++        assert_eq!(call_count.load(Ordering::SeqCst), 2);
+ 
+         // Schema call after checkout_tag should re-fetch (cache was invalidated)
+         let schema3 = table.schema().await.unwrap();
+         assert_eq!(
+             call_count.load(Ordering::SeqCst),
+-            2,
++            3,
+             "Cache should have been invalidated and re-fetched"
+         );
+         assert_ne!(
+@@ -18130,12 +18128,13 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn test_freshness_checkout_tag_resolve_sends_no_min_version() {
+-        // Same invariant for checkout_tag: the tag-resolve request must not
+-        // pick up a stale min_version from a prior write.
++    async fn test_freshness_checkout_tag_validation_sends_no_min_version() {
++        // Neither the tag lookup nor the version validation should pick up a
++        // stale min_version from a prior write.
+         let (handler, captured) = path_capturing_handler(|path| match path {
+             "/v1/table/my_table/update/" => r#"{"rows_updated":1,"version":7}"#.to_string(),
+             "/v1/table/my_table/tags/version/" => r#"{"version":5}"#.to_string(),
++            "/v1/table/my_table/describe/" => r#"{"version":5,"schema":{"fields":[]}}"#.to_string(),
+             _ => panic!("unexpected path: {}", path),
+         });
+         let table = Table::new_with_handler("my_table", handler);
+@@ -18144,14 +18143,20 @@ mod tests {
+         table.checkout_tag("v_initial").await.unwrap();
+ 
+         let captured = captured.lock().unwrap();
+-        let resolve_headers = captured
+-            .get("/v1/table/my_table/tags/version/")
+-            .expect("tags/version should have been called by checkout_tag");
+-        assert!(
+-            !resolve_headers.contains_key("x-lancedb-min-version"),
+-            "checkout_tag resolve must not carry stale min_version",
+-        );
+-        assert!(!resolve_headers.contains_key("x-lancedb-min-timestamp"));
++        for path in [
++            "/v1/table/my_table/tags/version/",
++            "/v1/table/my_table/describe/",
++        ] {
++            let headers = captured
++                .get(path)
++                .expect("checkout_tag should call endpoint");
++            assert!(
++                !headers.contains_key("x-lancedb-min-version"),
++                "{path} must not carry stale min_version",
++            );
++            assert!(!headers.contains_key("x-lancedb-min-timestamp"));
++            assert!(!headers.contains_key("x-lancedb-min-read-version"));
++        }
+     }
+ 
+     #[tokio::test]
+@@ -19017,6 +19022,221 @@ mod tests {
+         }
+     }
+ 
++    #[rstest]
++    #[case(None, Some("exp"))]
++    #[case(Some("exp"), None)]
++    #[case(Some("exp"), Some("main"))]
++    #[case(Some("exp"), Some("other"))]
++    #[tokio::test]
++    async fn test_checkout_tag_rejects_other_
+```
+
+**File**: `rust/lancedb/src/table.rs` (modified, +4/-0)
+```diff
+@@ -3075,6 +3075,10 @@ impl Table {
+ 
+     /// Checks out a specific version of the Table by tag
+     ///
++    /// On Enterprise tables, the tag must belong to this handle's branch. Use
++    /// [`Self::checkout_branch`] to obtain a handle for another branch first.
++    /// A failed Enterprise tag checkout leaves the handle unchanged.
++    ///
+     /// Any read operation on the table will now access the data at the version referenced by the tag.
+     /// As a consequence, calling this method will disable any read consistency interval
+     /// that was previously set.
+```
+
+---
+
+### Incident Patch 3: `fdfbb98a` (2026-11-27)
+**Commit Message**: fix(python): give tied FTS scores full weight in hybrid normalization (#4858)
+
+## Why
+
+Hybrid search normalizes FTS scores with min-max. When all FTS scores
+are equal (one match, or a tie), the range is 0 and every score became
+0. `LinearCombinationReranker` treats 0 as a missing FTS match. So a
+lone keyword match could rank below documents without the keyword. Fixes
+#4857.
+
+## What changed
+
+- `_normalize_scores` takes a `tie_value` for the zero-range case. The
+default stays 0, so vector distances are unchanged.
+- The FTS leg passes `tie_value=1.0`, so tied FTS matches count as the
+best FTS result.
+
+## Scope
+
+- Covers the zero-range case for both `normalize="score"` and
+`normalize="rank"`.
+- Leaves out how `_rank` breaks ties among equal scores. That is a
+separate question.
+
+## Blast Radius
+
+The change only affects hybrid queries where every FTS hit has the same
+score. RRF and MRR use list position, so their results don't change.
+LinearCombination and custom score-based rerankers now give those hits
+full FTS weight.
+
+## Verification
+
+- A new test in `test_hybrid_query.py` fails on main in both normalize
+modes and passes with the fix.
+- `pytest python/tests -m "not slow and not s3_t
+
+**File**: `python/python/lancedb/query.py` (modified, +10/-5)
+```diff
+@@ -3491,7 +3491,9 @@ def _combine_hybrid_results(
+             fts_results = fts_results.set_column(
+                 score_i,
+                 fts_results.field(score_i),
+-                LanceHybridQueryBuilder._normalize_scores(fts_results.column(score_i)),
++                LanceHybridQueryBuilder._normalize_scores(
++                    fts_results.column(score_i), tie_value=1.0
++                ),
+             )
+ 
+         results = reranker.rerank_hybrid(fts_query, vector_results, fts_results)
+@@ -3552,7 +3554,9 @@ def _rank(results: pa.Table, column: str, ascending: bool = True):
+         return results
+ 
+     @staticmethod
+-    def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
++    def _normalize_scores(
++        scores: pa.Array, invert=False, tie_value: float = 0.0
++    ) -> pa.Array:
+         if len(scores) == 0:
+             return scores
+         # normalize the scores by subtracting the min and dividing by the max
+@@ -3561,9 +3565,10 @@ def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
+ 
+         if not pc.equal(rng, pa.scalar(0.0)).as_py():
+             scores = pc.divide(pc.subtract(scores, min), rng)
+-        elif not pc.equal(max, pa.scalar(0.0)).as_py():
+-            # If rng is 0, then we at least want the scores to be 0
+-            scores = pc.subtract(scores, min)
++        else:
++            # All scores are equal, so they are equally relevant. Distances
++            # tie at 0 (best), while higher-is-better scores tie at 1.
++            scores = pc.add(pc.subtract(scores, min), pa.scalar(tie_value, scores.type))
+ 
+         if invert:
+             scores = pc.subtract(1, scores)
+```
+
+**File**: `python/python/tests/test_hybrid_query.py` (modified, +31/-0)
+```diff
+@@ -604,6 +604,37 @@ def test_normalize_scores():
+             )
+ 
+ 
++@pytest.mark.parametrize("normalize", ["score", "rank"])
++def test_hybrid_single_fts_match_keeps_fts_weight(tmp_path, normalize):
++    from lancedb.rerankers import LinearCombinationReranker
++
++    db = lancedb.connect(tmp_path)
++    table = db.create_table(
++        "test",
++        [
++            {"text": "apple banana", "vector": [0.0, 0.0]},
++            {"text": "zebra unicorn", "vector": [0.1, 0.0]},
++            {"text": "cherry grape", "vector": [5.0, 5.0]},
++        ],
++    )
++    table.create_fts_index("text")
++
++    results = (
++        table.search(query_type="hybrid")
++        .vector([0.0, 0.0])
++        .text("zebra")
++        .rerank(LinearCombinationReranker(weight=0.3), normalize=normalize)
++        .limit(3)
++        .to_arrow()
++    )
++
++    assert results["text"].to_pylist() == [
++        "zebra unicorn",
++        "apple banana",
++        "cherry grape",
++    ]
++
++
+ def test_hybrid_query_rejects_query_with_vector(sync_table: Table):
+     # Pins the full message: the space between "hybrid search." and "But" is
+     # load-bearing (see the _validate_query literal concatenation).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5246** (2026-11-27): chore: update lance dependency to v16.0.0-beta.5 (@lancedb-robot)
+- **PR #5242** (2026-11-27): chore: update lance dependency to v16.0.0-beta.4 (@lancedb-robot)
 - **PR #5238** (2026-11-26): feat(nodejs): open source-bearing blob descriptors (@Xuanwo)
 - **PR #5237** (2026-11-26): chore: update lance dependency to v16.0.0-beta.3 (@lancedb-robot)
 - **PR #5236** (2026-11-26): fix(ci): hand off Pages artifact to a separate deploy job (@Xuanwo)
 - **PR #5234** (2026-11-26): chore: update lance dependency to v16.0.0-beta.2 (@lancedb-robot)
-- **PR #5220** (2026-11-26): fix(python): preserve the requested package index on Function inspection (@Xuanwo)
-- **PR #5218** (2026-11-25): feat(rust): open a native table at a retained version (@Xuanwo)
 
 ---
 
@@ -1938,53 +1794,55 @@ suites passed 5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): hand off Pages artifact to a separate deploy job
+## X. reject merge inserts on version-pinned tables
 
 **RULE**:
-When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/table.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2806709b`: ci): hand off Pages artifact to a separate deploy job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0736ef02`: reject merge inserts on version-pinned tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    outputs:
-      artifact_name: ${{ steps.artifact-name.outputs.name }}
-      - name: Set artifact name
-        id: artifact-name
-        run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
-          name: ${{ steps.artifact-name.outputs.name }}
-
-  # Deploy from a separate job so the Pages artifact upload has settled before
-  # the deploy action looks it up. The per-run name keeps a full workflow
-  # re-run from accumulating artifacts that share the default name.
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-        with:
-          artifact_name: ${{ needs.build.outputs.artifact_name }}
+        self.dataset.ensure_mutable()?;
+        let exp_head = head.version().await.unwrap();
+        for pinned_table in [&pinned, &pinned_direct] {
+            let mut merge = pinned_table.merge_insert(&["i"]);
+            merge
+                .when_matched_update_all(None)
+                .when_not_matched_insert_all();
+            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
+            assert!(matches!(err, Error::InvalidInput { message }
+                if message == "table cannot be modified when a specific version is checked out"));
+            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
+            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
+        }
+        assert_eq!(head.version().await.unwrap(), exp_head);
+        assert_eq!(head.count_rows(None).await.unwrap(), 3);
+        assert_eq!(table.version().await.unwrap(), main_v2);
+        assert_eq!(table.count_rows(None).await.unwrap(), 4);
+        let latest_version = table.version().await.unwrap();
+        let opened = conn
+            .open_table("my_table")
+            .version(version)
+            .execute()
+            .await
+            .unwrap();
+        asse
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  # Single deploy job since we're just deploying
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+        assert!(table.add(some_sample_data()).execute().await.is_err())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2806709b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0736ef02` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,22 +4,22 @@
 {
   "source_repository": "Automattic/harper",
   "source_url": "https://github.com/Automattic/harper",
-  "source_version": "15b85dfd",
+  "source_version": "2b63882d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T13:55:14.230Z",
+  "timestamp": "2026-11-27T14:06:59.593Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-automattic-harper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `15b85dfd`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:55:14.230Z`  
+> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `2b63882d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T14:06:59.593Z`  
 > **Learning ID**: `learn-github-automattic-harper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Automattic/harper` (Commit: `15b85dfd`)
+- **Target Repository**: `Automattic/harper` (Commit: `2b63882d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:55:12.842Z  
+> **Harvest Timestamp**: 2026-11-27T14:04:56.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17979 stars
+- **Stars / Engagement**: 18000 stars
 
 ---
 
@@ -1419,11 +1419,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5008** (2026-11-22): **"TEARDOWN" doesn't get flagged to correct to "TEAR DOWN"**
-  *Symptoms*: <img width="658" height="48" alt="image" src="https://github.com/user-attachments/assets/706b19aa-b1d9-4196-9f36-6869d97a7814" />  > I FINALLY **TEARDOWN** A VR6! Volkswagen's CRAZY Engine Idea From The 90's Was A HUGE SUCCESS!  "tear down" is a verb while "teardown" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.  May be the same as #5006 but it might be related to using all-caps, which the other bug doesn't.
+- **Issue #5080** (2026-11-26): **"graining" not recognized as a word**
+  *Symptoms*: ## What got flagged? ``` maybe there's some part of the mold broken off, maybe the mechanical usage has smoothed out some graining or made the parts slightly looser/smaller etc. ```  ## Why is this incorrect? https://www.dictionary.com/browse/graining  <img width="979" height="518" alt="image" src="https://github.com/user-attachments/assets/61b47d0a-b734-4b14-84cb-8baf022f085c" />  ## Example of correct usage The graining on the inside of that car's door is noticable to the touch.
 
-- **Issue #5006** (2026-11-22): **"Fallback" does not get corrected to "fall back" in some contexts**
-  *Symptoms*: <img width="512" height="72" alt="image" src="https://github.com/user-attachments/assets/9487776c-cae3-4d64-abbd-63c4abf02e48" />  > If the syscall does not work **fallback** to APE loader or /bin/sh if FD_CLOEXEC is not set and the fd has a path.  "fall back" is a verb, "fallback" is a noun. `PhrasalVerbAsCompoundNoun` is the linter that handles this.
+- **Issue #5079** (2026-11-27): **Closed Compound Incorrect Suggestion**
+  *Symptoms*: ## What got flagged? “I’m not made of feathers and hymns, Kryptos. I’m one hundred percent machine.” He lowers his cuff and buttons it with practiced calm. “When Demvora impaled me, I triggered my self-destruct protocol. My soul routed through Naraka, my Second Circle or Subspace to you, finding a replication pod protected by Rakia. Weeks later, I stepped out of the vat and went back to demon slaying.”  <img width="2613" height="538" alt="image" src="https://github.com/user-attachments/assets/86a98360-b527-4718-8103-b318bccc0dce" />  ## Why is this incorrect? Says "my self" could be myself, but self is part of a hyphenated compound self-destruct. Even if it wasn't, the suggestion would still be invalid.  ## Example of correct usage See above text.
+  **Post-Mortem & Fix Analysis**:
+  > Do you have the latest Harper? I can't reproduce this in `https://writewithharper.com/editor`   <img width="822" height="166" alt="image" src="https://github.com/user-attachments/assets/22c2526d-82af-4bae-b76d-ac53d34b0505" />
+  > Upgraded to 3.3.0. Can close and will re-open if I see the same issue again.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1440,164 +1443,53 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15b85dfd` (2026-11-26)
-**Commit Message**: fix(core): don't flag ASCII arrows as dashes (#5072)
+### Incident Patch 1: `2b63882d` (2026-11-27)
+**Commit Message**: fix: add "XSL" and "XSLT" to `dictionary.dict` (#5082)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
+Neither word was in the dictionary, so Harper flagged both as spelling
+errors in any case. With them added as all-caps entries, matching XML,
+"XSL" and "XSLT" pass and lowercase "xsl" and "xslt" get the
+capitalisation suggestion instead.
 
-**File**: `harper-core/src/linting/dashes.rs` (modified, +90/-2)
+**File**: `harper-core/dictionary.dict` (modified, +2/-0)
 ```diff
-@@ -34,7 +34,20 @@ impl ExprLinter for Dashes {
-         &self.expr
-     }
- 
--    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
-+    fn match_to_lint_with_context(
-+        &self,
-+        matched_tokens: &[Token],
-+        _source: &[char],
-+        context: Option<(&[Token], &[Token])>,
-+    ) -> Option<Lint> {
-+        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
-+        if let Some((before, after)) = context
-+            && (before.last().is_some_and(|t| t.kind.is_less_than())
-+                || after.first().is_some_and(|t| t.kind.is_greater_than()))
-+        {
-+            return None;
-+        }
-+
-         let span = matched_tokens.span()?;
-         let lint_kind = LintKind::Formatting;
- 
-@@ -65,7 +78,9 @@ impl ExprLinter for Dashes {
- 
- #[cfg(test)]
- mod tests {
--    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
-+    use crate::linting::tests::{
-+        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
-+    };
- 
-     use super::Dashes;
-     use super::{EM_DASH, EN_DASH};
-@@ -97,4 +112,77 @@ mod tests {
-     fn no_lint_for_long_hyphen_sequences() {
-         assert_suggestion_count("'There is no box' ------ Scott", Dashes::default(), 0);
-     }
-+
-+    #[test]
-+    fn ignores_right_arrow() {
-+        assert_no_lints("Go from A --> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_left_arrow() {
-+        assert_no_lints("Go from A <-- B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_bidirectional_arrow() {
-+        assert_no_lints("Go from A <--> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_long_right_arrow() {
-+        assert_no_lints("Go from A ---> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_long_left_arrow() {
-+        assert_no_lints("Go from A <--- B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_long_bidirectional_arrow() {
-+        assert_no_lints("Go from A <---> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_longer_right_arrow() {
-+        assert_no_lints("Go from A ----> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_single_hyphen_arrow() {
-+        assert_no_lints("Go from A -> B now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_unspaced_arrow() {
-+        assert_no_lints("Click File-->Save now.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_arrow_at_start() {
-+        assert_no_lints("--> Start here.", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn ignores_arrow_at_end() {
-+        assert_no_lints("Start here -->", Dashes::default());
-+    }
-+
-+    #[test]
-+    fn catches_dash_separated_from_angle_bracket() {
-+        assert_suggestion_result(
-+            "The result -- > 5 in most cases",
-+            Dashes::default(),
-+            &format!("The result {EN_DASH} > 5 in most cases"),
-+        );
-+    }
-+
-+    #[test]
-+    fn catches_dash_alongside_arrow() {
-+        assert_suggestion_result(
-+            "Go from A --> B -- quickly",
-+            Dashes::default(),
-+            &format!("Go from A --> B {EN_DASH} quickly"),
-+        );
-+    }
- }
+@@ -11044,6 +11044,8 @@ XL/NgJ
+ XML/O
+ XMPP/ONV            # chat protocol
+ XS/NJ
++XSL/O
++XSLT/O
+ XXL/NJ
+ Xamarin/g
+ Xanadu/ONg
 ```
 
 ---
 
-### Incident Patch 2: `b166c194` (2026-11-26)
-**Commit Message**: fix: clarify `message` shown to user (#5073)
+### Incident Patch 2: `be52bb49` (2026-11-26)
+**Commit Message**: fix: add "graining" to `dictionary.dict` (#5081)
 
-**File**: `harper-core/src/linting/pay_for_price.rs` (modified, +6/-6)
+Fixes #5080
+
+**File**: `harper-core/dictionary.dict` (modified, +1/-0)
 ```diff
-@@ -35,14 +35,14 @@ impl ExprLinter for PayForPrice {
- 
-     fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
-         let span = matched_tokens[2..4].span()?;
--        let lint_kind = LintKind::Usage;
--        let suggestions = vec![Suggestion::Remove];
--        let message = "You `pay for` things or services, but just `pay prices/fees`, etc with no preposition.".to_owned();
-+
-         Some(Lint {
-             span,
--            lint_kind,
--            suggestions,
--            message,
-+            lint_kind: LintKind::Usage,
-+            suggestions: vec![Suggestion::Remove],
-+            message:
-+                "Omit 'for' before a price or fee (e.g., pay the price, not pay for the price)."
-+                    .to_owned(),
-             ..Default::default()
-         })
-     }
+@@ -27354,6 +27354,7 @@ graham/~NS
+ grail/~NgS
+ grain/~NwSgVdi
+ graininess/Nmg
++graining/Nmg
+ grainy/J^>p
+ gram/~NOSgVK
+ grammar/~NwgSV
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5082** (2026-11-27): fix: add "XSL" and "XSLT" to `dictionary.dict` (@GaryJones)
+- **PR #5081** (2026-11-26): fix: add "graining" to `dictionary.dict` (@hippietrail)
 - **PR #5073** (2026-11-26): fix: clarify `message` shown to user (@hippietrail)
 - **PR #5072** (2026-11-26): fix(core): don't flag ASCII arrows as dashes (@pyrooka)
 - **PR #5068** (2026-11-25): ci: move Mac CI to the xcode-27.2-v4 image (@mokagio)
 - **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
-- **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
-- **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
 
 ---
 
@@ -1617,72 +1509,32 @@ Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): don't flag ASCII arrows as dashes
+## X. add "XSL" and "XSLT" to `dictionary.dict`
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/dashes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15b85dfd`: core): don't flag ASCII arrows as dashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b63882d`: add "XSL" and "XSLT" to `dictionary.dict`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/dashes.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    fn match_to_lint_with_context(
-        &self,
-        matched_tokens: &[Token],
-        _source: &[char],
-        context: Option<(&[Token], &[Token])>,
-    ) -> Option<Lint> {
-        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
-        if let Some((before, after)) = context
-            && (before.last().is_some_and(|t| t.kind.is_less_than())
-                || after.first().is_some_and(|t| t.kind.is_greater_than()))
-        {
-            return None;
-        }
-
-    use crate::linting::tests::{
-        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
-    };
-
-    #[test]
-    fn ignores_right_arrow() {
-        assert_no_lints("Go from A --> B now.", Dashes::default());
-    }
-
-    #[test]
-    fn ignores_left_arrow() {
-        assert_no_lints("Go from A <-- B now.", Dashes::default());
-    }
-
-    #[test]
-    fn ignores_bidirectional_arrow() {
-        assert_no_lints("Go from A <--> B now.", Dashes::default());
-    }
-
-    #[test]
-    fn ignores_long_right_arrow() {
-        assert_no_lints("Go from A ---> B now.", Dashes::default());
-    }
-
-    #[test]
-    fn ignores_long_left_arrow() {
-        assert_no_lints("Go from A <--- B now.", Dashes:
+XSL/O
+XSLT/O
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
-    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15b85dfd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b63882d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

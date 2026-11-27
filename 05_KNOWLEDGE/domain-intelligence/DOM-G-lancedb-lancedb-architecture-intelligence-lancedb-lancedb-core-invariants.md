@@ -4,24 +4,24 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "7c3d68e9",
+  "source_version": "fdc8041b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T00:34:58.442Z",
+  "timestamp": "2026-11-27T14:05:11.022Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `7c3d68e9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T00:34:58.442Z`  
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `fdc8041b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T14:05:11.022Z`  
 > **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb/lancedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T00:34:57.106Z  
+> **Harvest Timestamp**: 2026-11-27T14:05:09.015Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11986 stars
+- **Stars / Engagement**: 11996 stars
 
 ---
 
@@ -1277,11 +1277,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5216** (2026-11-25): **fix(remote): preserve blob snapshot identity across credential refresh**
-  *Symptoms*: ## What  Fix the refresh path for direct Blob handles opened from a SQL `blob_descriptor`.  `open_blob_file` acquired the resolver's immutable snapshot identity, but the `PresignedBlobRangeRequester` used `blob_locations_context_for_source`, which only copied the table handle's `expected_query_snapshot`. For an ordinary table handle that is `None`, so a provider credential expiry and refresh could establish a different identity at the same numeric version. The refreshed handle could then accept replacement-table bytes.  The refresh context now carries the identity acquired by the first resolver response, matching the whole-read, range-read and `fetch_blob_files` paths.  ## Coverage  Adds five focused tests through the normal `open_blob_file` entrypoint:  - proactive refresh inside the 30s expiry skew before any object GET; - provider credentials expiring earlier than the advertised URL TTL (far-future `expires_at`, object store returns 403); - single-shot re-resolution: a second 403 after refresh fails without a third resolver call; - renewal with a different snapshot identity is rejected before accepting bytes; - renewal resolver `403` propagates as an auth failure.  Existing `direct_blob_file_refreshes_expired_url_once` covered only reactive refresh with no advertised expiry.  ## Signer contract  The SDK treats object-store `401`/`403` as expiry and refreshes once. If the resolver signs the refreshed URL with still-expired provider credentials, the second object GET fails a
+- **Issue #5236** (2026-11-26): **fix(ci): hand off Pages artifact to a separate deploy job**
+  *Symptoms*: The docs workflow uploads `github-pages` and deploys in the same job. On `0adfd22`, attempt 1 finished the upload and the deploy immediately found zero artifacts; attempt 2 uploaded again and the deploy found two artifacts with the same name. Four earlier main runs show the same zero-artifact race.  This uploads the site as `github-pages-<run_id>-<run_attempt>`, exposes that name as a `build` job output, and deploys from a separate `needs: build` job using the same name. A full workflow re-run gets a fresh name, while a deploy-only retry keeps the original build output and reuses the artifact uploaded by that build.  The existing action pins already expose the required inputs (`name` on `upload-pages-artifact`, `artifact_name` on `deploy-pages`), so this does not bump actions. Workflow triggers, permissions, concurrency, docs build steps, and the Pages environment URL are unchanged.  Validation: `actionlint .github/workflows/docs.yml`, YAML parsing, and `git diff --check` pass locally. Hosted checks run on this PR; the actual Pages upload and deploy are verified on main after merge because the workflow only deploys from `main`.  Evidence: - [attempt 1](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139857949931): upload succeeded, deploy logged `Found 0 artifact(s)`. - [attempt 2](https://github.com/lancedb/lancedb/actions/runs/45805006874/job/139875545904): upload succeeded, deploy logged `Found 2 artifact(s)` and failed with `Multiple artifacts named "githu
 
-- **Issue #5195** (2026-11-24): **fix(python): skip OpenAI embedding requests when no valid text remains**
-  *Symptoms*: ## Summary  Follows up on #4005, which handled mixed batches in `OpenAIEmbeddings.generate_embeddings`. On `main`, when the input batch is empty (`[]`) or filtering leaves no valid texts (such as `[None, ""]`), `generate_embeddings` still imports the `openai` SDK and calls `embeddings.create(input=[], ...)`.  - Return `[None] * len(texts)` early in `python/python/lancedb/embeddings/openai.py` when no valid texts remain (`[]` for empty input, one `None` per item when all inputs are filtered), before importing the `openai` SDK or sending a request. - Add regression tests in `python/python/tests/test_embeddings.py` covering empty batches, all-filtered batches, and native-backed `table.add(..., on_bad_vectors="null")` verifying rows are kept with null vectors and no OpenAI request is made.  ## Attribution  Successor to #3152. The early return and nullable ingestion test were originally contributed by @saudademjj in #3152.  ## Verification  - 3 new regression tests failed before the fix (observing `embeddings.create(input=[], ...)`) and passed after. - Related embedding test suite: `148 passed, 1 skipped, 9 deselected` (mocked client only; no live OpenAI API calls). - Ruff check and format checks are clean for the changed `python/` tree (scoped to `python/` only).  Co-authored-by: saudademjj <128795969+saudademjj@users.noreply.github.com> 
+- **Issue #5229** (2026-11-27): **fix(sql)!: request JSON for storage integration descriptions**
+  *Symptoms*: BREAKING CHANGE: Enterprise Storage Integration descriptions now explicitly request `DESCRIBE STORAGE INTEGRATION ... FORMAT JSON` and decode a complete JSON metadata document. The client previously decoded separate typed columns; use a server supporting JSON descriptions with this client.  ### TEXT and JSON examples  For interactive SQL, the corresponding human-readable description is shown below. The SDK continues to request `FORMAT JSON`.  ```sql DESCRIBE STORAGE INTEGRATION raw FORMAT TEXT; ```  For a GCP integration using a credential Secret, the complete illustrative `description` value is:  ```text Storage Integration name: raw database: example namespace_path: [] storage_provider: GCP storage_prefix: gs://example-bucket/raw/ aws_role_arn: NULL aws_access_key_id_secret: NULL aws_secret_access_key_secret: NULL aws_region: NULL aws_endpoint: NULL aws_account_id:  aws_iam_principal_arn:  aws_external_id: 00000000-0000-0000-0000-000000000004 created_at_millis: 1795350000000 access_verified: false trust_policy: NULL permissions_policy: NULL configuration_instructions: Store the GCP application credentials JSON in the referenced Secret and grant its identity Cloud Storage object read and write access to gs://example-bucket/raw/. azure_storage_account: NULL azure_tenant_id_secret: NULL azure_client_id_secret: NULL azure_client_secret_secret: NULL gcp_credentials_json_secret:   namespace_path:     [0]: credentials   name: gcp_key huggingface_token_secret: NULL azure_storage_ac
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1298,158 +1298,472 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d558adc` (2026-11-25)
-**Commit Message**: fix(remote): preserve blob snapshot identity across credential refresh (#5216)
+### Incident Patch 1: `0736ef02` (2026-11-27)
+**Commit Message**: fix: reject merge inserts on version-pinned tables (#4851)
 
-## What
+Local `merge_insert` skipped the mutability check, allowing a
+version-pinned handle to commit onto its branch's latest version. Add
+`ensure_mutable()` at the start of `NativeTable::merge_insert` so it
+returns the same `InvalidInput` error as other writes before processing
+the merge. This shared Rust path serves both Python and TypeScript local
+tables.
 
-Fix the refresh path for direct Blob handles opened from a SQL
-`blob_descriptor`.
+Extend the existing branch-version and time-travel tests to cover pinned
+opens and checkouts on main and named branches. Assert that rejection
+preserves pinned data and the latest version, and that
+`checkout_latest()` restores merge writes.
 
-`open_blob_file` acquired the resolver's immutable snapshot identity,
-but the `PresignedBlobRangeRequester` used
-`blob_locations_context_for_source`, which only copied the table
-handle's `expected_query_snapshot`. For an ordinary table handle that is
-`None`, so a provider credential expiry and refresh could establish a
-different identity at the same numeric version. The refreshed handle
-could then accept replacement-table bytes.
+Validation:
 
-The refresh context now carries the identity acquired by the first
-resolver response, matching the whole-read, range-read and
-`fetch_blob_files` paths.
+- Both regression tests failed before the fix, reproducing successful
+commits from pinned handles.
+- Table tests: 405 passed (`cargo test --quiet --locked --profile ci
+--features remote -p lancedb --lib table::tests::`).
+- Merge tests: 20 passed (`cargo test --quiet --locked --profile ci
+--features remote -p lancedb --lib table::merge::tests::`).
+- `cargo clippy --quiet --locked --profile ci --features remote -p
+lancedb --tests --examples` passed.
+- `cargo fmt --all` and `git diff --check` passed.
 
-## Coverage
+Fixes #4844
 
-Adds five focused tests through the normal `open_blob_file` entrypoint:
+<!-- lance-ga
 
-- proactive refresh inside the 30s expiry skew before any object GET;
-- provider credentials expiring earlier than the advertised URL TTL
-(far-future `expires_at`, object store returns 403);
-- single-shot re-resolution: a second 403 after refresh fails without a
-third resolver call;
-- renewal with a different snapshot identity is rejected before
-accepti
-
-**File**: `rust/lancedb/src/remote/table/blobs.rs` (modified, +215/-2)
+**File**: `rust/lancedb/src/table.rs` (modified, +45/-1)
 ```diff
-@@ -798,9 +798,10 @@ impl<S: HttpSend> BlobLocationsContext<S> {
-             }
-         }
-         log::debug!(
--            "blob_locations resolved rows={} version={} elapsed_ms={:.3}",
-+            "blob_locations resolved rows={} version={} identity={} elapsed_ms={:.3}",
-             row_ids.len(),
-             version,
-+            identity.as_deref().unwrap_or(""),
-             started.elapsed().as_secs_f64() * 1000.0
-         );
-         Ok(ResolvedBlobLocations {
-@@ -1096,13 +1097,18 @@ impl<S: HttpSend> BlobRangeRequester for PresignedBlobRangeRequester<S> {
-                         expires <= now.saturating_add(BLOB_PRESIGN_REFRESH_SKEW.as_secs())
-                     }) && !refreshed
-                     {
-+                        log::debug!(
-+                            "blob_direct refresh row={} reason=proactive expires_at={expires:?}",
-+                            self.row_id
-+                        );
-                         self.refresh().await?;
-                         refreshed = true;
-                         continue;
-                     }
-                     match self.direct_read(&url, base_offset, range.clone()).await {
-                         Ok(response) => return Ok(response),
-                         Err(PresignedReadError::Expired) if !refreshed => {
-+                            log::debug!("blob_direct refresh row={} reason=reactive", self.row_id);
-                             self.refresh().await?;
-                             refreshed = true;
-                         }
-@@ -2564,8 +2570,19 @@ impl<S: HttpSend> RemoteTable<S> {
-                                 resolved.sources.len()
-                             ),
-                         })?;
-+                let refresh_context = self.blob_locations_context(
-+                    &source.column,
-+                    Some(source.version),
-+                    source.branch.clone(),
-+                    Some(source),
-+                    resolved
-+                        .identity
-+                        .clone()
-+                        .or_else(|| self.expected_query_snapshot.clone()),
-+                    None,
-+                );
-                 Arc::new(PresignedBlobRangeRequester::new(
--                    self.blob_locations_context_for_source(source),
-+                    refresh_context,
-                     source.row_reference,
-                     size,
-                     self.client.blob_presign_threshold_bytes,
-@@ -6288,4 +6305,200 @@ mod tests {
-         let file = files.pop().unwrap().unwrap();
-         assert_eq!(file.read_range(0..1).await.unwrap().as_ref(), b"A");
+@@ -4805,6 +4805,7 @@ impl BaseTable for NativeTable {
+         params: MergeInsertBuilder,
+         new_data: Box<dyn RecordBatchReader + Send>,
+     ) -> Result<MergeResult> {
++        self.dataset.ensure_mutable()?;
+         let source_schema = arrow_array::RecordBatchReader::schema(&new_data);
+         self.ensure_not_a_view("merge insert into").await?;
+         computed_columns::ensure_not_written(
+@@ -6005,6 +6006,22 @@ mod tests {
+ 
+         // a pinned version is a detached head: writes are rejected
+         assert!(pinned.add(sample_rows(vec![9])).execute().await.is_err());
++        let exp_head = head.version().await.unwrap();
++        for pinned_table in [&pinned, &pinned_direct] {
++            let mut merge = pinned_table.merge_insert(&["i"]);
++            merge
++                .when_matched_update_all(None)
++                .when_not_matched_insert_all();
++            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
++            assert!(matches!(err, Error::InvalidInput { message }
++                if message == "table cannot be modified when a specific version is checked out"));
++            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
++            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
++        }
++        assert_eq!(head.version().await.unwrap(), exp_head);
++        assert_eq!(head.count_rows(None).await.unwrap(), 3);
++        assert_eq!(table.version().await.unwrap(), main_v2);
++        assert_eq!(table.count_rows(None).await.unwrap(), 4);
+ 
+         // version-only (no branch) time-travels main itself: its fork-point
+         // version holds only main's first row, and the shared version number
+@@ -6390,8 +6407,35 @@ mod tests {
+             .unwrap();
+         let version = table.version().await.unwrap();
+         table.add(some_sample_data()).execute().await.unwrap();
++        let latest_version = table.version().await.unwrap();
++        let opened = conn
++            .open_table("my_table")
++            .version(version)
++            .execute()
++            .await
++            .unwrap();
+         table.checkout(version).await.unwrap();
+-        assert!(table.add(some_sample_data()).execute().await.is_err())
++        assert!(table.add(some_sample_data()).execute().await.is_err());
++        for pinned_table in [&table, &opened] {
++            let mut merge = pinned_table.merge_insert(&["i"]);
++            merge
++                .when_matched_update_all(None)
++                .when_not_matched_insert_all();
++            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
++            assert!(matches!(err, Error::InvalidInput { message }
++                if message == "table cannot be modified when a specific version is checked out"));
++            assert_eq!(pinned_table.version().await.unwrap(), version);
++            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 1);
++        }
++
++        table.checkout_latest().await.unwrap();
++        assert_eq!(table.version().await.unwrap(), latest_version);
++        assert_eq!(table.count_rows(None).await.unwrap(), 2);
++        let mut merge = table.merge_insert(&["i"]);
++        merge.when_not_matched_insert_all();
++        let result = merge.execute(sample_rows(vec![300])).await.unwrap();
++        assert_eq!(result.num_inserted_rows, 1);
++        assert_eq!(table.count_rows(None).await.unwrap(), 3);
      }
+ 
+     #[tokio::test]
+```
+
+---
+
+### Incident Patch 2: `a663417f` (2026-11-27)
+**Commit Message**: fix: validate remote tag checkout branch and version (#4853)
+
+Remote tag checkout discarded the tag's branch and pinned its version on
+the handle's own branch without checking that the version existed. This
+could read a different snapshot or leave the handle pinned to a
+nonexistent version.
+
+Resolve the complete tag reference and reject cross-branch tags with an
+error naming both branches. For a tag on the handle's branch, reuse
+numeric checkout to validate the version before committing the selector
+and freshness state. This also protects Python's
+`open_table(version=tag)`, which delegates to tag checkout. To read a
+tag on another branch, obtain that branch's handle first with
+`checkout_branch` in Rust or `table.branches.checkout(...)` in Python.
+The Python checkout docstrings and tag-based versioning guide document
+this requirement.
+
+Add 17 regression cases covering cross-branch tags in both directions,
+main-branch aliases, same-branch reads, and failed validation on
+writable and pinned handles. Twelve cases failed against the original
+implementation. Update the existing freshness and schema-cache tests for
+the validation request.
+
+Validation:
+
+- `cargo test --locked --profile ci 
+
+**File**: `docs/web/management/table.mdx` (modified, +7/-0)
+```diff
+@@ -1736,6 +1736,13 @@ page).
+ The tags API supports the standard CRUD operations (create, list, update, delete),
+ plus checking out by tag name.
+ 
++A tag identifies both a branch and a version. On Enterprise tables, a tag must belong
++to the handle's current branch; checking out a tag on another branch raises an
++error without changing the current selection. Obtain a handle for the tag's
++branch first: in Python, use `branch_table = table.branches.checkout("exp")`, then
++`branch_table.checkout("baseline")` to read a tag named `baseline` on `exp`.
++See [Branches](/tables/branching) for more on branch handles.
 +
-+    struct RefreshHarness {
-+        table: RemoteTable<crate::remote::client::test_utils::MockSender>,
-+        resolves: Arc<AtomicUsize>,
-+        objects: Arc<AtomicUsize>,
-+    }
+ In Python, `tags.create()` accepts an optional `version`. If you omit it, the
+ tag uses the version the table handle currently shows. That includes a handle
+ checked out to an older version, so pass `version` explicitly when the tag must
+```
+
+**File**: `python/python/lancedb/remote/table.py` (modified, +10/-0)
+```diff
+@@ -332,6 +332,16 @@ def to_polars(self, batch_size=None) -> "pl.LazyFrame":
+         )
+ 
+     def checkout(self, version: Union[int, str]):
++        """Check out a version number or tag as a read-only view in place.
 +
-+    fn refresh_harness(
-+        first_expires: Option<u64>,
-+        second_expires: Option<u64>,
-+        second_identity: &'static str,
-+        second_location_status: Option<StatusCode>,
-+        fail_second_object: bool,
-+    ) -> RefreshHarness {
-+        let resolves = Arc::new(AtomicUsize::new(0));
-+        let objects = Arc::new(AtomicUsize::new(0));
-+        let captured_resolves = resolves.clone();
-+        let captured_objects = objects.clone();
-+        let mut table = RemoteTable::new_mock(
-+            "my_table".to_string(),
-+            move |request| {
-+                if request.url().host_str() == Some("objects.example") {
-+                    captured_objects.fetch_add(1, Ordering::SeqCst);
-+                    let old = request
-+                        .url()
-+                        .query()
-+                        .is_some_and(|query| query.contains("sig=old"));
-+                    if old || fail_second_object {
-+                        return http::Response::builder()
-+                            .status(StatusCode::FORBIDDEN)
-+                            .body(Vec::new())
-+                            .unwrap();
-+                    }
-+                    return http::Response::builder()
-+                        .status(StatusCode::PARTIAL_CONTENT)
-+                        .header(header::CONTENT_RANGE, "bytes 0-0/1")
-+                        .body(b"A".to_vec())
-+                        .unwrap();
-+                }
-+                let path = request.url().path();
-+                if path == "/v1/table/my_table/blob_locations/" {
-+                    let call = captured_resolves.fetch_add(1, Ordering::SeqCst) + 1;
-+                    if call == 2
-+                        && let Some(status) = second_location_status
-+                    {
-+                        return http::Response::builder()
-+                            .status(status)
-+                            .body(Vec::new())
-+                            .unwrap();
-+                    }
-+                    let body: serde_json::Value =
-+                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
-+                         
++        A tag must belong to this handle's current branch. To read a tag on
++        another branch, first obtain that branch's handle with
++        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
++        that handle. A tag on another branch raises an error without changing
++        the current selection.
++
++        Call `checkout_latest()` to return to the latest version of this branch.
++        """
+         result = LOOP.run(self._table.checkout(version))
+         self._checkout_version = self.version
+         return result
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +12/-0)
+```diff
+@@ -4247,6 +4247,12 @@ def checkout(self, version: Union[int, str]):
+         out state. To return the table to a normal state use
+         `[Self::checkout_latest]`.
+ 
++        For Enterprise tables, a tag must belong to this handle's current branch.
++        To read a tag on another branch, first obtain that branch's handle with
++        `table.branches.checkout("branch_name")`, then call `checkout(tag)` on
++        that handle. A tag on another branch raises an error without changing
++        the current selection.
++
+         Parameters
+         ----------
+         version: int | str,
+@@ -10036,6 +10042,12 @@ async def checkout(self, version: int | str):
+         out state. To return the table to a normal state use
+         `[Self::checkout_latest]`.
+ 
++        For Enterprise tables, a tag must belong to this handle's current branch.
++        To read a tag on another branch, first obtain that branch's handle with
++        `await table.branches.checkout("branch_name")`, then call
++        `await branch_table.checkout(tag)` on that handle. A tag on another
++        branch raises an error without changing the current selection.
++
+         Parameters
+         ----------
+         version: int | str,
+```
+
+**File**: `rust/lancedb/src/remote/table.rs` (modified, +248/-28)
+```diff
+@@ -1269,7 +1269,7 @@ impl<S: HttpSend> RemoteTable<S> {
+     }
+ 
+     /// Resolve a tag to its `(branch, version)` coordinate via the `tags/version`
+-    /// endpoint, since the `/branches/create` contract accepts no `from_tag`.
++    /// endpoint.
+     async fn resolve_tag_ref(&self, tag: &str) -> Result<(Option<String>, u64)> {
+         let request = self
+             .client
+@@ -4286,22 +4286,19 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+         // Resolve the tag without attaching freshness headers; a stale
+         // `min_version` from a previous write should not ride along on an
+         // explicit time-travel request.
+-        let request = self
+-            .client
+-            .post(&format!("/v1/table/{}/tags/version/", self.identifier));
+-        let version = self
+-            .resolve_tag_version_with_request(tag, request, false)
+-            .await?;
+-
+-        let mut write_guard = self.version.write().await;
+-        // Commit the selector and its freshness mode while holding the selector
+-        // write lock, with no cancellation point between the two updates.
+-        self.reset_freshness(None, true);
+-        *write_guard = Some(version);
+-        self.invalidate_schema_cache();
+-        drop(write_guard);
++        let (branch, version) = self.resolve_tag_ref(tag).await?;
++        if branch != self.branch {
++            return Err(Error::InvalidInput {
++                message: format!(
++                    "Tag '{tag}' belongs to branch '{}', but this table handle is scoped to branch '{}'. Check out the tag's branch first.",
++                    branch.as_deref().unwrap_or("main"),
++                    self.branch.as_deref().unwrap_or("main"),
++                ),
++            });
++        }
+ 
+-        Ok(())
++        // Validate the version before pinning the handle.
++        self.checkout(version).await
+     }
+     /// Only `OptimizeAction::Compact` with supported `options` and no custom
+     /// `remap_options` is supported remotely: it submits a durable
+@@ -16191,12 +16188,13 @@ mod tests {
+             .checkout_tag("v2")
+             .await
+             .expect("checkout_tag should succeed");
++        assert_eq!(call_count.load(Ordering::SeqCst), 2);
+ 
+         // Schema call after checkout_tag should re-fetch (cache was invalidated)
+         let schema3 = table.schema().await.unwrap();
+         assert_eq!(
+             call_count.load(Ordering::SeqCst),
+-            2,
++            3,
+             "Cache should have been invalidated and re-fetched"
+         );
+         assert_ne!(
+@@ -18130,12 +18128,13 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn test_freshness_checkout_tag_resolve_sends_no_min_version() {
+-        // Same invariant for checkout_tag: the tag-resolve request must not
+-        // pick up a stale min_version from a prior write.
++    async fn test_freshness_checkout_tag_validation_sends_no_min_version() {
++        // Neither the tag lookup nor the version validation should pick up a
++        // stale min_version from a prior write.
+         let (handler, captured) = path_capturing_handler(|path| match path {
+             "/v1/table/my_table/update/" => r#"{"rows_updated":1,"version":7}"#.to_string(),
+             "/v1/table/my_table/tags/version/" => r#"{"version":5}"#.to_string(),
++            "/v1/table/my_table/describe/" => r#"{"version":5,"schema":{"fields":[]}}"#.to_string(),
+             _ => panic!("unexpected path: {}", path),
+         });
+         let table = Table::new_with_handler("my_table", handler);
+@@ -18144,14 +18143,20 @@ mod tests {
+         table.checkout_tag("v_initial").await.unwrap();
+ 
+         let captured = captured.lock().unwrap();
+-        let resolve_headers = captured
+-            .get("/v1/table/my_table/tags/version/")
+-            .expect("tags/version should have been called by checkout_tag");
+-        assert!(
+-            !resolve_headers.contains_key("x-lancedb-min-version"),
+-            "checkout_tag resolve must not carry stale min_version",
+-        );
+-        assert!(!resolve_headers.contains_key("x-lancedb-min-timestamp"));
++        for path in [
++            "/v1/table/my_table/tags/version/",
++            "/v1/table/my_table/describe/",
++        ] {
++            let headers = captured
++                .get(path)
++                .expect("checkout_tag should call endpoint");
++            assert!(
++                !headers.contains_key("x-lancedb-min-version"),
++                "{path} must not carry stale min_version",
++            );
++            assert!(!headers.contains_key("x-lancedb-min-timestamp"));
++            assert!(!headers.contains_key("x-lancedb-min-read-version"));
++        }
+     }
+ 
+     #[tokio::test]
+@@ -19017,6 +19022,221 @@ mod tests {
+         }
+     }
+ 
++    #[rstest]
++    #[case(None, Some("exp"))]
++    #[case(Some("exp"), None)]
++    #[case(Some("exp"), Some("main"))]
++    #[case(Some("exp"), Some("other"))]
++    #[tokio::test]
++    async fn test_checkout_tag_rejects_other_
+```
+
+**File**: `rust/lancedb/src/table.rs` (modified, +4/-0)
+```diff
+@@ -3075,6 +3075,10 @@ impl Table {
+ 
+     /// Checks out a specific version of the Table by tag
+     ///
++    /// On Enterprise tables, the tag must belong to this handle's branch. Use
++    /// [`Self::checkout_branch`] to obtain a handle for another branch first.
++    /// A failed Enterprise tag checkout leaves the handle unchanged.
++    ///
+     /// Any read operation on the table will now access the data at the version referenced by the tag.
+     /// As a consequence, calling this method will disable any read consistency interval
+     /// that was previously set.
+```
+
+---
+
+### Incident Patch 3: `fdfbb98a` (2026-11-27)
+**Commit Message**: fix(python): give tied FTS scores full weight in hybrid normalization (#4858)
+
+## Why
+
+Hybrid search normalizes FTS scores with min-max. When all FTS scores
+are equal (one match, or a tie), the range is 0 and every score became
+0. `LinearCombinationReranker` treats 0 as a missing FTS match. So a
+lone keyword match could rank below documents without the keyword. Fixes
+#4857.
+
+## What changed
+
+- `_normalize_scores` takes a `tie_value` for the zero-range case. The
+default stays 0, so vector distances are unchanged.
+- The FTS leg passes `tie_value=1.0`, so tied FTS matches count as the
+best FTS result.
+
+## Scope
+
+- Covers the zero-range case for both `normalize="score"` and
+`normalize="rank"`.
+- Leaves out how `_rank` breaks ties among equal scores. That is a
+separate question.
+
+## Blast Radius
+
+The change only affects hybrid queries where every FTS hit has the same
+score. RRF and MRR use list position, so their results don't change.
+LinearCombination and custom score-based rerankers now give those hits
+full FTS weight.
+
+## Verification
+
+- A new test in `test_hybrid_query.py` fails on main in both normalize
+modes and passes with the fix.
+- `pytest python/tests -m "not slow and not s3_t
+
+**File**: `python/python/lancedb/query.py` (modified, +10/-5)
+```diff
+@@ -3491,7 +3491,9 @@ def _combine_hybrid_results(
+             fts_results = fts_results.set_column(
+                 score_i,
+                 fts_results.field(score_i),
+-                LanceHybridQueryBuilder._normalize_scores(fts_results.column(score_i)),
++                LanceHybridQueryBuilder._normalize_scores(
++                    fts_results.column(score_i), tie_value=1.0
++                ),
+             )
+ 
+         results = reranker.rerank_hybrid(fts_query, vector_results, fts_results)
+@@ -3552,7 +3554,9 @@ def _rank(results: pa.Table, column: str, ascending: bool = True):
+         return results
+ 
+     @staticmethod
+-    def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
++    def _normalize_scores(
++        scores: pa.Array, invert=False, tie_value: float = 0.0
++    ) -> pa.Array:
+         if len(scores) == 0:
+             return scores
+         # normalize the scores by subtracting the min and dividing by the max
+@@ -3561,9 +3565,10 @@ def _normalize_scores(scores: pa.Array, invert=False) -> pa.Array:
+ 
+         if not pc.equal(rng, pa.scalar(0.0)).as_py():
+             scores = pc.divide(pc.subtract(scores, min), rng)
+-        elif not pc.equal(max, pa.scalar(0.0)).as_py():
+-            # If rng is 0, then we at least want the scores to be 0
+-            scores = pc.subtract(scores, min)
++        else:
++            # All scores are equal, so they are equally relevant. Distances
++            # tie at 0 (best), while higher-is-better scores tie at 1.
++            scores = pc.add(pc.subtract(scores, min), pa.scalar(tie_value, scores.type))
+ 
+         if invert:
+             scores = pc.subtract(1, scores)
+```
+
+**File**: `python/python/tests/test_hybrid_query.py` (modified, +31/-0)
+```diff
+@@ -604,6 +604,37 @@ def test_normalize_scores():
+             )
+ 
+ 
++@pytest.mark.parametrize("normalize", ["score", "rank"])
++def test_hybrid_single_fts_match_keeps_fts_weight(tmp_path, normalize):
++    from lancedb.rerankers import LinearCombinationReranker
++
++    db = lancedb.connect(tmp_path)
++    table = db.create_table(
++        "test",
++        [
++            {"text": "apple banana", "vector": [0.0, 0.0]},
++            {"text": "zebra unicorn", "vector": [0.1, 0.0]},
++            {"text": "cherry grape", "vector": [5.0, 5.0]},
++        ],
++    )
++    table.create_fts_index("text")
++
++    results = (
++        table.search(query_type="hybrid")
++        .vector([0.0, 0.0])
++        .text("zebra")
++        .rerank(LinearCombinationReranker(weight=0.3), normalize=normalize)
++        .limit(3)
++        .to_arrow()
++    )
++
++    assert results["text"].to_pylist() == [
++        "zebra unicorn",
++        "apple banana",
++        "cherry grape",
++    ]
++
++
+ def test_hybrid_query_rejects_query_with_vector(sync_table: Table):
+     # Pins the full message: the space between "hybrid search." and "But" is
+     # load-bearing (see the _validate_query literal concatenation).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5218** (2026-11-25): feat(rust): open a native table at a retained version (@Xuanwo)
-- **PR #5217** (2026-11-25): chore: update lance dependency to v15.1.0-beta.2 (@lancedb-robot)
-- **PR #5216** (2026-11-25): fix(remote): preserve blob snapshot identity across credential refresh (@Xuanwo)
-- **PR #5214** (2026-11-25): feat(cli): package release binaries as lancedb-tools wheels (@ChilePiquin)
-- **PR #5213** (2026-11-25): chore: update lance dependency to v15.1.0-beta.1 (@lancedb-robot)
-- **PR #5210** (2026-11-25): feat(remote): add presigned direct Blob V2 reads (@Xuanwo)
+- **PR #5246** (2026-11-27): chore: update lance dependency to v16.0.0-beta.5 (@lancedb-robot)
+- **PR #5242** (2026-11-27): chore: update lance dependency to v16.0.0-beta.4 (@lancedb-robot)
+- **PR #5238** (2026-11-26): feat(nodejs): open source-bearing blob descriptors (@Xuanwo)
+- **PR #5237** (2026-11-26): chore: update lance dependency to v16.0.0-beta.3 (@lancedb-robot)
+- **PR #5236** (2026-11-26): fix(ci): hand off Pages artifact to a separate deploy job (@Xuanwo)
+- **PR #5234** (2026-11-26): chore: update lance dependency to v16.0.0-beta.2 (@lancedb-robot)
 
 ---
 
@@ -1469,61 +1783,55 @@ accepti
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remote): preserve blob snapshot identity across credential refresh
+## X. reject merge inserts on version-pinned tables
 
 **RULE**:
-When implementing operations in `rust/lancedb/src/remote/table/blobs.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/table.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d558adc`: remote): preserve blob snapshot identity across credential refresh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0736ef02`: reject merge inserts on version-pinned tables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/remote/table/blobs.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            "blob_locations resolved rows={} version={} identity={} elapsed_ms={:.3}",
-            identity.as_deref().unwrap_or(""),
-                        log::debug!(
-                            "blob_direct refresh row={} reason=proactive expires_at={expires:?}",
-                            self.row_id
-                        );
-                            log::debug!("blob_direct refresh row={} reason=reactive", self.row_id);
-                let refresh_context = self.blob_locations_context(
-                    &source.column,
-                    Some(source.version),
-                    source.branch.clone(),
-                    Some(source),
-                    resolved
-                        .identity
-                        .clone()
-                        .or_else(|| self.expected_query_snapshot.clone()),
-                    None,
-                );
-                    refresh_context,
-
-    struct RefreshHarness {
-        table: RemoteTable<crate::remote::client::test_utils::MockSender>,
-        resolves: Arc<AtomicUsize>,
-        objects: Arc<AtomicUsize>,
-    }
-
-    fn refresh_harness(
-        first_expires: Option<u64>,
-        second_expires: Option<u64>,
-        se
+        self.dataset.ensure_mutable()?;
+        let exp_head = head.version().await.unwrap();
+        for pinned_table in [&pinned, &pinned_direct] {
+            let mut merge = pinned_table.merge_insert(&["i"]);
+            merge
+                .when_matched_update_all(None)
+                .when_not_matched_insert_all();
+            let err = merge.execute(sample_rows(vec![300])).await.unwrap_err();
+            assert!(matches!(err, Error::InvalidInput { message }
+                if message == "table cannot be modified when a specific version is checked out"));
+            assert_eq!(pinned_table.version().await.unwrap(), exp_v2);
+            assert_eq!(pinned_table.count_rows(None).await.unwrap(), 2);
+        }
+        assert_eq!(head.version().await.unwrap(), exp_head);
+        assert_eq!(head.count_rows(None).await.unwrap(), 3);
+        assert_eq!(table.version().await.unwrap(), main_v2);
+        assert_eq!(table.count_rows(None).await.unwrap(), 4);
+        let latest_version = table.version().await.unwrap();
+        let opened = conn
+            .open_table("my_table")
+            .version(version)
+            .execute()
+            .await
+            .unwrap();
+        asse
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            "blob_locations resolved rows={} version={} elapsed_ms={:.3}",
-                    self.blob_locations_context_for_source(source),
+        assert!(table.add(some_sample_data()).execute().await.is_err())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d558adc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0736ef02` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -13831,3 +13831,5 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `2b1e274d` | Multi-dimensional audit evidence | 2026-11-27T13:36:53.807Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `fbb7c9e0` | Multi-dimensional audit evidence | 2026-11-27T13:46:39.677Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4aea0221` | Multi-dimensional audit evidence | 2026-11-27T13:55:26.618Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `fdc8041b` | Multi-dimensional audit evidence | 2026-11-27T14:05:10.676Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2b63882d` | Multi-dimensional audit evidence | 2026-11-27T14:06:59.256Z |

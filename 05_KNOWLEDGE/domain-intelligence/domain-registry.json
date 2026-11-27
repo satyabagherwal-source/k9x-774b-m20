@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T13:55:33.754Z",
+  "last_updated": "2026-11-27T14:07:07.041Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -9571,8 +9571,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7571d3c0084fce1d043990f4a106b22ae7ee48f7df72c4518b969c3ba0aa0028",
-      "created_at": "2026-11-27T13:55:32.479Z"
+      "content_hash": "18233f1e7e5da0f9db145c3ac3ac7d202231dec4979a95d353145eba301812f9",
+      "created_at": "2026-11-27T14:07:07.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31703,8 +31703,8 @@
       "title": "Research & Knowledge Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-research-knowledge-intelligence-automattic-harper-core-invaria.md",
       "repository": "Automattic/harper",
-      "content_hash": "40db2293fe5c9cb72a8b2b04c1377927119a9820b0114824db2107ec20e85241",
-      "created_at": "2026-11-25T05:54:35.679Z"
+      "content_hash": "f1a11db2ca0ef2c98c248d3c8199d51db809ca763d4a1f68951675c333c9c1da",
+      "created_at": "2026-11-27T14:06:59.908Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -31721,8 +31721,8 @@
       "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-learnings-research-knowledge-intelligence-automattic-harper-le.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "7c6907a43ebb9a83e36703ccd02658ed98812149df35bc8b1c00223e17856e0b",
-      "created_at": "2026-11-25T05:54:47.242Z"
+      "content_hash": "bfc570d6d46d941970d423bd84ed9a5f447141f95ae75d4070d713a695d80074",
+      "created_at": "2026-11-27T14:07:04.415Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
@@ -37297,8 +37297,8 @@
       "title": "Architecture Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-architecture-intelligence-lancedb-lancedb-core-invariants.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "a8c44951959d8f47f4bacbf718e1af3edb8e7d837426d215a4b5a26a67aa9844",
-      "created_at": "2026-11-26T00:34:58.617Z"
+      "content_hash": "634bfcc9b1bcb3d1d0f08e604a5654673d200adc315adba82f80feb9bca30767",
+      "created_at": "2026-11-27T14:05:11.307Z"
     },
     "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -37306,8 +37306,8 @@
       "title": "Architecture Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lancedb-lancedb-learnings-architecture-intelligence-lancedb-lancedb-learnings-co.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "0267de1d237ee4931d1da38a65a70893f13fc5feb0cc5722c85bfdc85385d777",
-      "created_at": "2026-11-26T00:35:03.463Z"
+      "content_hash": "09bc1b8cc3ec89c5dac53bbcc20011c76089c0b7f03959d2a7ca6bc010c3a5cf",
+      "created_at": "2026-11-27T14:07:05.761Z"
     },
     "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-rdflib-rdflib-core-invariants",
