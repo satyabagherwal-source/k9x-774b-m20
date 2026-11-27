@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:36:53.551Z",
+  "last_updated": "2026-11-27T15:45:46.562Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26624,
+  "total_items": 26629,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220245,8 +220245,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "0cc7bd5b",
-      "content_hash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
+      "source_version": "7036495c",
+      "content_hash": "f55b7801f96e4ed221fc846e5379a50fb5dd00233de3364751ffedad6b09601e",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -220294,6 +220294,11 @@
           "number": 10772,
           "title": "keep maintenance dispatch on the gevent hub and delay turnover",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10921,
+          "title": "Empirical Invariant Guard in test_lexical_index_resolution_contract.py",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220301,7 +220306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:31:53.404Z",
+      "verified_at": "2026-11-27T15:45:39.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220355,10 +220360,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "0cc7bd5b",
-      "content_hash": "5b2edbc2e0a1c7d177f592d9b15d3b7022a679eb371456a46f62509593f36d49",
+      "source_version": "7036495c",
+      "content_hash": "4a1a217c8bb51335632ab3e8cd1b1fa700736d18ee9bde794d0c4049b4d2ddd7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:31:54.519Z"
+      "persisted_at": "2026-11-27T15:45:40.025Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -220392,9 +220397,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ontos-ai-knowhere-learnings",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "97d436c8e35dcebfa733c8d18ee732c34e5ba6a4a3d73aefa862363646cdf3e5",
+      "content_hash": "30f2843c9302d7b7553e4317523f676286740ee8bf7a116b76f3b3bb50ecf50c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:31:58.836Z"
+      "persisted_at": "2026-11-27T15:45:45.338Z"
     },
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
@@ -239856,9 +239861,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3882d5091ddc424524ff4d48808ed083d6c155e889ba314bab69e9faced1ca0",
+      "content_hash": "73d72e9f55742074db34998869ecdda820f592b69b5ed9d331a036a146ceb666",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T07:13:40.818Z"
+      "persisted_at": "2026-11-27T15:45:46.562Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -243535,8 +243540,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "e874a148",
-      "content_hash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
+      "source_version": "8566ba53",
+      "content_hash": "ce9d64990d60815165bbfa8b9ccf0a1505bcb185d04488b76643a13ba0b6e25a",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -243569,6 +243574,11 @@
           "number": 10714,
           "title": "tolerate brief transaction observation gaps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10920,
+          "title": "apply nested overrides at arbitrary depth",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243576,7 +243586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T15:22:02.832Z",
+      "verified_at": "2026-11-27T15:45:25.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243618,10 +243628,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "repository": "cachix/devenv",
-      "source_version": "e874a148",
-      "content_hash": "d614a1b23b0319090cc42b184a0b91863523689d68f6f885e614833ffc853109",
+      "source_version": "8566ba53",
+      "content_hash": "6f8c892650f0e26d450d8a082c65d5aa4521367dc1c692a592f5049ce1e94117",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T15:22:03.819Z"
+      "persisted_at": "2026-11-27T15:45:26.260Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
@@ -243630,10 +243640,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "e874a148",
-      "content_hash": "cf89727b4c9e3e344421593293eb209f6e8853184fa98501cf039bc94e87c2ec",
+      "source_version": "8566ba53",
+      "content_hash": "bbcedb993cb8b80a6ef4fc993fcfdbdf6b76ccb22dc717751d83be50dd1ec7ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:22:04.095Z"
+      "persisted_at": "2026-11-27T15:45:26.464Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -243874,9 +243884,9 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "478f1ccffb8ad64685f8f260a43b3f4fabfc78eea4b15aaa1c2d18b5148b9b4f",
+      "content_hash": "084174932d7e43895f8dc1fd43ead7b980f2ae97a69d2e4981243113e4e0e122",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T15:22:17.708Z"
+      "persisted_at": "2026-11-27T15:45:44.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
@@ -243886,9 +243896,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0917b010a2d2a2e61bf70ecc8366c61243b3e0d612b99253eff5ac66a42dc01",
+      "content_hash": "9eeebff7742bd381f554eb691835ee33eb48f5399c462dcdd15694e7c5837e86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:22:17.994Z"
+      "persisted_at": "2026-11-27T15:45:44.409Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -323522,10 +323532,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ontos-ai-knowhere-technical-construction-intelligence-ontos-ai-knowhere-core-inv.md",
       "title": "Technical Construction Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "da75fa74",
-      "content_hash": "a9c1b57c453f2afbe36bbe68667e02fc935c1ce7cb09dbce656cc7cec88e4da7",
+      "source_version": "7036495c",
+      "content_hash": "40fa13539fa37737218b0823268e3a134aac73dd09bf92d60831845e05365ea4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:20:31.886Z"
+      "persisted_at": "2026-11-27T15:45:39.834Z"
     },
     "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -323535,9 +323545,9 @@
       "title": "Technical Construction Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "51e221f03800cbf05cacd2b648ae6f4a0039ce25fe709b58c19412e9d3ec1510",
+      "content_hash": "c4325310fe6d80a5ce8cb61ac418cfb76b1075b09b50140086165afe13c007d2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:20:39.345Z"
+      "persisted_at": "2026-11-27T15:45:45.140Z"
     },
     "rule-9889": {
       "learning_id": "rule-9889",
@@ -365523,6 +365533,70 @@
       "content_hash": "6ff615dc4e151a3472e960a23926b766f5bff812b976d2fe419baa17d8ebf9b3",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T15:36:52.151Z"
+    },
+    "rule-10920": {
+      "learning_id": "rule-10920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10920,
+      "title": "apply nested overrides at arbitrary depth",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "8566ba53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:45:25.554Z"
+    },
+    "candidate_directive-apply-nested-overrides-at-arbitrary-depth": {
+      "item_id": "candidate_directive-apply-nested-overrides-at-arbitrary-depth",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KQ3T-apply-nested-overrides-at-arbitrary-depth.md",
+      "title": "apply nested overrides at arbitrary depth",
+      "repository": "cachix/devenv",
+      "source_version": "8566ba53",
+      "content_hash": "0767e7ba8ff04860da55b31f1f591f6e7fbcee98536555be01c1489cd7b78f3f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:45:26.060Z"
+    },
+    "rule-10921": {
+      "learning_id": "rule-10921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10921,
+      "title": "Empirical Invariant Guard in test_lexical_index_resolution_contract.py",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "7036495c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:45:39.120Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-test_lexical_index_resolution_contract-py": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-test_lexical_index_resolution_contract-py",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L4O5-empirical-invariant-guard-in-test_lexical_index_resolution_contract-py.md",
+      "title": "Empirical Invariant Guard in test_lexical_index_resolution_contract.py",
+      "repository": "ontos-ai-knowhere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f3d359e7fafbacaa82c71962d371271b991207185f8cdc83180cbff8ced8222",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T15:45:44.936Z"
+    },
+    "candidate_directive-inputs-apply-nested-overrides-at-arbitrary-depth": {
+      "item_id": "candidate_directive-inputs-apply-nested-overrides-at-arbitrary-depth",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L3XI-inputs-apply-nested-overrides-at-arbitrary-depth.md",
+      "title": "inputs): apply nested overrides at arbitrary depth",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "726a70078a5b6dcb8f223b3509e3145d33999d7ac08632b3ac596e81820eef17",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:45:43.977Z"
     }
   },
   "ai-builder-brain": {

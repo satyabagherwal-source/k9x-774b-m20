@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QINV",
-    "timestamp": "2026-11-26T07:10:23.227Z",
-    "repository": "wzh4869/AppPorts",
-    "learningId": "learn-github-wzh4869-appports",
-    "contentHash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-QKF9",
-    "timestamp": "2026-11-26T07:10:25.509Z",
-    "repository": "actions/actions-runner-controller",
-    "learningId": "learn-github-actions-actions-runner-controller",
-    "contentHash": "20c421dcba8a163d6c887b4bc5ff1714f7a302ccba895fd962ed0c1fc4e4f1c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QMFV",
     "timestamp": "2026-11-26T07:10:28.123Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7460,36 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "5950376ea3e4435a9528ff1887d1cf568b5402bc4b620a93d4127262c812ece4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-KPWU",
+    "timestamp": "2026-11-27T15:45:25.806Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "ce9d64990d60815165bbfa8b9ccf0a1505bcb185d04488b76643a13ba0b6e25a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-L0DE",
+    "timestamp": "2026-11-27T15:45:39.362Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "f55b7801f96e4ed221fc846e5379a50fb5dd00233de3364751ffedad6b09601e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

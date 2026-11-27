@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:36:46.799Z",
-  "total_cycles_completed": 13106,
-  "total_learnings_persisted": 13106,
-  "total_rules_promoted": 11832,
+  "last_updated": "2026-11-27T15:45:39.385Z",
+  "total_cycles_completed": 13108,
+  "total_learnings_persisted": 13108,
+  "total_rules_promoted": 11834,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:40:54.920Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T23:41:01.129Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:41:03.195Z",
       "repository": "temporalio/temporal",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T15:36:46.799Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:45:25.831Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:45:39.385Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

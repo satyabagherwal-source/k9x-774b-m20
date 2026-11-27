@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T15:36:51.840Z",
+  "updated_at": "2026-11-27T15:45:44.661Z",
   "stats": {
-    "total_discovered": 10462,
-    "approved_pending_harvest": 9931,
+    "total_discovered": 10468,
+    "approved_pending_harvest": 9936,
     "harvested_count": 0,
-    "rejected_count": 531,
+    "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9936,
+      "COMMUNITY_AND_EXPERT": 9942,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226474,6 +226474,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
         "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-160871EF0491": {
+      "id": "SRC-160871EF0491",
+      "url": "https://github.com/cachix/devenv/issues/3378",
+      "title": "https://github.com/cachix/devenv/issues/3378",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:45:43.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-4BE3482FD50E": {
+      "id": "SRC-4BE3482FD50E",
+      "url": "https://github.com/cachix/nix-bindings-rust.git?branch=2.35",
+      "title": "https://github.com/cachix/nix-bindings-rust.git?branch=2.35",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:45:43.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-4594FD94EA18": {
+      "id": "SRC-4594FD94EA18",
+      "url": "https://github.com/cachix/nix-bindings-rust.git",
+      "title": "https://github.com/cachix/nix-bindings-rust.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:45:43.560Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-EED0C57C5332": {
+      "id": "SRC-EED0C57C5332",
+      "url": "https://github.com/axllent/mailpit/commit/48c73ae97b5a3c36d2e9c7b6c99ba1ada0b15d9c",
+      "title": "https://github.com/axllent/mailpit/commit/48c73ae97b5a3c36d2e9c7b6c99ba1ada0b15d9c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:45:43.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-A2C395E62066": {
+      "id": "SRC-A2C395E62066",
+      "url": "https://github.com/axllent/mailpit/commit/e0fc20012a33a862393e941a740e010a5183722a",
+      "title": "https://github.com/axllent/mailpit/commit/e0fc20012a33a862393e941a740e010a5183722a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:45:43.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-368ADBE33DB5": {
+      "id": "SRC-368ADBE33DB5",
+      "url": "http://test/",
+      "title": "http://test/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T15:45:44.661Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
       }
     }
   }

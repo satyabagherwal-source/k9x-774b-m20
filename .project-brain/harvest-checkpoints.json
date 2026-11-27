@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T15:36:46.803Z",
+  "last_updated": "2026-11-27T15:45:39.389Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
-      "verified_at": "2026-11-26T20:31:53.770Z",
+      "content_hash": "f55b7801f96e4ed221fc846e5379a50fb5dd00233de3364751ffedad6b09601e",
+      "verified_at": "2026-11-27T15:45:39.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T20:31:53.770Z"
+      "last_updated": "2026-11-27T15:45:39.388Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
-      "verified_at": "2026-11-26T15:22:03.204Z",
+      "content_hash": "ce9d64990d60815165bbfa8b9ccf0a1505bcb185d04488b76643a13ba0b6e25a",
+      "verified_at": "2026-11-27T15:45:25.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T15:22:03.204Z"
+      "last_updated": "2026-11-27T15:45:25.834Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",

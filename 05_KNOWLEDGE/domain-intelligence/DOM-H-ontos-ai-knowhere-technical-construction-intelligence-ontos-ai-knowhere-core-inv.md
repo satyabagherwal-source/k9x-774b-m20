@@ -4,24 +4,24 @@
 {
   "source_repository": "Ontos-AI/knowhere",
   "source_url": "https://github.com/Ontos-AI/knowhere",
-  "source_version": "da75fa74",
+  "source_version": "7036495c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T04:20:31.704Z",
+  "timestamp": "2026-11-27T15:45:39.627Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ontos-ai-knowhere",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `da75fa74`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T04:20:31.704Z`  
+> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `7036495c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T15:45:39.627Z`  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Ontos-AI/knowhere:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:20:30.317Z  
+> **Harvest Timestamp**: 2026-11-27T15:45:38.152Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4108 stars
+- **Stars / Engagement**: 4142 stars
 
 ---
 
@@ -1016,1139 +1016,1000 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da75fa74` (2026-11-23)
-**Commit Message**: Merge pull request #582 from Ontos-AI/fix/wangbinqi/reject-nul-section-path
+### Incident Patch 1: `53aeaf0b` (2026-11-27)
+**Commit Message**: Merge pull request #589 from Ontos-AI/fix/wangbinqi/move-indexing-input-cleanup-to-ops
 
-Reject NUL characters in corpus scope section paths
+Move S3 indexing input cleanup to an operator script
 
-**File**: `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py` (modified, +47/-0)
+**File**: `apps/api/tests/contract/test_lexical_index_resolution_contract.py` (modified, +1/-2)
 ```diff
-@@ -255,6 +255,53 @@ async def test_invoke_read_records_the_read_document_and_chunk(
-     assert counts == {("document", None): 1, ("chunk", chunk_id): 1}
+@@ -117,8 +117,7 @@ def resolutionRuntime(monkeypatch: pytest.MonkeyPatch, postgresql_proc: PostgreS
+     clear_application_modules()
+     asyncio.run(prepare_contract_storage())
+     from shared.core.celery_app import celery_app
+-    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt",
+-            "collectOrphanInputs", "resolveIndex"):
++    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt", "resolveIndex"):
+         celery_app.tasks.pop(f"shared.services.retrieval.lexical.maintenance.{taskName}", None)
+     from shared.services.retrieval.lexical import resolution
+     from shared.services.retrieval.lexical.maintenance_signals import LexicalMaintenanceSignals
+```
+
+**File**: `apps/api/tests/contract/test_lexical_maintenance_contract.py` (modified, +101/-5)
+```diff
+@@ -4,6 +4,10 @@
+ 
+ import asyncio
+ from collections.abc import Iterator
++import json
++from pathlib import Path
++import runpy
++import sys
+ from uuid import uuid4
+ from typing import TypeVar
+ from types import SimpleNamespace
+@@ -35,7 +39,7 @@ def publishedInput(monkeypatch: pytest.MonkeyPatch, postgresql_proc: PostgreSQLP
+     clear_application_modules()
+     asyncio.run(prepare_contract_storage())
+     from shared.core.celery_app import celery_app
+-    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt", "collectOrphanInputs"):
++    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt"):
+         celery_app.tasks.pop(f"shared.services.retrieval.lexical.maintenance.{taskName}", None)
+     from shared.models.database.user import User
+     from shared.models.database.job import Job
+@@ -297,26 +301,39 @@ def test_orphan_inventory_keeps_winner_and_live_preparation_then_reclaims(monkey
+     bucket: str = LexicalInputStorage().bucket
+     adapter.upload_fileobj(BytesIO(b"orphan"), orphan, bucket=bucket)
+     collector = LexicalInputCollector(sessionFactory=sessionmaker(engine, expire_on_commit=False))
+-    assert collector.discover() == 2
++    page = collector.discover()
++    assert page is not None and len(page.objects) == 2
+     assert not collector.collectOrphan(winner)
+     assert not collector.collectOrphan(orphan)
++    assert collector.findCandidates() == ((), ())
+     identity: str = LexicalInputRetention.getIdentity(bucket=bucket, key=orphan)
+     with Session(engine) as db:
+         requireRow(db, LexicalInputInventory, identity).firstSeenAt -= timedelta(days=1)
++        requireRow(db, LexicalInputInventory, identity).nextScanAt -= timedelta(days=1)
+         db.commit()
+     assert not collector.collectOrphan(orphan)  # Even expired but unsettled work retains it.
++    assert collector.findCandidates() == ((), ())
+     with Session(engine) as db:
+         requireRow(db, IndexingAttempt, attemptId).state = "succeeded"
+         db.commit()
++    assert collector.findCandidates() == ((), (orphan,))
++    with Session(engine) as db:
++        requireRow(db, JobResult, revisionId).indexing_input_key = orphan
++        db.commit()
++    assert not collector.collectOrphan(orphan)
++    assert adapter.exists(orphan, bucket=bucket)
++    with Session(engine) as db:
++        requireRow(db, JobResult, revisionId).indexing_input_key = winner
++        db.commit()
+     assert collector.collectOrphan(orphan)
+     assert not adapter.exists(orphan, bucket=bucket)
+     assert adapter.exists(winner, bucket=bucket)
  
  
-+async def test_invoke_rejects_nul_in_grep_scope_section_path(
+ @pytest.mark.parametrize("controlState", [
+-    None, ("postgresql", "serving"), ("postgresql", "gated"), ("opensearch", "gated"),
++    None, ("postgresql", "serving"), ("postgresql", "gated"), ("opensearch", "gated"), ("opensearch", "serving"),
+ ])
+-def test_worker_maintenance_waits_for_persisted_opensearch_serving(
++def test_worker_maintenance_does_not_collect_indexing_inputs(
+     monkeypatch: pytest.MonkeyPatch,
+     publishedInput: tuple[Engine, str, str, str],
+     controlState: tuple[str, str] | None,
+@@ -345,6 +362,7 @@ def test_worker_maintenance_waits_for_persisted_opensearch_serving(
+         maintenance, "get_sync_session_factory", lambda: sessionmaker(engine, expire_on_commit=False),
+     )
+     monkeypatch.setattr(LexicalCleanup, "closeEmptyNamespaces", lambda self: 0)
++    monkeypatch.setattr(maintenance, "turnOverIndexes", lambda: 0)
+ 
+     assert maintenance.sweepLexical() == 0
+     with Session(engine) as db:
+@@ -357,6 +375,83 @@ def test_worker_maintenance_waits_for_persisted_opensearch_serving(
+             assert db.get(LexicalBackendControl, 1) is None
+ 
+ 
++def test_indexing_input_script_dry_run_and_apply_recheck_current_revision(
++    monkeypatch: pytest.MonkeyPatch,
++    capsys: pytest.CaptureFixture[str],
++    publishedInput: tuple[Engine, str, str, str],
++) -> None:
++    from shared.core.config.storage import get_cached_storage_adapter
++    from shared.models.database.document import Document
++    from shared.models.database.job_result import JobResult
++    from shared.models.database.lexicalbuild import LexicalBuild
++    from shared.services.retrieval.lexical import input_collector, maintenance
++    from shared.services.retrieval.lexical.additivecleanup import AdditiveCleanup
++    from shared.services.retrieval.lexical.cleanup import LexicalCleanup
++    from shared.services.retrieval.lexical.coordination import LexicalCoordination
++
++    engine, buildId, _, revisionId = publishedInput
++    sessions: sessionmaker[Session] = sessionmaker(engine, expire_on_commit=False)
++    with sessions.begin() as db:
++        build: LexicalBuild = requireRow(db, LexicalBuild, buildId)
++        build.legacyCopyState = "completed"
++        documentId: str = build.documentId
++        document: Document = requireRow(db, Document, documentId)
++        document.status = "archived"
++        document.index_cleanup_after = Lexical
+```
+
+**File**: `deploy/opensearch/README.md` (modified, +27/-0)
+```diff
+@@ -309,6 +309,33 @@ rechecks their actual UUIDs before each native snapshot delete, and uses no
+ object TTL. File-only `manage.py snapshot-verify` is catalog review; a
+ caller-provided digest cannot satisfy the restored payload proof or retention floor.
+ 
++## On-demand S3 indexing input cleanup
++
++Run the operator script from the repository root on a DevOps host or one-off job
++with access to the target environment's PostgreSQL database. Use the target
++environment's database and object storage settings. Discovery and apply also
++need access to the results bucket configured for indexing inputs.
++
++```bash
++uv run --package knowhere-shared python scripts/collect-indexing-inputs.py --dry-run
++uv run --package knowhere-shared python scripts/collect-indexing-inputs.py --apply
++```
++
++Dry-run is the default. It counts eligible assigned inputs and inventoried
++orphans in a read-only database transaction. Apply inspects fresh candidates
++and rechecks references and active consumers under locks before deleting each
++object. The JSON report includes the number collected and the number left
++untouched. Apply exits with status 1 when any candidate was left untouched,
++including when a new reference or consumer appeared after inspection.
++
++To inventory objects that have yet to be registered, run the discovery mode.
++It lists the indexing input prefix in S3 and updates the database inventory.
++Newly observed orphans become eligible after the existing two-hour grace period.
++
++```bash
++uv run --package knowhere-shared python scripts/collect-indexing-inputs.py --discover
++```
++
+ ## Manual native recovery
+ 
+ An `uncertain` registry row on its own does not need this section. Resolution
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/lexical/input_collector.py` (modified, +95/-100)
+```diff
+@@ -4,7 +4,7 @@
+ import re
+ 
+ from loguru import logger
+-from sqlalchemy import func, or_, select
++from sqlalchemy import Select, or_, select, text
+ from sqlalchemy.dialects.postgresql import insert
+ from sqlalchemy.orm import Session, noload, sessionmaker
+ 
+@@ -20,7 +20,6 @@
+ from shared.models.database.lexicallease import LexicalLease
+ from shared.services.retrieval.corpus_storage import CorpusStorage
+ from shared.services.retrieval.demo_authorization import authorize_demo_transaction
+-from shared.services.retrieval.lexical.cleanupbatch import CleanupBatch
+ from shared.services.retrieval.lexical.coordination import LexicalCoordination
+ from shared.services.retrieval.lexical.error import LexicalIndexError
+ from shared.services.retrieval.lexical.input_retention import LexicalInputRetention
+@@ -29,80 +28,73 @@
+ 
+ _INPUT_PATTERN: re.Pattern[str] = re.compile(r"indexing-input/v1/([^/]{1,36})/([^/]{1,36})/[a-f0-9]{64}(?:-[a-f0-9]{32})?\.json\.zlib")
+ _SCAN_INTERVAL: timedelta = timedelta(minutes=5)
+-# A current published input stays needed until its document is archived, and
+-# archival dispatches its own collection. The safety sweep only rechecks it daily.
++# An input can become current between the operator's inspection and collection.
+ _CURRENT_INPUT_RECHECK_INTERVAL: timedelta = timedelta(days=1)
+ _ORPHAN_GRACE: timedelta = timedelta(seconds=7200)
+-MAXIMUM_SCAN: int = 100
+-_MAXIMUM_BATCH: int = 20
+-_MAXIMUM_BYTES: int = 64 * 1024 * 1024
++_MAXIMUM_SCAN: int = 100
+ _CURSOR_KEY: str = "__indexing_input_cursor__"
++_Revision = tuple[JobResult, Job, Document | DemoDocument | None]
+ 
+ 
+ class LexicalInputCollector:
+     def __init__(self, *, sessionFactory: sessionmaker[Session] | None = None) -> None:
+         self.sessions: sessionmaker[Session] = sessionFactory or get_sync_session_factory()
+         self.bucket: str = LexicalInputStorage().bucket
+ 
+-    def run(self) -> int:
+-        """List new bucket objects, then process one fair batch from each queue."""
+-        try:
+-            self.discover()
+-        except Exception as error:
+-            logger.warning("Indexing input inventory deferred: error_type={}", type(error).__name__)
+-        completed: int = self.runBatch().succeeded
+-        self._logBacklog()
+-        return completed
+-
+-    def runBatch(self) -> CleanupBatch:
+-        """Process one fair batch from each queue without listing the bucket; no age cutoff on eligibility."""
++    def findCandidates(self) -> tuple[tuple[str, ...], tuple[str, ...]]:
++        """Inspect due revisions and inventoried orphans in one read-only snapshot."""
++        assigned: list[str] = []
++        orphans: list[str] = []
+         with self.sessions.begin() as db:
++            db.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
+             now: datetime = LexicalCoordination.getDatabaseTime(db)
+-            results: list[JobResult] = list(db.scalars(select(JobResult).options(noload("*")).where(
+-                JobResult.indexing_input_key.is_not(None), JobResult.indexing_input_gc_state != "deleted",
+-                or_(JobResult.indexing_input_next_scan_at.is_(None), JobResult.indexing_input_next_scan_at <= now),
+-            ).order_by(JobResult.indexing_input_next_scan_at.asc().nullsfirst(), JobResult.id)
+-                .limit(_MAXIMUM_BATCH).with_for_update(of=JobResult, skip_locked=True)))
+-            revisions: tuple[str, ...] = tuple(result.id for result in results)
+-            for result in results:
+-                result.indexing_input_next_scan_at = now + _SCAN_INTERVAL
+-            objects: list[LexicalInputInventory] = list(db.scalars(select(LexicalInputInventory).where(
+-                LexicalInputInventory.bucket == self.bucket,
+-                LexicalInputInventory.state.in_(("observed", "deleting")),
+-                LexicalInputInventory.nextScanAt <= now,
+-            ).order_by(LexicalInputInventory.nextScanAt, LexicalInputInventory.id)
+-                .limit(_MAXIMUM_BATCH).with_for_update(skip_locked=True)))
+-            keys: tuple[tuple[str, int], ...] = tuple((item.objectKey, item.sizeBytes or 0) for item in objects)
+-            for item in objects:
+-                item.nextScanAt = now + _SCAN_INTERVAL
+-        completed: int = 0
+-        reclaimedBytes: int = 0
+-        for revision in revisions:
+-            with self.sessions.begin() as db:
+-                source = db.execute(select(JobResult.indexing_input_key, JobResult.indexing_input_bytes)
+-                    .where(JobResult.id == revision)).one_or_none()
+-            if source is None or source[0] is None:
+-                continue
+-            try:
+-                size: int = source[1] if source[1] is not None else (
+-                    get_cached_storage_adapter().get_object_size(source[0], bucket=self.bucket) or 0)
+-            except Exception as error:
+-                self._recordFailure(source[0], revision, error)
+-                continue
+-            if reclaimedBytes and reclaimedBy
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/lexical/maintenance.py` (modified, +1/-23)
+```diff
+@@ -34,7 +34,6 @@
+ from shared.services.retrieval.lexical.cleanup import LexicalCleanup
+ from shared.services.retrieval.lexical.cleanupbatch import CleanupBatch
+ from shared.services.retrieval.lexical.copy_dispatch import LegacyCopyDispatch
+-from shared.services.retrieval.lexical.input_collector import MAXIMUM_SCAN, LexicalInputCollector
+ from shared.services.retrieval.lexical.coordination import LexicalCoordination
+ from shared.services.retrieval.lexical.maintenance_signals import (
+     CLEAN_ARCHIVED_DOCUMENT_TASK, CLEAN_BUILD_TASK, CLEAN_FAILED_ATTEMPT_TASK, RESOLVE_INDEX_TASK,
+@@ -46,7 +45,6 @@
+ from shared.services.retrieval.lexical.turnover import turnOverIndexes
+ 
+ MAINTAIN_TASK: Final[str] = "shared.services.retrieval.lexical.maintenance.maintainLexical"
+-COLLECT_ORPHAN_INPUTS_TASK: Final[str] = "shared.services.retrieval.lexical.maintenance.collectOrphanInputs"
+ # Matches the hourly beat_schedule slot in celery_app.py.
+ _SWEEP_PERIOD_SECONDS: Final[int] = 3600
+ # The sweep drains due work in bounded passes and stops well before the next slot.
+@@ -87,7 +85,6 @@ def sweepLexical() -> int:
+         completed += _runSafely("Index resolution",
+             lambda: LexicalIndexResolution(sessionFactory=sessions).resolveDue(deadline))
+         completed += _drain("Additive index", lambda: AdditiveCleanup(sessions).runBatch(), deadline)
+-        completed += _drain("Indexing input", lambda: LexicalInputCollector(sessionFactory=sessions).runBatch(), deadline)
+         completed += _runSafely("Empty namespace", lambda: LexicalCleanup(sessionFactory=sessions).closeEmptyNamespaces())
+         completed += _runSafely("Index turnover", turnOverIndexes)
+     completed += _runSafely("Manifest", lambda: collectPublishedManifests(sessions))
+@@ -122,7 +119,7 @@ def cleanBuild(buildId: str, hop: int = 0) -> _Outcome:
+ 
+ @celery_app.task(name=CLEAN_ARCHIVED_DOCUMENT_TASK)
+ def cleanArchivedDocument(documentId: str, hop: int = 0) -> _Outcome:
+-    """Remove one archived document from its index, then release its input and empty namespace."""
++    """Remove one archived document from its index and close an empty namespace."""
+     sessions: sessionmaker[Session] = get_sync_session_factory()
+     with sessions.begin() as db:
+         document: Document | None = db.get(Document, documentId)
+@@ -132,12 +129,8 @@ def cleanArchivedDocument(documentId: str, hop: int = 0) -> _Outcome:
+         if document.index_cleanup_after > now:
+             return _reschedule(CLEAN_ARCHIVED_DOCUMENT_TASK, documentId, document.index_cleanup_after - now, hop)
+         namespaceIndexId: str = LexicalScope(ownerId=document.user_id, namespace=document.namespace).fingerprint
+-        revisionId: str | None = document.current_job_result_id
+     if not AdditiveCleanup(sessions).collectDocument(documentId):
+         return _reschedule(CLEAN_ARCHIVED_DOCUMENT_TASK, documentId, _CLAIM_LEASE, hop)
+-    if revisionId is not None:
+-        _runSafely("Indexing input", lambda: int(
+-            LexicalInputCollector(sessionFactory=sessions).collectAssigned(revisionId)))
+     _runSafely("Empty namespace", lambda: int(
+         LexicalCleanup(sessionFactory=sessions).closeEmptyNamespace(namespaceIndexId)))
+     return "completed"
+@@ -167,21 +160,6 @@ def resolveIndex(registryId: str, hop: int = 0) -> _Outcome:
+     return LexicalIndexResolution().resolveDispatched(registryId, hop)
+ 
+ 
+-@celery_app.task(name=COLLECT_ORPHAN_INPUTS_TASK)
+-def collectOrphanInputs() -> int:
+-    """Operator-run only: list the input bucket and delete unreferenced objects.
+-
+-    Not scheduled, because listing S3 is the one maintenance step with no committed
+-    row to trigger it. Run it by hand when orphan inputs need reclaiming.
+-    """
+-    deadline: float = time.monotonic() + _SWEEP_BUDGET_SECONDS
+-    collector: LexicalInputCollector = LexicalInputCollector()
+-    # A short page is the end of the bucket; the cursor then restarts from the beginning.
+-    while time.monotonic() < deadline and collector.discover(isImmediate=True) >= MAXIMUM_SCAN:
+-        pass
+-    return _drain("Indexing input", collector.runBatch, deadline)
+-
+-
+ def _claimPendingBuilds(sessions: sessionmaker[Session],
+                         isNativeServing: bool) -> tuple[tuple[str, str, str], ...] | None:
+     """Claim one batch of due builds; None when the backend is not serving."""
+```
+
+**File**: `scripts/collect-indexing-inputs.py` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++"""Inspect or collect retained indexing inputs as an on-demand operation."""
++
++import argparse
++import json
++import sys
++
++
++def run() -> int:
++    parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
++    modes: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
++    modes.add_argument("--dry-run", action="store_true", help="Count eligible inputs (default)")
++    modes.add_argument("--apply", action="store_true", help="Recheck and delete eligible inputs")
++    modes.add_argument("--discover", action="store_true", help="Refresh the S3 input inventory")
++    options: argparse.Namespace = parser.parse_args()
++
++    try:
++        from shared.services.retrieval.lexical.input_collector import LexicalInputCollector
++        from shared.services.storage.object_inventory_page import ObjectInventoryPage
++
++        collector: LexicalInputCollector = LexicalInputCollector()
++        if options.discover:
++            listedObjects: int = 0
++            while True:
++                page: ObjectInventoryPage | None = collector.discover(isImmediate=True)
++                if page is None:
++                    raise RuntimeError("Input inventory cursor moved during discovery")
++                listedObjects += len(page.objects)
++                if page.nextCursor is None:
++                    break
++            print(json.dumps({"mode": "discover", "listed_objects": listedObjects}))
++            return 0
++
++        assigned: tuple[str, ...]
++        orphans: tuple[str, ...]
++        assigned, orphans = collector.findCandidates()
++        candidates: int = len(assigned) + len(orphans)
++        report: dict[str, int | str] = {
++            "mode": "apply" if options.apply else "dry-run",
++            "candidates": candidates,
++            "assigned_candidates": len(assigned),
++            "orphan_candidates": len(orphans),
++        }
++        if not options.apply:
++            print(json.dumps(report))
++            return 0
++
++        collected: int = sum(collector.collectAssigned(revision) for revision in assigned)
++        collected += sum(collector.collectOrphan(key) for key in orphans)
++        report.update(collected=collected, not_collected=candidates - collected)
++        print(json.dumps(report))
++        return int(collected != candidates)
++    except Exception as error:
++        print(f"Indexing input maintenance failed: {type(error).__name__}", file=sys.stderr)
++        return 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(run())
+```
+
+---
+
+### Incident Patch 2: `dbbe2f35` (2026-11-27)
+**Commit Message**: Merge branch 'main' into fix/wangbinqi/move-indexing-input-cleanup-to-ops
+
+**File**: `AGENTS.md` (modified, +6/-0)
+```diff
+@@ -604,6 +604,12 @@ after successful retrieval.
+ Tracks per-chunk and per-document retrieval usage. `hit_count` and `last_hit_at`
+ feed into `compute_importance_score()` for ranking boost.
+ 
++#### `retrieval_active_days`
++
++The UTC days each caller searched each namespace (explicit or automatic
++retrieval, or a corpus tool call). Importance ages by these days, so documents
++in a namespace nobody searches do not grow older.
++
+ #### `retrieval_runs` / `retrieval_steps`
+ 
+ Append-only agentic retrieval analytics. One `retrieval_runs` row per query,
+```
+
+**File**: `apps/api/alembic/versions/e71664cb1cee_add_retrieval_active_days.py` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++"""Record the UTC days each caller searched each namespace.
++
++Document importance ages by these days instead of calendar days, so documents
++in a namespace nobody uses do not grow older. The backfill takes the days of
++recorded retrieval runs. Days before those records, and days with only cache
++hits or tool calls, are not restored; documents uploaded before then rank as
++slightly fresher.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Sequence
++
++import sqlalchemy as sa
++from alembic import op
++
++revision: str = "e71664cb1cee"
++down_revision: str | None = "809ee432a5f6"
++branch_labels: Sequence[str] | None = None
++depends_on: Sequence[str] | None = None
++
++
++def upgrade() -> None:
++    op.create_table(
++        "retrieval_active_days",
++        sa.Column("user_id", sa.Text(), primary_key=True),
++        sa.Column("namespace", sa.String(255), primary_key=True),
++        sa.Column("day", sa.Date(), primary_key=True),
++    )
++    # Run times are stored as naive UTC, so their date is the UTC day.
++    op.execute(
++        "INSERT INTO retrieval_active_days (user_id, namespace, day) "
++        "SELECT DISTINCT user_id, namespace, created_at::date FROM retrieval_runs "
++        "ON CONFLICT DO NOTHING"
++    )
++
++
++def downgrade() -> None:
++    op.drop_table("retrieval_active_days")
+```
+
+**File**: `apps/api/app/api/v1/routes/retrieval.py` (modified, +4/-1)
+```diff
+@@ -105,7 +105,10 @@ class RetrievalQueryRequest(BaseModel):
+             "Why the caller retrieved. explicit (default): a person or agent "
+             "asked, and the hits count toward document importance. automatic: "
+             "context the caller fetched on its own, such as per-turn recall; "
+-            "hits are not recorded. Does not affect caching or result content."
++            "hits are not recorded. Both make today an active day, by which "
++            "the namespace's documents age. background: work the caller runs "
++            "without a person or agent turn; neither is recorded. Does not "
++            "affect caching or result content."
+         ),
+     )
+ 
+```
+
+**File**: `apps/api/app/api/v2/routes/retrieval.py` (modified, +6/-1)
+```diff
+@@ -20,7 +20,10 @@
+ from shared.models.schemas.llm_config import LLMConfig
+ from shared.models.schemas.retrieval_namespace import normalize_retrieval_namespace
+ from shared.services.retrieval.agent_tools import REGISTRY, ToolContext
+-from shared.services.retrieval.stats.recorder import schedule_document_usage_update
++from shared.services.retrieval.stats.recorder import (
++    schedule_active_day_update,
++    schedule_document_usage_update,
++)
+ from shared.services.retrieval.stats.service import record_document_usage
+ 
+ router = APIRouter(tags=["Retrieval"])
+@@ -118,6 +121,8 @@ async def invoke_retrieval_tool(
+     namespace = normalize_retrieval_namespace(
+         request.headers.get(KNOWHERE_NAMESPACE_HEADER)
+     )
++    # A corpus tool call is an Agent working in the namespace, so the day is active.
++    schedule_active_day_update(user_id=current_user.user_id, namespace=namespace)
+     result = await REGISTRY.dispatch(
+         payload.tool,
+         ToolContext(
+```
+
+**File**: `apps/api/tests/contract/test_retrieval_active_days_contract.py` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++"""Ranking importance ages a namespace's documents by its active days only."""
++
++from __future__ import annotations
++
++from collections.abc import Callable
++from contextlib import AbstractAsyncContextManager
++from datetime import date, datetime, timedelta, timezone
++from uuid import uuid4
++
++import pytest
++from httpx import AsyncClient
++
++from shared.services.retrieval.search.ranking import load_importance_scores
++from shared.services.retrieval.stats.active_days import record_active_day
++from tests.contract.test_retrieval_classic_map_unit_contract import _USER_ID, _publish_document
++from tests.support.contract_database import ContractDatabase
++from tests.support.retrieval_snapshot_support import contract_db_session
++
++_TODAY: date = datetime.now(timezone.utc).date()
++
++
++async def _publish_old_document(namespace: str, chunk_id: str) -> str:
++    published = await _publish_document(
++        namespace=namespace,
++        source_file_name="aging.pdf",
++        chunks=[
++            {
++                "chunk_id": chunk_id,
++                "type": "text",
++                "content": "aging evidence",
++                "path": "aging.pdf/Root/body",
++                "order": 1,
++            }
++        ],
++    )
++    document_id = published["document_id"]
++    await ContractDatabase.execute(
++        "UPDATE documents SET created_at = NOW() - interval '100 days' "
++        "WHERE document_id = :document_id",
++        {"document_id": document_id},
++    )
++    return document_id
++
++
++async def _record_days(*, user_id: str, namespace: str, days: list[date]) -> None:
++    async with contract_db_session() as db:
++        for day in days:
++            await record_active_day(db, user_id=user_id, namespace=namespace, day=day)
++        await db.commit()
++
++
++async def _importance(namespace: str, document_id: str, chunk_id: str) -> dict[str, float]:
++    async with contract_db_session() as db:
++        return await load_importance_scores(
++            db,
++            user_id=_USER_ID,
++            namespace=namespace,
++            rows=[{"document_id": document_id, "chunk_id": chunk_id}],
++        )
++
++
++async def test_documents_age_only_by_the_caller_s_active_days_in_the_namespace(
 +    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
 +) -> None:
-+    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
++    namespace = f"aging-{uuid4().hex[:8]}"
++    chunk_id = f"{namespace}-body"
++    async with developer_api_client_factory():
++        document_id = await _publish_old_document(namespace, chunk_id)
 +
-+    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
-+    async with developer_api_client_factory() as api_client:
-+        published: dict[str, str] = await _publish_document(
-+            namespace=namespace,
-+            source_file_name="contract.pdf",
-+            chunks=[
-+                {
-+                    "chunk_id": "scope-contract-body",
-+                    "type": "text",
-+                    "content": "Quarterly revenue",
-+                    "path": "contract.pdf/Root/Summary",
-+                    "order": 1,
-+                    "metadata": {},
-+                }
-+            ],
-+        )
-+        response: Response = await api_client.post(
-+            "/api/v2/retrieval/tools/invoke",
-+            headers={"X-Knowhere-Namespace": namespace},
-+            json={
-+                "tool": "corpus.grep",
-+                "arguments": {
-+                    "pattern": "revenue",
-+                    "scope": [
-+                        {
-+                            "document_id": published["document_id"],
-+                            "section_path": "Quarterly\x00Summary",
-+                        }
-+                    ],
-+                },
++        # Nobody searched since the upload, so only today's search adds age.
++        idle = await _importance(namespace, document_id, chunk_id)
++        assert idle == {f"{document_id}:": pytest.approx(0.3 * 0.5 ** (1 / 30), abs=1e-3)}
++
++        past_days = [_TODAY - timedelta(days=offset) for offset in range(1, 30)]
++        await _record_days(user_id=_USER_ID, namespace=namespace, days=past_days)
++        await _record_days(user_id=_USER_ID, namespace=namespace, days=past_days[:1])
++        await _record_days(user_id="someone-else", namespace=namespace, days=[_TODAY - timedelta(days=40)])
++        await _record_days(user_id=_USER_ID, namespace=f"{namespace}-other", days=[_TODAY - timedelta(days=50)])
++
++        month = await _importance(namespace, document_id, chunk_id)
++        assert month == {f"{document_id}:": pytest.approx(0.15, abs=1e-3)}
++
++        await ContractDatabase.execute(
++            "INSERT INTO retrieval_hit_stats (id, user_id, namespace, hit_kind, document_id, "
++            "chunk_id, hit_count, last_hit_at, created_at, updated_at) VALUES "
++            "(:id, :user_id, :namespace, 'chunk', :document_id, :chunk_id, 1, "
++            "NOW() - interval '200 days', NOW(), NOW())",
++            {
++                "id": f"rhs_{uuid4().hex[:12]}",
++                "user_id": _USER_ID,
++                "namespace": namespace,
++                "document_id": document_id,
++                "chunk_id": chunk_id,
 +            },
 +        )
-+
-+    assert response.status_code == 200
-+    assert response.json() == {
-+        "text": "",
-+        "payload": {},
-+        "refs": [],
-+        "error": "grep: scope item section_path must not contain NUL characters",
-+    }
-+
-+
- async def test_invoke_recall_returns_table_connected_to_additive_body(
-     developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-     monkeypatch: pytest.MonkeyPatch,
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/agent_tools/scope.py` (modified, +8/-6)
-```diff
-@@ -97,15 +97,19 @@ async def resolve_scope(
-     if not items:
-         return [], "scope requires at least one {document_id, section_path?} item"
- 
--    document_ids: list[str] = []
-+    scope_items: list[tuple[str, str]] = []
-     for item in items:
-         if not isinstance(item, dict):
-             return [], f"scope item must be an object with document_id, got {item!r}"
--        document_id = str(item.get("document_id") or "").strip()
-+        document_id: str = str(item.get("document_id") or "").strip()
-         if not document_id:
-             return [], "scope item requires document_id"
--        document_ids.append(document_id)
-+        raw_path: str = str(item.get("section_path") or "").strip()
-+        if "\x00" in raw_path:
-+            return [], "scope item section_path must not contain NUL characters"
-+        scope_items.append((document_id, raw_path))
- 
-+    document_ids: list[str] = [document_id for document_id, _ in scope_items]
-     documents = (
-         (
-             await db.execute(
-@@ -125,12 +129,10 @@ async def resolve_scope(
-     }
- 
-     targets: list[ScopeTarget] = []
--    for item in items:
--        document_id = str(item.get("document_id") or "").strip()
-+    for document_id, raw_path in scope_items:
-         job_result_id = revision_by_doc.get(document_id)
-         if not job_result_id:
-             return [], f"unknown document_id: {document_id}"
--        raw_path = str(item.get("section_path") or "").strip()
-         if not raw_path:
-             targets.append(ScopeTarget(document_id, job_result_id, None))
-             continue
-```
-
----
-
-### Incident Patch 2: `32df7a7f` (2026-11-23)
-**Commit Message**: Merge pull request #580 from Ontos-AI/fix/wangbinqi/production-logfire-errors
-
-Fix production errors in billing, API keys, and retrieval
-
-**File**: `apps/api/app/api/v1/routes/api_key.py` (modified, +6/-7)
-```diff
-@@ -168,20 +168,19 @@ async def toggle_api_key(
- ):
-     """Enable or disable an API key."""
-     try:
--        success = await _api_key_management_service.toggle_api_key(
-+        success: bool = await _api_key_management_service.toggle_api_key(
-             db,
-             user_id=current_user.user_id,
-             api_key_id=api_key_id,
-         )
--        if success:
--            return {"message": "API key status updated"}
--        else:
--            raise APIKeyOperationException(
--                internal_message="Failed to toggle API Key status"
--            )
-     except APIKeyOperationException:
-         raise
-     except Exception as e:
-         raise APIKeyOperationException(
-             internal_message=f"Failed to toggle API Key: {str(e)}"
-         )
-+
-+    if not success:
-+        raise NotFoundException(resource="APIKey", resource_id=api_key_id)
-+
-+    return {"message": "API key status updated"}
-```
-
-**File**: `apps/api/app/core/exception_handlers.py` (modified, +21/-2)
-```diff
-@@ -62,9 +62,15 @@
-     UnknownException,
-     ValidationException,
- )
--from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
-+from shared.core.exceptions.domain_exceptions import (
-+    LLMServiceException,
-+    RateLimitException,
-+    UnavailableException,
-+    Violation,
-+)
- from shared.core.logging import LogEvent
- from shared.core.response import ErrorCodeMapper
-+from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
- 
- 
- def _get_request_id(request: Request) -> str:
-@@ -280,7 +286,20 @@ async def _knowhere_exception_handler_adapter(
-     request: Request, exc: Exception
- ) -> JSONResponse:
-     """Adapt the typed Knowhere handler to FastAPI's generic signature."""
--    return await knowhere_exception_handler(request, cast(KnowhereException, exc))
-+    error: KnowhereException = cast(KnowhereException, exc)
-+    cause: Exception | None = error.original_exception
-+    if (
-+        isinstance(error, RequiredQueryEmbeddingException)
-+        and isinstance(cause, LLMServiceException)
-+        and cause.details.get("status_code") == 503
-+    ):
-+        error = UnavailableException(
-+            internal_message=error.internal_message,
-+            retry_after=1,
-+            user_message="Search is temporarily unavailable. Please retry.",
-+            original_exception=error,
++        used = await _importance(namespace, document_id, chunk_id)
++        assert used[f"{document_id}:{chunk_id}"] == pytest.approx(
++            0.7 * (1 / 3) * 0.5 + 0.3 * 0.5, abs=1e-3
 +        )
-+    return await knowhere_exception_handler(request, error)
- 
- 
- async def _http_exception_handler_adapter(
 ```
 
-**File**: `apps/api/app/services/billing/billing_command_workflow.py` (modified, +19/-7)
+**File**: `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py` (modified, +17/-2)
 ```diff
-@@ -1,7 +1,10 @@
- from __future__ import annotations
+@@ -42,7 +42,20 @@ async def override_db():
+     return app
  
- from app.services.billing.stripe_purchase_service import StripePurchaseService
--from app.services.billing.stripe_webhook_service import StripeWebhookService
-+from app.services.billing.stripe_webhook_service import (
-+    StripeWebhookService,
-+    StripeWebhookValidationException,
-+)
- from sqlalchemy import select
- from sqlalchemy.ext.asyncio import AsyncSession
  
-@@ -86,18 +89,27 @@ async def handle_stripe_webhook(
-         payload: bytes,
-         stripe_signature: str | None,
-     ) -> dict[str, object]:
--        stripe_webhook_service = StripeWebhookService()
-+        if not stripe_signature:
-+            raise StripeWebhookValidationException(
-+                user_message="Invalid webhook signature",
-+                violations=[
-+                    {
-+                        "field": "Stripe-Signature",
-+                        "description": "Stripe-Signature header is required",
-+                    }
-+                ],
-+            )
+-async def test_invoke_rejects_tools_outside_the_hipo_whitelist() -> None:
++@pytest.fixture(autouse=True)
++def active_days(monkeypatch: Any) -> list[dict[str, str]]:
++    from app.api.v2.routes import retrieval as retrieval_routes
 +
-+        stripe_webhook_service: StripeWebhookService = StripeWebhookService()
-         try:
--            if not stripe_signature:
--                raise StripeServiceException(
--                    internal_message="Missing stripe-signature header"
--                )
-             return await stripe_webhook_service.handle_webhook(
-                 db,
-                 payload=payload,
-                 sig_header=stripe_signature,
-             )
-+        except StripeWebhookValidationException:
-+            raise
-         except Exception as exc:
-             raise StripeServiceException(
-                 internal_message=f"Failed to handle webhook: {str(exc)}"
--            )
-+            ) from exc
-```
-
-**File**: `apps/api/app/services/billing/stripe_webhook_service.py` (modified, +23/-10)
-```diff
-@@ -16,7 +16,6 @@
- 
- from shared.core.config import settings
- from shared.core.exceptions.domain_exceptions import (
--    AuthException,
-     KnowhereException,
-     StripeServiceException,
-     SystemSettingMissingException,
-@@ -31,6 +30,10 @@
- ]
- 
- 
-+class StripeWebhookValidationException(ValidationException):
-+    """Stripe rejected the webhook request before dispatch."""
++    scheduled: list[dict[str, str]] = []
++    monkeypatch.setattr(
++        retrieval_routes, "schedule_active_day_update", lambda **day: scheduled.append(day)
++    )
++    return scheduled
 +
 +
- class StripeWebhookService:
-     def __init__(
-         self,
-@@ -71,27 +74,37 @@ async def handle_webhook(
-         payload: bytes,
-         sig_header: str,
-     ) -> dict[str, object]:
-+        webhook_secret: str | None = settings.STRIPE_WEBHOOK_SECRET
-+        if not webhook_secret:
-+            raise SystemSettingMissingException(
-+                internal_message="Stripe webhook secret not configured (STRIPE_WEBHOOK_SECRET)"
-+            )
-+
-         try:
-             event = stripe.Webhook.construct_event(
-                 payload,
-                 sig_header,
--                settings.STRIPE_WEBHOOK_SECRET,
-+                webhook_secret,
-             )
--            return await self._dispatch_event(db, event)
-         except ValueError as exc:
--            logger.error(f"Invalid payload: {exc}")
--            raise ValidationException(
-+            raise StripeWebhookValidationException(
-                 user_message="Invalid webhook payload",
-                 violations=[
-                     {"field": "payload", "description": "Webhook payload is malformed"}
-                 ],
--            )
-+            ) from exc
-         except stripe.SignatureVerificationError as exc:
--            logger.error(f"Invalid signature: {exc}")
--            raise AuthException(
-+            raise StripeWebhookValidationException(
-                 user_message="Invalid webhook signature",
--                internal_message=f"Webhook signature verification failed: {exc}",
--            )
-+                violations=[
-+                    {
-+                        "field": "Stripe-Signature",
-+                        "description": "Stripe-Signature could not be verified",
-+                    }
-+                ],
-+            ) from exc
-+
-+        return await self._dispatch_event(db, event)
- 
-     async def _dispatch_event(
-         self,
-```
-
-**File**: `apps/api/tests/contract/test_api_key_contract.py` (modified, +55/-1)
-```diff
-@@ -4,7 +4,10 @@
- from uuid import uuid4
- 
- import pytest
--from httpx import AsyncClient
-+from httpx import AsyncClient, Response
-+
-+from shared.utils.api_keys import generate_api_key
-+from tests.support.contract_database import ContractDatabase
- 
- 
- @pytest.mark.asyncio
-@@ -144,6 +147,57 @@ async def test_should_return_not_found_for_a_missing_api_key_metadata_request(
-     }
- 
- 
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "belongs_to_another_user", [False, True], ids=["missing", "another-user"]
-+)
-+async def test_should_return_not_found_when_toggling_an_unowned_api_key(
-+    developer_api_client_factory: Callable[
-+        [], AbstractAsyncContextManager[AsyncClient]
-+    ],
-+    belongs_to_another_user: bool,
++async def test_invoke_rejects_tools_outside_the_hipo_whitelist(
++    active_days: list[dict[str, str]],
 +) -> None:
-+    api_key_id: str = str(uuid4())
-+    owner_headers: dict[str, str] = {}
-+
-+    async with developer_api_client_factory() as api_client:
-+        if belongs_to_another_user:
-+            owner_key: str = generate_api_key()
-+            owner_headers = {"Authorization": f"Bearer {owner_key}"}
-+            await ContractDatabase.insert_authenticated_user(
-+                user_id=f"contract-toggle-owner-{uuid4().hex[:12]}",
-+                api_key=owner_key,
-+            )
-+            list_response: Response = await api_client.get(
-+                "/api/v1/auth/list", headers=owner_headers
-+            )
-+            assert list_response.status_code == 200
-+            api_keys: list[dict[str, object]] = list_response.json()["api_keys"]
-+            assert len(api_keys) == 1
-+            api_key_id = cast(str, api_keys[0]["id"])
-+
-+        response: Response = await api_client.put(f"/api/v1/auth/{api_key_id}/toggle")
-+
-+        if belongs_to_another_user:
-+            owner_response: Response = await api_client.get(
-+                f"/api/v1/auth/{api_key_id}", headers=owner_headers
-+            )
-+            assert owner_response.status_code == 200
-+            assert owner_response.json()["is_active"] is True
-+
-+    assert response.status_code == 404
-+    assert response.headers["x-request-id"]
-+    assert response.json() == {
-+        "success": False,
-+        "error": {
-+            "code": "NOT_FOUND",
-+            "message": "APIKey not found",
-+            "request_id": response.headers["x-request-id"],
-+            "details": {"resource": "APIKey", "id": api_key_id},
-+        },
-+    }
-+
-+
- @pytest.mark.asyncio
- async def test_should_disable_and_then_reenable_an_api_key_via_the_toggle_route(
-     developer_api_client_factory: Callable[
-```
-
-**File**: `apps/api/tests/contract/test_billing_contract.py` (modified, +90/-6)
-```diff
-@@ -1,9 +1,11 @@
- import asyncio
-+import hmac
- import importlib
- import json
- from collections.abc import Callable
- from contextlib import AbstractAsyncContextManager
- from datetime import datetime, timedelta, timezone
-+from time import time
- from typing import cast
- from uuid import uuid4
+     transport = ASGITransport(app=_create_invoke_app())
+     async with AsyncClient(transport=transport, base_url="http://test") as client:
+         response = await client.post(
+@@ -52,10 +65,11 @@ async def test_invoke_rejects_tools_outside_the_hipo_whitelist() -> None:
  
-@@ -431,22 +433,104 @@ async def test_should_split_subscriptions_and_credit_packages_in_price_configs(
+     assert response.status_code == 400
+     assert response.json() == {"detail": "tool is not supported"}
++    assert active_days == []
  
  
- @pytest.mark.asyncio
--async def test_should_reject_a_missing_stripe_signature_header_for_the_webhook_endpoint(
-+@pytest.mark.parametrize(
-+    ("signature", "description"),
-+    [
-+        (None, "Stripe-Signature header is required"),
-+        ("invalid-signature", "Stripe-Signature could not be verified"),
-+    ],
-+    ids=["missing-signature", "invalid-signature"],
-+)
-+async def test_should_return_bad_request_for_an_invalid_stripe_webhook_signature(
-     api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    signature: str | None,
-+    description: str,
+ async def test_invoke_dispatches_whitelisted_tool_with_namespace_header(
+-    monkeypatch: Any,
++    monkeypatch: Any, active_days: list[dict[str, str]]
  ) -> None:
-+    headers: dict[str, str] = (
-+        {"Stripe-Signature": signature} if signature is not None else {}
-+    )
-     async with api_client_factory() as api_client:
--        response = await api_client.post("/api/v1/billing/webhook", content=b"{}")
-+        response = await api_client.post(
-+            "/api/v1/billing/webhook", content=b"{}", headers=headers
-+        )
+     from app.api.v2.routes import retrieval as retrieval_routes
  
--    assert response.status_code == 500
-+    assert response.status_code == 400
-     assert response.headers["x-request-id"]
- 
-     response_json = cast(dict[str, object], response.json())
-     error = cast(dict[str, object], response_json["error"])
- 
-     assert response_json["success"] is False
--    assert error["code"] == "INTERNAL_ERROR"
--    assert error["message"] == "An internal system error occurred. Please contact support."
--    assert error["details"] == {"service": "stripe"}
-+    assert error["code"] == "INVALID_ARGUMENT"
-+    assert error["message"] == "Invalid webhook signature"
-+    assert error["details"] == {
-+        "violations": [{"field": "Stripe-Signature", "description": description}],
-+    }
-+
-+
-+def _sign_stripe_webhook_payload(payload: bytes, secret: str) -> str:
-+    timestamp: int = int(time())
-+    message: bytes = f"{timestamp}.".encode() + payload
-+    signature: str = hmac.digest(secret.encode(), message, "sha256").hex()
-+    return f"t={timestamp},v1={signature}"
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("is_malformed", [False, True], ids=["valid", "malformed"])
-+async def test_should_verify_stripe_webhook_before_handling_the_event(
-+    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    is_malformed: bool,
-+) -> None:
-+    payload: bytes = (
-+        b"{"
-+        if is_malformed
-+        else b'{"id":"evt_contract","object":"event","type":"customer.created"}'
-+    )
-+    async with api_client_factory() as api_client:
-+        from shared.core.config import settings
-+
-+        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
-+        assert secret
-+        response = await api_client.post(
-+            "/api/v1/billing/webhook",
-+            content=payload,
-+            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
-+        )
-+
-+    if is_malformed:
-+        assert response.status_code == 400
-+        assert response.json()["error"]["code"] == "INVALID_ARGUMENT"
-+        assert response.json()["error"]["message"] == "Invalid webhook payload"
-+    else:
-+        assert response.status_code == 200
-+        assert response.json() == {"status": "ignored", "event_type": "customer.created"}
-+
-+
-+@pytest.mark.asyncio
-+async def test_should_return_server_error_when_processing_a_verified_stripe_event_fails(
-+    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    monkeypatch: MonkeyPatch,
-+) -> None:
-+    payload: bytes = b'{"id":"evt_contract","object":"event","type":"checkout.session.completed"}'
-+
-+    async def fail_after_verification(*_args: object) -> None:
-+        raise ValueError("Simulated payment processing failure")
-+
-+    async with api_client_factory() as api_client:
-+        from app.services.billing.stripe_webhook_service import StripeWebhookService
-+        from shared.core.config import settings
-+
-+        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
-+        assert secret
-+        monkeypatch.setattr(StripeWebhookService, "_dispatch_event", fail_after_verification)
-+        response = await api_client.post(
-+            "/api/v1/billing/webhook",
-+            content=payload,
-+            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
-+        )
-+
-+    assert response.status_code == 500
-+    assert response.json()["error"]["code"] == "INTERNAL_ERROR"
+@@ -112,6 +126,7 @@ async def fake_dispatch(name: str, ctx: object, args: dict[str, Any]) -> ToolRes
+             "items": [{"document_id": "doc-1", "chunk_id": None}],
+         },
+     }
++    assert active_days == [{"user_id": "user_invoke", "namespace": "brain-ns"}]
  
  
- @pytest.mark.asyncio
+ async def test_invoke_defaults_namespace_when_header_is_omitted(
 ```
 
-**File**: `apps/api/tests/contract/test_retrieval_classic_map_unit_contract.py` (modified, +83/-1)
+**File**: `apps/api/tests/migrations/test_retrieval_active_days_backfill_contract.py` (added, +72/-0)
 ```diff
-@@ -7,7 +7,7 @@
- from uuid import UUID, uuid4
- 
- import pytest
--from httpx import AsyncClient
-+from httpx import AsyncClient, Client, MockTransport, Request, Response
- from sqlalchemy import Engine, event, select
- from sqlalchemy.engine import Result
- from sqlalchemy.ext.asyncio import AsyncSession
-@@ -142,6 +142,88 @@ async def execute_then_refine(
-     ] == [(new_chunk["chunk_id"], new_chunk["content"], [7])]
- 
- 
-+@pytest.mark.parametrize(
-+    ("upstream_status", "expected_status", "expected_code", "retry_after"),
-+    [
-+        (503, 503, "UNAVAILABLE", "1"),
-+        (500, 500, "INTERNAL_ERROR", None),
-+    ],
-+)
-+async def test_required_visual_embedding_error_response_after_gateway_retries(
-+    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    monkeypatch: pytest.MonkeyPatch,
-+    upstream_status: int,
-+    expected_status: int,
-+    expected_code: str,
-+    retry_after: str | None,
-+) -> None:
-+    namespace: str = f"embedding-retry-{uuid4().hex[:8]}"
-+    requests: list[Request] = []
+@@ -0,0 +1,72 @@
++"""Real PostgreSQL contract for backfilling active days from retrieval runs."""
 +
-+    def respond_to_embedding(request: Request) -> Response:
-+        requests.append(request)
-+        return Response(upstream_status, json={"error": {"message": "private gateway detail"}})
++from __future__ import annotations
 +
-+    with Client(transport=MockTransport(respond_to_embedding)) as gateway_client:
-+        async with developer_api_client_factory() as api_client:
-+            from shared.core.config import settings
-+            from shared.models.database.document import DocumentPageEmbedding
-+            from shared.services.ai.embedding import multimodal_client
++from datetime import date, datetime
++from pathlib import Path
 +
-+            published: dict[str, str] = await _publish_document(
-+                namespace=namespace,
-+                source_file_name="report.pdf",
-+                chunks=[
-+                    {
-+                        "chunk_id": f"report-page-{page_number}",
-+                        "type": "page",
-+                        "content": f"Revenue statistics for quarter {page_number}",
-+                        "path": f"report.pdf/Root/Quarter {page_number}/body",
-+                        "order": page_number,
-+                        "metadata": {"page_nums": [page_number]},
-+                    }
-+                    for page_number in (1, 2)
-+                ],
++from alembic import command
++from alembic.config import Config
++from sqlalchemy import inspect, text
++from sqlalchemy.engine import Engine
++
++_ROOT: Path = Path(__file__).resolve().parents[4]
++_PARENT_REVISION: str = "809ee432a5f6"
++_REVISION: str = "e71664cb1cee"
++
++
++def _build_config() -> Config:
++    config: Config = Config(str(_ROOT / "apps/api/alembic.ini"))
++    config.set_main_option("script_location", str(_ROOT / "apps/api/alembic"))
++    return config
++
++
++def _active_days(engine: Engine) -> set[tuple[str, str, date]]:
++    with engine.connect() as connection:
++        return {
++            (row[0], row[1], row[2])
++            for row in connection.execute(
++                text("SELECT user_id, namespace, day FROM retrieval_active_days")
 +            )
-+            async with contract_db_session() as db:
-+                db.add(
-+                    DocumentPageEmbedding(
-+                        user_id=_USER_ID,
-+                        namespace=namespace,
-+                        document_id=published["document_id"],
-+                        job_result_id=published["job_result_id"],
-+                        chunk_id="report-page-1",
-+                        page_num=1,
-+                        embedding=[0.1] * multimodal_client.DEFAULT_EMBEDDING_DIM,
-+                    )
-+                )
-+                await db.commit()
++        }
 +
-+            monkeypatch.setattr(settings, "VISUAL_RETRIEVAL_ENABLED", True)
-+            monkeypatch.setattr(multimodal_client, "_should_mock_embeddings", lambda: False)
-+            monkeypatch.setattr(multimodal_client, "_resolve_vercel_api_key", lambda: "test-key")
-+            monkeypatch.setattr(multimodal_client, "get_sync_client", lambda: gateway_client)
-+            monkeypatch.setattr(multimodal_client, "_sleep_before_retry", lambda _attempt: None)
 +
-+            response: Response = await api_client.post(
-+                "/api/v2/retrieval/query",
-+                json={
++def test_should_backfill_one_active_day_per_caller_namespace_and_utc_day(
++    alembic_engine: Engine,
++) -> None:
++    config: Config = _build_config()
++    command.upgrade(config, _PARENT_REVISION)
++    runs: list[tuple[str, str, datetime]] = [
++        ("reader", "brain", datetime(2026, 11, 20, 0, 5)),
++        ("reader", "brain", datetime(2026, 11, 20, 23, 55)),
++        ("reader", "brain", datetime(2026, 11, 22, 8)),
++        ("reader", "other", datetime(2026, 11, 20, 8)),
++        ("writer", "brain", datetime(2026, 11, 21, 8)),
++    ]
++    with alembic_engine.begin() as connection:
++        for index, (user_id, namespace, created_at) in enumerate(runs):
++            connection.execute(
++                text(
++                    "INSERT INTO retrieval_runs (run_id, user_id, namespace, query, query_hash, "
++                    "top_k, policy_name, agentic_enabled, cache_hit, result_count, latency_ms, "
++                    "created_at) VALUES (:run_id, :user_id, :namespace, 'q', '', 10, "
++                    "'rule_based_v1', false, false, 0, 0, :created_at)"
++                ),
++                {
++                    "run_id": f"aret_{index}",
++                    "user_id": user_id,
 +                    "namespace": namespace,
-+                    "query": "revenue statistics",
-+                    "top_k": 1,
-+                    "use_agentic": False,
++                    "created_at": created_at,
 +                },
 +            )
 +
-+    assert [request.url.path for request in requests] == ["/v1/embeddings"] * 3
-+    assert response.status_code == expected_status
-+    assert response.headers.get("retry-after") == retry_after
-+    result: dict[str, object] = response.json()
-+    assert result["success"] is False
-+    assert cast(dict[str, object], result["error"])["code"] == expected_code
-+    assert "private gateway detail" not in response.text
++    command.upgrade(config, _REVISION)
++    assert _active_days(alembic_engine) == {
++        ("reader", "brain", date(2026, 11, 20)),
++        ("reader", "brain", date(2026, 11, 22)),
++        ("reader", "other", date(2026, 11, 20)),
++        ("writer", "brain", date(2026, 11, 21)),
++    }
 +
-+
- async def test_classic_route_maps_winning_unit_to_one_chunk(
-     developer_api_client_factory: Callable[
-         [], AbstractAsyncContextManager[AsyncClient]
++    command.downgrade(config, _PARENT_REVISION)
++    assert "retrieval_active_days" not in inspect(alembic_engine).get_table_names()
 ```
 
-**File**: `apps/api/tests/contract/test_retrieval_document_scope.py` (modified, +32/-1)
+**File**: `apps/api/tests/unit/test_retrieval_purpose.py` (modified, +7/-2)
 ```diff
-@@ -2,19 +2,22 @@
- 
- import asyncio
- import json
--from contextlib import asynccontextmanager
-+from collections.abc import Callable
-+from contextlib import AbstractAsyncContextManager, asynccontextmanager
- from types import SimpleNamespace
- from typing import Any
- from uuid import uuid4
- 
- import pytest
-+from httpx import AsyncClient
- from sqlalchemy import select
- 
- from shared.models.database.document import DocumentChunk, GraphEdge, GraphNode
- from shared.services.retrieval.agent_explore.dispatch import dispatch_tool_call
- from shared.services.retrieval.agent_explore.budget import EpisodeBudget
- from shared.services.retrieval.agent_explore.evidence_pool import Candidate
- from shared.services.retrieval.agent_explore.types import EpisodeResult
-+from shared.services.retrieval.agent_tools import ToolResult
- from shared.services.retrieval.cache_service import _cache_shape_digest
- from shared.services.retrieval.document_scope import DocumentScope
- from shared.services.retrieval.hydration.connected import hydrate_connected_target_rows
-@@ -108,6 +111,34 @@ def _matrix(ids):
-     ]
- 
- 
-+@pytest.mark.parametrize(
-+    ("tool_name", "arguments", "result_key"),
+@@ -13,7 +13,12 @@
+ @pytest.mark.asyncio
+ @pytest.mark.parametrize(
+     ("body", "expected"),
+-    [({}, "explicit"), ({"purpose": "explicit"}, "explicit"), ({"purpose": "automatic"}, "automatic")],
 +    [
-+        ("corpus.list_documents", {}, "documents"),
-+        ("corpus.grep", {"pattern": "scopeprobe"}, "rows"),
++        ({}, "explicit"),
++        ({"purpose": "explicit"}, "explicit"),
++        ({"purpose": "automatic"}, "automatic"),
++        ({"purpose": "background"}, "background"),
 +    ],
-+)
-+async def test_corpus_tools_return_empty_results_for_empty_namespace(
-+    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-+    tool_name: str,
-+    arguments: dict[str, str],
-+    result_key: str,
-+) -> None:
-+    namespace: str = f"empty-corpus-{uuid4().hex[:8]}"
-+    async with developer_api_client_factory():
-+        result: ToolResult = await dispatch_tool_call(
-+            tool_name,
-+            arguments,
-+            db_factory=contract_db_session,
-+            user_id="local-dev-user",
-+            namespace=namespace,
-+        )
-+
-+    assert result.error is None
-+    assert result.payload[result_key] == []
-+    assert result.refs == []
-+
-+
- async def test_scope_matrix_all_corpus_tools_and_refs(developer_api_client_factory):
-     namespace = f"scope-tools-{uuid4().hex[:8]}"
-     async with developer_api_client_factory():
+ )
+ async def test_purpose_reaches_retrieval(
+     monkeypatch: pytest.MonkeyPatch, body: dict[str, str], expected: str
+@@ -37,4 +42,4 @@ async def run(**keywords: Any) -> dict[str, Any]:
+ 
+ def test_unknown_purpose_is_rejected() -> None:
+     with pytest.raises(ValidationError):
+-        retrieval.RetrievalQueryRequest(query="topic", purpose="background")
++        retrieval.RetrievalQueryRequest(query="topic", purpose="scheduled")
 ```
 
 ---
 
-### Incident Patch 3: `f8baf09f` (2026-11-23)
-**Commit Message**: Trace retrieval router decisions and fallback outcomes
+### Incident Patch 3: `7036495c` (2026-11-27)
+**Commit Message**: Merge pull request #591 from Ontos-AI/fix/wangbinqi/prepare-neon-database-cutover
 
-**File**: `apps/api/tests/contract/test_retrieval_query_router_contract.py` (modified, +116/-2)
+Prepare database TLS and API timeouts for Neon
+
+**File**: `.github/workflows/build-images.yml` (modified, +6/-5)
 ```diff
-@@ -2,11 +2,12 @@
+@@ -37,6 +37,7 @@ env:
+   AWS_ECS_PROD_SECRETS_ARN: ${{ secrets.AWS_ECS_PROD_SECRETS_ARN }}
+   AWS_ECS_PROD_API_SERVICE_NAME: knowhere-api-prod
+   AWS_ECS_PROD_WORKER_SERVICE_NAME: knowhere-worker-prod
++  PROD_DB_SSL_MODE: ${{ vars.PROD_DB_SSL_MODE || 'disable' }}
  
- from collections.abc import Callable
- from contextlib import AbstractAsyncContextManager
--from typing import Any, cast
-+from typing import Any, NoReturn, cast
- from uuid import uuid4
+ jobs:
+   build-and-publish:
+@@ -292,7 +293,7 @@ jobs:
+             -m alembic upgrade heads
  
- import pytest
--from httpx import AsyncClient
-+from httpx import AsyncClient, ConnectError
-+from loguru import logger
- from pytest import MonkeyPatch
+   migrate-ecs-production:
+-    name: Run production Aurora database migration
++    name: Run production database migration
+     runs-on: ubuntu-latest
+     needs: build-and-publish
+     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+@@ -327,7 +328,7 @@ jobs:
+           aws ecr get-login-password --region "${AWS_ECS_PROD_REGION}" \
+             | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
  
- from shared.services.retrieval.routing.types import QueryMode, RouterDecision
-@@ -162,6 +163,119 @@ async def test_unset_use_agentic_agent_decision_uses_agent_explore(
-     assert body["router_decision"]["source"] == "llm"
+-      - name: Run migration against production Aurora
++      - name: Run migration against the production database
+         env:
+           DATABASE_URL: ${{ secrets.PRODUCTION_MIGRATION_DATABASE_URL }}
+           # The image build metadata uses the short release label `prod`, but
+@@ -345,7 +346,7 @@ jobs:
+             --env S3_BUCKET_NAME \
+             --env TMP_PATH \
+             --env S3_TEMP_PATH \
+-            --env DB_SSL_MODE=disable \
++            --env "DB_SSL_MODE=${PROD_DB_SSL_MODE}" \
+             --env ENVIRONMENT \
+             --entrypoint python \
+             "${image_uri}" \
+@@ -843,7 +844,7 @@ jobs:
+             --env S3_BUCKET_NAME \
+             --env S3_TEMP_PATH \
+             --env TMP_PATH \
+-            --env DB_SSL_MODE=disable \
++            --env "DB_SSL_MODE=${PROD_DB_SSL_MODE}" \
+             --env ENVIRONMENT \
+             --entrypoint python \
+             "${API_IMAGE}" \
+@@ -871,7 +872,7 @@ jobs:
+           DEPLOYMENT_ENVIRONMENT: prod
+           RUNTIME_ENVIRONMENT: production
+           APP_ENV: production
+-          DB_SSL_MODE: disable
++          DB_SSL_MODE: ${{ env.PROD_DB_SSL_MODE }}
+           API_DB_POOL_SIZE: "50"
+           API_DB_MAX_OVERFLOW: "50"
+           WORKER_DB_SYNC_POOL_SIZE: "5"
+```
+
+**File**: `apps/api/tests/contract/test_statement_deadline_contract.py` (modified, +47/-2)
+```diff
+@@ -1,8 +1,9 @@
+-"""Owned PostgreSQL checks for the worker's client-side statement deadline (green mode)."""
++"""Owned PostgreSQL checks for API and worker database deadlines."""
+ 
+ from __future__ import annotations
+ 
+ from collections.abc import Callable, Iterator
++from importlib import import_module
+ import time
+ from typing import Any
+ 
+@@ -12,13 +13,57 @@
+ from loguru import logger
+ from psycopg2 import errors
+ from sqlalchemy import create_engine, text
++from sqlalchemy.engine import URL, make_url
++from sqlalchemy.exc import DBAPIError
+ 
+ from shared.core.statement_deadline import StatementDeadline
+-from shared.testing.contract_runtime import PostgreSQLProcess
++from shared.testing.contract_runtime import (
++    PostgreSQLProcess,
++    clear_application_modules,
++    configure_contract_environment,
++    get_contract_database_url,
++)
+ 
+ Connect = Callable[[], Any]
  
  
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    ("uses_override", "fallback_succeeds"),
-+    [(True, True), (False, False)],
-+    ids=["request-model-fallback-succeeds", "default-model-fallback-fails"],
-+)
-+async def test_automatic_router_logs_model_failure_and_fallback_outcome(
-+    developer_api_client_factory: Callable[
-+        [], AbstractAsyncContextManager[AsyncClient]
-+    ],
-+    monkeypatch: MonkeyPatch,
-+    uses_override: bool,
-+    fallback_succeeds: bool,
++async def testApiTransactionTimeouts(
++    monkeypatch: pytest.MonkeyPatch,
++    postgresql_proc: PostgreSQLProcess,
 +) -> None:
-+    namespace: str = f"router-fallback-{uuid4().hex[:8]}"
-+    request_key: str = "test-router-provider-secret"
-+    query: str = "private test query text"
-+    events: list[dict[str, object]] = []
-+    payload: dict[str, object] = {"namespace": namespace, "query": query, "top_k": 1}
-+    if uses_override:
-+        payload["llm_config"] = {
-+            "model": "request-router-model",
-+            "api_key": request_key,
-+            "base_url": "https://router.example.test/v1",
-+        }
-+
-+    async with developer_api_client_factory() as api_client:
-+        from shared.core.exceptions.domain_exceptions import (
-+            LLMServiceException,
-+            UnavailableException,
-+        )
-+        from shared.services.ai import openai_compatible_client_sync
-+        from shared.services.retrieval.agent_explore import harness
-+        from shared.services.retrieval.routing import config
-+
-+        class FailingRouterClient:
-+            def chat_completion_with_usage(
-+                self, *_args: object, **_kwargs: object
-+            ) -> NoReturn:
-+                connection_error: ConnectError = ConnectError("Provider connection failed")
-+                connection_error.__cause__ = OSError(111, "Connection refused")
-+                raise LLMServiceException(
-+                    internal_message="Provider request failed",
-+                    original_exception=connection_error,
-+                ) from connection_error
-+
-+        class FailingAgent:
-+            async def run_episode(self, **_kwargs: object) -> NoReturn:
-+                raise UnavailableException(
-+                    internal_message="Agent unavailable", retry_after=1
-+                )
-+
-+        target: dict[str, str] = await _publish_above_top_k(namespace=namespace)
-+        monkeypatch.setattr(config, "QUERY_ROUTER_MODEL", "default-router-model")
-+        monkeypatch.setattr(
-+            openai_compatible_client_sync,
-+            "get_openai_client",
-+            lambda **_kwargs: FailingRouterClient(),
-+        )
-+        if fallback_succeeds:
-+            _patch_harness(monkeypatch, _episode_keeping_refs(documents=[target]))
-+        else:
-+            monkeypatch.setattr(
-+                harness, "resolve_harness", lambda **_kwargs: FailingAgent()
-+            )
-+
-+        sink_id: int = logger.add(
-+            lambda message: events.append(message.record["extra"].copy()),
-+            level="INFO",
-+            filter=lambda record: str(record["extra"].get("event", "")).startswith(
-+                "retrieval.query_router."
-+            ),
-+        )
-+        try:
-+            response = await api_client.post("/api/v2/retrieval/query", json=payload)
-+        finally:
-+            logger.remove(sink_id)
-+
-+    assert response.status_code == (200 if fallback_succeeds else 503)
-+    assert [entry["event"] for entry in events] == [
-+        "retrieval.query_router.decision",
-+        "retrieval.query_router.fallback",
-+    ]
-+    decision, fallback = events
-+    request_id: str = response.headers["x-request-id"]
-+    assert decision["request_id"] == fallback["request_id"] == request_id
-+    assert decision["routing_trigger"] == "use_agentic_unset"
-+    assert decision["model_config_source"] == ("request" if uses_override else "default")
-+    assert decision["model_name"] == (
-+        "request-router-model" if uses_override else "default-router-model"
-+    )
-+    assert decision["failure_stage"] == "model_connect"
-+    assert decision["failure_error_type"] == "ConnectError"
-+    assert decision["failure_errno"] == 111
-+    assert fallback["fallback_outcome"] == (
-+        "succeeded" if fallback_succeeds else "failed"
-+    )
-+    if fallback_succeeds:
-+        assert fallback["agent_stop_reason"] == "finished"
-+        assert response.json()["router_decision"] == {
-+            "mode": "agent",
-+            "reason": "",
-+            "source": "fallback",
-+    
-```
-
-**File**: `packages/shared-python/shared/core/logging.py` (modified, +3/-0)
-```diff
-@@ -55,6 +55,9 @@ class LogEvent(Enum):
- 
-     PUBLICATION_TRACE_TERMINAL = "publication.trace.terminal"
- 
-+    RETRIEVAL_QUERY_ROUTER_DECISION = "retrieval.query_router.decision"
-+    RETRIEVAL_QUERY_ROUTER_FALLBACK = "retrieval.query_router.fallback"
-+
-     S3_WEBHOOK_EVENT = "s3.webhook"
- 
-     # iLoveAPI document conversion events
-```
-
-**File**: `packages/shared-python/shared/services/retrieval/execution/routes.py` (modified, +40/-4)
-```diff
-@@ -1,5 +1,6 @@
- from __future__ import annotations
- 
-+import asyncio
- import time
- from collections.abc import AsyncIterator, Sequence
- from contextlib import AbstractAsyncContextManager, asynccontextmanager
-@@ -10,6 +11,7 @@
- from sqlalchemy.ext.asyncio import AsyncSession
- 
- from shared.core.config import settings
-+from shared.core.logging import LogEvent
- from shared.services.retrieval.execution.postgresql_snapshot import (
-     open_postgresql_snapshot,
-     validate_postgresql_snapshot,
-@@ -126,6 +128,8 @@ async def run_retrieval_route(
-             if native_read is not None:
-                 native_read.isClassic = True
-             outcome = await _run_classic_topk_route(context)
-+        elif decision is not None and decision.source == "fallback":
-+            outcome = await _run_agent_fallback(context)
-         else:
-             outcome = await _run_agent_explore_route(context)
- 
-@@ -149,13 +153,45 @@ async def _resolve_auto_route(
-         )
-     else:
-         decision = await classify_query_mode(context.query)
--    logger.info(
--        f"retrieval query router mode={decision.mode.value} "
--        f"source={decision.source} reason={decision.reason}"
--    )
-+    logger.bind(
-+        event=LogEvent.RETRIEVAL_QUERY_ROUTER_DECISION.value,
-+        routing_trigger="use_agentic_unset",
-+        selected_mode=decision.mode.value,
-+        decision_source=decision.source,
-+        model_config_source=decision.model_config_source,
-+        model_name=decision.attempted_model_name or decision.model_name or None,
-+        failure_stage=decision.failure_stage,
-+        failure_error_type=decision.failure_error_type,
-+        failure_errno=decision.failure_errno,
-+    ).info("Retrieval query router decision")
-     return decision.mode == QueryMode.AGENT, decision
- 
- 
-+async def _run_agent_fallback(context: RetrievalRouteContext) -> RetrievalRouteOutcome:
-+    fallback_log = logger.bind(
-+        event=LogEvent.RETRIEVAL_QUERY_ROUTER_FALLBACK.value,
-+        fallback_route="agent_explore",
-+    )
++    configure_contract_environment(monkeypatch, postgresql_proc)
++    url: URL = make_url(get_contract_database_url()).set(database="postgres")
++    monkeypatch.setenv("DATABASE_URL", url.render_as_string(hide_password=False))
++    clear_application_modules()
++    database = import_module("shared.core.database")
 +    try:
-+        outcome: RetrievalRouteOutcome = await _run_agent_explore_route(context)
-+    except asyncio.CancelledError:
-+        fallback_log.bind(fallback_outcome="cancelled").info(
-+            "Retrieval query fallback cancelled"
-+        )
-+        raise
-+    except Exception as error:
-+        fallback_log.bind(
-+            fallback_outcome="failed", fallback_error_type=type(error).__name__
-+        ).warning("Retrieval query fallback failed")
-+        raise
-+    fallback_log.bind(
-+        fallback_outcome="succeeded",
-+        agent_stop_reason=outcome.response.get("stop_reason"),
-+        result_count=outcome.completion_count,
-+    ).info("Retrieval query fallback completed")
-+    return outcome
++        async with database.engine.connect() as connection:
++            async with connection.begin():
++                await connection.exec_driver_sql("SET statement_timeout = 0")
++                await connection.exec_driver_sql("SET idle_in_transaction_session_timeout = 0")
++
++            async with connection.begin():
++                await connection.exec_driver_sql("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY")
++                assert await connection.scalar(text("SHOW transaction_isolation")) == "repeatable read"
++                assert await connection.scalar(text("SHOW transaction_read_only")) == "on"
++                assert await connection.scalar(text("SHOW statement_timeout")) == "30s"
++                assert await connection.scalar(text("SHOW idle_in_transaction_session_timeout")) == "1min"
++
++        async with database.get_db_context_with_timeouts(120, 6) as session:
++            await session.execute(text("SET statement_timeout = 0"))
++            await session.commit()
++            assert await session.scalar(text("SHOW statement_timeout")) == "120ms"
++            with pytest.raises(DBAPIError) as error:
++                await session.execute(text("SELECT pg_sleep(2)"))
++            assert getattr(error.value.orig, "sqlstate", None) == "57014"
++            await session.rollback()
++            assert await session.scalar(text("SHOW statement_timeout")) == "120ms"
++            assert await session.scalar(text("SELECT 1")) == 1
++    finally:
++        await database.dispose_all_engines()
 +
 +
- async def _try_run_small_corpus_route(
-     context: RetrievalRouteContext,
- ) -> RetrievalRouteOutcome | None:
+ @pytest.fixture
+ def greenDatabase(postgresql_proc: PostgreSQLProcess) -> Iterator[tuple[Connect, str, list[str]]]:
+     url: str = (f"postgresql+psycopg2://{postgresql_proc.user}:{postgresql_proc.password or ''}"
 ```
 
-**File**: `packages/shared-python/shared/services/retrieval/routing/classifier.py` (modified, +56/-18)
+**File**: `deploy/ecs/README.md` (modified, +7/-0)
 ```diff
-@@ -2,33 +2,27 @@
+@@ -75,6 +75,13 @@ additional GitHub Actions secrets:
+ - `AWS_ECS_PROD_SECRETS_ARN`
+ - `PRODUCTION_MIGRATION_DATABASE_URL` (direct migration-only database URL)
  
- import asyncio
- import json
--from typing import Any
-+from dataclasses import replace
-+from typing import Literal
- 
-+import httpx
- from loguru import logger
- 
- from shared.services.retrieval.routing import config as routing_config
- from shared.services.retrieval.routing.prompt import QUERY_ROUTER_SYSTEM_PROMPT
- from shared.services.retrieval.routing.types import QueryMode, RouterDecision
- 
- 
--def _resolve_client_and_model() -> tuple[Any, str]:
--    from shared.services.ai.llm_overrides import resolve_text
--    from shared.services.ai.openai_compatible_client_sync import get_openai_client
--
--    requested = routing_config.QUERY_ROUTER_MODEL
--    effective_model, api_key, api_url = resolve_text(requested)
--    model = effective_model or requested
--    client = get_openai_client(model=model, api_key=api_key, api_url=api_url)
--    return client, model
--
--
--def _fallback_decision(*, model_name: str, tokens_used: int = 0) -> RouterDecision:
-+def _fallback_decision(
-+    *, model_name: str, tokens_used: int = 0, failure_stage: str = "model_response"
-+) -> RouterDecision:
-     return RouterDecision(
-         mode=QueryMode.AGENT,
-         reason="",
-         source="fallback",
-         model_name=model_name,
-         tokens_used=tokens_used,
-+        failure_stage=failure_stage,
-     )
- 
- 
-@@ -53,10 +47,46 @@ def _parse_decision(
-     )
- 
- 
-+def _describe_failure(error: Exception, stage: str) -> tuple[str, str, int | None]:
-+    error_type: str = type(error).__name__
-+    error_number: int | None = None
-+    current: BaseException | None = error
-+    for _ in range(8):
-+        if current is None:
-+            break
-+        if isinstance(current, httpx.HTTPError):
-+            error_type = type(current).__name__
-+            if isinstance(current, (httpx.ConnectError, httpx.ConnectTimeout)):
-+                stage = "model_connect"
-+            elif isinstance(current, httpx.UnsupportedProtocol):
-+                stage = "model_protocol"
-+            elif isinstance(
-+                current, (httpx.HTTPStatusError, httpx.ReadError, httpx.ReadTimeout)
-+            ):
-+                stage = "model_response"
-+        if isinstance(current, OSError) and current.errno is not None:
-+            error_number = current.errno
-+        current = current.__cause__ or current.__context__
-+    return stage, error_type, error_number
++The repository variable `PROD_DB_SSL_MODE` controls the production migration,
++the lexical backend database check, and both ECS task definitions. The default
++is `disable` for the current Aurora configuration. Set it to `require` when
++switching production to Neon. At that point, use Neon pooler URLs for the API
++and worker runtime secret and a direct Neon URL for
++`PRODUCTION_MIGRATION_DATABASE_URL`.
 +
-+
- async def classify_query_mode(query: str) -> RouterDecision:
--    model_name = ""
-+    model_name: str = ""
-+    attempted_model_name: str = routing_config.QUERY_ROUTER_MODEL
-+    model_config_source: Literal["default", "request"] | None = None
-+    failure_stage: str = "model_config"
-     try:
--        client, model_name = _resolve_client_and_model()
-+        from shared.services.ai.llm_overrides import resolve_text
-+        from shared.services.ai.openai_compatible_client_sync import get_openai_client
-+
-+        effective_model, api_key, api_url = resolve_text(attempted_model_name)
-+        attempted_model_name = effective_model or attempted_model_name
-+        model_config_source = "request" if api_url is not None else "default"
-+        client = get_openai_client(
-+            model=attempted_model_name, api_key=api_key, api_url=api_url
-+        )
-+        model_name = attempted_model_name
-+        failure_stage = "model_request"
-         content, usage = await asyncio.to_thread(
-             client.chat_completion_with_usage,
-             [
-@@ -70,12 +100,20 @@ async def classify_query_mode(query: str) -> RouterDecision:
-             response_format={"type": "json_object"},
-             usage_task="retrieval.query_router",
-         )
-+        failure_stage = "model_response"
-         tokens_used = int((usage or {}).get("total_tokens", 0) or 0)
--        return _parse_decision(
-+        decision: RouterDecision = _parse_decision(
-             str(content or ""),
-             model_name=model_name,
-             tokens_used=tokens_used,
-         )
-     except Exception as exc:
--        logger.warning("retrieval query router fallback to agent: {}", exc)
--        return _fallback_decision(model_name=model_name)
-+        failure_stage, error_type, error_number = _describe_failure(exc, failure_stage)
-+        logger.warning("retrieval query router fallback to agent: {}", error_type)
-+        decision = replace(
-+            _fallback_decision(model_name=model_name, failure_stage=failure_stage),
-+            attempted_model_name=attempted_model_name,
-+            failure_error_type=error_type,
-+            failure_errno=error_number,
-+        )
-+    return replace(decision, model_config_source=model_config_source)
+ Before publishing the production release, an operator must create and verify
+ the production runtime secret, IAM roles, API and worker ECS services, API
+ target group/listener rule, production ACM certificate attachment, and
 ```
 
-**File**: `packages/shared-python/shared/services/retrieval/routing/types.py` (modified, +6/-1)
+**File**: `packages/shared-python/shared/core/database.py` (modified, +29/-15)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -5,6 +5,7 @@
+ from typing import Any, AsyncGenerator, Awaitable, Callable, TypeVar
  
- from dataclasses import dataclass
- from enum import Enum
--from typing import Any
-+from typing import Any, Literal
- 
- 
- class QueryMode(str, Enum):
-@@ -17,6 +17,11 @@ class RouterDecision:
-     source: str
-     model_name: str
-     tokens_used: int
-+    model_config_source: Literal["default", "request"] | None = None
-+    attempted_model_name: str | None = None
-+    failure_stage: str | None = None
-+    failure_error_type: str | None = None
-+    failure_errno: int | None = None
- 
-     def to_dict(self) -> dict[str, Any]:
-         return {
-```
-
-**File**: `packages/shared-python/shared/tests/test_query_router_classifier.py` (modified, +24/-9)
-```diff
-@@ -13,6 +13,7 @@
- os.environ.setdefault("S3_TEMP_PATH", "/tmp")
- 
- import pytest
-+from httpx import ConnectTimeout, UnsupportedProtocol
- 
- from shared.core.config import settings
- from shared.services.retrieval.execution.response_projection import (
-@@ -33,10 +34,13 @@ def chat_completion_with_usage(self, messages: object, **kwargs: object) -> tupl
-         return self.content, self.usage
+ from sqlalchemy import event, text
++from sqlalchemy.engine import Connection
+ from sqlalchemy.ext.asyncio import (
+     AsyncEngine,
+     AsyncSession,
+@@ -24,6 +25,7 @@
+ is_async_database_pool_disabled: bool = (
+     os.getenv("DB_USE_NULL_POOL", "false").lower() == "true"
+ )
++IDLE_TRANSACTION_TIMEOUT_MS: int = 60_000
  
  
--def _patch_client(monkeypatch: pytest.MonkeyPatch, client: _FakeClient) -> None:
-+def _patch_client(monkeypatch: pytest.MonkeyPatch, client: object) -> None:
-     monkeypatch.setattr(
--        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
--        lambda: (client, "test-router-model"),
-+        "shared.services.retrieval.routing.config.QUERY_ROUTER_MODEL", "test-router-model"
+ def _async_engine_options(
+@@ -40,7 +42,7 @@ def _async_engine_options(
+                 "application_name": "knowhere_api",
+                 "timezone": "UTC",
+                 "statement_timeout": str(statement_timeout_ms),
+-                "idle_in_transaction_session_timeout": "60000",
++                "idle_in_transaction_session_timeout": str(IDLE_TRANSACTION_TIMEOUT_MS),
+             },
+             "command_timeout": command_timeout_seconds,
+             **ssl_connect_args,
+@@ -60,15 +62,30 @@ def _async_engine_options(
+     return options
+ 
+ 
+-engine_options: dict[str, Any] = _async_engine_options(
+-    statement_timeout_ms=30000,
+-    command_timeout_seconds=30,
+-)
++def _createApiEngine(
++    *, statementTimeoutMs: int, commandTimeoutSeconds: int
++) -> AsyncEngine:
++    apiEngine: AsyncEngine = create_async_engine(
++        settings.DATABASE_URL,
++        **_async_engine_options(
++            statement_timeout_ms=statementTimeoutMs,
++            command_timeout_seconds=commandTimeoutSeconds,
++        ),
 +    )
-+    monkeypatch.setattr(
-+        "shared.services.ai.openai_compatible_client_sync.get_openai_client",
-+        lambda **_kwargs: client,
+ 
+-engine = create_async_engine(
+-    settings.DATABASE_URL,
+-    **engine_options,
+-)
++    @event.listens_for(apiEngine.sync_engine, "begin")
++    def applyTransactionTimeouts(connection: Connection) -> None:
++        # Pooled PostgreSQL connections can ignore the driver's startup settings.
++        # SET also leaves callers free to issue SET TRANSACTION before their first query.
++        connection.exec_driver_sql(f"SET LOCAL statement_timeout = {statementTimeoutMs:d}")
++        connection.exec_driver_sql(
++            f"SET LOCAL idle_in_transaction_session_timeout = {IDLE_TRANSACTION_TIMEOUT_MS:d}"
++        )
++
++    return apiEngine
++
++
++engine: AsyncEngine = _createApiEngine(statementTimeoutMs=30_000, commandTimeoutSeconds=30)
+ # Create the async session factory.
+ AsyncSessionFactory = async_sessionmaker(
+     bind=engine,
+@@ -89,12 +106,9 @@ def _session_factory_for_timeouts(
+     factory = _timeout_session_factories.get(key)
+     if factory is not None:
+         return factory
+-    extra_engine = create_async_engine(
+-        settings.DATABASE_URL,
+-        **_async_engine_options(
+-            statement_timeout_ms=statement_timeout_ms,
+-            command_timeout_seconds=command_timeout_seconds,
+-        ),
++    extra_engine: AsyncEngine = _createApiEngine(
++        statementTimeoutMs=statement_timeout_ms,
++        commandTimeoutSeconds=command_timeout_seconds,
      )
- 
- 
-@@ -51,6 +55,8 @@ async def test_classifier_parses_classic_json(monkeypatch: pytest.MonkeyPatch) -
-     assert decision.source == "llm"
-     assert decision.reason == "single fact"
-     assert decision.model_name == "test-router-model"
-+    assert decision.model_config_source == "default"
-+    assert decision.failure_stage is None
-     assert decision.tokens_used == 4
-     assert client.calls[0]["temperature"] == 0.0
-     assert client.calls[0]["response_format"] == {"type": "json_object"}
-@@ -88,6 +94,7 @@ async def test_classifier_invalid_mode_falls_back_to_agent(
-     assert decision.source == "fallback"
-     assert decision.reason == ""
-     assert decision.tokens_used == 4
-+    assert decision.failure_stage == "model_response"
- 
- 
- @pytest.mark.asyncio
-@@ -102,27 +109,35 @@ async def test_classifier_invalid_json_falls_back_to_agent(
-     assert decision.mode is QueryMode.AGENT
-     assert decision.source == "fallback"
-     assert decision.tokens_used == 4
-+    assert decision.failure_stage == "model_response"
- 
- 
- @pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    ("error", "failure_stage"),
-+    [
-+        (TimeoutError("router timed out"), "model_request"),
-+        (ConnectTimeout("router connection timed out"), "model_connect"),
-+        (UnsupportedProtocol("unsupported scheme"), "model_protocol"),
-+    ],
-+)
- async def test_classifier_exception_falls_back_to_agent(
--    monkeypatch: pytest.MonkeyPatch,
-+    monkeypatch: pytest.MonkeyPatch, error: Exception, failure_stage: str
- ) -> None:
-     class _BoomClient:
-         def chat_completion_with_usage(self, *_args: object, **_kwargs: object) -> tuple[str, dict[str, int]]:
--            raise TimeoutError("router timed out")
-+            raise error
- 
--    monkeypatch.setattr(
--        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
--        lambda: (_BoomClient(), "test-router-model"),
--    )
-+    _patch_client(monkeypatch, _BoomClient())
- 
-     decision = await classify_query_mode("anything")
- 
-     assert decision.mode is QueryMode.AGENT
-     assert decision.source == "fallback"
-     assert decision.model_name == "test-router-model"
-     assert decision.tokens_used == 0
-+    assert decision.failure_stage == failure_stage
-+    assert decision.failure_error_type == type(error).__name__
- 
- 
- @pytest.mark.asyncio
+     factory = async_sessionmaker(bind=extra_engine, expire_on_commit=False)
+     _timeout_session_factories[key] = factory
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #582** (2026-11-23): Reject NUL characters in corpus scope section paths (@suguanYang)
-- **PR #581** (2026-11-23): Rank documents by usage and freshness that decay over time (@EricNGOntos)
-- **PR #580** (2026-11-23): Fix production errors in billing, API keys, and retrieval (@suguanYang)
-- **PR #579** (2026-11-22): chore: promote main to staging (Word tracked changes, equations, embedded objects, additive publication) (@EricNGOntos)
-- **PR #578** (2026-11-22): Accept Word tracked changes, read equations and embedded objects, keep table values as written (@EricNGOntos)
-- **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
+- **PR #591** (2026-11-27): Prepare database TLS and API timeouts for Neon (@suguanYang)
+- **PR #590** (2026-11-27): chore: promote main to staging (active-day importance aging, lazy lexical maintenance) (@EricNGOntos)
+- **PR #589** (2026-11-27): Move S3 indexing input cleanup to an operator script (@suguanYang)
+- **PR #588** (2026-11-27): Age document importance by a namespace's active days (@EricNGOntos)
+- **PR #587** (2026-11-26): feat: bound each worker database statement on the client (@suguanYang)
+- **PR #586** (2026-11-26): fix: resolve uncertain lexical indexes automatically (@suguanYang)
 
 ---
 
@@ -2168,61 +2029,32 @@ Fix production errors in billing, API keys, and retrieval
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in test_retrieval_tools_invoke_contract.py
+## X. Empirical Invariant Guard in test_lexical_index_resolution_contract.py
 
 **RULE**:
-When implementing operations in `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/api/tests/contract/test_lexical_index_resolution_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da75fa74`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53aeaf0b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_lexical_index_resolution_contract.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-async def test_invoke_rejects_nul_in_grep_scope_section_path(
-    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
-) -> None:
-    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
-
-    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
-    async with developer_api_client_factory() as api_client:
-        published: dict[str, str] = await _publish_document(
-            namespace=namespace,
-            source_file_name="contract.pdf",
-            chunks=[
-                {
-                    "chunk_id": "scope-contract-body",
-                    "type": "text",
-                    "content": "Quarterly revenue",
-                    "path": "contract.pdf/Root/Summary",
-                    "order": 1,
-                    "metadata": {},
-                }
-            ],
-        )
-        response: Response = await api_client.post(
-            "/api/v2/retrieval/tools/invoke",
-            headers={"X-Knowhere-Namespace": namespace},
-            json={
-                "tool": "corpus.grep",
-                "arguments": {
-                    "pattern": "revenue",
-                    "scope": [
-                        {
-
+    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt", "resolveIndex"):
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    for taskName in ("maintainLexical", "cleanBuild", "cleanArchivedDocument", "cleanFailedAttempt",
+            "collectOrphanInputs", "resolveIndex"):
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da75fa74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53aeaf0b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

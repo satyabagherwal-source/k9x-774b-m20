@@ -13808,3 +13808,5 @@
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T15:27:46.469Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ACBB63D0` [Domain D] | Yes (`9b7b9a1b...`) |
 | `CYCLE-20261127-9K7J` | `2026-11-27T15:36:45.199Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10918` | Yes (`9ae0f2e5...`) |
 | `CYCLE-20261127-9LFA` | `2026-11-27T15:36:46.774Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10919` | Yes (`5950376e...`) |
+| `CYCLE-20261127-KPWU` | `2026-11-27T15:45:25.806Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10920` | Yes (`ce9d6499...`) |
+| `CYCLE-20261127-L0DE` | `2026-11-27T15:45:39.362Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10921` | Yes (`f55b7801...`) |

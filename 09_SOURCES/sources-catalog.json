@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "0cc7bd5b",
+    "sourceVersion": "7036495c",
     "license": "Apache-2.0",
-    "contentHash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
-    "lastHarvestedAt": "2026-11-26T20:31:53.745Z",
+    "contentHash": "f55b7801f96e4ed221fc846e5379a50fb5dd00233de3364751ffedad6b09601e",
+    "lastHarvestedAt": "2026-11-27T15:45:39.375Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "e874a148",
+    "sourceVersion": "8566ba53",
     "license": "Apache-2.0",
-    "contentHash": "14edecd937e4ff4a51967dd0974245d3a1dceacc7e5e2a3bc2d6935675072092",
-    "lastHarvestedAt": "2026-11-26T15:22:03.168Z",
+    "contentHash": "ce9d64990d60815165bbfa8b9ccf0a1505bcb185d04488b76643a13ba0b6e25a",
+    "lastHarvestedAt": "2026-11-27T15:45:25.821Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {

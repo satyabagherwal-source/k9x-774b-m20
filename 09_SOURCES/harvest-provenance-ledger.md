@@ -13841,3 +13841,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-acbb63d0` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-27T15:27:46.469Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `35922adf` | Multi-dimensional audit evidence | 2026-11-27T15:36:45.214Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `f5942749` | Multi-dimensional audit evidence | 2026-11-27T15:36:46.789Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `8566ba53` | Multi-dimensional audit evidence | 2026-11-27T15:45:25.821Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `7036495c` | Multi-dimensional audit evidence | 2026-11-27T15:45:39.375Z |
