@@ -13694,3 +13694,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T03:54:55.364Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `e97111d2` | Multi-dimensional audit evidence | 2026-11-27T03:55:06.392Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `0f54e1f8` | Multi-dimensional audit evidence | 2026-11-27T03:55:10.716Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T04:09:46.649Z |

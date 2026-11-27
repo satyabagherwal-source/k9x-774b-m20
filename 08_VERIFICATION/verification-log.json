@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-FDGO",
-    "timestamp": "2026-11-25T16:05:55.560Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-    "contentHash": "0e982773b2b7482abbb710057a8383b041c2ed30b0a72163d5aebe26071352bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-FEPI",
     "timestamp": "2026-11-25T16:05:57.174Z",
     "repository": "transact-rs/sqlx",
@@ -7492,6 +7477,21 @@
     "contentHash": "6f3d05cec33c2cc087bc19c549b0571cd28eb7462bc1a9d9f95c4a0d9ea8261a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-Q3RN",
+    "timestamp": "2026-11-27T04:09:46.643Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "3adb18faf1f574ecbc320dcbb673ba374f5c8a36f145c40db1a0a4f013c3b609",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
