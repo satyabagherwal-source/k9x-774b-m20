@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T05:21:45.859Z",
+  "last_updated": "2026-11-27T05:30:26.179Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26383,
+  "total_items": 26389,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -237394,8 +237394,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "e8eb093b",
-      "content_hash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
+      "source_version": "bceb12f7",
+      "content_hash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -237443,6 +237443,11 @@
           "number": 10664,
           "title": "run the work held back by the Leader lease wait once the region can run",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10836,
+          "title": "require a region to own its files before a remap",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237450,7 +237455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:29:08.698Z",
+      "verified_at": "2026-11-27T05:30:20.214Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237492,10 +237497,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "e8eb093b",
-      "content_hash": "6c98b5c2f4bd98d15932231ffe80ada97aee2a08173f37906a9167d2cdd14428",
+      "source_version": "bceb12f7",
+      "content_hash": "cf7b0be74c5eb231080ff4dd59fcaa98b0c5a4bf316364b701dd729b9f143ea3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T11:29:09.640Z"
+      "persisted_at": "2026-11-27T05:30:20.924Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -237504,10 +237509,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "e8eb093b",
-      "content_hash": "44bdc93e1e96d6c118a874b1c326f3a68e7b54d42494bad718601108eb77d11d",
+      "source_version": "bceb12f7",
+      "content_hash": "90f14a78ef8b0af46c9cfa88fcbbffbeb7f20850eeb8004642329275cf7551c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:29:09.905Z"
+      "persisted_at": "2026-11-27T05:30:21.115Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -237565,9 +237570,9 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8365167cdf17e7c40679cf117964e4fe7915250796e97e6d41953590ab69db9",
+      "content_hash": "3db89d8327a8d36fe1d800eec3188794b3b48921b5246860df84c9a6f3693890",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:54:34.875Z"
+      "persisted_at": "2026-11-27T05:30:25.966Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb-learni",
@@ -237577,9 +237582,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for greptimeteam-greptimedb-learnings",
       "repository": "greptimeteam-greptimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f405601fb778ba2ad38086669296376b00dfd2160d8b4a7a27e96744eaea4d32",
+      "content_hash": "883b61cdf14ede61648c1da4cbe3677df7b2c8a055f700bc4955258df7200be8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:54:35.052Z"
+      "persisted_at": "2026-11-27T05:30:26.179Z"
     },
     "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark": {
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
@@ -240551,7 +240556,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "b9e8e64a656e69e564f86b604c87a1f21da53e15f5129bc5f26971930cce2a85",
+      "content_hash": "562d5f6a29ccba99a4796ddaff78a5dcdb5db610458820dc03759c3e27045e7c",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [],
@@ -240560,7 +240565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:21:53.366Z",
+      "verified_at": "2026-11-27T05:30:03.747Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240577,9 +240582,9 @@
       "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "ec7e5dc9d4724852ab6d913722e2d051cddb300637d311ce7b33a6ec2aab30ab",
+      "content_hash": "daa4d0eb016b627074325e56121d0f35ef398b4c42d8f7022a9546b23d63ffc4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:21:53.842Z"
+      "persisted_at": "2026-11-27T05:30:04.253Z"
     },
     "learn-github-automattic-harper": {
       "learning_id": "learn-github-automattic-harper",
@@ -240990,9 +240995,9 @@
       "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
       "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a7d12a15ae89bf33c6d291b801db76d2cd313cac135f67ee699b42159811c9e",
+      "content_hash": "164f7ab8d27368ad6105cc3a37539d5882860e3a24f933d084c771500c71ba5e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:22:13.210Z"
+      "persisted_at": "2026-11-27T05:30:25.213Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
@@ -257065,8 +257070,8 @@
       "slug": "topgrade-rs-topgrade",
       "platform": "github",
       "source_url": "https://github.com/topgrade-rs/topgrade",
-      "source_version": "d2e732b9",
-      "content_hash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
+      "source_version": "95c5787f",
+      "content_hash": "57659565e5d12d20053ad4f89a6b1f6493f30f2a1b0f65acb0f14a5b1281c9a4",
       "dossier_path": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md",
       "promoted_rules": [
@@ -257089,6 +257094,11 @@
           "number": 10368,
           "title": "check PATH for pio executable before using full path",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10835,
+          "title": "run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257096,7 +257106,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T22:15:50.188Z",
+      "verified_at": "2026-11-27T05:30:06.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257138,10 +257148,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "d2e732b9",
-      "content_hash": "1ab38794498f34c2bd1ce87b0ab79aba4f5332f1dbaf223ae2011010f3dd2d64",
+      "source_version": "95c5787f",
+      "content_hash": "049b12d78fe994458adc9b1ab9adecde289272e3bd300bda3d49a6ea41ae98b9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:15:50.804Z"
+      "persisted_at": "2026-11-27T05:30:06.858Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade",
@@ -257150,10 +257160,10 @@
       "relative_path": "08_VERIFICATION/topgrade-rs-topgrade-verification-protocol-empirical-defect-shield-for-topgrade-.md",
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs/topgrade",
       "repository": "topgrade-rs/topgrade",
-      "source_version": "d2e732b9",
-      "content_hash": "ab4c1d11b71e1355f8c7bdd7031648ac5c152a77b4c48de5faef50854d70e1a9",
+      "source_version": "95c5787f",
+      "content_hash": "511ac0cc9019d9bef03aafb0e6cb2ce526d25d8b169f62af1a0f92cf9706b9bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:15:50.980Z"
+      "persisted_at": "2026-11-27T05:30:07.053Z"
     },
     "rule-8682": {
       "learning_id": "rule-8682",
@@ -257189,9 +257199,9 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6b2a869a7be6b64c5bb00077d8f3b44a0cd1785c0de035859a216a6d85d991b",
+      "content_hash": "14d0b2e5e8c498e58debe893933a1e57812a4a0f3202f8222f211ae67fd9fabd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:16:04.721Z"
+      "persisted_at": "2026-11-27T05:30:24.588Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-topgrade-rs-topgrade-learnings",
@@ -257201,9 +257211,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for topgrade-rs-topgrade-learnings",
       "repository": "topgrade-rs-topgrade-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc2cc652a6a4c4311dbefa748b4c0dc5384ba2b244fe5b0bb7ca20836afc7a1d",
+      "content_hash": "4563c2b98f0683d5cb4af4e7e475307ba601fdfe86d1b354ba1e1e8ab40b31fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:16:04.891Z"
+      "persisted_at": "2026-11-27T05:30:24.788Z"
     },
     "learn-huggingface-comfy-org-relayvsr": {
       "learning_id": "learn-huggingface-comfy-org-relayvsr",
@@ -361956,6 +361966,82 @@
       "content_hash": "c57b723ff1cbcd8fe265a2bf3fc1d5d3350046c3a9b26d3633af2f6c56e25f67",
       "domain_letter": "B",
       "persisted_at": "2026-11-27T05:21:43.755Z"
+    },
+    "rule-10835": {
+      "learning_id": "rule-10835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10835,
+      "title": "run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+      "source_url": "https://github.com/topgrade-rs/topgrade",
+      "source_version": "95c5787f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:30:06.176Z"
+    },
+    "candidate_directive-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim": {
+      "item_id": "candidate_directive-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LEX3-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim.md",
+      "title": "run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+      "repository": "topgrade-rs/topgrade",
+      "source_version": "95c5787f",
+      "content_hash": "2ef95a6e16b719c0d9505e829a5403c406cf6d5f812d54c78412bfce52f5159c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:30:06.664Z"
+    },
+    "rule-10836": {
+      "learning_id": "rule-10836",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10836,
+      "title": "require a region to own its files before a remap",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "bceb12f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:30:20.214Z"
+    },
+    "candidate_directive-require-a-region-to-own-its-files-before-a-remap": {
+      "item_id": "candidate_directive-require-a-region-to-own-its-files-before-a-remap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LPRP-require-a-region-to-own-its-files-before-a-remap.md",
+      "title": "require a region to own its files before a remap",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "bceb12f7",
+      "content_hash": "465267f1c013e4676f2dd5c7e0c7e408a49f744ed79bb8d5c93c45a779c602d3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:30:20.729Z"
+    },
+    "candidate_directive-ci-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim": {
+      "item_id": "candidate_directive-ci-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LSLE-ci-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim.md",
+      "title": "ci: run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+      "repository": "topgrade-rs-topgrade-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1dab7ec225a94392981d038f6252a3f7cdf5fa8e57e9a7f24f9367bd30e4ddd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:30:24.387Z"
+    },
+    "candidate_directive-mito2-require-a-region-to-own-its-files-before-a-remap": {
+      "item_id": "candidate_directive-mito2-require-a-region-to-own-its-files-before-a-remap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LTNL-mito2-require-a-region-to-own-its-files-before-a-remap.md",
+      "title": "mito2): require a region to own its files before a remap",
+      "repository": "greptimeteam-greptimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eeda180014f298c304839f2b88fed91f27b11cf0b598a8469b1998c068825726",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:30:25.764Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T09:54:34.553Z",
+  "timestamp": "2026-11-27T05:30:25.622Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-greptimeteam-greptimedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [greptimeteam-greptimedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T09:54:34.553Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:30:25.622Z`  
 > **Learning ID**: `LEARN-EVO-greptimeteam-greptimedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `0813fc35`  
+> **Source Version**: `bceb12f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T09:54:28.421Z  
+> **Timestamp**: 2026-11-27T05:30:19.251Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:54:28.416Z  
+> **Harvest Timestamp**: 2026-11-27T05:30:19.245Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6831 stars
+- **Stars / Engagement**: 6843 stars
 
 ---
 
@@ -1767,11 +1767,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10624** (2026-11-25): **fix: reject primary key encoding options on logical metric tables**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  This pull request fixes a validation gap that allowed logical metric tables to specify a primary key encoding even though their backing physical table determines the encoding. Creating a logical table with either `primary_key_encoding` or its deprecated alias `memtable.partition_tree.primary_key_encoding` now returns `InvalidArguments` and names the offending option.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [ ] Skip nightly merge  <!-- Eligible PRs enter the merge queue hourly from 02:10 through 08:10 Beijing time (UTC+8), up to five per run. Check to opt out. To resume, uncheck the box and remove any manually applied `skip nightly merge` label. Maintainers can use **Merge when ready** to merge earlier. Changing this checkbox does not cancel an existing queue entry or manually enabled auto
+- **Issue #10652** (2026-11-26): **perf(query): open regions of a merge scan partition ahead for bounded results**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  `MergeScanExec::to_stream` reads the regions of an output partition one after another: it sends the `DoGet` for a region only after the previous region's stream is drained. With 16 regions and 4 partitions, a TopK query waits for 4 region queries in sequence per partition, although each region returns at most `fetch` rows.  When `remote_plan_row_bound` bounds every region's result to at most one batch (`LIMIT`, `ORDER BY ... LIMIT`, aggregates without `GROUP BY`), a partition now sends the `DoGet`s of its regions together, up to `target_partitions` at a time, and drains them in region order through `buffered`. The partition's output order is unchanged. Unbounded plans, and plans with a query-wide `RegionReadLimiter` (native PromQL), keep reading one region at a time.  The remote dynamic filter fanout starts as soon as a region's `DoGet` succeeds, so regions opened ahead receive threshold updates while earlier regions are drained.  Known limitation: a region opened ahead starts with the initial remote dynamic filter instead of the threshold the regions before it tightened. Updates still reach it through the fanout.  Local cluster (metasrv, 2 datanodes, frontend; `query.parallelism = 4`), 16-region traces table with 17.4M rows and 168 SST files per region. Only the fronten
+  **Post-Mortem & Fix Analysis**:
+  > Closing this. The review is right: `max_concurrent_queries` on the datanode bounds in-flight reads per datanode, and the permit is held until the stream drops. Opening regions ahead lets one query exceed a budget sized for `target_partitions` and time out on its own reads.  The same latency gain is available without code. With the frontend's `query.parallelism` at least the region count, each merge scan partition reads one region, so all regions run at once and the datanode budget stays an explicit operator setting.  Same main binary, 16-region table, single client, median of 15 runs, three rounds each:  | Query | parallelism 4 | parallelism 16 | |---|---|---| | root spans, 8 columns, `ORDER BY ts DESC LIMIT 100` | 26.2 ms | 16.9 ms | | root spans, `SELECT *`, same order and limit | 78.3 ms | 55.4 ms | | root spans with a rare status, same order and limit | 49.7 ms | 39.1 ms | | `count(*)` of root spans | 172.9 ms | 155.5 ms | | `ORDER BY ts DESC LIMIT 100`, no filter | 24.3 ms | 12.9 
 
-- **Issue #10621** (2026-11-25): **fix(meta): preserve table column order and primary key indices during reconciliation [Backport release/v1.3]**
-  *Symptoms*: Backport of #10251 to release/v1.3.  --- Original PR: #10251 Merged by: @killme2008
+- **Issue #10651** (2026-11-26): **fix(mito2): make table compaction publication retries idempotent**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  A datanode can publish a table compaction and lose the acknowledgement. Retrying the same request then returned `StaleInputs` because the first attempt had already removed the shared input files.  Mito now returns `Applied` when the region manifest shows that every input ID is absent and every expected output is present with exactly the requested `FileMeta`. The output set must be nonempty. The worker confirms the file set under the manifest lock and checks the schema, region state, and leader lease. A successful replay skips output verification, manifest writes, in-memory file installation, and compaction scheduling.  If a later compaction has replaced an output, the retry still returns `StaleInputs`. The same applies to an empty-output retry after its inputs disappear, since the manifest cannot establish that the requested replacement occurred.  Publication allows region options to change after the job takes its snapshot. If an ALTER enables `preserve_row_sequence` and a fresh publication would install unmarked outputs, Mito returns `StaleInputs` so the caller can replan. This protects exact sequence-range reads even when the inputs have mixed sequence markers. Mito checks the policy before reading output objects, so a missing object cannot mask an already stale policy
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1788,1021 +1790,1457 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1110a0af` (2026-11-25)
-**Commit Message**: fix(meta): preserve table column order and primary key indices during reconciliation (#10251)
+### Incident Patch 1: `0127d638` (2026-11-26)
+**Commit Message**: fix(mito2): require a region to own its files before a remap (#10646)
 
-* fix(meta): preserve table column order and primary key indices during reconciliation
+* fix(mito2): require a region to own its files before a remap
 
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+A remap (split or merge) moves file references between regions. Today mito2 checks
+only that the inputs come from the same table, so a merge can be applied while a
+participant still holds files another region created; a later compaction then
+materialises a copy of the same rows and both references survive the file-id
+dedup, so the merged region reads those rows twice.
 
-* fix(meta): address maintainer review on column order and PK validation during reconciliation
+Reject such a remap instead: every participating region must hold only files whose
+creation expression equals that region's own partition expression. The error names
+each offending (region, file, creator expression) so the caller can compact the
+region and retry. A one-source-to-many-targets split is exempt: no target combines
+file sets there and the region predicate keeps a split's rows apart.
 
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+This trades a merge-time error and a compaction for the per-reference row range
+that #10616 adds.
 
-* style(meta): simplify nested if blocks in reconciliation utils
+Signed-off-by: discord9 <[REDACTED_EMAIL]>
 
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
+* fix(mito2): treat a file without a recorded creator as the region's own
 
-* test(meta): use OutputData::pretty_print for SHOW CREATE TABLE verification
+Files written before the partition expression was recorded carry no creator,
 
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-
-* test(meta): drop unused mut in reconcile_table integration test
-
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-
-* test(meta): make reconcile SHOW CREATE TABLE assertion formatting-tolerant
-
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-
-* test(meta): cargo fmt reconcile assertion
-
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-
-* test(integration): parse quoted SHOW CREATE output in reconcile test
-
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-
-* style(tests): rustfmt reconcile_table SHOW CREATE assertions
-
-Signed-off-by: Tyagiquamar <[REDACTED_EMAIL]>
-Signed-off-by: Tyagiquamar <
-
-**File**: `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs` (modified, +3/-0)
+**File**: `src/common/meta/src/instruction.rs` (modified, +75/-4)
 ```diff
-@@ -92,6 +92,9 @@ impl State for ResolveColumnMetadata {
-         ctx.persistent_ctx.table_info_value = Some(table_info_value);
- 
-         if let Some(column_metadatas) = check_column_metadatas_consistent(&self.region_metadata) {
-+            // The consistent regions share their key: order the tags as the regions keep them, which
-+            // also checks that the region's primary key matches its tag columns. Column order still
-+            // comes from the stored `TableInfo`; see `build_table_meta_from_column_metadatas`.
-             let column_metadatas =
-                 reorder_tag_columns(&column_metadatas, &self.region_metadata[0].primary_key)?;
-             // Safety: fetched in the above.
-```
-
-**File**: `src/common/meta/src/reconciliation/utils.rs` (modified, +243/-18)
-```diff
-@@ -358,15 +358,24 @@ pub(crate) fn check_column_metadata_invariants(
-     Ok(())
+@@ -993,7 +993,7 @@ impl Display for SyncRegion {
+     }
  }
  
--/// Builds a [`TableMeta`] from the provided [`ColumnMetadata`]s.
-+/// Builds a [`TableMeta`] from the provided [`ColumnMetadata`]s, preserving schema column order
-+/// from `table_meta` and taking the primary key order from the input tags.
-+///
-+/// The input [`ColumnMetadata`]s determine which columns currently exist in region metadata:
-+/// - Columns present in `table_meta` but missing from `column_metadata` are dropped.
-+/// - Columns present in both retain the column order from `table_meta.schema`.
-+/// - Columns present only in `column_metadata` are appended.
-+/// - Primary key order follows the tag columns in `column_metadata`, which the physical-table
-+///   reconcile paths feed in the regions' key order (`table_meta.primary_key_indices` only
-+///   determines which columns must remain tags). The logical-table reconcile path feeds columns
-+///   in column-position order and relies on a subsequent `sort_columns()` call.
- ///
- /// Returns an error if:
- /// - Any column is missing in the `name_to_ids`(if `name_to_ids` is provided).
- /// - The column id in table metadata is not the same as the column id in the column metadata.(if `name_to_ids` is provided)
- /// - The table index is missing in the column metadata.
-+/// - Any primary key column of `table_meta` is not [`SemanticType::Tag`] in `column_metadata`.
- /// - The primary key or partition key columns are missing in the column metadata.
--///
--/// TODO(weny): add tests
- pub(crate) fn build_table_meta_from_column_metadatas(
-     table_id: TableId,
-     table_ref: TableReference,
-@@ -434,11 +443,30 @@ pub(crate) fn build_table_meta_from_column_metadatas(
-         );
+-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
++#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+ pub struct RemapManifest {
+     pub region_id: RegionId,
+     /// Regions to remap manifests from.
+@@ -1002,14 +1002,33 @@ pub struct RemapManifest {
+     pub region_mapping: HashMap<RegionId, Vec<RegionId>>,
+     /// New partition expressions for the new regions.
+     pub new_partition_exprs: HashMap<RegionId, String>,
++    /// Only verify that the remap would be accepted instead of writing staging manifests.
++    ///
++    /// The repartition procedure sends such a request to each *source leader* before it publishes
++    /// the new routes; the datanode then reads the region's persisted manifest and reports whether
++    /// the region holds a file it did not create itself. Nothing is staged and nothing is written.
++    ///
++    /// An older datanode ignores this unknown field (it is `#[serde(default)]`, so it simply
++    /// deserializes as `false`) and performs an ordinary remap. That is still safe: an ordinary
++    /// remap requires the region to be in staging state, and these sources are not staged yet, so
++    /// the datanode answers with the structured stage-required error
++    /// (`mito2::worker::handle_remap` → `InvalidRequest` "region is not in staging state"). Metasrv
++    /// therefore sees an error rather than a silent success, and aborts the group before the
++    /// routes are published.
++    #[serde(default)]
++    pub validate_only: bool,
+ }
+ 
+ impl Display for RemapManifest {
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+         write!(
+             f,
+-            "RemapManifest(region_id={}, input_regions={:?}, region_mapping={:?}, new_partition_exprs={:?})",
+-            self.region_id, self.input_regions, self.region_mapping, self.new_partition_exprs
++            "RemapManifest(region_id={}, input_regions={:?}, region_mapping={:?}, new_partition_exprs={:?}, validate_only={})",
++            self.region_id,
++            self.input_regions,
++            self.region_mapping,
++            self.new_partition_exprs,
++            self.validate_only
+         )
+     }
+ }
+@@ -1477,7 +1496,7 @@ impl InstructionReply {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use std::collections::HashSet;
++    use std::collections::{HashMap, HashSet};
+     use std::error::Error as _;
+ 
+     use common_error::mock::MockError;
+@@ -1563,6 +1582,58 @@ mod tests {
+         assert_eq!(error.retry_hint.as_str(), "retry_after_route_refresh");
      }
  
-+    let mut ordered_column_metadatas = Vec::with_capacity(column_metadata.len());
-+    let mut existing_names = HashSet::with_capacity(column_schemas.len());
++    #[test]
++    fn test_remap_manifest_wire_accepts_a_metasrv_without_validate_only() {
++        // A metasrv that predates the pre-publication check sends no `validate_only` key. A new
++        // datanode has to read that as an ordinary remap - the old behaviour - so a mixed
++        // cluster keeps working: nothing is staged yet, and the remap is refused.
++        let region_id = RegionId::new(1, 2);
++        let new_region_id = RegionId::new(1, 3);
++        let mut wire = serde_json::to_value(Instruction::RemapManifest(RemapManifest {
++            region_id,
++            input_regions: vec![region_id],
++            region_mapping: HashMap::from([(region_id, vec![new_region_id])]),
++            new_partition_exprs: HashMap::from([(
++                new_region_id,
++                "col(x) >= 0 AND col(x) < 100".to_string(),
++            )]),
++            validate_only: true,
++        }))
++        .unwrap();
++        wire["RemapManifest"]
++            .as_object_mut()
++            .unwrap()
++            .remove("validate_only");
 +
-+    // Preserves the original table column order from `table_meta.schema`.
-+    for col_schema in column_schemas {
-+        if let Some(col) = column_in_column_metadata.get(col_schema.name.as_str()) {
-+            ordered_column_metadatas.push(*col);
-+            existing_names.insert(col_schema.name.as_str());
-+        }
++        let instruction: Instruction = serde_json::from_value(wire).unwrap();
++        let Instruction::RemapManifest(remap) = instruction else {
++            panic!("expected a remap manifest instruction");
++        };
++        assert!(!remap.validate_only);
++        assert_eq!(remap.region_id, region_id);
++
++        // A validate-only instruction is told apart by the key alone, and an old datanode that
++        // drops it performs an ordinary remap, which fails because nothing is staged: metasrv
++        // never mistakes it for a successful check.
++        let wire = serde_json::to_value(Instruction::RemapManifest(RemapManifest {
++            region_id,
++            input_regions: vec![region_id],
++            region_mapping: HashMap::from([(region_id, vec![new_region_id])]),
++            new_partition_exprs: HashMap::new(),
++            validate_only: true,
++        }))
++        .unwrap();
++        assert_eq!(
++            wire["RemapManifest"]["validate_only"],
++            serde_json::json!(true)
++        );
++        let decoded: Instruction = serde_json::from_value(wire).unwrap();
++        let Instruction::RemapManifest(decoded) = decoded else {
++            panic!("expected a remap manifest instruction");
++        };
++        assert!(decoded.validate_only);
 +    }
 +
-+    // Appends any newly added columns from `column_metadata`.
-+    for col in column_metadata {
-+        if !existing_names.contains(col.column_schema.name.as_str()) {
-+            ordered_column_metadatas.push(col);
-+        }
-+    }
-+
-     let mut new_raw_table_meta = table_meta.clone();
-     let primary_key_indices = &mut new_raw_table_meta.primary_key_indices;
-     let partition_key_indices = &mut new_raw_table_meta.partition_key_indices;
-     let value_indices = &mut new_raw_table_meta.value_indices;
--    let mut columns = Vec::with_capacity(column_metadata.len());
-+    let mut columns = Vec::with_capacity(ordered_column_metadatas.len());
-+    let mut column_name_to_index = HashMap::with_capacity(ordered_column_metadatas.len());
-     let column_ids = &mut new_raw_table_meta.column_ids;
-     let next_column_id = &mut new_raw_table_meta.next_column_id;
- 
-@@ -447,24 +475,47 @@ pub(crate) fn build_table_meta_from_column_metadatas(
-     primary_key_indices.clear();
-     partition_key_indices.clear();
- 
--    for (idx, col) in column_metadata.iter().enumerate() {
--        if partition_key_names.contains(&col.column_schema.name.as_str()) {
--            partition_key_indices.push(idx);
--        }
--        match col.semantic_type {
--            SemanticType::Tag => {
--                primary_key_indices.push(idx);
--            }
--            SemanticType::Field => {
--                value_indices.push(idx);
--            }
--            SemanticType::Timestamp => {
--                value_indices.push(idx);
--            }
-+    for (idx, col) in ordered_column_metadatas.iter().enumerate() {
-+        if col.semantic_type != SemanticType::Tag {
-+            value_indices.push(idx);
-         }
- 
-         columns.push(col.column_schema.clone());
-         column_ids.push(col.column_id);
-+        column_name_to_index.insert(col.column_schema.name.as_str(), idx);
-+    }
-+
-+    // Physical-table reconciliation supplies tags in region primary key order.
-+    for col in column_metadata
-+        .iter()
-+        .filter(|c| c.semantic_type == SemanticType::Tag)
-+    {
-+        primary_key_indices.push(column_name_to_index[col.column_schema.name.as_str()]);
-+    }
-+
-+    // Ensures every stored primary key column is still a tag in the region metadata.
-+    for old_idx in &table_meta.primary_key_indices {
-+        let col_schema = &column_schemas[*old_idx];
-+        if let Some(col) = column_in_column_metadata.get(col_schema.name.as_str()) {
-+            ensure!(
-+                col.semantic_type == SemanticType::Tag,
-+                UnexpectedSnafu {
-+                    err_msg: format!(
-+                        "Primary key column '{}' has invalid semantic type '{:?}', expected Tag, table: {}, table_id: {}",
-+               
+     #[test]
+     fn test_instruction_error_from_error() {
+         
 ```
 
-**File**: `tests-integration/src/tests/reconcile_table.rs` (modified, +71/-0)
+**File**: `src/datanode/src/heartbeat/handler/apply_staging_manifest.rs` (modified, +1/-0)
 ```diff
-@@ -541,6 +541,77 @@ async fn test_renamed_table() {
-     check_output_stream(output.data, expected).await;
+@@ -246,6 +246,7 @@ mod tests {
+             .handle(
+                 &handler_context,
+                 RemapManifest {
++                    validate_only: false,
+                     region_id,
+                     input_regions: vec![region_id, region_id2],
+                     region_mapping: HashMap::from([
+```
+
+**File**: `src/datanode/src/heartbeat/handler/remap_manifest.rs` (modified, +9/-2)
+```diff
+@@ -35,12 +35,14 @@ impl InstructionHandler for RemapManifestHandler {
+             input_regions,
+             region_mapping,
+             new_partition_exprs,
++            validate_only,
+         } = request;
+         info!(
+-            "Datanode received remap manifest request, region_id: {}, input_regions: {}, target_regions: {}",
++            "Datanode received remap manifest request, region_id: {}, input_regions: {}, target_regions: {}, validate_only: {}",
+             region_id,
+             input_regions.len(),
+-            new_partition_exprs.len()
++            new_partition_exprs.len(),
++            validate_only
+         );
+         let Some(leader) = ctx.region_server.is_region_leader(region_id) else {
+             warn!("Region: {} is not found", region_id);
+@@ -65,6 +67,7 @@ impl InstructionHandler for RemapManifestHandler {
+         let reply = match ctx
+             .region_server
+             .remap_manifests(RemapManifestsRequest {
++                validate_only,
+                 region_id,
+                 input_regions,
+                 region_mapping,
+@@ -131,6 +134,7 @@ mod tests {
+             .handle(
+                 &handler_context,
+                 RemapManifest {
++                    validate_only: false,
+                     region_id,
+                     input_regions: vec![],
+                     region_mapping: HashMap::new(),
+@@ -161,6 +165,7 @@ mod tests {
+             .handle(
+                 &handler_context,
+                 RemapManifest {
++                    validate_only: false,
+                     region_id,
+                     input_regions: vec![],
+                     region_mapping: HashMap::new(),
+@@ -225,6 +230,7 @@ mod tests {
+             .handle(
+                 &handler_context,
+                 RemapManifest {
++                    validate_only: false,
+                     region_id,
+                     input_regions: vec![region_id, region_id2],
+                     region_mapping: HashMap::from([
+@@ -249,6 +255,7 @@ mod tests {
+             .handle(
+                 &handler_context,
+                 RemapManifest {
++                    validate_only: false,
+                     region_id,
+                     input_regions: vec![region_id],
+                     region_mapping: HashMap::from([
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/collect.rs` (modified, +85/-10)
+```diff
+@@ -44,6 +44,10 @@ pub struct Collect {
+     pub succeeded_procedures: Vec<ProcedureMeta>,
+     /// Sub-procedures that have failed.
+     pub failed_procedures: Vec<ProcedureMeta>,
++    /// The errors the failed sub-procedures reported, so that a caller of the parent procedure
++    /// learns why a group failed - for instance which region holds a file it did not create.
++    #[serde(default)]
++    pub failed_procedure_errors: Vec<String>,
+     /// Sub-procedures whose state could not be determined.
+     pub unknown_procedures: Vec<ProcedureMeta>,
+ }
+@@ -54,6 +58,7 @@ impl Collect {
+             inflight_procedures,
+             succeeded_procedures: Vec::new(),
+             failed_procedures: Vec::new(),
++            failed_procedure_errors: Vec::new(),
+             unknown_procedures: Vec::new(),
+         }
+     }
+@@ -90,6 +95,8 @@ impl State for Collect {
+                 Err(e) => {
+                     error!(e; "failed to wait for repartition subprocedure, procedure_id: {}, group_id: {}", procedure_id, group_id);
+                     self.failed_procedures.push(*procedure_meta);
++                    self.failed_procedure_errors
++                        .push(format!("group {group_id}: {}", describe_cause(&e)));
+                 }
+             }
+         }
+@@ -111,8 +118,11 @@ impl State for Collect {
+                 .extend(self.unknown_procedures.iter());
+             return crate::error::UnexpectedSnafu {
+                 violated: format!(
+-                    "Repartition groups failed or became unknown, table_id: {}, failed: {}, unknown: {}",
+-                    table_id, failed, unknown
++                    "Repartition groups failed or became unknown, table_id: {}, failed: {}, unknown: {}{}",
++                    table_id,
++                    failed,
++                    unknown,
++                    describe_failed_groups(&self.failed_procedure_errors)
+                 ),
+             }
+             .fail();
+@@ -130,18 +140,54 @@ impl State for Collect {
+     }
+ }
+ 
++/// Renders `error` together with every cause it wraps.
++///
++/// [`watcher::wait`] reports a child failure as `ProcedureExec`, whose own message is only
++/// "Failed to execute procedure": the reason a group failed - which region holds a file it did
++/// not create - lives in the wrapped error. Walking the source chain keeps it, so the parent
++/// error a SQL caller sees still names the region and the file.
++fn describe_cause(error: &(dyn std::error::Error + 'static)) -> String {
++    let mut message = error.to_string();
++    let mut cause = error.source();
++    while let Some(error) = cause {
++        let text = error.to_string();
++        if !message.contains(&text) {
++            message.push_str(": ");
++            message.push_str(&text);
++        }
++        cause = error.source();
++    }
++    message
++}
++
++/// Appends the errors of the failed groups, bounded so an error message stays readable.
++fn describe_failed_groups(errors: &[String]) -> String {
++    const MAX_REPORTED: usize = 4;
++    if errors.is_empty() {
++        return String::new();
++    }
++    let mut details = errors
++        .iter()
++        .take(MAX_REPORTED)
++        .cloned()
++        .collect::<Vec<_>>()
++        .join("; ");
++    if errors.len() > MAX_REPORTED {
++        details.push_str(&format!("; and {} more", errors.len() - MAX_REPORTED));
++    }
++    format!(": {details}")
++}
++
+ #[cfg(test)]
+ mod tests {
+     use std::sync::Arc;
+ 
+-    use common_error::mock::MockError;
+-    use common_error::status_code::StatusCode;
+     use common_meta::test_util::MockDatanodeManager;
+     use common_procedure::{
+-        Context as ProcedureContext, ContextProvider, Error as ProcedureError, ProcedureId,
+-        ProcedureState,
++        Context as ProcedureContext, ContextProvider, ProcedureId, ProcedureState,
+     };
+     use common_procedure_test::MockContextProvider;
++    use store_api::storage::RegionId;
+     use tokio::sync::watch;
+ 
+     use super::*;
+@@ -204,6 +250,7 @@ mod tests {
+             inflight_procedures: vec![],
+             succeeded_procedures: vec![],
+             failed_procedures: vec![],
++            failed_procedure_errors: vec![],
+             unknown_procedures: vec![ProcedureMeta {
+                 plan_index: 0,
+                 group_id: uuid::Uuid::new_v4(),
+@@ -234,12 +281,22 @@ mod tests {
+             env.server_addr.clone(),
+             persistent_ctx,
+         );
++        // The group fails the way a refused merge does: the child error names the region that
++        // holds a file it did not create, and the file. The parent error has to keep both, so
++        // the fixture fixes them here and the assertions below look for these very values.
++        let refused_region = RegionId::new(1024, 1);
++        let refused_file = "018f3b1e-0000-7000-8000-0000000000aa";
++        let child_error = common_procedure::error::UnexpectedSnafu {
++            err_msg: format!(
++                "region {refused_region} holds file {refused_fi
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/group/remap_manifest.rs` (modified, +1/-0)
+```diff
+@@ -121,6 +121,7 @@ impl RemapManifest {
+             input_regions: source_regions.iter().map(|r| r.region_id()).collect(),
+             region_mapping: region_mapping.clone(),
+             new_partition_exprs,
++            validate_only: false,
+         })
+     }
+ 
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/group/repartition_start.rs` (modified, +7/-0)
+```diff
+@@ -24,6 +24,7 @@ use snafu::{OptionExt, ensure};
+ use crate::error::{self, Result};
+ use crate::procedure::repartition::group::sync_region::SyncRegion;
+ use crate::procedure::repartition::group::update_metadata::UpdateMetadata;
++use crate::procedure::repartition::group::utils::validate_merge_sources;
+ use crate::procedure::repartition::group::{
+     Context, GroupId, GroupPrepareResult, State, region_routes,
+ };
+@@ -146,6 +147,9 @@ impl State for RepartitionStart {
+         _procedure_ctx: &ProcedureContext,
+     ) -> Result<(Box<dyn State>, Status)> {
+         if ctx.persistent_ctx.group_prepare_result.is_some() {
++            // Refuse a merge whose sources still hold another region's files while the old
++            // routes are still the published ones.
++            validate_merge_sources(ctx).await?;
+             return Ok((
+                 Box::new(UpdateMetadata::ApplyStaging),
+                 Status::executing(true),
+@@ -191,6 +195,9 @@ impl State for RepartitionStart {
+             }
+         }
+ 
++        // The last edge into `UpdateMetadata::ApplyStaging`: the routes are still the old ones
++        // here, so a refusal cannot strand an acknowledged write on an unpublished route.
++        validate_merge_sources(ctx).await?;
+         Ok((
+             Box::new(UpdateMetadata::ApplyStaging),
+             Status::executing(true),
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/group/sync_region.rs` (modified, +3/-0)
+```diff
+@@ -37,6 +37,7 @@ use crate::handler::HeartbeatMailbox;
+ use crate::procedure::repartition::group::update_metadata::UpdateMetadata;
+ use crate::procedure::repartition::group::utils::{
+     HandleMultipleResult, group_region_routes_by_peer, handle_multiple_results,
++    validate_merge_sources,
+ };
+ use crate::procedure::repartition::group::{Context, State};
+ use crate::procedure::utils::{ErrorStrategy, instruction_error_result};
+@@ -60,6 +61,8 @@ impl State for SyncRegion {
+     ) -> Result<(Box<dyn State>, Status)> {
+         Self::flush_central_region(ctx).await?;
+         self.sync_with_paused_source(ctx).await?;
++        // The other edge into `UpdateMetadata::ApplyStaging`, still before publication.
++        validate_merge_sources(ctx).await?;
+ 
+         Ok((
+             Box::new(UpdateMetadata::ApplyStaging),
+```
+
+**File**: `src/meta-srv/src/procedure/repartition/group/utils.rs` (modified, +590/-1)
+```diff
+@@ -13,12 +13,23 @@
+ // limitations under the License.
+ 
+ use std::collections::HashMap;
++use std::time::Instant;
+ 
++use api::v1::meta::MailboxMessage;
++use common_error::ext::ErrorExt;
++use common_meta::instruction::{Instruction, InstructionReply};
+ use common_meta::peer::Peer;
+ use common_meta::rpc::router::RegionRoute;
++use common_telemetry::tracing_context::TracingContext;
++use common_telemetry::warn;
++use common_time::util as time_util;
++use snafu::{OptionExt, ResultExt};
+ use store_api::storage::RegionId;
+ 
+-use crate::error::{Error, Result};
++use crate::error::{self, Error, Result};
++use crate::handler::HeartbeatMailbox;
++use crate::procedure::repartition::group::Context;
++use crate::service::mailbox::{Channel, MailboxRef};
+ 
+ /// Groups the region routes by the leader peer.
+ ///
+@@ -86,3 +97,581 @@ pub(crate) fn handle_multiple_results<'a>(results: &'a [Result<()>]) -> HandleMu
+         (true, true) => HandleMultipleResult::AllSuccessful,
+     }
+ }
++
++/// Verifies that every source of a **merge** holds only the files it created itself, before the
++/// procedure publishes the new routes.
++///
++/// The remap-time guard in mito2 refuses the same state, but it fires inside `RemapManifest`,
++/// which runs *after* `UpdateMetadata::ApplyStaging` has already published the target write
++/// routes: an acknowledged write could then land in a region the rollback no longer routes
++/// correctly. This asks each merge source leader first, with a validate-only remap that only
++/// reads the region's persisted manifest, so the refusal happens while the old routes still apply.
++///
++/// A one-to-many split is exempt: every target receives only that source's files and no target
++/// combines copies, so the check is skipped unless two or more sources feed the same target.
++pub(crate) async fn validate_merge_sources(ctx: &Context) -> Result<()> {
++    // Only a target fed by two or more distinct sources can publish one object twice, so only the
++    // sources that feed such a target are checked. The remap-time guard exempts exactly the other
++    // shapes through the same predicate, so a repartition this check lets through cannot be
++    // refused after its routes are published.
++    let checked_sources =
++        store_api::region_engine::sources_sharing_a_target(&ctx.persistent_ctx.region_mapping);
++    if checked_sources.is_empty() {
++        return Ok(());
++    }
++    let Some(prepare_result) = ctx.persistent_ctx.group_prepare_result.as_ref() else {
++        // The prepare result is captured by `RepartitionStart` before any edge into
++        // `UpdateMetadata::ApplyStaging`, so it is always present here.
++        return Ok(());
++    };
++
++    let operation_timeout = ctx
++        .next_operation_timeout()
++        .context(error::ExceededDeadlineSnafu {
++            operation: "Validate merge sources",
++        })?;
++
++    let mut requests = Vec::with_capacity(checked_sources.len());
++    for &region_id in &checked_sources {
++        // A source without a route would silently go unchecked, so refuse to guess.
++        let route = prepare_result
++            .source_routes
++            .iter()
++            .find(|route| route.region.id == region_id)
++            .context(error::UnexpectedSnafu {
++                violated: format!("No source route for region: {region_id}"),
++            })?;
++        let peer = route.leader_peer.clone().context(error::UnexpectedSnafu {
++            violated: format!("Leader peer is not set for source region: {region_id}"),
++        })?;
++        requests.push((region_id, peer));
++    }
++
++    let mut pending = Vec::with_capacity(requests.len());
++    for (region_id, peer) in requests {
++        let instruction = build_validate_only_instruction(ctx, region_id)?;
++        pending.push(send_validate_only(
++            ctx.mailbox.clone(),
++            ctx.server_addr.clone(),
++            peer,
++            instruction,
++            operation_timeout,
++        ));
++    }
++    let results = futures::future::join_all(pending).await;
++
++    let mut offenders = Vec::new();
++    for (region_id, result) in checked_sources.into_iter().zip(results) {
++        match result {
++            Ok(()) => {}
++            // A retryable failure - a mailbox timeout, a channel that closed, a region that is
++            // not a leader yet - says nothing about which region owns what. It reaches the
++            // procedure as retryable, so it is retried instead of turning into a terminal
++            // "compact the region" refusal.
++            Err(err) if err.retry_hint().is_retryable() => return Err(err),
++            Err(err) => offenders.push(format!("region {region_id}: {err}")),
++        }
++    }
++
++    if offenders.is_empty() {
++        return Ok(());
++    }
++    error::UnexpectedSnafu {
++        violated: format!(
++            "The repartition refuses to merge regions that hold files another region created, \
++             before the new routes are published: {}. Compact the offending regions
+```
+
+---
+
+### Incident Patch 2: `5cd42ef8` (2026-11-26)
+**Commit Message**: fix(mito2): make table compaction publication retries idempotent (#10651)
+
+* fix(mito2): make table compaction publication retries idempotent
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(mito2): allow table compaction publication across region option changes
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(mito2): preserve exact sequence reads across table compaction publication
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(mito2): guard mixed compaction inputs after sequence preservation is enabled
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(mito2): check sequence policy before verifying compaction outputs
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `src/mito2/src/engine/edit_region_test.rs` (modified, +1/-1)
+```diff
+@@ -103,7 +103,7 @@ async fn test_delayed_series_index_notification_after_removal() -> WhateverResul
+                             ..Default::default()
+                         },
+                         waiters: crate::request::Waiters::one(tx),
+-                        result: Ok(()),
++                        result: Ok(crate::request::RegionEditOutcome::Written),
+                         is_staging: false,
+                         update_region_state: false,
+                     },
+```
+
+**File**: `src/mito2/src/engine/table_compaction.rs` (modified, +3/-3)
+```diff
+@@ -50,8 +50,10 @@ pub(crate) struct PublicationContext {
+ /// A result for this publication attempt, not a durable task receipt.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum PublicationOutcome {
++    /// This attempt installed the replacement, or its nonempty outputs are still fully visible
++    /// with all of its inputs absent.
+     Applied,
+-    /// The captured inputs/schema/options no longer match. Re-snapshot and replan.
++    /// The schema or file set no longer matches this publication. Re-snapshot and replan.
+     StaleInputs,
+ }
+ 
+@@ -99,8 +101,6 @@ impl MitoEngine {
+                 reason: "Publication requires this region's nonempty input snapshot"
+             }
+         );
+-        // The public snapshot keeps JSON options; parse them once here so the
+-        // worker compares typed options and reads typed flags without reparsing.
+         let options = serde_json::from_value(snapshot.options).context(SerdeJsonSnafu)?;
+         let edit = RegionEdit {
+             files_to_remove: snapshot.inputs,
+```
+
+**File**: `src/mito2/src/engine/table_compaction/tests.rs` (modified, +215/-81)
+```diff
+@@ -21,7 +21,9 @@ use common_time::Timestamp;
+ use common_time::timestamp::TimeUnit;
+ use parquet::file::metadata::ParquetMetaData;
+ use store_api::region_engine::{RegionEngine, RegionRole};
+-use store_api::region_request::{RegionRequest, RegionTruncateRequest};
++use store_api::region_request::{
++    AlterKind, RegionAlterRequest, RegionRequest, RegionTruncateRequest, SetRegionOption,
++};
+ use store_api::storage::{FileId, RegionId};
+ 
+ use super::{PublicationOutcome, TableCompactionSnapshot};
+@@ -147,12 +149,24 @@ async fn row_count(engine: &MitoEngine, region_id: RegionId) -> usize {
+     .sum()
+ }
+ 
++#[rstest::rstest]
++#[case::fresh(false)]
++#[case::replay(true)]
+ #[tokio::test]
+-async fn test_publication_refused_awaiting_leader_lease() {
++async fn test_publication_refused_awaiting_leader_lease(#[case] replay: bool) {
+     let mut env = TestEnv::new().await;
+     let engine = env.create_engine(config()).await;
+     let region_id = RegionId::new(1, 1);
+     let (snapshot, output) = seed(&engine, region_id).await;
++    if replay {
++        assert_eq!(
++            PublicationOutcome::Applied,
++            engine
++                .publish_table_compaction(region_id, snapshot.clone(), vec![output.clone()])
++                .await
++                .unwrap()
++        );
++    }
+     engine.require_write_lease();
+     engine.freeze_lease_clock(Instant::now());
+     promote_to_await_leader_lease(&engine, region_id).await;
+@@ -196,25 +210,16 @@ async fn test_duplicate_publication_and_later_replacement_do_not_readmit_inputs(
+     let (snapshot, output) = seed(&engine, region_id).await;
+     let region = engine.get_region(region_id).unwrap();
+     let sequence = region.version_control.committed_sequence();
++    let version = region.manifest_ctx.manifest_version().await;
+     let (first, second) = tokio::join!(
+         engine.publish_table_compaction(region_id, snapshot.clone(), vec![output.clone()]),
+         engine.publish_table_compaction(region_id, snapshot.clone(), vec![output.clone()])
+     );
+-    let outcomes = [first.unwrap(), second.unwrap()];
+     assert_eq!(
+-        1,
+-        outcomes
+-            .iter()
+-            .filter(|outcome| **outcome == PublicationOutcome::Applied)
+-            .count()
+-    );
+-    assert_eq!(
+-        1,
+-        outcomes
+-            .iter()
+-            .filter(|outcome| **outcome == PublicationOutcome::StaleInputs)
+-            .count()
++        [PublicationOutcome::Applied; 2],
++        [first.unwrap(), second.unwrap()]
+     );
++    assert_eq!(version + 1, region.manifest_ctx.manifest_version().await);
+     assert_eq!(sequence, region.version_control.committed_sequence());
+     assert_eq!(sequence, region.version_control.current().last_sequence);
+     assert_eq!(3, row_count(&engine, region_id).await);
+@@ -266,6 +271,45 @@ async fn test_duplicate_publication_and_later_replacement_do_not_readmit_inputs(
+     assert_eq!(3, row_count(&engine, region_id).await);
  }
  
 +#[tokio::test]
-+async fn test_reconcile_table_preserves_column_order_and_pk_order() {
-+    let builder =
-+        GreptimeDbClusterBuilder::new("test_reconcile_table_preserves_column_order_and_pk_order")
-+            .await;
-+    let test_context = TestContext::new(MockInstanceBuilder::Distributed(builder)).await;
-+    let frontend = test_context.frontend();
-+    let metasrv = test_context.metasrv();
-+    let reconciliation_manager = metasrv.reconciliation_manager();
-+
-+    // 1. CREATE TABLE q8 with columns ts, a, b and non-column-ordered PRIMARY KEY (b, a)
-+    let output = execute_sql(
-+        &frontend,
-+        "CREATE TABLE q8 (ts TIMESTAMP TIME INDEX, a STRING, b STRING, PRIMARY KEY(b, a));",
-+    )
-+    .await;
-+    assert_affected_rows(output.data).await;
-+
-+    // 2. Positional INSERT before ALTER TABLE
-+    let output = execute_sql(
-+        &frontend,
-+        "INSERT INTO q8 VALUES ('1970-01-01 00:00:01', 'a1', 'b1');",
-+    )
-+    .await;
-+    assert_affected_rows(output.data).await;
-+
-+    // 3. ALTER TABLE q8 ADD COLUMN c INT introduces #10248 stale primary_key_indices order
-+    let output = execute_sql(&frontend, "ALTER TABLE q8 ADD COLUMN c INT;").await;
-+    assert_affected_rows(output.data).await;
-+
-+    // 4. Reconcile the table (repairs stale primary key order while preserving column order)
-+    reconcile_table(metasrv.procedure_manager(), reconciliation_manager, "q8").await;
-+
-+    // 5. Positional INSERT after reconcile (must insert into ts, a, b, c)
-+    let output = execute_sql(
-+        &frontend,
-+        "INSERT INTO q8 VALUES ('1970-01-01 00:00:02', 'a2', 'b2', 2);",
-+    )
-+    .await;
-+    assert_affected_rows(output.data).await;
-+
-+    // 6. SELECT * asserts columns are ts, a, b, c and positional inserts landed correctly
-+    let output = execute_sql(&frontend, "SELECT * FROM q8 ORDER BY ts").await;
-+    let expected = r#"+---------------------+----+----+---+
-+| ts                  | a  | b  | c |
-++---------------------+----+----+---+
-+| 1970-01-01T00:00:01 | a1 | b1 |   |
-+| 1970-01-01T00:00:02 | a2 | b2 | 2 |
-++---------------------+----+----+---+"#;
-+    check_output_stream(output.data, expected).await;
-+
-+    // 7. SHOW CREATE TABLE q8 asserts columns ts, a, b, c and PRIMARY KEY (b, a).
-+    let output = execute_sql(&frontend, "SHOW CREATE TABLE q8").await;
-+    let expected = r#"+-------+-----------------------------------+
-+| Table | Create Table                      |
-++-------+-----------------------------------+
-+| q8    | CREATE TABLE IF NOT EXISTS "q8" ( |
-+|       |   "ts" TIMESTAMP(3) NOT NULL,     |
-+|       |   "a" STRING NULL,                |
-+|       |   "b" STRING NULL,                |
-+|       |   "c" INT NULL,                   |
-+|       |   TIME INDEX ("ts"),              |
-+|       |   PRIMARY KEY ("b", "a")          |
-+|       | )                                 |
-+|       |                                   |
-+|       | ENGINE=mito                       |
-+|       |                                   |
-++-------+-----------------------------------+"#;
-+    check_output_stream(output.data, expected).await;
-+}
-+
- async fn unwrap_err(output: OutputData) -> String {
-     let error = match output {
-         OutputData::Stream(stream) => collect_batches(stream).await.unwrap_err(),
-```
-
----
-
-### Incident Patch 2: `0813fc35` (2026-11-25)
-**Commit Message**: fix(mito2): size old SSTs from size statistics and move the downgrade target to v1.2.0 (#10585)
-
-* test(compat): downgrade to v1.2.1 instead of v1.1.4
-
-SSTs written since #10528 can have inverted-index segments that cross row
-group boundaries. Readers older than v1.2.0 do not split such segments and
-return fewer rows, so v1.1.x is no longer a supported downgrade target.
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* fix(cmd): record the decoded row group size of a replacement SST
-
-sst_replace set max_row_group_decoded_size to 0 for the replacement file.
-Compute it from the replacement footer with the helper writers use, which
-is now public in mito2.
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* fix(mito2): derive decoded value bytes from size statistics for old SSTs
-
-SSTs written before #10528 have no greptime:max_row_group_value_bytes or
-greptime:max_row_value_width footer keys, so a row group of repeated large
-dictionary-encoded values was sized by its encoded bytes on the first
-compaction and read after upgrade.
-
-When the keys are absent, sum the unencoded_byte_array_data_bytes size
-statistic of each row group's byte array column chunks instead, skipping
-columns that 
-
-**File**: `src/cmd/src/datanode/sst_replace.rs` (modified, +2/-2)
-```diff
-@@ -22,6 +22,7 @@ use mito2::region::ManifestStats;
- use mito2::sst::file::RegionFileId;
- use mito2::sst::file_metadata::FileMetadataInterner;
- use mito2::sst::location::{region_dir_from_table_dir, sst_file_path};
-+use mito2::sst::parquet::max_row_group_decoded_size;
- use object_store::ObjectStore;
- use parquet::file::FOOTER_SIZE;
- use parquet::file::metadata::{FooterTail, ParquetMetaDataReader};
-@@ -172,8 +173,7 @@ impl SstReplaceCommand {
-         new_file.num_rows = new_num_rows;
-         new_file.num_row_groups = new_num_row_groups;
-         new_file.max_row_group_uncompressed_size = max_row_group_uncompressed_size(&parquet_meta);
--        // The old file's decoded size does not describe the replacement.
--        new_file.max_row_group_decoded_size = 0;
-+        new_file.max_row_group_decoded_size = max_row_group_decoded_size(&parquet_meta);
- 
-         println!("{} Region: {}", "[ok]".green(), region_id);
-         println!("{} Target SST: {}", "[ok]".green(), target_path.cyan());
-```
-
-**File**: `src/mito2/src/batch_size.rs` (modified, +2/-2)
-```diff
-@@ -23,8 +23,8 @@ pub(crate) const TARGET_BATCH_BYTES: usize = 64 * 1024 * 1024;
- 
- /// Returns `(num_rows, bytes)` estimates of the row groups in a Parquet file: the uncompressed
- /// size of each row group, and one row of the largest decoded string and binary value bytes per
--/// row recorded by the writer. Dictionary encoding can make the uncompressed size far smaller
--/// than the decoded values.
-+/// row of the file (see [max_row_value_width]). Dictionary encoding can make the uncompressed size
-+/// far smaller than the decoded values.
- pub(crate) fn row_group_statistics(
-     metadata: &ParquetMetaData,
- ) -> impl Iterator<Item = (u64, u64)> + '_ {
-```
-
-**File**: `src/mito2/src/sst/parquet.rs` (modified, +222/-16)
-```diff
-@@ -24,6 +24,7 @@ use datatypes::arrow::datatypes::DataType;
- use datatypes::arrow::record_batch::RecordBatch;
- use datatypes::json::JsonSettings;
- use datatypes::schema::ColumnEncoding;
-+use parquet::arrow::parquet_to_arrow_schema;
- use parquet::basic::{Compression, Encoding, ZstdLevel};
- use parquet::file::metadata::{KeyValue, ParquetMetaData};
- use parquet::file::properties::{
-@@ -285,29 +286,103 @@ pub(crate) fn max_row_group_uncompressed_size(metadata: &ParquetMetaData) -> u64
- }
- 
- /// Returns the size of the largest row group of `metadata`, counting string and binary values
--/// at their decoded size when the footer records it under [MAX_ROW_GROUP_VALUE_BYTES_KEY].
--pub(crate) fn max_row_group_decoded_size(metadata: &ParquetMetaData) -> u64 {
-+/// at their decoded size (see [max_row_group_value_bytes]).
-+pub fn max_row_group_decoded_size(metadata: &ParquetMetaData) -> u64 {
-     max_row_group_uncompressed_size(metadata).max(max_row_group_value_bytes(metadata))
- }
- 
--/// Returns the [MAX_ROW_GROUP_VALUE_BYTES_KEY] value of the footer, or 0 when it is absent.
-+/// Returns the [MAX_ROW_GROUP_VALUE_BYTES_KEY] value of the footer, or the same quantity derived
-+/// from the column chunk size statistics when the footer predates the key.
- pub(crate) fn max_row_group_value_bytes(metadata: &ParquetMetaData) -> u64 {
--    footer_u64(metadata, MAX_ROW_GROUP_VALUE_BYTES_KEY)
-+    footer_u64(metadata, MAX_ROW_GROUP_VALUE_BYTES_KEY).unwrap_or_else(|| {
-+        row_group_value_bytes_from_size_statistics(metadata)
-+            .into_iter()
-+            .map(|(_, bytes)| bytes)
-+            .max()
-+            .unwrap_or(0)
-+    })
- }
- 
--/// Returns the [MAX_ROW_VALUE_WIDTH_KEY] value of the footer, or 0 when it is absent.
-+/// Returns the [MAX_ROW_VALUE_WIDTH_KEY] value of the footer, or the same quantity derived from
-+/// the column chunk size statistics when the footer predates the key.
- pub(crate) fn max_row_value_width(metadata: &ParquetMetaData) -> u64 {
--    footer_u64(metadata, MAX_ROW_VALUE_WIDTH_KEY)
-+    footer_u64(metadata, MAX_ROW_VALUE_WIDTH_KEY).unwrap_or_else(|| {
-+        row_group_value_bytes_from_size_statistics(metadata)
-+            .into_iter()
-+            .filter(|(rows, _)| *rows > 0)
-+            .map(|(rows, bytes)| bytes.div_ceil(rows))
-+            .max()
-+            .unwrap_or(0)
-+    })
- }
- 
--fn footer_u64(metadata: &ParquetMetaData, key: &str) -> u64 {
-+/// Returns the value of `key`, or `None` when the footer has no parseable value for it.
-+fn footer_u64(metadata: &ParquetMetaData, key: &str) -> Option<u64> {
-     metadata
-         .file_metadata()
--        .key_value_metadata()
--        .and_then(|kvs| kvs.iter().find(|kv| kv.key == key))
--        .and_then(|kv| kv.value.as_deref())
--        .and_then(|value| value.parse().ok())
--        .unwrap_or(0)
-+        .key_value_metadata()?
-+        .iter()
-+        .find(|kv| kv.key == key)?
-+        .value
-+        .as_deref()?
-+        .parse()
-+        .ok()
-+}
-+
-+/// Returns `(num_rows, value_bytes)` of each row group, where `value_bytes` sums the
-+/// `unencoded_byte_array_data_bytes` size statistic of the column chunks that
-+/// [var_len_value_bytes] counts: top-level string and binary columns that readers do not decode
-+/// as dictionaries.
-+///
-+/// This stands in for [MAX_ROW_GROUP_VALUE_BYTES_KEY] in footers written without it. Parquet
-+/// writers record the statistic per value, so repeated dictionary-encoded values count every
-+/// time. Column chunks written with statistics disabled lack the statistic and count as 0.
-+fn row_group_value_bytes_from_size_statistics(metadata: &ParquetMetaData) -> Vec<(u64, u64)> {
-+    let file = metadata.file_metadata();
-+    let Ok(arrow_schema) = parquet_to_arrow_schema(file.schema_descr(), file.key_value_metadata())
-+    else {
-+        return Vec::new();
++async fn test_replay_requires_all_inputs_absent_and_all_outputs_matching() {
++    let mut env = TestEnv::new().await;
++    let engine = env.create_engine(config()).await;
++    let region_id = RegionId::new(1, 1);
++    let (snapshot, outputs) = seed_shared_inputs(&engine, region_id, &[(0, 3), (3, 6)]).await;
++    let mut subset = snapshot.clone();
++    subset.inputs.truncate(1);
++    let output = outputs[0].clone();
++    assert_eq!(
++        PublicationOutcome::Applied,
++        engine
++            .publish_table_compaction(region_id, subset.clone(), vec![output.clone()])
++            .await
++            .unwrap()
++    );
++    let region = engine.get_region(region_id).unwrap();
++    let version = region.manifest_ctx.manifest_version().await;
++    let different = FileMeta {
++        file_size: output.file_size + 1,
++        ..output.clone()
 +    };
-+    let counted: Vec<bool> = file
-+        .schema_descr()
-+        .columns()
-+        .iter()
-+        .enumerate()
-+        .map(|(leaf, column)| {
-+            if column.path().parts().len() != 1 {
-+                return false;
-+            }
-+            let root = file.schema_descr().get_column_root_idx(leaf);
-+            arrow_schema.fields().get(root).is_some_and(|field| {
-+                matches!(
-+                    field.data_type(),
-+                    DataType::Binary
-+                        | DataType::LargeBinary
-+                        | DataType::Utf8
-+                        | DataType::LargeUtf8
-+                        | DataType::BinaryView
-+                        | DataType::Utf8View
-+                )
-+            })
-+        })
-+        .collect();
-+
-+    metadata
-+        .row_groups()
-+        .iter()
-+        .map(|row_group| {
-+            let bytes = row_group
-+                .columns()
-+                .iter()
-+                .zip(&counted)
-+                .filter(|(_, counted)| **counted)
-+                .map(|(column, _)| {
-+                    column.unencoded_byte_array_data_bytes().unwr
-```
-
-**File**: `tests/compatibility/README.md` (modified, +5/-2)
-```diff
-@@ -98,7 +98,7 @@ cargo run -p sqlness-runner -- compat --from-version v0.9.5
- cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/old --to-bins-dir ./bins/new
- 
- # Test a downgrade from the current build to a released binary:
--cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/current --to-version v1.1.4
-+cargo run -p sqlness-runner -- compat --from-bins-dir ./bins/current --to-version v1.2.1
- 
- # Run a compatibility case in standalone mode:
- cargo run -p sqlness-runner -- compat --topology standalone --test-filter "downgrade_compatibility"
-@@ -227,7 +227,10 @@ wrapper around artifact download/extraction and this script.
- 
- `downgrade_to_versions` optionally lists releases that CI restarts after the
- PR-built cluster. Those runs select only the `downgrade_compatibility` case in
--both distributed and standalone topologies.
-+both distributed and standalone topologies. The oldest supported target is
-+v1.2.0: SSTs written since #10528 can have inverted index segments that cross
-+row group boundaries, and older readers return fewer rows for indexed queries
-+on them without an error.
- 
- ### `setup.sql` — Setup Phase (From Version)
- 
-```
-
-**File**: `tests/compatibility/cases/downgrade_compatibility/case.toml` (modified, +3/-3)
-```diff
-@@ -1,8 +1,8 @@
- name = "downgrade_compatibility"
--reason = "Verify v1.1.4 can reopen tables whose region WAL options, byte-stream-split (BSS) float SSTs, or plain and delta encoded column SSTs were written by the current binary, and can read all rows of an append-only table flushed and compacted with preserve_row_sequence enabled."
-+reason = "Verify v1.2.0 and v1.2.1 can reopen tables whose region WAL options, byte-stream-split (BSS) float SSTs, or plain and delta encoded column SSTs were written by the current binary, can read all rows of an append-only table flushed and compacted with preserve_row_sequence enabled, and can look up an inverted index segment that crosses a row group boundary."
- introduced_by = "fix: preserve legacy region WAL options format; preserve_row_sequence"
- topologies = ["distributed", "standalone"]
- from_range = [">=v1.2.0"]
--to_range = ["=v1.1.4"]
--features = ["table", "wal", "downgrade", "append", "preserve_row_sequence", "sst", "float", "byte_stream_split", "encoding"]
-+to_range = ["=v1.2.0", "=v1.2.1"]
-+features = ["table", "wal", "downgrade", "append", "preserve_row_sequence", "sst", "float", "byte_stream_split", "encoding", "inverted_index"]
- owner = "metasrv"
-```
-
-**File**: `tests/compatibility/cases/downgrade_compatibility/setup.sql` (modified, +19/-0)
-```diff
-@@ -68,3 +68,22 @@ CREATE TABLE t_column_encoding_downgrade (
- INSERT INTO t_column_encoding_downgrade VALUES (1, 'a1', 1000), (2, 'a2', 2000), (3, NULL, NULL);
- 
- ADMIN FLUSH_TABLE('t_column_encoding_downgrade');
-+
-+-- Row groups of 10 rows and index segments of 4 rows: the segment covering rows [8, 12)
-+-- crosses the first row group boundary.
-+CREATE TABLE t_inverted_segment_downgrade (
-+    ts TIMESTAMP TIME INDEX,
-+    label STRING INVERTED INDEX
-+) WITH (
-+    'append_mode' = 'true',
-+    'max_row_group_row_count' = '10',
-+    'index.inverted_index.segment_row_count' = '4'
-+);
-+
-+INSERT INTO t_inverted_segment_downgrade VALUES
-+    (0, 'miss'), (1, 'miss'), (2, 'miss'), (3, 'miss'), (4, 'miss'),
-+    (5, 'miss'), (6, 'miss'), (7, 'miss'), (8, 'hit'), (9, 'hit'),
-+    (10, 'hit'), (11, 'hit'), (12, 'miss'), (13, 'miss'), (14, 'miss'),
-+    (15, 'miss'), (16, 'miss'), (17, 'miss'), (18, 'miss'), (19, 'miss');
-+
-+ADMIN FLUSH_TABLE('t_inverted_segment_downgrade');
-```
-
-**File**: `tests/compatibility/cases/downgrade_compatibility/verify.result` (modified, +11/-0)
-```diff
-@@ -57,3 +57,14 @@ SELECT ts, span_id, ts_end FROM t_column_encoding_downgrade ORDER BY ts;
- | 1970-01-01T00:00:00.002 | a2      | 1970-01-01T00:00:00.000002 |
- | 1970-01-01T00:00:00.003 |         |                            |
- +-------------------------+---------+----------------------------+
-+
-+SELECT ts, label FROM t_inverted_segment_downgrade WHERE label = 'hit' ORDER BY ts;
-+
-++-------------------------+-------+
-+| ts                      | label |
-++-------------------------+-------+
-+| 1970-01-01T00:00:00.008 | hit   |
-+| 1970-01-01T00:00:00.009 | hit   |
-+| 1970-01-01T00:00:00.010 | hit   |
-+| 1970-01-01T00:00:00.011 | hit   |
-++-------------------------+-------+
-```
-
-**File**: `tests/compatibility/cases/downgrade_compatibility/verify.sql` (modified, +2/-0)
-```diff
-@@ -13,3 +13,5 @@ SELECT ts, msg FROM t_fulltext_bloom_v2_downgrade WHERE msg @@ 'hello_world' ORD
- SELECT ts, msg FROM t_fulltext_bloom_v2_downgrade WHERE msg @@ '错误error日志' ORDER BY ts;
- 
- SELECT ts, span_id, ts_end FROM t_column_encoding_downgrade ORDER BY ts;
-+
-+SELECT ts, label FROM t_inverted_segment_downgrade WHERE label = 'hit' ORDER BY ts;
-```
-
----
-
-### Incident Patch 3: `9ecd84f6` (2026-11-24)
-**Commit Message**: fix(mito2): decouple table compaction upload and Arrow budgets (#10607)
-
-* fix(mito2): decouple table compaction upload and Arrow budgets
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* test(mito2): prune redundant table compaction checks
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* fix(mito2): cap GCS compaction objects at 5 TiB
-
-Apply the GCS service limit even when the operator omits its object limit. Keep stricter advertised limits and the multipart part-count limit, and cover all three with geometry tests that perform no uploads.
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* test(mito2): require an SST part before its final input batch
-
-Gate the payload of the last source row group on the first Parquet part from its target. A writer that buffers until close can no longer pass the lossless multipart regression.
-
-Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
-
-* refactor(mito2): isolate enterprise buffered uploads
-
-Move the bounded SST and Puffin upload adapter and its regression test behind one gated module declaration. Leave the shared chunk transfer in the Apache-licensed parent and register the new enterprise source in both license lists.
-
-Signed-off-by: Lei, HUANG <[R
-
-**File**: `licenserc-enterprise.toml` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ includes = [
-     "src/mito2/src/compaction/multi_region/worker.rs",
-     "src/mito2/src/compaction/multi_region/writer.rs",
-     "src/mito2/src/compaction/multi_region/tests.rs",
-+    "src/mito2/src/sst/upload/buffered.rs",
-     "src/common/function/src/admin/purge_table.rs",
-     "src/catalog/src/system_schema/information_schema/recycle_bin.rs",
-     "src/common/meta/src/ddl/purge_dropped_table.rs",
-```
-
-**File**: `licenserc.toml` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ excludes = [
-     "src/mito2/src/compaction/multi_region/worker.rs",
-     "src/mito2/src/compaction/multi_region/writer.rs",
-     "src/mito2/src/compaction/multi_region/tests.rs",
-+    "src/mito2/src/sst/upload/buffered.rs",
-     "src/common/function/src/admin/purge_table.rs",
-     "src/catalog/src/system_schema/information_schema/recycle_bin.rs",
-     "src/common/meta/src/ddl/purge_dropped_table.rs",
-```
-
-**File**: `src/mito2/src/access_layer.rs` (modified, +13/-6)
-```diff
-@@ -454,12 +454,12 @@ impl AccessLayer {
-             // bypass it.
-             let store = self.object_store.clone();
-             let path_provider = RegionFilePathFactory::new(self.table_dir.clone(), self.path_type);
--            let puffin_factory = if limits.is_some() {
--                self.puffin_manager_factory
--                    .clone()
--                    .with_write_buffer_size(write_opts.write_buffer_size.as_bytes() as usize)
-+            let puffin_factory = self.puffin_manager_factory.clone();
-+            #[cfg(feature = "enterprise")]
-+            let puffin_factory = if let Some(limits) = limits {
-+                puffin_factory.with_upload_limits(limits.upload_limits)
-             } else {
--                self.puffin_manager_factory.clone()
-+                puffin_factory
-             };
-             let indexer_builder = IndexerBuilderImpl {
-                 index_build_inputs: request.index_build_inputs,
-@@ -479,7 +479,7 @@ impl AccessLayer {
-             // TODO(yingwen): If we support other non-fs stores without the write cache, then
-             // we may have find a way to check whether we need the cleaner.
-             let cleaner = TempFileCleaner::new(region_id, self.object_store.clone());
--            let mut writer = ParquetWriter::new_with_object_store(
-+            let writer = ParquetWriter::new_with_object_store(
-                 self.object_store.clone(),
-                 request.metadata,
-                 request.index_config,
-@@ -497,6 +497,13 @@ impl AccessLayer {
-             .with_write_guard(guard)
-             .with_cancellation(cancellation)
-             .with_memory_limits(limits);
-+            #[cfg(feature = "enterprise")]
-+            let writer = if let Some(limits) = limits {
-+                writer.with_upload_limits(limits.upload_limits)
-+            } else {
-+                writer
-+            };
-+            let mut writer = writer;
-             match request.sst_write_format {
-                 FormatType::PrimaryKey => {
-                     writer
-```
-
-**File**: `src/mito2/src/compaction/multi_region.rs` (modified, +5/-5)
-```diff
-@@ -64,10 +64,10 @@ pub struct MultiRegionCompactionPlan {
-     pub sources: Vec<FileMeta>,
-     /// Metadata and routing must belong to the same physical-table snapshot.
-     pub targets: BTreeMap<RegionId, MultiRegionTarget>,
--    /// Working-set admission budget, including all resident writers and their finish workspace.
--    /// This bounds managed buffers and estimates codec/index allocations, not process RSS.
--    /// It must be large enough that the per-buffer share still covers the storage
--    /// multipart minimum, otherwise the plan is rejected before any output.
-+    /// Total working-set admission budget for computation and all resident uploads.
-+    /// Upload chunks follow the destination backend's limits independently of the Arrow
-+    /// batch limit. The executor reserves uploads before sizing the compute buffers and
-+    /// checks the estimated working set before creating outputs. This is not a process RSS limit.
-     pub memory_limit: usize,
-     /// Soft size limit, in bytes, of one output SST. A file rolls over at the next
-     /// series boundary after it is exceeded, so a single series may stay in one file.
-@@ -99,7 +99,7 @@ pub struct MultiRegionCompactionStats {
-     pub source_store_page_bytes: u64,
-     pub output_rows: u64,
-     pub output_bytes: u64,
--    /// Conservative admission estimate, including reader pages, writers, indexes and finish.
-+    /// Admission estimate for reader pages, encoders, indexes, uploads, and finish workspace.
-     pub estimated_memory_bytes: u64,
-     /// Peak retained equal-key group storage (including shared buffer capacities).
-     pub peak_group_bytes: u64,
-```
-
-**File**: `src/mito2/src/compaction/multi_region/memory.rs` (modified, +245/-56)
-```diff
-@@ -15,17 +15,18 @@ use api::v1::SemanticType;
- use datatypes::arrow::datatypes::SchemaRef;
- use datatypes::schema::{ColumnEncoding, FulltextBackend};
- use index::fulltext_index::create::TantivyFulltextIndexCreator;
-+use object_store::ObjectStore;
- use parquet::arrow::ArrowSchemaConverter;
- use parquet::file::metadata::ParquetMetaData;
--use snafu::{ResultExt, ensure};
-+use snafu::{OptionExt, ResultExt, ensure};
- 
--use crate::compaction::multi_region::{
--    MultiRegionCompactionContext, MultiRegionCompactionPlan, MultiRegionTarget,
--};
-+use crate::compaction::multi_region::{MultiRegionCompactionPlan, MultiRegionTarget};
- use crate::config::{FulltextIndexConfig, MitoConfig};
- use crate::error::{IndexOptionsSnafu, MultiRegionCompactionResourceSnafu, Result};
-+use crate::sst::DEFAULT_WRITE_BUFFER_SIZE;
- use crate::sst::parquet::max_row_group_value_bytes;
- use crate::sst::parquet::writer::SstWriteLimits;
-+use crate::sst::upload::buffered::UploadLimits;
- 
- pub(crate) const BATCH_SIZE: usize = 64;
- /// Cap on the rows of one output row group.
-@@ -41,37 +42,58 @@ pub(crate) const MAX_ROW_GROUP_SIZE: usize = 1024;
- /// separate runtime checks. Neither estimate nor buffer accounting measures RSS.
- #[derive(Clone)]
- pub(crate) struct MemoryLimits {
--    pub(crate) batch: usize,
-+    pub(crate) arrow_batch_bytes: usize,
-     pub(crate) group: usize,
-     pub(crate) index: usize,
-+    upload_reserved_bytes: usize,
-+    compute_budget: usize,
-     /// Reuses index allocation only when the optional working set fits admission.
-     pub(crate) extension_index_memory_limit: Option<usize>,
-     pub(crate) writer: SstWriteLimits,
-     pub(crate) estimated: u64,
- }
- 
- impl MemoryLimits {
--    pub(crate) fn new(plan: &MultiRegionCompactionPlan, schema: &SchemaRef) -> Result<Self> {
-+    pub(crate) fn new(
-+        plan: &MultiRegionCompactionPlan,
-+        schema: &SchemaRef,
-+        upload: UploadBudget,
-+    ) -> Result<Self> {
-         let schema = crate::sst::maybe_wrap_schema(schema)?;
-         let columns = ArrowSchemaConverter::new()
-             .convert(&schema)
-             .context(crate::error::WriteParquetSnafu)?
-             .num_columns();
--        let batch =
--            plan.memory_limit / (64 * (plan.sources.len() + plan.targets.len() + BATCH_SIZE + 4));
-+        let targets = plan.targets.len();
-+        let batch_share = 64usize.saturating_mul(
-+            plan.sources
-+                .len()
-+                .saturating_add(targets)
-+                .saturating_add(BATCH_SIZE + 4),
-+        );
-+        let arrow_batch_bytes = upload.compute_bytes / batch_share;
-+        ensure!(
-+            arrow_batch_bytes > 0,
-+            MultiRegionCompactionResourceSnafu {
-+                reason: "No Arrow batch budget after reserving upload memory",
-+            }
-+        );
-         Ok(Self {
--            batch,
--            group: plan.memory_limit / 16,
--            index: plan.memory_limit / (64 * plan.targets.len()),
-+            arrow_batch_bytes,
-+            group: upload.compute_bytes / 16,
-+            index: upload.compute_bytes / targets / 64,
-+            upload_reserved_bytes: upload.reserved_bytes,
-+            compute_budget: upload.compute_bytes,
-             extension_index_memory_limit: None,
-             writer: SstWriteLimits {
-                 // Parquet 59 preallocates a 1 MiB bit writer for each of the
-                 // timestamp/sequence delta encoders. Dictionary interner tables
-                 // also have a nonzero minimum, independent of batch row count.
--                working_bytes: 2 * 1024 * 1024
--                    + columns * 128 * 1024
--                    + batch * (MAX_ROW_GROUP_SIZE / BATCH_SIZE),
--                metadata_bytes: plan.memory_limit / (8 * plan.targets.len()),
-+                working_bytes: (2usize << 20)
-+                    .saturating_add(columns.saturating_mul(128 << 10))
-+                    .saturating_add(arrow_batch_bytes * (MAX_ROW_GROUP_SIZE / BATCH_SIZE)),
-+                metadata_bytes: upload.compute_bytes / targets / 8,
-+                upload_limits: upload.limits,
-             },
-             estimated: 0,
-         })
-@@ -80,60 +102,67 @@ impl MemoryLimits {
-     pub(crate) fn admit(
-         &mut self,
-         plan: &MultiRegionCompactionPlan,
--        context: &MultiRegionCompactionContext,
-+        config: &MitoConfig,
-         footers: &[Arc<ParquetMetaData>],
-         extension_targets: usize,
-     ) -> Result<()> {
--        self.check_upload_minimum(context)?;
-         let mut extra_delta = 0;
-         for target in plan.targets.values() {
-             extra_delta = extra_delta.max(extra_delta_encoder_bytes(target)?);
-         }
-         self.writer.working_bytes = self.writer.working_bytes.saturating_add(extra_delta);
--        // Merge assembly can retain exhausted batches until an output batch is full.
--        let mut bytes = 4_u64
--            .saturating_mul((plan.sources.len() + BATCH_SIZE + 2) as u64)
--            .satura
-```
-
-**File**: `src/mito2/src/compaction/multi_region/source.rs` (modified, +13/-9)
-```diff
-@@ -33,7 +33,7 @@ use tokio_util::sync::CancellationToken;
- 
- use crate::cache::CacheStrategy;
- use crate::compaction::json2::collect_json2_rewrite_plans_from_parquet;
--use crate::compaction::multi_region::memory::{BATCH_SIZE, MemoryLimits};
-+use crate::compaction::multi_region::memory::{BATCH_SIZE, MemoryLimits, UploadBudget};
- use crate::compaction::multi_region::{
-     MultiRegionCompactionContext, MultiRegionCompactionPlan, MultiRegionTarget, SourceCounters,
- };
-@@ -88,7 +88,7 @@ impl RoutedBatch {
-         let batch = take_record_batch(&self.batch, &indices).context(ComputeArrowSnafu)?;
-         let batch = compact_dictionaries(batch)?;
-         ensure!(
--            batch.get_array_memory_size() <= source.limits.batch,
-+            batch.get_array_memory_size() <= source.limits.arrow_batch_bytes,
-             MultiRegionCompactionResourceSnafu {
-                 reason: "Routed batch exceeds the task buffer budget"
-             }
-@@ -127,6 +127,7 @@ impl SharedSource {
-         metadata: RegionMetadataRef,
-         counters: Arc<SourceCounters>,
-     ) -> Result<Arc<Self>> {
-+        let upload = UploadBudget::new(plan, context.access_layer.object_store())?;
-         let mut common = (*metadata).clone();
-         common.set_partition_expr(None);
-         let metadata = Arc::new(common);
-@@ -157,9 +158,12 @@ impl SharedSource {
-             let footer = sst.parquet_metadata();
-             footer_bytes = footer_bytes.saturating_add(footer.memory_size());
-             ensure!(
--                footer_bytes <= plan.memory_limit / 8,
-+                footer_bytes <= upload.compute_bytes / 8,
-                 MultiRegionCompactionResourceSnafu {
--                    reason: "Source footer metadata exceeds the task budget",
-+                    reason: format!(
-+                        "Source footer metadata needs {footer_bytes} bytes, budget after reserving uploads is {}",
-+                        upload.compute_bytes / 8,
-+                    ),
-                 }
-             );
-             footers.push(footer);
-@@ -194,7 +198,7 @@ impl SharedSource {
-             .with_cache(cache.clone())
-             .with_json2_rewrite_targets(json2_targets.clone())
-             .build();
--        let mut limits = MemoryLimits::new(plan, &schema)?;
-+        let mut limits = MemoryLimits::new(plan, &schema, upload)?;
-         let mut inverted = context.config.inverted_index.clone();
-         inverted.mem_threshold_on_create =
-             admitted_index_threshold(inverted.mem_threshold_on_create(), limits.index);
-@@ -224,7 +228,7 @@ impl SharedSource {
-             .collect::<BTreeMap<_, _>>();
-         limits.admit(
-             plan,
--            context,
-+            &context.config,
-             &footers,
-             index_plans
-                 .values()
-@@ -363,12 +367,12 @@ impl SharedSource {
-                         let batch = compact_dictionaries(batch)?;
-                         let batch_bytes = batch.get_array_memory_size();
-                         ensure!(
--                            batch_bytes <= preparing.limits.batch,
-+                            batch_bytes <= preparing.limits.arrow_batch_bytes,
-                             MultiRegionCompactionResourceSnafu {
-                                 reason: format!(
-                                     "Decoded source batch uses {} bytes, budget is {}",
-                                     batch_bytes,
--                                    preparing.limits.batch,
-+                                    preparing.limits.arrow_batch_bytes,
-                                 ),
-                             }
-                         );
-@@ -583,7 +587,7 @@ impl SharedSource {
-             batch
-                 .get_array_memory_size()
-                 .saturating_add(materialized_bytes)
--                <= self.limits.batch,
-+                <= self.limits.arrow_batch_bytes,
-             MultiRegionCompactionResourceSnafu {
-                 reason: "Routing projection exceeds the task buffer budget"
-             }
-```
-
-**File**: `src/mito2/src/compaction/multi_region/tests.rs` (modified, +617/-60)
-```diff
-@@ -11,6 +11,7 @@
- 
- use std::collections::{BTreeMap, HashSet};
- use std::num::NonZeroU64;
-+use std::sync::atomic::{AtomicBool, Ordering};
- use std::sync::{Arc, Mutex};
- use std::time::Duration;
- 
-@@ -33,14 +34,20 @@ use datatypes::value::Value;
- use datatypes::vectors::json::array::JsonArray;
- use datatypes::vectors::json::json2_physical_data_type;
- use futures::TryStreamExt;
-+use futures::io::{self, AsyncReadExt};
-+use object_store::layers::CapabilityOverrideLayer;
-+use object_store::layers::mock::oio::Write as _;
- use object_store::layers::mock::{self, MockLayerBuilder, oio};
- use partition::expr::col;
- use partition::multi_dim::MultiDimPartitionRule;
-+use puffin::puffin_manager::{PuffinManager, PuffinReader, PuffinWriter};
-+use rand::{RngCore, SeedableRng, rngs::SmallRng};
- use serde_json::json;
- use store_api::codec::PrimaryKeyEncoding;
--use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
-+use store_api::metadata::{ColumnMetadata, RegionMetadata, RegionMetadataBuilder};
- use store_api::region_request::PathType;
- use store_api::storage::RegionId;
-+use tokio::sync::watch;
- 
- use super::*;
- use crate::access_layer::{AccessLayer, Metrics, OperationType, SstWriteRequest, WriteType};
-@@ -49,10 +56,15 @@ use crate::error::InvalidMultiRegionCompactionSnafu;
- use crate::read::FlatSource;
- use crate::sst::file::{FileHandle, RegionFileId};
- use crate::sst::file_purger::NoopFilePurger;
--use crate::sst::index::handler::{IndexKindHandler, IndexKindProvider, PlanContext, PlannedIndex};
-+use crate::sst::index::CompletedEntry;
-+use crate::sst::index::handler::{
-+    BuildContext, IndexCreator, IndexKindHandler, IndexKindProvider, PlanContext, PlanEntry,
-+    PlannedIndex,
-+};
- use crate::sst::index::intermediate::IntermediateManager;
- use crate::sst::index::kind::{ExtensionIndexKind, IndexKind};
--use crate::sst::index::puffin_manager::PuffinManagerFactory;
-+use crate::sst::index::puffin_manager::{PuffinManagerFactory, SstPuffinWriter};
-+use crate::sst::location;
- use crate::sst::parquet::WriteOptions;
- use crate::sst::parquet::flat_format::{
-     primary_key_column_index, sequence_column_index, time_index_column_index,
-@@ -124,11 +136,33 @@ impl Fixture {
-         format: FormatType,
-         batches: impl FnOnce(&RegionMetadataRef) -> Vec<RecordBatch>,
-     ) -> Self {
-+        let mut fixture = Self::without_source(sst_region_metadata_with_encoding(encoding)).await;
-+        let mut batches = batches(&fixture.metadata);
-+        batches.sort_by_cached_key(|batch| {
-+            let keys = cast(
-+                batch.column(primary_key_column_index(batch.num_columns())),
-+                &DataType::Binary,
-+            )
-+            .unwrap();
-+            keys.as_any()
-+                .downcast_ref::<BinaryArray>()
++    for (request, expected_outputs) in [
++        (snapshot, vec![output]),
++        (subset.clone(), outputs),
++        (subset, vec![different]),
++    ] {
++        assert_eq!(
++            PublicationOutcome::StaleInputs,
++            engine
++                .publish_table_compaction(region_id, request, expected_outputs)
++                .await
 +                .unwrap()
-+                .value(0)
-+                .to_vec()
-+        });
-+        let info = fixture
-+            .write_source(fixture.metadata.clone(), batches, format)
-+            .await;
-+        fixture.source = file_meta(info, fixture.metadata.region_id);
-+        fixture
++        );
 +    }
++    assert_eq!(version, region.manifest_ctx.manifest_version().await);
++    assert_eq!(6, row_count(&engine, region_id).await);
++}
 +
-+    async fn without_source(mut metadata: RegionMetadata) -> Self {
-         let env = SchedulerEnv::new().await;
-         let aux = env.path.path().join("table-index");
-         let layer = Arc::new(AccessLayer::new(
-             "table/",
--            if encoding == PrimaryKeyEncoding::Sparse {
-+            if metadata.primary_key_encoding == PrimaryKeyEncoding::Sparse {
-                 PathType::Data
-             } else {
-                 PathType::Bare
-@@ -141,44 +175,34 @@ impl Fixture {
-                 .await
-                 .unwrap(),
-         ));
--        let mut metadata = sst_region_metadata_with_encoding(encoding);
-         metadata.region_id = RegionId::new(1, 0);
--        let metadata = Arc::new(metadata);
-         let mut config = MitoConfig::default();
-         config.index.aux_path = aux.display().to_string();
--        let config = Arc::new(config);
--        let mut batches = batches(&metadata);
--        batches.sort_by_cached_key(|batch| {
--            let keys = cast(
--                batch.column(primary_key_column_index(batch.num_columns())),
--                &DataType::Binary,
--            )
--            .unwrap();
--            keys.as_any()
--                .downcast_ref::<BinaryArray>()
--                .unwrap()
--                .value(0)
--                .to_vec()
--        });
--        let mut fixture = Self {
-+        Self {
-             env,
-             layer,
--            metadata: metadata.clone(),
-+            metadata: Arc::new(metadata),
-             source: FileMeta::default(),
--            config,
--        };
--        let info = fixture
--            .write_source(metadata.clone(), batches, format)
--            .await;
--        fixture.source = file_meta(info, metadata.region_id);
--        fixture
-+            config: Arc::new(config),
-+        }
+ #[tokio::test]
+ async fn test_partial_success_can_retry_both_regions_without_duplicate_files() {
+     let mut env = TestEnv::new().await;
+@@ -292,7 +336,7 @@ async fn test_partial_success_can_retry_both_regions_without_duplicate_files() {
+         engine.publish_table_compaction(a, snapshot_a, vec![output_a.clone()]),
+         engine.publish_table_compaction(b, snapshot_b, vec![output_b.clone()])
+     );
+-    assert_eq!(PublicationOutcome::StaleInputs, retry_a.unwrap());
++    assert_eq!(PublicationOutcome::Applied, retry_a.unwrap());
+     assert_eq!(PublicationOutcome::Applied, retry_b.unwrap());
+     for (id, output) in [(a, out
+```
+
+**File**: `src/mito2/src/region.rs` (modified, +14/-4)
+```diff
+@@ -2172,10 +2172,9 @@ impl ManifestContext {
+         commit: impl AsyncFnOnce(&mut RegionManifestManager) -> Result<T>,
+     ) -> Result<T> {
+         let region_id = manager.manifest().metadata.region_id;
+-        let result = if manager.is_conditional_publication() && self.is_leader_lease_expired() {
+-            RegionLeaseExpiredSnafu { region_id }.fail()
+-        } else {
+-            commit(manager).await
++        let result = match self.ensure_commit_deadline(manager) {
++            Ok(()) => commit(manager).await,
++            Err(error) => Err(error),
+         };
+         if let Err(e) = &result {
+             error!(e; "Failed to update manifest, region_id: {}", region_id);
+@@ -2186,6 +2185,17 @@ impl ManifestContext {
+         result
      }
  
-     async fn write_source(
-         &self,
-         metadata: RegionMetadataRef,
-         bat
++    /// Checks the leader deadline for a conditionally published manifest.
++    pub(crate) fn ensure_commit_deadline(&self, manager: &RegionManifestManager) -> Result<()> {
++        ensure!(
++            !manager.is_conditional_publication() || !self.is_leader_lease_expired(),
++            RegionLeaseExpiredSnafu {
++                region_id: manager.manifest().metadata.region_id
++            }
++        );
++        Ok(())
++    }
++
+     /// Returns whether a commit, once written, checks that no checkpoint covers its version: a
+     /// region past its Leader deadline may no longer hold the region, and one that [awaits its
+     /// Leader lease](Self::awaits_leader_lease) may not hold it yet, so either may have written a
 ```
 
-**File**: `src/mito2/src/compaction/multi_region/writer.rs` (modified, +1/-1)
+**File**: `src/mito2/src/request.rs` (modified, +10/-2)
 ```diff
-@@ -142,7 +142,7 @@ impl<'a> TargetWriter<'a> {
+@@ -1583,7 +1583,15 @@ impl RegionEditRequest {
+     }
+ }
  
-     pub(super) fn options(&self) -> WriteOptions {
-         WriteOptions {
--            write_buffer_size: ReadableSize(self.limits.batch as u64),
-+            write_buffer_size: ReadableSize(self.limits.writer.upload_limits.chunk_bytes as u64),
-             max_file_size: Some(self.max_file_size),
-             // Capped so each admitted encoder stays within the task budget; see
-             // [memory::MAX_ROW_GROUP_SIZE].
+-/// Notifies the regin the result of editing region.
++/// Whether the worker needs to install the edit in the in-memory version.
++#[derive(Debug)]
++pub(crate) enum RegionEditOutcome {
++    Written,
++    #[cfg(feature = "enterprise")]
++    AlreadyApplied,
++}
++
++/// Notifies the region of the result of editing its manifest.
+ #[derive(Debug)]
+ pub(crate) struct RegionEditResult {
+     /// Region id.
+@@ -1595,7 +1603,7 @@ pub(crate) struct RegionEditResult {
+     /// Region edit to apply.
+     pub(crate) edit: RegionEdit,
+     /// Result from the manifest manager.
+-    pub(crate) result: std::result::Result<(), Arc<Error>>,
++    pub(crate) result: std::result::Result<RegionEditOutcome, Arc<Error>>,
+     /// Whether region state need to be set to Writable after handling this request.
+     pub(crate) update_region_state: bool,
+     /// The region is in staging mode before handling this request.
+```
+
+**File**: `src/mito2/src/series_index/task.rs` (modified, +5/-2)
+```diff
+@@ -37,7 +37,8 @@ use crate::metrics::{
+ use crate::read::series_candidate::is_sparse_metric_metadata;
+ use crate::region::{MitoRegionRef, RegionLeaderState, RegionMapRef, RegionRoleState};
+ use crate::request::{
+-    BackgroundNotify, RegionEditResult, Waiters, WorkerRequest, WorkerRequestWithTime,
++    BackgroundNotify, RegionEditOutcome, RegionEditResult, Waiters, WorkerRequest,
++    WorkerRequestWithTime,
+ };
+ 
+ use crate::series_index::maintenance::{ReconcileStats, reconcile_series_indexes_with_mode};
+@@ -616,7 +617,9 @@ impl SeriesIndexTask {
+                 region_id: region.region_id,
+                 origin: region.clone(),
+                 edit,
+-                result: result.map_err(Arc::new),
++                result: result
++                    .map(|()| RegionEditOutcome::Written)
++                    .map_err(Arc::new),
+                 waiters: Waiters::one(tx),
+                 is_staging: false,
+                 update_region_state: false,
+```
+
+**File**: `src/mito2/src/worker/handle_manifest.rs` (modified, +16/-17)
+```diff
+@@ -46,8 +46,8 @@ use crate::region::version::VersionControlRef;
+ use crate::region::{MitoRegionRef, RegionLeaderState, RegionRoleState};
+ use crate::request::{
+     BackgroundNotify, BuildIndexRequest, DdlRequest, DiscardUnflushedResult, OptionOutputTx,
+-    RegionChangeResult, RegionEditKind, RegionEditRequest, RegionEditResult, RegionSyncRequest,
+-    SenderDdlRequest, TruncateResult, WorkerRequest, WorkerRequestWithTime,
++    RegionChangeResult, RegionEditKind, RegionEditOutcome, RegionEditRequest, RegionEditResult,
++    RegionSyncRequest, SenderDdlRequest, TruncateResult, WorkerRequest, WorkerRequestWithTime,
+ };
+ use crate::sst::index::IndexBuildType;
+ use crate::sst::{file, location};
+@@ -465,17 +465,16 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         // Updates manifest in background.
+         common_runtime::spawn_global(async move {
+             let result = match kind {
+-                RegionEditKind::Import => {
+-                    edit_region(
+-                        &region,
+-                        &mut edit,
+-                        cache_manager,
+-                        listener,
+-                        is_staging,
+-                        preload_sst_cache,
+-                    )
+-                    .await
+-                }
++                RegionEditKind::Import => edit_region(
++                    &region,
++                    &mut edit,
++                    cache_manager,
++                    listener,
++                    is_staging,
++                    preload_sst_cache,
++                )
++                .await
++                .map(|()| RegionEditOutcome::Written),
+                 #[cfg(feature = "enterprise")]
+                 RegionEditKind::Compaction(context) => {
+                     crate::worker::handle_table_compaction::publish(&region, &context, edit.clone())
+@@ -573,16 +572,16 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+ 
+             false
+         } else {
++            let written = matches!(edit_result.result, Ok(RegionEditOutcome::Written));
+             let need_compaction = self.config.schedule_compaction_after_edit
+-                && edit_result.result.is_ok()
++                && written
+                 && edit_result
+                     .edit
+                     .files_to_add
+                     .iter()
+                     .any(|file| file.level < file::LEVEL_SHARED);
+ 
+-            // Only apply the edit if the result is ok and region is not in staging state.
+-            if edit_result.result.is_ok() {
++            if written {
+                 let mut edit = edit_result.edit;
+                 // A background publication can be superseded before its notification arrives.
+                 let guard = if !edit_result.update_region_state {
+@@ -617,7 +616,7 @@ impl<S: LogStore> RegionWorkerLoop<S> {
+         edit_result
+             .waiters
+             .reply_with(|| match &edit_result.result {
+-                Ok(()) => Ok(()),
++                Ok(_) => Ok(()),
+                 Err(e) => Err(e.clone()).context(EditRegionSnafu {
+                     region_id: edit_result.region_id,
+                 }),
+```
+
+**File**: `src/mito2/src/worker/handle_table_compaction.rs` (modified, +75/-34)
+```diff
+@@ -19,24 +19,21 @@ use crate::engine::table_compaction::{PublicationContext, output};
+ use crate::error::{InvalidRequestSnafu, RegionBusySnafu, Result, StaleCompactionExecutionSnafu};
+ use crate::manifest::action::{RegionEdit, RegionManifest, RegionMetaAction, RegionMetaActionList};
+ use crate::region::{MitoRegionRef, RegionLeaderState, RegionRoleState};
+-use crate::sst::file::LEVEL_SHARED;
++use crate::request::RegionEditOutcome;
++use crate::sst::file::{FileMeta, LEVEL_SHARED};
+ 
+ pub(crate) async fn publish(
+     region: &MitoRegionRef,
+     context: &PublicationContext,
+     edit: RegionEdit,
+-) -> Result<()> {
++) -> Result<RegionEditOutcome> {
+     let snapshot = region.manifest_ctx.manifest().await;
+-    // An old result can name outputs already compacted away. Reject stale inputs
+-    // before inspecting those objects; absence of an output is not a task receipt.
+-    ensure!(
+-        is_current(region, context, &edit, &snapshot),
+-        StaleCompactionExecutionSnafu {
+-            region_id: region.region_id
+-        }
+-    );
+-    validate_files(region, context, &edit, &snapshot)?;
+-    output::verify_and_notify(region, &context.metadata, &edit.files_to_add).await?;
++    let replay = is_replay(region, context, &edit, &snapshot)?;
++    validate_files(region, context, &edit)?;
++    if !replay {
++        check_sequence_policy(region, context, &edit)?;
++        output::verify_and_notify(region, &context.metadata, &edit.files_to_add).await?;
++    }
+ 
+     let mut manager = region.manifest_ctx.manifest_manager.write().await;
+     ensure!(
+@@ -48,14 +45,21 @@ pub(crate) async fn publish(
+             region_id: region.region_id
+         }
+     );
+-    let manifest = manager.manifest();
++    if is_replay(region, context, &edit, &manager.manifest())? {
++        region
++            .manifest_ctx
++            .ensure_leader_lease_or_downgrading(region.region_id)?;
++        region.manifest_ctx.ensure_commit_deadline(&manager)?;
++        return Ok(RegionEditOutcome::AlreadyApplied);
++    }
++    // A previously satisfied request skipped object verification.
+     ensure!(
+-        is_current(region, context, &edit, &manifest),
++        !replay,
+         StaleCompactionExecutionSnafu {
+             region_id: region.region_id
+         }
+     );
+-    validate_files(region, context, &edit, &manifest)?;
++    check_sequence_policy(region, context, &edit)?;
+     let pending = match region
+         .manifest_ctx
+         .update_locked(
+@@ -77,30 +81,71 @@ pub(crate) async fn publish(
+     };
+     drop(manager);
+     pending.fire().await;
++    Ok(RegionEditOutcome::Written)
++}
++
++fn check_sequence_policy(
++    region: &MitoRegionRef,
++    context: &PublicationContext,
++    edit: &RegionEdit,
++) -> Result<()> {
++    // An exact scan can skip an unmarked input below its lower bound, but
++    // an unmarked replacement can inherit a higher sequence from another input.
++    if !context.options.preserve_row_sequence && region.version().options.preserve_row_sequence {
++        ensure!(
++            edit.files_to_add
++                .iter()
++                .all(|file| file.preserve_row_sequence),
++            StaleCompactionExecutionSnafu {
++                region_id: region.region_id
++            }
++        );
++    }
+     Ok(())
+ }
+ 
+-fn is_current(
++fn is_replay(
+     region: &MitoRegionRef,
+     context: &PublicationContext,
+     edit: &RegionEdit,
+     manifest: &RegionManifest,
+-) -> bool {
+-    let current = region.version_control.current();
+-    context.metadata == manifest.metadata
+-        && context.options == current.version.options
+-        && !edit.files_to_remove.is_empty()
+-        && edit
+-            .files_to_remove
++) -> Result<bool> {
++    let region_id = region.region_id;
++    ensure!(
++        context.metadata == manifest.metadata && !edit.files_to_remove.is_empty(),
++        StaleCompactionExecutionSnafu { region_id }
++    );
++    let matches =
++        |file: &FileMeta| manifest.files.get(&file.file_id).map(AsRef::as_ref) == Some(file);
++    if edit.files_to_remove.iter().all(matches) {
++        ensure!(
++            edit.files_to_add
++                .iter()
++                .all(|file| !manifest.files.contains_key(&file.file_id)),
++            InvalidRequestSnafu {
++                region_id,
++                reason: "Invalid region-local compaction output"
++            }
++        );
++        return Ok(false);
++    }
++
++    // With no durable receipt, only a still-visible, nonempty replacement proves success.
++    ensure!(
++        edit.files_to_remove
+             .iter()
+-            .all(|file| manifest.files.get(&file.file_id).map(AsRef::as_ref) == Some(file))
++            .all(|file| !manifest.files.contains_key(&file.file_id))
++            && !edit.files_to_add.is_empty()
++            && edit.files_to_add.iter().all(matches),
++        StaleCompactionExecutionSnafu { region_id }
++    );
++    Ok(true)
+ }
+ 
+ fn validate_files(
+     region: &MitoRegionRef,
+     context: &PublicationContext,
+    
+```
+
+---
+
+### Incident Patch 3: `59b108af` (2026-11-27)
+**Commit Message**: fix(procedure): recover from the last readable checkpoint (#10612)
+
+* fix(procedure): recover from the last readable checkpoint
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(procedure): keep unreadable checkpoints out of GC checks
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* fix(procedure): use the SNAFU selector for corrupt checkpoints
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `src/common/procedure/src/error.rs` (modified, +6/-7)
+```diff
+@@ -211,13 +211,12 @@ pub enum Error {
+         location: Location,
+     },
+ 
+-    #[snafu(display("Failed to parse segment key: {key}"))]
+-    ParseSegmentKey {
+-        #[snafu(implicit)]
+-        location: Location,
++    #[snafu(display("Corrupt checkpoint {key}: {reason}"))]
++    CorruptCheckpoint {
+         key: String,
+-        #[snafu(source)]
+-        error: std::num::ParseIntError,
++        /// Actual stored keys, including surviving segments when the base key is missing.
++        keys: Vec<String>,
++        reason: String,
+     },
+ 
+     #[snafu(display("Unexpected: {err_msg}"))]
+@@ -281,7 +280,7 @@ impl ErrorExt for Error {
+                 StatusCode::InvalidArguments
+             }
+             Error::ProcedurePanic { .. }
+-            | Error::ParseSegmentKey { .. }
++            | Error::CorruptCheckpoint { .. }
+             | Error::Unexpected { .. }
+             | &Error::ProcedureNotFound { .. }
+             | Error::PoisonKeyNotDefined { .. } => StatusCode::Unexpected,
+```
+
+**File**: `src/common/procedure/src/store.rs` (modified, +133/-53)
+```diff
+@@ -16,11 +16,11 @@ use std::collections::HashMap;
+ use std::fmt;
+ 
+ use common_telemetry::{debug, error, info, warn};
+-use futures::TryStreamExt;
++use futures::StreamExt;
+ use serde::{Deserialize, Serialize};
+ use snafu::ResultExt;
+ 
+-use crate::error::{Result, ToJsonSnafu};
++use crate::error::{Error, Result, ToJsonSnafu};
+ pub(crate) use crate::store::state_store::StateStoreRef;
+ use crate::{ProcedureContext, ProcedureId, SubprocedureRecovery};
+ 
+@@ -203,17 +203,21 @@ impl ProcedureStore {
+         // 8 should be enough for most procedures.
+         let mut step_keys = Vec::with_capacity(8);
+         let mut finish_keys = Vec::new();
+-        while let Some((key_set, _)) = key_values.try_next().await? {
+-            let key = key_set.key();
+-            let Some(curr_key) = ParsedKey::parse_str(&self.proc_path, key) else {
++        while let Some(item) = key_values.next().await {
++            let (key, keys) = match item {
++                Ok((key_set, _)) => (key_set.key().to_owned(), key_set.keys()),
++                Err(Error::CorruptCheckpoint { key, keys, .. }) => (key, keys),
++                Err(error) => return Err(error),
++            };
++            let Some(curr_key) = ParsedKey::parse_str(&self.proc_path, &key) else {
+                 warn!("Unknown key while deleting procedures, key: {}", key);
+                 continue;
+             };
+             if curr_key.key_type == KeyType::Step {
+-                step_keys.extend(key_set.keys());
++                step_keys.extend(keys);
+             } else {
+                 // .commit or .rollback
+-                finish_keys.extend(key_set.keys());
++                finish_keys.extend(keys);
+             }
+         }
+ 
+@@ -235,79 +239,96 @@ impl ProcedureStore {
+ 
+     /// Load procedures from the storage.
+     pub(crate) async fn load_messages(&self) -> Result<ProcedureMessages> {
+-        // Track the key-value pair by procedure id.
+-        let mut procedure_key_values: HashMap<_, (ParsedKey, Vec<u8>)> = HashMap::new();
+-
+-        // Scan all procedures.
+-        let mut key_values = self.store.walk_top_down(&self.proc_path).await?;
+-        while let Some((key_set, value)) = key_values.try_next().await? {
+-            let key = key_set.key();
+-            let Some(curr_key) = ParsedKey::parse_str(&self.proc_path, key) else {
++        // Keep one usable checkpoint per procedure even if keys arrive out of order.
++        let mut latest = HashMap::new();
++        let mut damaged = HashMap::<ProcedureId, ParsedKey>::new();
++        let mut stream = self.store.walk_top_down(&self.proc_path).await?;
++        while let Some(item) = stream.next().await {
++            let (key, value) = match item {
++                Ok((key, value)) => (key.key().to_owned(), Ok(value)),
++                Err(Error::CorruptCheckpoint { key, reason, .. }) => (key, Err(reason)),
++                Err(error) => return Err(error),
++            };
++            let Some(parsed) = ParsedKey::parse_str(&self.proc_path, &key) else {
+                 warn!("Unknown key while loading procedures, key: {}", key);
+                 continue;
+             };
+-
+-            if let Some(entry) = procedure_key_values.get_mut(&curr_key.procedure_id) {
+-                if entry.0.step < curr_key.step {
+-                    entry.0 = curr_key;
+-                    entry.1 = value;
++            let id = parsed.procedure_id;
++            let message = value.and_then(|value| match parsed.key_type {
++                KeyType::Commit => Ok(None),
++                _ => serde_json::from_slice::<ProcedureMessage>(&value)
++                    .map(Some)
++                    .map_err(|e| e.to_string()),
++            });
++            match message {
++                Ok(message) => {
++                    let rank = (parsed.step, parsed.key_type);
++                    if latest.get(&id).is_none_or(|(old, _)| *old < rank) {
++                        latest.insert(id, (rank, message));
++                    }
++                }
++                Err(reason) => {
++                    error!(
++                        "Unreadable procedure checkpoint, procedure_id: {id}, key: {key}, reason: {reason}"
++                    );
++                    if damaged
++                        .get(&id)
++                        .is_none_or(|old| (old.step, old.key_type) < (parsed.step, parsed.key_type))
++                    {
++                        damaged.insert(id, parsed);
++                    }
+                 }
+-            } else {
+-                let _ = procedure_key_values.insert(curr_key.procedure_id, (curr_key, value));
+             }
+         }
+ 
+-        let mut messages = HashMap::with_capacity(procedure_key_values.len());
++        let mut messages = HashMap::new();
+         let mut rollback_messages = HashMap::new();
+         let mut finished_ids = Vec::new();
+-        for (procedure_id, (parsed_key, value)) in procedure_key_values {
+-            match parsed_key.key_type {
++        for (id, ((step, kind), messa
+```
+
+**File**: `src/common/procedure/src/store/util.rs` (modified, +94/-84)
+```diff
+@@ -14,89 +14,73 @@
+ 
+ use std::pin::Pin;
+ 
+-use async_stream::try_stream;
+-use futures::{Stream, TryStreamExt};
+-use snafu::{ResultExt, ensure};
++use async_stream::stream;
++use futures::{Stream, StreamExt};
+ 
+ use crate::error;
+ use crate::error::Result;
+ use crate::store::state_store::KeySet;
+ 
+ struct CollectingState {
++    key: String,
+     pairs: Vec<(String, Vec<u8>)>,
+ }
+ 
+-fn parse_segments(segments: Vec<(String, Vec<u8>)>, prefix: &str) -> Result<Vec<(usize, Vec<u8>)>> {
+-    segments
+-        .into_iter()
+-        .map(|(key, value)| {
+-            let suffix = key.trim_start_matches(prefix);
+-            let index = suffix
+-                .parse::<usize>()
+-                .context(error::ParseSegmentKeySnafu { key })?;
+-
+-            Ok((index, value))
+-        })
+-        .collect::<Result<Vec<_>>>()
+-}
+-
+-/// Merges multiple values into a single key-value pair.
+-/// Returns an error if:
+-/// - Part values are lost.
+-/// - Failed to parse the key of segment.
+-fn merge_multiple_values(
+-    CollectingState { mut pairs }: CollectingState,
+-) -> Result<(KeySet, Vec<u8>)> {
+-    if pairs.len() == 1 {
+-        // Safety: must exist.
+-        let (key, value) = pairs.into_iter().next().unwrap();
+-        Ok((KeySet::new(key, 0), value))
+-    } else {
+-        let segments = pairs.split_off(1);
+-        // Safety: must exist.
+-        let (key, value) = pairs.into_iter().next().unwrap();
+-        let prefix = KeySet::with_prefix(&key);
+-        let mut parsed_segments = parse_segments(segments, &prefix)?;
+-        parsed_segments.sort_unstable_by_key(|a| a.0);
+-
+-        // Safety: `parsed_segments` must larger than 0.
+-        let segment_num = parsed_segments.last().unwrap().0;
+-        ensure!(
+-            // The segment index start from 1.
+-            parsed_segments.len() == segment_num,
+-            error::UnexpectedSnafu {
+-                err_msg: format!(
+-                    "Corrupted segment keys, parsed segment indexes: {:?}",
+-                    parsed_segments
+-                        .into_iter()
+-                        .map(|(key, _)| key)
+-                        .collect::<Vec<_>>()
+-                )
+-            }
+-        );
+-
+-        let segment_values = parsed_segments.into_iter().map(|(_, value)| value);
+-        let mut values = Vec::with_capacity(segment_values.len() + 1);
+-        values.push(value);
+-        values.extend(segment_values);
+-
+-        Ok((KeySet::new(key, segment_num), values.concat()))
+-    }
+-}
+-
+ impl CollectingState {
+-    fn new(key: String, value: Vec<u8>) -> CollectingState {
++    fn new(key: String, value: Vec<u8>) -> Self {
++        // A surviving suffix may be the first key in a damaged checkpoint.
++        let base = super::ParsedKey::checkpoint_base_of_segment(&key)
++            .unwrap_or(&key)
++            .to_owned();
+         Self {
++            key: base,
+             pairs: vec![(key, value)],
+         }
+     }
+ 
+-    fn push(&mut self, key: String, value: Vec<u8>) {
+-        self.pairs.push((key, value));
+-    }
+-
+-    fn key(&self) -> &str {
+-        self.pairs[0].0.as_str()
++    fn finish(mut self) -> Result<(KeySet, Vec<u8>)> {
++        let corrupt = |reason: String| {
++            error::CorruptCheckpointSnafu {
++                key: self.key.clone(),
++                keys: self
++                    .pairs
++                    .iter()
++                    .map(|(key, _)| key.clone())
++                    .collect::<Vec<_>>(),
++                reason,
++            }
++            .build()
++        };
++        if self.pairs[0].0 != self.key {
++            return Err(corrupt("missing base segment".to_string()));
++        }
++        if self.pairs.len() == 1 {
++            let (key, value) = self.pairs.pop().unwrap();
++            return Ok((KeySet::new(key, 0), value));
++        }
++        let prefix = KeySet::with_prefix(&self.key);
++        let mut indexed = Vec::with_capacity(self.pairs.len());
++        indexed.push((0, 0));
++        for (position, (key, _)) in self.pairs.iter().enumerate().skip(1) {
++            let idx = key
++                .strip_prefix(&prefix)
++                .and_then(|suffix| suffix.parse::<usize>().ok())
++                .ok_or_else(|| corrupt(format!("invalid segment key {key}")))?;
++            indexed.push((idx, position));
++        }
++        indexed.sort_unstable();
++        for (expected, (actual, _)) in indexed.iter().enumerate() {
++            if expected != *actual {
++                return Err(corrupt(format!(
++                    "expected segment {expected}, found {actual}"
++                )));
++            }
++        }
++        let mut value = Vec::with_capacity(self.pairs.iter().map(|(_, part)| part.len()).sum());
++        for (_, position) in indexed {
++            value.extend_from_slice(&self.pairs[position].1);
++        }
++        Ok((KeySet::new(self.key, self.pairs.len() - 1), value))
+     }
+ }
+ 
+@@ -107,26 +91,28 @@ type Upstream = dyn Stream<Item = Result<(String, Vec<u8>)>> + Send;
+```
+
+**File**: `tests-integration/src/cluster.rs` (modified, +102/-0)
+```diff
+@@ -1086,6 +1086,108 @@ mod tests {
+ 
+     use super::*;
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_recover_procedures_with_missing_checkpoint_segments() {
++        use common_meta::ddl::create_database::{
++            CreateDatabaseData, CreateDatabaseProcedure, CreateDatabaseState,
++        };
++        use common_meta::rpc::store::RangeRequest;
++        use common_meta::state_store::KvStateStore;
++        use common_procedure::store::ProcedureMessage;
++        use common_procedure::store::state_store::StateStore;
++        use common_procedure::{ProcedureId, SubprocedureRecovery};
++
++        let builder = GreptimeDbClusterBuilder::new("corrupt_checkpoint_recovery")
++            .await
++            .with_datanodes(1);
++        let kv = builder.kv_backend.clone();
++        let store = KvStateStore::new(kv.clone()).with_max_value_size(Some(32));
++        let replayed_id = ProcedureId::random();
++        let lost_id = ProcedureId::random();
++        for (schema, id, damage, has_previous) in [
++            ("replayed_db", replayed_id, true, true),
++            ("healthy_db", ProcedureId::random(), false, false),
++            ("lost_db", lost_id, true, false),
++        ] {
++            let data = CreateDatabaseData {
++                state: CreateDatabaseState::Prepare,
++                catalog: "greptime".to_string(),
++                schema: schema.to_string(),
++                create_if_not_exists: false,
++                options: Default::default(),
++                creator: None,
++            };
++            let mut message = ProcedureMessage {
++                type_name: CreateDatabaseProcedure::TYPE_NAME.into(),
++                data: serde_json::to_string(&data).unwrap(),
++                parent_id: None,
++                subprocedure_recovery: SubprocedureRecovery::Discard,
++                step: 7,
++                error: None,
++                context: Default::default(),
++            };
++            if has_previous {
++                store
++                    .put(
++                        &format!("procedure/{id}/0000000007.step"),
++                        serde_json::to_vec(&message).unwrap(),
++                    )
++                    .await
++                    .unwrap();
++            }
++            message.step = 8;
++            let suffix = if has_previous { "rollback" } else { "step" };
++            let key = format!("procedure/{id}/0000000008.{suffix}");
++            store
++                .put(&key, serde_json::to_vec(&message).unwrap())
++                .await
++                .unwrap();
++            if damage {
++                store.delete(&format!("{key}/0000000001")).await.unwrap();
++            }
++        }
++
++        let lost_keys = RangeRequest::new()
++            .with_prefix(format!("/__procedure__/procedure/{lost_id}/").into_bytes());
++        let replayed_keys = RangeRequest::new()
++            .with_prefix(format!("/__procedure__/procedure/{replayed_id}/").into_bytes());
++        let before = kv.range(lost_keys.clone()).await.unwrap().kvs;
++        assert!(before.len() > 1);
++        let cluster = builder.build(false).await;
++        let schemas = cluster.metasrv.table_metadata_manager().schema_manager();
++        tokio::time::timeout(std::time::Duration::from_secs(30), async {
++            loop {
++                use common_meta::key::schema_name::SchemaNameKey;
++                if schemas
++                    .exists(SchemaNameKey::new("greptime", "replayed_db"))
++                    .await
++                    .unwrap()
++                    && schemas
++                        .exists(SchemaNameKey::new("greptime", "healthy_db"))
++                        .await
++                        .unwrap()
++                    && kv
++                        .range(replayed_keys.clone())
++                        .await
++                        .unwrap()
++                        .kvs
++                        .is_empty()
++                {
++                    break;
++                }
++                tokio::time::sleep(std::time::Duration::from_millis(20)).await;
++            }
++        })
++        .await
++        .unwrap();
++        crate::test_util::execute_sql(
++            cluster.fe_instance(),
++            "CREATE TABLE after_recovery (ts TIMESTAMP TIME INDEX)",
++        )
++        .await;
++        assert_eq!(kv.range(lost_keys).await.unwrap().kvs, before);
++    }
++
+     #[tokio::test]
+     async fn test_do_get_stats_follow_response_body_lifetime() {
+         let stats = Arc::new(DatanodeRpcStats::default());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10624** (2026-11-25): fix: reject primary key encoding options on logical metric tables (@shuiyisong)
-- **PR #10621** (2026-11-25): fix(meta): preserve table column order and primary key indices during reconciliation [Backport release/v1.3] (@MichaelScofield)
-- **PR #10620** (2026-11-25): fix: keep exact DECIMAL and BIGINT UNSIGNED values in COPY FROM csv and json [Backport release/v1.3] (@MichaelScofield)
-- **PR #10614** (closed): fix(mito): stop deleting narthex parts GC never judged (@discord9)
-- **PR #10613** (2026-11-25): fix(table): keep the primary key order when adding columns [Backport release/v1.3] (@MichaelScofield)
-- **PR #10610** (closed): feat(meta-srv): rotate GC candidates so no region waits forever (@discord9)
+- **PR #10652** (closed): perf(query): open regions of a merge scan partition ahead for bounded results (@killme2008)
+- **PR #10651** (2026-11-26): fix(mito2): make table compaction publication retries idempotent (@WenyXu)
+- **PR #10649** (2026-11-26): feat(mito): compact native series indexes within a coverage window (@evenyag)
+- **PR #10646** (2026-11-26): fix(mito2): require a region to own its files before a remap (@discord9)
+- **PR #10645** (2026-11-26): fix(query): prune logical metric scans by table ID (@evenyag)
+- **PR #10640** (closed): test(mito2): add storage-side model-based tests for repartition visibility (@discord9)
 
 ---
 
@@ -2822,33 +3260,50 @@ Signed-off-by: Lei, HUANG <[R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): preserve table column order and primary key indices during reconciliation
+## X. mito2): require a region to own its files before a remap
 
 **RULE**:
-When implementing operations in `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/meta/src/instruction.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1110a0af`: meta): preserve table column order and primary key indices during reconciliation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0127d638`: mito2): require a region to own its files before a remap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/meta/src/reconciliation/reconcile_table/resolve_column_metadata.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/meta/src/instruction.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // The consistent regions share their key: order the tags as the regions keep them, which
-            // also checks that the region's primary key matches its tag columns. Column order still
-            // comes from the stored `TableInfo`; see `build_table_meta_from_column_metadatas`.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
+    /// Only verify that the remap would be accepted instead of writing staging manifests.
+    ///
+    /// The repartition procedure sends such a request to each *source leader* before it publishes
+    /// the new routes; the datanode then reads the region's persisted manifest and reports whether
+    /// the region holds a file it did not create itself. Nothing is staged and nothing is written.
+    ///
+    /// An older datanode ignores this unknown field (it is `#[serde(default)]`, so it simply
+    /// deserializes as `false`) and performs an ordinary remap. That is still safe: an ordinary
+    /// remap requires the region to be in staging state, and these sources are not staged yet, so
+    /// the datanode answers with the structured stage-required error
+    /// (`mito2::worker::handle_remap` → `InvalidRequest` "region is not in staging state"). Metasrv
+    /// therefore sees an error rather than a silent success, and aborts the group before the
+    /// routes are published.
+    #[serde(default)]
+    pub validate_only: bool,
+            "RemapManifest(region_id={}, input_regions={:?}, region_mapping={:?}, new_part
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+            "RemapManifest(region_id={}, input_regions={:?}, region_mapping={:?}, new_partition_exprs={:?})",
+            self.region_id, self.input_regions, self.region_mapping, self.new_partition_exprs
+    use std::collections::HashSet;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1110a0af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0127d638` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13718,3 +13718,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T05:21:23.789Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `515ddfaa` | Multi-dimensional audit evidence | 2026-11-27T05:21:25.182Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `846c1e61` | Multi-dimensional audit evidence | 2026-11-27T05:21:39.387Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-27T05:30:04.018Z |
+| `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `95c5787f` | Multi-dimensional audit evidence | 2026-11-27T05:30:06.433Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `bceb12f7` | Multi-dimensional audit evidence | 2026-11-27T05:30:20.471Z |

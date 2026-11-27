@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T05:21:45.654Z",
+  "last_updated": "2026-11-27T05:30:25.966Z",
   "total_records": 2811,
   "domains": {
     "A": {
@@ -17798,8 +17798,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "6c98b5c2f4bd98d15932231ffe80ada97aee2a08173f37906a9167d2cdd14428",
-      "created_at": "2026-11-26T11:29:09.640Z"
+      "content_hash": "cf7b0be74c5eb231080ff4dd59fcaa98b0c5a4bf316364b701dd729b9f143ea3",
+      "created_at": "2026-11-27T05:30:20.924Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17867,8 +17867,8 @@
       "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
       "repository": "greptimeteam-greptimedb-learnings",
-      "content_hash": "f8365167cdf17e7c40679cf117964e4fe7915250796e97e6d41953590ab69db9",
-      "created_at": "2026-11-25T09:54:34.875Z"
+      "content_hash": "3db89d8327a8d36fe1d800eec3188794b3b48921b5246860df84c9a6f3693890",
+      "created_at": "2026-11-27T05:30:25.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
@@ -18654,8 +18654,8 @@
       "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-research-knowledge-intelligence-phocinae-pho.md",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "content_hash": "ec7e5dc9d4724852ab6d913722e2d051cddb300637d311ce7b33a6ec2aab30ab",
-      "created_at": "2026-11-23T20:21:53.842Z"
+      "content_hash": "daa4d0eb016b627074325e56121d0f35ef398b4c42d8f7022a9546b23d63ffc4",
+      "created_at": "2026-11-27T05:30:04.253Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
@@ -18741,8 +18741,8 @@
       "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
-      "content_hash": "9a7d12a15ae89bf33c6d291b801db76d2cd313cac135f67ee699b42159811c9e",
-      "created_at": "2026-11-23T20:22:13.210Z"
+      "content_hash": "164f7ab8d27368ad6105cc3a37539d5882860e3a24f933d084c771500c71ba5e",
+      "created_at": "2026-11-27T05:30:25.213Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
@@ -23778,8 +23778,8 @@
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "repository": "topgrade-rs/topgrade",
-      "content_hash": "1ab38794498f34c2bd1ce87b0ab79aba4f5332f1dbaf223ae2011010f3dd2d64",
-      "created_at": "2026-11-24T22:15:50.804Z"
+      "content_hash": "049b12d78fe994458adc9b1ab9adecde289272e3bd300bda3d49a6ea41ae98b9",
+      "created_at": "2026-11-27T05:30:06.858Z"
     },
     "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
@@ -23787,8 +23787,8 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-learnings-architecture-intelligence-topgrade-rs-topgrade-le.md",
       "repository": "topgrade-rs-topgrade-learnings",
-      "content_hash": "a6b2a869a7be6b64c5bb00077d8f3b44a0cd1785c0de035859a216a6d85d991b",
-      "created_at": "2026-11-24T22:16:04.721Z"
+      "content_hash": "14d0b2e5e8c498e58debe893933a1e57812a4a0f3202f8222f211ae67fd9fabd",
+      "created_at": "2026-11-27T05:30:24.588Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",

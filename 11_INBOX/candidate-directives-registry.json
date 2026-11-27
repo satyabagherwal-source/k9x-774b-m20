@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:21:45.452Z",
+  "last_updated": "2026-11-27T05:30:25.764Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68861,6 +68861,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CC0EBA--33147-ysql-disable-read-committed-isola.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-LEX3",
+      "directive_title": "run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+      "source_repo": "topgrade-rs/topgrade",
+      "source_commit": "95c5787f",
+      "staged_file": "11_INBOX/candidate-directives/CD-LEX3-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LPRP",
+      "directive_title": "require a region to own its files before a remap",
+      "source_repo": "GreptimeTeam/greptimedb",
+      "source_commit": "bceb12f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-LPRP-require-a-region-to-own-its-files-before-a-remap.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LSLE",
+      "directive_title": "ci: run custom-checks, dependency-review and check_pr_template on ubuntu-slim",
+      "source_repo": "topgrade-rs-topgrade-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LSLE-ci-run-custom-checks-dependency-review-and-check_pr_template-on-ubuntu-slim.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LTNL",
+      "directive_title": "mito2): require a region to own its files before a remap",
+      "source_repo": "greptimeteam-greptimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LTNL-mito2-require-a-region-to-own-its-files-before-a-remap.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
     }
   ]
 }

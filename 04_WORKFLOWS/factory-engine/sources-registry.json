@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T05:21:42.737Z",
-    "lastVerified": "2026-11-27T05:21:42.737Z",
+    "lastChecked": "2026-11-27T05:30:23.815Z",
+    "lastVerified": "2026-11-27T05:30:23.815Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T04:54:04.903Z",
-    "lastVerified": "2026-11-27T04:54:04.903Z",
+    "lastChecked": "2026-11-27T05:30:15.515Z",
+    "lastVerified": "2026-11-27T05:30:15.515Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1090,9 +1090,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-27T01:06:51.001Z",
+    "lastChecked": "2026-11-27T05:30:10.530Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-27T01:06:51.001Z"
+    "lastVerified": "2026-11-27T05:30:10.530Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2783,9 +2783,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-26T12:38:35.642Z",
+    "lastChecked": "2026-11-27T05:30:08.166Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-26T12:38:35.642Z"
+    "lastVerified": "2026-11-27T05:30:08.166Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -6428,14 +6428,14 @@
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T11:29:07.524Z",
-    "lastVerified": "2026-11-26T11:29:07.524Z",
+    "lastChecked": "2026-11-27T05:30:19.245Z",
+    "lastVerified": "2026-11-27T05:30:19.245Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
+    "contentHash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6609,9 +6609,9 @@
   "hungps-flutter_pokedex": {
     "name": "flutter_pokedex",
     "officialUrl": "https://github.com/hungps/flutter_pokedex",
-    "lastChecked": "2026-11-24T21:01:20.375Z",
+    "lastChecked": "2026-11-27T05:30:05.619Z",
     "revisionIdentifier": "7e2b6d49",
-    "lastVerified": "2026-11-24T21:01:20.375Z"
+    "lastVerified": "2026-11-27T05:30:05.619Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -7653,22 +7653,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "topgrade-rs-topgrade": {
-    "name": "topgrade",
+    "name": "topgrade-rs/topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T04:39:04.339Z",
-    "lastVerified": "2026-11-26T04:39:04.339Z",
+    "lastChecked": "2026-11-27T05:30:05.228Z",
+    "lastVerified": "2026-11-27T05:30:05.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
+    "contentHash": "57659565e5d12d20053ad4f89a6b1f6493f30f2a1b0f65acb0f14a5b1281c9a4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d2e732b9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -8226,12 +8225,12 @@
     "officialUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T20:21:52.947Z",
-    "lastVerified": "2026-11-23T20:21:52.947Z",
+    "lastChecked": "2026-11-27T05:30:03.336Z",
+    "lastVerified": "2026-11-27T05:30:03.336Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "b9e8e64a656e69e564f86b604c87a1f21da53e15f5129bc5f26971930cce2a85",
+    "contentHash": "562d5f6a29ccba99a4796ddaff78a5dcdb5db610458820dc03759c3e27045e7c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

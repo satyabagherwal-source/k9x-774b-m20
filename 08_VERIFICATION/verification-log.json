@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-06JS",
-    "timestamp": "2026-11-25T23:50:00.232Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-    "contentHash": "34be4abc281f762ea7a8b27c1725724509506ea2cd38f438a33a59c485e3cbd5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-BZHO",
-    "timestamp": "2026-11-25T23:59:10.956Z",
-    "repository": "PrunaAI/P-Image-OSS-Comfy",
-    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-    "contentHash": "49260281d1ac9bd0ac60722c4cd86d244e5ded9960c9c2c18679b3d38a84e470",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-C4KQ",
-    "timestamp": "2026-11-25T23:59:17.546Z",
-    "repository": "Kianuni/Erosion-CN",
-    "learningId": "learn-github-kianuni-erosion-cn",
-    "contentHash": "ce887e46e49efcd39562e6fda0adde9d84d7cc9ba4958bf5de6b46f913f979a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-C8NS",
     "timestamp": "2026-11-25T23:59:22.840Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7445,51 @@
     "repository": "yugabyte/yugabyte-db",
     "learningId": "learn-github-yugabyte-yugabyte-db",
     "contentHash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LCVH",
+    "timestamp": "2026-11-27T05:30:04.013Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "562d5f6a29ccba99a4796ddaff78a5dcdb5db610458820dc03759c3e27045e7c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LEQD",
+    "timestamp": "2026-11-27T05:30:06.421Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "57659565e5d12d20053ad4f89a6b1f6493f30f2a1b0f65acb0f14a5b1281c9a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LPKA",
+    "timestamp": "2026-11-27T05:30:20.458Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

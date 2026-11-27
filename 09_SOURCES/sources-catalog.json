@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "b9e8e64a656e69e564f86b604c87a1f21da53e15f5129bc5f26971930cce2a85",
-    "lastHarvestedAt": "2026-11-23T20:21:53.602Z",
+    "contentHash": "562d5f6a29ccba99a4796ddaff78a5dcdb5db610458820dc03759c3e27045e7c",
+    "lastHarvestedAt": "2026-11-27T05:30:04.018Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "e8eb093b",
+    "sourceVersion": "bceb12f7",
     "license": "Apache-2.0",
-    "contentHash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
-    "lastHarvestedAt": "2026-11-26T11:29:09.026Z",
+    "contentHash": "65570df268cf2fa161e7f88e65eb876dfae2d63e861ce6aadd481158501eea86",
+    "lastHarvestedAt": "2026-11-27T05:30:20.471Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "d2e732b9",
+    "sourceVersion": "95c5787f",
     "license": "GPL-3.0",
-    "contentHash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
-    "lastHarvestedAt": "2026-11-24T22:15:50.386Z",
+    "contentHash": "57659565e5d12d20053ad4f89a6b1f6493f30f2a1b0f65acb0f14a5b1281c9a4",
+    "lastHarvestedAt": "2026-11-27T05:30:06.433Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {

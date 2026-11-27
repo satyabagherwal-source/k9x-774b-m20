@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:21:39.397Z",
-  "total_cycles_completed": 12989,
-  "total_learnings_persisted": 12989,
-  "total_rules_promoted": 11744,
+  "last_updated": "2026-11-27T05:30:20.481Z",
+  "total_cycles_completed": 12992,
+  "total_learnings_persisted": 12992,
+  "total_rules_promoted": 11746,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:58:30.802Z",
-      "repository": "topoteretes/cognee",
-      "learningId": "learn-github-topoteretes-cognee",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:06:12.950Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:06:21.048Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:06:25.087Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T05:21:39.397Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:30:04.029Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:30:06.442Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:30:20.481Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

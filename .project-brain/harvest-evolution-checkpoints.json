@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:21:46.019Z",
+  "last_updated": "2026-11-27T05:30:26.357Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T04:45:33.796Z",
@@ -838,7 +838,7 @@
       "staged_for_review": 1
     },
     "greptimeteam-greptimedb-learnings.md": {
-      "processed_at": "2026-11-25T09:54:34.396Z",
+      "processed_at": "2026-11-27T05:30:25.442Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1248,7 +1248,7 @@
       "staged_for_review": 1
     },
     "topgrade-rs-topgrade-learnings.md": {
-      "processed_at": "2026-11-24T22:16:04.130Z",
+      "processed_at": "2026-11-27T05:30:24.000Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2753,7 +2753,7 @@
       "staged_for_review": 0
     },
     "hf-phocinae-phocinae-largha-150m-v1-learnings.md": {
-      "processed_at": "2026-11-23T20:22:12.962Z",
+      "processed_at": "2026-11-27T05:30:24.975Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4023,7 +4023,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4827,
+  "total_dossiers_evaluated": 4830,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3614
+  "total_staged_for_review": 3616
 }

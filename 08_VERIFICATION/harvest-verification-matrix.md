@@ -13685,3 +13685,6 @@
 | `CYCLE-20261127-A7GP` | `2026-11-27T05:21:23.785Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`16185385...`) |
 | `CYCLE-20261127-A8J3` | `2026-11-27T05:21:25.167Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10833` | Yes (`de849460...`) |
 | `CYCLE-20261127-AJHP` | `2026-11-27T05:21:39.373Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10834` | Yes (`a747eeac...`) |
+| `CYCLE-20261127-LCVH` | `2026-11-27T05:30:04.013Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`562d5f6a...`) |
+| `CYCLE-20261127-LEQD` | `2026-11-27T05:30:06.421Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10835` | Yes (`57659565...`) |
+| `CYCLE-20261127-LPKA` | `2026-11-27T05:30:20.458Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10836` | Yes (`65570df2...`) |
