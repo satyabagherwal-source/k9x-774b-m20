@@ -13856,3 +13856,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-4e0de84a` | `project://rook-rook` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md` | 2026-11-27T16:42:21.483Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d74ff6dc` | Multi-dimensional audit evidence | 2026-11-27T16:52:06.817Z |
 | `learn-dom-d-cfd4c4ad` | `project://cilium-cilium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md` | 2026-11-27T16:52:44.852Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `704cfbcb` | Multi-dimensional audit evidence | 2026-11-27T17:01:41.304Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `58d46831` | Multi-dimensional audit evidence | 2026-11-27T17:01:47.947Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `699ed4b3` | Multi-dimensional audit evidence | 2026-11-27T17:01:53.920Z |

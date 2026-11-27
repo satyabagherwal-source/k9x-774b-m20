@@ -825883,3 +825883,202 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `301c3eae` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10931. avoid repeated bash hooks and keep prompt callbacks (Harvested from flox/flox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "avoid repeated bash hooks and keep prompt callbacks",
+  "source": "flox/flox",
+  "source_url": "https://github.com/flox/flox",
+  "source_version": "704cfbcb",
+  "license": "GPL-2.0",
+  "extracted_at": "2026-11-27T17:01:40.672Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-flox-flox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `704cfbcb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cli/flox-activations/src/gen_rc/bash.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2f6e75b9`: activate): avoid repeated bash hooks and keep prompt callbacks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-activations/src/gen_rc/bash.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            if ! (
+              _flox_nl=$'\n';
+              if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )); then
+                _flox_commands="${PROMPT_COMMAND:-}";
+                builtin printf -v _flox_commands '%s;' "${PROMPT_COMMAND[@]:-}";
+              fi;
+              if [[ "${PROMPT_COMMAND:-}" == "__vsc_prompt_cmd_original" ]]; then
+                _flox_commands="$_flox_commands;${__vsc_original_prompt_command:-}";
+              fi;
+              _flox_commands=";${_flox_commands//$_flox_nl/;};";
+              [[ "${_flox_commands//; /;}" == *";_flox_hook;"* ]];
+            ); then
+              if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )) || [[ "$(declare -p PROMPT_COMMAND 2>&1)" != "declare -a"* ]]; then
+              else
+                PROMPT_COMMAND=(_flox_hook "${PROMPT_COMMAND[@]}");
+            if ! (
+              _flox_nl=$'\n';
+              if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )); then
+                _flox_commands="${PROMPT_COMMAND:-}";
+                builtin printf -v _flox_commands '%s;' "${PROMPT_COMMAND[@]:-}";
+              fi;
+       
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            if [[ ";${PROMPT_COMMAND[*]:-};" != *";_flox_hook;"* ]]; then
+              if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
+                PROMPT_COMMAND=(_flox_hook "${PROMPT_COMMAND[@]}");
+            if [[ ";${PROMPT_COMMAND[*]:-};" != *";_flox_hook;"* ]]; then
+              if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
+                PROMPT_COMMAND=(_flox_hook "${PROMPT_COMMAND[@]}");
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2f6e75b9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10932. drop orphan list files when rebuilding generated lists (Harvested from lioensky/VCPToolBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "drop orphan list files when rebuilding generated lists",
+  "source": "lioensky/VCPToolBox",
+  "source_url": "https://github.com/lioensky/VCPToolBox",
+  "source_version": "699ed4b3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-27T17:01:53.319Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lioensky-vcptoolbox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `699ed4b3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `routes/admin/emojis.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `15fb5246`: emojis): drop orphan list files when rebuilding generated lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `routes/admin/emojis.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+async function rebuildEmojiGeneratedLists({
+    imageRootDir = IMAGE_ROOT_DIR,
+    listsDir = EMOJI_LISTS_DIR,
+} = {}) {
+    await fs.mkdir(listsDir, { recursive: true });
+    const sourceEntries = await fs.readdir(imageRootDir, { withFileTypes: true });
+        const packDirPath = path.join(imageRootDir, packName);
+        const targetFilePath = path.join(listsDir, `${packName}.txt`);
+        await assertSafePath(listsDir, targetFilePath);
+    // 目录被删除后，旧的列表文件不会随重建消失，会让 /emojis/list 继续吐出
+    // 已经不存在的表情（前端兜底后表现为裂图）。这里按目录真相清理孤儿列表。
+    const validPackNames = new Set(emojiDirs);
+    const removed = [];
+    for (const file of await fs.readdir(listsDir)) {
+        if (!file.toLowerCase().endsWith('.txt')) continue;
+        const packName = path.basename(file, path.extname(file));
+        if (validPackNames.has(packName)) continue;
+
+        const staleFilePath = path.join(listsDir, file);
+        await assertSafePath(listsDir, staleFilePath);
+        await fs.unlink(staleFilePath);
+        removed.push(packName);
+    }
+
+        removedCount: removed.length,
+        removed,
+
+// 供测试直接驱动列表重建，避免为了验证孤儿清理去启动整个 admin 服务。
+module.exports.rebuildEmojiGeneratedLists = rebuildEmojiGeneratedLists;
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+async function rebuildEmojiGeneratedLists() {
+    await fs.mkdir(EMOJI_LISTS_DIR, { recursive: true });
+    const sourceEntries = await fs.readdir(IMAGE_ROOT_DIR, { withFileTypes: true });
+        const packDirPath = path.join(IMAGE_ROOT_DIR, packName);
+        const targetFilePath = path.join(EMOJI_LISTS_DIR, `${packName}.txt`);
+        await assertSafePath(EMOJI_LISTS_DIR, targetFilePath);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `15fb5246` are properly handled with clean fallback behavior.

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T16:52:48.399Z",
-  "total_records": 2841,
+  "last_updated": "2026-11-27T17:02:00.036Z",
+  "total_records": 2843,
   "domains": {
     "A": {
-      "total": 23,
+      "total": 25,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -29,7 +29,9 @@
         "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
         "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants",
         "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants",
-        "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants"
+        "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-human-need-intelligence-flox-flox-core-invariants",
+        "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants"
       ]
     },
     "B": {
@@ -10873,8 +10875,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "15f24bcbf67d8b272e67b54f8fddec91b9f84b4f98d367c112d9349a5f6b900e",
-      "created_at": "2026-11-26T22:59:57.862Z"
+      "content_hash": "76759f6ea3f45fa21686a4d1969886b38ce211fdca189278b3f6f939f8ce6f97",
+      "created_at": "2026-11-27T17:01:48.432Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10942,8 +10944,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "e36b93cf5d1bf18d468f1f1a5408e83bf64c034ab0fd798efcff75f09bf10bc4",
-      "created_at": "2026-11-26T23:00:07.610Z"
+      "content_hash": "4d233e318bcc0512658f30276abc6e75e2305339e94bf4bc199f89368bed5902",
+      "created_at": "2026-11-27T17:01:59.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -32285,8 +32287,8 @@
       "title": "Content & Information Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-content-information-intelligence-lioensky-vcptoolbox-core-in.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "4d05a9e32ce7fd661a420194e633c036e5c8c01020e3c17171d311078d8ebd62",
-      "created_at": "2026-11-18T15:51:51.476Z"
+      "content_hash": "c4edb8faf408804f707c60a22c207c5f17e01a0afefade29a2d1500d7feafc55",
+      "created_at": "2026-11-27T17:01:54.371Z"
     },
     "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
@@ -32294,8 +32296,8 @@
       "title": "Content & Information Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-learnings-content-information-intelligence-lioensky-vcptoolb.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "daa508f70f966259f6f9d9649c7551841657ddb1515de2cb2844fd85e828ab0b",
-      "created_at": "2026-11-18T15:51:56.517Z"
+      "content_hash": "52a220b7f8de1afc6584324117d1e4aee744dd49da707cc338268e3fd6a406e4",
+      "created_at": "2026-11-27T17:02:00.036Z"
     },
     "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants",
@@ -48015,6 +48017,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T16:52:44.808Z"
+    },
+    "domain_intelligence-human-need-intelligence-flox-flox-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-flox-flox-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: flox/flox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-flox-flox-human-need-intelligence-flox-flox-core-invariants.md",
+      "repository": "flox/flox",
+      "content_hash": "554cda6e8ecd549c386eb12a5dc864fabe76285c51826847280307155b89c98f",
+      "created_at": "2026-11-27T17:01:41.772Z"
+    },
+    "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: flox-flox-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-flox-flox-learnings-human-need-intelligence-flox-flox-learnings-core-invariants.md",
+      "repository": "flox-flox-learnings",
+      "content_hash": "caf535606bdbf54aa2c64b7e10e47123f83c2eb3414704a2ec57865089205fb1",
+      "created_at": "2026-11-27T17:01:58.054Z"
     }
   }
 }

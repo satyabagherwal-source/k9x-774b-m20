@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:52:48.083Z",
+  "last_updated": "2026-11-27T17:01:59.832Z",
   "directives": [
     {
       "id": "CD-001",
@@ -71459,6 +71459,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C22148-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-ASL0",
+      "directive_title": "avoid repeated bash hooks and keep prompt callbacks",
+      "source_repo": "flox/flox",
+      "source_commit": "704cfbcb",
+      "staged_file": "11_INBOX/candidate-directives/CD-ASL0-avoid-repeated-bash-hooks-and-keep-prompt-callbacks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-AXQC",
+      "directive_title": "translate logical expressions of rego v2 in filters",
+      "source_repo": "open-policy-agent/opa",
+      "source_commit": "58d46831",
+      "staged_file": "11_INBOX/candidate-directives/CD-AXQC-translate-logical-expressions-of-rego-v2-in-filters.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-B2B9",
+      "directive_title": "drop orphan list files when rebuilding generated lists",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "699ed4b3",
+      "staged_file": "11_INBOX/candidate-directives/CD-B2B9-drop-orphan-list-files-when-rebuilding-generated-lists.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-B54X",
+      "directive_title": "activate): avoid repeated bash hooks and keep prompt callbacks",
+      "source_repo": "flox-flox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B54X-activate-avoid-repeated-bash-hooks-and-keep-prompt-callbacks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-B5ZD",
+      "directive_title": "compile: translate logical expressions of rego v2 in filters",
+      "source_repo": "open-policy-agent-opa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B5ZD-compile-translate-logical-expressions-of-rego-v2-in-filters.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-B6OL",
+      "directive_title": "emojis): drop orphan list files when rebuilding generated lists",
+      "source_repo": "lioensky-vcptoolbox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B6OL-emojis-drop-orphan-list-files-when-rebuilding-generated-lists.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
     }
   ]
 }

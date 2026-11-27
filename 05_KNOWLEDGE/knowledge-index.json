@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T16:52:48.962Z",
+  "last_updated": "2026-11-27T17:02:00.242Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26654,
+  "total_items": 26664,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214354,8 +214354,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "3dc49738",
-      "content_hash": "ad834bff8c77176fecdfd18a2a3e5fe5b2ab3f5790332e79fe4d103503d4ca42",
+      "source_version": "58d46831",
+      "content_hash": "aa54f581bedfb07b3fe040e5c9f9d618ec932c991701b4fc04f0411a3c22c711",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -214410,7 +214410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T22:59:57.053Z",
+      "verified_at": "2026-11-27T17:01:47.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214452,10 +214452,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "3dc49738",
-      "content_hash": "15f24bcbf67d8b272e67b54f8fddec91b9f84b4f98d367c112d9349a5f6b900e",
+      "source_version": "58d46831",
+      "content_hash": "76759f6ea3f45fa21686a4d1969886b38ce211fdca189278b3f6f939f8ce6f97",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:59:57.862Z"
+      "persisted_at": "2026-11-27T17:01:48.432Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -214464,10 +214464,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "3dc49738",
-      "content_hash": "a1fc971d9707a1e05bfcdd28b3f204acb2604a87a62ae671c8ae2d0edf9bd359",
+      "source_version": "58d46831",
+      "content_hash": "29254ff2473608d137c13e9aeb1785dcccdb0670ec7fd102aa178cc3c9aa7cbb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:59:58.066Z"
+      "persisted_at": "2026-11-27T17:01:48.637Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214868,9 +214868,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "e36b93cf5d1bf18d468f1f1a5408e83bf64c034ab0fd798efcff75f09bf10bc4",
+      "content_hash": "4d233e318bcc0512658f30276abc6e75e2305339e94bf4bc199f89368bed5902",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T23:00:07.610Z"
+      "persisted_at": "2026-11-27T17:01:59.137Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214880,9 +214880,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "3997406ef7d8ba1c1a0d81088dab3099c35bcbf30cdf6bfe7289494408137278",
+      "content_hash": "8d6276e6bc75b7636d37bccb604eb35ecbb5979fb9b5cae8a47385dbdaf5f392",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:00:07.877Z"
+      "persisted_at": "2026-11-27T17:01:59.357Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -222824,8 +222824,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "e03ef4b2",
-      "content_hash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
+      "source_version": "699ed4b3",
+      "content_hash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -222883,6 +222883,11 @@
           "number": 10592,
           "title": "recognise role-split tool results, keep observe read-only, tiered slim",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10932,
+          "title": "drop orphan list files when rebuilding generated lists",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222890,7 +222895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T21:52:54.477Z",
+      "verified_at": "2026-11-27T17:01:53.662Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222944,10 +222949,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "e03ef4b2",
-      "content_hash": "13eda5e48d9eeff8216d876e7b0358c887a26b68d3f517174eea4c5c5a23400e",
+      "source_version": "699ed4b3",
+      "content_hash": "2d4e18c75ac915886aad631a6ee127730fe860d96e5411502d2fec51ea49335c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:52:55.382Z"
+      "persisted_at": "2026-11-27T17:01:54.568Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -245928,8 +245933,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "5441ece2",
-      "content_hash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
+      "source_version": "704cfbcb",
+      "content_hash": "9198dbf36c6f9ebfda7cd31b236ea9d3f421a7d4b787ab9dc43c545325dc0900",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -245972,6 +245977,11 @@
           "number": 10729,
           "title": "run tcsh profiles after the last deactivation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10931,
+          "title": "avoid repeated bash hooks and keep prompt callbacks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245979,7 +245989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:58:18.201Z",
+      "verified_at": "2026-11-27T17:01:41.024Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246033,10 +246043,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "5441ece2",
-      "content_hash": "49818998bf823ddd1a80bb23ab42e38fdce2a58803504ac5c81e0ecc37ef73e1",
+      "source_version": "704cfbcb",
+      "content_hash": "6c7f73257ea87f3576e59057c75ce49371722567e2fb4f701ca5da53c492081a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:58:19.137Z"
+      "persisted_at": "2026-11-27T17:01:41.995Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -246096,9 +246106,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6a73b0c41f895f1b3c530b221d9885e4c6032d19adb29fed9e903da458c1963",
+      "content_hash": "f53d853f96d076811b9c6881339edb6ae1cfbc6129d9cad44655fff600a3b618",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:58:35.239Z"
+      "persisted_at": "2026-11-27T17:01:58.261Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -251936,9 +251946,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8a6a4e5d641100c9d0fe151c4bc7f5730b6f94a018e4c08144bcc5a2f75a147",
+      "content_hash": "872f3b4147c71aafa3fc5936f555a6dcdbdeb0ba50914faede2012058bb4911f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:53:00.794Z"
+      "persisted_at": "2026-11-27T17:02:00.242Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -295822,10 +295832,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-content-information-intelligence-lioensky-vcptoolbox-core-in.md",
       "title": "Content & Information Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "ec435c0e",
-      "content_hash": "4d05a9e32ce7fd661a420194e633c036e5c8c01020e3c17171d311078d8ebd62",
+      "source_version": "699ed4b3",
+      "content_hash": "c4edb8faf408804f707c60a22c207c5f17e01a0afefade29a2d1500d7feafc55",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T15:51:51.476Z"
+      "persisted_at": "2026-11-27T17:01:54.371Z"
     },
     "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
@@ -295835,9 +295845,9 @@
       "title": "Content & Information Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "daa508f70f966259f6f9d9649c7551841657ddb1515de2cb2844fd85e828ab0b",
+      "content_hash": "52a220b7f8de1afc6584324117d1e4aee744dd49da707cc338268e3fd6a406e4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T15:51:56.517Z"
+      "persisted_at": "2026-11-27T17:02:00.036Z"
     },
     "rule-9254": {
       "learning_id": "rule-9254",
@@ -365960,6 +365970,130 @@
       "content_hash": "3514ff8136428c81d61243d5f2a8ef8ec2fed13000d29ba32889a9701d381fa1",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T16:41:43.374Z"
+    },
+    "rule-10931": {
+      "learning_id": "rule-10931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10931,
+      "title": "avoid repeated bash hooks and keep prompt callbacks",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "704cfbcb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:01:41.024Z"
+    },
+    "candidate_directive-avoid-repeated-bash-hooks-and-keep-prompt-callbacks": {
+      "item_id": "candidate_directive-avoid-repeated-bash-hooks-and-keep-prompt-callbacks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ASL0-avoid-repeated-bash-hooks-and-keep-prompt-callbacks.md",
+      "title": "avoid repeated bash hooks and keep prompt callbacks",
+      "repository": "flox/flox",
+      "source_version": "704cfbcb",
+      "content_hash": "354c7b8ebd73ea81bf43989d469d94a13a508e2b69c8227d9f143cee2998e1a4",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T17:01:41.560Z"
+    },
+    "domain_intelligence-human-need-intelligence-flox-flox-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-flox-flox-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-flox-flox-human-need-intelligence-flox-flox-core-invariants.md",
+      "title": "Human & Need Intelligence: flox/flox Core Invariants",
+      "repository": "flox/flox",
+      "source_version": "704cfbcb",
+      "content_hash": "554cda6e8ecd549c386eb12a5dc864fabe76285c51826847280307155b89c98f",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T17:01:41.772Z"
+    },
+    "candidate_directive-translate-logical-expressions-of-rego-v2-in-filters": {
+      "item_id": "candidate_directive-translate-logical-expressions-of-rego-v2-in-filters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AXQC-translate-logical-expressions-of-rego-v2-in-filters.md",
+      "title": "translate logical expressions of rego v2 in filters",
+      "repository": "open-policy-agent/opa",
+      "source_version": "58d46831",
+      "content_hash": "70e54b05ee60c981ced0e69e0b649c64f584623ed8858c1cd463ceed9ef086f4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T17:01:48.232Z"
+    },
+    "rule-10932": {
+      "learning_id": "rule-10932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10932,
+      "title": "drop orphan list files when rebuilding generated lists",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "699ed4b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:01:53.662Z"
+    },
+    "candidate_directive-drop-orphan-list-files-when-rebuilding-generated-lists": {
+      "item_id": "candidate_directive-drop-orphan-list-files-when-rebuilding-generated-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B2B9-drop-orphan-list-files-when-rebuilding-generated-lists.md",
+      "title": "drop orphan list files when rebuilding generated lists",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "699ed4b3",
+      "content_hash": "286fa7f70457edd40305f6b94fc5bbcb8d26aa2894b41734850bc474da96be06",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T17:01:54.169Z"
+    },
+    "candidate_directive-activate-avoid-repeated-bash-hooks-and-keep-prompt-callbacks": {
+      "item_id": "candidate_directive-activate-avoid-repeated-bash-hooks-and-keep-prompt-callbacks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B54X-activate-avoid-repeated-bash-hooks-and-keep-prompt-callbacks.md",
+      "title": "activate): avoid repeated bash hooks and keep prompt callbacks",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f9d6b7c8dd1b761bdab1b535b4f046bfb83e58edd632a5414b12bb352c92a5be",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T17:01:57.830Z"
+    },
+    "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-flox-flox-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-flox-flox-learnings-human-need-intelligence-flox-flox-learnings-core-invariants.md",
+      "title": "Human & Need Intelligence: flox-flox-learnings Core Invariants",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "caf535606bdbf54aa2c64b7e10e47123f83c2eb3414704a2ec57865089205fb1",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T17:01:58.054Z"
+    },
+    "candidate_directive-compile-translate-logical-expressions-of-rego-v2-in-filters": {
+      "item_id": "candidate_directive-compile-translate-logical-expressions-of-rego-v2-in-filters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B5ZD-compile-translate-logical-expressions-of-rego-v2-in-filters.md",
+      "title": "compile: translate logical expressions of rego v2 in filters",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e4dedcd881dc24d48114e83e4bf853116d4a2ff4dafeb8eb5b0dc6ea61adbbb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T17:01:58.925Z"
+    },
+    "candidate_directive-emojis-drop-orphan-list-files-when-rebuilding-generated-lists": {
+      "item_id": "candidate_directive-emojis-drop-orphan-list-files-when-rebuilding-generated-lists",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B6OL-emojis-drop-orphan-list-files-when-rebuilding-generated-lists.md",
+      "title": "emojis): drop orphan list files when rebuilding generated lists",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05118df071853d209e3b6c0c65e3e6dac893b01091a9098e5913510ea92ec443",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T17:01:59.832Z"
     }
   },
   "ai-builder-brain": {

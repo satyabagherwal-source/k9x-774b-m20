@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T16:52:06.829Z",
+  "last_updated": "2026-11-27T17:01:53.929Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
-      "verified_at": "2026-11-26T21:52:54.745Z",
+      "content_hash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
+      "verified_at": "2026-11-27T17:01:53.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T21:52:54.745Z"
+      "last_updated": "2026-11-27T17:01:53.928Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
-      "verified_at": "2026-11-26T16:58:18.492Z",
+      "content_hash": "9198dbf36c6f9ebfda7cd31b236ea9d3f421a7d4b787ab9dc43c545325dc0900",
+      "verified_at": "2026-11-27T17:01:41.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T16:58:18.492Z"
+      "last_updated": "2026-11-27T17:01:41.317Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "ad834bff8c77176fecdfd18a2a3e5fe5b2ab3f5790332e79fe4d103503d4ca42",
-      "verified_at": "2026-11-26T22:59:57.342Z",
+      "content_hash": "aa54f581bedfb07b3fe040e5c9f9d618ec932c991701b4fc04f0411a3c22c711",
+      "verified_at": "2026-11-27T17:01:47.992Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T22:59:57.342Z"
+      "last_updated": "2026-11-27T17:01:47.992Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

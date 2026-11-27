@@ -13823,3 +13823,6 @@
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T16:42:21.483Z` | `rook-rook` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4E0DE84A` [Domain D] | Yes (`afc52ea9...`) |
 | `CYCLE-20261127-YH3W` | `2026-11-27T16:52:06.812Z` | `cilium/cilium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cilium-cilium-learnings.md` | Yes (`06c16373...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T16:52:44.852Z` | `cilium-cilium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CFD4C4AD` [Domain D] | Yes (`39e5a080...`) |
+| `CYCLE-20261127-ASDU` | `2026-11-27T17:01:41.298Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10931` | Yes (`9198dbf3...`) |
+| `CYCLE-20261127-AXI7` | `2026-11-27T17:01:47.935Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`aa54f581...`) |
+| `CYCLE-20261127-B23Z` | `2026-11-27T17:01:53.903Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10932` | Yes (`07608754...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:52:49.227Z",
+  "last_updated": "2026-11-27T17:02:00.432Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T16:52:45.589Z",
@@ -158,7 +158,7 @@
       "staged_for_review": 1
     },
     "open-policy-agent-opa-learnings.md": {
-      "processed_at": "2026-11-26T23:00:06.956Z",
+      "processed_at": "2026-11-27T17:01:58.470Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -468,7 +468,7 @@
       "staged_for_review": 1
     },
     "flox-flox-learnings.md": {
-      "processed_at": "2026-11-26T16:58:34.333Z",
+      "processed_at": "2026-11-27T17:01:57.428Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1398,7 +1398,7 @@
       "staged_for_review": 1
     },
     "lioensky-vcptoolbox-learnings.md": {
-      "processed_at": "2026-11-26T21:52:59.849Z",
+      "processed_at": "2026-11-27T17:01:59.569Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5022,
+  "total_dossiers_evaluated": 5025,
   "total_canonical_promoted": 582,
-  "total_staged_for_review": 3777
+  "total_staged_for_review": 3780
 }

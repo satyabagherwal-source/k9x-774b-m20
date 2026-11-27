@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:52:06.824Z",
-  "total_cycles_completed": 13119,
-  "total_learnings_persisted": 13119,
-  "total_rules_promoted": 11843,
+  "last_updated": "2026-11-27T17:01:53.926Z",
+  "total_cycles_completed": 13122,
+  "total_learnings_persisted": 13122,
+  "total_rules_promoted": 11845,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:32:58.240Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:41:28.613Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:41:43.000Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:50:08.002Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1403,6 +1382,27 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:01:41.314Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:01:47.986Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:01:53.926Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

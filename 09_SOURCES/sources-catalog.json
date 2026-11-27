@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "e03ef4b2",
+    "sourceVersion": "699ed4b3",
     "license": "NOASSERTION",
-    "contentHash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
-    "lastHarvestedAt": "2026-11-26T21:52:54.698Z",
+    "contentHash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
+    "lastHarvestedAt": "2026-11-27T17:01:53.920Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "5441ece2",
+    "sourceVersion": "704cfbcb",
     "license": "GPL-2.0",
-    "contentHash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
-    "lastHarvestedAt": "2026-11-26T16:58:18.472Z",
+    "contentHash": "9198dbf36c6f9ebfda7cd31b236ea9d3f421a7d4b787ab9dc43c545325dc0900",
+    "lastHarvestedAt": "2026-11-27T17:01:41.304Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "3dc49738",
+    "sourceVersion": "58d46831",
     "license": "Apache-2.0",
-    "contentHash": "ad834bff8c77176fecdfd18a2a3e5fe5b2ab3f5790332e79fe4d103503d4ca42",
-    "lastHarvestedAt": "2026-11-26T22:59:57.322Z",
+    "contentHash": "aa54f581bedfb07b3fe040e5c9f9d618ec932c991701b4fc04f0411a3c22c711",
+    "lastHarvestedAt": "2026-11-27T17:01:47.947Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
