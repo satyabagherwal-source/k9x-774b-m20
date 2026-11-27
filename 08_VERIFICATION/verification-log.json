@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-04Y1",
-    "timestamp": "2026-11-26T00:17:57.769Z",
-    "repository": "touchlab/Kermit",
-    "learningId": "learn-github-touchlab-kermit",
-    "contentHash": "498de7aea36d7683970730ce5429d3061599b5b69faf49a002d7ad128b6a1fdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-0A5F",
-    "timestamp": "2026-11-26T00:18:04.515Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "cad71c926823f73e08fa8304cca1238561b63041b0a9cac6fc1b5d87affb637f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-0AFC",
     "timestamp": "2026-11-26T00:18:04.872Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7462,36 @@
     "contentHash": "67064cae352c35df3953b877a4fc8f6fd450ce8d3128dce5aa004ab9d74e7dda",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-VKZK",
+    "timestamp": "2026-11-27T06:06:00.704Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "1d7d1c266379c89a95754fcfcd58e8f9aa4868a9d8335f8eac5fd1e478aa02ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-VRUH",
+    "timestamp": "2026-11-27T06:06:09.593Z",
+    "repository": "litmuschaos/litmus",
+    "learningId": "learn-github-litmuschaos-litmus",
+    "contentHash": "0120c6fd87062857e97592d0fa2e8fe47f9820f45278794272aa94ddff018fe7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

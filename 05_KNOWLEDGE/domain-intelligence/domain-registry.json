@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T05:57:48.038Z",
-  "total_records": 2811,
+  "last_updated": "2026-11-27T06:06:15.304Z",
+  "total_records": 2813,
   "domains": {
     "A": {
       "total": 23,
@@ -1245,7 +1245,7 @@
       ]
     },
     "G": {
-      "total": 482,
+      "total": 484,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1728,7 +1728,9 @@
         "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants",
         "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-maka-core-invariants",
-        "domain_intelligence-architecture-intelligence-apache-maka-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-apache-maka-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-litmuschaos-litmus-core-invariants",
+        "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants"
       ]
     },
     "H": {
@@ -18993,8 +18995,8 @@
       "title": "Research & Knowledge Intelligence: facebook/sam3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-research-knowledge-intelligence-facebook-sam3-core-invariants.md",
       "repository": "facebook/sam3",
-      "content_hash": "67965c483af69e7ea4d58415ed522a578684a15825fcd68c911243da52d950d5",
-      "created_at": "2026-11-23T20:56:07.121Z"
+      "content_hash": "3b88eadf7367b1e1afd8d9e337112ead983d8a12fa5d1cc0c08db195acef4e3b",
+      "created_at": "2026-11-27T06:06:00.931Z"
     },
     "DOM-D-DD21AD65": {
       "record_id": "DOM-D-DD21AD65",
@@ -19044,8 +19046,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-learnings-research-knowledge-intelligence-hf-facebook-sam3-lear.md",
       "repository": "hf-facebook-sam3-learnings",
-      "content_hash": "854b8e5b922fe160d9f6b49c510935b2cbeade35987d5bc34d4c84db69597d8d",
-      "created_at": "2026-11-23T20:56:24.537Z"
+      "content_hash": "ea8ed996233d5b22a6b8bfe44fc42f9f2b6f639fc33b9f5cb2368d112d06e25e",
+      "created_at": "2026-11-27T06:06:13.340Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
@@ -46758,8 +46760,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "195ee1a45c400eefec1da5b1fa867c3b4b0bf45af7e0219fd9ac4b19f3131a2f",
-      "created_at": "2026-11-27T05:48:27.966Z"
+      "content_hash": "7895e2303115a1ff41b9f6dd17203bfddf99d44455bfd53aa3ec437729906b11",
+      "created_at": "2026-11-27T06:06:15.304Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -47453,6 +47455,24 @@
       "repository": "kividbio-kividb-learnings",
       "content_hash": "e46eb90a8e9551c381f161288bb5bc632b54db61d90fecdf9e75a188e826567a",
       "created_at": "2026-11-27T05:12:44.441Z"
+    },
+    "domain_intelligence-architecture-intelligence-litmuschaos-litmus-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-litmuschaos-litmus-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: litmuschaos/litmus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-litmuschaos-litmus-architecture-intelligence-litmuschaos-litmus-core-invariants.md",
+      "repository": "litmuschaos/litmus",
+      "content_hash": "bcb8dafb4d47d98354a2e61f422d8e94a9eae868050283642be66fa6c3b9e04f",
+      "created_at": "2026-11-27T06:06:10.069Z"
+    },
+    "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: litmuschaos-litmus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-litmuschaos-litmus-learnings-architecture-intelligence-litmuschaos-litmus-learni.md",
+      "repository": "litmuschaos-litmus-learnings",
+      "content_hash": "fa3542bcbe861791d93cbc29c69b18a3316fede15ec8faf597ca88a0ccfa6ce4",
+      "created_at": "2026-11-27T06:06:14.301Z"
     }
   }
 }

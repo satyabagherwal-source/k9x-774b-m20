@@ -625,8 +625,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
-    "lastHarvestedAt": "2026-11-23T20:56:06.909Z",
+    "contentHash": "1d7d1c266379c89a95754fcfcd58e8f9aa4868a9d8335f8eac5fd1e478aa02ea",
+    "lastHarvestedAt": "2026-11-27T06:06:00.708Z",
     "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
@@ -2913,10 +2913,10 @@
     "repository": "litmuschaos/litmus",
     "platform": "github",
     "sourceUrl": "https://github.com/litmuschaos/litmus",
-    "sourceVersion": "97a397fb",
+    "sourceVersion": "434832d4",
     "license": "Apache-2.0",
-    "contentHash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
-    "lastHarvestedAt": "2026-10-27T12:56:55.412Z",
+    "contentHash": "0120c6fd87062857e97592d0fa2e8fe47f9820f45278794272aa94ddff018fe7",
+    "lastHarvestedAt": "2026-11-27T06:06:09.609Z",
     "learningId": "learn-github-litmuschaos-litmus"
   },
   "provablehq-snarkos": {

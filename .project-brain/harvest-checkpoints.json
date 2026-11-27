@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T05:57:33.554Z",
+  "last_updated": "2026-11-27T06:06:09.628Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "da83616c00bfa93c5d31dadccd889aaebc72a314e8d9eaab5101324e171db275",
-      "verified_at": "2026-11-23T20:56:06.917Z",
+      "content_hash": "1d7d1c266379c89a95754fcfcd58e8f9aa4868a9d8335f8eac5fd1e478aa02ea",
+      "verified_at": "2026-11-27T06:06:00.721Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:56:06.917Z"
+      "last_updated": "2026-11-27T06:06:00.721Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -4506,14 +4506,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-litmuschaos-litmus",
-      "content_hash": "5b5b93ae6be4c6a11a043d849ed472689d4b8e5727dd0a4e7e90fe6c1399c7dc",
-      "verified_at": "2026-10-27T12:56:55.418Z",
+      "content_hash": "0120c6fd87062857e97592d0fa2e8fe47f9820f45278794272aa94ddff018fe7",
+      "verified_at": "2026-11-27T06:06:09.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:56:55.418Z"
+      "last_updated": "2026-11-27T06:06:09.627Z"
     },
     "vasu-devs/JustHireMe": {
       "repository": "vasu-devs/JustHireMe",

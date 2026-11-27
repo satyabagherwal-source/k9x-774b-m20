@@ -13727,3 +13727,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-27T05:48:14.600Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `a2d478d0` | Multi-dimensional audit evidence | 2026-11-27T05:48:15.665Z |
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-27T05:57:33.535Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-27T06:06:00.708Z |
+| `learn-github-litmuschaos-litmus` | `https://github.com/litmuschaos/litmus` | `434832d4` | Multi-dimensional audit evidence | 2026-11-27T06:06:09.609Z |

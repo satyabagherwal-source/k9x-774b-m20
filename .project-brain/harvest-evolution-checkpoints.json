@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:57:48.531Z",
+  "last_updated": "2026-11-27T06:06:15.660Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T05:48:27.287Z",
+      "processed_at": "2026-11-27T06:06:14.667Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2778,7 +2778,7 @@
       "staged_for_review": 1
     },
     "hf-facebook-sam3-learnings.md": {
-      "processed_at": "2026-11-23T20:56:24.327Z",
+      "processed_at": "2026-11-27T06:06:13.085Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4021,9 +4021,14 @@
       "processed_at": "2026-11-27T04:36:58.896Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "litmuschaos-litmus-learnings.md": {
+      "processed_at": "2026-11-27T06:06:13.551Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4839,
+  "total_dossiers_evaluated": 4842,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3623
+  "total_staged_for_review": 3625
 }

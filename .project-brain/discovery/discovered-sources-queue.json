@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T05:21:45.137Z",
+  "updated_at": "2026-11-27T06:06:13.842Z",
   "stats": {
-    "total_discovered": 10176,
-    "approved_pending_harvest": 9648,
+    "total_discovered": 10181,
+    "approved_pending_harvest": 9653,
     "harvested_count": 0,
     "rejected_count": 528,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9654,
+      "COMMUNITY_AND_EXPERT": 9658,
       "OFFICIAL_DOCUMENTATION": 288,
-      "STANDARDS_AND_SPECIFICATIONS": 161,
+      "STANDARDS_AND_SPECIFICATIONS": 162,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
       "LEGAL_AND_REGULATORY": 2,
@@ -220203,6 +220203,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-DB3F19BA69B6": {
+      "id": "SRC-DB3F19BA69B6",
+      "url": "https://github.com/litmuschaos/litmus",
+      "title": "https://github.com/litmuschaos/litmus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:06:13.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
+        "fileName": "litmuschaos-litmus-learnings.md"
+      }
+    },
+    "SRC-8F3D65ED5B72": {
+      "id": "SRC-8F3D65ED5B72",
+      "url": "https://hub.litmuschaos.io/",
+      "title": "https://hub.litmuschaos.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:06:13.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
+        "fileName": "litmuschaos-litmus-learnings.md"
+      }
+    },
+    "SRC-12028C1F1AF2": {
+      "id": "SRC-12028C1F1AF2",
+      "url": "https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q",
+      "title": "https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:06:13.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
+        "fileName": "litmuschaos-litmus-learnings.md"
+      }
+    },
+    "SRC-F39812C9FBB5": {
+      "id": "SRC-F39812C9FBB5",
+      "url": "https://www.mongodb.com/docs/manual/tutorial/expire-data",
+      "title": "https://www.mongodb.com/docs/manual/tutorial/expire-data",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:06:13.779Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
+        "fileName": "litmuschaos-litmus-learnings.md"
+      }
+    },
+    "SRC-5283FE413CE4": {
+      "id": "SRC-5283FE413CE4",
+      "url": "https://www.rfc-editor.org/rfc/rfc5321",
+      "title": "IETF RFC 5321",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T06:06:13.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md",
+        "fileName": "litmuschaos-litmus-learnings.md"
       }
     }
   }

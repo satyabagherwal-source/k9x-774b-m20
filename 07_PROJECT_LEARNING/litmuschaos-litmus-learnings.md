@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md`  
 > **Source**: github ([https://github.com/litmuschaos/litmus](https://github.com/litmuschaos/litmus))  
-> **Source Version**: `97a397fb`  
+> **Source Version**: `434832d4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:56:55.151Z  
+> **Timestamp**: 2026-11-27T06:06:08.463Z  
 > **Learning ID**: `learn-github-litmuschaos-litmus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/litmuschaos/litmus](https://github.com/litmuschaos/litmus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:56:54.714Z  
+> **Harvest Timestamp**: 2026-11-27T06:06:08.459Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Litmus helps  SREs and developers practice chaos engineering in a Cloud-native way. Chaos experiments are published at the ChaosHub  (https://hub.litmuschaos.io). Community notes is at https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5733 stars
+- **Stars / Engagement**: 5748 stars
 
 ---
 
@@ -1195,11 +1195,11 @@ var Config Envs
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5654** (2026-11-26): **fix(chaoscenter): typo in EnableDisableCronButton variable name**
+  *Symptoms*: **What happened**: In `EnableDisableCronButton` inside `ExperimentActionButtons.tsx`, there's a typo on line 405 — the variable is named `diable` instead of `disable`:  const diable = isCronEnabled ? true : false; setIsCronEnabled?.(!diable); updateCronExperimentStateMutation({ variables: { ...scope, experimentID, disable: diable } });  It works correctly but is misleading since it maps directly to a field called `disable`. Also `isCronEnabled ? true : false` is redundant — simplifies to just `isCronEnabled`.  **What you expected to happen**: Variable should be named `disable` and the line simplified to `const disable = isCronEnabled`.  **Where can this issue be corrected?**: `chaoscenter/web/src/components/ExperimentActionButtons/ExperimentActionButtons.tsx` line 405  **How to reproduce it (as minimally and precisely as possible)**: Open the file and search for `diable` — it appears on lines 405, 406, and 411. 
+
 - **Issue #5641** (2026-10-14): **Auth server panics in GetProjectById when FindUsersByUID returns an error**
   *Symptoms*: **What happened**:  The auth server's gRPC `GetProjectById` dereferences the result of `FindUsersByUID` before checking its error:  ```go authUsers, err := s.ApplicationService.FindUsersByUID(uids) for _, authUser := range *authUsers { ```  `FindUsersByUID` returns `nil, err` when the `Find` fails, and the `err` check only comes after the loops. The gRPC server is created without a recovery interceptor, so the nil pointer panic takes down the whole authentication server (REST and gRPC), which the GraphQL server needs for every RBAC check.  **What you expected to happen**:  A DB error returns a gRPC error to the caller instead of crashing the process.  **Where can this issue be corrected? (optional)**  `chaoscenter/authentication/api/handlers/grpc/grpc_handler.go`, `GetProjectById`: move the `if err != nil` check to directly after `FindUsersByUID`.  **How to reproduce it (as minimally and precisely as possible)**:  Make `FindUsersByUID` fail, e.g. a mongo timeout or a stopped mongo while the auth server is running, then call anything on the GraphQL server that goes through `GetProjectById`. The auth server panics with `invalid memory address or nil pointer dereference`. A unit test with the application service mock returning `nil, err` shows the same panic.  **Anything else we need to know?**:  This is the same kind of issue as the nil checks fixed in #5449 and #5563. I'll send a PR with a mock-based test. 
-
-- **Issue #5640** (2026-10-14): **listExperiment: sorting by NAME with ascending: true returns descending order**
-  *Symptoms*: **What happened**:  `listExperiment` with `sort: { field: NAME, ascending: true }` returns experiments in descending name order (Z to A), and `ascending: false` returns A to Z.  ```go if request.Sort.Ascending != nil && *request.Sort.Ascending { 	sortStage = bson.D{{"$sort", bson.D{{"name", -1}}}} } else { 	sortStage = bson.D{{"$sort", bson.D{{"name", 1}}}} } ```  The TIME case in the same switch and `ListExperimentRun` both use `1` for ascending.  **What you expected to happen**:  `ascending: true` sorts A to Z.  **Where can this issue be corrected? (optional)**  `chaoscenter/graphql/server/pkg/chaos_experiment/handler/handler.go`, `ListExperiment`, the `ExperimentSortingFieldName` case.  **How to reproduce it (as minimally and precisely as possible)**:  Create experiments `a-exp` and `b-exp`, then query `listExperiment(projectID, request: { sort: { field: NAME, ascending: true } })`. `b-exp` comes first.  **Anything else we need to know?**:  The web UI doesn't send a sort for experiments, so this mostly affects API and litmusctl users. It's a two-line fix; I can add a test that checks the generated pipeline. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1216,539 +1216,40 @@ var Config Envs
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2967753b` (2026-10-26)
-**Commit Message**: chore(chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)
+### Incident Patch 1: `434832d4` (2026-11-26)
+**Commit Message**: fix(chaoscenter): rename typo variable 'diable' to 'disable' in EnableDisableCronButton (#5655)
 
-Move the production build of the Chaos Center web UI from Yarn-in-CI into a
-multi-stage Dockerfile that uses pnpm with BuildKit cache mounts, so the build
-is reproducible, self-contained, and fast to rebuild.
-
-- Add a build stage (node:22-alpine + pnpm via corepack) that installs with
-  `pnpm install --frozen-lockfile` behind a `--mount=type=cache` store mount
-  and runs the webpack build; the runtime stage copies only `dist` into the
-  existing nginx image (no sources or node_modules in the final image).
-- Pin the build stage to `--platform=$BUILDPLATFORM` so multi-arch builds run
-  the Node/webpack step natively instead of under QEMU emulation (the output
-  assets are architecture-independent).
-- Add pnpm-lock.yaml (imported from yarn.lock). The hoisted node_modules
-  layout this legacy, phantom-dependency-reliant tree needs (e.g. tslib) is set
-  via an .npmrc generated inside the build, so no developer registry
-  credentials can leak into the repo or build context.
-- Mirror the Yarn `resolutions` security pins into `pnpm.overrides`; both are
-  kept in sync (the react-router path-to-regexp pin 
-
-**File**: `.github/workflows/build.yml` (modified, +4/-3)
-```diff
-@@ -229,12 +229,13 @@ jobs:
-       - name: Checkout code
-         uses: actions/checkout@v4
- 
--      - name: yarn build check
--        run: |
--          cd chaoscenter/web && yarn && yarn build
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v3
- 
-       - name: web docker build check
-         shell: bash
-+        env:
-+          DOCKER_BUILDKIT: "1"
-         run: |
-           cd chaoscenter/web
-           docker build . -f Dockerfile --build-arg TARGETARCH=amd64 -t docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}
-```
-
-**File**: `.github/workflows/push.yml` (modified, +1/-8)
-```diff
-@@ -254,14 +254,6 @@ jobs:
-         with:
-           version: latest
- 
--      - uses: actions/setup-node@v4
--        with:
--          node-version: 16
--
--      - name: yarn build
--        run: |
--          cd web && yarn && yarn build
--
-       - name: Login to DockerHub
-         uses: docker/login-action@v1
-         with:
-@@ -270,6 +262,7 @@ jobs:
- 
-       - name: Push frontend docker image ( ${{ matrix.frontend.image_name }} )
-         env:
-+          DOCKER_BUILDKIT: "1"
-           IMG_TAG: ${IMG_TAG}
-           PLATFORMS: ${{ secrets.PLATFORMS }}
-           REPONAME: ${{ secrets.REPONAME }}
-```
-
-**File**: `chaoscenter/web/.dockerignore` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+# Dependencies and build output are produced inside the image, never copied in.
-+node_modules
-+**/node_modules
-+dist
-+coverage
-+.nyc_output
-+reports
-+cypress-coverage
-+merged-coverage
-+cypress/videos
-+
-+# Local tooling, caches and secrets that must not enter the build context.
-+# .npmrc is excluded so developer registry credentials never reach the image;
-+# the build generates its own minimal .npmrc (see Dockerfile).
-+.husky
-+.yalc
-+yalc.lock
-+.env
-+.npmrc
-+certificates
-+tsconfig.tmp
-+temp
-+junit.xml
-+yarn-error.log
-+*.log
-+
-+# VCS / editor / OS cruft.
-+.git
-+.gitignore
-+.idea
-+.vscode
-+.DS_Store
-+
-+# The image is built with pnpm; the yarn lockfile is not needed in context.
-+yarn.lock
-+
-+# Docker artifacts themselves.
-+Dockerfile
-+.dockerignore
-```
-
-**File**: `chaoscenter/web/Dockerfile` (modified, +51/-2)
-```diff
-@@ -1,6 +1,55 @@
-+# syntax=docker/dockerfile:1
-+
-+# ----------------------------------------------------------------------------
-+# Build stage: install dependencies and build the production bundle with pnpm.
-+# BuildKit cache mounts keep the pnpm content-addressable store warm across
-+# builds, so repeat/CI builds reinstall dependencies in seconds on a cache hit.
-+#
-+# --platform=$BUILDPLATFORM pins this stage to the builder's native architecture.
-+# The output is architecture-independent static assets, so on a multi-arch build
-+# the Node/webpack step runs natively instead of under slow, memory-heavy QEMU
-+# emulation for the non-native target(s).
-+# ----------------------------------------------------------------------------
-+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
-+
-+# pnpm is provided via corepack, pinned to a known-good version for
-+# reproducible installs across CI and local builds.
-+ENV PNPM_HOME="/pnpm"
-+ENV PATH="$PNPM_HOME:$PATH"
-+ENV COREPACK_ENABLE_AUTO_PIN=0
-+RUN corepack enable && corepack prepare pnpm@10.6.1 --activate
-+
-+WORKDIR /app
-+
-+# Use a flat, hoisted node_modules layout (like npm/Yarn). This project predates
-+# pnpm and relies on "phantom" dependencies (e.g. tslib) being hoisted to the top
-+# level, so pnpm's default isolated layout breaks the webpack build. This .npmrc
-+# is generated here rather than committed so that no developer registry
-+# credentials can ever leak into the repository or the build context.
-+RUN printf 'node-linker=hoisted\nauto-install-peers=true\n' > .npmrc
-+
-+# Install dependencies first so this layer is cached unless the manifest or
-+# lockfile changes. --frozen-lockfile enforces an install that exactly matches
-+# pnpm-lock.yaml (fails if the lockfile is out of date). --ignore-scripts skips
-+# lifecycle scripts (husky git hooks, optional native rebuilds) that are neither
-+# available nor needed inside the image.
-+COPY package.json pnpm-lock.yaml ./
-+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-+    pnpm install --frozen-lockfile --ignore-scripts --store-dir=/pnpm/store
-+
-+# Build the static assets.
-+COPY . .
-+ARG PUBLIC_URL=""
-+ENV PUBLIC_URL=${PUBLIC_URL}
-+RUN pnpm run build
-+
-+# ----------------------------------------------------------------------------
-+# Runtime stage: serve the prebuilt assets with nginx. Only the compiled
-+# bundle is copied in, so the final image carries no sources or node_modules.
-+# ----------------------------------------------------------------------------
- FROM registry.access.redhat.com/ubi10/nginx-126:10.1
- 
--COPY dist /opt/chaos
-+COPY --from=build /app/dist /opt/chaos
- COPY nginx/nginx.conf /etc/nginx/
- COPY ./entrypoint.sh /opt
- 
-@@ -16,4 +65,4 @@ USER 65534
- 
- EXPOSE 8185
- 
--ENTRYPOINT ["sh", "/opt/entrypoint.sh"]
-\ No newline at end of file
-+ENTRYPOINT ["sh", "/opt/entrypoint.sh"]
-```
-
-**File**: `chaoscenter/web/package.json` (modified, +14/-2)
-```diff
-@@ -180,7 +180,19 @@
-     "d3-color": "3.1.0",
-     "lodash": "4.18.1",
-     "lodash-es": "4.18.1",
--    "**/react-router/path-to-regexp": "1.9.0",
--    "**/picomatch": "2.3.2"
-+    "picomatch": "2.3.2"
-+  },
-+  "pnpm": {
-+    "overrides": {
-+      "@types/react": "^17.0.27",
-+      "@types/react-dom": "^17.0.9",
-+      "create-react-context": "0.3.0",
-+      "@blueprintjs/core": "3.26.1",
-+      "d3-color": "3.1.0",
-+      "lodash": "4.18.1",
-+      "lodash-es": "4.18.1",
-+      "react-router>path-to-regexp": "1.9.0",
-+      "picomatch": "2.3.2"
-+    }
-   }
- }
-```
-
----
-
-### Incident Patch 2: `9751c430` (2026-10-26)
-**Commit Message**: fix(graphql-server): chaos-infra stuck INACTIVE after abrupt subscriber disconnect (#5621)
-
-* allow chaos-infra reconnect to replace stale connection
-
-Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
-
-* don't close stale channel, guard cleanup by connection ownership
-
-Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
+Signed-off-by: Shahazadi-Shaguftha-Syed <[REDACTED_EMAIL]>
 Co-authored-by: Pritesh Kiri <[REDACTED_EMAIL]>
-Co-authored-by: Shubham Chaudhary <[REDACTED_EMAIL]>
-Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
 
-**File**: `chaoscenter/graphql/server/graph/chaos_infrastructure.resolvers.go` (modified, +17/-12)
+**File**: `chaoscenter/web/src/components/ExperimentActionButtons/ExperimentActionButtons.tsx` (modified, +3/-3)
 ```diff
-@@ -6,7 +6,6 @@ package graph
- 
- import (
- 	"context"
--	"errors"
- 	"fmt"
- 	"net/http"
- 	"net/url"
-@@ -298,29 +297,35 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
- 		return infraAction, err
- 	}
- 	data_store.Store.Mutex.Lock()
--	if infra_channel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
--		data_store.Store.Mutex.Unlock()
--		logrus.Print("ALREADY CONNECTED, FORCED DISCONNECT: ", request.InfraID)
--		close(infra_channel)
--		return infraAction, errors.New("CLUSTER ALREADY CONNECTED")
-+	if _, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
-+		// A previous connection for this infra is still registered (e.g. the old
-+		// subscriber pod was force-deleted and the server hasn't yet detected the
-+		// drop). Rather than rejecting this new, already-verified connection and
-+		// leaving the infra stuck INACTIVE forever, tear down the stale entry and
-+		// let the new connection take over.
-+		logrus.Print("STALE CONNECTION FOUND, REPLACING: ", request.InfraID)
- 	}
- 	data_store.Store.ConnectedInfra[request.InfraID] = infraAction
- 	data_store.Store.Mutex.Unlock()
- 	go func() {
- 		<-ctx.Done()
--		verifiedInfra.IsActive = false
- 		logrus.Print("Context Done, will handle disconnection for: ", request.InfraID)
--		newVerifiedInfra := model.Infra{}
--		copier.Copy(&newVerifiedInfra, &verifiedInfra)
--
--		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
- 
- 		data_store.Store.Mutex.Lock()
-+		if current, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok && current != infraAction {
-+			data_store.Store.Mutex.Unlock()
-+			return
-+		}
- 		delete(data_store.Store.ConnectedInfra, request.InfraID)
- 		data_store.Store.Mutex.Unlock()
-+
-+		verifiedInfra.IsActive = false
-+		newVerifiedInfra := model.Infra{}
-+		copier.Copy(&newVerifiedInfra, &verifiedInfra)
-+		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
-+
- 		query := bson.D{{"infra_id", request.InfraID}}
- 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", time.Now().UnixMilli()}}}}
--
- 		err = r.chaosInfrastructureService.UpdateInfra(query, update)
- 		if err != nil {
- 			logrus.Print("Error", err)
-```
-
-**File**: `chaoscenter/graphql/server/graph/chaos_infrastructure.resolvers_test.go` (added, +99/-0)
-```diff
-@@ -0,0 +1,99 @@
-+package graph
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
-+	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
-+	data_store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
-+	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
-+	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// TestInfraConnect_ReplacesStaleConnection reproduces litmuschaos/litmus#4789:
-+// a stale ConnectedInfra map entry (left behind by an abruptly-killed subscriber)
-+// must not permanently block the infra from reconnecting.
-+func TestInfraConnect_ReplacesStaleConnection(t *testing.T) {
-+	infraID := "test-infra-stale"
-+
-+	mockService := new(mocks.InfraService)
-+	mockService.On("VerifyInfra", mock.Anything).
-+		Return(&dbChaosInfra.ChaosInfra{InfraID: infraID}, nil)
-+	mockService.On("UpdateInfra", mock.Anything, mock.Anything).
-+		Return(nil)
-+	mockService.On("SendInfraEvent", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-+		Return().Maybe()
-+
-+	r := &subscriptionResolver{&Resolver{chaosInfrastructureService: mockService}}
-+	staleChannel := make(chan *model.InfraActionResponse, 1)
-+	data_store.Store.Mutex.Lock()
-+	data_store.Store.ConnectedInfra[infraID] = staleChannel
-+	data_store.Store.Mutex.Unlock()
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	defer cancel()
-+
-+	newChannel, err := r.InfraConnect(ctx, model.InfraIdentity{InfraID: infraID})
-+
-+	require.NoError(t, err, "a verified reconnect must not be rejected because of a stale entry")
-+	select {
-+	case _, ok := <-staleChannel:
-+		require.True(t, ok, "stale channel must not be closed")
-+	default:
-+	}
-+	data_store.Store.Mutex.Lock()
-+	current := data_store.Store.ConnectedInfra[infraID]
-+	data_store.Store.Mutex.Unlock()
-+	require.Equal(t, newChannel, (<-chan *model.InfraActionResponse)(current))
-+
-+	cancel()
-+	time.Sleep(50 * time.Millisecond)
-+}
-+
-+func TestInfraConnect_SecondConnectSucceedsAfterFirst(t *testing.T) {
-+	infraID := "test-infra-reconnect"
-+
-+	mockService := new(mocks.InfraService)
-+	mockService.On("VerifyInfra", mock.Anything).
-+		Return(&dbChaosInfra.ChaosInfra{InfraID: infraID}, nil)
-+	mockService.On("UpdateInfra", mock.Anything, mock.Anything).
-+		Return(nil)
-+	mockService.On("SendInfraEvent", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
-+		Return().Maybe()
-+
-+	r := &subscriptionResolver{&Resolver{chaosInfrastructureService: mockService}}
-+
-+	ctx1, cancel1 := context.WithCancel(context.Background())
-+	defer cancel1()
-+	ctx2, cancel2 := context.WithCancel(context.Background())
-+	defer cancel2()
-+
-+	_, err := r.InfraConnect(ctx1, model.InfraIdentity{InfraID: infraID})
-+	require.NoError(t, err)
-+
-+	secondChannel, err := r.InfraConnect(ctx2, model.InfraIdentity{InfraID: infraID})
-+	require.NoError(t, err, "reconnect must succeed instead of returning CLUSTER ALREADY CONNECTED")
-+
-+	data_store.Store.Mutex.Lock()
-+	current := data_store.Store.ConnectedInfra[infraID]
-+	data_store.Store.Mutex.Unlock()
-+	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current))
-+
-+	cancel1()
-+	time.Sleep(50 * time.Millisecond)
-+	data_store.Store.Mutex.Lock()
-+	current = data_store.Store.ConnectedInfra[infraID]
-+	data_store.Store.Mutex.Unlock()
-+	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current),
-+		"old connection's cleanup must not remove the new connection")
-+
-+	cancel2()
-+	time.Sleep(50 * time.Millisecond)
-+	data_store.Store.Mutex.Lock()
-+	_, exists := data_store.Store.ConnectedInfra[infraID]
-+	data_store.Store.Mutex.Unlock()
-+	require.False(t, exists)
-+}
-```
-
----
-
-### Incident Patch 3: `b4fce793` (2026-10-26)
-**Commit Message**: fix(authentication): return 400 on invalid list_projects query params (#5649)
-
-Signed-off-by: Barbie Rajput <[REDACTED_EMAIL]>
-Co-authored-by: Pritesh Kiri <[REDACTED_EMAIL]>
-Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
-
-**File**: `chaoscenter/authentication/api/handlers/rest/project_handler.go` (modified, +10/-2)
-```diff
-@@ -58,7 +58,11 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
- 			return
- 		}
- 
--		request := projectUtils.GetProjectFilters(c)
-+		request, err := projectUtils.GetProjectFilters(c)
-+		if err != nil {
-+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-+			return
-+		}
- 		request.UserID = user.ID
- 
- 		res, err := service.GetProjectsByUserID(request)
-@@ -135,7 +139,11 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
- // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
- func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
- 	return func(c *gin.Context) {
--		request := projectUtils.GetProjectFilters(c)
-+		request, err := projectUtils.GetProjectFilters(c)
-+		if err != nil {
-+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-+			return
-+		}
- 
- 		res, err := service.GetProjectsByUserID(request)
- 		if res == nil || (res.TotalNumberOfProjects != nil && *res.TotalNumberOfProjects == 0) {
-```
-
-**File**: `chaoscenter/authentication/api/utils/project_utils.go` (modified, +5/-7)
-```diff
-@@ -1,7 +1,7 @@
- package utils
- 
- import (
--	"log"
-+	"fmt"
- 	"strconv"
- 
- 	"github.com/gin-gonic/gin"
-@@ -11,7 +11,7 @@ import (
- 	"go.mongodb.org/mongo-driver/bson/primitive"
- )
- 
--func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
-+func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
- 	var request entities.ListProjectRequest
- 
- 	uID, exists := c.Get("uid")
-@@ -32,8 +32,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
- 	if createdByMeStr != "" {
- 		createdByMe, err := strconv.ParseBool(createdByMeStr)
- 		if err != nil {
--			log.Fatal(err)
--			return nil
-+			return nil, fmt.Errorf("invalid value for %s: %w", types.CreatedByMe, err)
- 		}
- 		request.Filter.CreatedByMe = &createdByMe
- 	}
-@@ -65,8 +64,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
- 	if ascendingStr != "" {
- 		ascending, err := strconv.ParseBool(ascendingStr)
- 		if err != nil {
--			log.Fatal(err)
--			return nil
-+			return nil, fmt.Errorf("invalid value for %s: %w", types.Ascending, err)
- 		}
- 		request.Sort.Ascending = &ascending
- 	}
-@@ -98,7 +96,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
- 
- 	request.Pagination = &pagination
- 
--	return &request
-+	return &request, nil
- }
- 
- func CreateMatchStage(userID string) bson.D {
-```
-
-**File**: `chaoscenter/authentication/api/utils/project_utils_test.go` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+package utils
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/gin-gonic/gin"
-+	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
-+)
-+
-+func TestGetProjectFilters(t *testing.T) {
-+	gin.SetMode(gin.TestMode)
-+
-+	tests := []struct {
-+		name    string
-+		query   string
-+		wantErr bool
-+	}{
-+		{"no params", "", false},
-+		{"valid createdByMe", types.CreatedByMe + "=true", false},
-+		{"valid ascending", types.Ascending + "=false", false},
-+		{"invalid createdByMe", types.CreatedByMe + "=notabool", true},
-+		{"invalid ascending", types.Ascending + "=notabool", true},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
-+			c.Request = httptest.NewRequest(http.MethodGet, "/list_projects?"+tt.query, nil)
-+
-+			req, err := GetProjectFilters(c)
-+			if (err != nil) != tt.wantErr {
-+				t.Fatalf("GetProjectFilters() error = %v, wantErr %v", err, tt.wantErr)
-+			}
-+			if !tt.wantErr && req == nil {
-+				t.Fatal("expected a non-nil request")
-+			}
-+		})
-+	}
-+}
+@@ -402,13 +402,13 @@ export const EnableDisableCronButton = ({
+     intent: Intent.WARNING,
+     onClose: (isConfirmed: boolean) => {
+       if (isConfirmed) {
+-        const diable = isCronEnabled ? true : false;
+-        setIsCronEnabled?.(!diable);
++        const disable = isCronEnabled;
++        setIsCronEnabled?.(!disable);
+         updateCronExperimentStateMutation({
+           variables: {
+             projectID: scope.projectID,
+             experimentID: experimentID,
+-            disable: diable
++            disable: disable
+           }
+         });
+       }
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5687** (2026-10-27): chore(3.33.0): Add the installation manifest for 3.33.0 version (@ispeakc0de)
 - **PR #5681** (2026-10-26): Updating email address for oumkale (@oumkale)
+- **PR #5674** (closed): docs: add seccompProfiles to the OpenShift SCC example (@AnKiT-GaRG2)
 - **PR #5673** (closed): build(deps): Bump github.com/klauspost/compress from 1.18.2 to 1.18.7 in /chaoscenter/graphql/server (@dependabot[bot])
 - **PR #5672** (closed): build(deps): Bump github.com/klauspost/compress from 1.18.4 to 1.18.7 in /chaoscenter/authentication (@dependabot[bot])
 - **PR #5660** (2026-10-26): Build frontend image with pnpm multi-stage Dockerfile (@yashgoyal0110)
-- **PR #5657** (2026-10-20): fix: resolve Trivy HIGH vulnerabilities in chaoscenter images (@Sonichigo)
 
 ---
 
@@ -1768,33 +1269,32 @@ Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)
+## X. chaoscenter): rename typo variable 'diable' to 'disable' in EnableDisableCronBut
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in litmuschaos/litmus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chaoscenter/web/src/components/ExperimentActionButtons/ExperimentActionButtons.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in litmuschaos/litmus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2967753b`: chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `434832d4`: chaoscenter): rename typo variable 'diable' to 'disable' in EnableDisableCronButton. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chaoscenter/web/src/components/ExperimentActionButtons/ExperimentActionButtons.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        env:
-          DOCKER_BUILDKIT: "1"
+        const disable = isCronEnabled;
+        setIsCronEnabled?.(!disable);
+            disable: disable
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-      - name: yarn build check
-        run: |
-          cd chaoscenter/web && yarn && yarn build
+// Induced defect failure mode:
+        const diable = isCronEnabled ? true : false;
+        setIsCronEnabled?.(!diable);
+            disable: diable
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2967753b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `434832d4` are properly handled with clean fallback behavior.
