@@ -13631,3 +13631,7 @@
 | `CYCLE-20261127-9S5P` | `2026-11-27T01:37:07.021Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`23265c91...`) |
 | `CYCLE-20261127-9ZUO` | `2026-11-27T01:37:16.992Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10267` | Yes (`691cd71c...`) |
 | `CYCLE-20261127-LVLB` | `2026-11-27T01:46:31.343Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`ad0769d6...`) |
+| `CYCLE-20261127-WN2B` | `2026-11-27T01:54:53.507Z` | `ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md` | Yes (`72039c2c...`) |
+| `CYCLE-20261127-WOZY` | `2026-11-27T01:54:56.014Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`008168fd...`) |
+| `CYCLE-20261127-WW53` | `2026-11-27T01:55:05.271Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10810` | Yes (`34597999...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T01:55:37.085Z` | `hf-ista-daslab-inkling-2-mini-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D67ECC01` [Domain D] | Yes (`f8a257b8...`) |

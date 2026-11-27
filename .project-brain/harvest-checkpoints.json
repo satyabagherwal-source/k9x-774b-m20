@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T01:46:31.367Z",
+  "last_updated": "2026-11-27T01:55:05.296Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1685,14 +1685,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "b12d212d293a5e8d1479d8732e7b1fcfacde67b21a151738d6daa8d86b829a36",
-      "verified_at": "2026-11-23T16:53:28.473Z",
+      "content_hash": "008168fd63f18d6584b4c68d6d89837080dddb5d5e0ca1c4d320e9e21554b885",
+      "verified_at": "2026-11-27T01:54:56.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:53:28.473Z"
+      "last_updated": "2026-11-27T01:54:56.034Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
-      "verified_at": "2026-11-26T08:10:21.709Z",
+      "content_hash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
+      "verified_at": "2026-11-27T01:55:05.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:10:21.709Z"
+      "last_updated": "2026-11-27T01:55:05.295Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -20504,6 +20504,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T21:17:20.619Z"
+    },
+    "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF": {
+      "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf",
+      "content_hash": "72039c2c06df9f61ea2f0ce87557066c1e692910a8cb5c1577faae30b969eaf1",
+      "verified_at": "2026-11-27T01:54:53.525Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-27T01:54:53.525Z"
     }
   },
   "repos": {

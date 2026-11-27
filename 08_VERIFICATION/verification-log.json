@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-S42N",
-    "timestamp": "2026-11-25T14:23:51.455Z",
-    "repository": "zoontek/react-native-bootsplash",
-    "learningId": "learn-github-zoontek-react-native-bootsplash",
-    "contentHash": "b7584c8aa75dc96991cc74b28de1ce057669631427a1dcc3cdc20a02118e1f8a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-S773",
-    "timestamp": "2026-11-25T14:23:55.503Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "570c1b46bd3e19057b0ec30e136a969eb167bef8bb29b76c836850670ee52c97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-S95I",
-    "timestamp": "2026-11-25T14:23:58.038Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-2Y4D",
     "timestamp": "2026-11-25T14:32:16.957Z",
     "repository": "burner22/numbat",
@@ -7492,6 +7447,51 @@
     "contentHash": "ad0769d69a676a523c153172be186280b952bbdd0a003be4208422eb1aa0153e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WN2B",
+    "timestamp": "2026-11-27T01:54:53.507Z",
+    "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf",
+    "contentHash": "72039c2c06df9f61ea2f0ce87557066c1e692910a8cb5c1577faae30b969eaf1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WOZY",
+    "timestamp": "2026-11-27T01:54:56.014Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "008168fd63f18d6584b4c68d6d89837080dddb5d5e0ca1c4d320e9e21554b885",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WW53",
+    "timestamp": "2026-11-27T01:55:05.271Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

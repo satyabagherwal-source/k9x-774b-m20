@@ -13664,3 +13664,7 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `f38ec06c` | Multi-dimensional audit evidence | 2026-11-27T01:37:07.026Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `b64eea09` | Multi-dimensional audit evidence | 2026-11-27T01:37:16.997Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-27T01:46:31.348Z |
+| `learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-27T01:54:53.511Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-27T01:54:56.019Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9ed7804e` | Multi-dimensional audit evidence | 2026-11-27T01:55:05.275Z |
+| `learn-dom-d-d67ecc01` | `project://hf-ista-daslab-inkling-2-mini-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md` | 2026-11-27T01:55:37.085Z |

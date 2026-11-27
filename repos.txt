@@ -5462,3 +5462,7 @@ https://huggingface.co/kandinskylab/Kandinsky-ImageSR-2.0
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T21:17:16.092Z] ---
 # [AI-AGENTS] arxhr007/Aliens_eye (2873 score) - AI powered OSINT engine to discover and map  7,700+ social media identities acro
 https://github.com/arxhr007/Aliens_eye
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-27T01:54:47.324Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF (1110 score) - Verified Hugging Face Model: ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF (111 likes,
+https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF

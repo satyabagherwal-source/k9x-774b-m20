@@ -22471,5 +22471,17 @@
     "qualityScore": 2873,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-26T21:13:53.967Z"
+  },
+  {
+    "name": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "fullName": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "url": "https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF (111 likes, 0 downloads)",
+    "likes": 111,
+    "downloads": 0,
+    "qualityScore": 1110,
+    "discoveredAt": "2026-11-27T01:52:39.167Z"
   }
 ]

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:46:31.363Z",
-  "total_cycles_completed": 12939,
-  "total_learnings_persisted": 12939,
-  "total_rules_promoted": 11719,
+  "last_updated": "2026-11-27T01:55:05.293Z",
+  "total_cycles_completed": 12942,
+  "total_learnings_persisted": 12942,
+  "total_rules_promoted": 11720,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:33:35.162Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:33:40.230Z",
-      "repository": "sharkdp/bat",
-      "learningId": "learn-github-sharkdp-bat",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:33:44.011Z",
-      "repository": "jithin-sabu/purge-app",
-      "learningId": "learn-github-jithin-sabu-purge-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:33:49.096Z",
       "repository": "skyhook-io/radar",
@@ -1403,6 +1382,27 @@
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:54:53.522Z",
+      "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:54:56.032Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:55:05.293Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

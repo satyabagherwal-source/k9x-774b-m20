@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "b12d212d293a5e8d1479d8732e7b1fcfacde67b21a151738d6daa8d86b829a36",
-    "lastHarvestedAt": "2026-11-23T16:53:28.464Z",
+    "contentHash": "008168fd63f18d6584b4c68d6d89837080dddb5d5e0ca1c4d320e9e21554b885",
+    "lastHarvestedAt": "2026-11-27T01:54:56.019Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "c57711cf",
+    "sourceVersion": "9ed7804e",
     "license": "Apache-2.0",
-    "contentHash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
-    "lastHarvestedAt": "2026-11-26T08:10:21.692Z",
+    "contentHash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
+    "lastHarvestedAt": "2026-11-27T01:55:05.275Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -13588,5 +13588,15 @@
     "contentHash": "d81b3ea3e83ac13c85657df90ca5f32a1fe21ff443ff99b738c45235219dc43a",
     "lastHarvestedAt": "2026-11-26T21:17:20.562Z",
     "learningId": "learn-github-arxhr007-aliens_eye"
+  },
+  "hf-ista-daslab-inkling-2-mini-gsq-rco-gguf": {
+    "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+    "sourceVersion": "hf-ista-daslab-inkling-2-mini-gsq-rco-gguf",
+    "license": "Open-Source",
+    "contentHash": "72039c2c06df9f61ea2f0ce87557066c1e692910a8cb5c1577faae30b969eaf1",
+    "lastHarvestedAt": "2026-11-27T01:54:53.511Z",
+    "learningId": "learn-huggingface-ista-daslab-inkling-2-mini-gsq-rco-gguf"
   }
 }

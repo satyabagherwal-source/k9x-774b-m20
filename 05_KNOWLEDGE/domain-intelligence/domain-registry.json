@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T01:46:46.040Z",
-  "total_records": 2792,
+  "last_updated": "2026-11-27T01:55:39.450Z",
+  "total_records": 2795,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1031,
+      "total": 1034,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1104,7 +1104,10 @@
         "domain_intelligence-research-knowledge-intelligence-kandinskylab-kandinsky-imagesr-2-0-core-invarian",
         "DOM-D-95F35A51",
         "domain_intelligence-research-knowledge-intelligence-hf-kandinskylab-kandinsky-imagesr-2-0-learnings-",
-        "DOM-D-A715B2E4"
+        "DOM-D-A715B2E4",
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-inkling-2-mini-gsq-rco-gguf-core-inv",
+        "DOM-D-D67ECC01",
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learn"
       ]
     },
     "E": {
@@ -12381,8 +12384,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "10c122e299f1e5011595111235d09e6b306a7b93f83072507e3f851e17b905c6",
-      "created_at": "2026-11-26T08:10:22.258Z"
+      "content_hash": "d886fac1ce1be85efc2e1ef0e63f02dc427511aab86123014d32d143df25dc64",
+      "created_at": "2026-11-27T01:55:05.717Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -12476,8 +12479,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "d51635a992b8e4134fbc42ebcd4888e8023e91e15b64611122f47b1623b85817",
-      "created_at": "2026-11-26T08:10:28.640Z"
+      "content_hash": "4a67ca627010ba527f4859f845d33c652a8b6d9ad60145327d839a0693f3208c",
+      "created_at": "2026-11-27T01:55:39.450Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -16651,8 +16654,8 @@
       "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-research-knowledge-intelligence-bingsu-adetailer-core-invari.md",
       "repository": "Bingsu/adetailer",
-      "content_hash": "54ba1e5d1d65f1853f7db1547b3c5aa821e1335ac9ead6b261b3c7c462e28776",
-      "created_at": "2026-11-23T16:53:28.669Z"
+      "content_hash": "bcf30ade339dca16c143789c409ae56d049de52f15a19bc16119f0f4698efa28",
+      "created_at": "2026-11-27T01:54:56.267Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
@@ -16780,8 +16783,8 @@
       "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-learnings-research-knowledge-intelligence-hf-bingsu-adetaile.md",
       "repository": "hf-bingsu-adetailer-learnings",
-      "content_hash": "6d18f45724b3ce5d38c4a177372450eb559cfefdfdadf9a6b76fe52faca25755",
-      "created_at": "2026-11-23T16:53:48.806Z"
+      "content_hash": "4b1e7f0e7c4a11492dc7a96930cc7966c9acda963238df5b1cf5b0d020399491",
+      "created_at": "2026-11-27T01:55:37.942Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants",
@@ -47131,6 +47134,66 @@
       "confidence": 0.95,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T23:50:09.397Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-inkling-2-mini-gsq-rco-gguf-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-inkling-2-mini-gsq-rco-gguf-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-research-knowledge-intelligence-ista-.md",
+      "repository": "ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+      "content_hash": "23dc93d7ad4b9d6b6c86bee0e628d1b233095d65eac8ef6961701abb4cfe47c5",
+      "created_at": "2026-11-27T01:54:53.747Z"
+    },
+    "DOM-D-D67ECC01": {
+      "record_id": "DOM-D-D67ECC01",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Inkling-2-Mini-GSQ-RCO-GGUF))  \n> **Source Version**: `hf-",
+      "content_hash": "f8a257b88d4b500035506bd8c7f23a8b5761f6a795000d8996c17a854766c9fd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface",
+      "provenance": {
+        "source_uri": "project://hf-ista-daslab-inkling-2-mini-gsq-rco-gguf/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T01:55:08.743Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ista-daslab-inkling-2-mini-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ista-daslab-inkling-2-mini-gsq-rco-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T01:55:37.043Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings-research-knowledge-intellig.md",
+      "repository": "hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings",
+      "content_hash": "5244d92c98612ff2c77714d446ccabbee19fd39ebbd68c5b3dbf666aa39d0039",
+      "created_at": "2026-11-27T01:55:37.416Z"
     }
   }
 }
