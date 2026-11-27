@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-3J57",
-    "timestamp": "2026-11-25T15:00:43.819Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-BSYI",
-    "timestamp": "2026-11-25T15:07:09.786Z",
-    "repository": "SulphurAI/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "70465d66db34570d759de418641b916949128507ee3bc73b475015b59d3fb040",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-C1LZ",
-    "timestamp": "2026-11-25T15:07:20.999Z",
-    "repository": "dosco/deeporg",
-    "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "d96f520f2e1f433972e6a654286555724f2690a19e18eb00addb5b67d52dd713",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-MX4H",
     "timestamp": "2026-11-25T15:15:48.401Z",
     "repository": "xiaomi-research/Xiaomi-OCR-0",
@@ -7492,6 +7447,51 @@
     "contentHash": "a64f2ebaba65016f559fb248cf4e357537f6ef03474de27607c0e562085e3c78",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-I54M",
+    "timestamp": "2026-11-27T03:07:35.926Z",
+    "repository": "Reson8/Rumble-2-Flash",
+    "learningId": "learn-huggingface-reson8-rumble-2-flash",
+    "contentHash": "005619c6d9f2170e622a88ebd0a5821fec1b50045337316ead1aac0662679027",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ICFQ",
+    "timestamp": "2026-11-27T03:07:45.398Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-IGB9",
+    "timestamp": "2026-11-27T03:07:50.421Z",
+    "repository": "sfu-db/connector-x",
+    "learningId": "learn-github-sfu-db-connector-x",
+    "contentHash": "f072771fc5dafcb1f09a896ab909de98640e3076e376bfdf892be29bf26e526c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -13678,3 +13678,6 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `30d9cb34` | Multi-dimensional audit evidence | 2026-11-27T02:49:38.627Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `fa2f007e` | Multi-dimensional audit evidence | 2026-11-27T02:49:46.937Z |
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T02:58:15.624Z |
+| `learn-huggingface-reson8-rumble-2-flash` | `https://huggingface.co/Reson8/Rumble-2-Flash` | `hf-reson8-` | Multi-dimensional audit evidence | 2026-11-27T03:07:35.931Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `7ab87806` | Multi-dimensional audit evidence | 2026-11-27T03:07:45.403Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c5c3f409` | Multi-dimensional audit evidence | 2026-11-27T03:07:50.439Z |

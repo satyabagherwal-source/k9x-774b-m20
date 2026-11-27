@@ -4,22 +4,22 @@
 {
   "source_repository": "goharbor/harbor",
   "source_url": "https://github.com/goharbor/harbor",
-  "source_version": "1a8626d5",
+  "source_version": "7ab87806",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T09:48:00.439Z",
+  "timestamp": "2026-11-27T03:07:45.749Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-goharbor-harbor",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `1a8626d5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T09:48:00.439Z`  
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `7ab87806`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:07:45.749Z`  
 > **Learning ID**: `learn-github-goharbor-harbor`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `goharbor/harbor` (Commit: `1a8626d5`)
+- **Target Repository**: `goharbor/harbor` (Commit: `7ab87806`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:47:58.338Z  
+> **Harvest Timestamp**: 2026-11-27T03:07:43.869Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Harbor is a CNCF graduated open-source container registry to manage container images and other OCI artifacts securely with policies, role-based access control, vulnerability scans and signing.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29805 stars
+- **Stars / Engagement**: 29810 stars
 
 ---
 
@@ -666,11 +666,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24483** (2026-11-25): **fix(i18n): correct wrong Korean labels**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Ten Korean strings that the portal shows are wrong. The first five change the meaning; the others are typos.  | Key | English | Before | After | Shown in | |---|---|---|---|---| | `REPLICATION.FAILURE` | FAILURE | 실행 ("run") | 실패 | status and count of failed replication and P2P preheat executions | | `CLARITY.CLOSE` | Close | 보기 ("show") | 닫기 | title and label of Clarity close buttons | | `CLARITY.SHOW` | Show | 닫기 ("close") | 보기 | swapped with `CLARITY.CLOSE` | | `BUTTON.ENABLE` | ENABLE | 가능 ("possible") | 활성화 | confirmation dialog button | | `REPLICATION.CREATION_TIME` | Start Time | 생성 시간 ("creation time") | 시작 시간 | replication, P2P preheat and webhook execution lists | | `PROJECT_DETAIL.USERS` | Members | 맴버 | 멤버 | project tab and summary | | `REPOSITORY.TAGS` | Tags | 테그 | 태그 | artifact tags | | `CONFIG.GC` | Garbage Collection | 가비지 컬랙션 | 가비지 컬렉션 | clean up page | | `JOB_SERVICE_DASHBOARD.WAITING_TOO_LONG_2` | dashboard. | 데쉬보드. | 대시보드. | alert for jobs pending over 24 hours | | `TOOLTIP.NEW_SECRET` | The secret must be… | …8자 이상이여야합니다 | …8자 이상이어야 합니다 | secret rule hint |  Follow-up to #24482, which fixes placeholders in the same file (different lines).  # Issue being fixed N/A (small i18n fix; no issue created)  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [x] Label the PR as needed. I can't set labels; `release-note/update` seems to fit. - [x]
+- **Issue #24488** (2026-11-26): **fix(i18n): translate Korean strings still shown in English**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  159 Korean strings that the portal shows are still in English. 154 are verbatim copies of en-us, and 5 are older English text that no longer matches en-us (for example `REPLICATION.NO_FLATTING` was "No Flatting"). This PR translates them and reuses the terms the file already has (태그 보관, 태그 불변성, 복제, 스캐너, 감사 로그, 예열, 구성원).  Examples:  | Key | English (shown before) | After | Shown in | |---|---|---|---| | `CHANGE_PREF.TITLE` | Preferences | 환경 설정 | Preferences dialog | | `PROJECT.SPEED_LIMIT_TIP` | Please enter -1 or an integer greater than 0. | -1 또는 0보다 큰 정수를 입력하세요. | bandwidth error of a proxy cache project | | `PROJECT.PROXY_REFERRER_API_TIP` | Enable this to proxy OCI 1.1 referrer API requests to the upstream registry. | OCI 1.1 referrer API 요청을 업스트림 레지스트리로 프록시하려면 이 옵션을 활성화하세요. | proxy cache project settings | | `ROBOT_ACCOUNT.ROBOT` | Robot Account | 로봇 계정 | system robot account permissions | | `REPLICATION.FLATTEN_LEVEL_1` | Flatten 1 Level | 1단계 평탄화 | flattening options of a replication rule | | `PROJECT_CONFIG.PREVENT_VULNERABLE_1` and `_2` | Prevent images with vulnerability severity of [Critical] and above from being deployed. | 취약점 심각도가 [심각] 이상인 이미지가 배포되지 않도록 방지합니다. | deployment security in project configuration | | `USER.OF` and 15 other pagination keys | 1 - 15 of 100 items | 1 - 15 / 100 아이템 | list footers |  Notes:  - Strings split around a value (`PROJECT_CONFIG.PREVENT_VULNERABLE_1`/
 
-- **Issue #24482** (2026-11-25): **fix(i18n): fix broken placeholders in Korean translation**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Two Korean strings don't match the placeholders the portal passes:  - `REPLICATION.UNREACHABLE_SOURCE_REGISTRY` used `{{오류}}` instead of `{{error}}`. When the source registry of a replication rule can't be reached, the Korean UI shows the text `{{오류}}` and not the actual error. - `REPLICATION.BANDWIDTH_TOOLTIP` was missing `{{max_job_workers}}`, so the Korean tooltip doesn't show the maximum number of concurrent executions. I also changed "each execution" to "each replication worker" to match the English text.  Output of `TranslateDefaultParser` from `@ngx-translate/core` 17.0.0 (the version in `src/portal/package.json`):  | String | Before | After | |---|---|---| | `UNREACHABLE_SOURCE_REGISTRY` with `error: "Bad Gateway"` | …사용할 수 있는지 확인하세요. {{오류}} | …사용할 수 있는지 확인하세요: Bad Gateway | | `BANDWIDTH_TOOLTIP` with `max_job_workers: 10` | …동시 실행 횟수에 주의하시기 바랍니다… | …동시 실행 횟수(최대 10개)에 주의하시기 바랍니다… |  Comparing the placeholders of every language with English also finds `ru-ru` (`REPLICATION.BANDWIDTH_TOOLTIP`, `VULNERABILITY.CHART.TOOLTIPS_TITLE`, `VULNERABILITY.CHART.TOOLTIPS_TITLE_SINGULAR`) and `tr-tr` (`QUOTA.SET_QUOTAS`). I left those to people who speak the languages.  # Issue being fixed N/A (small i18n fix; no issue created)  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. I can't set labels; `release-note/update` seems to fit. - 
+- **Issue #24487** (2026-11-26): **fix(quota): keep hard limits in the redis flush**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  With `QUOTA_UPDATE_PROVIDER=redis`, a project quota changed through `PUT /api/v2.0/quotas/{id}` goes back to the old value within 30 seconds. This PR fixes the 30-second flush in [`src/controller/quota/controller.go`](https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/controller/quota/controller.go#L121-L147). Only the redis provider changes. The db provider does not change.  **Cause.** Each core instance runs `flushQuota` every 30 seconds. It passed the whole redis record to `Controller.Update`, which copies the hard limits and the usage to the database. The quota API writes a new hard limit to the database only. The redis record keeps the hard limit that a push read when it created the record, and each push resets its 5-minute expiry. So:  1. If only the hard limit differs, the flush writes the old limit back to the database. 2. If the usage differs too, the database rejects the update with `not support change both hard and used of the quota` ([`dao.go:180`](https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/pkg/quota/dao/dao.go#L180)). `Update` retries it for 5 minutes. The next flush does the same, until the record expires. 3. Pushes check the old limit while the record exists. 4. After someone deletes a project, `GetByRef` returns not found. `Update` retries that for 5 minutes too.  During each 5-minute retry, the flush on tha
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -687,111 +687,140 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a8626d5` (2026-11-25)
-**Commit Message**: fix(i18n): correct wrong Korean labels (#24483)
-
-Correct wrong Korean labels in the portal
-
-Failed replication executions were labeled "실행" (run), the Clarity
-strings for close and show were swapped, the enable button read "가능"
-(possible), and "Start Time" was translated as creation time. Also fix
-five typos.
+### Incident Patch 1: `ffac21f6` (2026-11-26)
+**Commit Message**: fix(i18n): translate Korean strings still shown in English (#24488)
 
 Signed-off-by: Ethan <[REDACTED_EMAIL]>
-Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 
-**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +10/-10)
+**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +159/-159)
 ```diff
-@@ -41,7 +41,7 @@
-         "ACTIONS": "동작",
-         "ADD": "추가",
-         "RUN": "실행",
--        "ENABLE": "가능",
-+        "ENABLE": "활성화",
-         "DISABLE": "비활성화"
+@@ -9,7 +9,7 @@
+         "REMEMBER": "사용자 정보 기억하기",
+         "INVALID_MSG": "유효하지 않은 사용자 이름 또는 비밀번호입니다.",
+         "CORE_SERVICE_NOT_AVAILABLE": "핵심 서비스를 이용할 수 없습니다.",
+-        "OR": "OR",
++        "OR": "또는",
+         "VIA_LOCAL_DB": "로컬 DB를 통해 로그인"
      },
-     "BATCH": {
-@@ -88,7 +88,7 @@
-         "OIDC_VERIFYCERT": "OIDC 서버가 자체 서명된 인증서를 통해 호스팅되는 경우 이 상자를 선택 취소하세요.",
-         "OIDC_AUTOONBOARD": "온보딩 화면을 건너뛰면 사용자가 사용자 이름을 변경할 수 없습니다. 사용자 이름은 ID 토큰에서 제공됩니다.",
-         "OIDC_USER_CLAIM": "사용자 이름을 검색하는 ID 토큰의 클레임 이름입니다. 지정하지 않으면 기본값은 'name'입니다.",
--        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이여야합니다",
-+        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이어야 합니다",
-         "OIDC_LOGOUT": "ID 공급자에서 현재 세션을 로그아웃합니다."
+     "SIGN_UP": {
+@@ -127,10 +127,10 @@
+         "CONFIRM_BODY_CLI_GENERATE": "Cli 시크릿을 재생성하면 이전 Cli 시크릿이 삭제됩니다"
      },
-     "PLACEHOLDER": {
-@@ -266,7 +266,7 @@
-         "SUMMARY": "요약",
-         "REPOSITORIES": "저장소",
-         "REPLICATION": "복제",
--        "USERS": "맴버",
-+        "USERS": "멤버",
-         "LOGS": "로그",
-         "LABELS": "라벨",
-         "PROJECTS": "프로젝트",
-@@ -547,7 +547,7 @@
-         "DURATION": "지속",
-         "SUCCESS_RATE": "성공률",
-         "SUCCESS": "성공",
--        "FAILURE": "실행",
-+        "FAILURE": "실패",
-         "IN_PROGRESS": "진행 중",
-         "REPLICATION_RULE": "복제 규칙",
-         "NEW_REPLICATION_RULE": "새 복제 규칙",
-@@ -592,7 +592,7 @@
-         "SIMPLE": "기본",
-         "ADVANCED": "고급",
-         "STATUS": "상태",
--        "CREATION_TIME": "생성 시간",
-+        "CREATION_TIME": "시작 시간",
-         "UPDATE_TIME": "갱신 시간",
-         "END_TIME": "종료 시간",
-         "LOGS": "로그",
-@@ -700,7 +700,7 @@
-         "COPY_DIGEST_ID": "Digest 복사",
+     "CHANGE_PREF": {
+-        "TITLE": "Preferences",
+-        "LANGUAGE": "Language",
+-        "DATE_TIME_FORMAT": "Date/Time Format",
+-        "PULL_CMD_PREFIX": "Pull Command Prefix"
++        "TITLE": "환경 설정",
++        "LANGUAGE": "언어",
++        "DATE_TIME_FORMAT": "날짜/시간 형식",
++        "PULL_CMD_PREFIX": "풀(Pull) 명령어 접두사"
+     },
+     "CHANGE_PWD": {
+         "TITLE": "비밀번호 변경",
+@@ -142,9 +142,9 @@
+     },
+     "ACCOUNT_SETTINGS": {
+         "PROFILE": "사용자 프로필",
+-        "PREFERENCES": "Preferences",
++        "PREFERENCES": "환경 설정",
+         "CHANGE_PWD": "비밀번호 변경",
+-        "ABOUT": "About",
++        "ABOUT": "정보",
+         "LOGOUT": "로그아웃"
+     },
+     "GLOBAL_SEARCH": {
+@@ -194,7 +194,7 @@
+         "DELETION_SUMMARY": "사용자{{param}}를 정말 삭제하시겠습니까?",
+         "DELETE_SUCCESS": "사용자를 성공적으로 삭제했습니다.",
+         "ITEMS": "아이템",
+-        "OF": "of",
++        "OF": "/",
+         "RESET_OK": "사용자 비밀번호를 성공적으로 초기화했습니다",
+         "EXISTING_PASSWORD": "새 비밀번호는 이전 비밀번호와 동일할 수 없습니다",
+         "UNKNOWN": "알 수 없음",
+@@ -229,10 +229,10 @@
+         "DELETED_SUCCESS": "프로젝트가 성공적으로 삭제됐습니다.",
+         "TOGGLED_SUCCESS": "프로젝트가 성공적으로 전환됐습니다.",
+         "INLINE_HELP_PUBLIC": "프로젝트가 공개로 설정되면 누구나 이 프로젝트의 저장소에 대한 읽기 권한을 갖게 되며 사용자는 이 프로젝트에서 이미지를 가져오기 전에 \"docker login\"을 실행할 필요가 없습니다.",
+-        "PROXY_CACHE_BANDWIDTH": "Set the maximum network bandwidth to pull image from upstream for proxy-cache. For unlimited bandwidth, please enter -1. ",
+-        "BANDWIDTH": "Bandwidth",
+-        "SPEED_LIMIT_TIP": "Please enter -1 or an integer greater than 0. ",
+-        "OF": "of",
++        "PROXY_CACHE_BANDWIDTH": "프록시 캐시가 업스트림에서 이미지를 가져올 때 쓸 최대 네트워크 대역폭을 설정합니다. 무제한 대역폭을 원하시면 -1을 입력하세요. ",
++        "BANDWIDTH": "대역폭",
++        "SPEED_LIMIT_TIP": "-1 또는 0보다 큰 정수를 입력하세요. ",
++        "OF": "/",
+         "COUNT_QUOTA": "할당량 수",
+         "STORAGE_QUOTA": "프로젝트 할당량 제한",
+         "STORAGE_QUOTA_TIP": "저장 장치 할당량의 상한은 '1024TB'로 제한되는 정수 값만 사용합니다. 할당량을 무제한으로 지정하려면 '-1'을 입력하세요.",
+@@ -251,8 +251,8 @@
+         "PROXY_CACHE_MAX_UPSTREAM_CONN_PLACEHOLDER": "-1 또는 0보다 큰 정수를 입력하세요.",
+         "PROXY_CACHE_LOCAL_ON_NOT_FOUND": "오래된 콘텐츠를 로컬에서 제공",
+         "PROXY_CACHE_LOCAL_ON_NOT_FOUND_TOOLTIP": "업스트림 레지스트리에서 아티팩트를 찾을 수 없는 경우에도 이 프로젝트가 캐시된 콘텐츠를 계속 제공할 수 있도록 하려면 이 옵션을 활성화하세요. 이로 인해 오래된 콘텐츠가 제공될 수 있습니다.",
+-        "PROXY_REFERRER_API_TIP": "Enable this to proxy OCI 1.1 referrer API requests to the upstream registry.",
+-        "PROXY_REFERRER_API_LABEL": "Enable proxy for referrer API",
++        "PROXY_REFERRER_API_TIP": "OCI 1.1 referrer API 요청을 업스트림 레지스트리로 프록시하려면 이 옵션을 활성화하세요.",
++        "PROXY_REFERRER_API_LABEL": "referrer API 프록시 활성화",
+         "REPOSITORY_FILTER": "저장소 필터",
+         "REPOSITORY_FILTER_TOOLTIP": "업스트림 레지스트리에서 캐시할 저장소를 제한하는 선택적 필터입니다. 'Doublestar'(기본값)는 ** 지원 glob 스타일 패턴을 사용합니다(예: library/**). 'Regex'는 정규식 패턴을 사용하며, 패턴은 전체 저장소 경로와 일치해야 합니다(예: ^library/.*). 현재 프록시 캐시 프로젝트에만 적용됩니다.",
+         "REPOSITORY_FILTER_PLACEHOLDER": "예: library/**",
+@@ -273,7 +273,7 @@
+         "CONFIG": "설정",
+         "ROBOT_ACCOUNTS": "로봇 계정",
+         "WEBHOOKS": "웹훅",
+-        "IMMUTABLE_TAG": "Tag Immutability",
++        "IMMUTABLE_TAG": "태그 불변성",
+         "POLICY": "정책"
+     },
+     "PROJECT_CONFIG": {
+@@ -283,8 +283,8 @@
+         "SECURITY": "배포 보안",
+         "CONTENT_TRUST_POLCIY": "확인된 이미지만 배포되도록 허용합니다.",
+         "PREVENT_VULNERABLE_TOGGLE": "취약한 이미지가 실행되지 않도록 방지합니다.",
+-        "PREVENT_VULNERABLE_1": "Prevent images with vulnerability severity of",
+-        "PREVENT_VULNERABLE_2": "and above from being deployed.",
++        "PREVENT_VULNERABLE_1": "취약점 심각도가",
++        "PREVENT_VULNERABLE_2": "이상인 이미지가 배포되지 않도록 방지합니다.",
+         "SCAN": "취약점 스캔",
+         "AUTOSCAN_TOGGLE": "푸시 시 이미지 자동 스캔",
+         "AUTOSCAN_POLICY": "이미지가 프로젝트 레지스트리에 푸시되면 자동으로 이미지를 스캔합니다.",
+@@ -326,7 +326,7 @@
+         "DELETION_SUMMARY": "프로젝트 구성원{{param}}를 정말 삭제하시겠습니까?",
+         "ADDED_SUCCESS": "구성원를 성공적으로 추가했습니다.",
+         "DELETED_SUCCESS": "구성원를 성공적으로 삭제했습니다.",
+-        "OF": "of",
++        "OF": "/",
+         "SET_ROLE": "역할 설정",
+         "REMOVE": "제거",
+         "GROUP_NAME_REQUIRED": "그룹 이름은 필수항목입니다",
+@@ -347,7 +347,7 @@
+         "ACTION": "동작",
+         "EDIT": "편집",
+         "ITEMS": "아이템",
+-        "OF": "of",
++        "OF": "/",
          "DELETE": "삭제",
-         "NAME": "이름",
--        "TAGS": "테그",
-+        "TAGS": "태그",
-         "PLATFORM": "OS/ARCH",
-         "ARTIFACT_TOOTIP": "이 OCI 인덱스의 아티팩트 목록을 보려면 클릭하세요.",
-         "ARTIFACTS_COUNT": "아티팩트",
-@@ -788,7 +788,7 @@
-         "SYSTEM": "시스템 셋팅",
-         "PROJECT_QUOTAS": "프로젝트 할당량",
-         "VULNERABILITY": "취약점",
--        "GC": "가비지 컬랙션",
-+        "GC": "가비지 컬렉션",
-         "CONFIRM_TITLE": "취소 확인",
-         "CONFIRM_SUMMARY": "일부 변경사항이 저장되지 않았습니다. 삭제하시겠습니까?",
-         "SAVE_SUCCESS": "구성이 성공적으로 저장되었습니다",
-@@ -1844,14 +1844,14 @@
-         "WORKER_FREE_BTN_INFO": "현재 실행 중인 작업을 중지하여 작업자를 해제합니다.",
-         "CRON": "반복 작업",
-         "WAITING_TOO_LONG_1": "특정 작업의 실행이 24시간 이상 보류되었습니다. 작업 서비스를 확인해주세요",
--        "WAITING_TOO_LONG_2": "데쉬보드.",
-+        "WAITING_TOO_LONG_2": "대시보드.",
-         "WAITING_TOO_LONG_3": "자세한 내용은 다음을 확인해주세요",
-         "WAITING_TOO_LONG_4": "Wiki."
-     },
-     "CLARITY": {
-         "OPEN": "열기",
--        "CLOSE": "보기",
--        "SHOW": "닫기",
-+        "CLOSE": "닫기",
-+        "SHOW": "보기",
-         "HIDE": "숨기기",
-         "EXPAND": "확장하기",
-         "COLLAPSE": "접기",
+         "PUSH": "푸시",
+         "PULL": "풀(Pull)",
+@@ -393,7 +393,7 @@
+         "ARTIFACT_ADDITION": "아티팩트 추가",
+         "ARTIFACT_LABEL": "아티팩트 라벨",
+         "PREHEAT_POLICY": "예열 정책",
+-        "IMMUTABLE_TAG": "Tag Immutability",
++        "IMMUTABLE_TAG": "태그 불변성",
+         "LOG": "로그",
+         "NOTIFICATION_POLICY": "알림 정책",
+         "QUOTA": 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24488** (2026-11-26): fix(i18n): translate Korean strings still shown in English (@ethan3011)
+- **PR #24487** (closed): fix(quota): keep hard limits in the redis flush (@c-gerke)
 - **PR #24483** (2026-11-25): fix(i18n): correct wrong Korean labels (@ethan3011)
 - **PR #24482** (2026-11-25): fix(i18n): fix broken placeholders in Korean translation (@ethan3011)
 - **PR #24480** (2026-11-24): Mark webhook execution as error when the task can't be submitted (@bupd)
 - **PR #24478** (2026-11-24): fix: allow tag events to be disabled and purged in audit log (@bupd)
-- **PR #24469** (2026-11-24): (cherry-pick)Change the harbor introduction text in testcase along with the github.com (@stonezdj)
-- **PR #24468** (2026-11-24): Change the harbor introduction text in testcase along with the github… (@stonezdj)
 
 ---
 
@@ -811,13 +840,13 @@ Co-authored-by: Wang Yan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. i18n): correct wrong Korean labels
+## X. i18n): translate Korean strings still shown in English
 
 **RULE**:
 When implementing operations in `src/portal/src/i18n/lang/ko-kr-lang.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a8626d5`: i18n): correct wrong Korean labels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffac21f6`: i18n): translate Korean strings still shown in English. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/i18n/lang/ko-kr-lang.json`.
@@ -825,35 +854,55 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "ENABLE": "활성화",
-        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이어야 합니다",
-        "USERS": "멤버",
-        "FAILURE": "실패",
-        "CREATION_TIME": "시작 시간",
-        "TAGS": "태그",
-        "GC": "가비지 컬렉션",
-        "WAITING_TOO_LONG_2": "대시보드.",
-        "CLOSE": "닫기",
-        "SHOW": "보기",
+        "OR": "또는",
+        "TITLE": "환경 설정",
+        "LANGUAGE": "언어",
+        "DATE_TIME_FORMAT": "날짜/시간 형식",
+        "PULL_CMD_PREFIX": "풀(Pull) 명령어 접두사"
+        "PREFERENCES": "환경 설정",
+        "ABOUT": "정보",
+        "OF": "/",
+        "PROXY_CACHE_BANDWIDTH": "프록시 캐시가 업스트림에서 이미지를 가져올 때 쓸 최대 네트워크 대역폭을 설정합니다. 무제한 대역폭을 원하시면 -1을 입력하세요. ",
+        "BANDWIDTH": "대역폭",
+        "SPEED_LIMIT_TIP": "-1 또는 0보다 큰 정수를 입력하세요. ",
+        "OF": "/",
+        "PROXY_REFERRER_API_TIP": "OCI 1.1 referrer API 요청을 업스트림 레지스트리로 프록시하려면 이 옵션을 활성화하세요.",
+        "PROXY_REFERRER_API_LABEL": "referrer API 프록시 활성화",
+        "IMMUTABLE_TAG": "태그 불변성",
+        "PREVENT_VULNERABLE_1": "취약점 심각도가",
+        "PREVENT_VULNERABLE_2": "이상인 이미지가 배포되지 않도록 방지합니다.",
+        "OF": "/",
+        "OF": "/",
+        "IMMUTABLE_TAG": "태그 불변성",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        "ENABLE": "가능",
-        "NEW_SECRET": "시크릿은 대문자 1개, 소문자 1개, 숫자 1개 이상이 포함된 8자 이상이여야합니다",
-        "USERS": "맴버",
-        "FAILURE": "실행",
-        "CREATION_TIME": "생성 시간",
-        "TAGS": "테그",
-        "GC": "가비지 컬랙션",
-        "WAITING_TOO_LONG_2": "데쉬보드.",
-        "CLOSE": "보기",
-        "SHOW": "닫기",
+        "OR": "OR",
+        "TITLE": "Preferences",
+        "LANGUAGE": "Language",
+        "DATE_TIME_FORMAT": "Date/Time Format",
+        "PULL_CMD_PREFIX": "Pull Command Prefix"
+        "PREFERENCES": "Preferences",
+        "ABOUT": "About",
+        "OF": "of",
+        "PROXY_CACHE_BANDWIDTH": "Set the maximum network bandwidth to pull image from upstream for proxy-cache. For unlimited bandwidth, please enter -1. ",
+        "BANDWIDTH": "Bandwidth",
+        "SPEED_LIMIT_TIP": "Please enter -1 or an integer greater than 0. ",
+        "OF": "of",
+        "PROXY_REFERRER_API_TIP": "Enable this to proxy OCI 1.1 referrer API requests to the upstream registry.",
+        "PROXY_REFERRER_API_LABEL": "Enable proxy for referrer API",
+        "IMMUTABLE_TAG": "Tag Immutability",
+        "PREVENT_VULNERABLE_1": "Prevent images with vulnerability severity of",
+        "PREVENT_VULNERABLE_2": "and above from being deployed.",
+        "OF": "of",
+        "OF": "of",
+        "IMMUTABLE_TAG": "Tag Immutability",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a8626d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffac21f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:58:29.155Z",
+  "last_updated": "2026-11-27T03:07:58.132Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T02:27:08.788Z",
@@ -433,7 +433,7 @@
       "staged_for_review": 1
     },
     "goharbor-harbor-learnings.md": {
-      "processed_at": "2026-11-25T09:25:04.703Z",
+      "processed_at": "2026-11-27T03:07:54.972Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3088,7 +3088,7 @@
       "staged_for_review": 0
     },
     "sfu-db-connector-x-learnings.md": {
-      "processed_at": "2026-11-26T08:26:41.588Z",
+      "processed_at": "2026-11-27T03:07:56.675Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3498,7 +3498,7 @@
       "staged_for_review": 0
     },
     "hf-reson8-rumble-2-flash-learnings.md": {
-      "processed_at": "2026-11-23T17:54:18.540Z",
+      "processed_at": "2026-11-27T03:07:54.310Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4018,7 +4018,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4782,
+  "total_dossiers_evaluated": 4785,
   "total_canonical_promoted": 571,
-  "total_staged_for_review": 3583
+  "total_staged_for_review": 3585
 }

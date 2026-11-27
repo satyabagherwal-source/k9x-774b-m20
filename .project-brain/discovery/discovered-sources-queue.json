@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T02:18:23.538Z",
+  "updated_at": "2026-11-27T03:07:56.983Z",
   "stats": {
-    "total_discovered": 10118,
-    "approved_pending_harvest": 9594,
+    "total_discovered": 10122,
+    "approved_pending_harvest": 9598,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9598,
-      "OFFICIAL_DOCUMENTATION": 287,
+      "COMMUNITY_AND_EXPERT": 9601,
+      "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
@@ -218955,6 +218955,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-metro-learnings.md",
         "fileName": "react-metro-learnings.md"
+      }
+    },
+    "SRC-E37C91D3FCFA": {
+      "id": "SRC-E37C91D3FCFA",
+      "url": "https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/controller/quota/controller.go",
+      "title": "https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/controller/quota/controller.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:07:55.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-7D56ADDB9668": {
+      "id": "SRC-7D56ADDB9668",
+      "url": "https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/pkg/quota/dao/dao.go",
+      "title": "https://github.com/goharbor/harbor/blob/7ceeba65493582af2adffa15826bdbc31310461a/src/pkg/quota/dao/dao.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:07:55.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-1210C5E8E2E9": {
+      "id": "SRC-1210C5E8E2E9",
+      "url": "https://docs.aws.amazon.com/redshift/latest/mgmt/options-for-providing-iam-credentials.html",
+      "title": "https://docs.aws.amazon.com/redshift/latest/mgmt/options-for-providing-iam-credentials.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:07:56.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
+        "fileName": "sfu-db-connector-x-learnings.md"
+      }
+    },
+    "SRC-2019E1C8C1D4": {
+      "id": "SRC-2019E1C8C1D4",
+      "url": "https://github.com/antivirak/redshift-iam-rs",
+      "title": "https://github.com/antivirak/redshift-iam-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T03:07:56.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
+        "fileName": "sfu-db-connector-x-learnings.md"
       }
     }
   }

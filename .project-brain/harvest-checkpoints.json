@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T02:58:15.641Z",
+  "last_updated": "2026-11-27T03:07:50.459Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
-      "verified_at": "2026-11-26T08:22:44.744Z",
+      "content_hash": "f072771fc5dafcb1f09a896ab909de98640e3076e376bfdf892be29bf26e526c",
+      "verified_at": "2026-11-27T03:07:50.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:22:44.744Z"
+      "last_updated": "2026-11-27T03:07:50.458Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "d53cf75c3b054e431837807473e506a018870bc2f681cfcb2f18f2a226e9a9f4",
-      "verified_at": "2026-11-26T09:48:00.120Z",
+      "content_hash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
+      "verified_at": "2026-11-27T03:07:45.432Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:48:00.120Z"
+      "last_updated": "2026-11-27T03:07:45.432Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -19506,14 +19506,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-reson8-rumble-2-flash",
-      "content_hash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
-      "verified_at": "2026-11-23T17:53:59.359Z",
+      "content_hash": "005619c6d9f2170e622a88ebd0a5821fec1b50045337316ead1aac0662679027",
+      "verified_at": "2026-11-27T03:07:35.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:53:59.359Z"
+      "last_updated": "2026-11-27T03:07:35.950Z"
     },
     "vcaesar/riot": {
       "repository": "vcaesar/riot",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T02:58:28.767Z",
-  "total_records": 2798,
+  "last_updated": "2026-11-27T03:07:57.615Z",
+  "total_records": 2799,
   "domains": {
     "A": {
       "total": 23,
@@ -2647,7 +2647,7 @@
       ]
     },
     "K": {
-      "total": 177,
+      "total": 178,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2825,7 +2825,8 @@
         "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-core-invariants",
         "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari",
         "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants"
       ]
     },
     "L": {
@@ -13047,8 +13048,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "9c988477f270db36648cc82d5052306af92a9cc446bb8b4c561beff1347d8d12",
-      "created_at": "2026-11-26T09:48:00.717Z"
+      "content_hash": "6cbb5aaba74ade61ea41e4c11f0358d65bda5ce31723fb4f56267284cfc7e5c3",
+      "created_at": "2026-11-27T03:07:46.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -13125,8 +13126,8 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
       "repository": "goharbor-harbor-learnings",
-      "content_hash": "6a945fa2bfe5a033933a83b43689aa39ea16e5c1e39a07bf6a32a34ce5bd0ce7",
-      "created_at": "2026-11-25T09:25:05.620Z"
+      "content_hash": "5bd2ea52739d07b3f5a0b0d870a15265af3f4f50c7870bb393e101312cd4a4f6",
+      "created_at": "2026-11-27T03:07:56.151Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
@@ -33593,8 +33594,8 @@
       "title": "Research & Knowledge Intelligence: Reson8/Rumble-2-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-research-knowledge-intelligence-reson8-rumble-2-flash-c.md",
       "repository": "Reson8/Rumble-2-Flash",
-      "content_hash": "bf390e18fd3708453a9dab6d46180dd453f4edcad79df7a09db74960c298341a",
-      "created_at": "2026-11-23T17:53:59.556Z"
+      "content_hash": "fad1a1fa133801e926b0ee1f3ae7bc8ca8a2beb1dd5dec0be9380e091f606777",
+      "created_at": "2026-11-27T03:07:36.256Z"
     },
     "DOM-D-28CD838B": {
       "record_id": "DOM-D-28CD838B",
@@ -33644,8 +33645,8 @@
       "title": "Research & Knowledge Intelligence: hf-reson8-rumble-2-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-learnings-research-knowledge-intelligence-hf-reson8-rum.md",
       "repository": "hf-reson8-rumble-2-flash-learnings",
-      "content_hash": "0a17f6b91a1f19305a06b480744133239ac87f77e3e0b7c38ab64d0a771c6378",
-      "created_at": "2026-11-23T17:54:18.748Z"
+      "content_hash": "26624ad870728bc912c81998e85fe52360fd14b86efa8eea4399cfa0bf982854",
+      "created_at": "2026-11-27T03:07:54.672Z"
     },
     "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-tickernelz-opencode-mem-core-invariants",
@@ -44504,8 +44505,8 @@
       "title": "Quality & Verification Intelligence: sfu-db/connector-x Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sfu-db-connector-x-quality-verification-intelligence-sfu-db-connector-x-core-inv.md",
       "repository": "sfu-db/connector-x",
-      "content_hash": "903520adbd3479d12e1bf7fa53cfb925d224a23f91b9dcd573df0d03f989511f",
-      "created_at": "2026-11-25T07:04:42.643Z"
+      "content_hash": "919a9bde8003aeef330eb4fd881e90a14539f2cbc9a6fe79c1b70879fdf4f45d",
+      "created_at": "2026-11-27T03:07:51.041Z"
     },
     "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants",
@@ -47224,6 +47225,15 @@
       "repository": "pingcap-tidb-learnings",
       "content_hash": "9f1262c4740be91a6fece1f155bbb44687a15af71c501737960344f60e95382b",
       "created_at": "2026-11-27T02:49:52.041Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sfu-db-connector-x-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sfu-db-connector-x-learnings-quality-verification-intelligence-sfu-db-connector-.md",
+      "repository": "sfu-db-connector-x-learnings",
+      "content_hash": "3b180cb661406c620367bd7d83f1e8c4978fcc0012847f22b411fa95e70a2172",
+      "created_at": "2026-11-27T03:07:57.615Z"
     }
   }
 }

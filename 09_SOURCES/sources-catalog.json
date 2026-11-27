@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "68c2c3ad",
+    "sourceVersion": "c5c3f409",
     "license": "MIT",
-    "contentHash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
-    "lastHarvestedAt": "2026-11-26T08:22:44.729Z",
+    "contentHash": "f072771fc5dafcb1f09a896ab909de98640e3076e376bfdf892be29bf26e526c",
+    "lastHarvestedAt": "2026-11-27T03:07:50.439Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "1a8626d5",
+    "sourceVersion": "7ab87806",
     "license": "Apache-2.0",
-    "contentHash": "d53cf75c3b054e431837807473e506a018870bc2f681cfcb2f18f2a226e9a9f4",
-    "lastHarvestedAt": "2026-11-26T09:48:00.091Z",
+    "contentHash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
+    "lastHarvestedAt": "2026-11-27T03:07:45.403Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -12945,8 +12945,8 @@
     "sourceUrl": "https://huggingface.co/Reson8/Rumble-2-Flash",
     "sourceVersion": "hf-reson8-rumble-2-flash",
     "license": "Open-Source",
-    "contentHash": "3e2e542abfb7d8bd7afcaa13b14928ab688655d516a55aa1a8ed50fed8cdfa2a",
-    "lastHarvestedAt": "2026-11-23T17:53:59.350Z",
+    "contentHash": "005619c6d9f2170e622a88ebd0a5821fec1b50045337316ead1aac0662679027",
+    "lastHarvestedAt": "2026-11-27T03:07:35.931Z",
     "learningId": "learn-huggingface-reson8-rumble-2-flash"
   },
   "vcaesar-riot": {

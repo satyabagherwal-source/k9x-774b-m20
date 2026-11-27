@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:58:15.637Z",
-  "total_cycles_completed": 12952,
-  "total_learnings_persisted": 12952,
-  "total_rules_promoted": 11724,
+  "last_updated": "2026-11-27T03:07:50.454Z",
+  "total_cycles_completed": 12955,
+  "total_learnings_persisted": 12955,
+  "total_rules_promoted": 11726,
   "history": [
-    {
-      "timestamp": "2026-11-26T15:02:20.244Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T15:02:25.506Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T15:11:41.485Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T15:11:47.335Z",
       "repository": "react/react-native",
@@ -1403,6 +1382,27 @@
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
       "learningId": "learn-huggingface-autotrust-jev-27b-vl",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:07:35.947Z",
+      "repository": "Reson8/Rumble-2-Flash",
+      "learningId": "learn-huggingface-reson8-rumble-2-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:07:45.428Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T03:07:50.454Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

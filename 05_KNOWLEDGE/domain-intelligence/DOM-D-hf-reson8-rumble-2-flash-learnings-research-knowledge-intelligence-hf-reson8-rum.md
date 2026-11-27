@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:54:18.664Z",
+  "timestamp": "2026-11-27T03:07:54.515Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-reson8-rumble-2-flash-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-reson8-rumble-2-flash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:54:18.664Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:07:54.515Z`  
 > **Learning ID**: `LEARN-EVO-hf-reson8-rumble-2-flash-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-reson8-ru`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:53:58.878Z  
+> **Timestamp**: 2026-11-27T03:07:35.171Z  
 > **Learning ID**: `learn-huggingface-reson8-rumble-2-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Reson8/Rumble-2-Flash](https://huggingface.co/Reson8/Rumble-2-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:53:58.393Z  
+> **Harvest Timestamp**: 2026-11-27T03:07:34.968Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2978 downloads | 358 likes
+- **Stars / Engagement**: 3673 downloads | 412 likes
 
 ---
 

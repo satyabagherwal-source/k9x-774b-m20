@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:58:28.554Z",
+  "last_updated": "2026-11-27T03:07:57.342Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68314,6 +68314,48 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-80065A-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-ICPG",
+      "directive_title": "translate Korean strings still shown in English",
+      "source_repo": "goharbor/harbor",
+      "source_commit": "7ab87806",
+      "staged_file": "11_INBOX/candidate-directives/CD-ICPG-translate-korean-strings-still-shown-in-english.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ILNI",
+      "directive_title": "Empirical Invariant Guard in __init__.py",
+      "source_repo": "sfu-db-connector-x-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ILNI-empirical-invariant-guard-in-__init__-py.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-IKIB",
+      "directive_title": "i18n): translate Korean strings still shown in English",
+      "source_repo": "goharbor-harbor-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IKIB-i18n-translate-korean-strings-still-shown-in-english.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3BAB70",
+      "directive_title": "Empirical Invariant Guard in __init__.py",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sfu-db-connector-x",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3BAB70-empirical-invariant-guard-in-init-py.md",
       "staged_date": "2026-11-27"
     }
   ]

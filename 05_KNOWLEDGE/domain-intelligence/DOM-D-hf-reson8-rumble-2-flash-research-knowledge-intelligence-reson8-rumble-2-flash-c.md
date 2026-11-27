@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Reson8/Rumble-2-Flash",
   "source_version": "hf-reson8-rumble-2-flash",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:53:59.555Z",
+  "timestamp": "2026-11-27T03:07:36.255Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-reson8-rumble-2-flash",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Reson8/Rumble-2-Flash](https://huggingface.co/Reson8/Rumble-2-Flash) (Revision: `hf-reson8-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:53:59.555Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:07:36.255Z`  
 > **Learning ID**: `learn-huggingface-reson8-rumble-2-flash`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Reson8/Rumble-2-Flash](https://huggingface.co/Reson8/Rumble-2-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:53:58.393Z  
+> **Harvest Timestamp**: 2026-11-27T03:07:34.968Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2978 downloads | 358 likes
+- **Stars / Engagement**: 3673 downloads | 412 likes
 
 ---
 
