@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:48:15.674Z",
-  "total_cycles_completed": 12997,
-  "total_learnings_persisted": 12997,
+  "last_updated": "2026-11-27T05:57:33.550Z",
+  "total_cycles_completed": 12998,
+  "total_learnings_persisted": 12998,
   "total_rules_promoted": 11749,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:22:56.650Z",
-      "repository": "open-wa/wa-automate-nodejs",
-      "learningId": "learn-github-open-wa-wa-automate-nodejs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:22:57.905Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1403,6 +1396,13 @@
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:57:33.550Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-ZZAW",
-    "timestamp": "2026-11-26T00:17:50.456Z",
-    "repository": "ricursiveAI/Ripple-65B-Preview",
-    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
-    "contentHash": "bdc2d0f12bd5adf9433f6926a50375ed8b9cd8c2f538a4370f7be438caaf22be",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-04Y1",
     "timestamp": "2026-11-26T00:17:57.769Z",
     "repository": "touchlab/Kermit",
@@ -7492,6 +7477,21 @@
     "contentHash": "085e0684a2e0962c7f93f2016a596ab72a9d9c1a30e7052af862cba6658ec9e3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-KPNE",
+    "timestamp": "2026-11-27T05:57:33.530Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "67064cae352c35df3953b877a4fc8f6fd450ce8d3128dce5aa004ab9d74e7dda",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

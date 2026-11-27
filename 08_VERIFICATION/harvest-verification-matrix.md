@@ -13693,3 +13693,4 @@
 | `CYCLE-20261127-XY21` | `2026-11-27T05:39:51.337Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10838` | Yes (`8274743d...`) |
 | `CYCLE-20261127-8QDF` | `2026-11-27T05:48:14.595Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`5c88eb66...`) |
 | `CYCLE-20261127-8R6T` | `2026-11-27T05:48:15.653Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10839` | Yes (`085e0684...`) |
+| `CYCLE-20261127-KPNE` | `2026-11-27T05:57:33.530Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`67064cae...`) |
