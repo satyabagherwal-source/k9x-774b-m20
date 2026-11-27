@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "4cc6d7c41e6bcb6e4af8490d015c6bcede5edc9e3d7811752201f86bf76bdf45",
-    "lastHarvestedAt": "2026-11-24T00:22:33.427Z",
+    "contentHash": "7dc81e541c1cb0a3328eddad49e7dd083ec86d1157f474000a0dac2e679a30a9",
+    "lastHarvestedAt": "2026-11-27T10:01:40.089Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "a3ce8d5e",
+    "sourceVersion": "46375fbf",
     "license": "NOASSERTION",
-    "contentHash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
-    "lastHarvestedAt": "2026-11-26T08:57:24.522Z",
+    "contentHash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
+    "lastHarvestedAt": "2026-11-27T10:01:40.344Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-K2GS",
-    "timestamp": "2026-11-26T03:21:25.372Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "d3a7133307f839f22384d317450040aaaf33e2713a8b6eaed7f7e31a56e7452a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-UZL6",
-    "timestamp": "2026-11-26T03:29:54.858Z",
-    "repository": "Comfy-Org/RelayVSR",
-    "learningId": "learn-huggingface-comfy-org-relayvsr",
-    "contentHash": "f4a211814f7d6f697cc0371cc20f25f30914a0753e507f6d9ec485d095910e39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-5POS",
     "timestamp": "2026-11-26T03:38:15.244Z",
     "repository": "Zyphra/ZONOS3-Mini",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "a4557fcb8e85aed15af881cfa875a7a20e1506e2ddd198c965c053e4d2fac5f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-AN05",
+    "timestamp": "2026-11-27T10:01:40.085Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+    "contentHash": "7dc81e541c1cb0a3328eddad49e7dd083ec86d1157f474000a0dac2e679a30a9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-AN6S",
+    "timestamp": "2026-11-27T10:01:40.324Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

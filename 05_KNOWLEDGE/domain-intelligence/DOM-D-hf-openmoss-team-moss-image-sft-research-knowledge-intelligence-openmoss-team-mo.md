@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
   "source_version": "hf-openmoss-team-moss-image-sft",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T00:22:33.738Z",
+  "timestamp": "2026-11-27T10:01:40.341Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [OpenMOSS-Team/MOSS-Image-SFT](https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT) (Revision: `hf-openmos`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T00:22:33.738Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:01:40.341Z`  
 > **Learning ID**: `learn-huggingface-openmoss-team-moss-image-sft`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT](https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:22:32.704Z  
+> **Harvest Timestamp**: 2026-11-27T10:01:28.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16087 downloads | 1013 likes
+- **Stars / Engagement**: 15158 downloads | 1031 likes
 
 ---
 

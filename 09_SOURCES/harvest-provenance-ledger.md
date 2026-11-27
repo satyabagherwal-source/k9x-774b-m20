@@ -13784,3 +13784,5 @@ Every entry in this ledger must capture:
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `68fdb4c9` | Multi-dimensional audit evidence | 2026-11-27T09:44:40.427Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `3da229e1` | Multi-dimensional audit evidence | 2026-11-27T09:44:45.912Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f176c30a` | Multi-dimensional audit evidence | 2026-11-27T09:44:54.970Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-27T10:01:40.089Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `46375fbf` | Multi-dimensional audit evidence | 2026-11-27T10:01:40.344Z |

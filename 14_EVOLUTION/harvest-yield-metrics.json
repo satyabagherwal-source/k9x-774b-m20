@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T09:44:54.980Z",
-  "total_cycles_completed": 13051,
-  "total_learnings_persisted": 13051,
-  "total_rules_promoted": 11784,
+  "last_updated": "2026-11-27T10:01:40.356Z",
+  "total_cycles_completed": 13053,
+  "total_learnings_persisted": 13053,
+  "total_rules_promoted": 11785,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:04:26.557Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:04:31.979Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:04:34.615Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T09:44:54.980Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:01:40.094Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:01:40.356Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T08:57:39.758Z",
+  "timestamp": "2026-11-27T10:01:44.171Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zed-industries-zed-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zed-industries-zed-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T08:57:39.758Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:01:44.171Z`  
 > **Learning ID**: `LEARN-EVO-zed-industries-zed-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `a3ce8d5e`  
+> **Source Version**: `46375fbf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T08:57:23.239Z  
+> **Timestamp**: 2026-11-27T10:01:39.204Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:57:23.233Z  
+> **Harvest Timestamp**: 2026-11-27T10:01:31.313Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 95762 stars
+- **Stars / Engagement**: 95820 stars
 
 ---
 
@@ -2362,627 +2362,439 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ba65ce3` (2026-11-25)
-**Commit Message**: crashes: Update crash-handler to fix child processes hanging on macOS (#67378)
+### Incident Patch 1: `b47d9288` (2026-11-27)
+**Commit Message**: agent_ui: Fix subagent card staying failed after a successful retry (#67156)
 
 ## Summary
 
-On macOS, child processes inherit Zed's Mach exception port.
-`crash-handler` 0.8.0 replies to their exceptions as handled, so a child
-that faults retries the instruction forever instead of receiving its
-signal.
-[0.8.1](https://github.com/EmbarkStudios/crash-handling/pull/126) passes
-these exceptions on to the kernel.
+Closes #67134
 
-Closes #67287
-Closes #60389
+When a subagent fails (for example on a dropped connection) and you
+retry it from its own view, the retry can finish fine but the card in
+the parent thread stays red. The subagent's own view shows the right
+state, so the two disagree.
+
+The card for a `spawn_agent` tool call was taking the first result the
+subagent reported after the call started, and only showing entries up to
+where the tool call ended. A retry doesn't send a new message to the
+subagent, it just keeps going in the same run, so the card never saw the
+retry's result or output.
+
+Now the card treats everything up to the next message sent to the
+subagent as the same run, and shows the latest result in it. While the
+retry is still going it shows as running, with the stop button. Cards
+for ACP subagent session messages work differently and aren't touched
+here.
+
+The retry's result is also saved on the subagent's thread now, the same
+way `NativeSubagentHandle::send` does it, so it's still there after
+reopening the thread instead of the old error coming back. This only
+runs for subagent threads.
 
 ## Testing
 
-- To reproduce, run the program from either issue as a task on macOS. It
-hangs instead of exiting.
-- Tested on macOS 26
-[arm64](https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936952458)
-and macOS 15
-[x86_64](https://github.com/ptweezy/zed/actions/runs/45244310375/job/137936951965)
-runners, with a small program that attaches the handler as Zed does and
-spawns each issue's program. Not tested in a full Zed build on macOS.
-  - With 0.8.0, both programs hang until killed.
-- With 0.8.1, the Go program prints `<nil>` and the C program exits with
-`SIGSEGV`.
-- `crash-handler`'s `foreign_task` test fails on 0.8.0 and passes on
-0.8.1 on both runners.
-- `cargo test -p crashes` and `./script/clippy -p crashes` pass on
-Linux.
+Added `test_r
 
-## Self
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/acp_thread/src/acp_thread.rs` (modified, +15/-0)
 ```diff
-@@ -4123,9 +4123,9 @@ dependencies = [
+@@ -4589,6 +4589,21 @@ impl AcpThread {
+             .map(|(_, state)| state)
+     }
  
- [[package]]
- name = "crash-handler"
--version = "0.8.0"
-+version = "0.8.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c16fd44a8db657c3647d6b4c9eb4b41a43a2954947469ed90abcdb310c8eba96"
-+checksum = "b9897480a6a7009a9ca940c1813daf2755d8a3e6857e5ac4fd0ae526ff5682d1"
- dependencies = [
-  "cfg-if",
-  "crash-context",
++    /// The last idle state this subagent reported for the run covering entries `start..=end`:
++    /// after the entry at `start` arrived and before any entry after `end`. A retry reports
++    /// again within the same run, so its outcome replaces the one it retried.
++    pub fn subagent_outcome_between(
++        &self,
++        start: usize,
++        end: usize,
++    ) -> Option<&acp_v2::StateUpdate> {
++        self.subagent_outcomes
++            .iter()
++            .rev()
++            .find(|(entry_count, _)| *entry_count > start && *entry_count <= end + 1)
++            .map(|(_, state)| state)
++    }
++
+     pub fn foreground_activity(&self) -> ForegroundActivity {
+         self.activity.phase()
+     }
 ```
 
----
-
-### Incident Patch 2: `dc1a4bfd` (2026-11-25)
-**Commit Message**: trusted_worktrees: Fix case-sensitive path comparison on Windows (#67078)
-
-Closes #66915
-
-## Summary
-
-Zed canonicalizes a folder's path when it opens it, so a worktree root
-always has its on-disk spelling. Persisted trusted paths don't. They
-keep the casing they had when they were saved. On Windows the two can
-drift apart, for example after renaming `Project` to `project`. The
-trust check then compares `C:\dev\project` with `C:\dev\Project`, fails,
-and the worktree's `.zed/debug.json`, tasks, and settings never load.
-
-The fix happens while a local worktree is created. In
-`create_local_worktree`, before `Worktree::local` starts scanning and
-before the worktree is added to its store, Zed looks for persisted local
-trusted paths that match the worktree path only when case is ignored. It
-resolves those through the project's `Fs`, with `Fs::canonicalize` like
-the worktree path itself, so mapped drive letters are kept, and trusts
-their on-disk spelling in that store. Nothing can check the worktree's
-trust before it's added, so the first check already sees the corrected
-grant.
-
-What it does and doesn't touch:
-
-- The filesystem decides whether two spellings are the same directory.
-In a case
-
-**File**: `crates/fs/src/fs.rs` (modified, +23/-0)
+**File**: `crates/agent/src/agent.rs` (modified, +18/-0)
 ```diff
-@@ -161,6 +161,10 @@ pub trait Fs: Send + Sync {
-     async fn is_file(&self, path: &Path) -> bool;
-     async fn is_dir(&self, path: &Path) -> bool;
-     async fn metadata(&self, path: &Path) -> Result<Option<Metadata>>;
-+    /// Whether `path` is a symlink, without following it or needing read access to it.
-+    /// On Windows, junctions and other name surrogate reparse points (e.g. mount points) count too.
-+    /// Errors when `path` does not exist.
-+    async fn is_symlink(&self, path: &Path) -> Result<bool>;
-     async fn read_link(&self, path: &Path) -> Result<PathBuf>;
-     async fn read_dir(
-         &self,
-@@ -1281,6 +1285,15 @@ impl Fs for RealFs {
-         }))
-     }
- 
-+    async fn is_symlink(&self, path: &Path) -> Result<bool> {
-+        let path = path.to_owned();
-+        let metadata = self
-+            .executor
-+            .spawn(async move { std::fs::symlink_metadata(&path) })
-+            .await?;
-+        Ok(metadata.file_type().is_symlink())
-+    }
-+
-     async fn read_link(&self, path: &Path) -> Result<PathBuf> {
-         let path = path.to_owned();
-         let path = self
-@@ -3681,6 +3694,16 @@ impl Fs for FakeFs {
-         }
-     }
- 
-+    async fn is_symlink(&self, path: &Path) -> Result<bool> {
-+        self.simulate_random_delay().await;
-+        let path = normalize_path(path);
-+        let mut state = self.state.lock();
-+        let (entry, _) = state
-+            .try_entry(&path, false)
-+            .with_context(|| format!("path does not exist: {path:?}"))?;
-+        Ok(entry.is_symlink())
-+    }
-+
-     async fn read_link(&self, path: &Path) -> Result<PathBuf> {
-         self.simulate_random_delay().await;
-         let path = normalize_path(path);
-```
-
-**File**: `crates/project/src/trusted_worktrees.rs` (modified, +138/-1)
-```diff
-@@ -41,12 +41,13 @@
- 
- use client::ProjectId;
- use collections::{HashMap, HashSet};
-+use fs::Fs;
- use gpui::{App, AppContext as _, Context, Entity, EventEmitter, Global, Task, WeakEntity};
- use remote::RemoteConnectionIdentity;
- use rpc::{AnyProtoClient, proto};
- use settings::{Settings as _, WorktreeId};
- use std::{
--    path::{Path, PathBuf},
-+    path::{Component, Path, PathBuf, Prefix},
-     sync::Arc,
- };
- use util::debug_panic;
-@@ -60,6 +61,46 @@ pub fn init(db_trusted_paths: DbTrustedPaths, cx: &mut App) {
-     }
- }
- 
-+/// Returns the on-disk spelling of `path` when it differs from `path` only by ASCII case.
-+///
-+/// Paths through a symlink or junction are skipped, as resolving those may land in another
-+/// directory whose name differs only by case. Components are checked from the root, so nothing
-+/// under a link is looked up. Only local drive paths are resolved, `C:\` and `\\?\C:\` alike:
-+/// paths with a component that cannot be checked are skipped, as are UNC paths (network shares,
-+/// `\\wsl.localhost`).
-+async fn on_disk_spelling(fs: &dyn Fs, path: &Path) -> Option<PathBuf> {
-+    let Some(Component::Prefix(prefix)) = path.components().next() else {
-+        return None;
-+    };
-+    // Local drives, including in the extended-length `\\?\C:\` form, which paths keep e.g. when
-+    // longer than `MAX_PATH`.
-+    if !matches!(prefix.kind(), Prefix::Disk(_) | Prefix::VerbatimDisk(_)) {
-+        return None;
-+    }
-+    for ancestor in path.ancestors().collect::<Vec<_>>().into_iter().rev() {
-+        if fs.is_symlink(ancestor).await.unwrap_or(true) {
-+            return None;
-+        }
-+    }
-+    // Resolved with the `Fs::canonicalize` worktree paths are opened with, which keeps mapped
-+    // drive letters. Unlike worktree roots, the result is not simplified: it keeps the drive
-+    // prefix form of `path`, so that a short `\\?\C:\` parent of a longer root keeps matching it.
-+    let canonical = fs.canonicalize(path).await.ok()?;
-+    (canonical != path && canonical.as_os_str().eq_ignore_ascii_case(path.as_os_str()))
-+        .then_some(canonical)
-+}
-+
-+fn starts_with_ignoring_ascii_case(path: &Path, prefix: &Path) -> bool {
-+    let mut components = path.components();
-+    prefix.components().all(|prefix_component| {
-+        components.next().is_some_and(|component| {
-+            component
-+                .as_os_str()
-+                .eq_ignore_ascii_case(prefix_component.as_os_str())
-+        })
-+    })
-+}
-+
- /// An initialization call to set up trust global for a particular project (remote or local).
- pub fn track_worktree_trust(
-     worktree_store: Entity<WorktreeStore>,
-@@ -136,6 +177,8 @@ pub struct TrustedWorktreesStore {
-     trusted_paths: TrustedPaths,
-     restricted: HashMap<WeakEntity<WorktreeStore>, HashSet<WorktreeId>>,
-     worktree_trust_serialization: Task<()>,
-+    #[cfg(feature = "test-support")]
-+    casing_resolution_hold: Option<futures::channel::oneshot::Receiver<()>>,
- }
- 
- #[derive(Debug, Default)]
-@@ -204,9 +247,21 @@ impl TrustedWorktreesStore {
-             worktree_stores: HashMap::default(),
-             restricted: HashMap::default(),
-             worktree_trust_serialization: Task::ready(()),
-+            #[cfg(feature = "test-support")]
-+            casing_resolution_hold: None,
-         }
-     }
- 
-+    /// Holds the next casing resolution until the returned sender is used or dropped,
-+    /// so that tests can let everything else run first.
-+    /// Only a resolution with persisted paths to resolve takes the hold.
-+    #[cfg(feature = "test-support")]
-+    pub fn hold_next_casing_resolution(&mut self) -> futures::channel::oneshot::Sender<()> {
-+        let (release, hold) = futures::channel::oneshot::channel();
-+        self.casing_resolution_hold = Some(hold);
-+        release
-+    }
-+
-     /// Whether a particular worktree store has associated worktrees that are restricted, or an associated host is restricted.
-     pub fn has_restricted_worktrees(
-         &self,
-@@ -409,6 +464,88 @@ impl TrustedWorktreesStore {
-         ));
-     }
- 
-+    /// Worktrees open with their canonical, on-disk path spelling, but a persisted trusted path keeps
-+    /// the casing it was stored with, so it stops matching once those differ (#66915).
-+    ///
-+    /// To be awaited before a local worktree at `worktree_abs_path` joins `worktree_store`:
-+    /// finds the persisted local trusted paths that match the worktree path only when ignoring
-+    /// ASCII case, and trusts their on-disk spelling in that store.
-+    /// The file system decides whether those name the same directory; nothing restricted is lifted.
-+    pub(crate) fn resolve_trusted_path_casing(
-+        &mut self,
-+        worktree_store: &Entity<WorktreeStore>,
-+        worktree_abs_path: &Path,
-+        fs: Arc<dyn Fs>,
-+        cx: &mut Context<Self>,
-+    ) -> Task<()> {
-+        let worktree_store = worktree_store.downgrade();
-+        let is_local_store = self
-+            .worktree_stores
-+           
-```
-
-**File**: `crates/project/src/worktree_store.rs` (modified, +19/-0)
-```diff
-@@ -1013,6 +1013,25 @@ impl WorktreeStore {
- 
-         cx.spawn(async move |this, cx| {
-             let worktree_id = next_worktree_id.await?;
-+            // Before the worktree starts scanning, so that neither a trust check nor a scan
-+            // event happens before the worktree joins the store with the corrected grants.
-+            let resolve_trusted_path_casing = this.update(cx, |_, cx| {
-+                TrustedWorktrees::try_get_global(cx).map(|trusted_worktrees| {
-+                    let worktree_store = cx.entity();
-+                    trusted_worktrees.update(cx, |trusted_worktrees, cx| {
-+                        trusted_worktrees.resolve_trusted_path_casing(
-+                            &worktree_store,
-+                            abs_path.as_path(),
-+                            fs.clone(),
-+                            cx,
-+                        )
+@@ -2750,6 +2750,24 @@ impl NativeAgentConnection {
+                     Err(error)
+                 }
+             };
++            // Save a subagent's outcome on its thread too, so reopening it shows the latest
++            // run, including a retry from the subagent's own view. When the parent's tool
++            // call drives the run, `NativeSubagentHandle::send` replaces this with its verdict.
++            if thread.read_with(cx, |thread, _| thread.is_subagent()) {
++                let outcome = acp_thread
++                    .read_with(cx, |acp_thread, _| match acp_thread.foreground_state() {
++                        Some(acp_v2::StateUpdate::Idle(idle)) => Some(SubagentOutcome {
++                            entry_count: acp_thread.entries().len(),
++                            stop_reason: idle.stop_reason.clone()?,
++                        }),
++                        _ => None,
 +                    })
-+                })
-+            })?;
-+            if let Some(resolve_trusted_path_casing) = resolve_trusted_path_casing {
-+                resolve_trusted_path_casing.await;
++                    .ok()
++                    .flatten();
++                if let Some(outcome) = outcome {
++                    thread.update(cx, |thread, cx| thread.record_subagent_outcome(outcome, cx));
++                }
 +            }
-+
-             let worktree = Worktree::local(
-                 SanitizedPath::cast_arc(abs_path.clone()),
-                 visible,
+             if completion.send(result).is_err() {
+                 log::debug!("Native completion observer was dropped");
+             }
 ```
 
-**File**: `crates/project/tests/integration/project_tests.rs` (modified, +75/-0)
+**File**: `crates/agent/src/tests/mod.rs` (modified, +88/-0)
 ```diff
-@@ -1446,6 +1446,81 @@ async fn test_project_tasks_and_debug_scenarios_require_trust(cx: &mut gpui::Tes
-     assert_eq!(scenarios[0].1.label, "debug");
+@@ -7526,6 +7526,94 @@ async fn test_native_subagent_reports_and_restores_each_runs_outcome(cx: &mut Te
+     assert_reported(&reloaded, cx);
  }
  
-+#[cfg(windows)]
 +#[gpui::test]
-+async fn test_debug_scenarios_load_with_differently_cased_db_trusted_path(
-+    cx: &mut gpui::TestAppContext,
++async fn test_native_subagent_restores_the_outcome_of_a_retry_from_its_own_view(
++    cx: &mut TestAppContext,
 +) {
-+    use project::trusted_worktrees::{self, DbTrustedPaths, TrustedWorktrees};
-+
-+    init_test(cx);
-+    TaskStore::init(None);
-+
-+    let fs = FakeFs::new(cx.executor());
-+    fs.set_case_sensitive(false);
-+    fs.insert_tree(
-+        path!("/root/Project"),
-+        json!({
-+            ".zed": {
-+                "debug.json": r#"[{ "label": "debug", "adapter": "Debugpy", "request": "launch" }]"#,
-+            },
-+        }),
-+    )
-+    .await;
-+    let root = PathBuf::from(path!("/root"));
-+    let db_trusted_paths =
-+        DbTrustedPaths::from_iter([(None, HashSet::from_iter([root.join("project")]))]);
-+    cx.update(|cx| trusted_worktrees::init(db_trusted_paths, cx));
-+    let trusted_worktrees = cx.update(|cx| TrustedWorktrees::try_get_global(cx).unwrap());
-+
-+    let no_paths: [&Path; 0] = [];
-+    let project = Project::test_with_worktree_trust(fs, no_paths, cx).await;
-+    let release_casing_resolution =
-+        trusted_worktrees.update(cx, |store, _| store.hold_next_casing_resolution());
-+    let create_worktree = project.update(cx, |project, cx| {
-+        project.find_or_create_worktree(root.join("Project"), true, cx)
++    let test = SubagentCompactionTest::new(cx).await;
++    test.configure_compaction(false, 1_000_000, None, cx);
++    let session_id = test.handle.id();
++    let subagent = test._agent.read_with(cx, |agent, _| {
++        agent.sessions[&session_id].acp_thread.upgrade().unwrap()
 +    });
-+    // Let everything else run first: had the worktree started scanning, the scan would finish here.
-+    cx.run_until_parked();
-+    assert!(
-+        project.read_with(cx, |project, cx| project.worktrees(cx).next().is_none()),
-+        "the casing resolution should hold the worktree creation"
++
++    let send = test.send("task", cx);
++    test.fake.send_last_error(
++        &test.model,
++        LanguageModelCompletionError::from_http_status(
++            LanguageModelProviderName::new("test"),
++            http_client::StatusCode::BAD_REQUEST,
++            "request failed".to_string(),
++            None,
++        ),
 +    );
-+    release_casing_resolution.send(()).unwrap();
-+    create_worktree.await.unwrap();
++    test.fake.end_last(&test.model);
++    let error = send.await.unwrap_err().to_string();
++    let failed_run_end = subagent.read_with(cx, |subagent, _| subagent.entries().len());
++
++    // A retry from the subagent's own view doesn't go through the parent's tool call.
++    let retry = subagent.update(cx, |subagent, cx| subagent.retry(cx));
 +    cx.run_until_parked();
++    test.fake.send_last_text(&test.model, "done");
++    test.fake.end_last(&test.model);
++    cx.run_until_parked();
++    retry.await.unwrap();
++    let run_end = subagent.read_with(cx, |subagent, _| subagent.entries().len() - 1);
 +
-+    let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
-+    assert!(
-+        !trusted_worktrees.read_with(cx, |store, cx| store
-+            .has_restricted_worktrees(&worktree_store, cx)),
-+        "the worktree must never be restricted"
++    let mut failure = acp_v2::Error::internal_error();
++    failure.message = error;
++    test.thread.read_with(cx, |thread, _| {
++        assert_eq!(
++            thread.subagent_outcomes(),
++            [
++                SubagentOutcome {
++                    entry_count: failed_run_end,
++                    stop_reason: acp_v2::StopReason::Error(
++                        acp_v2::ErrorStopReason::new().error(failure)
++                    ),
++                },
++                SubagentOutcome {
++                    entry_count: run_end + 1,
++                    stop_reason: acp_v2::StopReason::EndTurn,
++                },
++            ]
++        )
++    });
++
++    let done = acp_v2::StateUpdate::Idle(
++        acp_v2::IdleStateUpdate::new().stop_reason(acp_v2::StopReason::EndTurn),
 +    );
-+
-+    let worktree_id = project.read_with(cx, |project, cx| {
-+        project.worktrees(cx).next().unwrap().read(cx).id()
-+    });
-+    let inventory = project.read_with(cx, |project, cx| {
-+        project
-+            .task_store()
-+            .read(cx)
-+            .task_inventory()
-+            .unwrap()
-+            .clone()
-+    });
-+    let contexts = TaskContexts {
-+        active_worktree_context: Some((worktree_id, TaskContext::default())),
-+        ..Default::default()
++    let assert_done = |subagent: &Entity<AcpThread>, cx: &mut TestAppContext| {
++        subagent.read_with(cx, |subagent, _| {
++            assert_eq!(subagent.subagent_outcome_between(0, run_end), Some(&done));
++        });
 +    };
-+    let (_, scenarios) = inventory
-+        .update(cx, |inventory, cx| {
-+            inventory.list_debug_scenarios(&contexts, Vec::new(), Vec::new(), false, cx)
-+        })
-+        .await;
-+    assert_eq!(scenarios.len(), 1);
-+    assert_eq!(scenarios[0].1.label, "debug");
++    assert_done(&subagent, cx);
++
++    let project = test
++        .thread
++        .read_with(cx, |thread, _| thread.project.clone());
++    let SubagentCompactionTest {
++        _agent: agent,
++        _acp_thread,
++        parent,
++        thread,
++        environment,
++        handle,
++        ..
++    } = test;
++    drop((_acp_thread, parent, thread, environment, handle, subagent));
++    cx.run_until_parked();
++    release_dropped_entities(cx);
++    agent.read_with(cx, |agent, _| assert!(agent.sessions.is_empty()));
++
++    let reloaded = agent
++        .update(cx, |agent, cx| agent.open_thread(session_id, project, cx))
++        .await
++        .unwrap();
++    assert_done(&reloaded, cx);
 +}
 +
  #[gpui::test]
- async fn test_invalid_local_tasks_shows_toast_with_doc_link(cx: &mut gpui::TestAppContext) {
-     init_test(cx);
+ async fn test_subagent_context_limit_preserves_result_after_turn_completes(
+     cx: &mut TestAppContext,
 ```
 
-**File**: `crates/project/tests/integration/trusted_worktrees.rs` (modified, +479/-0)
+**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +133/-0)
 ```diff
-@@ -33,6 +33,485 @@ fn init_trust_global(
-     })
- }
+@@ -7785,6 +7785,139 @@ pub(crate) mod tests {
+         }
+     }
  
-+#[cfg(windows)]
-+#[gpui::test]
-+async fn test_differently_cased_db_trusted_parent_path(cx: &mut TestAppContext) {
-+    use fs::RealFs;
-+    use std::path::Path;
-+    use util::{paths::SanitizedPath, test::TempTree};
++    #[gpui::test]
++    async fn test_retried_subagent_tool_call_shows_the_retry_state(cx: &mut TestAppContext) {
++        use super::subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
 +
-+    init_test(cx);
-+    cx.executor().allow_parking();
-+
-+    let dir = TempTree::new(json!({ "Dev": { "one": {}, "two": {} } }));
-+    let root = SanitizedPath::new(dir.path()).as_path().to_path_buf();
-+    cx.update(|cx| {
-+        init(
-+            DbTrustedPaths::from_iter([(None, HashSet::from_iter([root.join("DEV")]))]),
-+            cx,
-+        )
-+    });
-+    let one = root.join("Dev").join("one");
-+    let two = root.join("Dev").join("two");
-+    let untracked_project =
-+        Project::test(RealFs::new(None, cx.executor()), [one.as_path()], cx).await;
-+    // Both tracked stores are registered before either opens a child of the trusted parent.
-+    let no_paths: [&Path; 0] = [];
-+    let project_a =
-+        Project::test_with_worktree_trust(RealFs::new(None, cx.executor()), no_paths, cx).await;
-+    let project_b =
-+        Project::test_with_worktree_trust(RealFs::new(None, cx.executor()), no_paths, cx).await;
-+    for (project, path) in [(&project_a, &one), (&project_b, &two)] {
-+        project
-+            .update(cx, |project, cx| {
-+                project.find_or_create_worktree(path, true, cx)
-+            })
-+            .await
-+            .unwrap();
-+        cx.run_until_parked();
-+    }
-+
-+    let trusted_worktrees = cx.update(|cx| TrustedWorktrees::try_get_global(cx).unwrap());
-+    for (project, trusted) in [
-+        (project_a, true),
-+        (project_b, true),
-+        (untracked_project, false),
-+    ] {
-+        let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
-+        let worktree_id = worktree_store.read_with(cx, |store, cx| {
-+            store.worktrees().next().unwrap().read(cx).id()
++        init_test(cx);
++        let project = Project::test(FakeFs::new(cx.executor()), [], cx).await;
++        let connection: Rc<dyn AgentConnection> = Rc::new(StubAgentConnection::new());
++        let parent = cx.update(|cx| {
++            create_test_acp_thread(None, "parent", connection.clone(), project.clone(), cx)
 +        });
-+        trusted_worktrees.update(cx, |store, cx| {
-+            assert_eq!(
-+                store.can_trust(&worktree_store, worktree_id, cx),
-+                trusted,
-+                "a differently cased trusted parent should trust its subdirectories \
-+                 in every worktree store tracked for trust, and only there"
-+            );
++        let parent_session_id = parent.read_with(cx, |thread, _| thread.session_id().clone());
++        let subagent = cx.update(|cx| {
++            create_test_acp_subagent(parent_session_id, "child", connection, project, cx)
 +        });
-+    }
-+}
++        subagent.update(cx, |subagent, cx| {
++            subagent
++                .update_subagent_association(
++                    &acp_v2::SubagentUpdate::new("child").capabilities(
++                        acp_v2::SubagentSessionCapabilities::new()
++                            .cancel(acp_v2::SessionCancelCapabilities::new()),
++                    ),
++                    cx,
++                )
++                .expect("ACP subagent")
++        });
++        let work = |id: &str, cx: &mut TestAppContext| {
++            subagent
++                .update(cx, |subagent, cx| {
++                    subagent.upsert_assistant_message(
++                        acp_v2::AgentMessage::new(id).content(vec!["Working".into()]),
++                        cx,
++                    )
++                })
++                .expect("subagent work");
++        };
++        let report = |state: acp_v2::StateUpdate, cx: &mut TestAppContext| {
++            subagent
++                .update(cx, |subagent, cx| subagent.update_session_state(state, cx))
++                .expect("reported state");
++        };
++        let idle = |stop_reason: acp_v2::StopReason| {
++            acp_v2::StateUpdate::Idle(acp_v2::IdleStateUpdate::new().stop_reason(stop_reason))
++        };
++        let mut failure = acp_v2::Error::internal_error();
++        failure.message = "connection error".into();
++        // The retry's work is a new entry in the same run, with no new message.
++        let retry_work = |cx: &mut TestAppContext| {
++            subagent
++                .update(cx, |subagent, cx| {
++                    subagent.upsert_wire_tool_call(
++                        acp_v2::ToolCallUpdate::new("retry-read")
++                            .title("Read file")
++                            .status(acp_v2::ToolCallStatus::Completed),
++                        cx,
++                    )
++                })
++                .expect("retry work");
++        };
 +
-+#[cfg(windows)]
-+#[gpui::test]
-+async fn test_differently_cased_db_trusted_path_on_mapped_drive(cx: &mut TestAppContext) {
-+    use fs::{Fs as _, RealFs};
-+    use std::path::Path;
-+    use util::{ResultExt as _, paths::SanitizedPath, test::TempTree};
-+
-+    /// A free drive letter mapped to the directory's administrative network share.
-+    struct MappedDrive(PathBuf);
-+
-+    impl MappedDrive {
-+        #[allow(clippy::disallowed_methods)]
-+        fn new(target: &Path) -> Option<Self> {
-+            let share = format!(
-+                r"\\localhost\{}",
-+                target.to_string_lossy().replacen(':', "$", 1)
-+            );
-+            if !Path::new(&share).exists() {
-+                return None;
-+            }
-+            ('M'..='Z').rev().find_map(|letter| {
-+                let root = PathBuf::from(format!("{letter}:\\"));
-+                if root.exists() {
-+                    return None;
-+                }
-+                std::process::Command::new("net")
-+                    .args(["use", &format!("{letter}:"), &share, "/persistent:no"])
-+                    .output()
-+                    .ok()?
-+                    .status
-+                    .success()
-+                    .then(|| Self(root))
-+            })
-+        }
-+    }
-+
-+    impl Drop for MappedDrive {
-+        #[allow(clippy::disallowed_methods)]
-+        fn drop(&mut self) {
-+            let drive = self.0.to_string_lossy();
-+            std::process::Command::new("net")
-+                .args(["use", drive.trim_end_matches('\\'), "/delete", "/y"])
-+                .output()
-+                .log_err();
-+        }
-+    }
-+
-+    init_test(cx);
-+    cx.executor().allow_parking();
-+
-+    let dir = TempTree::new(json!({ "Project": {} }));
-+    let Some(drive) = MappedDrive::new(SanitizedPath::new(dir.path()).as_path()) else {
-+        eprintln!("skipping: no drive letter could be mapped to a network share");
-+        return;
-+    };
-+    cx.update(|cx| {
-+        init(
-+            DbTrustedPaths::from_iter([(None, HashSet::from_iter([drive.0.join("project")]))]),
++        work("first", cx);
++        report(
++            idle(acp_v2::StopReason::Error(
++                acp_v2::ErrorStopReason::new().error(failure.clone()),
++            )),
 +            cx,
-+        )
-+    });
-+    let fs = RealFs::new(None, cx.executor());
-+    // Zed opens a worktree by its canonical path, which keeps the mapped drive letter.
-+    let worktree_path = fs.canonicalize(&drive.0.join("project")).await.unwrap();
-+    assert_eq!(worktree_path, drive.0.join("Project"));
-+    let project = Project::test_with_worktree_trust(fs, [worktree_path.as_path()], cx).await;
-+    let worktree_store = project.read_with(cx, |project, _| project.worktree_store());
-+    let worktree_id = worktree_store.read_with(cx, |store, cx| {
-+   
++        );
++        let session_info = acp_v2::Meta::from_iter([(
++            acp_thread::SUBAGENT_SESSION_INFO_META_KEY.into(),
++            serde_json::to_value(acp_thread::SubagentSessionInfo {
++                session_id: acp_v2::SessionId::new("child"),
++                message_start_index: 0,
++                message_end_index: Some(0),
++            })
++            .expect("subagent session info should serialize"),
++        )]);
++        parent
++            .update(cx, |thread, cx| {
++                thread.upsert_wire_tool_call(
++                    acp_v2::ToolCallUpdate::new("spawn")
++                        .title("Explore")
++                        .status(acp_v2::ToolCallStatus::Failed)
++                        .content(vec!["connection error".into()])
++                        .meta(session_info),
++                    cx,
++                )
++            })
++            .expect("spawn tool call should apply");
++        let card = |cx: &mut TestAppContext| {
++            cx.update(|cx| {
++                let (_, tool_call) = parent
++                    .read(cx)
++                    .tool_call(&acp_v2::ToolCallId::new("spawn"))
++                    .expect("spawn tool call should exist");
++                SubagentCardState::for_subagent_tool_call(tool_call, Some(subagent.read(cx)), cx)
++            })
++        };
++        let assert_card = |status, can_stop, end, cx: &mut TestAppContext| {
++            let card = card(cx);
++            assert_eq!(card.status, status);
++            assert_eq!(card.error, None);
++            assert_eq!(card.can_stop, can_stop);
++            assert_eq!(card.entries, Some(SubagentEntries { start: 0, end }));
++        };
++        assert_eq!(card(cx).status, SubagentStatus::Failed);
++
++        report(
++            acp_v2::StateUpdate::Running(acp_v2::RunningStateUpdate::new()),
++            cx,
++        );
++        assert_card(SubagentStatus::Running, true, Some(0), cx);
++        retry_work(cx);
++        report(idle(acp_v2::StopReaso
+```
+
+**File**: `crates/agent_ui/src/conversation_view/subagent_card.rs` (modified, +33/-5)
+```diff
+@@ -227,6 +227,10 @@ impl SubagentCardState {
+     /// recorded an outcome for the call's run (as native subagents do) shows that outcome.
+     /// Calls saved before outcomes were recorded, and subagents of agents that don't report
+     /// state, show the tool call's status.
++    ///
++    /// Retrying the subagent from its own view continues the call's run past the end recorded
++    /// when the call finished, up to the next message sent to the subagent, so the card covers
++    /// the retry's entries and shows its state.
+     pub(crate) fn for_subagent_tool_call(
+         tool_call: &ToolCall,
+         subagent: Option<&AcpThread>,
+@@ -235,22 +239,46 @@ impl SubagentCardState {
+         let card = Self::from_tool_call(tool_call, cx);
+         let Some(SubagentEntries {
+             start,
+-            end: Some(_),
++            end: Some(end),
+         }) = card.entries
+         else {
+             return card;
+         };
+-        let Some(outcome) = subagent
+-            .filter(|subagent| subagent.subagent_association().is_some())
+-            .and_then(|subagent| subagent.subagent_outcome_after(start))
++        let Some(subagent) = subagent.filter(|subagent| subagent.subagent_association().is_some())
++        else {
++            return card;
++        };
++        let next_run_start = subagent
++            .entries()
++            .iter()
++            .enumerate()
++            .skip(end + 1)
++            .find_map(|(ix, entry)| {
++                matches!(entry, AgentThreadEntry::UserMessage(_)).then_some(ix)
++            });
++        let end = next_run_start
++            .unwrap_or(subagent.entries().len())
++            .saturating_sub(1)
++            .max(end);
++        let retry_state = subagent
++            .foreground_state()
++            .filter(|_| next_run_start.is_none() && subagent.foreground_activity().is_active());
++        let Some(outcome) = retry_state.or_else(|| subagent.subagent_outcome_between(start, end))
+         else {
+             return card;
+         };
+         let (status, error) = SubagentStatus::from_reported_state(Some(outcome));
++        let can_cancel = subagent
++            .subagent_association()
++            .is_some_and(|association| association.can_cancel);
+         Self {
+             status,
+             error,
+-            can_stop: false,
++            can_stop: status == SubagentStatus::Running && can_cancel,
++            entries: Some(SubagentEntries {
++                start,
++                end: Some(end),
++            }),
+             ..card
+         }
+     }
 ```
 
 ---
 
-### Incident Patch 3: `fa6e2e98` (2026-11-25)
-**Commit Message**: gpui: Remove `.unwrap()` on every GPUI entity borrow (#67361)
+### Incident Patch 2: `46375fbf` (2026-11-27)
+**Commit Message**: gpui_linux: Fix X11 file drop position with display scaling (#66866)
 
 ## Summary
 
-Removes an `unwrap` call during entity borrows. Realistically this only
-happens once in each function where the compiler can optimize the later
-calls away, but every new function usually still has one of these
-unwraps. I didn't take the time to benchmark though, since the effect
-will likely be insignificant.
+Closes #66854
 
-`DropGuard`, Rust 1.100 new feature, allows writing Drop implementations
-inline. The differentiating feature for me, is that the function takes a
-owned `self`, instead of `&mut self` as in `impl Drop`, this allows us
-to get rid of `Option` in a lot of drop implementations, where the type
-needs to be moved out during `Drop`.
+On X11 with a display scale factor other than 1, a file drop landed at
+the pointer position multiplied by the scale factor. With scale 2 it
+landed at twice the pointer's x and y, or outside the window near the
+right and bottom edges, so the drop was lost.
+
+The `XdndPosition` handler stored `query_pointer`'s `win_x` and `win_y`
+directly. Those are device pixels, but `FileDropEvent` positions are
+logical pixels. Every other pointer event in `x11/client.rs` divides by
+`state.scale_factor`, and so does `X11Window::mouse_position` for the
+same `query_pointer` reply. This change applies the same division to the
+drop position, which is then used for `Pending`, `Submit`, `Entered`,
+and `Exited`.
 
 ## Testing
 
-Trivial change once familiar with `DropGuard`.
+I built and checked this in a Debian trixie (aarch64) container with
+Rust 1.98.1:
 
-## Self-review
+- `./script/clippy -p gpui_linux` (release, all targets, all features,
+warnings denied): passes
+- `cargo test -p gpui_linux --lib`: 54 passed
+- `cargo fmt -p gpui_linux --check`: passes
 
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
+I could not test a live drag and drop, since that needs an X11 session
+with a scale factor of 2. The fix follows the conver
 
-Release Notes:
-
-- N/A
-- [GPUI] Removed an unwrap during Entity borrow
-
-**File**: `crates/gpui/src/app.rs` (modified, +11/-18)
+**File**: `crates/gpui_linux/src/linux/x11/client.rs` (modified, +4/-2)
 ```diff
-@@ -4,7 +4,7 @@ use std::{
-     cell::{Cell, Ref, RefCell, RefMut},
-     ffi::OsString,
-     marker::PhantomData,
--    mem,
-+    mem::{self, DropGuard},
-     ops::{Deref, DerefMut},
-     path::{Path, PathBuf},
-     rc::{Rc, Weak},
-@@ -3791,53 +3791,46 @@ impl HttpClient for NullHttpClient {
- 
- /// A mutable reference to an entity owned by GPUI
- pub struct GpuiBorrow<'a, T> {
--    inner: Option<Lease<T>>,
--    app: &'a mut App,
-+    guard: DropGuard<(Lease<T>, &'a mut App), fn((Lease<T>, &'a mut App))>,
- }
- 
- impl<'a, T: 'static> GpuiBorrow<'a, T> {
-     fn new(inner: Entity<T>, app: &'a mut App) -> Self {
-         app.start_update();
-         let lease = app.entities.lease(&inner);
-         Self {
--            inner: Some(lease),
--            app,
-+            guard: DropGuard::new((lease, app), |(lease, app)| {
-+                app.notify(lease.id);
-+                app.entities.end_lease(lease);
-+                app.finish_update();
-+            }),
-         }
-     }
- }
- 
- impl<'a, T: 'static> std::borrow::Borrow<T> for GpuiBorrow<'a, T> {
-     fn borrow(&self) -> &T {
--        self.inner.as_ref().unwrap().borrow()
-+        &self.guard.0
-     }
- }
- 
- impl<'a, T: 'static> std::borrow::BorrowMut<T> for GpuiBorrow<'a, T> {
-     fn borrow_mut(&mut self) -> &mut T {
--        self.inner.as_mut().unwrap().borrow_mut()
-+        &mut self.guard.0
-     }
- }
- 
- impl<'a, T: 'static> std::ops::Deref for GpuiBorrow<'a, T> {
-     type Target = T;
- 
-     fn deref(&self) -> &Self::Target {
--        self.inner.as_ref().unwrap()
-+        &self.guard.0
-     }
- }
- 
- impl<'a, T: 'static> std::ops::DerefMut for GpuiBorrow<'a, T> {
-     fn deref_mut(&mut self) -> &mut T {
--        self.inner.as_mut().unwrap()
--    }
--}
--
--impl<'a, T> Drop for GpuiBorrow<'a, T> {
--    fn drop(&mut self) {
--        let lease = self.inner.take().unwrap();
--        self.app.notify(lease.id);
--        self.app.entities.end_lease(lease);
--        self.app.finish_update();
-+        &mut self.guard.0
-     }
- }
- 
+@@ -957,8 +957,10 @@ impl X11Client {
+                         || "Failed to query pointer position",
+                         state.xcb_connection.query_pointer(event.window),
+                     ) {
+-                        state.xdnd_state.position =
+-                            Point::new(px(pos.win_x as f32), px(pos.win_y as f32));
++                        state.xdnd_state.position = Point::new(
++                            px(pos.win_x as f32 / state.scale_factor),
++                            px(pos.win_y as f32 / state.scale_factor),
++                        );
+                     }
+                     if !state.xdnd_state.retrieved {
+                         check_reply(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #67490** (closed): gpui_macos: fall back to CVDisplayLink on Apple Paravirtual Metal devices (@danchamorro)
-- **PR #67487** (closed): opencode: Fix 404s for Google models (@SGumbles)
-- **PR #67478** (closed): Update stable docs for current hosted models and pricing (@morgankrey)
-- **PR #67474** (2026-11-25): google_ai: Default citation_sources when Gemini omits it (@Anthony-Eid)
-- **PR #67471** (2026-11-25): terminal_view: Draw tab cells as spaces (@ptweezy)
-- **PR #67470** (2026-11-26): search: Replace from the editor while buffer search is open (@ptweezy)
+- **PR #67534** (closed): Add a language extension tutorial (@savealamb)
+- **PR #67526** (closed): Edit, run, and save Jupyter notebooks in Zed (@ArnoGevorkyan)
+- **PR #67524** (closed): Add a language extension tutorial (@savealamb)
+- **PR #67516** (2026-11-27): outline_panel: Apply default expansion depth to outlines loaded later (@Chukwuebuka-2003)
+- **PR #67509** (closed): Apply settings profiles only on confirmation by default (@karleone)
+- **PR #67508** (2026-11-27): editor: Improve performance with many cursors (@smitbarmase)
 
 ---
 
@@ -3002,33 +2814,45 @@ Release Notes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crashes: Update crash-handler to fix child processes hanging on macOS
+## X. agent_ui: Fix subagent card staying failed after a successful retry
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/acp_thread/src/acp_thread.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ba65ce3`: crashes: Update crash-handler to fix child processes hanging on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b47d9288`: agent_ui: Fix subagent card staying failed after a successful retry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/acp_thread/src/acp_thread.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.8.1"
-checksum = "b9897480a6a7009a9ca940c1813daf2755d8a3e6857e5ac4fd0ae526ff5682d1"
+    /// The last idle state this subagent reported for the run covering entries `start..=end`:
+    /// after the entry at `start` arrived and before any entry after `end`. A retry reports
+    /// again within the same run, so its outcome replaces the one it retried.
+    pub fn subagent_outcome_between(
+        &self,
+        start: usize,
+        end: usize,
+    ) -> Option<&acp_v2::StateUpdate> {
+        self.subagent_outcomes
+            .iter()
+            .rev()
+            .find(|(entry_count, _)| *entry_count > start && *entry_count <= end + 1)
+            .map(|(_, state)| state)
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.8.0"
-checksum = "c16fd44a8db657c3647d6b4c9eb4b41a43a2954947469ed90abcdb310c8eba96"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ba65ce3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b47d9288` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

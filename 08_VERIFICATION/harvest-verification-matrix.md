@@ -13751,3 +13751,5 @@
 | `CYCLE-20261127-OS7W` | `2026-11-27T09:44:40.412Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10871` | Yes (`951c774e...`) |
 | `CYCLE-20261127-OWG9` | `2026-11-27T09:44:45.897Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10872` | Yes (`2a5861a1...`) |
 | `CYCLE-20261127-P3FU` | `2026-11-27T09:44:54.954Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10873` | Yes (`a4557fcb...`) |
+| `CYCLE-20261127-AN05` | `2026-11-27T10:01:40.085Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`7dc81e54...`) |
+| `CYCLE-20261127-AN6S` | `2026-11-27T10:01:40.324Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10874` | Yes (`cebc4fe4...`) |

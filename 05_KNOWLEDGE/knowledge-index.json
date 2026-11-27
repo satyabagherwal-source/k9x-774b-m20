@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T09:45:01.136Z",
+  "last_updated": "2026-11-27T10:01:46.084Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26493,
+  "total_items": 26496,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230271,9 +230271,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e28f4864ee86bd4dc1d17b23b14a20ecdd9aaec2cdfe710a8a1cd17d1a00b2e0",
+      "content_hash": "3001026af624d4b619ff20c1bcd3e6f85b18b6908f23de89c7e28c86ead7f557",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T06:46:31.265Z"
+      "persisted_at": "2026-11-27T10:01:45.900Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230283,9 +230283,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce0b480027f0fa0cd601019671ca53097a0bf7791d1900673a2efce9f3ff80da",
+      "content_hash": "f8ac240b4e3057f33186d008c6f7ba2f8e90bfdb7816310e335ffe41bd9d323f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:46:31.470Z"
+      "persisted_at": "2026-11-27T10:01:46.084Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -235408,8 +235408,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "a3ce8d5e",
-      "content_hash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
+      "source_version": "46375fbf",
+      "content_hash": "cebc4fe40367411f283d60ef0d5391c37afc7c83d40ae5bb4400b165a0907fe6",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -235462,6 +235462,11 @@
           "number": 10634,
           "title": "Update crash-handler to fix child processes hanging on macOS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10874,
+          "title": "Fix subagent card staying failed after a successful retry",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235469,7 +235474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:57:24.239Z",
+      "verified_at": "2026-11-27T10:01:40.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235511,10 +235516,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "a3ce8d5e",
-      "content_hash": "80df4082301ea77341bc8e57dd538820ec4814a5f890202b87f4180901834a38",
+      "source_version": "46375fbf",
+      "content_hash": "56881b6141c9b9e12cc4963b72f7d97d1a914881afadb791a71df6d8906dfdc5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T08:57:25.016Z"
+      "persisted_at": "2026-11-27T10:01:40.854Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -235523,10 +235528,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "a3ce8d5e",
-      "content_hash": "fee9efb8e54c52a59847764635da6ab295e0de951bc65d817597bcbe0ad515a1",
+      "source_version": "46375fbf",
+      "content_hash": "8603adf84f0952c253ef367f0a7a60ecf666506cc8fe2c6406fac9f111715254",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:57:25.245Z"
+      "persisted_at": "2026-11-27T10:01:41.054Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -235548,9 +235553,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b9ee9984ab60cef2ed52f2981bc9902cbaa64db22fad167c7844ad0f5949a97",
+      "content_hash": "61d3226f2df909746c36d18f3ff9697a043a65b84250151b56d5296c8a2e3795",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T08:57:40.123Z"
+      "persisted_at": "2026-11-27T10:01:44.531Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -235560,9 +235565,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ed790a46a588311dc3f701d9c9e3220fc352b70fa02c803e59423a085f7fc6d",
+      "content_hash": "37e612918ea4008f143452688097d531e6c2c6bcd995a45afc45146ac8cb8db9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:57:40.337Z"
+      "persisted_at": "2026-11-27T10:01:44.720Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -247223,7 +247228,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "4cc6d7c41e6bcb6e4af8490d015c6bcede5edc9e3d7811752201f86bf76bdf45",
+      "content_hash": "7dc81e541c1cb0a3328eddad49e7dd083ec86d1157f474000a0dac2e679a30a9",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [],
@@ -247232,7 +247237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:22:33.114Z",
+      "verified_at": "2026-11-27T10:01:39.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247249,9 +247254,9 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "3943ed3abddb59b500f3acd5154038230e86c5d95bd08fecd8276c8a3cf5a490",
+      "content_hash": "06f2d06a6e8f475b8d09d0b08cb322707084ec9a30491d174cedf8d6194ee794",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:32:56.175Z"
+      "persisted_at": "2026-11-27T10:01:40.342Z"
     },
     "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots": {
       "item_id": "candidate_directive-tui-retain-unchanged-cells-in-sparse-frame-snapshots",
@@ -247309,9 +247314,9 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
       "repository": "hf-openmoss-team-moss-image-sft-learnings",
       "source_version": "HEAD",
-      "content_hash": "4937c5b3af48ee8c29279d7bf04c41b1125e131cdb2b5fe512cf10d8c525cf6e",
+      "content_hash": "e461011fa01c4f81dba5db0cddbfd15f865733029230eda83807ca437d706f40",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T00:23:25.798Z"
+      "persisted_at": "2026-11-27T10:01:45.125Z"
     },
     "candidate_directive-deps-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-deps-update-all-go-dependencies-main",
@@ -350125,13 +350130,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DWRP-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ARCK-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8377e1f090055c82536666a60a10a4f6beee3c1835e5c1e2279153ea82e3a723",
+      "content_hash": "322f1e3ef73c7d56525c5419a71107afffdaedb76274b492f6a8e8e37292ab90",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T09:08:13.478Z"
+      "persisted_at": "2026-11-27T10:01:45.717Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363597,6 +363602,44 @@
       "content_hash": "12e6d38262a037824a0b8cc0a49d01ea05dafa617a99bf1dcd6121807ca513cd",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T09:45:00.523Z"
+    },
+    "rule-10874": {
+      "learning_id": "rule-10874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10874,
+      "title": "Fix subagent card staying failed after a successful retry",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "46375fbf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T10:01:40.083Z"
+    },
+    "candidate_directive-fix-subagent-card-staying-failed-after-a-successful-retry": {
+      "item_id": "candidate_directive-fix-subagent-card-staying-failed-after-a-successful-retry",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ANEO-fix-subagent-card-staying-failed-after-a-successful-retry.md",
+      "title": "Fix subagent card staying failed after a successful retry",
+      "repository": "zed-industries/zed",
+      "source_version": "46375fbf",
+      "content_hash": "fedf359f52c8f2a44d99e875e97ab60efdb30c6707e8b9826fbca7d2f4b6e69d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T10:01:40.614Z"
+    },
+    "candidate_directive-agent_ui-fix-subagent-card-staying-failed-after-a-successful-retry": {
+      "item_id": "candidate_directive-agent_ui-fix-subagent-card-staying-failed-after-a-successful-retry",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AQ8T-agent_ui-fix-subagent-card-staying-failed-after-a-successful-retry.md",
+      "title": "agent_ui: Fix subagent card staying failed after a successful retry",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da961e3c778052e047bfba8c76041c32161fdbaeab8ba47815c0d491db3c7d7a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T10:01:44.291Z"
     }
   },
   "ai-builder-brain": {
