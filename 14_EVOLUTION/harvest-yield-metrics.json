@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:41:44.638Z",
-  "total_cycles_completed": 13089,
-  "total_learnings_persisted": 13089,
-  "total_rules_promoted": 11816,
+  "last_updated": "2026-11-27T12:59:19.337Z",
+  "total_cycles_completed": 13091,
+  "total_learnings_persisted": 13091,
+  "total_rules_promoted": 11818,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:38:56.335Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:38:58.649Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:39:03.226Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T12:41:44.638Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:59:14.544Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:59:19.337Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

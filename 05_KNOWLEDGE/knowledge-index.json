@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T12:41:51.435Z",
+  "last_updated": "2026-11-27T12:59:27.878Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26583,
+  "total_items": 26588,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b18396106ef8908fb5798d7ff6c52de35d818f4fe2b17c684502e8f29a008064",
+      "content_hash": "367b1fe53ef83c70d2453874d27b21851c070587d234cfa808b4a5567b4bb0e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:34:31.376Z"
+      "persisted_at": "2026-11-27T12:59:27.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4fec51c9a316d48a97004bd1b377f80e2b8f50bba0e72cca8833cbeb7bc1b668",
+      "content_hash": "917f3a0e160ae83ad46192655c128b49a997e855c328534b660334cd1b0b10ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:34:31.617Z"
+      "persisted_at": "2026-11-27T12:59:27.878Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -249709,8 +249709,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "63a96c2d",
-      "content_hash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
+      "source_version": "c74830ff",
+      "content_hash": "11c569e1e6e7f01a5ad2f8013ef6a2860efe0c17a7688c93786c6f03a18a32e8",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -249733,6 +249733,11 @@
           "number": 10449,
           "title": "keep tests off the real preferences, show pictures after a layout reset, and sma",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10906,
+          "title": "match the Mac App Store iStat Menus helper despite its team prefix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249740,7 +249745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:59:14.978Z",
+      "verified_at": "2026-11-27T12:59:18.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249794,10 +249799,10 @@
       "relative_path": "08_VERIFICATION/thaw-app-thaw-verification-protocol-empirical-defect-shield-for-thaw-app-thaw.md",
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app/Thaw",
       "repository": "thaw-app/Thaw",
-      "source_version": "63a96c2d",
-      "content_hash": "0f6443dadf21c5d7b920c3c41d7559127f941d52f7c0c7a4d25cec871e0f2875",
+      "source_version": "c74830ff",
+      "content_hash": "88300a9d351229b31fae4650d63c36b5842f526503e97bdf15498163eb927687",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:59:15.850Z"
+      "persisted_at": "2026-11-27T12:59:20.227Z"
     },
     "learn-github-open-policy-agent-gatekeeper": {
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
@@ -249995,9 +250000,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app-thaw-learnings",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "679316b2636a358b3c2896478b0cdd46f7f3536da9f494f1abc045897801229e",
+      "content_hash": "1f715c3b9cba6b7522994b3b672f9b7a580e3fa0bc0392337f91716598d07165",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:59:21.133Z"
+      "persisted_at": "2026-11-27T12:59:26.749Z"
     },
     "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in": {
       "item_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
@@ -263399,8 +263404,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "97e68d53",
-      "content_hash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
+      "source_version": "16b02ac8",
+      "content_hash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -263453,6 +263458,11 @@
           "number": 10459,
           "title": "Empirical Invariant Guard in pnpm_cmd.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10905,
+          "title": "Empirical Invariant Guard in search.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263460,7 +263470,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T05:00:34.442Z",
+      "verified_at": "2026-11-27T12:59:14.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263502,10 +263512,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "97e68d53",
-      "content_hash": "547db8f3599ac6f699c8b280be79d03fd5b359e3429c7246d5a3edab6c9e11f1",
+      "source_version": "16b02ac8",
+      "content_hash": "ea9db8bc760b459b7e46199a2051110d4fed3b4e35ca4c582cc00144e6b13031",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:00:35.259Z"
+      "persisted_at": "2026-11-27T12:59:15.109Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -263514,10 +263524,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "97e68d53",
-      "content_hash": "81aae6e5438c397edf733ca08634061e21a304d53303dd2d5116b729894a39fc",
+      "source_version": "16b02ac8",
+      "content_hash": "3dc6159ebdc235b608386eeb93310b530bf3176df4b6c28a3dd06e231b2a12cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:00:35.451Z"
+      "persisted_at": "2026-11-27T12:59:15.332Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -263553,9 +263563,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2613e7deb1312f78d0f0609ee4bc7f0da100e8af9ff7baf8f958a58bd489cc1",
+      "content_hash": "35d0122770fd6f6463afcfbb34553d666d41d8cd5becb411b6ed89163041e257",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:00:55.267Z"
+      "persisted_at": "2026-11-27T12:59:25.392Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -263565,9 +263575,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c9ff33dc98e79b5a7fb250163a730378ed65ce431bf086653e50cd6873f58a8",
+      "content_hash": "9cedac188bb89a9521c77777412a57de47913eb5b9cd8c0650d122a5e7c9644f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:00:55.471Z"
+      "persisted_at": "2026-11-27T12:59:25.659Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -302347,10 +302357,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-architecture-intelligence-thaw-app-thaw-core-invariants.md",
       "title": "Architecture Intelligence: thaw-app/Thaw Core Invariants",
       "repository": "thaw-app/Thaw",
-      "source_version": "63a96c2d",
-      "content_hash": "8a856b7592af37b7216f2f28d72d304d75e856b8afd46ae02746f7ff916c4302",
+      "source_version": "c74830ff",
+      "content_hash": "9f1e010c0923dd2440e181d1b90bb2c3368149404f171c46669d0c2dff419422",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:59:15.648Z"
+      "persisted_at": "2026-11-27T12:59:19.945Z"
     },
     "rule-9402": {
       "learning_id": "rule-9402",
@@ -302436,9 +302446,9 @@
       "title": "Architecture Intelligence: thaw-app-thaw-learnings Core Invariants",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "6dc2d12545377782d4aeb6a3fd903d6131ce9c6d333111dcdce61a7c8f41ae03",
+      "content_hash": "7b88f20590ba32b90a5716d2d073387978779a483df23a6a66e01b762e4aa359",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:59:20.947Z"
+      "persisted_at": "2026-11-27T12:59:26.514Z"
     },
     "candidate_directive-pyflakes-fix-false-negative-when-a-name-is-assigned-more-than-once-f823": {
       "item_id": "candidate_directive-pyflakes-fix-false-negative-when-a-name-is-assigned-more-than-once-f823",
@@ -361178,13 +361188,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M1N5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-N9YQ-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a472c3409f6424039979818206477e6236c50a86e7c0797a14575b5063c78ec6",
+      "content_hash": "131c13555531d903f9d672015c8f9aa04ce063ac0ea5d2450ba9604bd14d98bf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:34:31.132Z"
+      "persisted_at": "2026-11-27T12:59:27.416Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -364919,6 +364929,70 @@
       "content_hash": "bcc218dcbb9f0fc42542b1d95ce2d12542f94746083b8d8dcaec13023627a66d",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T12:41:51.239Z"
+    },
+    "rule-10905": {
+      "learning_id": "rule-10905",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10905,
+      "title": "Empirical Invariant Guard in search.rs",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "16b02ac8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:59:14.235Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-search-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-search-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N85Z-empirical-invariant-guard-in-search-rs.md",
+      "title": "Empirical Invariant Guard in search.rs",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de8b5f71dc5c2877919f1e2fd02d85128129645bcdbe16d7df474213badcf533",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T12:59:25.085Z"
+    },
+    "rule-10906": {
+      "learning_id": "rule-10906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10906,
+      "title": "match the Mac App Store iStat Menus helper despite its team prefix",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "c74830ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:59:18.974Z"
+    },
+    "candidate_directive-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix": {
+      "item_id": "candidate_directive-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N3YI-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix.md",
+      "title": "match the Mac App Store iStat Menus helper despite its team prefix",
+      "repository": "thaw-app/Thaw",
+      "source_version": "c74830ff",
+      "content_hash": "3ace63b309ee825f497453c6c59dae8d7728414728ffc284fd156c26096f6e18",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T12:59:19.627Z"
+    },
+    "candidate_directive-layout-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix": {
+      "item_id": "candidate_directive-layout-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N93A-layout-match-the-mac-app-store-istat-menus-helper-despite-its-team-prefix.md",
+      "title": "layout): match the Mac App Store iStat Menus helper despite its team prefix",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "526e85fda71a8ef0180b39dc371cc1a101c1693d06f5f00a48147786dd0ff159",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T12:59:26.279Z"
     }
   },
   "ai-builder-brain": {

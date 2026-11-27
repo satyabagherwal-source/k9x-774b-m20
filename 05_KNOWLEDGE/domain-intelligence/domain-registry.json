@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:41:51.239Z",
+  "last_updated": "2026-11-27T12:59:27.641Z",
   "total_records": 2836,
   "domains": {
     "A": {
@@ -9569,8 +9569,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b18396106ef8908fb5798d7ff6c52de35d818f4fe2b17c684502e8f29a008064",
-      "created_at": "2026-11-27T11:34:31.376Z"
+      "content_hash": "367b1fe53ef83c70d2453874d27b21851c070587d234cfa808b4a5567b4bb0e2",
+      "created_at": "2026-11-27T12:59:27.641Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24953,8 +24953,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "547db8f3599ac6f699c8b280be79d03fd5b359e3429c7246d5a3edab6c9e11f1",
-      "created_at": "2026-11-25T05:00:35.259Z"
+      "content_hash": "ea9db8bc760b459b7e46199a2051110d4fed3b4e35ca4c582cc00144e6b13031",
+      "created_at": "2026-11-27T12:59:15.109Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -24962,8 +24962,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "e2613e7deb1312f78d0f0609ee4bc7f0da100e8af9ff7baf8f958a58bd489cc1",
-      "created_at": "2026-11-25T05:00:55.267Z"
+      "content_hash": "35d0122770fd6f6463afcfbb34553d666d41d8cd5becb411b6ed89163041e257",
+      "created_at": "2026-11-27T12:59:25.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -34239,8 +34239,8 @@
       "title": "Architecture Intelligence: thaw-app/Thaw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-architecture-intelligence-thaw-app-thaw-core-invariants.md",
       "repository": "thaw-app/Thaw",
-      "content_hash": "8a856b7592af37b7216f2f28d72d304d75e856b8afd46ae02746f7ff916c4302",
-      "created_at": "2026-11-25T03:59:15.648Z"
+      "content_hash": "9f1e010c0923dd2440e181d1b90bb2c3368149404f171c46669d0c2dff419422",
+      "created_at": "2026-11-27T12:59:19.945Z"
     },
     "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-chaos-mesh-chaos-mesh-core-invariants",
@@ -34341,8 +34341,8 @@
       "title": "Architecture Intelligence: thaw-app-thaw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-thaw-app-thaw-learnings-architecture-intelligence-thaw-app-thaw-learnings-core-i.md",
       "repository": "thaw-app-thaw-learnings",
-      "content_hash": "6dc2d12545377782d4aeb6a3fd903d6131ce9c6d333111dcdce61a7c8f41ae03",
-      "created_at": "2026-11-25T03:59:20.947Z"
+      "content_hash": "7b88f20590ba32b90a5716d2d073387978779a483df23a6a66e01b762e4aa359",
+      "created_at": "2026-11-27T12:59:26.514Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",

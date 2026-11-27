@@ -13790,3 +13790,5 @@
 | `CYCLE-20261127-0CHF` | `2026-11-27T12:41:37.587Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10902` | Yes (`84d38bad...`) |
 | `CYCLE-20261127-0E1W` | `2026-11-27T12:41:39.620Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10903` | Yes (`fda9e1a3...`) |
 | `CYCLE-20261127-0HWQ` | `2026-11-27T12:41:44.618Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10904` | Yes (`09a9da36...`) |
+| `CYCLE-20261127-N00J` | `2026-11-27T12:59:14.515Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10905` | Yes (`7e54294a...`) |
+| `CYCLE-20261127-N3PK` | `2026-11-27T12:59:19.304Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10906` | Yes (`11c569e1...`) |

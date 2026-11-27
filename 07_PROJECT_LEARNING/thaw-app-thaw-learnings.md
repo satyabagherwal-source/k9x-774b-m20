@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source**: github ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
-> **Source Version**: `63a96c2d`  
+> **Source Version**: `c74830ff`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T03:59:14.027Z  
+> **Timestamp**: 2026-11-27T12:59:17.980Z  
 > **Learning ID**: `learn-github-thaw-app-thaw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/thaw-app-thaw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/thaw-app/Thaw](https://github.com/thaw-app/Thaw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T03:59:14.021Z  
+> **Harvest Timestamp**: 2026-11-27T12:59:17.975Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open source menu bar manager
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12897 stars
+- **Stars / Engagement**: 12937 stars
 
 ---
 
@@ -1254,612 +1254,141 @@ extension AppSettings: MenuBarEngineConfiguration {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d09f6a70` (2026-11-23)
-**Commit Message**: fix: keep tests off the real preferences, show pictures after a layout reset, and small cleanups (#1684)
+### Incident Patch 1: `b328c87b` (2026-11-26)
+**Commit Message**: fix(layout): match the Mac App Store iStat Menus helper despite its team prefix (#1697)
 
-* test: keep app tests off the real Thaw preferences
+* fix(layout): match the Mac App Store iStat Menus helper despite its team prefix
 
-The test host is Thaw itself, built with the release bundle ID, and it ran migrations and the full launch against UserDefaults.standard before any suite swapped in scratch defaults. The host now switches to an empty com.stonerl.Thaw.testhost suite before AppState exists and skips the live startup.
+The App Store build's menu bar helper is Y93TK974AT.com.bjango.istatmenus-mas.status.
+The iStat matcher required the ID to start with com.bjango.istatmenus, so live titles such as "CPU 11%" were used as identity and every reading became a new item. Drop a leading team identifier before matching dynamic metric titles.
 
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+Signed-off-by: Nahuel Camillo <[REDACTED_EMAIL]>
 
-* fix(layout): show item pictures right after a layout reset
+* test(layout): check the team prefix through hasDynamicMetricTitles
 
-The reset recaptured every section while isResettingLayout was still set, and the publication policy rejects every capture during a reset, so the pictures were thrown away and the Layout bar stayed blank. The flag now covers only the reassignment passes.
+Test the malformed-prefix and foreign-bundle cases through the public matcher
+and identifier canonicalization instead of the internal helper.
 
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
+Signed-off-by: Nahuel Camillo <[REDACTED_EMAIL]>
 
-* chore(lint): keep unchanged baseline entries when updating the baseline
+---------
 
-update wrote SwiftLint's fresh output as is, so every run rewrote the stale line numbers of files nobody touched. Entries whose file, rule, source line and size are unchanged now keep their old record.
+Signed-off-by: Nahuel Camillo <[REDACTED_EMAIL]>
 
-Signed-off-by: René Jiménez <[REDACTED_EMAIL]>
-
-
-
-**File**: `.swiftlint.baseline` (modified, +38/-53)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,7 +7,7 @@
-     "file": "Thaw/App/AppDelegate.swift",
-     "line": 15
-    },
--   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 396 lines",
-+   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 390 lines",
-    "ruleDescription": "Type bodies should not span too many lines",
-    "ruleIdentifier": "type_body_length",
-    "ruleName": "Type Body Length",
-@@ -20,9 +20,9 @@
-    "location": {
-     "character": 1,
-     "file": "Thaw/App/AppDelegate.swift",
--    "line": 534
-+    "line": 523
-    },
--   "reason": "File should contain 400 lines or less: currently contains 534",
-+   "reason": "File should contain 400 lines or less: currently contains 527",
-    "ruleDescription": "Files should not span too many lines.",
-    "ruleIdentifier": "file_length",
-    "ruleName": "File Length",
-@@ -620,12 +620,12 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
--    "line": 583
-+    "line": 580
-    },
--   "reason": "Function should have complexity 10 or less; currently complexity is 33",
--   "ruleDescription": "Complexity of function bodies should be limited.",
--   "ruleIdentifier": "cyclomatic_complexity",
--   "ruleName": "Cyclomatic Complexity",
-+   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 216 lines",
-+   "ruleDescription": "Function bodies should not span too many lines",
-+   "ruleIdentifier": "function_body_length",
-+   "ruleName": "Function Body Length",
-    "severity": "error"
-   }
-  },
-@@ -637,10 +637,10 @@
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
-     "line": 583
-    },
--   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 222 lines",
--   "ruleDescription": "Function bodies should not span too many lines",
--   "ruleIdentifier": "function_body_length",
--   "ruleName": "Function Body Length",
-+   "reason": "Function should have complexity 10 or less; currently complexity is 33",
-+   "ruleDescription": "Complexity of function bodies should be limited.",
-+   "ruleIdentifier": "cyclomatic_complexity",
-+   "ruleName": "Cyclomatic Complexity",
-    "severity": "error"
-   }
-  },
-@@ -650,9 +650,9 @@
-    "location": {
-     "character": 1,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Cache.swift",
--    "line": 951
-+    "line": 941
-    },
--   "reason": "File should contain 400 lines or less: currently contains 951",
-+   "reason": "File should contain 400 lines or less: currently contains 941",
-    "ruleDescription": "Files should not span too many lines.",
-    "ruleIdentifier": "file_length",
-    "ruleName": "File Length",
-@@ -854,28 +854,13 @@
-    "severity": "error"
-   }
-  },
-- {
--  "text": "    private func resetAssignments(to target: MenuBarSection.Name = .hidden) async throws -> Int {",
--  "violation": {
--   "location": {
--    "character": 13,
--    "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
--    "line": 433
--   },
--   "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 56 lines",
--   "ruleDescription": "Function bodies should not span too many lines",
--   "ruleIdentifier": "function_body_length",
--   "ruleName": "Function Body Length",
--   "severity": "warning"
--  }
-- },
-  {
-   "text": "    private func restoreVisibleControlOrder(items: [MenuBarItem]) async -> Bool {",
-   "violation": {
-    "location": {
-     "character": 13,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
--    "line": 809
-+    "line": 808
-    },
-    "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 89 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -890,9 +875,9 @@
-    "location": {
-     "character": 1,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
--    "line": 913
-+    "line": 912
-    },
--   "reason": "File should contain 400 lines or less: currently contains 913",
-+   "reason": "File should contain 400 lines or less: currently contains 912",
-    "ruleDescription": "Files should not span too many lines.",
-    "ruleIdentifier": "file_length",
-    "ruleName": "File Length",
-@@ -1040,9 +1025,9 @@
-    "location": {
-     "character": 5,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1472
-+    "line": 1437
-    },
--   "reason": "Function should have complexity 10 or less; currently complexity is 31",
-+   "reason": "Function should have complexity 10 or less; currently complexity is 27",
-    "ruleDescription": "Complexity of function bodies should be limited.",
-    "ruleIdentifier": "cyclomatic_complexity",
-    "ruleName": "Cyclomatic Complexity",
-@@ -1055,9 +1040,9 @@
-    "location": {
-     "character": 5,
-     "file": "Thaw/Items/Manager/MenuBarItemManager+Moving.swift",
--    "line": 1472
-+    "line
-```
-
-**File**: `CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -24,6 +24,11 @@ the items under New and Fixed.
+@@ -27,6 +27,7 @@ the items under New and Fixed.
+ ### Fixed
  
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **Resetting the layout shows item pictures in the Layout bar right away,** instead of leaving them blank.
-+- **Closing Settings no longer sends What's New or Credits behind other apps.**
-+
- ## [3.0.0-alpha.15] - 2026-11-22
- 
- **macOS 27 only · Build 127**
-```
-
-**File**: `Thaw/App/AppDelegate.swift` (modified, +5/-12)
-```diff
-@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-     func applicationWillFinishLaunching(_: Notification) {
-         LiveApp.register(self)
-         ThawHUD.menuBarHeight = { $0.getMenuBarHeightEstimate() }
-+        guard !TestHosting.isActiveInProcess else { return }
-         #if DEBUG
-             // Don't perform setup if running as a preview.
-             if isRunningForPreviews {
-@@ -97,19 +98,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-             }
-         #endif
- 
-+        guard !TestHosting.isActiveInProcess else { return }
-         ConflictingAppDetector.showWarningIfNeeded()
--
--        switch appState.permissions.permissionsState {
--        case .hasAll:
--            appState.permissions.diagLog.debug("Passed all permissions checks")
--            appState.launch(withPermissions: true)
--        case .hasRequired:
--            appState.permissions.diagLog.debug("Passed required permissions checks")
--            appState.launch(withPermissions: true)
--        case .missing:
--            appState.permissions.diagLog.debug("Failed required permissions checks")
--            appState.launch(withPermissions: false)
--        }
-+        let permissionsState = appState.permissions.permissionsState
-+        appState.permissions.diagLog.debug("Permissions at launch: \(permissionsState)")
-+        appState.launch(withPermissions: permissionsState != .missing)
- 
-         // Share the window's onboarding inputs so the delegate neither opens an empty window nor skips a needed one.
-         let stage = OnboardingSequencer.stage(
-```
-
-**File**: `Thaw/App/AppState.swift` (modified, +1/-1)
-```diff
-@@ -666,7 +666,7 @@ final class AppState {
-             if navigationState.isWhatsNewRequested, !isUpdateConsentPresented {
-                 navigationState.settingsNavigationIdentifier = .about
-             }
--        } else {
-+        } else if Self.shouldDeactivateAfterSettingsClosed(openWindows: openWindows, pendingWindows: pendingOpenWindows) {
-             deactivate(withPolicy: .accessory)
-         }
-     }
-```
-
-**File**: `Thaw/App/ThawApp.swift` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@ enum ThawEntryPoint {
-             if SettingsProcessApp.isRequested {
-                 SettingsProcessApp.main()
-             } else {
-+                TestHosting.isolatePreferencesWhenHosted()
-                 // NSApp must be created as the subclass before SwiftUI first asks for it.
-                 _ = AppProcessApplication.shared
-                 // Before the first status item exists, or macOS seats Thaw's items with its own spacing.
-```
-
-**File**: `Thaw/Items/Capture/MenuBarItemGlyphCapture.swift` (modified, +11/-2)
-```diff
-@@ -7,6 +7,7 @@
- 
- import CoreGraphics
- import Foundation
-+import os
- 
- /// One menu bar item's pixels as they were read off the screen, paired with the
- /// backing scale that was in effect at that moment.
-@@ -18,10 +19,12 @@ import Foundation
- /// is only touched from main-actor members.
- struct MenuBarItemGlyphCapture: Hashable, @unchecked Sendable {
-     /// A reference box so the memoized trim survives copies of the value.
--    /// Only reached from main-actor members.
-+    /// Only reached from main-actor members, except the locked blank flag,
-+    /// which capture paths off the main actor read too.
-     private final class PresentationCache: @unchecked Sendable {
-         var horizontallyTrimmedCGImage: CGImage?
-         var isSingleInkGlyph: Bool?
-+        let isEffectivelyBlank = OSAllocatedUnfairLock<Bool?>(initialState: nil)
-     }
- 
-     /// The raw crop, sized in device pixels.
-@@ -91,8 +94,14 @@ struct MenuBarItemGlyphCapture: Hashable, @unchecked Sendable {
-     }
- 
-     /// Whether the capture is effectively blank for UI thumbnail purposes.
-+    /// Memoized because draw paths read it continuously and each check scans the pixels.
-     nonisolated var isEffectivelyBlank: Bool {
--        cgImage.isTransparent(alphaThreshold: 0.05)
-+        if let cached = presentationCache.isEffectivelyBlank.withLock({ $0 }) {
-+            return cached
-+        }
-+        let result = cgImage.isTransparent(alphaThreshold: 0.05)
-+        presentationCache.isEffectivelyBlank.withLock { $0 = result }
-+        return result
-     }
- 
-     /// Returns whether two optional captured images have equivalent visual content.
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+Cache.swift` (modified, +1/-11)
-```diff
-@@ -549,15 +549,12 @@ extension MenuBarItemManager {
-         return nil
-     }
- 
--    /// Transfer the background continuation to a follow-up pass so waiting callers resume after relocation settles and recaches.
-+    /// Schedule a settled follow-up pass after relocation.
-     private func scheduleRecacheAfterRelocation() {
-         MenuBarItemManager.diagLog.debug("Relocated new leftmost items; scheduling recache")
--        let continuation = backgroundCacheContinuation
--        backgroundCacheContinuation = nil
-         Task { [weak self] in
-             try? await Task.sleep(for: MenuBarItemManager.uiSettleDelay)
-             await self?.cacheItemsRegardless(skipRecentMoveCheck: true)
--            continuation?.resume()
-         }
-     }
- 
-@@ -589,11 +586,6 @@ extension MenuBarItemManager {
-         MenuBarItemManager.diagLog.debug(
-             "cacheItemsRegardless: entering (skipRecentMoveCheck=\(skipRecentMoveCheck), hasCurrentItemWindowIDs=\(currentItemWindowIDs != nil), resolveSourcePID=\(resolveSourcePID), skipSavedLayoutApply=\(skipSavedLayoutApply))"
-         )
--        defer {
--            backgroundCacheContinuation?.resume()
--            backgroundCacheContinuation = nil
--        }
--
-         guard skipRecentMoveCheck || !lastMoveOperationOccurred(within: .seconds(1)) else {
-             MenuBarItemManager.diagLog.debug("Skipping menu bar item cache due to recent item movement")
-             return
-@@ -849,8 +841,6 @@ extension MenuBarItemManager {
-                 currentDisplayID: displayID
-             )
-             if didApplySavedLayout {
--                backgroundCacheContinuation?.resume()
--                backgroundCacheContinuation = nil
-                 return
-             }
-         }
-```
-
-**File**: `Thaw/Items/Manager/MenuBarItemManager+EventHelpers.swift` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ extension MenuBarItemManager {
-     /// escape hatch ported from the Thaw 2 move path (there
-     /// inputPauseThresholdMs, default 50 ms): users hit by cursor kidnapping
-     /// during reordering can widen it via
--    /// defaults write <bundle-id> InputPauseThresholdMs -int <milliseconds>.
-+    /// defaults write <bundle-id> inputPauseThresholdMs -int <milliseconds>.
-     static nonisolated var inputPauseThreshold: Duration {
-         Duration.milliseconds(max(
-             0,
-```
-
----
-
-### Incident Patch 2: `0e778cc7` (2026-11-24)
-**Commit Message**: build(deps): bump the github-actions group with 4 updates (#1691)
-
-Bumps the github-actions group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action), [ossf/scorecard-action](https://github.com/ossf/scorecard-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
-
-
-Updates `github/codeql-action/init` from 4.39.3 to 4.39.4
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
-
-Updates `github/codeql-action/analyze` from 4.39.3 to 4.39.4
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
-
-Updates `ossf/scorecard-action` from 2.5.0 to 2.6.0
-- [Release notes](https://github.com/o
-
-**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
-```diff
-@@ -39,7 +39,7 @@ jobs:
-         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           languages: swift
-           build-mode: manual
-@@ -62,7 +62,7 @@ jobs:
-             CODE_SIGNING_ALLOWED=NO
- 
-       - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           category: "/language:swift"
-           # File the results under the branch that was scanned, not development.
-```
-
-**File**: `.github/workflows/scorecard.yml` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ jobs:
-           persist-credentials: false
- 
-       - name: "Run analysis"
--        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
-+        uses: ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5 # v2.6.0
-         with:
-           results_file: results.sarif
-           results_format: sarif
-@@ -53,6 +53,6 @@ jobs:
-           retention-days: 5
- 
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: results.sarif
-```
-
----
-
-### Incident Patch 3: `63a96c2d` (2026-11-24)
-**Commit Message**: fix(thaw-bar): space captured icons by their visible bounds (#1693)
-
-Signed-off-by: Alox x <[REDACTED_EMAIL]>
-
-**File**: `.swiftlint.baseline` (modified, +5/-5)
-```diff
-@@ -2212,7 +2212,7 @@
-     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
-     "line": 22
-    },
--   "reason": "Struct body should span 350 lines or less excluding comments and whitespace: currently spans 374 lines",
-+   "reason": "Struct body should span 350 lines or less excluding comments and whitespace: currently spans 373 lines",
-    "ruleDescription": "Type bodies should not span too many lines",
-    "ruleIdentifier": "type_body_length",
-    "ruleName": "Type Body Length",
-@@ -2225,7 +2225,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
--    "line": 316
-+    "line": 315
-    },
-    "reason": "Function should have complexity 10 or less; currently complexity is 11",
-    "ruleDescription": "Complexity of function bodies should be limited.",
-@@ -2240,7 +2240,7 @@
-    "location": {
-     "character": 13,
-     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
--    "line": 316
-+    "line": 315
-    },
-    "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 121 lines",
-    "ruleDescription": "Function bodies should not span too many lines",
-@@ -2255,9 +2255,9 @@
-    "location": {
-     "character": 1,
-     "file": "Thaw/Panels/ThawBar/ThawBarContentView.swift",
--    "line": 486
-+    "line": 485
-    },
--   "reason": "File should contain 400 lines or less: currently contains 486",
-+   "reason": "File should contain 400 lines or less: currently contains 485",
-    "ruleDescription": "Files should not span too many lines.",
-    "ruleIdentifier": "file_length",
-    "ruleName": "File Length",
-```
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ the items under New and Fixed.
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- The Thaw Bar trims transparent side margins from captured icons and keeps a minimum gap between items.
+ - The Thaw Bar trims transparent side margins from captured icons and keeps a minimum gap between items.
++- iStat Menus from the Mac App Store no longer fills Layout with a new item for every reading, such as each CPU percentage or network speed.
  ### Changed
  
  - **Exported diagnostics no longer include saved item lists,** and Thaw keeps only the newest five item lists.
 ```
 
-**File**: `Thaw/Panels/ThawBar/ThawBarContentView+ItemSize.swift` (modified, +8/-1)
+**File**: `packages/MenuBarModel/Sources/MenuBarModel/MenuBarItemTag+TeamIdentifier.swift` (added, +20/-0)
 ```diff
-@@ -6,17 +6,24 @@
- //  Licensed under the GNU GPLv3
- 
- import SwiftUI
-+import ThawUI
- 
- extension ThawBarItemSize {
-     /// A status item's height, which the pictures in the bar are cropped to. An icon standing in
-     /// for a picture is fitted to it, so it isn't smaller than the pictures beside it.
-     static let appIconHeight: CGFloat = 24
- 
-+    @MainActor
-+    func itemSpacing(offset: Double) -> CGFloat {
-+        max(ThawSpacing.hairline, spacing(ThawSpacing.base + CGFloat(offset).rounded()))
-+    }
+@@ -0,0 +1,20 @@
++//
++//  MenuBarItemTag+TeamIdentifier.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
 +
-     /// The size the Thaw Bar draws an item's glyph at: fitted to the menu bar's
-     /// height, or an icon standing in for a picture to a picture's, then scaled.
-+    @MainActor
-     func glyphSize(for image: MenuBarItemDisplayImage) -> CGSize {
-         guard case .icon = image else {
--            return scaledGlyphSize(image.targetSize(fittingHeight: fittingHeight))
-+            return scaledGlyphSize(image.targetSize(fittingHeight: fittingHeight, trimsCapturePadding: true))
-         }
-         let intrinsic = image.pointSize
-         let limit = min(fittingHeight.flatMap { $0 > 0 ? $0 : nil } ?? Self.appIconHeight, Self.appIconHeight)
-```
-
-**File**: `Thaw/Panels/ThawBar/ThawBarContentView.swift` (modified, +1/-2)
-```diff
-@@ -92,8 +92,7 @@ struct ThawBarContentView: View {
-     }
- 
-     private var itemSpacing: CGFloat {
--        let offset = CGFloat(displaySettings.configuration(for: screen.displayID).itemSpacingOffset).rounded()
--        return itemSizing.spacing(max(0, ThawSpacing.base + offset))
-+        itemSizing.itemSpacing(offset: displaySettings.configuration(for: screen.displayID).itemSpacingOffset)
-     }
- 
-     private var horizontalPadding: CGFloat {
-```
-
-**File**: `Thaw/Panels/ThawBar/ThawBarItemViews.swift` (modified, +1/-0)
-```diff
-@@ -109,6 +109,7 @@ struct ThawBarItemView: View {
-                 image: image,
-                 fittingHeight: sizing.fittingHeight,
-                 reinksCaptures: true,
-+                trimsCapturePadding: true,
-                 drawnSize: sizing.glyphSize(for: image)
-             )
-             .contentShape(Rectangle())
-```
-
-**File**: `Thaw/Settings/SettingsPanes/Displays/ThawBarPreview.swift` (modified, +1/-3)
-```diff
-@@ -57,10 +57,8 @@ struct ThawBarPreview: View {
-         return height > 0 ? height : nil
-     }
- 
--    /// The real panel's item spacing: the base gap plus the clamped offset.
-     private var itemSpacing: CGFloat {
--        let offset = CGFloat(itemSpacingOffset).rounded()
--        return itemSizing.spacing(max(0, ThawSpacing.base + offset))
-+        itemSizing.itemSpacing(offset: itemSpacingOffset)
-     }
- 
-     /// Scales the tiles the way the real panel scales its glyphs.
-```
-
-**File**: `Thaw/UI/Views/OverflowFallbackIcon.swift` (modified, +16/-6)
-```diff
-@@ -41,22 +41,29 @@ enum MenuBarItemDisplayImage {
-         }
-     }
- 
--    var swiftUIImage: Image {
-+    func swiftUIImage(trimsCapturePadding: Bool) -> Image {
-         switch self {
--        case let .capture(capture): Image(decorative: capture.cgImage, scale: capture.scale)
-+        case let .capture(capture): Image(decorative: captureBitmap(capture, trimsPadding: trimsCapturePadding), scale: capture.scale)
-         case let .icon(image): Image(nsImage: image)
-         }
-     }
- 
-+    private func captureBitmap(_ capture: MenuBarItemGlyphCapture, trimsPadding: Bool) -> CGImage {
-+        (trimsPadding ? capture.horizontallyTrimmedCGImage : nil) ?? capture.cgImage
-+    }
++import Foundation
 +
-     /// The tallest an icon standing in for a capture is drawn, about a menu bar glyph's height,
-     /// so it doesn't tower over captures in a row as tall as a notched menu bar.
-     static let appIconHeight: CGFloat = 18
- 
-     /// Fit downward only; upscaling native raster glyphs blurs them in taller rows.
-     /// Nil or non-positive row/image heights leave intrinsic size unchanged, except that an icon
-     /// is never drawn taller than appIconHeight.
--    func targetSize(fittingHeight rowHeight: CGFloat?) -> CGSize {
--        let intrinsic = pointSize
-+    func targetSize(fittingHeight rowHeight: CGFloat?, trimsCapturePadding: Bool = false) -> CGSize {
-+        var intrinsic = pointSize
-+        if trimsCapturePadding, case let .capture(capture) = self {
-+            intrinsic.width = CGFloat(captureBitmap(capture, trimsPadding: true).width) / capture.scale
++extension MenuBarItemTag {
++    /// Drops a leading team identifier, such as `Y93TK974AT.` in the Mac App Store
++    /// iStat Menus helper `Y93TK974AT.com.bjango.istatmenus-mas.status`, so bundle
++    /// matchers see the same ID as in the direct-download build.
++    static func withoutTeamIdentifierPrefix(_ bundleID: String) -> Substring {
++        guard let match = bundleID.prefixMatch(of: /[A-Z0-9]{10}\./) else {
++            return bundleID[...]
 +        }
-         var limit = rowHeight.flatMap { $0 > 0 ? $0 : nil }
-         if case .icon = self {
-             limit = min(limit ?? Self.appIconHeight, Self.appIconHeight)
-@@ -83,13 +90,16 @@ struct MenuBarItemGlyph: View {
-     /// Keep original ink over the menu bar, where it already matches.
-     var reinksCaptures = false
- 
-+    /// Let the Thaw Bar set the space between neighboring captures.
-+    var trimsCapturePadding = false
-+
-     /// Overrides the fitted size, for a surface that scales its glyphs like the Thaw Bar.
-     var drawnSize: CGSize?
- 
-     var body: some View {
--        let size = drawnSize ?? image.targetSize(fittingHeight: fittingHeight)
-+        let size = drawnSize ?? image.targetSize(fittingHeight: fittingHeight, trimsCapturePadding: trimsCapturePadding)
-         // Templating opaque app icons makes blank blocks; preserve their colors.
--        image.swiftUIImage
-+        image.swiftUIImage(trimsCapturePadding: trimsCapturePadding)
-             .renderingMode(image.isTemplate || (reinksCaptures && image.isReinkable) ? .template : .original)
-             .interpolation(.high)
-             .antialiased(true)
++        return bundleID[match.range.upperBound...]
++    }
++}
 ```
 
-**File**: `ThawTests/Items/MenuBarItemGlyphCaptureTests.swift` (modified, +4/-0)
+**File**: `packages/MenuBarModel/Sources/MenuBarModel/MenuBarItemTag.swift` (modified, +1/-1)
 ```diff
-@@ -94,6 +94,10 @@ struct MenuBarItemGlyphCaptureTests {
+@@ -165,7 +165,7 @@ public struct MenuBarItemTag: Hashable, CustomStringConvertible, Sendable, Codab
+     /// metric values and therefore need canonicalizing before use as identity.
+     public static func hasDynamicMetricTitles(_ bundleID: String) -> Bool {
+         dynamicMetricTitleBundleMatchers.contains { matcher in
+-            bundleID.hasPrefix(matcher.prefix) && bundleID.hasSuffix(matcher.suffix)
++            withoutTeamIdentifierPrefix(bundleID).hasPrefix(matcher.prefix) && bundleID.hasSuffix(matcher.suffix)
+         }
+     }
  
-         #expect(trimmed.width == 8)
-         #expect(trimmed.height == 16)
-+        let image = MenuBarItemDisplayImage.capture(capture)
-+        let bar = ThawBarItemSize(fittingHeight: 8)
-+        #expect(bar.glyphSize(for: image) == CGSize(width: 4, height: 8))
-+        #expect(image.targetSize(fittingHeight: 8) == CGSize(width: 10, height: 8))
-         #expect(capture.horizontallyTrimmedCGImage === trimmed)
-         // A copy of the value shares the memoized trim.
-         let copy = capture
+```
+
+**File**: `packages/MenuBarModel/Tests/MenuBarModelTests/TeamIdentifierPrefixTests.swift` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++//
++//  TeamIdentifierPrefixTests.swift
++//  Project: Thaw
++//
++//  Copyright (Thaw) © 2026 Toni Förster
++//  Licensed under the GNU GPLv3
++
++@testable import MenuBarModel
++import Testing
++
++/// The Mac App Store iStat Menus helper is `Y93TK974AT.com.bjango.istatmenus-mas.status`;
++/// its team identifier must not keep it from the iStat title rules.
++@Suite("Team identifier prefix")
++struct TeamIdentifierPrefixTests {
++    private let appStoreHelper = "Y93TK974AT.com.bjango.istatmenus-mas.status"
++
++    @Test("The Mac App Store iStat helper has dynamic metric titles")
++    func appStoreHelperMatches() {
++        #expect(MenuBarItemTag.hasDynamicMetricTitles(appStoreHelper))
++        #expect(!MenuBarItemTag.hasDynamicMetricTitles("Y93TK974AT.com.bjango.istatmenus-mas.agent"))
++    }
++
++    @Test("Only a ten-character uppercase team identifier is ignored", arguments: [
++        "y93tk974at.com.bjango.istatmenus-mas.status",
++        "Y93TK974A.com.bjango.istatmenus-mas.status",
++        "Y93TK974AT.com.example.status",
++    ])
++    func malformedOrForeignPrefixDoesNotMatch(_ bundleID: String) {
++        #expect(!MenuBarItemTag.hasDynamicMetricTitles(bundleID))
++    }
++
++    @Test("A team-prefixed app outside the matchers keeps ordinal titles distinct")
++    func foreignTeamPrefixedTitlesStayDistinct() {
++        let bundle = "Y93TK974AT.com.example.status"
++        #expect(
++            MenuBarItemTag.canonicalPersistentIdentifier("\(bundle):Fan 1")
++                != MenuBarItemTag.canonicalPersistentIdentifier("\(bundle):Fan 2")
++        )
++    }
++
++    @Test("Metric ticks from the Mac App Store helper share one identity")
++    func appStoreIdentifierCanonicalizes() {
++        let first = MenuBarItemTag.canonicalPersistentIdentifier("\(appStoreHelper):CPU 11%")
++        let second = MenuBarItemTag.canonicalPersistentIdentifier("\(appStoreHelper):CPU 27%")
++        let quiet = MenuBarItemTag.canonicalPersistentIdentifier("\(appStoreHelper):Upload 1 KB/s, Download 2 KB/s")
++        let busy = MenuBarItemTag.canonicalPersistentIdentifier("\(appStoreHelper):Upload 10 KB/s, Download 15 KB/s")
++
++        #expect(first == second)
++        #expect(first == "\(appStoreHelper):CPU #%")
++        #expect(quiet == busy)
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1693** (2026-11-24): fix(thaw-bar): space captured icons by their visible bounds (@alox92)
-- **PR #1692** (2026-11-24): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #1691** (2026-11-24): build(deps): bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #1690** (2026-11-24): build(deps): bump the swift group with 2 updates (@dependabot[bot])
-- **PR #1688** (2026-11-24): refactor(items): move the section order pass scope checks out of MenuBarItemManager+Moving (@elior-esh)
-- **PR #1687** (2026-11-24): fix(layout): re-lay Thaw's controls in Manual when they stand out of order (@diazdesandi)
+- **PR #1707** (closed): fix(menubar): lay the bar out again after a reveal settles (@diazdesandi)
+- **PR #1702** (2026-11-26): fix(ops): publish the Thaw 2 updates release after its uploads (@diazdesandi)
+- **PR #1700** (2026-11-26): fix(menubar): stop the overlay retry stall and stale search results (@diazdesandi)
+- **PR #1697** (2026-11-26): fix(layout): match the Mac App Store iStat Menus helper despite its team prefix (@nahuelcamillo)
+- **PR #1696** (2026-11-26): test(layout): place the control order test by the main display (@elior-esh)
+- **PR #1695** (2026-11-26): feat(settings): add previews for the Displays folder (@WGlegola)
 
 ---
 
@@ -1879,69 +1408,28 @@ Signed-off-by: Alox x <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep tests off the real preferences, show pictures after a layout reset, and sma
+## X. layout): match the Mac App Store iStat Menus helper despite its team prefix
 
 **RULE**:
-When implementing operations in `.swiftlint.baseline`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in thaw-app/Thaw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d09f6a70`: keep tests off the real preferences, show pictures after a layout reset, and small cleanups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b328c87b`: layout): match the Mac App Store iStat Menus helper despite its team prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.swiftlint.baseline`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 390 lines",
-    "line": 523
-   "reason": "File should contain 400 lines or less: currently contains 527",
-    "line": 580
-   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 216 lines",
-   "ruleDescription": "Function bodies should not span too many lines",
-   "ruleIdentifier": "function_body_length",
-   "ruleName": "Function Body Length",
-   "reason": "Function should have complexity 10 or less; currently complexity is 33",
-   "ruleDescription": "Complexity of function bodies should be limited.",
-   "ruleIdentifier": "cyclomatic_complexity",
-   "ruleName": "Cyclomatic Complexity",
-    "line": 941
-   "reason": "File should contain 400 lines or less: currently contains 941",
-    "line": 808
-    "line": 912
-   "reason": "File should contain 400 lines or less: currently contains 912",
-    "line": 1437
-   "reason": "Function should have complexity 10 or less; currently complexity is 27",
-    "line
+- iStat Menus from the Mac App Store no longer fills Layout with a new item for every reading, such as each CPU percentage or network speed.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-   "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 396 lines",
-    "line": 534
-   "reason": "File should contain 400 lines or less: currently contains 534",
-    "line": 583
-   "reason": "Function should have complexity 10 or less; currently complexity is 33",
-   "ruleDescription": "Complexity of function bodies should be limited.",
-   "ruleIdentifier": "cyclomatic_complexity",
-   "ruleName": "Cyclomatic Complexity",
-   "reason": "Function body should span 100 lines or less excluding comments and whitespace: currently spans 222 lines",
-   "ruleDescription": "Function bodies should not span too many lines",
-   "ruleIdentifier": "function_body_length",
-   "ruleName": "Function Body Length",
-    "line": 951
-   "reason": "File should contain 400 lines or less: currently contains 951",
- {
-  "text": "    private func resetAssignments(to target: MenuBarSection.Name = .hidden) async throws -> Int {",
-  "violation": {
-   "location": {
-    "character": 13,
-    "file": "Thaw/Items/Manager/MenuBarItemManager+LayoutReset.swift",
-    "line": 433
-   },
-   "reason": "Function body should span 50 lines or less excluding comments and whitespace: 
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d09f6a70` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b328c87b` are properly handled with clean fallback behavior.

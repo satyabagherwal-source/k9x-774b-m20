@@ -7833,20 +7833,20 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "63a96c2d",
+    "sourceVersion": "c74830ff",
     "license": "GPL-3.0",
-    "contentHash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
-    "lastHarvestedAt": "2026-11-25T03:59:15.205Z",
+    "contentHash": "11c569e1e6e7f01a5ad2f8013ef6a2860efe0c17a7688c93786c6f03a18a32e8",
+    "lastHarvestedAt": "2026-11-27T12:59:19.321Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "97e68d53",
+    "sourceVersion": "16b02ac8",
     "license": "Apache-2.0",
-    "contentHash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
-    "lastHarvestedAt": "2026-11-25T05:00:34.719Z",
+    "contentHash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
+    "lastHarvestedAt": "2026-11-27T12:59:14.531Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

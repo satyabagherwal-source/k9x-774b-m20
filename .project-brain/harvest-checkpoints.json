@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:41:44.642Z",
+  "last_updated": "2026-11-27T12:59:19.341Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "2629b49454e1e32854c8f1da66839f7f018062fec3b3f747a336de7532776b2a",
-      "verified_at": "2026-11-25T03:59:15.221Z",
+      "content_hash": "11c569e1e6e7f01a5ad2f8013ef6a2860efe0c17a7688c93786c6f03a18a32e8",
+      "verified_at": "2026-11-27T12:59:19.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:59:15.221Z"
+      "last_updated": "2026-11-27T12:59:19.340Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
-      "verified_at": "2026-11-25T05:00:34.736Z",
+      "content_hash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
+      "verified_at": "2026-11-27T12:59:14.549Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:00:34.736Z"
+      "last_updated": "2026-11-27T12:59:14.549Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

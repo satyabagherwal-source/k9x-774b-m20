@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-LKDF",
-    "timestamp": "2026-11-26T06:10:32.931Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "59229656970acc80a6f9d42a57b6ae4e475edb9cc8281fc7c4bad2757051c74e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LOR4",
-    "timestamp": "2026-11-26T06:10:38.608Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-VGGU",
     "timestamp": "2026-11-26T06:18:14.430Z",
     "repository": "IFM/PAN2",
@@ -7490,6 +7460,36 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-N00J",
+    "timestamp": "2026-11-27T12:59:14.515Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "7e54294a8d40c46012034c16fbd49c58a09025dd2d3519b6a410cebf5d3f0f6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-N3PK",
+    "timestamp": "2026-11-27T12:59:19.304Z",
+    "repository": "thaw-app/Thaw",
+    "learningId": "learn-github-thaw-app-thaw",
+    "contentHash": "11c569e1e6e7f01a5ad2f8013ef6a2860efe0c17a7688c93786c6f03a18a32e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
