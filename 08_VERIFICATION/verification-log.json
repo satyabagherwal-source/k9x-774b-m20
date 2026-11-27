@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-XSBQ",
-    "timestamp": "2026-11-26T04:56:04.262Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "ebb60dc903e8921ebdbcaa38ffb3242f02eaca861af6e34714b1724562bc146c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-9GX9",
     "timestamp": "2026-11-26T05:05:09.357Z",
     "repository": "laion/clap-htsat-fused",
@@ -7492,6 +7477,21 @@
     "contentHash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-L2PX",
+    "timestamp": "2026-11-27T11:33:45.861Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio",
+    "contentHash": "13f17ef1ba0b1567eae7c33be9648fc18bd0355f3dc30736b3ec9bf52d6e9d3f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

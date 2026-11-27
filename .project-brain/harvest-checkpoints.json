@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T11:25:06.466Z",
+  "last_updated": "2026-11-27T11:33:45.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
-      "verified_at": "2026-11-19T18:19:51.329Z",
+      "content_hash": "13f17ef1ba0b1567eae7c33be9648fc18bd0355f3dc30736b3ec9bf52d6e9d3f",
+      "verified_at": "2026-11-27T11:33:45.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:19:51.329Z"
+      "last_updated": "2026-11-27T11:33:45.886Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",

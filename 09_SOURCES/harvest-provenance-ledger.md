@@ -13803,3 +13803,5 @@ Every entry in this ledger must capture:
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `af9c9650` | Multi-dimensional audit evidence | 2026-11-27T11:14:30.670Z |
 | `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `0ad4751d` | Multi-dimensional audit evidence | 2026-11-27T11:24:50.794Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `ec4dbd34` | Multi-dimensional audit evidence | 2026-11-27T11:25:06.447Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `3b797f02` | Multi-dimensional audit evidence | 2026-11-27T11:33:45.866Z |
+| `learn-dom-d-457f0ddf` | `project://nguyenphutrong-quotio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | 2026-11-27T11:34:28.744Z |

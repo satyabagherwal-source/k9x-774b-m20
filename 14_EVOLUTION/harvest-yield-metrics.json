@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:25:06.462Z",
-  "total_cycles_completed": 13070,
-  "total_learnings_persisted": 13070,
+  "last_updated": "2026-11-27T11:33:45.883Z",
+  "total_cycles_completed": 13071,
+  "total_learnings_persisted": 13071,
   "total_rules_promoted": 11799,
   "history": [
-    {
-      "timestamp": "2026-11-26T21:09:01.723Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T21:17:20.616Z",
       "repository": "arxhr007/Aliens_eye",
@@ -1403,6 +1396,13 @@
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:33:45.883Z",
+      "repository": "nguyenphutrong/quotio",
+      "learningId": "learn-github-nguyenphutrong-quotio",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

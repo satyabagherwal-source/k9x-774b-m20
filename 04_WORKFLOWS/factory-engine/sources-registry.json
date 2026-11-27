@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T11:25:10.203Z",
-    "lastVerified": "2026-11-27T11:25:10.203Z",
+    "lastChecked": "2026-11-27T11:33:55.802Z",
+    "lastVerified": "2026-11-27T11:33:55.802Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -200,8 +200,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:52:01.048Z",
-    "lastVerified": "2026-11-27T10:52:01.048Z",
+    "lastChecked": "2026-11-27T11:33:55.792Z",
+    "lastVerified": "2026-11-27T11:33:55.792Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -862,9 +862,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-11-26T17:06:22.121Z",
+    "lastChecked": "2026-11-27T11:33:53.207Z",
     "revisionIdentifier": "2fd7bd0f",
-    "lastVerified": "2026-11-26T17:06:22.121Z"
+    "lastVerified": "2026-11-27T11:33:53.207Z"
   },
   "max-sixty-worktrunk": {
     "name": "max-sixty/worktrunk",
@@ -1706,9 +1706,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-27T06:37:48.072Z",
+    "lastChecked": "2026-11-27T11:33:50.845Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-27T06:37:48.072Z"
+    "lastVerified": "2026-11-27T11:33:50.845Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4936,9 +4936,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-26T18:05:42.535Z",
+    "lastChecked": "2026-11-27T11:33:48.387Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-26T18:05:42.535Z"
+    "lastVerified": "2026-11-27T11:33:48.387Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -8519,9 +8519,9 @@
   "kotlin-kmp-production-sample": {
     "name": "kmp-production-sample",
     "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
-    "lastChecked": "2026-11-25T02:38:38.277Z",
+    "lastChecked": "2026-11-27T11:33:45.800Z",
     "revisionIdentifier": "b0bed628",
-    "lastVerified": "2026-11-25T02:38:38.277Z"
+    "lastVerified": "2026-11-27T11:33:45.800Z"
   },
   "pamburus-hl": {
     "name": "hl",
@@ -9202,22 +9202,21 @@
     "lastVerified": "2026-11-25T05:19:44.459Z"
   },
   "nguyenphutrong-quotio": {
-    "name": "quotio",
+    "name": "nguyenphutrong/quotio",
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T11:03:35.360Z",
-    "lastVerified": "2026-11-26T11:03:35.360Z",
+    "lastChecked": "2026-11-27T11:33:45.060Z",
+    "lastVerified": "2026-11-27T11:33:45.060Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
+    "contentHash": "13f17ef1ba0b1567eae7c33be9648fc18bd0355f3dc30736b3ec9bf52d6e9d3f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "474bc2af"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openmoss-team-moss-image-base": {
     "name": "OpenMOSS-Team/MOSS-Image-Base",
@@ -9575,9 +9574,9 @@
   "maatify-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/Maatify/seo",
-    "lastChecked": "2026-11-24T01:46:44.213Z",
+    "lastChecked": "2026-11-27T11:33:43.319Z",
     "revisionIdentifier": "47d17d7d",
-    "lastVerified": "2026-11-24T01:46:44.213Z"
+    "lastVerified": "2026-11-27T11:33:43.319Z"
   },
   "jacklandrin-onlyswitch": {
     "name": "OnlySwitch",

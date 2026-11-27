@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T11:25:15.603Z",
-  "total_records": 2830,
+  "last_updated": "2026-11-27T11:34:31.376Z",
+  "total_records": 2831,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1040,
+      "total": 1041,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1113,7 +1113,8 @@
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c",
         "DOM-D-E7237660",
-        "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants",
+        "DOM-D-457F0DDF"
       ]
     },
     "E": {
@@ -9563,8 +9564,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0e6b55b99f734de961039f1dbe5e4937a404626936ebef2d81556c0dcd5d8c44",
-      "created_at": "2026-11-27T11:25:15.603Z"
+      "content_hash": "b18396106ef8908fb5798d7ff6c52de35d818f4fe2b17c684502e8f29a008064",
+      "created_at": "2026-11-27T11:34:31.376Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12221,8 +12222,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "5324f898ea2e179cd48bf5d99a0365bf8d06d1b18f0c46f58ea703a032de57a1",
-      "created_at": "2026-11-27T09:08:13.704Z"
+      "content_hash": "ced90e9df585dd4f92135fd859b14cb8b6e94960493f275c639acccc1eabb264",
+      "created_at": "2026-11-27T11:34:30.258Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -24769,8 +24770,8 @@
       "title": "Technical Construction Intelligence: nguyenphutrong/quotio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-technical-construction-intelligence-nguyenphutrong-quotio-.md",
       "repository": "nguyenphutrong/quotio",
-      "content_hash": "9b430daffa2bc3429d959c513c6a1b48d7ee32a1c7b3111d45ff8f14d79c96df",
-      "created_at": "2026-11-19T18:19:51.511Z"
+      "content_hash": "958f2bafa486ca463ceb11c3dbb84b033b3b6c6cf8dffe546db3a9a191754e9b",
+      "created_at": "2026-11-27T11:33:46.135Z"
     },
     "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria",
@@ -24778,8 +24779,8 @@
       "title": "Technical Construction Intelligence: nguyenphutrong-quotio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-learnings-technical-construction-intelligence-nguyenphutro.md",
       "repository": "nguyenphutrong-quotio-learnings",
-      "content_hash": "f8a2ca12deb4d60176c0d0fdd5d9d975e9a8685dd337b04cfb3e9953575cf7ec",
-      "created_at": "2026-11-19T18:20:38.466Z"
+      "content_hash": "b153bd653d3ca287af177ee0125847226341be03a3984a1b15283afc6f689289",
+      "created_at": "2026-11-27T11:34:29.290Z"
     },
     "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
@@ -47773,6 +47774,48 @@
       "repository": "topoteretes-cognee-learnings",
       "content_hash": "4ae059938e399c15b9eeb7f84344a362a3ecf877a7dc849c4ab1cc0bfb7695cc",
       "created_at": "2026-11-27T11:25:14.254Z"
+    },
+    "DOM-D-457F0DDF": {
+      "record_id": "DOM-D-457F0DDF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nguyenphutrong/quotio",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  \n> **Source Version**: `3b797f02`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structu",
+      "content_hash": "2617fdd26bee5757657d4c6f056a586b9e01057b77ec2bc1e022fdf1829ce059",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy",
+      "provenance": {
+        "source_uri": "project://nguyenphutrong-quotio/nguyenphutrong-quotio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T11:33:55.944Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nguyenphutrong-quotio)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nguyenphutrong-quotio"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T11:34:28.701Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T11:25:13.558Z",
+  "updated_at": "2026-11-27T11:34:28.943Z",
   "stats": {
-    "total_discovered": 10315,
-    "approved_pending_harvest": 9786,
+    "total_discovered": 10316,
+    "approved_pending_harvest": 9787,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9790,
+      "COMMUNITY_AND_EXPERT": 9791,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -223254,6 +223254,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
         "fileName": "topoteretes-cognee-learnings.md"
+      }
+    },
+    "SRC-AA6AC3A0EB5D": {
+      "id": "SRC-AA6AC3A0EB5D",
+      "url": "https://x6.ai/",
+      "title": "https://x6.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:34:28.943Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+        "fileName": "nguyenphutrong-quotio-learnings.md"
       }
     }
   }

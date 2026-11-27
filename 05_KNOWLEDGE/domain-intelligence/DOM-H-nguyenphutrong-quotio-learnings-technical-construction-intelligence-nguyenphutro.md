@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T18:20:38.364Z",
+  "timestamp": "2026-11-27T11:34:29.142Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nguyenphutrong-quotio-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nguyenphutrong-quotio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T18:20:38.364Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T11:34:29.142Z`  
 > **Learning ID**: `LEARN-EVO-nguyenphutrong-quotio-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), E (Creative Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nguyenphutrong-quotio-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `474bc2af`  
+> **Source Version**: `3b797f02`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T18:19:50.871Z  
+> **Timestamp**: 2026-11-27T11:33:45.206Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T18:19:50.867Z  
+> **Harvest Timestamp**: 2026-11-27T11:33:45.060Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4913 stars
+- **Stars / Engagement**: 4922 stars
 
 ---
 
@@ -1074,256 +1074,116 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `474bc2af` (2026-11-18)
-**Commit Message**: chore: remove 88API and PatewayAI from sponsors
+### Incident Patch 1: `3b797f02` (2026-11-26)
+**Commit Message**: chore: remove x6.ai from sponsors (#580)
 
-**File**: `README.fr.md` (modified, +0/-20)
+**File**: `README.fr.md` (modified, +0/-14)
 ```diff
-@@ -36,26 +36,6 @@ Quotio est une application macOS native pour gérer **CLIProxyAPI** - un serveur
- ### Standard Sponsors
- 
- <table>
+@@ -53,20 +53,6 @@ Quotio est une application macOS native pour gérer **CLIProxyAPI** - un serveur
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">Explore Proxy-Seller →</a>
+     </td>
+   </tr>
 -  <tr>
 -    <td width="180" align="center">
--      <a href="https://88api.ai/sign-up?aff=OMpN">
--        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      <a href="https://x6.ai">
+-        <img src=".github/assets/sponsors/x6ai.png" alt="x6.ai logo" width="160" />
 -      </a>
 -    </td>
 -    <td>
--      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
--      multi-model AI API platform for developers, creators, and AI applications. It
--      provides a unified API for text, image, audio, and video models, supporting common
--      workflows such as AI coding, translation, content creation, voice generation, image
--      generation, and video generation. 88API can be added and switched directly in CC
--      Switch. It supports major international payment methods, can provide invoices, and
--      offers stable service for teams and individual developers. Users who register
--      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
--      receive complimentary credits.
+-      <a href="https://x6.ai">x6.ai</a>: One API key for every major model. Official-key and proxy
+-      channels, up to 90% off, free credits on sign-up. Pay with Alipay, Google Pay,
+-      Apple Pay, Visa or Mastercard.
 -      <br />
--      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-      <a href="https://x6.ai">Explore x6.ai →</a>
 -    </td>
 -  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
+ </table>
+ 
+ Interested in sponsoring Quotio? Contact
 ```
 
-**File**: `README.md` (modified, +0/-20)
+**File**: `README.md` (modified, +0/-14)
 ```diff
-@@ -69,26 +69,6 @@ service.
- ### Standard Sponsors
- 
- <table>
+@@ -86,20 +86,6 @@ service.
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">Explore Proxy-Seller →</a>
+     </td>
+   </tr>
 -  <tr>
 -    <td width="180" align="center">
--      <a href="https://88api.ai/sign-up?aff=OMpN">
--        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      <a href="https://x6.ai">
+-        <img src=".github/assets/sponsors/x6ai.png" alt="x6.ai logo" width="160" />
 -      </a>
 -    </td>
 -    <td>
--      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
--      multi-model AI API platform for developers, creators, and AI applications. It
--      provides a unified API for text, image, audio, and video models, supporting common
--      workflows such as AI coding, translation, content creation, voice generation, image
--      generation, and video generation. 88API can be added and switched directly in CC
--      Switch. It supports major international payment methods, can provide invoices, and
--      offers stable service for teams and individual developers. Users who register
--      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
--      receive complimentary credits.
+-      <a href="https://x6.ai">x6.ai</a>: One API key for every major model. Official-key and proxy
+-      channels, up to 90% off, free credits on sign-up. Pay with Alipay, Google Pay,
+-      Apple Pay, Visa or Mastercard.
 -      <br />
--      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-      <a href="https://x6.ai">Explore x6.ai →</a>
 -    </td>
 -  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
+ </table>
+ 
+ Interested in sponsoring Quotio? Contact
 ```
 
-**File**: `README.vi.md` (modified, +0/-20)
+**File**: `README.vi.md` (modified, +0/-14)
 ```diff
-@@ -36,26 +36,6 @@ Quotio là ứng dụng macOS để quản lý **CLIProxyAPI** - máy chủ prox
- ### Standard Sponsors
- 
- <table>
+@@ -53,20 +53,6 @@ Quotio là ứng dụng macOS để quản lý **CLIProxyAPI** - máy chủ prox
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">Explore Proxy-Seller →</a>
+     </td>
+   </tr>
 -  <tr>
 -    <td width="180" align="center">
--      <a href="https://88api.ai/sign-up?aff=OMpN">
--        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      <a href="https://x6.ai">
+-        <img src=".github/assets/sponsors/x6ai.png" alt="x6.ai logo" width="160" />
 -      </a>
 -    </td>
 -    <td>
--      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
--      multi-model AI API platform for developers, creators, and AI applications. It
--      provides a unified API for text, image, audio, and video models, supporting common
--      workflows such as AI coding, translation, content creation, voice generation, image
--      generation, and video generation. 88API can be added and switched directly in CC
--      Switch. It supports major international payment methods, can provide invoices, and
--      offers stable service for teams and individual developers. Users who register
--      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
--      receive complimentary credits.
+-      <a href="https://x6.ai">x6.ai</a>: One API key for every major model. Official-key and proxy
+-      channels, up to 90% off, free credits on sign-up. Pay with Alipay, Google Pay,
+-      Apple Pay, Visa or Mastercard.
 -      <br />
--      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-      <a href="https://x6.ai">Explore x6.ai →</a>
 -    </td>
 -  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
+ </table>
+ 
+ Interested in sponsoring Quotio? Contact
 ```
 
-**File**: `README.zh.md` (modified, +0/-15)
+**File**: `README.zh.md` (modified, +0/-14)
 ```diff
-@@ -36,21 +36,6 @@ Quotio 是一款原生 macOS 应用，用于管理 **CLIProxyAPI** ——为你
- ### Standard Sponsors
- 
- <table>
+@@ -53,20 +53,6 @@ Quotio 是一款原生 macOS 应用，用于管理 **CLIProxyAPI** ——为你
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">Explore Proxy-Seller →</a>
+     </td>
+   </tr>
 -  <tr>
 -    <td width="180" align="center">
--      <a href="https://88api.ai/sign-up?aff=OMpN">
--        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      <a href="https://x6.ai">
+-        <img src=".github/assets/sponsors/x6ai.png" alt="x6.ai logo" width="160" />
 -      </a>
 -    </td>
 -    <td>
--      感谢 <a href="https://88api.ai/sign-up?aff=OMpN">88API Token聚合平台</a>赞助了本项目！88API
--      是一家由香港企业运营并且主要面向开发者、创作者与 AI 应用用户的一站式多模型 API
--      平台，通过统一接口接入文本、图片、语音和视频模型，覆盖 AI 编程、智能翻译、内容创作、配音、图像生成、视频生成等常见工作流。可以直接在
--      CC Switch 中完成 Provider 添加并切换，支持国际主流付款方式，可提供发票，提供企业级稳定服务。<a href="https://88api.ai/sign-up?aff=OMpN">通过此链接注册</a>可以获取专属赠送额度！
+-      <a href="https://x6.ai">x6.ai</a>: One API key for every major model. Official-key and proxy
+-      channels, up to 90% off, free credits on sign-up. Pay with Alipay, Google Pay,
+-      Apple Pay, Visa or Mastercard.
 -      <br />
--      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-      <a href="https://x6.ai">Explore x6.ai →</a>
 -    </td>
 -  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
-```
-
----
-
-### Incident Patch 2: `6333ce4a` (2026-11-18)
-**Commit Message**: chore: remove Swiftproxy from sponsors
-
-**File**: `README.fr.md` (modified, +0/-18)
-```diff
-@@ -36,24 +36,6 @@ Quotio est une application macOS native pour gérer **CLIProxyAPI** - un serveur
- ### Standard Sponsors
+ </table>
  
- <table>
--  <tr>
--    <td width="180" align="center">
--      <a href="https://www.swiftproxy.net/?ref=quotio">
--        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
--      </a>
--    </td>
--    <td>
--      Power your AI-powered workflows with
--      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
--      proxy provider offering rotating and static residential proxies for reliable web
--      access and data collection. Access 90M+ residential IPs across 220+ locations,
--      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
--      and get started with residential proxies from just $0.7/GB. Use code
--      <strong>PROXY90</strong> for an additional 10% off.
--      <br />
--      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
--    </td>
--  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://88api.ai/sign-up?aff=OMpN">
-```
-
-**File**: `README.md` (modified, +0/-18)
-```diff
-@@ -69,24 +69,6 @@ service.
- ### Standard Sponsors
- 
- <table>
--  <tr>
--    <td width="180" align="center">
--      <a href="https://www.swiftproxy.net/?ref=quotio">
--        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
--      </a>
--    </td>
--    <td>
--      Power your AI-powered workflows with
--      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
--      proxy provider offering rotating and static residential proxies for reliable web
--      access and data collection. Access 90M+ residential IPs across 220+ locations,
--      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
--      and get started with residential proxies from just $0.7/GB. Use code
--      <strong>PROXY90</strong> for an additional 10% off.
--      <br />
--      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
--    </td>
--  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://88api.ai/sign-up?aff=OMpN">
-```
-
-**File**: `README.vi.md` (modified, +0/-18)
-```diff
-@@ -36,24 +36,6 @@ Quotio là ứng dụng macOS để quản lý **CLIProxyAPI** - máy chủ prox
- ### Standard Sponsors
- 
- <table>
--  <tr>
--    <td width="180" align="center">
--      <a href="https://www.swiftproxy.net/?ref=quotio">
--        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
--      </a>
--    </td>
--    <td>
--      Power your AI-powered workflows with
--      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
--      proxy provider offering rotating and static residential proxies for reliable web
--      access and data collection. Access 90M+ residential IPs across 220+ locations,
--      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
--      and get started with residential proxies from just $0.7/GB. Use code
--      <strong>PROXY90</strong> for an additional 10% off.
--      <br />
--      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
--    </td>
--  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://88api.ai/sign-up?aff=OMpN">
-```
-
-**File**: `README.zh.md` (modified, +0/-18)
-```diff
-@@ -36,24 +36,6 @@ Quotio 是一款原生 macOS 应用，用于管理 **CLIProxyAPI** ——为你
- ### Standard Sponsors
- 
- <table>
--  <tr>
--    <td width="180" align="center">
--      <a href="https://www.swiftproxy.net/?ref=quotio">
--        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
--      </a>
--    </td>
--    <td>
--      Power your AI-powered workflows with
--      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
--      proxy provider offering rotating and static residential proxies for reliable web
--      access and data collection. Access 90M+ residential IPs across 220+ locations,
--      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
--      and get started with residential proxies from just $0.7/GB. Use code
--      <strong>PROXY90</strong> for an additional 10% off.
--      <br />
--      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
--    </td>
--  </tr>
-   <tr>
-     <td width="180" align="center">
-       <a href="https://88api.ai/sign-up?aff=OMpN">
+ Interested in sponsoring Quotio? Contact
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #580** (2026-11-26): chore: remove x6.ai from sponsors (@nguyenphutrong)
 - **PR #574** (2026-11-03): feat(desktop): signed releases and self-update for Windows and Linux (@nguyenphutrong)
 - **PR #573** (2026-11-03): feat(desktop): signed releases and self-update for Windows and Linux (@nguyenphutrong)
 - **PR #572** (closed): fix(macos): reopen Settings from menu bar and respect Dock visibility (@sleepless)
 - **PR #571** (2026-10-28): fix(cli): label Antigravity Argon bucket as Argon Weekly (@nguyenphutrong)
 - **PR #570** (2026-10-28): fix: send Antigravity hub user agent for quota summary requests (@sleepless)
-- **PR #569** (2026-10-23): fix(cli): update locked dependencies for new advisories (@nguyenphutrong)
 
 ---
 

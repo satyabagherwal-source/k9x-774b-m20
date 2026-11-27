@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T11:25:15.887Z",
+  "last_updated": "2026-11-27T11:34:31.617Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e6b55b99f734de961039f1dbe5e4937a404626936ebef2d81556c0dcd5d8c44",
+      "content_hash": "b18396106ef8908fb5798d7ff6c52de35d818f4fe2b17c684502e8f29a008064",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:25:15.603Z"
+      "persisted_at": "2026-11-27T11:34:31.376Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec7d0f5a03b3554a355df57dde049f836f037b4ea5dedac86baeed92913d4633",
+      "content_hash": "4fec51c9a316d48a97004bd1b377f80e2b8f50bba0e72cca8833cbeb7bc1b668",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:25:15.887Z"
+      "persisted_at": "2026-11-27T11:34:31.617Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219697,9 +219697,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "5324f898ea2e179cd48bf5d99a0365bf8d06d1b18f0c46f58ea703a032de57a1",
+      "content_hash": "ced90e9df585dd4f92135fd859b14cb8b6e94960493f275c639acccc1eabb264",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T09:08:13.704Z"
+      "persisted_at": "2026-11-27T11:34:30.258Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219709,9 +219709,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d81e619d54ef095edff44168f8c02d1df88ca153101794c991b2befbedc24b20",
+      "content_hash": "8786a1dda5960d75e7c62299e3b801d02a875a567411bd6f4fee4ad29890ddc4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:08:13.878Z"
+      "persisted_at": "2026-11-27T11:34:30.493Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -262343,8 +262343,8 @@
       "slug": "nguyenphutrong-quotio",
       "platform": "github",
       "source_url": "https://github.com/nguyenphutrong/quotio",
-      "source_version": "474bc2af",
-      "content_hash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
+      "source_version": "3b797f02",
+      "content_hash": "13f17ef1ba0b1567eae7c33be9648fc18bd0355f3dc30736b3ec9bf52d6e9d3f",
       "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
       "promoted_rules": [
@@ -262359,7 +262359,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:19:51.125Z",
+      "verified_at": "2026-11-27T11:33:45.559Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262401,10 +262401,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-technical-construction-intelligence-nguyenphutrong-quotio-.md",
       "title": "Technical Construction Intelligence: nguyenphutrong/quotio Core Invariants",
       "repository": "nguyenphutrong/quotio",
-      "source_version": "474bc2af",
-      "content_hash": "9b430daffa2bc3429d959c513c6a1b48d7ee32a1c7b3111d45ff8f14d79c96df",
+      "source_version": "3b797f02",
+      "content_hash": "958f2bafa486ca463ceb11c3dbb84b033b3b6c6cf8dffe546db3a9a191754e9b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T18:19:51.511Z"
+      "persisted_at": "2026-11-27T11:33:46.135Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nguyenphutrong-quotio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nguyenphutrong-quotio",
@@ -262464,9 +262464,9 @@
       "title": "Technical Construction Intelligence: nguyenphutrong-quotio-learnings Core Invariants",
       "repository": "nguyenphutrong-quotio-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8a2ca12deb4d60176c0d0fdd5d9d975e9a8685dd337b04cfb3e9953575cf7ec",
+      "content_hash": "b153bd653d3ca287af177ee0125847226341be03a3984a1b15283afc6f689289",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T18:20:38.466Z"
+      "persisted_at": "2026-11-27T11:34:29.290Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nguyenphutrong-quotio-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nguyenphutrong-quotio-learning",
@@ -350190,13 +350190,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S9Q2-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M0SD-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7e4a55ee7365280a132b671e7a169065bfac5563cda3e3497e9495bb4a0780a",
+      "content_hash": "5d506a6faeb161eff3eef7daad4fbddb26b4adbeff0873b2d379350fc8fb689a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:22.298Z"
+      "persisted_at": "2026-11-27T11:34:30.014Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361103,13 +361103,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-A4S0-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M1N5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ee149e82acc40f89967453fe8e1a59c1b4793ded2e8d6ccc8d71448e11df37c",
+      "content_hash": "a472c3409f6424039979818206477e6236c50a86e7c0797a14575b5063c78ec6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:25:15.319Z"
+      "persisted_at": "2026-11-27T11:34:31.132Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
