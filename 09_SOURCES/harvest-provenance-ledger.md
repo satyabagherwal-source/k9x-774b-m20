@@ -13830,3 +13830,4 @@ Every entry in this ledger must capture:
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `40e18b81` | Multi-dimensional audit evidence | 2026-11-27T13:36:47.403Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `2b1e274d` | Multi-dimensional audit evidence | 2026-11-27T13:36:53.807Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `fbb7c9e0` | Multi-dimensional audit evidence | 2026-11-27T13:46:39.677Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4aea0221` | Multi-dimensional audit evidence | 2026-11-27T13:55:26.618Z |

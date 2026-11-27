@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T13:46:47.533Z",
+  "last_updated": "2026-11-27T13:55:33.754Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -9232,8 +9232,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "3a5ee600b11f2c26347ee9d899e5db4c81096e971ed9d55bbe09ced04c7380af",
-      "created_at": "2026-11-26T20:04:27.163Z"
+      "content_hash": "17ffb235504f5901714b1914f05dedcd0ea0ef41b55e10ca7b3365c1c7bf9f8c",
+      "created_at": "2026-11-27T13:55:27.198Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -9310,8 +9310,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "daa92e7f4d4dead6444e903ae1778875831d69dc411b0923b7d55844f8281b89",
-      "created_at": "2026-11-24T07:47:23.099Z"
+      "content_hash": "cd78f97b353e4ab7ec2b495364bb49c26f56400a9b721b985541e899b16828be",
+      "created_at": "2026-11-27T13:55:31.417Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -9571,8 +9571,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "54d3735d0a21e7d54c775cd927ce2d7bbdd1f0d9794ea48b3ac8eab6e99b7f1b",
-      "created_at": "2026-11-27T13:23:17.066Z"
+      "content_hash": "7571d3c0084fce1d043990f4a106b22ae7ee48f7df72c4518b969c3ba0aa0028",
+      "created_at": "2026-11-27T13:55:32.479Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -46785,8 +46785,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2a8193857d1563d9efa721467b45f7b0b5e39182b331454200a53e11c56b155e",
-      "created_at": "2026-11-27T13:46:45.961Z"
+      "content_hash": "e1f1b31639e2f9d83f7ca83e1449dd4f409a72326a4a165c4026aeac5ef9846e",
+      "created_at": "2026-11-27T13:55:33.754Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

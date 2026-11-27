@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T13:46:43.374Z",
-    "lastVerified": "2026-11-27T13:46:43.374Z",
+    "lastChecked": "2026-11-27T13:55:30.208Z",
+    "lastVerified": "2026-11-27T13:55:30.208Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T13:14:00.390Z",
+    "lastChecked": "2026-11-27T13:55:29.118Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T13:14:00.390Z"
+    "lastVerified": "2026-11-27T13:55:29.118Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -480,8 +480,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T08:58:21.255Z",
-    "lastVerified": "2026-11-27T08:58:21.255Z",
+    "lastChecked": "2026-11-27T13:55:24.037Z",
+    "lastVerified": "2026-11-27T13:55:24.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -679,12 +679,12 @@
     "lastVerified": "2026-11-27T11:14:34.465Z"
   },
   "iii-hq-iii": {
-    "name": "iii-hq/iii",
+    "name": "iii",
     "officialUrl": "https://github.com/iii-hq/iii",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T13:44:35.673Z",
-    "lastVerified": "2026-11-26T13:44:35.673Z",
+    "lastChecked": "2026-11-27T13:55:14.015Z",
+    "lastVerified": "2026-11-27T13:55:14.015Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iii-hq-iii",
@@ -693,7 +693,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f06f7917"
   },
   "hf-qwen-qwen3.8-27b": {
     "name": "Qwen/Qwen3.8-27B",
@@ -2003,8 +2004,8 @@
     "officialUrl": "https://github.com/zilliztech/claude-context",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T18:58:55.381Z",
-    "lastVerified": "2026-11-26T18:58:55.381Z",
+    "lastChecked": "2026-11-27T13:55:26.527Z",
+    "lastVerified": "2026-11-27T13:55:26.527Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zilliztech-claude-context",
@@ -5805,14 +5806,14 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-26T20:04:25.489Z",
-    "lastVerified": "2026-11-26T20:04:25.489Z",
+    "lastChecked": "2026-11-27T13:55:25.132Z",
+    "lastVerified": "2026-11-27T13:55:25.132Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "934985a2d1ffc5d107588d3a5abef5f33b992d307e3a5ee4e244edce118264be",
+    "contentHash": "3375ecdc342c19758c68036ed2df057be65865f0f620ce98c3321a0000a4b5cc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9082,9 +9083,9 @@
   "sindresorhus-gifski": {
     "name": "Gifski",
     "officialUrl": "https://github.com/sindresorhus/Gifski",
-    "lastChecked": "2026-11-25T04:51:56.910Z",
+    "lastChecked": "2026-11-27T13:55:18.998Z",
     "revisionIdentifier": "e184b284",
-    "lastVerified": "2026-11-25T04:51:56.910Z"
+    "lastVerified": "2026-11-27T13:55:18.998Z"
   },
   "apache-arrow": {
     "name": "apache/arrow",
@@ -9794,9 +9795,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-11-24T03:49:50.164Z",
+    "lastChecked": "2026-11-27T13:55:16.516Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-11-24T03:49:50.164Z"
+    "lastVerified": "2026-11-27T13:55:16.516Z"
   },
   "vinceglb-filekit": {
     "name": "FileKit",

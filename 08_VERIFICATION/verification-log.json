@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HGGE",
-    "timestamp": "2026-11-26T06:35:20.846Z",
-    "repository": "n4ze3m/tiny-voca",
-    "learningId": "learn-huggingface-n4ze3m-tiny-voca",
-    "contentHash": "905c4867e9140fa0fbb4b31565abb4f73672c9c76602227451d25d0486133e8e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HIWF",
     "timestamp": "2026-11-26T06:35:24.015Z",
     "repository": "xevrion/hatchzip",
@@ -7490,6 +7475,21 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-N9XM",
+    "timestamp": "2026-11-27T13:55:26.602Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "3375ecdc342c19758c68036ed2df057be65865f0f620ce98c3321a0000a4b5cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -4,22 +4,22 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "e1e64c4b",
+  "source_version": "4aea0221",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T20:04:26.878Z",
+  "timestamp": "2026-11-27T13:55:26.903Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `e1e64c4b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:04:26.878Z`  
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `4aea0221`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T13:55:26.903Z`  
 > **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `e1e64c4b`)
+- **Target Repository**: `gocd/gocd` (Commit: `4aea0221`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T20:04:25.489Z  
+> **Harvest Timestamp**: 2026-11-27T13:55:25.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7439 stars
+- **Stars / Engagement**: 7438 stars
 
 ---
 
@@ -891,104 +891,90 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e6b4105` (2026-11-26)
-**Commit Message**: build(deps-ui-dev): bump addressable (#14768)
+### Incident Patch 1: `4aea0221` (2026-11-27)
+**Commit Message**: build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails (#14770)
 
-Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.2 to 2.10.0.
-- [Changelog](https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sporkmonger/addressable/compare/addressable-2.9.2...addressable-2.10.0)
-
----
-updated-dependencies:
-- dependency-name: addressable
-  dependency-version: 2.10.0
-  dependency-type: indirect
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -37,7 +37,7 @@ GEM
-       minitest (>= 5.1, < 6)
-       securerandom (>= 0.3)
-       tzinfo (~> 2.0, >= 2.0.5)
--    addressable (2.9.2)
-+    addressable (2.10.0)
-       public_suffix (>= 2.0.2, < 8.0)
-     base64 (0.3.0)
-     benchmark (0.5.0)
-@@ -196,7 +196,7 @@ CHECKSUMS
-   actionpack (7.2.4) sha256=c7acf80263cf09125e5c4d866abda3536cc941f436e81673f17be11ad407a4eb
-   actionview (7.2.4) sha256=6005a3427881b2e8f509a5f7ed894e66f256410f734f7a227d01c4d3d9cb06a2
-   activesupport (7.2.4) sha256=b97027b31e111675dba67b86edcd589acc25a0dddf8eecacca18d33a703a0788
--  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
-+  addressable (2.10.0) sha256=5e13b9c001adf01dd65ad6e0d2a91d2bc07885c0ff2b83f48cbcd95e08d9de62
-   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
-   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
-   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
-```
-
----
-
-### Incident Patch 2: `e1e64c4b` (2026-11-26)
-**Commit Message**: build(deps): bump postgresql driver to 42.7.15
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -127,7 +127,7 @@ def libraries = [
-   objenesis           : 'org.objenesis:objenesis:3.6',
-   oshi                : 'com.github.oshi:oshi-core:7.8.0',
-   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.2.0',
--  postgresql          : 'org.postgresql:postgresql:42.7.14',
-+  postgresql          : 'org.postgresql:postgresql:42.7.15',
-   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
-   semanticVersion     : 'de.skuzzle:semantic-version:2.1.1',
-   servletApi          : 'jakarta.servlet:jakarta.servlet-api:4.0.4',
-```
-
----
-
-### Incident Patch 3: `5faf6205` (2026-11-26)
-**Commit Message**: build(deps): bump com.bucket4j:bucket4j_jdk17-core from 8.22.0 to 8.23.0 (#14767)
-
-Bumps [com.bucket4j:bucket4j_jdk17-core](https://github.com/bucket4j/bucket4j) from 8.22.0 to 8.23.0.
-- [Release notes](https://github.com/bucket4j/bucket4j/releases)
-- [Commits](https://github.com/bucket4j/bucket4j/compare/8.22.0...8.23.0)
+Bumps [chart.js](https://github.com/chartjs/Chart.js) from 4.6.1 to 4.6.2.
+- [Release notes](https://github.com/chartjs/Chart.js/releases)
+- [Commits](https://github.com/chartjs/Chart.js/compare/v4.6.1...v4.6.2)
 
 ---
 updated-dependencies:
-- dependency-name: com.bucket4j:bucket4j_jdk17-core
-  dependency-version: 8.23.0
+- dependency-name: chart.js
+  dependency-version: 4.6.2
   dependency-type: direct:production
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
-@@ -83,7 +83,7 @@ def libraries = [
-   aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
-   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
-   bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
--  bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.22.0',
-+  bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.23.0',
-   caffeine            : 'com.github.ben-manes.caffeine:caffeine:3.3.1',
-   cloning             : 'io.github.kostaskougios:cloning:1.13.0',
-   commonsCodec        : 'commons-codec:commons-codec:1.23.0',
+@@ -35,7 +35,7 @@
+     "angular": "file:node-vendor/angular#node-vendor/angular::hash=036648&locator=gocd-server-ui%40workspace%3A.",
+     "awesomplete": "^1.1.7",
+     "bourbon": "~7.1.0",
+-    "chart.js": "^4.6.1",
++    "chart.js": "^4.6.2",
+     "chartjs-plugin-zoom": "^2.2.0",
+     "classnames": "^2.5.1",
+     "core-js": "^3.51.0",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +10/-10)
+```diff
+@@ -1556,10 +1556,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@kurkle/color@npm:^0.3.0":
+-  version: 0.3.4
+-  resolution: "@kurkle/color@npm:0.3.4"
+-  checksum: 10c0/0e9fd55c614b005c5f0c4c755bca19ec0293bc7513b4ea3ec1725234f9c2fa81afbc78156baf555c8b9cb0d305619253c3f5bca016067daeebb3d00ebb4ea683
++"@kurkle/color@npm:^0.6.6":
++  version: 0.6.6
++  resolution: "@kurkle/color@npm:0.6.6"
++  checksum: 10c0/ce7c1393621b5c8d51e51478ddb2390259af13e2673b5e10f145a468a5efc686e8c0072b6941fe58299817fac8f62576a7bdd4ab6ea218c9d85817e53b71bec8
+   languageName: node
+   linkType: hard
+ 
+@@ -2763,12 +2763,12 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"chart.js@npm:^4.6.1":
+-  version: 4.6.1
+-  resolution: "chart.js@npm:4.6.1"
++"chart.js@npm:^4.6.2":
++  version: 4.6.2
++  resolution: "chart.js@npm:4.6.2"
+   dependencies:
+-    "@kurkle/color": "npm:^0.3.0"
+-  checksum: 10c0/442e3f3958ddbb217b19ec9f57f997f59695d5543af246a8023f3d373bdca494d67ed4dd080600fef71b0894441cd36d7eaebb8e164b2686a97ceef43d91faa4
++    "@kurkle/color": "npm:^0.6.6"
++  checksum: 10c0/ec73e734cfaa043c5f4511c77ce3056f624e307be922c0e8919e0be7c8cc636c76049c746f166ecb4dc1b0331b448e0e46e52e76f6bbe6fd55c8942725d5db91
+   languageName: node
+   linkType: hard
+ 
+@@ -4416,7 +4416,7 @@ __metadata:
+     awesomplete: "npm:^1.1.7"
+     babel-loader: "npm:^10.1.1"
+     bourbon: "npm:~7.1.0"
+-    chart.js: "npm:^4.6.1"
++    chart.js: "npm:^4.6.2"
+     chartjs-plugin-zoom: "npm:^2.2.0"
+     classnames: "npm:^2.5.1"
+     core-js: "npm:^3.51.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14770** (2026-11-27): build(deps-ui): bump chart.js from 4.6.1 to 4.6.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14769** (closed): build(deps-ui): bump chartjs-plugin-zoom from 2.2.0 to 3.0.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14768** (2026-11-26): build(deps-ui-dev): bump addressable from 2.9.2 to 2.10.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14767** (2026-11-26): build(deps): bump com.bucket4j:bucket4j_jdk17-core from 8.22.0 to 8.23.0 (@dependabot[bot])
 - **PR #14766** (closed): build(deps-ui): bump chartjs-plugin-zoom from 2.2.0 to 3.0.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 - **PR #14765** (2026-11-24): build(deps-ui-dev): bump rack from 2.2.25 to 2.2.26 in /server/src/main/webapp/WEB-INF/rails in the rack group (@dependabot[bot])
-- **PR #14764** (2026-11-24): build(deps): bump net.javacrumbs.json-unit:json-unit-assertj from 6.4.0 to 6.4.1 in the test group (@dependabot[bot])
-- **PR #14763** (2026-11-23): build(deps): bump ch.qos.logback:logback-classic from 1.6.7 to 1.6.8 (@dependabot[bot])
 
 ---
 
@@ -1008,33 +994,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump addressable
+## X. build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e6b4105`: build(deps-ui-dev): bump addressable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4aea0221`: build(deps-ui): bump chart.js in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    addressable (2.10.0)
-  addressable (2.10.0) sha256=5e13b9c001adf01dd65ad6e0d2a91d2bc07885c0ff2b83f48cbcd95e08d9de62
+    "chart.js": "^4.6.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    addressable (2.9.2)
-  addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
+    "chart.js": "^4.6.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e6b4105` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4aea0221` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

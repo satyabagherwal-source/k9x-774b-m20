@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T13:46:39.692Z",
-  "total_cycles_completed": 13096,
-  "total_learnings_persisted": 13096,
-  "total_rules_promoted": 11823,
+  "last_updated": "2026-11-27T13:55:26.629Z",
+  "total_cycles_completed": 13097,
+  "total_learnings_persisted": 13097,
+  "total_rules_promoted": 11824,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:00:02.646Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:11:34.618Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T13:46:39.692Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:55:26.629Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
