@@ -13938,3 +13938,4 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1a278de9` | Multi-dimensional audit evidence | 2026-11-27T23:30:40.123Z |
 | `learn-huggingface-sentinel7-h3` | `https://huggingface.co/Sentinel7/h3` | `hf-sentine` | Multi-dimensional audit evidence | 2026-11-27T23:39:11.050Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `aaa905b1` | Multi-dimensional audit evidence | 2026-11-27T23:39:12.408Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba332c5e` | Multi-dimensional audit evidence | 2026-11-27T23:48:53.750Z |

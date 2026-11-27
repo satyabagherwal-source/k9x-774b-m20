@@ -13905,3 +13905,4 @@
 | `CYCLE-20261127-70Q8` | `2026-11-27T23:30:40.112Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10989` | Yes (`fcf6cc00...`) |
 | `CYCLE-20261127-HYYN` | `2026-11-27T23:39:11.039Z` | `Sentinel7/h3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md` | Yes (`f1eeecab...`) |
 | `CYCLE-20261127-I00C` | `2026-11-27T23:39:12.396Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10990` | Yes (`2b9fac27...`) |
+| `CYCLE-20261127-UGKP` | `2026-11-27T23:48:53.737Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10991` | Yes (`cbc55e53...`) |

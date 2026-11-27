@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T23:39:22.798Z",
-    "lastVerified": "2026-11-27T23:39:22.798Z",
+    "lastChecked": "2026-11-27T23:48:57.459Z",
+    "lastVerified": "2026-11-27T23:48:57.459Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -398,22 +398,21 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T23:13:02.073Z",
-    "lastVerified": "2026-11-27T23:13:02.073Z",
+    "lastChecked": "2026-11-27T23:48:52.090Z",
+    "lastVerified": "2026-11-27T23:48:52.090Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c979ca2d5a26ace32cf8bad23f686581ecd183d5811eda03a654e57017b3bce8",
+    "contentHash": "cbc55e53c6dbae6d6bc39b5fdbd1a312e4e51cab0bca09ed9b5b643c80210ced",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "17ea4bc4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1091,9 +1090,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-27T19:35:41.064Z",
+    "lastChecked": "2026-11-27T23:48:43.465Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-27T19:35:41.064Z"
+    "lastVerified": "2026-11-27T23:48:43.465Z"
   },
   "chroma-core-chroma": {
     "name": "chroma-core/chroma",
@@ -2929,8 +2928,8 @@
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T05:48:18.266Z",
-    "lastVerified": "2026-11-27T05:48:18.266Z",
+    "lastChecked": "2026-11-27T23:48:41.013Z",
+    "lastVerified": "2026-11-27T23:48:41.013Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -5324,9 +5323,9 @@
   "telemt-telemt": {
     "name": "telemt",
     "officialUrl": "https://github.com/telemt/telemt",
-    "lastChecked": "2026-11-26T23:49:23.042Z",
+    "lastChecked": "2026-11-27T23:48:33.461Z",
     "revisionIdentifier": "dac7aeee",
-    "lastVerified": "2026-11-26T23:49:23.042Z"
+    "lastVerified": "2026-11-27T23:48:33.461Z"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -6188,8 +6187,8 @@
     "officialUrl": "https://github.com/citusdata/citus",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-27T04:45:27.003Z",
-    "lastVerified": "2026-11-27T04:45:27.003Z",
+    "lastChecked": "2026-11-27T23:48:45.974Z",
+    "lastVerified": "2026-11-27T23:48:45.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-citusdata-citus",
@@ -10475,9 +10474,9 @@
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",
     "officialUrl": "https://github.com/michaelbull/kotlin-result",
-    "lastChecked": "2026-11-25T15:15:50.245Z",
+    "lastChecked": "2026-11-27T23:48:38.462Z",
     "revisionIdentifier": "aed7438b",
-    "lastVerified": "2026-11-25T15:15:50.245Z"
+    "lastVerified": "2026-11-27T23:48:38.462Z"
   },
   "hf-thejagstudio-tessera-small": {
     "name": "thejagstudio/tessera-small",
@@ -10984,9 +10983,9 @@
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
-    "lastChecked": "2026-11-24T15:35:56.977Z",
+    "lastChecked": "2026-11-27T23:48:35.983Z",
     "revisionIdentifier": "a8caf39d",
-    "lastVerified": "2026-11-24T15:35:56.977Z"
+    "lastVerified": "2026-11-27T23:48:35.983Z"
   },
   "krzysztofzablocki-inject": {
     "name": "Inject",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:39:12.413Z",
-  "total_cycles_completed": 13196,
-  "total_learnings_persisted": 13196,
-  "total_rules_promoted": 11905,
+  "last_updated": "2026-11-27T23:48:53.757Z",
+  "total_cycles_completed": 13197,
+  "total_learnings_persisted": 13197,
+  "total_rules_promoted": 11906,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:48:15.674Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:57:33.550Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T23:39:12.413Z",
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:48:53.757Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
