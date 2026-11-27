@@ -13939,3 +13939,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentinel7-h3` | `https://huggingface.co/Sentinel7/h3` | `hf-sentine` | Multi-dimensional audit evidence | 2026-11-27T23:39:11.050Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `aaa905b1` | Multi-dimensional audit evidence | 2026-11-27T23:39:12.408Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ba332c5e` | Multi-dimensional audit evidence | 2026-11-27T23:48:53.750Z |
+| `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `36838659` | Multi-dimensional audit evidence | 2026-11-27T23:57:32.929Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `5951a71b` | Multi-dimensional audit evidence | 2026-11-27T23:57:41.915Z |

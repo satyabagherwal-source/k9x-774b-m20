@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T15:21:40.462Z",
+  "timestamp": "2026-11-27T23:57:45.831Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-prof18-feed-flow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prof18-feed-flow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T15:21:40.462Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:57:45.831Z`  
 > **Learning ID**: `LEARN-EVO-prof18-feed-flow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source**: github ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
-> **Source Version**: `dcaa91c6`  
+> **Source Version**: `36838659`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:21:34.130Z  
+> **Timestamp**: 2026-11-27T23:57:31.645Z  
 > **Learning ID**: `learn-github-prof18-feed-flow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prof18/feed-flow](https://github.com/prof18/feed-flow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:21:34.125Z  
+> **Harvest Timestamp**: 2026-11-27T23:57:31.499Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1369 stars
+- **Stars / Engagement**: 1373 stars
 
 ---
 
@@ -709,431 +709,298 @@ private suspend fun revealInterruptibly(scroll: suspend () -> Unit) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7898d03c` (2026-11-22)
-**Commit Message**: Keep desktop reader direction detection from overflowing the stack on long link destinations
+### Incident Patch 1: `3ac44321` (2026-11-25)
+**Commit Message**: Fix flaky database and desktop tests and serialise iOS simulator test tasks
 
-**File**: `shared/src/jvmMain/kotlin/com/prof18/feedflow/shared/domain/ReaderModeMarkdown.kt` (modified, +4/-2)
+**File**: `.github/workflows/code-checks.yaml` (modified, +8/-1)
 ```diff
-@@ -59,9 +59,11 @@ private fun String.withoutMarkupForDirection(): String = directionMarkupRegexes.
- private const val DIRECTION_SCAN_WINDOW = 8000
+@@ -77,7 +77,14 @@ jobs:
+       # JVM and Android host tests and detekt run in the jvm-checks job on Linux. The cloud sync
+       # artifact tasks still run here, since they exchange snapshots with the iOS side.
+       - name: Run Kotlin/Native and cloud sync tests
+-        run: ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
++        # Simulator tests occasionally stall on this 3-core runner, so a failure gets one retry.
++        # Tasks that passed are up to date in the second run, except the cloud sync ones, which
++        # always re-run.
++        run: |
++          run_tests() {
++            ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
++          }
++          run_tests || { echo "::warning::Kotlin/Native and cloud sync tests failed, retrying once"; run_tests; }
  
- // A link destination as Klead writes it: parentheses escaped, wrapped in <> when it has spaces,
--// optionally followed by a quoted title with escaped quotes.
-+// optionally followed by a quoted title with escaped quotes. Each run of plain characters is one greedy
-+// character class and only escapes start a new group iteration: java.util.regex recurses once per iteration
-+// of a repeated group, so `(?:\\.|[^)])*` overflows the UI thread's stack on a long URL such as a data: image.
- private const val MARKDOWN_DESTINATION =
--    """\((?:<(?:\\.|[^>\\])*>|(?:\\.|[^)\\\s])*)(?:\s+"(?:\\.|[^"\\])*")?\)"""
-+    """\((?:<[^>\\]*(?:\\.[^>\\]*)*>|[^)\\\s]*(?:\\.[^)\\\s]*)*)(?:\s+"[^"\\]*(?:\\.[^"\\]*)*")?\)"""
- private val directionMarkupRegexes = listOf(
-     Regex("""!\[[^]]*]$MARKDOWN_DESTINATION"""),
-     Regex("""]$MARKDOWN_DESTINATION"""),
+       - name: Run iOS tests
+         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
 ```
 
-**File**: `shared/src/jvmTest/kotlin/com/prof18/feedflow/shared/domain/ReaderModeMarkdownTest.kt` (modified, +38/-0)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -118,4 +118,42 @@ class ReaderModeMarkdownTest {
-             readerModeContentDirection(title = null, siteName = null, markdown = markdown),
-         )
+@@ -352,7 +352,7 @@ When creating commits:
+ - CI config: `.github/workflows/code-checks.yaml`
+ - Pipeline: every job starts in parallel. `checks` (macos-26) runs swiftlint, `allTests` without the JVM/Android suites (Kotlin/Native, cloud sync, Swift `CloudSyncTests`), `.scripts/ios-tests.sh` and the macOS desktop tests; `jvm-checks` (Linux) runs detekt and the Android host/unit tests; `tests-desktop` runs `jvmTest` on Linux and Windows; `build-android-app`, `build-desktop-app` and `build-ios-app` build the apps. PR runs cancel when a newer push arrives. macOS runners are the scarce, slow resource (7 GB RAM, few concurrent slots), so keep work that does not need macOS off the `checks` job. The iOS build job and the iOS release job run on GitHub's `xcode-27` runner (a preview image) and select Xcode 27.1 with `maxim-lobanov/setup-xcode`: the iPhone Duo layout uses iOS 27.1 SDK APIs, so Xcode 27.0 cannot build the app.
+ - iOS CI build forces arm64 simulator architecture: `xcodebuild -project iosApp/FeedFlow.xcodeproj -configuration Debug -scheme FeedFlow -sdk iphonesimulator -destination "generic/platform=iOS Simulator" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build | xcbeautify --renderer github-actions`
+-- The `checks` job runs `.scripts/ios-tests.sh` after `allTests`. The Swift `CloudSyncTests` run inside `allTests` instead, because they read snapshots the Kotlin cloud-sync tests write first; the other Swift test targets need nothing from Gradle beyond the FeedFlowKit framework, so they are not bound to it. Both runs share `build/ios-test-derived-data` and the same xcodebuild settings so the Swift packages compile once; keep the settings in `SwiftCloudSyncTest` and `ios-tests.sh` identical. CI boots the simulator (`.scripts/ios-test-simulator.sh`) at the start of the job so it is ready by the time the tests run. Add a new Swift test target to the `iOSTests` scheme in `iosApp/project.yml`, or CI won't run it.
++- The `checks` job runs `.scripts/ios-tests.sh` after `allTests`. The Swift `CloudSyncTests` run inside `allTests` instead, because they read snapshots the Kotlin cloud-sync tests write first; the other Swift test targets need nothing from Gradle beyond the FeedFlowKit framework, so they are not bound to it. Both runs share `build/ios-test-derived-data` and the same xcodebuild settings so the Swift packages compile once; keep the settings in `SwiftCloudSyncTest` and `ios-tests.sh` identical. The `IosSimulatorTestLock` build service lets only one simulator test task (any project's Kotlin/Native simulator tests or `swiftCloudSyncTest`) run at a time, and the CI step retries `allTests` once, because overlapping runs stalled Kotlin/Native tests on the 3-core runner. CI boots the simulator (`.scripts/ios-test-simulator.sh`) at the start of the job so it is ready by the time the tests run. Add a new Swift test target to the `iOSTests` scheme in `iosApp/project.yml`, or CI won't run it.
+ - Debugging CI failures: `gh run list --limit=10`, then `gh run view <run-id> --log`
+ - Red CI recovery loop: `gh run rerun <run-id>` (or `gh run rerun <run-id> --failed`), then fix and push until green
+ 
+```
+
+**File**: `build-logic/convention/src/main/kotlin/CloudSyncTestsPlugin.kt` (modified, +2/-0)
+```diff
+@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.native.DefaultSimulatorTestRun
+ 
+ class CloudSyncTestsPlugin : Plugin<Project> {
+     override fun apply(project: Project) = with(project) {
++        serializeKotlinNativeSimulatorTests()
+         // Ordinary tests remain independently runnable without artifact setup.
+         tasks.withType<AbstractTestTask>().configureEach {
+             if (!name.contains("cloudArtifact", ignoreCase = true)) {
+@@ -48,6 +49,7 @@ class CloudSyncTestsPlugin : Plugin<Project> {
+                     derivedDataDirectory.set(rootProject.layout.buildDirectory.dir("ios-test-derived-data"))
+                     outputDirectory.set(layout.buildDirectory.dir("reports/tests/swiftCloudSyncTest"))
+                     destination.set(providers.gradleProperty("feedflow.swiftCloudSyncDestination"))
++                    usesService(iosSimulatorTestLock())
+                 }
+                 tasks.named("allTests") { dependsOn(swiftTests) }
+             }
+```
+
+**File**: `build-logic/convention/src/main/kotlin/IosSimulatorTestLock.kt` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++import org.gradle.api.Project
++import org.gradle.api.provider.Provider
++import org.gradle.api.services.BuildService
++import org.gradle.api.services.BuildServiceParameters
++import org.gradle.kotlin.dsl.registerIfAbsent
++import org.gradle.kotlin.dsl.withType
++import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
++
++/**
++ * Lets one iOS simulator test task run at a time across all projects: the Kotlin/Native simulator
++ * tests and the Swift cloud sync xcodebuild run. On the 3-core CI macOS runner, overlapping runs
++ * stalled Kotlin/Native tests past their runTest and Turbine timeouts.
++ */
++abstract class IosSimulatorTestLock : BuildService<BuildServiceParameters.None>
++
++internal fun Project.iosSimulatorTestLock(): Provider<IosSimulatorTestLock> =
++    gradle.sharedServices.registerIfAbsent("iosSimulatorTestLock", IosSimulatorTestLock::class) {
++        maxParallelUsages.set(1)
++    }
++
++internal fun Project.serializeKotlinNativeSimulatorTests() {
++    val lock = iosSimulatorTestLock()
++    tasks.withType<KotlinNativeSimulatorTest>().configureEach { usesService(lock) }
++}
+```
+
+**File**: `build-logic/convention/src/main/kotlin/KmpLibraryConventionPlugin.kt` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
+                     freeCompilerArgs.add("-Xexpect-actual-classes")
+                 }
+             }
++            serializeKotlinNativeSimulatorTests()
+         }
      }
-+
-+    @Test
-+    fun `reader direction skips a very long inline image destination without overflowing the stack`() {
-+        val markdown = "![](data:image/png;base64,${"A".repeat(LONG_TOKEN_LENGTH)})\n\nمتن مقاله"
-+
-+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
-+    }
-+
-+    @Test
-+    fun `reader direction skips a very long angle-bracket destination without overflowing the stack`() {
-+        val markdown = "[](<https://example.com/${"a b".repeat(LONG_TOKEN_LENGTH / 3)}>) متن مقاله"
-+
-+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
-+    }
-+
-+    @Test
-+    fun `reader direction skips a very long link title without overflowing the stack`() {
-+        val markdown = "[](https://example.com \"${"Latin ".repeat(LONG_TOKEN_LENGTH / 6)}\") متن مقاله"
-+
-+        assertEquals(ContentDirection.RIGHT_TO_LEFT, directionOnUiSizedStack(markdown))
-+    }
-+
-+    // The desktop reader resolves the direction during composition, on AWT-EventQueue-0, which has the JVM's
-+    // default 1 MB thread stack.
-+    private fun directionOnUiSizedStack(markdown: String): ContentDirection? {
-+        var result: Result<ContentDirection?>? = null
-+        val thread = Thread(null, {
-+            result = runCatching { readerModeContentDirection(title = null, siteName = null, markdown = markdown) }
-+        }, "reader-direction", UI_THREAD_STACK_BYTES)
-+        thread.start()
-+        thread.join()
-+        return checkNotNull(result).getOrThrow()
-+    }
-+
-+    private companion object {
-+        const val LONG_TOKEN_LENGTH = 7_000
-+        const val UI_THREAD_STACK_BYTES = 1024L * 1024L
-+    }
- }
+ 
 ```
 
----
-
-### Incident Patch 2: `a2159d21` (2026-11-24)
-**Commit Message**: Skip Android app initialization outside the main process so RevenueCat doesn't crash WebView helper processes
-
-**File**: `androidApp/src/main/kotlin/com/prof18/feedflow/android/FeedFlowApp.kt` (modified, +11/-1)
+**File**: `database/src/jvmTest/kotlin/com/prof18/feedflow/database/DatabaseHelperLiveQueryGateTest.kt` (modified, +24/-1)
 ```diff
-@@ -2,6 +2,7 @@ package com.prof18.feedflow.android
+@@ -1,5 +1,6 @@
+ package com.prof18.feedflow.database
  
- import android.app.Application
- import android.content.Context
-+import android.os.Build
- import androidx.glance.appwidget.GlanceAppWidgetManager
- import androidx.lifecycle.DefaultLifecycleObserver
- import androidx.lifecycle.LifecycleOwner
-@@ -67,6 +68,12 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
-     override fun onCreate() {
-         super.onCreate()
++import app.cash.sqldelight.Query
+ import app.cash.sqldelight.db.QueryResult
+ import app.cash.sqldelight.db.SqlCursor
+ import app.cash.sqldelight.db.SqlDriver
+@@ -15,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.cancel
+ import kotlinx.coroutines.channels.Channel
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.first
++import kotlinx.coroutines.flow.update
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.runBlocking
+ import kotlinx.coroutines.withTimeout
+@@ -34,18 +38,20 @@ class DatabaseHelperLiveQueryGateTest {
+         val liveQueryRuns = driver.executedSql.count { it == liveQuerySql }
  
-+        // The system can create the Application in a process that isn't the app's own, such as a WebView
-+        // zygote child without network access, where RevenueCat refuses to start.
-+        if (!isMainProcess()) {
-+            return
+         gate.pause()
++        driver.awaitNoLiveQueries()
+         helper.insertFeedSource(listOf(parsedSource(SOURCE_B)))
+ 
+         assertNull(emissions.itemOrNull())
+         assertEquals(liveQueryRuns, driver.executedSql.count { it == liveQuerySql })
+     }
+ 
+     @Test
+-    fun `resuming the gate re-runs the live query with the current data`() = withHelper { helper, gate, _ ->
++    fun `resuming the gate re-runs the live query with the current data`() = withHelper { helper, gate, driver ->
+         val emissions = helper.observeSourceIds()
+         assertEquals(listOf(SOURCE_A), emissions.awaitItem())
+ 
+         gate.pause()
++        driver.awaitNoLiveQueries()
+         helper.insertFeedSource(listOf(parsedSource(SOURCE_B)))
+         gate.resume()
+ 
+@@ -101,6 +107,7 @@ class DatabaseHelperLiveQueryGateTest {
+ 
+     private class RecordingDriver(private val delegate: SqlDriver) : SqlDriver by delegate {
+         val executedSql: MutableList<String> = CopyOnWriteArrayList()
++        private val registeredListeners = MutableStateFlow(0)
+ 
+         override fun <R> executeQuery(
+             identifier: Int?,
+@@ -112,6 +119,22 @@ class DatabaseHelperLiveQueryGateTest {
+             executedSql += sql
+             return delegate.executeQuery(identifier, sql, mapper, parameters, binders)
+         }
++
++        override fun addListener(vararg queryKeys: String, listener: Query.Listener) {
++            delegate.addListener(*queryKeys, listener = listener)
++            registeredListeners.update { it + 1 }
 +        }
 +
-         val isGooglePlayFlavor = when (BuildConfig.FLAVOR) {
-             "googlePlay" -> true
-             else -> false
-@@ -84,7 +91,7 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
-             isIcloudSyncEnabled = false,
-             appVersion = BuildConfig.VERSION_NAME,
-             platformName = "Android",
--            platformVersion = "${android.os.Build.VERSION.RELEASE} - API ${android.os.Build.VERSION.SDK_INT}",
-+            platformVersion = "${Build.VERSION.RELEASE} - API ${Build.VERSION.SDK_INT}",
-         )
++        override fun removeListener(vararg queryKeys: String, listener: Query.Listener) {
++            delegate.removeListener(*queryKeys, listener = listener)
++            registeredListeners.update { it - 1 }
++        }
++
++        // Pausing the gate cancels the live queries asynchronously; a write sent before they
++        // unsubscribe still re-runs them.
++        suspend fun awaitNoLiveQueries() {
++            withTimeout(TIMEOUT_MS) { registeredListeners.first { it == 0 } }
++        }
+     }
  
-         RevenueCatSupport.configure(
-@@ -210,6 +217,9 @@ open class FeedFlowApp : Application(), SingletonImageLoader.Factory {
+     private fun parsedSource(id: String) = ParsedFeedSource(
+```
+
+**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/home/DesktopFeedMoveDialogTest.kt` (modified, +12/-4)
+```diff
+@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsActions
+ import androidx.compose.ui.test.assertIsNotEnabled
+ import androidx.compose.ui.test.assertIsSelected
+ import androidx.compose.ui.test.hasText
++import androidx.compose.ui.test.isEnabled
+ import androidx.compose.ui.test.isSelected
+ import androidx.compose.ui.test.junit4.v2.createComposeRule
+ import androidx.compose.ui.test.onNodeWithTag
+@@ -104,8 +105,8 @@ class DesktopFeedMoveDialogTest {
+         // The new category is picked for the move without a second trip through the list.
+         rule.waitUntilExactlyOneExists(hasText("Reading") and isSelected(), timeoutMillis = 5_000)
+ 
+-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
+-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
++        confirmMove()
++        rule.waitUntil(timeoutMillis = 5_000) { moved != null }
+         rule.runOnIdle {
+             assertEquals(listOf(source), moved?.first)
+             assertEquals("created-1", moved?.second?.id)
+@@ -137,15 +138,22 @@ class DesktopFeedMoveDialogTest {
+         rule.onNodeWithText(EnFeedFlowStrings.noCategory)
+             .performSemanticsAction(SemanticsActions.OnClick) { it() }
+         rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.noCategory) and isSelected(), timeoutMillis = 5_000)
+-        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
+-            .performSemanticsAction(SemanticsActions.OnClick) { it() }
++        confirmMove()
++        rule.waitUntil(timeoutMillis = 5_000) { moved != null }
+ 
+         rule.runOnIdle {
+             assertEquals(listOf(source), moved?.first)
+             assertNull(moved?.second)
          }
      }
  
-+    private fun isMainProcess(): Boolean =
-+        Build.VERSION.SDK_INT < Build.VERSION_CODES.P || getProcessName() == packageName
++    // A click on a still-disabled Confirm is silently dropped, so wait for the destination to enable it.
++    private fun confirmMove() {
++        rule.waitUntilExactlyOneExists(hasText(EnFeedFlowStrings.confirmButton) and isEnabled(), timeoutMillis = 5_000)
++        rule.onNodeWithText(EnFeedFlowStrings.confirmButton)
++            .performSemanticsAction(SemanticsActions.OnClick) { it() }
++    }
 +
-     override fun newImageLoader(context: PlatformContext): ImageLoader {
-         val appEnvironment = if (BuildConfig.DEBUG) {
-             AppEnvironment.Debug
+     private fun feedSource(category: FeedSourceCategory? = null) = FeedSource(
+         id = "source-1",
+         url = "https://example.com/feed.xml",
 ```
 
-**File**: `androidApp/src/test/kotlin/com/prof18/feedflow/android/SecondaryProcessFeedFlowAppTest.kt` (added, +33/-0)
+**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/reaadermode/DesktopReaderContentTest.kt` (modified, +25/-2)
 ```diff
-@@ -0,0 +1,33 @@
-+package com.prof18.feedflow.android
-+
-+import androidx.test.core.app.ApplicationProvider
-+import org.junit.Assert.assertNull
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.koin.core.context.GlobalContext
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+import org.robolectric.shadows.ShadowApplication
-+
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [35], application = SecondaryProcessFeedFlowApp::class)
-+class SecondaryProcessFeedFlowAppTest {
-+
-+    @Test
-+    fun secondaryProcessWithoutInternetStartsWithoutRunningAppInit() {
-+        ApplicationProvider.getApplicationContext<SecondaryProcessFeedFlowApp>()
-+
-+        assertNull(GlobalContext.getOrNull())
-+    }
-+}
-+
-+/**
-+ * Mirrors the WebView zygote child process seen on Android 17: the Application is created in a process
-+ * other than the app's own one, and that process has no INTERNET permission.
-+ */
-+class SecondaryProcessFeedFlowApp : FeedFlowApp() {
-+    override fun onCreate() {
-+        ShadowApplication.setProcessName("$packageName:sandboxed_process0")
-+        super.onCreate()
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `4f68d535` (2026-11-25)
-**Commit Message**: Fix flaky iOS and desktop E2E tests
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/harness/FlowActions.kt` (modified, +26/-2)
-```diff
-@@ -11,6 +11,7 @@ private const val MAX_SCROLLS = 60
- private const val MAX_WINDOW_SCROLLS = 8
- private const val CLICK_ATTEMPTS = 3
- private const val RETRY_WAIT_MS = 3_000L
-+private const val SEARCH_TAG = "search-query"
+@@ -15,6 +15,9 @@ import androidx.compose.ui.test.onNodeWithText
+ import androidx.compose.ui.test.performClick
+ import coil3.ImageLoader
+ import coil3.PlatformContext
++import coil3.intercept.Interceptor
++import coil3.request.ErrorResult
++import coil3.request.ImageResult
+ import com.prof18.feedflow.core.model.ArticleOpenMode
+ import com.prof18.feedflow.core.model.ArticleReportUiState
+ import com.prof18.feedflow.core.model.FeedItemId
+@@ -38,6 +41,18 @@ class DesktopReaderContentTest {
  
- /** Nodes of a window or dialog, by title (dialogs are popups in windows()). */
- fun Flow.nodesIn(windowTitle: String): List<NodeSnapshotDto> {
-@@ -65,6 +66,29 @@ fun Flow.clickSidebar(name: String) {
- /** The unread count shown next to a sidebar entry, or null when it shows none. */
- fun Flow.sidebarCount(name: String): String? = sidebarRow(name).texts.drop(1).firstOrNull()
+     private val imageLoader = ImageLoader.Builder(PlatformContext.INSTANCE).build()
  
-+/**
-+ * Opens search from the home toolbar and waits for the query field. A click on a window that has just
-+ * started can be swallowed, so it clicks again if the field does not show up.
-+ */
-+fun Flow.openSearch() {
-+    repeat(CLICK_ATTEMPTS - 1) {
-+        click(awaitContentDescription(strings.searchButtonContentDescription))
-+        if (runCatching { awaitTag(SEARCH_TAG, RETRY_WAIT_MS) }.isSuccess) return
-+    }
-+    click(awaitContentDescription(strings.searchButtonContentDescription))
-+    awaitTag(SEARCH_TAG)
-+}
++    // Fails every request at once, so the failed-image state never waits on real file I/O.
++    private val failingImageLoader = ImageLoader.Builder(PlatformContext.INSTANCE)
++        .components {
++            add(
++                object : Interceptor {
++                    override suspend fun intercept(chain: Interceptor.Chain): ImageResult =
++                        ErrorResult(null, chain.request, IllegalStateException("Image load disabled in tests"))
++                },
++            )
++        }
++        .build()
 +
-+/**
-+ * Scrolls a list from one of its rows. A lazy list can recycle that row between reading it and scrolling,
-+ * so a failed scroll is ignored: the caller reads the rows again before the next one.
-+ */
-+fun Flow.scrollFromRow(row: NodeSnapshotDto, amount: Int) {
-+    val failure = runCatching { scroll(row, amount) }.exceptionOrNull() ?: return
-+    if (failure !is SpectreAgentException) throw failure
-+    idle()
-+}
-+
- /** Opens a sidebar feed or category menu with Shift+F10 on the focused row (FACT context-menu). */
- fun Flow.openSidebarMenu(name: String) {
-     clickSidebar(name)
-@@ -141,7 +165,7 @@ fun Flow.scrollToTag(tag: String): NodeSnapshotDto {
-         nodes().firstOrNull { it.testTag == tag && it.isOnScreen && it.bounds.height > MIN_ROW_HEIGHT }
-             ?.let { return it }
-         val anchor = visibleArticleRows().lastOrNull() ?: awaitTagPrefix("article_row_").first()
--        scroll(anchor, SCROLL_STEP)
-+        scrollFromRow(anchor, SCROLL_STEP)
-     }
-     return awaitTag(tag)
- }
-@@ -152,7 +176,7 @@ fun Flow.scrollToText(text: String, exact: Boolean = true): NodeSnapshotDto {
-         nodes().firstOrNull { it.isOnScreen && it.matches(text, exact) && it.key.startsWith(MAIN_SURFACE) }
-             ?.let { return it }
-         val anchor = visibleArticleRows().lastOrNull() ?: return awaitText(text, exact)
--        scroll(anchor, SCROLL_STEP)
-+        scrollFromRow(anchor, SCROLL_STEP)
-     }
-     return awaitText(text, exact)
- }
-```
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/regression/AccountsDataFlowsTest.kt` (modified, +4/-4)
-```diff
-@@ -12,7 +12,9 @@ import com.prof18.feedflow.desktop.e2e.harness.clickSidebar
- import com.prof18.feedflow.desktop.e2e.harness.closeWindow
- import com.prof18.feedflow.desktop.e2e.harness.nodesIn
- import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
-+import com.prof18.feedflow.desktop.e2e.harness.openSearch
- import com.prof18.feedflow.desktop.e2e.harness.openSettings
-+import com.prof18.feedflow.desktop.e2e.harness.scrollFromRow
- import com.prof18.feedflow.desktop.e2e.harness.scrollToTag
- import com.prof18.feedflow.desktop.e2e.harness.typeIntoFocused
- import com.prof18.feedflow.desktop.e2e.harness.visibleArticleRows
-@@ -280,8 +282,7 @@ class AccountsDataFlowsTest {
-         flow.awaitTag(flow.largeRow(1))
-         flow.scrollToTag(flow.largeRow(PAST_FIRST_PAGE))
- 
--        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
--        flow.awaitTag(SEARCH_FIELD_TAG)
-+        flow.openSearch()
-         flow.typeIntoFocused("Pagination Needle")
-         flow.awaitText(NEEDLE_TITLE)
-     }
-@@ -325,7 +326,7 @@ class AccountsDataFlowsTest {
-             found()?.let { return it }
-             val rows = visibleArticleRows()
-             val anchor = (if (down) rows.lastOrNull() else rows.firstOrNull()) ?: return await(title) { found() }
--            scroll(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
-+            scrollFromRow(anchor, if (down) SCROLL_STEP else -SCROLL_STEP)
+     @Test
+     fun `loading transitions to actual Jewel content without retaining the spinner`() {
+         val state = mutableStateOf<ReaderModeState>(ReaderModeState.Loading)
+@@ -150,7 +165,10 @@ class DesktopReaderContentTest {
+     fun `an image without alt text that fails to load links with a label instead of its URL`() {
+         val imageUrl = "file:///feedflow-missing-image.avif"
+         val state = success()
+-        showBody(state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")))
++        showBody(
++            state.copy(readerModeData = state.readerModeData.copy(content = "$BODY_TEXT\n\n![]($imageUrl)")),
++            imageLoader = failingImageLoader,
++        )
+         // While loading, Jewel's inline placeholder text is the raw `![Open image](url)`, holding both the label
+         // and the URL, so wait for the failed-image link to replace it.
+         rule.waitUntil(timeoutMillis = 5_000) {
+@@ -196,7 +214,11 @@ class DesktopReaderContentTest {
          }
-         return await("row '$title' after $MAX_TIMELINE_SCROLLS scrolls") { found() }
-     }
-@@ -379,7 +380,6 @@ class AccountsDataFlowsTest {
-     private companion object {
-         val SETTINGS = com.prof18.feedflow.i18n.EnFeedFlowStrings.settingsTitle
-         const val MAIN_SURFACE_TAG = "desktop_main_window_surface"
--        const val SEARCH_FIELD_TAG = "search-query"
-         const val BACKUP_BUTTON_TAG = "account_backup_button"
-         const val INVALID_OPML = "e2e/fixtures/opml/zz-feedflow-invalid-opml.xml"
-         const val VALID_OPML = "feedflow-valid-opml-smoke.xml"
-```
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/regression/ArticleReaderFlowsTest.kt` (modified, +2/-2)
-```diff
-@@ -18,6 +18,7 @@ import com.prof18.feedflow.desktop.e2e.harness.hasButton
- import com.prof18.feedflow.desktop.e2e.harness.isArticleShown
- import com.prof18.feedflow.desktop.e2e.harness.isOnScreen
- import com.prof18.feedflow.desktop.e2e.harness.openArticle
-+import com.prof18.feedflow.desktop.e2e.harness.openSearch
- import com.prof18.feedflow.desktop.e2e.harness.openSettings
- import com.prof18.feedflow.desktop.e2e.harness.readerButton
- import com.prof18.feedflow.desktop.e2e.harness.scrollToTag
-@@ -466,8 +467,7 @@ class ArticleReaderFlowsTest {
      }
  
-     private fun Flow.search(query: String) {
--        click(awaitContentDescription(strings.searchButtonContentDescription))
--        awaitTag("search-query")
-+        openSearch()
-         typeIntoFocused(query)
+-    private fun showBody(state: ReaderModeState, onOpenInBrowser: (String) -> Unit = {}) {
++    private fun showBody(
++        state: ReaderModeState,
++        onOpenInBrowser: (String) -> Unit = {},
++        imageLoader: ImageLoader = this.imageLoader,
++    ) {
+         rule.setContent {
+             CompositionLocalProvider(LocalFeedFlowStrings provides EnFeedFlowStrings) {
+                 FeedFlowTheme(darkTheme = false, useOledTheme = false) {
+@@ -246,6 +268,7 @@ class DesktopReaderContentTest {
+     @After
+     fun closeImageLoader() {
+         imageLoader.shutdown()
++        failingImageLoader.shutdown()
      }
  
-```
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/regression/SettingsFlowsTest.kt` (modified, +2/-3)
-```diff
-@@ -13,6 +13,7 @@ import com.prof18.feedflow.desktop.e2e.harness.dropdownIn
- import com.prof18.feedflow.desktop.e2e.harness.isSwitchOn
- import com.prof18.feedflow.desktop.e2e.harness.nodesIn
- import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
-+import com.prof18.feedflow.desktop.e2e.harness.openSearch
- import com.prof18.feedflow.desktop.e2e.harness.openSettings
- import com.prof18.feedflow.desktop.e2e.harness.scrollInWindow
- import com.prof18.feedflow.desktop.e2e.harness.scrollToText
-@@ -214,8 +215,7 @@ class SettingsFlowsTest {
-         flow.clickIn(dialog, flow.strings.confirmButton)
-         flow.awaitWindowGone(dialog)
-         flow.closeWindow(SETTINGS(flow))
--        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
--        flow.awaitTag(SEARCH_FIELD_TAG)
-+        flow.openSearch()
-         flow.typeIntoFocused(OLD_ARTICLE_SEARCH)
-         flow.awaitText(flow.strings.searchNoData(OLD_ARTICLE_SEARCH))
-     }
-@@ -395,7 +395,6 @@ class SettingsFlowsTest {
-         val SETTINGS: (Flow) -> String = { it.strings.settingsTitle }
-         const val OLD_ARTICLE_TITLE = "E2E Old Article Eligible For Delete: Venezia council"
-         const val OLD_ARTICLE_SEARCH = "Venezia council"
--        const val SEARCH_FIELD_TAG = "search-query"
-         const val ABOUT_TEXT_START = "FeedFlow is a minimal RSS reader"
-     }
- }
-```
-
-**File**: `desktopApp/src/jvmTest/kotlin/com/prof18/feedflow/desktop/e2e/smoke/SmokeFlowsTest.kt` (modified, +3/-4)
-```diff
-@@ -21,6 +21,7 @@ import com.prof18.feedflow.desktop.e2e.harness.isArticleShown
- import com.prof18.feedflow.desktop.e2e.harness.isSwitchOn
- import com.prof18.feedflow.desktop.e2e.harness.openAddMenuItem
- import com.prof18.feedflow.desktop.e2e.harness.openArticle
-+import com.prof18.feedflow.desktop.e2e.harness.openSearch
- import com.prof18.feedflow.desktop.e2e.harness.openSettings
- import com.prof18.feedflow.desktop.e2e.harness.openSidebarMenu
- import com.prof18.feedflow.desktop.e2e.harness.replaceText
-@@ -159,8 +160,7 @@ class SmokeFlowsTest {
-         val flow = e2e.start(Seed.ContentRich)
-         flow.awaitText(SEED_NEWEST_TITLE)
- 
--        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
--        flow.awaitTag(SEARCH_FIELD_TAG)
-+        flow.openSearch()
-         flow.typeIntoFocused("Pixel")
-         flow.awaitText(SEED_BOOKMARKED_UNREAD_TITLE)
-         flow.awaitText(ARTICLE_WITH_COMMENTS)
-@@ -339,8 +339,7 @@ class SmokeFlowsTest {
-         flow.closeWindow(flow.strings.settingsTitle)
- 
-         flow.awaitGone(SEED_BOOKMARKED_UNREAD_TITLE)
--        flow.click(flow.awaitContentDescription(flow.strings.searchButtonContentDescription))
--        flow.awaitTag(SEARCH_FIELD_TAG)
-+        flow.openSearch()
-         flow.typeIntoFocused("Pixel")
-         flow.awaitText(flow.strings.searchNoData("Pixel"))
-         flow.assertAbsent(SEED_BOOKMARKED_UNREAD_TITLE)
-```
-
-**File**: `e2e/maestro/ios/regression/182-feed-verification-actions.yaml` (modified, +25/-0)
-```diff
-@@ -19,6 +19,8 @@ appId: com.prof18.feedflow.dev
-     visible:
-       id: e2e_seed_complete
-     timeout: 15000
-+- tapOn:
-+    id: e2e_seed_complete
- - tapOn:
-     id: drawer_menu_button
- - tapOn:
-@@ -57,3 +59,26 @@ appId: com.prof18.feedflow.dev
-     id: website_verification_cancel
- - assertNotVisible:
-     id: website_verification_screen
-+
-+# Clear the pending challenge. Left behind, the next flow's launch prompts for it, and
-+# iOS keeps that alert up when the flow's reset removes the challenge while it animates in.
-+# So relaunch to leave Settings, dismiss the launch prompt, and only then reset.
-+- launchApp
-+- extendedWaitUntil:
-+    visible: "Open website"
-+    timeout: 10000
-+- tapOn: "Cancel"
-+- openLink: feedflow://e2e/reset-and-seed?profile=content-rich
-+- tapOn:
-+    text: "^Open$"
-+    optional: true
-+- extendedWaitUntil:
-+    visible:
-+      id: e2e_seed_complete
-+    timeout: 15000
-+- launchApp
-+- assertVisible:
-+    id: article_row_e2e_article_newest_unread
-+- waitForAnimationToEnd:
-+    timeout: 5000
-+- assertNotVisible: "Open website"
-```
-
-**File**: `e2e/maestro/ios/smoke/011-import-export-smoke.yaml` (modified, +15/-0)
-```diff
-@@ -35,6 +35,14 @@ appId: com.prof18.feedflow.dev
-     timeout: 5000
- - tapOn:
-     point: 18%,43%
-+# The system file picker can ignore a tap while its search results settle; tap again if so.
-+- runFlow:
-+    when:
-+      notVisible:
-+        id: import_export_feed_import_success
-+    commands:
-+      - tapOn:
-+          point: 18%,43%
- - extendedWaitUntil:
-     visible:
-       id: import_export_feed_import_success
-@@ -58,6 +66,13 @@ appId: com.prof18.feedflow.dev
-     timeout: 5000
- - tapOn:
-     point: 18%,43%
-+- runFlow:
-+    when:
-+      notVisible:
-+        id: import_export_article_import_success
-+    commands:
-+      - tapOn:
-+          point: 18%,43%
- - extendedWaitUntil:
-     visible:
-       id: import_export_article_import_success
+     private fun success(url: String = ARTICLE_URL) = ReaderModeState.Success(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1755** (2026-11-27): Translations update from Hosted Weblate (@hosted-weblate[bot])
 - **PR #1742** (2026-11-25): Translations update from Hosted Weblate (@hosted-weblate[bot])
 - **PR #1741** (2026-11-24): Notify every new article and remove notifications once their articles are read (@prof18)
 - **PR #1737** (2026-11-24): Skip Android app initialization outside the main process so RevenueCat doesn't crash WebView helper processes (@prof18)
 - **PR #1736** (2026-11-24): Update dependency com.jetbrains.intellij.platform:icons to v263.7307.356 (@renovate[bot])
 - **PR #1735** (2026-11-24): Update dependency io.arrow-kt:arrow-fx-coroutines to v2.3.0.1 (@renovate[bot])
-- **PR #1731** (2026-11-24): Update dependency io.sentry:sentry to v8.65.1 (@renovate[bot])
 
 ---
 
@@ -1153,35 +1020,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep desktop reader direction detection from overflowing the stack on long link 
+## X. flaky database and desktop tests and serialise iOS simulator test tasks
 
 **RULE**:
-When implementing operations in `shared/src/jvmMain/kotlin/com/prof18/feedflow/shared/domain/ReaderModeMarkdown.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/code-checks.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prof18/feed-flow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7898d03c`: Keep desktop reader direction detection from overflowing the stack on long link destinations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ac44321`: flaky database and desktop tests and serialise iOS simulator test tasks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/jvmMain/kotlin/com/prof18/feedflow/shared/domain/ReaderModeMarkdown.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/code-checks.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-// optionally followed by a quoted title with escaped quotes. Each run of plain characters is one greedy
-// character class and only escapes start a new group iteration: java.util.regex recurses once per iteration
-// of a repeated group, so `(?:\\.|[^)])*` overflows the UI thread's stack on a long URL such as a data: image.
-    """\((?:<[^>\\]*(?:\\.[^>\\]*)*>|[^)\\\s]*(?:\\.[^)\\\s]*)*)(?:\s+"[^"\\]*(?:\\.[^"\\]*)*")?\)"""
+        # Simulator tests occasionally stall on this 3-core runner, so a failure gets one retry.
+        # Tasks that passed are up to date in the second run, except the cloud sync ones, which
+        # always re-run.
+        run: |
+          run_tests() {
+            ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
+          }
+          run_tests || { echo "::warning::Kotlin/Native and cloud sync tests failed, retrying once"; run_tests; }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// optionally followed by a quoted title with escaped quotes.
-    """\((?:<(?:\\.|[^>\\])*>|(?:\\.|[^)\\\s])*)(?:\s+"(?:\\.|[^"\\])*")?\)"""
+        run: ./gradlew allTests -x jvmTest -x testAndroidHostTest -x testGooglePlayDebugUnitTest "-Pfeedflow.swiftCloudSyncDestination=$IOS_TEST_DESTINATION"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7898d03c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ac44321` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

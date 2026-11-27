@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "e183bb1f",
+    "sourceVersion": "5951a71b",
     "license": "Apache-2.0",
-    "contentHash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
-    "lastHarvestedAt": "2026-11-27T04:54:08.161Z",
+    "contentHash": "ec21e306b39f2ce32dda9da18d41a690b3ceedae64cdce2a22efef302c5b6e2e",
+    "lastHarvestedAt": "2026-11-27T23:57:41.915Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "dcaa91c6",
+    "sourceVersion": "36838659",
     "license": "Apache-2.0",
-    "contentHash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
-    "lastHarvestedAt": "2026-11-25T15:21:35.224Z",
+    "contentHash": "4bd44083c9ce2e13d8fa6ed162b8ff5ffcc9489aa16a02088e80b74dfef959a2",
+    "lastHarvestedAt": "2026-11-27T23:57:32.929Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {

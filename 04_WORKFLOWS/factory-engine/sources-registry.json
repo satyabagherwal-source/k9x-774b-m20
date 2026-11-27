@@ -53,12 +53,12 @@
     "revisionIdentifier": "b0144700"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T23:21:53.368Z",
-    "lastVerified": "2026-11-27T23:21:53.368Z",
+    "lastChecked": "2026-11-27T23:57:37.525Z",
+    "lastVerified": "2026-11-27T23:57:37.525Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -67,7 +67,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7df21566"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -91,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T23:48:57.459Z",
-    "lastVerified": "2026-11-27T23:48:57.459Z",
+    "lastChecked": "2026-11-27T23:57:45.339Z",
+    "lastVerified": "2026-11-27T23:57:45.339Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1186,8 +1187,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T19:44:14.568Z",
-    "lastVerified": "2026-11-27T19:44:14.568Z",
+    "lastChecked": "2026-11-27T23:57:32.561Z",
+    "lastVerified": "2026-11-27T23:57:32.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2994,8 +2995,8 @@
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T05:57:37.626Z",
-    "lastVerified": "2026-11-27T05:57:37.626Z",
+    "lastChecked": "2026-11-27T23:57:30.137Z",
+    "lastVerified": "2026-11-27T23:57:30.137Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -5389,9 +5390,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-11-26T23:58:30.004Z",
+    "lastChecked": "2026-11-27T23:57:22.636Z",
     "revisionIdentifier": "3c4584ae",
-    "lastVerified": "2026-11-26T23:58:30.004Z"
+    "lastVerified": "2026-11-27T23:57:22.637Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -6254,14 +6255,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-27T04:54:06.994Z",
-    "lastVerified": "2026-11-27T04:54:06.994Z",
+    "lastChecked": "2026-11-27T23:57:40.614Z",
+    "lastVerified": "2026-11-27T23:57:40.614Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
+    "contentHash": "ec21e306b39f2ce32dda9da18d41a690b3ceedae64cdce2a22efef302c5b6e2e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10507,14 +10508,14 @@
     "officialUrl": "https://github.com/prof18/feed-flow",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T15:21:34.125Z",
-    "lastVerified": "2026-11-25T15:21:34.125Z",
+    "lastChecked": "2026-11-27T23:57:31.499Z",
+    "lastVerified": "2026-11-27T23:57:31.499Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
+    "contentHash": "4bd44083c9ce2e13d8fa6ed162b8ff5ffcc9489aa16a02088e80b74dfef959a2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11014,9 +11015,9 @@
   "scrapy-plugins-scrapy-zyte-api": {
     "name": "scrapy-zyte-api",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
-    "lastChecked": "2026-11-24T15:44:23.015Z",
+    "lastChecked": "2026-11-27T23:57:25.227Z",
     "revisionIdentifier": "8fcb6177",
-    "lastVerified": "2026-11-24T15:44:23.015Z"
+    "lastVerified": "2026-11-27T23:57:25.227Z"
   },
   "rechsteiner-parchment": {
     "name": "Parchment",

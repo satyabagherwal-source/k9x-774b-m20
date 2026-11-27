@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `e183bb1f`  
+> **Source Version**: `5951a71b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T04:54:06.999Z  
+> **Timestamp**: 2026-11-27T23:57:40.619Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T04:54:06.994Z  
+> **Harvest Timestamp**: 2026-11-27T23:57:40.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12292 stars
+- **Stars / Engagement**: 12295 stars
 
 ---
 
@@ -1818,833 +1818,557 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `908f480d` (2026-11-27)
-**Commit Message**: [BugFix] Resolve files() in expression subqueries before the planner lock (#84299)
+### Incident Patch 1: `a5b87e38` (2026-11-27)
+**Commit Message**: [BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthread (#84805)
+
+Signed-off-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: stdpain <[REDACTED_EMAIL]>
+Co-authored-by: Hyper-FF <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `be/src/connector/hive/scanner/jni_scanner.cpp` (modified, +18/-0)
+```diff
+@@ -17,6 +17,7 @@
+ #include <type_traits>
+ #include <utility>
+ 
++#include "base/testutil/sync_point.h"
+ #include "base/utility/defer_op.h"
+ #include "column/array_column.h"
+ #include "column/map_column.h"
+@@ -27,6 +28,7 @@
+ #include "fmt/core.h"
+ #include "fs/credential/cloud_configuration_factory.h"
+ #include "runtime/descriptors_ext.h"
++#include "runtime/java/java_env.h"
+ #include "runtime/java/java_runtime.h"
+ #include "runtime/java/jvm_helper.h"
+ #include "runtime/java/native_method_helper.h"
+@@ -66,6 +68,22 @@ Status JniScanner::do_open(RuntimeState* state) {
+ }
+ 
+ void JniScanner::do_close(RuntimeState* runtime_state) noexcept {
++    if (_jni_scanner_obj == nullptr && _jni_scanner_cls == nullptr) {
++        return;
++    }
++    // The last reference to a QueryContext can be dropped inside a brpc completion callback, and then
++    // the scanner is closed on a bthread, which cannot attach to the JVM: getting a JNIEnv there fails
++    // a CHECK and takes the whole process down. Run the JNI calls on a pthread of the JVM call pool
++    // instead and wait for them; call_function_in_pthread() runs them inline on a pthread already.
++    Status st = JavaEnv::GetInstance()->call_function_in_pthread([this]() {
++        _close_jni_scanner();
++        return Status::OK();
++    });
++    LOG_IF(WARNING, !st.ok()) << "Failed to close the off-heap table scanner: " << st;
++}
++
++void JniScanner::_close_jni_scanner() {
++    TEST_SYNC_POINT("JniScanner::_close_jni_scanner");
+     if (_jni_scanner_obj != nullptr) {
+         JNIEnv* env = JVMHelper::getInstance().getEnv();
+         if (_jni_scanner_close != nullptr) {
+```
+
+**File**: `be/src/connector/hive/scanner/jni_scanner.h` (modified, +3/-0)
+```diff
+@@ -84,6 +84,9 @@ class JniScanner : public HdfsScanner {
+ 
+     Status _release_off_heap_table(JNIEnv* env);
+ 
++    // The JNI part of do_close(); needs a thread that can attach to the JVM.
++    void _close_jni_scanner();
++
+     std::string _scanner_type() {
+         return _jni_scanner_params.contains("scanner_type") ? _jni_scanner_params["scanner_type"] : "default";
+     }
+```
+
+**File**: `be/test/connector/hive/scanner/jni_scanner_test.cpp` (modified, +78/-0)
+```diff
+@@ -14,18 +14,28 @@
+ 
+ #include "connector/hive/scanner/jni_scanner.h"
+ 
++#include <bthread/bthread.h>
+ #include <gtest/gtest.h>
+ 
++#include <atomic>
+ #include <cstdlib>
+ #include <string>
+ 
++#include "base/bthreads/util.h"
++#include "base/testutil/assert.h"
++#include "base/testutil/sync_point.h"
++#include "base/utility/defer_op.h"
+ #include "common/config_exec_fwd.h"
++#include "common/system/cpu_info.h"
+ #include "common/util/debug_util.h"
+ #include "common/util/thrift_util.h"
+ #include "runtime/descriptor_helper.h"
+ #include "runtime/descriptors_ext.h"
++#include "runtime/java/java_env.h"
+ #include "runtime/java/jni_env.h"
+ #include "runtime/java/jvm_helper.h"
++#include "runtime/runtime_env.h"
++#include "runtime/runtime_env_test_util.h"
+ #include "runtime/runtime_state.h"
+ 
+ namespace starrocks {
+@@ -605,4 +615,72 @@ TEST_F(JniScannerTest, test_close_clears_pending_java_exception) {
+     ASSERT_EQ(scanner->_jni_scanner_cls, nullptr);
+ }
+ 
++// The last QueryContext reference can be dropped in a brpc callback, so do_close() may run on a bthread,
++// which cannot attach to the JVM. do_close() must move its JNI calls to a pthread and still release the
++// scanner refs.
++TEST_F(JniScannerTest, test_close_from_bthread_runs_jni_on_pthread) {
++    if (std::getenv("JAVA_HOME") == nullptr) {
++        GTEST_SKIP() << "JAVA_HOME is not set";
++    }
++    JNIEnv* env = getJNIEnv();
++    if (env == nullptr) {
++        GTEST_SKIP() << "JVM is unavailable";
++    }
++
++    CpuInfo::init();
++    runtime_env_test::set_small_thread_pool_configs();
++    auto* java_env = RuntimeEnv::GetInstance()->java_env();
++    java_env->destroy();
++    DeferOp cleanup_java_env([java_env]() {
++        java_env->shutdown();
++        java_env->destroy();
++    });
++    ASSERT_OK(java_env->init());
++    ASSERT_NE(java_env->jvm_call_pool(), nullptr);
++
++    std::atomic<int> jni_close_calls = 0;
++    std::atomic<bool> jni_close_on_bthread = false;
++    SyncPoint::GetInstance()->SetCallBack("JniScanner::_close_jni_scanner", [&](void*) {
++        jni_close_calls.fetch_add(1, std::memory_order_relaxed);
++        if (bthread_self() != 0) {
++            jni_close_on_bthread.store(true, std::memory_order_relaxed);
++        }
++    });
++    SyncPoint::GetInstance()->EnableProcessing();
++    DeferOp cleanup_sync_point([]() {
++        SyncPoint::GetInstance()->DisableProcessing();
++        SyncPoint::GetInstance()->ClearCallBack("JniScanner::_close_jni_scanner");
++    });
++
++    jclass list_cls = env->FindClass("java/util/ArrayList");
++    ASSERT_NE(list_cls, nullptr);
++    LOCAL_REF_GUARD_ENV(env, list_cls);
++    jmethodID list_constructor = env->GetMethodID(list_cls, "<init>", "()V");
++    ASSERT_NE(list_constructor, nullptr);
++    jobject list = env->NewObject(list_cls, list_constructor);
++    ASSERT_NE(list, nullptr);
++    LOCAL_REF_GUARD_ENV(env, list);
++    // ArrayList.clear() matches the `()V` signature JniScanner uses for the scanner's close().
++    jmethodID clear_method = env->GetMethodID(list_cls, "clear", "()V");
++    ASSERT_NE(clear_method, nullptr);
++
++    std::map<std::string, std::string> params = {{"test_key", "test_value"}};
++    auto scanner = std::make_unique<JniScanner>("com/test/TestFactory", params);
++    scanner->_jni_scanner_obj = env->NewGlobalRef(list);
++    scanner->_jni_scanner_cls = (jclass)env->NewGlobalRef(list_cls);
++    scanner->_jni_scanner_close = clear_method;
++
++    std::atomic<bool> closed_on_bthread = false;
++    ASSERT_OK(bthreads::start_bthread_and_join([&]() {
++        closed_on_bthread.store(bthread_self() != 0, std::memory_order_relaxed);
++        scanner->do_close(_runtime_state);
++    }));
++
++    ASSERT_TRUE(closed_on_bthread.load(std::memory_order_relaxed));
++    ASSERT_EQ(jni_close_calls.load(std::memory_order_relaxed), 1);
++    ASSERT_FALSE(jni_close_on_bthread.load(std::memory_order_relaxed)) << "JNI close ran on a bthread";
++    ASSERT_EQ(scanner->_jni_scanner_obj, nullptr);
++    ASSERT_EQ(scanner->_jni_scanner_cls, nullptr);
++}
++
+ } // namespace starrocks
+```
+
+---
+
+### Incident Patch 2: `d73e4c13` (2026-11-27)
+**Commit Message**: [BugFix] Lock the tables of GROUP BY subqueries before analysis (#84300)
 
 Signed-off-by: trueeyu <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +10/-108)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java` (modified, +4/-5)
 ```diff
-@@ -171,7 +171,16 @@ public void analyze(StatementBase node) {
-      * while deferring normal table analysis to the locked phase.
-      */
-     public void analyzeFilesOnly(StatementBase node) {
--        new FilesOnlyVisitor().process(node, new Scope(RelationId.anonymous(), new RelationFields()));
-+        // The planner calls this when AnalyzerUtils#collectFileTableFunctionRelation finds a files() call; resolving
-+        // what that same walk finds leaves none of them to the analyzer, which runs under the planner lock.
-+        AnalyzerUtils.collectFileTableFunctionRelation(node).forEach(this::initializeFileTableIfAbsent);
-+    }
-+
-+    private void initializeFileTableIfAbsent(FileTableFunctionRelation relation) {
-+        if (relation.getTable() instanceof TableFunctionTable) {
-+            return;
-+        }
-+        relation.setTable(resolveTableFunctionTable(relation.getProperties(), relation.getPushDownSchemaFunc()));
-     }
- 
-     /**
-@@ -2775,113 +2784,6 @@ private boolean isCteName(String name) {
-         }
-     }
- 
--    /**
--     * A lightweight visitor that only resolves FileTableFunctionRelation so that
--     * files() schema can be inferred without acquiring DB/table locks. Normal tables/views are skipped.
--     */
--    private class FilesOnlyVisitor implements AstVisitorExtendInterface<Scope, Scope> {
--        public FilesOnlyVisitor() {}
--
--        public Scope process(ParseNode node, Scope scope) {
--            return node.accept(this, scope);
--        }
--
--        @Override
--        public Scope visitQueryStatement(QueryStatement node, Scope parent) {
--            QueryRelation queryRelation = node.getQueryRelation();
--            if (queryRelation != null && !queryRelation.getCteRelations().isEmpty()) {
--                for (CTERelation cteRelation : queryRelation.getCteRelations()) {
--                    process(cteRelation.getCteQueryStatement(), parent);
--                }
--            }
--            return process(queryRelation, parent);
--        }
--
--        @Override
--        public Scope visitQueryRelation(QueryRelation node, Scope parent) {
--            return process(node, parent);
--        }
--
--        @Override
--        public Scope visitSelect(SelectRelation selectRelation, Scope scope) {
--            Relation r = selectRelation.getRelation();
--            // Only touch files(); keep others intact
--            if (r instanceof FileTableFunctionRelation) {
--                FileTableFunctionRelation f = (FileTableFunctionRelation) r;
--                initializeFileTableIfAbsent(f);
--            } else if (r instanceof JoinRelation) {
--                visitJoin((JoinRelation) r, scope);
--            } else if (r instanceof SubqueryRelation) {
--                visitSubqueryRelation((SubqueryRelation) r, scope);
--            } else if (r instanceof SetOperationRelation) {
--                visitSetOp((SetOperationRelation) r, scope);
--            } else if (r instanceof PivotRelation) {
--                PivotRelation p = (PivotRelation) r;
--                process(p.getQuery(), scope);
--            }
--            return scope;
--        }
--
--        public Scope visitJoin(JoinRelation join, Scope scope) {
--            Relation l = join.getLeft();
--            Relation r = join.getRight();
--            // SubqueryRelation/SetOperationRelation/PivotRelation are intentionally skipped here, because
--            // pre-analyzing them would still require table metadata and locks; the full analyzer pass will
--            // revisit them after files() has been resolved where necessary.
--            if (l instanceof FileTableFunctionRelation) {
--                FileTableFunctionRelation f = (FileTableFunctionRelation) l;
--                initializeFileTableIfAbsent(f);
--            } else if (l instanceof JoinRelation) {
--                visitJoin((JoinRelation) l, scope);
--            } else if (l instanceof SelectRelation) {
--                visitSelect((SelectRelation) l, scope);
--            } else if (l instanceof SubqueryRelation) {
--                visitSubqueryRelation((SubqueryRelation) l, scope);
--            } else if (l instanceof SetOperationRelation) {
--                visitSetOp((SetOperationRelation) l, scope);
--            }
--
--            // Same as the left side. We continue to recurse into joins, subqueries and set operations to locate
--            // nested files() invocations, while still avoiding any metadata access for normal table relations.
--            if (r instanceof FileTableFunctionRelation) {
--                FileTableFunctionRelation f = (FileTableFunctionRelation) r;
--                initializeFileTableIfAbsent(f);
--                // Do NOT mark lateral here: the relation remains a FileTableFunctionRelation, and the main analyzer
--                // will decide whether lateral semantics are required once it has the final relation type.
--            } else if (r instanceof JoinRelation) {
--                visitJoin((JoinRelation) r, scope);
--            } el
+@@ -2836,11 +2836,10 @@ public Table resolveTable(TableRelation tableRelation) {
+                         Preconditions.checkState(mvTable instanceof OlapTable);
+                         OlapTable mvOlapTable = new OlapTable(mvTable.getType());
+                         // Known: when a statement is planned, PlannerMetaLocker collects the base table of a
+-                        // [_SYNC_MV_] relation by its index name, so this copy is taken under its READ lock -- but not
+-                        // yet for a read in GROUP BY, which that collection does not walk before analysis. Nor does
+-                        // every analysis run under the planner lock: CREATE VIEW analyzes its query
+-                        // holding none, and the copy is taken all the same. Tracked as 2-g in the FE lock todo: the
+-                        // analyzer is to stop copying, leaving the copy to the planner.
++                        // [_SYNC_MV_] relation by its index name, so this copy is taken under its READ lock. But not
++                        // every analysis runs under the planner lock -- CREATE VIEW analyzes its query holding none --
++                        // and the copy is taken all the same. Tracked as 2-g in the FE lock todo: the analyzer is to
++                        // stop copying, leaving the copy to the planner.
+                         try (SnapshotCopyValidator.KnownViolation known = SnapshotCopyValidator.exemptKnownViolation(
+                                 "[_SYNC_MV_] base table copied by analysis outside the planner lock (2-g)")) {
+                             ((OlapTable) mvTable).copyOnlyForQuery(mvOlapTable);
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/StatementPlannerTest.java` (modified, +35/-0)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/ast/AstTraverser.java` (modified, +3/-0)
 ```diff
-@@ -494,6 +494,41 @@ public void testQueryFilesJoinedWithNormalTableResolvedBeforeLock() throws Excep
-         assertFilesResolvedBeforeLock(sql);
+@@ -152,6 +152,9 @@ public R visitSelect(SelectRelation node, C context) {
+ 
+         if (node.getGroupBy() != null) {
+             node.getGroupBy().forEach(x -> visit(x, context));
++        } else if (node.getGroupByClause() != null) {
++            // Before analysis the grouping expressions are only in the parsed clause, as the select list is above.
++            node.getGroupByClause().getParsedGroupingExprs().forEach(x -> visit(x, context));
+         }
+ 
+         if (node.getAggregate() != null) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/ast/GroupByClause.java` (modified, +19/-0)
+```diff
+@@ -151,6 +151,25 @@ public List<Expr> getOriGroupingExprs() {
+         return oriGroupingExprs;
      }
  
 +    /**
-+     * The lock collection walks the select list before analysis and locks t0 there, so files() there has to be
-+     * found and resolved before the lock as well.
++     * The grouping expressions as parsed: the sets for GROUPING SETS, the expression list for every other kind.
++     * Unlike {@link #getGroupingExprs}, this generates nothing: that expansion is the analyzer's to do.
++     */
++    public List<Expr> getParsedGroupingExprs() {
++        List<Expr> exprs = new ArrayList<>();
++        if (oriGroupingExprs != null) {
++            oriGroupingExprs.stream().filter(e -> e != null).forEach(exprs::add);
++        }
++        if (groupingSetList != null) {
++            for (List<Expr> groupingSet : groupingSetList) {
++                if (groupingSet != null) {
++                    groupingSet.stream().filter(e -> e != null).forEach(exprs::add);
++                }
++            }
++        }
++        return exprs;
++    }
++
+     public ArrayList<Expr> getGroupingExprs() {
+         if (!exprGenerated) {
+             try {
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/PlanningSnapshotViewLockTest.java` (modified, +27/-0)
+```diff
+@@ -366,6 +366,21 @@ public PlannerMetaLocker forTablesNotLockedOf(Invocation invocation, ConnectCont
+         Assertions.assertEquals(1, reLocks.get());
+     }
+ 
++    /**
++     * Before analysis the grouping expressions are only in the parsed GROUP BY clause, not in the analyzed group-by
++     * list the traverser walks. A [_SYNC_MV_] read there is analyzed -- and its base table copied -- like any other,
++     * in every kind of grouping.
 +     */
 +    @Test
-+    public void testQueryFilesInSelectListSubqueryResolvedBeforeLock() throws Exception {
-+        assertFilesResolvedBeforeLock("select (select count(*) from t0), "
-+                + "(select count(*) from files(\"path\"=\"fake://select_list\", \"format\"=\"csv\"))");
++    public void testSyncMVReadInGroupBy() throws Exception {
++        String read = "(SELECT count(*) FROM test." + SYNC_MV + " [_SYNC_MV_])";
++        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test.t1 GROUP BY " + read);
++        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test.t1 GROUP BY GROUPING SETS ((v4), ("
++                + read + "))");
++        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test.t1 GROUP BY ROLLUP (v4, " + read + ")");
++        assertSyncMVBaseTableCopiedUnderItsLock("SELECT count(*) FROM test.t1 GROUP BY CUBE (v4, " + read + ")");
 +    }
 +
+     /**
+      * CREATE VIEW analyzes its query without the planner lock, and the analyzer still copies the base table of a
+      * [_SYNC_MV_] read: 2-g, exempted until the analyzer stops copying. Here so that dropping the exemption before
+@@ -478,6 +493,18 @@ public void testSyncMVReadDoesNotLockAnotherSessionsTemporaryTable() throws Exce
+         }
+     }
+ 
++    /** The same for a table read only by a subquery of GROUP BY, in every kind of grouping. */
 +    @Test
-+    public void testQueryFilesInWhereSubqueryResolvedBeforeLock() throws Exception {
-+        assertFilesResolvedBeforeLock("select v1 from t0 where v1 in "
-+                + "(select col_int from files(\"path\"=\"fake://where\", \"format\"=\"csv\"))");
++    public void testNoReLockForATableReadInGroupBy() throws Exception {
++        String read = "(SELECT count(*) FROM test.t1)";
++        AtomicInteger reLocks = countReLocks();
++        assertEveryCopyWasLockedOf("SELECT count(*) FROM test.t0 GROUP BY " + read, "t1");
++        assertEveryCopyWasLockedOf("SELECT count(*) FROM test.t0 GROUP BY GROUPING SETS ((v1), (" + read + "))", "t1");
++        assertEveryCopyWasLockedOf("SELECT count(*) FROM test.t0 GROUP BY ROLLUP (v1, " + read + ")", "t1");
++        assertEveryCopyWasLockedOf("SELECT count(*) FROM test.t0 GROUP BY CUBE (v1, " + read + ")", "t1");
++        Assertions.assertEquals(0, reLocks.get());
 +    }
 +
+     /** A view does not take the whole set again: the lock taken before analysis already covers its base tables. */
+     @Test
+     public void testNoReLockForAView() throws Exception {
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/StatementPlannerExternalTablesLockTest.java` (modified, +11/-0)
+```diff
+@@ -355,6 +355,17 @@ public void unlock() {
+         Assertions.assertEquals(1, getTableCalls.get());
+     }
+ 
++    /**
++     * An external table read by a subquery in GROUP BY. The lock collection walks GROUP BY before analysis and
++     * locks t0, so the external-table pre-pass has to walk it as well: the JDBC lookup must not wait for the
++     * analyzer under that lock.
++     */
 +    @Test
-+    public void testQueryFilesInJoinOnSubqueryResolvedBeforeLock() throws Exception {
-+        assertFilesResolvedBeforeLock("select t0.v1 from t0 join t1 on t0.v1 = t1.v4 and t0.v2 in "
-+                + "(select col_int from files(\"path\"=\"fake://join_on\", \"format\"=\"csv\"))");
++    public void testGroupByExternalSubqueryMetadataNotUnderLock() throws Exception {
++        assertExternalMetadataFetchedBeforeLock(
++                "select count(*) from t0 group by (select count(*) from jdbc0.partitioned_db0.tbl0)");
 +    }
 +
+     /**
+      * A non-recursive CTE's name is in scope only after its own definition: inside it, a same-named table is the
+      * table. Here the inner tbl0 is the JDBC table of the current database, which the pre-pass must resolve
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/StatementPlannerTest.java` (modified, +6/-0)
+```diff
+@@ -504,6 +504,12 @@ public void testQueryFilesInSelectListSubqueryResolvedBeforeLock() throws Except
+                 + "(select count(*) from files(\"path\"=\"fake://select_list\", \"format\"=\"csv\"))");
+     }
+ 
 +    @Test
-+    public void testInsertFilesInSelectListSubqueryResolvedBeforeLock() throws Exception {
-+        boolean originalRunningUnitTest = FeConstants.runningUnitTest;
-+        try {
-+            FeConstants.runningUnitTest = false;
-+            assertFilesResolvedBeforeLock("insert into t0 select "
-+                    + "(select count(*) from files(\"path\"=\"fake://insert_select_list\", \"format\"=\"csv\")), "
-+                    + "v2, v3 from t0");
-+        } finally {
-+            FeConstants.runningUnitTest = originalRunningUnitTest;
-+        }
++    public void testQueryFilesInGroupBySubqueryResolvedBeforeLock() throws Exception {
++        assertFilesResolvedBeforeLock("select count(*) from t0 "
++                + "group by (select count(*) from files(\"path\"=\"fake://group_by\", \"format\"=\"csv\"))");
 +    }
 +
      @Test
-     public void testCreatePipeFilesResolvedBeforeLock() throws Exception {
-         // CREATE PIPE analyzes its INSERT from inside PipeAnalyzer, i.e. after the lock of the outer
+     public void testQueryFilesInWhereSubqueryResolvedBeforeLock() throws Exception {
+         assertFilesResolvedBeforeLock("select v1 from t0 where v1 in "
 ```
 
----
-
-### Incident Patch 2: `9e9d9643` (2026-11-26)
-**Commit Message**: [BugFix] Lock TimeWatcher readers against concurrent mergeFrom (#84703)
-
-Signed-off-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/common/profile/TimeWatcher.java` (modified, +4/-2)
+**File**: `fe/fe-core/src/test/java/com/starrocks/sql/ast/AstTraverserTest.java` (modified, +21/-0)
 ```diff
-@@ -47,7 +47,9 @@ public synchronized Timer scope(long time, String name) {
-         return t;
-     }
- 
--    public Optional<Timer> getTimer(String name) {
-+    // Readers take the same monitor as scope()/mergeFrom(): a forked tracer can be merged from a
-+    // background thread (e.g. DeployScanRangesTask) while the query thread builds the profile.
-+    public synchronized Optional<Timer> getTimer(String name) {
-         if (!scopedTimers.containsRow(name)) {
-             return Optional.empty();
-         }
-@@ -61,7 +63,7 @@ public Optional<Timer> getTimer(String name) {
-                 .orElse(null));
-     }
- 
--    public List<Timer> getAllTimerWithOrder() {
-+    public synchronized List<Timer> getAllTimerWithOrder() {
-         return scopedTimers.values().stream().sorted(Comparator.comparingLong(o -> o.firstTimePointNanoSecond))
-                 .collect(Collectors.toList());
-     }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/TracerTest.java` (modified, +41/-0)
-```diff
-@@ -16,12 +16,14 @@
- 
- import com.starrocks.common.profile.Timer;
- import com.starrocks.common.profile.Tracers;
-+import com.starrocks.common.util.RuntimeProfile;
- import org.apache.commons.lang3.StringUtils;
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.Test;
- 
- import java.util.ArrayList;
- import java.util.List;
-+import java.util.concurrent.CountDownLatch;
- import java.util.concurrent.ExecutorService;
- import java.util.concurrent.Executors;
- import java.util.concurrent.Future;
-@@ -255,4 +257,43 @@ public void testTracerForkPrepareCollectMetaPattern() throws Exception {
-         }
-         Tracers.close();
+@@ -100,4 +100,25 @@ public void testResolvedOutputExpressionPreventsDuplicateSelectListTraversal() {
+         Assertions.assertEquals(1, counter.countOf("protected_table"),
+                 "once outputExpr is resolved, only it (not the stale parsed selectList) must be traversed");
      }
 +
++    /**
++     * Before analysis the grouping expressions are only in the parsed GROUP BY clause, as the select list is: a
++     * table read by a subquery there is reached in every kind of grouping, once.
++     */
 +    @Test
-+    public void testReadProfileWhileMergingFromAnotherThread() throws Exception {
-+        // A background thread (like DeployScanRangesTask) merges forks into the owner while the
-+        // query thread builds the profile; the read side must not race with mergeFrom().
-+        Tracers.register(connectContext);
-+        Tracers.init(Tracers.Mode.TIMER, Tracers.Module.BASE, true, false);
-+        Tracers owner = Tracers.get();
++    public void testTableInsideGroupBySubqueryVisitedBeforeAnalysis() {
++        String read = "(SELECT COUNT(*) FROM protected_table)";
++        for (String groupBy : new String[] {read, "GROUPING SETS ((v1), (" + read + "))",
++                "ROLLUP (v1, " + read + ")", "CUBE (v1, " + read + ")"}) {
++            QueryStatement stmt = parseWithoutAnalysis("SELECT COUNT(*) FROM outer_table GROUP BY " + groupBy);
++            Assertions.assertNull(((SelectRelation) stmt.getQueryRelation()).getGroupBy(),
++                    "the group-by list is not populated until analysis");
 +
-+        int numMerges = 2000;
-+        CountDownLatch readerStarted = new CountDownLatch(1);
-+        ExecutorService executor = Executors.newSingleThreadExecutor();
-+        try {
-+            Future<?> merger = executor.submit(() -> {
-+                readerStarted.await();
-+                for (int i = 0; i < numMerges; i++) {
-+                    Tracers forked = owner.fork(true);
-+                    // a new scope name per merge so that mergeFrom() inserts a new cell
-+                    try (Timer ignored = Tracers.watchScope(forked, Tracers.Module.BASE, "BASE.deploy" + i)) {
-+                        // simulate deploy work
-+                    }
-+                    owner.mergeFrom(forked);
-+                }
-+                return null;
-+            });
-+            readerStarted.countDown();
-+            do {
-+                Tracers.toRuntimeProfile(new RuntimeProfile("Planner"));
-+                Tracers.getSpecifiedTimer("BASE.deploy0");
-+            } while (!merger.isDone());
-+            merger.get();
-+        } finally {
-+            executor.shutdown();
++            TableVisitCounter counter = new TableVisitCounter();
++            counter.visit(stmt);
++
++            Assertions.assertEquals(1, counter.countOf("outer_table"), groupBy);
++            Assertions.assertEquals(1, counter.countOf("protected_table"), groupBy);
 +        }
-+
-+        String output = Tracers.printScopeTimer();
-+        Assertions.assertTrue(output.contains("BASE.deploy" + (numMerges - 1)), output);
-+        Tracers.close();
 +    }
  }
 ```
 
 ---
 
-### Incident Patch 3: `e183bb1f` (2026-11-27)
-**Commit Message**: [BugFix] Keep tablet range boundary values as raw bytes on FE (#84763)
+### Incident Patch 3: `42722621` (2026-11-27)
+**Commit Message**: [BugFix] Drop NULL rows when an inverted index answers <> or NOT IN (#84686)
 
-Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
+Signed-off-by: sevev <[REDACTED_EMAIL]>
+Co-authored-by: zhangqiang <[REDACTED_EMAIL]>
 
-**File**: `build-support/schema_compatibility_waivers.json` (modified, +22/-1)
+**File**: `be/src/storage_primitive/column_not_in_predicate.cpp` (modified, +8/-0)
 ```diff
-@@ -9,5 +9,26 @@
-     "reason": "Reviewed compatibility exception after a multi-release deprecation window.",
-     "owner": "engprod"
-   },
--  "waivers": []
-+  "waivers": [
-+    {
-+      "path": "gensrc/proto/types.proto",
-+      "container_or_method": "VariantPB",
-+      "field_number": 2,
-+      "field_name": "value",
-+      "rule": "field_type_changed",
-+      "base_signature": "optional string value = 2",
-+      "reason": "The value is the raw bytes of a range boundary and need not be valid UTF-8; string and bytes (binary) encode identically on the wire and generate the same C++ API, and FE must stop decoding it as UTF-8. Remove this waiver once the comparison base has the new type.",
-+      "owner": "xiangguangyxg"
-+    },
-+    {
-+      "path": "gensrc/thrift/Types.thrift",
-+      "container_or_method": "TVariant",
-+      "field_number": 2,
-+      "field_name": "value",
-+      "rule": "field_type_changed",
-+      "base_signature": "2: optional string value",
-+      "reason": "The value is the raw bytes of a range boundary and need not be valid UTF-8; string and binary encode identically in the Thrift binary and compact protocols (Thrift JSON writes binary as base64) and generate the same C++ API, and FE must stop decoding it as UTF-8. Remove this waiver once the comparison base has the new type.",
-+      "owner": "xiangguangyxg"
-+    }
-+  ]
+@@ -124,6 +124,10 @@ class ColumnNotInPredicate final : public ColumnPredicate {
+             indices |= index;
+         }
+         *row_bitmap -= indices;
++        // NULL NOT IN (...) is NULL: drop NULL rows too, as nothing re-evaluates the predicate once the index answers it.
++        roaring::Roaring null_roaring;
++        RETURN_IF_ERROR(iterator->read_null(column_name, &null_roaring));
++        *row_bitmap -= null_roaring;
+         return Status::OK();
+     }
+ 
+@@ -294,6 +298,10 @@ class BinaryColumnNotInPredicate final : public ColumnPredicate {
+             indices |= index;
+         }
+         *row_bitmap -= indices;
++        // NULL NOT IN (...) is NULL: drop NULL rows too, as nothing re-evaluates the predicate once the index answers it.
++        roaring::Roaring null_roaring;
++        RETURN_IF_ERROR(iterator->read_null(column_name, &null_roaring));
++        *row_bitmap -= null_roaring;
+         return Status::OK();
+     }
+ 
+```
+
+**File**: `be/src/storage_primitive/column_predicate_cmp.cpp` (modified, +8/-0)
+```diff
+@@ -585,6 +585,10 @@ class ColumnNePredicate final : public ColumnPredicateCmpBase<field_type, NeEval
+         roaring::Roaring roaring;
+         RETURN_IF_ERROR(iterator->read_from_inverted_index(column_name, &this->_value, query_type, &roaring));
+         *row_bitmap -= roaring;
++        // NULL <> v is NULL: drop NULL rows too, as nothing re-evaluates the predicate once the index answers it.
++        roaring::Roaring null_roaring;
++        RETURN_IF_ERROR(iterator->read_null(column_name, &null_roaring));
++        *row_bitmap -= null_roaring;
+         return Status::OK();
+ #else
+         return Status::OK();
+@@ -996,6 +1000,10 @@ class BinaryColumnNePredicate final : public BinaryColumnPredicateCmpBase<field_
+         roaring::Roaring roaring;
+         RETURN_IF_ERROR(iterator->read_from_inverted_index(column_name, &padded_value, query_type, &roaring));
+         *row_bitmap -= roaring;
++        // NULL <> v is NULL: drop NULL rows too, as nothing re-evaluates the predicate once the index answers it.
++        roaring::Roaring null_roaring;
++        RETURN_IF_ERROR(iterator->read_null(column_name, &null_roaring));
++        *row_bitmap -= null_roaring;
+         return Status::OK();
+ #else
+         return Status::OK();
+```
+
+**File**: `be/test/storage/index/builtin_inverted_index_test.cpp` (modified, +134/-0)
+```diff
+@@ -15,11 +15,13 @@
+ #include <gtest/gtest.h>
+ 
+ #include <memory>
++#include <optional>
+ #include <string>
+ #include <vector>
+ 
+ #include "base/string/slice.h"
+ #include "base/testutil/assert.h"
++#include "column/chunk_factory.h"
+ #include "exec/exec_env.h"
+ #include "fs/fs_memory.h"
+ #include "gen_cpp/segment.pb.h"
+@@ -34,6 +36,8 @@
+ #include "storage/rowset/bitmap_index_reader.h"
+ #include "storage/tablet_index.h"
+ #include "storage/types.h"
++#include "storage_primitive/column_predicate.h"
++#include "storage_primitive/column_predicate_factory.h"
+ 
+ namespace starrocks {
+ 
+@@ -1320,4 +1324,134 @@ TEST_F(BuiltinInvertedIndexTest, test_is_builtin_inverted_index) {
+     }
  }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/StringVariant.java` (modified, +114/-24)
-```diff
-@@ -14,65 +14,155 @@
  
- package com.starrocks.catalog;
- 
--import com.google.gson.annotations.SerializedName;
--import com.starrocks.common.util.StringUtils;
-+import com.google.gson.JsonDeserializationContext;
-+import com.google.gson.JsonDeserializer;
-+import com.google.gson.JsonElement;
-+import com.google.gson.JsonObject;
-+import com.google.gson.JsonParseException;
-+import com.google.gson.JsonSerializationContext;
-+import com.google.gson.JsonSerializer;
-+import com.google.gson.annotations.JsonAdapter;
- import com.starrocks.type.PrimitiveType;
- import com.starrocks.type.Type;
- 
-+import java.nio.ByteBuffer;
-+import java.nio.charset.CharacterCodingException;
-+import java.nio.charset.CodingErrorAction;
-+import java.nio.charset.StandardCharsets;
-+import java.util.Arrays;
-+import java.util.Base64;
-+
- /*
-- * StringVariant is for type CHAR, VARCHAR, BINARY, VARBINARY and HLL
-+ * StringVariant is for type CHAR, VARCHAR, BINARY, VARBINARY and HLL.
-+ * It holds the exact bytes of the value: the BE stores raw bytes, so a value may not be valid UTF-8.
-  */
-+@JsonAdapter(StringVariant.GsonAdapter.class)
- public class StringVariant extends Variant {
- 
--    @SerializedName(value = "value")
--    protected final String value;
-+    private final byte[] bytes;
-+
-+    public StringVariant(Type type, byte[] bytes) {
-+        this(type, bytes, false);
-+    }
- 
-     public StringVariant(Type type, String value) {
-+        this(type, value.getBytes(StandardCharsets.UTF_8), true);
-+    }
-+
-+    // owned: the caller just created the array and keeps no reference, so it is used as is unless the CHAR rule cuts it.
-+    private StringVariant(Type type, byte[] bytes, boolean owned) {
-         super(type);
--        // CHAR is defined only up to its first NUL in StarRocks: the BE strnlen-truncates a CHAR
--        // value on every storage read and when parsing a routing boundary (datum_from_string), so
--        // the bytes at/after the first '\0' are not part of the value. Canonicalize a CHAR variant
--        // the same way, so FE ordering and pre-split boundaries match what the BE stores and routes.
--        // VARCHAR/BINARY keep their raw bytes (the BE does not strnlen them).
--        if (value != null && type != null && type.getPrimitiveType() == PrimitiveType.CHAR) {
--            int nul = value.indexOf('\0');
--            if (nul >= 0) {
--                value = value.substring(0, nul);
-+        int length = valueLength(type, bytes);
-+        this.bytes = owned && length == bytes.length ? bytes : Arrays.copyOf(bytes, length);
-+    }
-+
-+    // CHAR is defined only up to its first NUL in StarRocks: the BE strnlen-truncates a CHAR value on
-+    // every storage read and when parsing a routing boundary, so the bytes at/after the first 0x00 are
-+    // not part of the value. Canonicalize a CHAR variant the same way, so FE ordering and pre-split
-+    // boundaries match what the BE stores and routes. VARCHAR/BINARY/VARBINARY/HLL keep every byte.
-+    private static int valueLength(Type type, byte[] bytes) {
-+        if (type != null && type.getPrimitiveType() == PrimitiveType.CHAR) {
-+            for (int i = 0; i < bytes.length; i++) {
-+                if (bytes[i] == 0) {
-+                    return i;
-+                }
-             }
-         }
--        this.value = value;
-+        return bytes.length;
-     }
- 
-     @Override
--    public long getLongValue() {
--        return IntVariant.parseLong(value);
-+    public byte[] getBytesValue() {
-+        return bytes.clone();
-     }
- 
-+    // Lossy for bytes that are not valid UTF-8: for display, messages and text conversions only.
-     @Override
-     public String getStringValue() {
--        return value;
-+        return new String(bytes, StandardCharsets.UTF_8);
-+    }
-+
-+    @Override
-+    public long getLongValue() {
-+        return IntVariant.parseLong(getStringValue());
-     }
- 
-     @Override
-     protected int compareToImpl(Variant other) {
--        // compare string with utf-8 byte array, same with DM,BE,StorageEngine
--        return StringUtils.compareStringWithUTF8ByteArray(value, other.getStringValue());
-+        // compare as unsigned bytes, same with DM,BE,StorageEngine
-+        byte[] otherBytes = other instanceof StringVariant ? ((StringVariant) other).bytes : other.getBytesValue();
-+        return Arrays.compareUnsigned(bytes, otherBytes);
-     }
- 
-     @Override
-     public boolean equals(Object object) {
-         if (this == object) {
-             return true;
-         }
--        if (object == null || !(object instanceof StringVariant)) {
-+        if (!(object instanceof StringVariant)) {
-             return false;
-         }
--        StringVariant other = (StringVariant) object;
--        return this.value.equals(other.value);
-+        return Arrays.equals(bytes, ((StringVariant) object).bytes);
-     }
- 
-     @Override
-     public int hashCode() {
--        return value.hashCode();
-+        return Arrays.hashCode(bytes);
-+    }
-+
-+    // Persisted as {"value": <text or {"by
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/Variant.java` (modified, +24/-4)
-```diff
-@@ -25,6 +25,7 @@
- import com.starrocks.type.TypeDeserializer;
- import com.starrocks.type.TypeSerializer;
- 
-+import java.nio.charset.StandardCharsets;
- import java.util.List;
- 
- /*
-@@ -55,6 +56,11 @@ public String toString() {
- 
-     public abstract long getLongValue();
- 
-+    // The value as raw bytes. Only StringVariant can hold bytes that are not valid UTF-8.
-+    public byte[] getBytesValue() {
-+        return getStringValue().getBytes(StandardCharsets.UTF_8);
-+    }
-+
-     public TVariant toThrift() {
-         TVariant variant = new TVariant();
-         variant.setType(TypeSerializer.toThrift(type));
-@@ -66,7 +72,7 @@ public TVariant toThrift() {
-             variant.setVariant_type(TVariantType.MAXIMUM);
-         } else {
-             variant.setVariant_type(TVariantType.NORMAL_VALUE);
--            variant.setValue(getStringValue());
-+            variant.setValue(getBytesValue());
-         }
-         return variant;
-     }
-@@ -82,7 +88,7 @@ public VariantPB toProto() {
-             variant.variantType = VariantTypePB.MAXIMUM;
-         } else {
-             variant.variantType = VariantTypePB.NORMAL_VALUE;
--            variant.value = getStringValue();
-+            variant.value = getBytesValue();
-         }
-         return variant;
-     }
-@@ -145,6 +151,20 @@ public static Variant of(Type type, String value) {
-         }
-     }
- 
-+    public static Variant of(Type type, byte[] bytes) {
-+        Preconditions.checkArgument(type.isValid());
-+        switch (type.getPrimitiveType()) {
-+            case CHAR:
-+            case VARCHAR:
-+            case BINARY:
-+            case VARBINARY:
-+            case HLL:
-+                return new StringVariant(type, bytes);
-+            default:
-+                return of(type, new String(bytes, StandardCharsets.UTF_8));
++// Seeks `pred` from all rows and expects the rows `pred->evaluate()` keeps on the column data.
++static void expect_seek_keeps_evaluated_rows(const ColumnPredicate& pred, const Column& column,
++                                             InvertedIndexIterator* iter) {
++    SCOPED_TRACE(pred.debug_string());
++    const size_t num_rows = column.size();
++    std::vector<uint8_t> selection(num_rows);
++    ASSERT_OK(pred.evaluate(&column, selection.data(), 0, num_rows));
++    roaring::Roaring expected;
++    for (uint32_t i = 0; i < num_rows; i++) {
++        if (selection[i]) {
++            expected.add(i);
 +        }
 +    }
++    roaring::Roaring got;
++    got.addRange(0, num_rows);
++    ASSERT_OK(pred.seek_inverted_index("c0", iter, &got));
++    EXPECT_EQ(expected, got) << "expected " << expected.toString() << ", got " << got.toString();
++}
 +
-     public static Variant nullVariant(Type type) {
-         Preconditions.checkArgument(type.isValid(), "Invalid type for Variant.nullVariant");
-         return new NullVariant(type);
-@@ -206,11 +226,11 @@ public static int compatibleCompare(Variant key1, Variant key2) {
-         Preconditions.checkArgument(destType.isValid());
-         Variant newKey1 = key1;
-         if (key1.getType() != destType) {
--            newKey1 = Variant.of(destType, key1.getStringValue());
-+            newKey1 = Variant.of(destType, key1.getBytesValue());
-         }
-         Variant newKey2 = key2;
-         if (key2.getType() != destType) {
--            newKey2 = Variant.of(destType, key2.getStringValue());
-+            newKey2 = Variant.of(destType, key2.getBytesValue());
-         }
-         return newKey1.compareTo(newKey2);
-     }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/common/util/StringUtils.java` (modified, +0/-16)
-```diff
-@@ -36,9 +36,7 @@
- 
- import com.starrocks.catalog.Table;
- 
--import java.nio.charset.StandardCharsets;
- import java.security.SecureRandom;
--import java.util.Arrays;
- 
- public class StringUtils {
-     private static final String CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-@@ -82,18 +80,4 @@ public static boolean areColumnNamesEqual(String columName, String toCheck) {
- 
-         return columName.equalsIgnoreCase(toCheck);
-     }
--
--    /*
--     * Compare two strings by their UTF-8 bytes in UNSIGNED byte order, matching how BE
--     * orders VARCHAR (memcmp on the raw bytes; see be/src/base/string/memcmp.h) and
--     * therefore how BE routes rows into range-distributed tablets. Bytes are masked to
--     * 0..255 (Java byte is signed); on a common prefix the shorter string is smaller (no
--     * trailing-NUL special case). A CHAR value that embeds a NUL is a separate, out-of-scope
--     * edge: the BE CHAR load strips at the first NUL (be/src/column/datum_convert.cpp), which
--     * this raw-byte compare does not model.
--     */
--    public static int compareStringWithUTF8ByteArray(String s1, String s2) {
--        return Arrays.compareUnsigned(
--                s1.getBytes(StandardCharsets.UTF_8), s2.getBytes(StandardCharsets.UTF_8));
--    }
- }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplitTabletJobTest.java` (modified, +96/-2)
-```diff
-@@ -45,6 +45,7 @@
- import com.starrocks.load.InsertOverwriteJob;
- import com.starrocks.persist.EditLog;
- import com.starrocks.persist.WALApplier;
-+import com.starrocks.planner.RangeDistributionPrunerTest;
- import com.starrocks.proto.AggregatePublishVersionRequest;
- import com.starrocks.proto.PublishVersionRequest;
- import com.starrocks.proto.PublishVersionResponse;
-@@ -66,6 +67,7 @@
- import com.starrocks.transaction.TransactionState;
- import com.starrocks.transaction.TransactionStatus;
- import com.starrocks.type.IntegerType;
-+import com.starrocks.type.VarcharType;
- import com.starrocks.utframe.MockedBackend.MockLakeService;
- import com.starrocks.utframe.StarRocksAssert;
- import com.starrocks.utframe.UtFrameUtils;
-@@ -78,6 +80,7 @@
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.Test;
- 
-+import java.nio.charset.StandardCharsets;
- import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.HashMap;
-@@ -1490,8 +1493,10 @@ private Map<Long, TabletRangePB> createSplitTabletRanges(long oldTabletId, List<
-                 && !oldRange.lowerBound.values.isEmpty();
-         boolean hasUpper = oldRange.upperBound != null && oldRange.upperBound.values != null
-                 && !oldRange.upperBound.values.isEmpty();
--        int upperIfBounded = hasUpper ? Integer.parseInt(oldRange.upperBound.values.get(0).value) : 0;
--        int lowerValue = hasLower ? Integer.parseInt(oldRange.lowerBound.values.get(0).value)
-+        int upperIfBounded = hasUpper
-+                ? Integer.parseInt(new String(oldRange.upperBound.values.get(0).value, StandardCharsets.UTF_8)) : 0;
-+        int lowerValue = hasLower
-+                ? Integer.parseInt(new String(oldRange.lowerBound.values.get(0).value, StandardCharsets.UTF_8))
-                 : (hasUpper ? upperIfBounded - step * count : 0);
-         int upperValue = hasUpper ? upperIfBounded : lowerValue + step * count;
-         int width = Math.max(1, (upperValue - lowerValue) / count);
-@@ -2063,6 +2068,95 @@ public void testCheckSplitTabletRangesRejectsAMissingFirstChild() {
-         assertRejected(expected, Map.of(11L, tabletRange(100, 200), 12L, tabletRange(200, 300)), "returned");
-     }
- 
-+    // A boundary that is not valid UTF-8: 'p' x 10, then the two bytes of U+00E9 followed by a stray 0xFF.
-+    private static byte[] nonUtf8Boundary() {
-+        byte[] prefix = "pppppppppp".getBytes(StandardCharsets.UTF_8);
-+        byte[] bytes = Arrays.copyOf(prefix, prefix.length + 3);
-+        bytes[prefix.length] = (byte) 0xC3;
-+        bytes[prefix.length + 1] = (byte) 0xA9;
-+        bytes[prefix.length + 2] = (byte) 0xFF;
-+        return bytes;
-+    }
++// Answers equal queries and NULL lookups on an INT column straight from its data.
++class Int32ColumnInvertedIndexIterator final : public InvertedIndexIterator {
++public:
++    explicit Int32ColumnInvertedIndexIterator(const Column* column) : _column(column) {}
 +
-+    private static Tuple varcharTuple(byte[] value) {
-+        return new Tuple(List.of(Variant.of(VarcharType.VARCHAR, value)));
-+    }
-+
-+    @Test
-+    public void testSplitResultWithNonUtf8BoundaryIsInstalled() throws Exception {
-+        starRocksAssert.withTable("create table split_non_utf8_boundary (k varchar(100), v int)\n"
-+                + "order by(k)\n"
-+                + "properties('replication_num' = '1', 'file_bundling' = 'true');");
-+        OlapTable varcharTable = (OlapTable) GlobalStateMgr.getCurrentState().getLocalMetastore()
-+                .getTable(db.getFullName(), "split_non_utf8_boundary");
-+        PhysicalPartition physicalPartition = varcharTable.getAllPhysicalPartitions().iterator().next();
-+        MaterializedIndex oldIndex = physicalPartition.getLatestBaseIndex();
-+        Tablet oldTablet = oldIndex.getTablets().get(0);
-+
-+        byte[] boundary = nonUtf8Boundary();
-+        // The compute node reports the children's shared boundary as raw bytes: (-inf, B) and [B, +inf).
-+        installLakeServiceMock((info, out) -> {
-+            if (info.splittingTabletInfo != null) {
-+                List<Long> newTabletIds = info.splittingTabletInfo.newTabletIds;
-+                Assertions.assertEquals(2, newTabletIds.size());
-+                out.put(newTabletIds.get(0), new TabletRange(Range.lt(varcharTuple(boundary))).toProto());
-+                out.put(newTabletIds.get(1), new TabletRange(Range.ge(varcharTuple(boundary))).toProto());
++    Status read_from_inverted_index(std::string_view column_name, const void* query_value,
++                                    InvertedIndexQueryType query_type, roaring::Roaring* bit_map) override {
++        if (query_type != InvertedIndexQueryType::EQUAL_QUERY) {
++            return Status::NotSupported("only equal queries");
++        }
++        const int32_t value = *static_cast<const int32_t*>(query_value);
++        for (uint32_t i = 0; i < _column->size(); i++) {
++            if (!_column->is_null(i) && _column->get(i).get_int32() == value) {
++                bit_map->add(i);
 +            }
-+        });
-+
-+        SplitTabletClause clause = new SplitTabletClause(null, new TabletList(List.of(oldTablet.getId())),
-+                Map.of(PropertyAnalyzer.PROPERTIES_TABLET_RESHARD_TARGET_SIZE, "-2"));
-+        clause.setTabletReshardTargetSize(-2);
-+        SplitTabletJob splitJob = (SplitTabletJob) new SplitTabletJobFactory(db, varcharTable, clause)
-+                .createTabletReshardJob();
-+        splitJob.init();
-+        for (int i = 0; i < 10 && !splitJob.isDone(); i++) {
-+            splitJob.run();
 +        }
++        return Status::OK();
++    }
 +
-+        Assertions.assertEquals(TabletReshardJob.JobState.FINISHED, splitJob.getJobState());
-+        Assertions.assertEquals("", splitJob.getInfo().getError_message());
-+        MaterializedIndex newIndex = physicalPartition.getLatestBaseIndex();
-+        Assertions.assertNotSame(oldIndex, ne
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/SplittingTabletTest.java` (modified, +2/-1)
-```diff
-@@ -27,6 +27,7 @@
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.Test;
- 
-+import java.nio.charset.StandardCharsets;
- import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.Collections;
-@@ -173,6 +174,6 @@ public void testJsonRoundTripPreservesDecimalBoundaries() {
-         Assertions.assertEquals(18, restoredType.getScalarPrecision());
-         Assertions.assertEquals(2, restoredType.getScalarScale());
-         // The restored boundary serializes the canonical decimal text the BE validator parses.
--        Assertions.assertEquals("10.00", restoredLower.toProto().value);
-+        Assertions.assertEquals("10.00", new String(restoredLower.toProto().value, StandardCharsets.UTF_8));
-     }
- }
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/alter/reshard/TabletRangeTest.java` (modified, +7/-6)
-```diff
-@@ -27,6 +27,7 @@
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.Test;
- 
-+import java.nio.charset.StandardCharsets;
- import java.util.List;
- 
- class TabletRangeTest {
-@@ -259,15 +260,15 @@ public void testFromThrift() {
-         TTuple lowerTuple = new TTuple();
-         TVariant lowerVariant = new TVariant();
-         lowerVariant.setType(TypeSerializer.toThrift(IntegerType.INT));
--        lowerVariant.setValue("10");
-+        lowerVariant.setValue("10".getBytes(StandardCharsets.UTF_8));
-         lowerTuple.setValues(List.of(lowerVariant));
-         tRange.setLower_bound(lowerTuple);
- 
-         // Create upper bound
-         TTuple upperTuple = new TTuple();
-         TVariant upperVariant = new TVariant();
-         upperVariant.setType(TypeSerializer.toThrift(IntegerType.INT));
--        upperVariant.setValue("20");
-+        upperVariant.setValue("20".getBytes(StandardCharsets.UTF_8));
-         upperTuple.setValues(List.of(upperVariant));
-         tRange.setUpper_bound(upperTuple);
- 
-@@ -290,14 +291,14 @@ public void testFromThriftClosedInterval() {
-         TTuple lowerTuple = new TTuple();
-         TVariant lowerVariant = new TVariant();
-         lowerVariant.setType(TypeSerializer.toThrift(IntegerType.BIGINT));
--        lowerVariant.setValue("1000");
-+        lowerVariant.setValue("1000".getBytes(StandardCharsets.UTF_8));
-         lowerTuple.setValues(List.of(lowerVariant));
-         tRange.setLower_bound(lowerTuple);
- 
-         TTuple upperTuple = new TTuple();
-         TVariant upperVariant = new TVariant();
-         upperVariant.setType(TypeSerializer.toThrift(IntegerType.BIGINT));
--        upperVariant.setValue("2000");
-+        upperVariant.setValue("2000".getBytes(StandardCharsets.UTF_8));
-         upperTuple.setValues(List.of(upperVariant));
-         tRange.setUpper_bound(upperTuple);
- 
-@@ -317,14 +318,14 @@ public void testFromThriftWithVarchar() {
-         TTuple lowerTuple = new TTuple();
-         TVariant lowerVariant = new TVariant();
-         lowerVariant.setType(TypeSerializer.toThrift(VarcharType.VARCHAR));
--        lowerVariant.setValue("aaa");
-+        lowerVariant.setValue("aaa".getBytes(StandardCharsets.UTF_8));
-         lowerTuple.setValues(List.of(lowerVariant));
-         tRange.setLower_bound(lowerTuple);
- 
-         TTuple upperTuple = new TTuple();
-         TVariant upperVariant = new TVariant();
-         upperVariant.setType(TypeSerializer.toThrift(VarcharType.VARCHAR));
--        upperVariant.setValue("zzz");
-+        upperVariant.setValue("zzz".getBytes(StandardCharsets.UTF_8));
-         upperTuple.setValues(List.of(upperVariant));
-         tRange.setUpper_bound(upperTuple);
- 
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/catalog/TabletRangeTest.java` (modified, +114/-17)
-```diff
-@@ -14,7 +14,11 @@
- 
- package com.starrocks.catalog;
- 
-+import com.google.gson.Gson;
-+import com.starrocks.common.Config;
- import com.starrocks.common.Range;
-+import com.starrocks.common.io.DeepCopy;
-+import com.starrocks.persist.gson.DefaultGsonBuilderFactory;
- import com.starrocks.proto.TabletRangePB;
- import com.starrocks.proto.TuplePB;
- import com.starrocks.proto.VariantPB;
-@@ -28,7 +32,9 @@
- import org.junit.jupiter.api.Assertions;
- import org.junit.jupiter.api.Test;
- 
-+import java.nio.charset.StandardCharsets;
- import java.util.Arrays;
-+import java.util.List;
- 
- public class TabletRangeTest {
- 
-@@ -90,14 +96,14 @@ public void testClosedRangeToThrift() {
- 
-         // All Variant values are encoded via the `value` field.
-         Assertions.assertTrue(lowerInt.isSetValue());
--        Assertions.assertEquals("1", lowerInt.getValue());
-+        Assertions.assertEquals("1", new String(lowerInt.getValue(), StandardCharsets.UTF_8));
-         Assertions.assertTrue(lowerStr.isSetValue());
--        Assertions.assertEquals("a", lowerStr.getValue());
-+        Assertions.assertEquals("a", new String(lowerStr.getValue(), StandardCharsets.UTF_8));
- 
-         Assertions.assertTrue(upperInt.isSetValue());
--        Assertions.assertEquals("5", upperInt.getValue());
-+        Assertions.assertEquals("5", new String(upperInt.getValue(), StandardCharsets.UTF_8));
-         Assertions.assertTrue(upperStr.isSetValue());
--        Assertions.assertEquals("z", upperStr.getValue());
-+        Assertions.assertEquals("z", new String(upperStr.getValue(), StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -129,14 +135,14 @@ public void testClosedRangeToProto() {
-         VariantPB upperStr = upperPB.values.get(1);
- 
-         Assertions.assertEquals(VariantTypePB.NORMAL_VALUE, lowerInt.variantType);
--        Assertions.assertEquals("1", lowerInt.value);
-+        Assertions.assertEquals("1", new String(lowerInt.value, StandardCharsets.UTF_8));
-         Assertions.assertEquals(VariantTypePB.NORMAL_VALUE, lowerStr.variantType);
--        Assertions.assertEquals("a", lowerStr.value);
-+        Assertions.assertEquals("a", new String(lowerStr.value, StandardCharsets.UTF_8));
- 
-         Assertions.assertEquals(VariantTypePB.NORMAL_VALUE, upperInt.variantType);
--        Assertions.assertEquals("5", upperInt.value);
-+        Assertions.assertEquals("5", new String(upperInt.value, StandardCharsets.UTF_8));
-         Assertions.assertEquals(VariantTypePB.NORMAL_VALUE, upperStr.variantType);
--        Assertions.assertEquals("z", upperStr.value);
-+        Assertions.assertEquals("z", new String(upperStr.value, StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -155,7 +161,7 @@ public void testLowerOnlyRangeToThrift() {
- 
-         TVariant tv = tRange.getLower_bound().getValues().get(0);
-         Assertions.assertTrue(tv.isSetValue());
--        Assertions.assertEquals("10", tv.getValue());
-+        Assertions.assertEquals("10", new String(tv.getValue(), StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -174,7 +180,7 @@ public void testUpperOnlyRangeToThrift() {
- 
-         TVariant tv = tRange.getUpper_bound().getValues().get(0);
-         Assertions.assertTrue(tv.isSetValue());
--        Assertions.assertEquals("100", tv.getValue());
-+        Assertions.assertEquals("100", new String(tv.getValue(), StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -197,9 +203,9 @@ public void testHalfOpenRangeToThrift() {
-         TVariant lowerInt = tRange.getLower_bound().getValues().get(0);
-         TVariant upperInt = tRange.getUpper_bound().getValues().get(0);
-         Assertions.assertTrue(lowerInt.isSetValue());
--        Assertions.assertEquals("1", lowerInt.getValue());
-+        Assertions.assertEquals("1", new String(lowerInt.getValue(), StandardCharsets.UTF_8));
-         Assertions.assertTrue(upperInt.isSetValue());
--        Assertions.assertEquals("5", upperInt.getValue());
-+        Assertions.assertEquals("5", new String(upperInt.getValue(), StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -222,9 +228,9 @@ public void testOpenRangeToThrift() {
-         TVariant lowerInt = tRange.getLower_bound().getValues().get(0);
-         TVariant upperInt = tRange.getUpper_bound().getValues().get(0);
-         Assertions.assertTrue(lowerInt.isSetValue());
--        Assertions.assertEquals("1", lowerInt.getValue());
-+        Assertions.assertEquals("1", new String(lowerInt.getValue(), StandardCharsets.UTF_8));
-         Assertions.assertTrue(upperInt.isSetValue());
--        Assertions.assertEquals("5", upperInt.getValue());
-+        Assertions.assertEquals("5", new String(upperInt.getValue(), StandardCharsets.UTF_8));
-     }
- 
-     @Test
-@@ -247,10 +253,101 @@ public void testDateRangeToThrift() {
- 
-         // Dates should be encoded via the `value` field.
-         Assertions.assertTrue(lowerDate.isSetValue());
--        Assertions.assertFalse(lowerDate.getValue().isEmpty());
-+        Assertions.assertTrue(lowerDate.getValue().length > 0);
- 
-         Assertions.assertTrue(upperDa
++    Status read_null(std::string_view column_name, roaring::Roaring* bit_map) override {
++        for (uint32_t i = 0; i < _column->size(); i++) {
++            if (_column->is_null(i)) {
++                bit_map->add(i);
++            }
++        }
++        return Status::OK();
++    }
++
++    bool is_untokenized() const override { return true; }
++
++private:
++    const Column* _column;
++};
++
++// `<>` and NOT IN answered by a parser=none index must keep what the predicate keeps on the column data: the
++// predicate is dropped from the scan after the seek, so a NULL row left in the bitmap would be returned.
++TEST_F(BuiltinInvertedIndexTest, test_ne_and_not_in_seek_drop_null_rows) {
++    const std::vector<std::optional<std::string>> rows = {"x", std::nullopt, "y", "z", std::nullopt, "x"};
++
++    TabletIndex tablet_index;
++    tablet_index.add_index_properties(INVERTED_INDEX_PARSER_KEY, INVERTED_INDEX_PARSER_NONE);
++    TypeInfoPtr type_info = get_type_info(TYPE_VARCHAR);
++    std::string file_name = kTestDir + "/ne_not_in_nulls";
++    ColumnMetaPB meta;
++    auto column = ChunkFactory::column_from_field_type(TYPE_VARCHAR, true);
++    {
++        ASSIGN_OR_ABORT(auto wfile, _fs->new_writable_file(file_name));
++        std::unique_ptr<InvertedWriter> writer;
++        ASSERT_OK(BuiltinInvertedWriter::create(type_info, &tablet_index, &writer));
++        ASSERT_OK(writer->init());
++        for (const auto& row : rows) {
++            if (row.has_value()) {
++                Slice value(*row);
++                writer->add_values(&value, 1);
++                column->append_datum(Datum(value));
++            } else {
++                writer->add_nulls(1);
++                column->append_nulls(1);
++            }
++        }
++        ASSERT_OK(writer->finish(wfile.get(), &meta));
++        ASSERT_TRUE(wfile->close().ok());
++    }
++
++    ASSIGN_OR_ABORT(auto rfile, _fs->new_random_access_file(file_name));
++    _opts.read_file = rfile.get();
++    _opts.segment_rows = rows.size();
++    auto tablet_index_sp = std::make_shared<TabletIndex>(tablet_index);
++    std::unique_ptr<InvertedReader> reader;
++    ASSERT_OK(BuiltinInvertedReader::create(tablet_index_sp, TYPE_VARCHAR, &reader));
++    BuiltinInvertedIndexPB builtin_meta_copy = meta.indexes(0).builtin_inverted_index();
++    ASSERT_OK(reader->load(_opts, &builtin_meta_copy));
++    InvertedIndexIterator* iter = nullptr;
++    ASSERT_OK(reader->new_iterator(tablet_index_sp, &iter, _opts));
++    std::unique_ptr<InvertedIndexIterator> iter_guard(iter);
++
++    std::vector<std::uni
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #84766** (2026-11-27): [BugFix] Wait for a non-loopback address before choosing the BE/CN local IP (backport #84696) (@mergify[bot])
-- **PR #84764** (2026-11-27): [BugFix] Create a reshard job's StarOS shards without holding the reshard scheduler (@starrocks-bot[bot])
-- **PR #84763** (2026-11-27): [BugFix] Keep tablet range boundary values as raw bytes on FE (@starrocks-bot[bot])
-- **PR #84753** (2026-11-27): [BugFix] Test each row of a constant column against its own partition's runtime filter (backport #84695) (@mergify[bot])
-- **PR #84752** (2026-11-27): [BugFix] Test each row of a constant column against its own partition's runtime filter (backport #84695) (@mergify[bot])
-- **PR #84751** (2026-11-27): [BugFix] Test each row of a constant column against its own partition's runtime filter (backport #84695) (@mergify[bot])
+- **PR #84878** (2026-11-27): [BugFix] Fix StarOS fs cache holding 64 filesystems, not 10000 (backport #84414) (backport #84418) (@mergify[bot])
+- **PR #84876** (2026-11-27): [BugFix] Link prev_garbage_version to the base FE asked for when a file bundling publish retry moves the base (backport #84452) (@mergify[bot])
+- **PR #84874** (2026-11-27): [BugFix] Turn off the shared LIMIT countdown in spilling DISTINCT sinks (backport #84406) (backport #84430) (@mergify[bot])
+- **PR #84871** (2026-11-27): [BugFix] Return segment load errors from the logical split morsel queue (backport #84865) (@mergify[bot])
+- **PR #84870** (2026-11-27): [BugFix] Return segment load errors from the logical split morsel queue (backport #84865) (@mergify[bot])
+- **PR #84869** (2026-11-27): [BugFix] Return segment load errors from the logical split morsel queue (backport #84865) (@mergify[bot])
 
 ---
 
@@ -2664,65 +2388,45 @@ Co-authored-by: xiangguangyxg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Resolve files() in expression subqueries before the planner lock
+## X. [BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthre
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `be/src/connector/hive/scanner/jni_scanner.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `908f480d`: [BugFix] Resolve files() in expression subqueries before the planner lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5b87e38`: [BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/QueryAnalyzer.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/connector/hive/scanner/jni_scanner.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // The planner calls this when AnalyzerUtils#collectFileTableFunctionRelation finds a files() call; resolving
-        // what that same walk finds leaves none of them to the analyzer, which runs under the planner lock.
-        AnalyzerUtils.collectFileTableFunctionRelation(node).forEach(this::initializeFileTableIfAbsent);
+#include "base/testutil/sync_point.h"
+#include "runtime/java/java_env.h"
+    if (_jni_scanner_obj == nullptr && _jni_scanner_cls == nullptr) {
+        return;
     }
+    // The last reference to a QueryContext can be dropped inside a brpc completion callback, and then
+    // the scanner is closed on a bthread, which cannot attach to the JVM: getting a JNIEnv there fails
+    // a CHECK and takes the whole process down. Run the JNI calls on a pthread of the JVM call pool
+    // instead and wait for them; call_function_in_pthread() runs them inline on a pthread already.
+    Status st = JavaEnv::GetInstance()->call_function_in_pthread([this]() {
+        _close_jni_scanner();
+        return Status::OK();
+    });
+    LOG_IF(WARNING, !st.ok()) << "Failed to close the off-heap table scanner: " << st;
+}
 
-    private void initializeFileTableIfAbsent(FileTableFunctionRelation relation) {
-        if (relation.getTable() instanceof TableFunctionTable) {
-            return;
-        }
-        relation.setTable(resolveTableFunctionTable(relation.getProperties(), relation.getPushDownSchemaFunc()));
+void JniScanner::_close_jni_scanner() {
+    TEST_SYNC_POINT("JniScanner::_close_jni_scanner");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        new FilesOnlyVisitor().process(node, new Scope(RelationId.anonymous(), new RelationFields()));
-    /**
-     * A lightweight visitor that only resolves FileTableFunctionRelation so that
-     * files() schema can be inferred without acquiring DB/table locks. Normal tables/views are skipped.
-     */
-    private class FilesOnlyVisitor implements AstVisitorExtendInterface<Scope, Scope> {
-        public FilesOnlyVisitor() {}
-
-        public Scope process(ParseNode node, Scope scope) {
-            return node.accept(this, scope);
-        }
-
-        @Override
-        public Scope visitQueryStatement(QueryStatement node, Scope parent) {
-            QueryRelation queryRelation = node.getQueryRelation();
-            if (queryRelation != null && !queryRelation.getCteRelations().isEmpty()) {
-                for (CTERelation cteRelation : queryRelation.getCteRelations()) {
-                    process(cteRelation.getCteQueryStatement(), parent);
-                }
-            }
-            return process(queryRelation, parent);
-        }
-
-        @Override
-        public Scope visitQueryRelation(QueryRelation node, Scope parent) {
-            return process(node, parent);
-        }
-
-      
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `908f480d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5b87e38` are properly handled with clean fallback behavior.

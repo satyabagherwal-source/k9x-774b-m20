@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:49:02.006Z",
+  "last_updated": "2026-11-27T23:57:49.152Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T23:04:22.728Z",
+      "processed_at": "2026-11-27T23:57:47.987Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -793,7 +793,7 @@
       "staged_for_review": 1
     },
     "starrocks-starrocks-learnings.md": {
-      "processed_at": "2026-11-27T04:54:12.088Z",
+      "processed_at": "2026-11-27T23:57:46.640Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1253,7 +1253,7 @@
       "staged_for_review": 1
     },
     "prof18-feed-flow-learnings.md": {
-      "processed_at": "2026-11-25T15:21:40.188Z",
+      "processed_at": "2026-11-27T23:57:45.536Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5154,
+  "total_dossiers_evaluated": 5157,
   "total_canonical_promoted": 587,
-  "total_staged_for_review": 3897
+  "total_staged_for_review": 3900
 }

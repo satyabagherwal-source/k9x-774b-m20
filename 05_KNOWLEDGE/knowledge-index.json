@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T23:49:01.762Z",
+  "last_updated": "2026-11-27T23:57:48.957Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26831,
+  "total_items": 26835,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcd96fa8f61b1dc6609474ee9e083fbda89bc77f7064d3e862bf771f98cb8759",
+      "content_hash": "9fdd8ca548e3e8c4abf36dad4dedc901958ece626521379e4123995cc190424f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:04:23.682Z"
+      "persisted_at": "2026-11-27T23:57:48.957Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -236257,8 +236257,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "e183bb1f",
-      "content_hash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
+      "source_version": "5951a71b",
+      "content_hash": "ec21e306b39f2ce32dda9da18d41a690b3ceedae64cdce2a22efef302c5b6e2e",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -236336,6 +236336,11 @@
           "number": 10829,
           "title": "[BugFix] Resolve files() in expression subqueries before the planner lock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10993,
+          "title": "[BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthre",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236343,7 +236348,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T04:54:07.906Z",
+      "verified_at": "2026-11-27T23:57:41.627Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236385,10 +236390,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "e183bb1f",
-      "content_hash": "08e5f59f89f11db77aff1bc999a0456bc2f2b4247b49aa3fec0ca9443e64d524",
+      "source_version": "5951a71b",
+      "content_hash": "d1bfa3347a62be7671a440f87f3b6e418496a7f0625a8ff17b6ac0f1f7a03241",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T04:54:08.593Z"
+      "persisted_at": "2026-11-27T23:57:42.397Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -236397,10 +236402,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "e183bb1f",
-      "content_hash": "764fec3888c1bd2bb7a5dc5c3ca756ee800ace54204de8820d81dc958cf9d8e5",
+      "source_version": "5951a71b",
+      "content_hash": "b48b9c8263f1e701c69ee7e34e4335ec6b8a8d182e32a6b2c1b68fbde4fdfcad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:54:08.782Z"
+      "persisted_at": "2026-11-27T23:57:42.614Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -236513,9 +236518,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "63379516578b76370d5b64939812093e6d6545426a04326aa9f883274d23f820",
+      "content_hash": "4b10835749817b824c2ed6cc83082f87815fc7dddff0f90fb0651acc4745e9e4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T04:54:12.843Z"
+      "persisted_at": "2026-11-27T23:57:47.544Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -236525,9 +236530,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "764b3fa1424dd55dd912175fa12a5949d49d7ea9e165bd5bd3c24a980cc743a0",
+      "content_hash": "f386ce61420a473be900c7ec25d11a4683fa1cbe1c5362e87fde78bc9a0c691c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:54:13.044Z"
+      "persisted_at": "2026-11-27T23:57:47.774Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -258785,8 +258790,8 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "dcaa91c6",
-      "content_hash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
+      "source_version": "36838659",
+      "content_hash": "4bd44083c9ce2e13d8fa6ed162b8ff5ffcc9489aa16a02088e80b74dfef959a2",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
@@ -258804,6 +258809,11 @@
           "number": 10548,
           "title": "Keep desktop reader direction detection from overflowing the stack on long link",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10992,
+          "title": "flaky database and desktop tests and serialise iOS simulator test tasks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258811,7 +258821,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:21:35.005Z",
+      "verified_at": "2026-11-27T23:57:32.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258865,10 +258875,10 @@
       "relative_path": "08_VERIFICATION/prof18-feed-flow-verification-protocol-empirical-defect-shield-for-prof18-feed-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for prof18/feed-flow",
       "repository": "prof18/feed-flow",
-      "source_version": "dcaa91c6",
-      "content_hash": "dffb286cc50f4d48ce33547bafbb8d18299ac0f23ee5c40e8491ad5ae7f4edaf",
+      "source_version": "36838659",
+      "content_hash": "db543073e5723f6bd662e9c229f9eca91b39052a8eccd3eec4fdabfc902aad3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:21:35.817Z"
+      "persisted_at": "2026-11-27T23:57:33.625Z"
     },
     "rule-8696": {
       "learning_id": "rule-8696",
@@ -258968,9 +258978,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prof18-feed-flow-learnings",
       "repository": "prof18-feed-flow-learnings",
       "source_version": "HEAD",
-      "content_hash": "85213f8ec9459bc596be550431d8d92afe0a96e057da93d2906d61f3f1ebfc58",
+      "content_hash": "b7d3b8c357fa20a79a8018024b4cc7be79906c60f29cda2c8eb52ee0d17b3137",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:21:40.933Z"
+      "persisted_at": "2026-11-27T23:57:46.420Z"
     },
     "learn-github-crawlcove-robots-txt-tester": {
       "learning_id": "learn-github-crawlcove-robots-txt-tester",
@@ -351161,10 +351171,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-prof18-feed-flow-quality-verification-intelligence-prof18-feed-flow-core-invaria.md",
       "title": "Quality & Verification Intelligence: prof18/feed-flow Core Invariants",
       "repository": "prof18/feed-flow",
-      "source_version": "dcaa91c6",
-      "content_hash": "725762e9ce221c8c94d663606fef4c45a57319adb884efea5e1fd9ca55de2d4d",
+      "source_version": "36838659",
+      "content_hash": "4a90331e7b6c871a8ffa88efe2662a0e213110ebe763f949026735dc0bb6ffef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:21:35.633Z"
+      "persisted_at": "2026-11-27T23:57:33.407Z"
     },
     "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-learnings-core-invariants",
@@ -351174,9 +351184,9 @@
       "title": "Quality & Verification Intelligence: prof18-feed-flow-learnings Core Invariants",
       "repository": "prof18-feed-flow-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1f9afe96732cde524036ffa3f3bbbad2f4ab0dfa55deb925dbb607bf77fa0c5",
+      "content_hash": "98b7a3c23c7192bcf1cd011adda233474086307fb2da56fe1c104c7217a60578",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:21:40.754Z"
+      "persisted_at": "2026-11-27T23:57:46.197Z"
     },
     "rule-10549": {
       "learning_id": "rule-10549",
@@ -358706,13 +358716,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9804-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5X7J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0791630f2e4d1e4c6e75b425fd9899e5c4cc5ea224546aacc1dfa7b5187b871",
+      "content_hash": "39f538c98cd120e93984c063a27d014ef2cc2e70ec2f37c7075695a0d56b195c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T23:04:23.239Z"
+      "persisted_at": "2026-11-27T23:57:48.514Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358722,9 +358732,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "15ffdaa1c3aadd6d365ad56d583bef63c92a02747cab793c61367d15a19c3c6f",
+      "content_hash": "61366e0f7c1e0f708bea476071fde5b0380701f129e18b3a1121c740f4c2771a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T23:04:23.466Z"
+      "persisted_at": "2026-11-27T23:57:48.728Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -368557,6 +368567,58 @@
       "content_hash": "954ad4706d8c94cd2e60a52d045587c764f6f29a68be38334adbba816054d9c9",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T23:48:58.575Z"
+    },
+    "rule-10992": {
+      "learning_id": "rule-10992",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10992,
+      "title": "flaky database and desktop tests and serialise iOS simulator test tasks",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "36838659",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:57:32.640Z"
+    },
+    "candidate_directive-flaky-database-and-desktop-tests-and-serialise-ios-simulator-test-tasks": {
+      "item_id": "candidate_directive-flaky-database-and-desktop-tests-and-serialise-ios-simulator-test-tasks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5V90-flaky-database-and-desktop-tests-and-serialise-ios-simulator-test-tasks.md",
+      "title": "flaky database and desktop tests and serialise iOS simulator test tasks",
+      "repository": "prof18-feed-flow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "522effb24645d17fe739c91ca792a655bf27b6b2a57f4c7b28cd47e4e16c8d8f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T23:57:45.973Z"
+    },
+    "rule-10993": {
+      "learning_id": "rule-10993",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10993,
+      "title": "[BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthre",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "5951a71b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:57:41.627Z"
+    },
+    "candidate_directive-bugfix-close-the-jni-scanner-on-a-pthread-when-its-last-owner-drops-on-a-bthre": {
+      "item_id": "candidate_directive-bugfix-close-the-jni-scanner-on-a-pthread-when-its-last-owner-drops-on-a-bthre",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5WAN-bugfix-close-the-jni-scanner-on-a-pthread-when-its-last-owner-drops-on-a-bthre.md",
+      "title": "[BugFix] Close the JNI scanner on a pthread when its last owner drops on a bthre",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a48582587c04a523055ccb43d9841ecb637f8e3014d4359939f94129cb8566b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T23:57:47.330Z"
     }
   },
   "ai-builder-brain": {

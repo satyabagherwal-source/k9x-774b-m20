@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T23:49:01.481Z",
+  "last_updated": "2026-11-27T23:57:48.728Z",
   "total_records": 2864,
   "domains": {
     "A": {
@@ -17425,8 +17425,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "08e5f59f89f11db77aff1bc999a0456bc2f2b4247b49aa3fec0ca9443e64d524",
-      "created_at": "2026-11-27T04:54:08.593Z"
+      "content_hash": "d1bfa3347a62be7671a440f87f3b6e418496a7f0625a8ff17b6ac0f1f7a03241",
+      "created_at": "2026-11-27T23:57:42.397Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -17503,8 +17503,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "63379516578b76370d5b64939812093e6d6545426a04326aa9f883274d23f820",
-      "created_at": "2026-11-27T04:54:12.843Z"
+      "content_hash": "4b10835749817b824c2ed6cc83082f87815fc7dddff0f90fb0651acc4745e9e4",
+      "created_at": "2026-11-27T23:57:47.544Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -45326,8 +45326,8 @@
       "title": "Quality & Verification Intelligence: prof18/feed-flow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-prof18-feed-flow-quality-verification-intelligence-prof18-feed-flow-core-invaria.md",
       "repository": "prof18/feed-flow",
-      "content_hash": "725762e9ce221c8c94d663606fef4c45a57319adb884efea5e1fd9ca55de2d4d",
-      "created_at": "2026-11-25T15:21:35.633Z"
+      "content_hash": "4a90331e7b6c871a8ffa88efe2662a0e213110ebe763f949026735dc0bb6ffef",
+      "created_at": "2026-11-27T23:57:33.407Z"
     },
     "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-prof18-feed-flow-learnings-core-invariants",
@@ -45335,8 +45335,8 @@
       "title": "Quality & Verification Intelligence: prof18-feed-flow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-prof18-feed-flow-learnings-quality-verification-intelligence-prof18-feed-flow-le.md",
       "repository": "prof18-feed-flow-learnings",
-      "content_hash": "f1f9afe96732cde524036ffa3f3bbbad2f4ab0dfa55deb925dbb607bf77fa0c5",
-      "created_at": "2026-11-25T15:21:40.754Z"
+      "content_hash": "98b7a3c23c7192bcf1cd011adda233474086307fb2da56fe1c104c7217a60578",
+      "created_at": "2026-11-27T23:57:46.197Z"
     },
     "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
@@ -46811,8 +46811,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "15ffdaa1c3aadd6d365ad56d583bef63c92a02747cab793c61367d15a19c3c6f",
-      "created_at": "2026-11-27T23:04:23.466Z"
+      "content_hash": "61366e0f7c1e0f708bea476071fde5b0380701f129e18b3a1121c740f4c2771a",
+      "created_at": "2026-11-27T23:57:48.728Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

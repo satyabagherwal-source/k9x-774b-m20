@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T23:48:53.761Z",
+  "last_updated": "2026-11-27T23:57:41.924Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "61087e51af5fac271e65fbec21d17f9ec9edd205c2a1ece1a59df13634d8cd84",
-      "verified_at": "2026-11-27T04:54:08.173Z",
+      "content_hash": "ec21e306b39f2ce32dda9da18d41a690b3ceedae64cdce2a22efef302c5b6e2e",
+      "verified_at": "2026-11-27T23:57:41.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T04:54:08.173Z"
+      "last_updated": "2026-11-27T23:57:41.923Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -13041,14 +13041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prof18-feed-flow",
-      "content_hash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
-      "verified_at": "2026-11-25T15:21:35.238Z",
+      "content_hash": "4bd44083c9ce2e13d8fa6ed162b8ff5ffcc9489aa16a02088e80b74dfef959a2",
+      "verified_at": "2026-11-27T23:57:32.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:21:35.238Z"
+      "last_updated": "2026-11-27T23:57:32.938Z"
     },
     "michaelbull/kotlin-result": {
       "repository": "michaelbull/kotlin-result",
