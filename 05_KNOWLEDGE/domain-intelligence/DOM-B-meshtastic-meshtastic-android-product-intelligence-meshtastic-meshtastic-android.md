@@ -4,24 +4,24 @@
 {
   "source_repository": "meshtastic/Meshtastic-Android",
   "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-  "source_version": "836e48f7",
+  "source_version": "33098634",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-22T17:22:08.469Z",
+  "timestamp": "2026-11-27T12:41:37.840Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meshtastic-meshtastic-android",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `836e48f7`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-22T17:22:08.469Z`  
+> **Provenance**: Harvested from [meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android) (Revision: `33098634`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-27T12:41:37.840Z`  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshtastic/Meshtastic-Android:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T17:22:07.132Z  
+> **Harvest Timestamp**: 2026-11-27T12:41:36.268Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1942 stars
+- **Stars / Engagement**: 1952 stars
 
 ---
 
@@ -1227,739 +1227,259 @@ internal actual fun createBleScanStartLimiter(): BleScanStartLimiter = processBl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de21f854` (2026-11-22)
-**Commit Message**: fix(ui): list every LoRa change and channel sharing flag when replacing from a channel link (#8214)
+### Incident Patch 1: `41951f6c` (2026-11-26)
+**Commit Message**: fix(node): stop the neighbor info log crashing on duplicate rows and chart x-values (#8266)
 
-**File**: `.skills/compose-ui/strings-index.txt` (modified, +26/-5)
+**File**: `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/model/MetricsState.kt` (modified, +13/-6)
 ```diff
-@@ -36,7 +36,6 @@ adc_voltage
- ### ADD ###
- add
- add_a_note
--add_channels_description
- add_custom_tile_source
- add_favorite
- add_layer
-@@ -202,6 +201,16 @@ channel_7
- channel_8
- channel_already_on_radio
- channel_features
-+channel_import_add_description
-+channel_import_confirm_add
-+channel_import_confirm_replace
-+channel_import_downlink
-+channel_import_mode_label
-+channel_import_position_approximate
-+channel_import_position_precise
-+channel_import_replace_description
-+channel_import_title
-+channel_import_uplink
- channel_invalid
- channel_name
- channel_slots_full
-@@ -866,6 +875,7 @@ fr_HT
- free_memory
- free_memory_description
- freq
-+frequency_value_mhz
- gas_resistance
- generate_qr_code
- ### GEOFENCE ###
-@@ -1101,11 +1111,24 @@ long_name
- longitude
- ### LORA ###
- lora
-+lora_change_spoken
-+lora_change_values
-+lora_changes_alert_description
-+lora_changes_alert_heading
-+lora_changes_heading
- lora_config
--lora_config_change_value
--lora_config_changes
-+lora_fem_lna_auto
-+lora_fem_lna_not_present
-+lora_field_fem_lna_mode
-+lora_field_frequency_offset
-+lora_field_modem_preset
-+lora_field_serial_hal_only
-+lora_field_transparent_mode
-+lora_field_unrecognized
- lora_preset_custom
- lora_preset_region
-+lora_value_none
-+lora_value_not_used
- low_battery
- low_battery_message
- low_battery_title
-@@ -1484,7 +1507,6 @@ neighbor_mean_snr_description
- network
- network_layer_url_hint
- network_scan_unavailable
--new_channel_rcvd
- new_messages_below
- new_node_seen
- new_nodes
-@@ -1861,7 +1883,6 @@ remove_layer
- remove_node_text
- remove_nodes_text
- replace
--replace_channels_and_settings_description
- reply
- replying_to
- report
-```
-
-**File**: `core/model/src/commonMain/kotlin/org/meshtastic/core/model/ChannelOption.kt` (modified, +12/-9)
-```diff
-@@ -23,6 +23,17 @@ import org.meshtastic.proto.Config.LoRaConfig.ModemPreset
- import org.meshtastic.proto.Config.LoRaConfig.RegionCode
- import kotlin.math.round
- 
-+/** The bandwidth in MHz that a manual `LoRaConfig.bandwidth` wire code stands for in the slot math. */
-+fun loraBandwidthMegahertz(code: Int): Float = when (code) {
-+    31 -> .03125f
-+    62 -> .0625f
-+    200 -> .203125f
-+    400 -> .40625f
-+    800 -> .8125f
-+    1600 -> 1.6250f
-+    else -> code / 1000f
-+}
-+
- /**
-  * djb2 over the name's UTF-8 bytes, matching firmware `RadioInterface.cpp` `hash()`; hashing UTF-16 chars gives a
-  * different slot for any non-ASCII name.
-@@ -58,15 +69,7 @@ val ModemPreset?.snrLimit: Float
- private fun LoRaConfig.bandwidth(regionInfo: RegionInfo?) = if (use_preset) {
-     modem_preset.bandwidth * if (regionInfo?.wideLora == true) 3.25f else 1f
- } else {
--    when (bandwidth) {
--        31 -> .03125f
--        62 -> .0625f
--        200 -> .203125f
--        400 -> .40625f
--        800 -> .8125f
--        1600 -> 1.6250f
--        else -> bandwidth / 1000f
--    }
-+    loraBandwidthMegahertz(bandwidth)
+@@ -22,6 +22,7 @@ import org.meshtastic.core.model.DeviceLink
+ import org.meshtastic.core.model.FirmwareRelease
+ import org.meshtastic.core.model.MeshLog
+ import org.meshtastic.core.model.Node
++import org.meshtastic.core.model.util.TimeConstants.MS_PER_SEC
+ import org.meshtastic.core.model.util.rxTimeOrNull
+ import org.meshtastic.proto.FirmwareEdition
+ import org.meshtastic.proto.MeshPacket
+@@ -114,29 +115,37 @@ data class MetricsState(
+  * connected radio's periodic report to the app - newest first.
+  */
+ fun MetricsState.neighborInfoEntries(): List<NeighborInfoEntry> {
++    // On our own node's page the results are every log our radio originated, so they hold our requests too.
++    val reports = neighborInfoResults.filterNot { it.isOutgoingRequest() }
+     val requested = neighborInfoRequests.map { request ->
+         val id = request.fromRadio.packet?.id
+         NeighborInfoEntry.Requested(
+             log = request,
+-            reply = neighborInfoResults.find { it.fromRadio.packet?.decoded?.request_id == id },
++            reply = reports.find { it.fromRadio.packet?.decoded?.request_id == id },
+         )
+     }
+     // Only the report each request took is excluded, so a second copy answering the same request still shows.
+     val pairedReplies = requested.mapNotNull { it.reply?.uuid }.toSet()
+-    val received = neighborInfoResults.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
++    val received = reports.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
+     return (requested + received).sortedByDescending { it.timeSeconds }
  }
  
- /**
-```
-
-**File**: `core/model/src/commonTest/kotlin/org/meshtastic/core/model/ChannelOptionTest.kt` (modified, +11/-0)
-```diff
-@@ -117,6 +117,17 @@ class ChannelOptionTest {
-         assertEquals(manual, manual.normalizeCodingRateOverride())
-     }
- 
-+    // The slot math's mapping, pinned as it is: six special codes, and the code in kHz for any other.
-+    @Test
-+    fun a_bandwidth_code_maps_to_the_megahertz_the_slot_math_uses() {
-+        val special = mapOf(31 to .03125f, 62 to .0625f, 200 to .203125f, 400 to .40625f, 800 to .8125f, 1600 to 1.625f)
-+        for ((code, megahertz) in special) {
-+            assertEquals(megahertz, loraBandwidthMegahertz(code), "bandwidth code $code")
-+        }
-+        assertEquals(.25f, loraBandwidthMegahertz(250))
-+        assertEquals(.125f, loraBandwidthMegahertz(125))
-+    }
++private fun MeshLog.isOutgoingRequest() =
++    fromNum == MeshLog.NODE_NUM_LOCAL && fromRadio.packet?.decoded?.want_response == true
 +
-     private fun presetConfig(preset: ModemPreset, codingRate: Int) = LoRaConfig.Builder()
-         .also { wb ->
-             wb.use_preset = true
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values-ar/strings.xml` (modified, +0/-1)
-```diff
-@@ -169,7 +169,6 @@
-     <string name="name">الاسم</string>
-     <string name="navigate_back">العودة إلى الخلف</string>
-     <!-- NEIGHBOR -->
--    <string name="new_channel_rcvd">تم تلقي رابط القناة الجديدة</string>
-     <!-- NO -->
-     <!-- NODE -->
-     <string name="node_filter_include_unknown">عربي</string>
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values-b+sr+Latn/strings.xml` (modified, +0/-1)
-```diff
-@@ -296,7 +296,6 @@
-     <string name="navigate_back">Иди назад</string>
-     <!-- NEIGHBOR -->
-     <string name="network">Мрежа</string>
--    <string name="new_channel_rcvd">Primljen novi link kanala</string>
-     <!-- NO -->
-     <!-- NODE -->
-     <string name="node_filter_include_unknown">Uključi nepoznato</string>
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values-bg/strings.xml` (modified, +0/-4)
-```diff
-@@ -48,7 +48,6 @@
-     <!-- ADD -->
-     <string name="add">Добавяне</string>
-     <string name="add_a_note">Добавяне на лична бележка...</string>
--    <string name="add_channels_description">Следните канали бяха открити в QR кода. Изберете тези, които искате да добавите към устройството си. Съществуващите канали ще бъдат запазени.</string>
-     <string name="add_favorite">Добавяне към любими</string>
-     <string name="add_layer">Добавяне на слой</string>
-     <string name="add_local_mbtiles_file">Добавяне на локален MBTiles файл</string>
-@@ -700,7 +699,6 @@
-     <!-- LORA -->
-     <string name="lora">LoRa</string>
-     <string name="lora_config">LoRa</string>
--    <string name="lora_config_change_value">%1$s: %2$s → %3$s</string>
-     <string name="lora_preset_region">%1$s · %2$s</string>
-     <string name="low_battery">Изтощена батерия</string>
-     <string name="low_battery_message">%1$sВъзела %1$s има слаба батерия (%2$d%)</string>
-@@ -885,7 +883,6 @@
-     <!-- NEIGHBOR -->
-     <string name="neighbor_count">Съседи</string>
-     <string name="network">Мрежа</string>
--    <string name="new_channel_rcvd">Получен е URL адрес на нов канал</string>
-     <string name="new_messages_below">Нови съобщения по-долу</string>
-     <string name="new_node_seen">Видян нов възел: %1$s</string>
-     <string name="new_nodes">Нови възли</string>
-@@ -1128,7 +1125,6 @@
-     <string name="remove_layer">Премахване на слой</string>
-     <string name="remove_node_text">Този възел ще бъде премахнат от вашия списък, докато вашият възел не получи данни от него отново.</string>
-     <string name="replace">Замяна</string>
--    <string name="replace_channels_and_settings_description">Този QR код съдържа пълна конфигурация. Той ще ЗАМЕНИ съществуващите ви канали и настройки на радиото. Всички съществуващи канали ще бъдат премахнати.</string>
-     <string name="reply">Отговор</string>
-     <string name="replying_to">Отговор на %1$s</string>
-     <string name="report">Докладвай</string>
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values-ca/strings.xml` (modified, +0/-1)
-```diff
-@@ -155,7 +155,6 @@
-     <string name="mute_notifications">Silenciar notificacions</string>
-     <string name="name">Nom</string>
-     <!-- NEIGHBOR -->
--    <string name="new_channel_rcvd">Nova URL de canal rebuda</string>
-     <!-- NO -->
-     <!-- NODE -->
-     <string name="node_filter_ignored">Estàs veient nodes ignorats, \n Prem per tornar al llistat de nodes</string>
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values-cs/strings.xml` (modified, +0/-3)
-```diff
-@@ -50,7 +50,6 @@
-     <!-- ADD -->
-     <string name="add">Přidat</string>
-     <string name="add_a_note">Přidat soukromou poznámku…</string>
--    <string name="add_channels_description">QR kód obsahuje následující kanály. Vyberte ty, které chcete přidat do zařízení. Stávající kanály zůstanou zachovány.</string>
-     <string name="add_favorite">Přidat do oblíbených</string>
-     <string name="add_layer">Přidat vrstvu</string>
-     <string name="add_network_device">Přidat</string>
-@@ -1180,7 +1179,6 @@
-     <string name="neighbor_info">Informace o sousedech</string>
-     <string name="neighbor_info_config">Nastavení informace o sousedech</string>
-     <string name="network">Síť</string>
--    <string name="new_channel_rcvd">Nová URL kanálu přijata</string>
-     <string name="new_messages_below">Nové zprávy</string>
-     <string name="new_node_seen">Nově objevený uzel: %1$s</string>
-     <string name="new_nodes">Nové uzly</string>
-@@ -1489,7 +1487,6 @@
-     <string name="remove_layer">Odebrat vrstvu</string>
-     <string name="remove_node_text">Tento uzel bude odstraněn z vašeho seznamu, dokud z něj váš uzel znovu neobdrží data.</string>
-     <string name="replace">Nahradit</string>
--    <string name="replace_channels_and_settings_description">Tento QR kód obsahuje kompletní konfiguraci. Tímto se NAHRADÍ vaše stávající kanály a nastavení rádia. Všechny existující kanály budou odstraněny.</string>
-     <string name="reply">Odpovědět</string>
-     <string name="replying_to">Odpověď na %1$s</string>
-     <string name="report">Odeslat chybové hlášení</string>
-```
-
----
-
-### Incident Patch 2: `a8b533fb` (2026-11-21)
-**Commit Message**: fix(firmware): fail on a manifest mismatch, cap download size, pin bootloader release base (#8211)
-
-**File**: `feature/firmware/README.md` (modified, +1/-1)
-```diff
-@@ -123,7 +123,7 @@ A node that reports its bootloader (`DeviceMetadata.bootloader_version`, decoded
+ /** One row of the neighbor-info log. */
+ sealed interface NeighborInfoEntry {
+     val log: MeshLog
  
- - `FirmwareUpdateManager.kt` / `DefaultFirmwareUpdateManager.kt`: Top-level orchestrator that routes an update to a handler by connection type and architecture.
- - `FirmwareUpdateViewModel.kt`: UI state management (MVI pattern) for the firmware update screen.
--- `FirmwareRetriever.kt`: Handles downloading and extracting firmware assets (ZIP/BIN/UF2) with manifest-based ESP32 resolution.
-+- `FirmwareRetriever.kt`: Handles downloading and extracting firmware assets (ZIP/BIN/UF2) with manifest-based ESP32 resolution. An ESP32 image that fails its `.mt.json` size or md5 check is deleted and the retrieval fails with no fallback; the filename fallbacks apply only when no manifest, no `app0` entry, or no downloadable image exists. Bootloader images resolve only against `https://github.com/meshtastic/nRF52_Bootloader/releases/download/<tag>` (`isBootloaderReleaseBase`), and any single download stops and is deleted past `MAX_FIRMWARE_ZIP_BYTES`.
- - `Esp32OtaUpdateHandler.kt`: Orchestrates the Unified OTA flow for ESP32 devices.
- - `WifiOtaTransport.kt`: Implements the TCP transport logic for ESP32 OTA.
- - `BleOtaTransport.kt`: Implements the BLE transport logic for ESP32 OTA using Kable.
-```
-
-**File**: `feature/firmware/src/commonMain/kotlin/org/meshtastic/feature/firmware/FirmwareRetriever.kt` (modified, +31/-13)
-```diff
-@@ -182,7 +182,10 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
+     /** The packet carrying the neighbor list, or null for a request nothing answered. */
+     val report: MeshLog?
  
-     /**
-      * Download the ESP32 OTA firmware binary. Tries in order:
--     * 1. `.mt.json` manifest resolution (2.7.17+) — the authoritative `app0` partition image.
-+     * 1. `.mt.json` manifest resolution (2.7.17+) — the authoritative `app0` partition image. When the manifest names
-+     *    the image and the download fails its size or digest check, the file is deleted and `null` is returned with no
-+     *    fallback. The fallbacks below apply only when no manifest is published, it has no `app0` entry, or the image
-+     *    it names could not be downloaded.
-      * 2. `firmware-<target>-<version>-update.bin` — the bare app image. Preferred over the plain `.bin` because on
-      *    pre-2.7.17 releases (which ship no manifest) `firmware-<target>-<version>.bin` is a *merged* image
-      *    (bootloader + partition table + app); flashing that to the `app0` partition leaves it misaligned and the
-@@ -202,8 +205,10 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
-         val target = hardware.platformioTarget.ifEmpty { hardware.hwModelSlug }
- 
-         // ── Primary: .mt.json manifest (2.7.17+) ────────────────────────────
--        resolveFromManifest(version, target, release, hardware, onProgress)?.let {
--            return it
-+        when (val resolution = resolveFromManifest(version, target, release, hardware, onProgress)) {
-+            is ManifestResolution.Verified -> return resolution.artifact
-+            ManifestResolution.Rejected -> return null
-+            ManifestResolution.Unavailable -> Unit
-         }
- 
-         // ── Fallback 1: bare app image `-update.bin` (unambiguous OTA image when published; required for pre-2.7.17,
-@@ -247,34 +252,45 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
- 
-     // ── Manifest resolution ──────────────────────────────────────────────────
- 
-+    private sealed interface ManifestResolution {
-+        /** The manifest named the image and the download passed its checks. */
-+        data class Verified(val artifact: FirmwareArtifact) : ManifestResolution
-+
-+        /** The manifest named the image and the download failed its checks; the file is already deleted. */
-+        data object Rejected : ManifestResolution
-+
-+        /** No usable manifest entry, or its image could not be downloaded; the filename fallbacks apply. */
-+        data object Unavailable : ManifestResolution
-+    }
-+
-     @Suppress("ReturnCount")
-     private suspend fun resolveFromManifest(
-         version: String,
-         target: String,
-         release: FirmwareRelease,
-         hardware: DeviceHardware,
-         onProgress: (Float) -> Unit,
--    ): FirmwareArtifact? {
-+    ): ManifestResolution {
-         val manifestUrl = "${release.artifactBaseUrl}/firmware-$target-$version.mt.json"
- 
-         val text = fileHandler.fetchText(manifestUrl)
-         if (text == null) {
-             Logger.d { "Manifest not available at $manifestUrl — falling back to filename heuristics" }
--            return null
-+            return ManifestResolution.Unavailable
-         }
- 
-         val manifest =
-             try {
-                 manifestJson.decodeFromString<FirmwareManifest>(text)
-             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-                 Logger.w(e) { "Failed to parse manifest from $manifestUrl" }
--                return null
-+                return ManifestResolution.Unavailable
-             }
- 
-         val otaEntry = manifest.files.firstOrNull { it.partName == OTA_PART_NAME }
-         if (otaEntry == null) {
-             Logger.w { "Manifest has no '$OTA_PART_NAME' entry — files: ${manifest.files.map { it.partName }}" }
--            return null
-+            return ManifestResolution.Unavailable
-         }
- 
-         Logger.i { "Manifest resolved OTA firmware: ${otaEntry.name} (${otaEntry.bytes} bytes, md5=${otaEntry.md5})" }
-@@ -287,13 +303,15 @@ open class FirmwareRetriever(private val fileHandler: FirmwareFileHandler) {
-                 fileSuffix = ".bin",
-                 internalFileExtension = ".bin",
-                 preferredFilename = otaEntry.name,
--            ) ?: return null
-+            ) ?: return ManifestResolution.Unavailable
- 
--        // Verify the download against the manifest before handing it to the OTA flow. On mismatch we return null so the
--        // caller falls back to the filename heuristics (exactly like a missing/garbage manifest) — surfacing a bad
--        // download here beats rebooting the device into OTA mode, which tears down the mesh link, only to fail
--        // device-side hash verification mid-flash.
--        return artifact.takeIf { verifyAgainstManifest(it, otaEntry) }
-+        // A mismatch is terminal: no fallback may supply an image the manifest rejected. Failing here also beats
-+        // rebooting the device into OTA mode, which tears down the
-```
-
-**File**: `feature/firmware/src/commonMain/kotlin/org/meshtastic/feature/firmware/MaintenanceUf2.kt` (modified, +11/-1)
-```diff
-@@ -72,6 +72,15 @@ internal data class MaintenanceUf2(
-  */
- private val SAFE_UF2_FILE_NAME = Regex("""[A-Za-z0-9._-]+\.uf2""")
- 
-+private val OTAFIX_BASE = Regex("""https://github\.com/meshtastic/nRF52_Bootloader/releases/download/[A-Za-z0-9._-]+""")
-+
-+/**
-+ * True only for a bootloader release download base: `https://github.com/meshtastic/nRF52_Bootloader/releases/download/
-+ * <tag>`. Matched against the whole string so a different scheme, host, repository, userinfo or trailing path never
-+ * passes; a base that fails resolves no image.
-+ */
-+internal fun isBootloaderReleaseBase(base: String): Boolean = OTAFIX_BASE.matches(base)
-+
- /**
-  * Factory-erase images are now vendored and served by `meshtastic/api` (`resource/maintenanceUf2/asset/<fileName>`)
-  * rather than a commit-pinned URL into `meshtastic/web-flasher`'s `public/uf2/` — see `data/maintenanceUf2.json` in
-@@ -119,7 +128,7 @@ internal fun bootloaderEraseUf2For(manifest: MaintenanceUf2Manifest, volumeFamil
-  */
- private fun MaintenanceUf2Manifest.otafixAssetOrNull(otafixBoardSlug: String, sha256: String): MaintenanceUf2? {
-     val name = "update-${otafixBoardSlug}_bootloader-${otafixReleaseTag}_nosd.uf2"
--    if (!SAFE_UF2_FILE_NAME.matches(name)) return null
-+    if (!isBootloaderReleaseBase(otafixBase) || !SAFE_UF2_FILE_NAME.matches(name)) return null
-     return MaintenanceUf2(url = "$otafixBase/$name", fileName = name, sha256 = sha256)
- }
- 
-@@ -159,6 +168,7 @@ internal fun bootloaderDfuZipFor(
-     val softDevice = SoftDeviceVariant.fromWire(row.softDevice) ?: return null
-     if (mappedSoftDevice != null && mappedSoftDevice != softDevice) return null
-     if (manifest.otafixReleaseTag.isBlank() || row.bleModel.isBlank()) return null
-+    if (!isBootloaderReleaseBase(manifest.otafixBase)) return null
-     val name = "${row.otafixBoardSlug}_bootloader-${manifest.otafixReleaseTag}_s140_${row.softDevice}.zip"
-     if (!SAFE_DFU_ZIP_FILE_NAME.matches(name)) return null
-     return BootloaderDfuZip(
-```
-
-**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/BleBootloaderUpgradeGateTest.kt` (modified, +15/-0)
-```diff
-@@ -74,6 +74,21 @@ class BleBootloaderUpgradeGateTest {
-         assertEquals(SoftDeviceVariant.S140_6_1_1, zip.softDevice)
-     }
- 
-+    @Test
-+    fun refusesAPackageBaseOffTheReleaseRepository() {
-+        listOf(
-+            "http://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
-+            "https://example.invalid/nRF52_Bootloader/releases/download/2.6.0",
-+            "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
-+        )
-+            .forEach { base ->
-+                assertNull(
-+                    bootloaderDfuZipFor(manifest.copy(otafixBase = base), "rak4631", null),
-+                    "package resolved for base '$base'",
-+                )
-+            }
-+    }
-+
-     @Test
-     fun offersForTheSharedLegacyVersion() {
-         assertNotNull(gate(BootloaderStatus(InstalledBootloader.OlderThanFirstNumbered, latest)))
-```
-
-**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/CommonFirmwareRetrieverTest.kt` (modified, +30/-7)
-```diff
-@@ -26,6 +26,7 @@ import org.meshtastic.feature.firmware.ota.FirmwareHashUtil
- import kotlin.test.Test
- import kotlin.test.assertEquals
- import kotlin.test.assertFailsWith
-+import kotlin.test.assertFalse
- import kotlin.test.assertNotNull
- import kotlin.test.assertNull
- import kotlin.test.assertTrue
-@@ -62,7 +63,7 @@ abstract class CommonFirmwareRetrieverTest {
-                 "files": [
-                     {
-                         "name": "firmware-heltec-v3-2.7.17.bin",
--                        "md5": "abc123",
-+                        "md5": "b2d1236c286a3c0704224fe4105eca49",
-                         "bytes": 2097152,
-                         "part_name": "app0"
-                     },
-@@ -92,6 +93,7 @@ abstract class CommonFirmwareRetrieverTest {
- 
-         // Direct download of the manifest-resolved filename succeeds
-         handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
-+        handler.fileBytes["firmware-heltec-v3-2.7.17.bin"] = ByteArray(2097152)
- 
-         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
- 
-@@ -121,7 +123,7 @@ abstract class CommonFirmwareRetrieverTest {
-     }
- 
-     @Test
--    fun `retrieveEsp32Firmware rejects manifest artifact on md5 mismatch and falls back`() = runTest {
-+    fun `retrieveEsp32Firmware fails without fallback on md5 mismatch`() = runTest {
-         val handler = FakeFirmwareFileHandler()
-         val retriever = FirmwareRetriever(handler)
- 
-@@ -131,17 +133,21 @@ abstract class CommonFirmwareRetrieverTest {
-             """{"files":[{"name":"$name","part_name":"app0","md5":"deadbeef","bytes":4}]}"""
-         handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/$name")
-         handler.fileBytes[name] = byteArrayOf(0x01, 0x02, 0x03, 0x04)
--        // Heuristic fallback the rejection should land on.
--        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
-+        // Fallbacks that must stay unreached once the manifest has rejected the image.
-+        val fallbackUrl = "$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin"
-+        handler.existingUrls.add(fallbackUrl)
-+        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17-update.bin")
- 
-         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
- 
--        assertNotNull(result)
--        assertEquals("firmware-heltec-v3-2.7.17.bin", result.fileName)
-+        assertNull(result)
-+        assertEquals(listOf(name), handler.deletedFiles.map { it.fileName })
-+        assertFalse(fallbackUrl in handler.downloadedUrls, "a rejected manifest image must not reach a fallback")
-+        assertEquals(1, handler.downloadedUrls.size)
-     }
- 
-     @Test
--    fun `retrieveEsp32Firmware rejects manifest artifact on size mismatch and falls back`() = runTest {
-+    fun `retrieveEsp32Firmware fails without fallback on size mismatch`() = runTest {
-         val handler = FakeFirmwareFileHandler()
-         val retriever = FirmwareRetriever(handler)
- 
-@@ -155,6 +161,23 @@ abstract class CommonFirmwareRetrieverTest {
- 
-         val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
- 
-+        assertNull(result)
-+        assertEquals(listOf(name), handler.deletedFiles.map { it.fileName })
-+        assertEquals(1, handler.downloadedUrls.size)
-+    }
-+
-+    @Test
-+    fun `retrieveEsp32Firmware falls back when the manifest image cannot be downloaded`() = runTest {
-+        val handler = FakeFirmwareFileHandler()
-+        val retriever = FirmwareRetriever(handler)
-+
-+        // The manifest names an image that is not published; nothing was downloaded, so nothing was rejected.
-+        handler.textResponses["$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.mt.json"] =
-+            """{"files":[{"name":"firmware-heltec-v3-2.7.17-app0.bin","part_name":"app0","md5":"deadbeef","bytes":4}]}"""
-+        handler.existingUrls.add("$RELEASE_BASE_URL/2.7.17/firmware-heltec-v3-2.7.17.bin")
-+
-+        val result = retriever.retrieveEsp32Firmware(TEST_RELEASE, TEST_HARDWARE) {}
-+
-         assertNotNull(result)
-         assertEquals("firmware-heltec-v3-2.7.17.bin", result.fileName)
-     }
-```
-
-**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/CommonUsbPassWriterTest.kt` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ abstract class CommonUsbPassWriterTest {
-             {
-               "manifestVersion": 1,
-               "otafixReleaseTag": "0.9.2-OTAFIX2.3-BP1.5",
--              "otafixBase": "https://example.invalid/otafix",
-+              "otafixBase": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/0.9.2-OTAFIX2.3-BP1.5",
-               "erase": {
-                 "nrf52": {
-                   "6.1.1": { "fileName": "nrf_erase2.uf2", "sha256": "00", "expectedFirstTargetAddress": 155648 }
-```
-
-**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/FirmwareUpdateViewModelTest.kt` (modified, +1/-1)
-```diff
-@@ -982,7 +982,7 @@ class FirmwareUpdateViewModelTest {
-         everySuspend { maintenanceUf2Repository.getSnapshot() } returns
-             MaintenanceUf2Manifest(
-                 otafixReleaseTag = "2.6.0",
--                otafixBase = "https://example.com",
-+                otafixBase = "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.0",
-                 otafixBleDfuByTarget =
-                 mapOf(
-                     "rak4631" to
-```
-
-**File**: `feature/firmware/src/commonTest/kotlin/org/meshtastic/feature/firmware/UsbMaintenanceGateTest.kt` (modified, +33/-1)
-```diff
-@@ -242,7 +242,7 @@ class UsbMaintenanceGateTest {
-                 """
-                 {
-                   "otafixReleaseTag": "../../../evil",
--                  "otafixBase": "https://example.invalid/releases",
-+                  "otafixBase": "https://github.com/meshtastic/nRF52_Bootloader/releases/download/2.6.1",
-                   "otafixByBoardId": {
-                     "rak4631": { "otafixBoardSlug": "rak4631", "sha256": "00" }
-                   }
-@@ -506,6 +506,38 @@ class UsbMaintenanceGateTest {
-         }
-     }
- 
-+    @Test
-+    fun `a bootloader base off the release repository yields no image`() {
-+        val tag = testManifest.otafixReleaseTag
-+        val release = "github.com/meshtastic/nRF52_Bootloader/releases/download/$tag"
-+        listOf(
-+            "http://$release",
-+            "https://example.invalid/nRF52_Bootloader/releases/download/$tag",
-+            "https://github.com/meshtastic/other-repo/releases/download/$tag",
-+            "https://github.com.example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
-+            "https://meshtastic@example.invalid/$release",
-+            "https://github.com@example.invalid/meshtastic/nRF52_Bootloader/releases/download/$tag",
-+            "https://$release/",
-+            "https://$release/extra",
-+            "",
-+        )
-+            .forEach { base ->
-+                val manifest = testManifest.copy(otafixBase = base)
-+                assertNull(otafixUf2ForBoardId(manifest, "WisBlock-RAK4631-Board"), "image resolved for base '$base'")
-+            }
-+    }
-+
-+    @Test
-+    fun `the release repository base still composes the asset url`() {
-+        val tag = testManifest.otafixReleaseTag
-+        val image = assertNotNull(otafixUf2ForBoardId(testManifest, "WisBlock-RAK4631-Board"))
-+
-+        assertEquals(
-+            "https://github.com/meshtastic/nRF52_Bootloader/releases/download/$tag/${image.fileName}",
-+            image.url,
-+        )
-+    }
-+
-     @Test
-     fun `board id selects the image rather than the build target`() {
-         val rak = otafixUf2ForBoardId(testManifest, "WisBlock-RAK4631-Board")
-```
-
----
-
-### Incident Patch 3: `858a4ff5` (2026-11-22)
-**Commit Message**: fix(wifi-provision): let the user choose which device receives the Wi-Fi setup (#8218)
-
-**File**: `.skills/compose-ui/strings-index.txt` (modified, +12/-0)
-```diff
-@@ -2361,18 +2361,30 @@ wifi_ip
- wifi_provision_available_networks
- wifi_provision_choose_device
- wifi_provision_choose_device_detail
-+wifi_provision_confirm_compare
-+wifi_provision_confirm_consequence
-+wifi_provision_confirm_title
-+wifi_provision_confirm_title_named
- wifi_provision_connect_failed
- wifi_provision_description
- wifi_provision_device_found
- wifi_provision_device_found_detail
-+wifi_provision_device_not_found
- wifi_provision_hidden_network
-+wifi_provision_link_unsupported
- wifi_provision_mpwrd_disclaimer
-+wifi_provision_no_devices
-+wifi_provision_no_devices_detail
- wifi_provision_no_networks
-+wifi_provision_no_response
-+wifi_provision_pick_device
-+wifi_provision_rescan
- wifi_provision_scan_failed
- wifi_provision_scan_networks
- wifi_provision_scanning_ble
- wifi_provision_scanning_wifi
- wifi_provision_sending_credentials
-+wifi_provision_signal_dbm
- wifi_provision_signal_strength
- wifi_provision_ssid_label
- wifi_provision_ssid_placeholder
-```
-
-**File**: `core/ble/src/androidMain/kotlin/org/meshtastic/core/ble/KablePlatformSetup.kt` (modified, +2/-0)
-```diff
-@@ -33,6 +33,8 @@ internal actual fun ScannerBuilder.platformScanConfig() {
- /** Android's scanner filters on address in hardware, so Kable's `Filter.Address` works natively here. */
- internal actual val supportsNativeAddressScanFilter: Boolean = true
- 
-+internal actual val bleAddressIsHardware: Boolean = true
-+
- /**
-  * Shared thread pool for Kable BLE connections.
-  *
-```
-
-**File**: `core/ble/src/commonMain/kotlin/org/meshtastic/core/ble/BleScanner.kt` (modified, +8/-0)
-```diff
-@@ -32,4 +32,12 @@ interface BleScanner {
-     /** True where a scan is a device chooser the user already picked from, so the device it emits is the selection. */
-     val picksDevice: Boolean
-         get() = false
-+
+-    /** When the neighbor list arrived, or when the request went out if it never did. */
 +    /**
-+     * True where [BleDevice.address] is a hardware (MAC) address the user can compare with a label or another device
-+     * list, and where a MAC from outside the app can match a scanned device. False where it is an identifier only this
-+     * host and app understand, such as a CoreBluetooth UUID or a browser device id.
++     * When the neighbor list arrived, or when the request went out if it never did, in whole seconds: the chart rejects
++     * x-values finer than four decimal places.
 +     */
-+    val addressIsHardware: Boolean
-+        get() = true
+     val timeSeconds: Double
+-        get() = (report ?: log).received_date / MS_PER_SEC_DOUBLE
++        get() = ((report ?: log).received_date / MS_PER_SEC).toDouble()
+ 
+     /** A request we sent, with the reply if one came back. */
+     data class Requested(override val log: MeshLog, val reply: MeshLog?) : NeighborInfoEntry {
+@@ -150,5 +159,3 @@ sealed interface NeighborInfoEntry {
+             get() = log
+     }
+ }
+-
+-private const val MS_PER_SEC_DOUBLE = 1000.0
+```
+
+**File**: `feature/node/src/commonTest/kotlin/org/meshtastic/feature/node/model/MetricsStateTest.kt` (modified, +38/-2)
+```diff
+@@ -73,19 +73,50 @@ class MetricsStateTest {
+         )
+     }
+ 
++    @Test
++    fun ownNodePageListsEachOfOurRequestsOnceAndNeverAsReceivedNeighborInfo() {
++        // Our own page reads every log our radio originated as a result, our requests included.
++        val selfRequest =
++            neighborLog(uuid = "self", packetId = 10, receivedDate = 1_000, fromNum = LOCAL, wantResponse = true)
++        val otherRequest =
++            neighborLog(uuid = "other", packetId = 11, receivedDate = 2_000, fromNum = LOCAL, wantResponse = true)
++        val reply = neighborLog(uuid = "reply", packetId = 12, requestId = 10, receivedDate = 3_000, fromNum = LOCAL)
++        val state =
++            MetricsState(
++                neighborInfoRequests = listOf(selfRequest),
++                neighborInfoResults = listOf(selfRequest, otherRequest, reply),
++            )
++
++        assertEquals(listOf(NeighborInfoEntry.Requested(selfRequest, reply)), state.neighborInfoEntries())
++    }
++
++    @Test
++    fun neighborInfoTimesAreWholeSecondsSoTheChartAcceptsThem() {
++        val broadcast = neighborLog(uuid = "b", packetId = 1, receivedDate = 1_764_000_000_123)
++
++        assertEquals(1_764_000_000.0, NeighborInfoEntry.Received(broadcast).timeSeconds)
++    }
++
+     @Test
+     fun neighborInfoLogsExistWithOnlyUnaskedNeighborInfo() {
+         val state = MetricsState(neighborInfoResults = listOf(neighborLog(uuid = "b", packetId = 1, receivedDate = 1)))
+ 
+         assertTrue(state.hasNeighborInfoLogs())
+     }
+ 
+-    private fun neighborLog(uuid: String, packetId: Int, receivedDate: Long, requestId: Int = 0) = MeshLog(
++    private fun neighborLog(
++        uuid: String,
++        packetId: Int,
++        receivedDate: Long,
++        requestId: Int = 0,
++        fromNum: Int = 2,
++        wantResponse: Boolean = false,
++    ) = MeshLog(
+         uuid = uuid,
+         message_type = "Packet",
+         received_date = receivedDate,
+         raw_message = "",
+-        fromNum = 2,
++        fromNum = fromNum,
+         portNum = PortNum.NEIGHBORINFO_APP.value,
+         fromRadio =
+         FromRadio.Builder()
+@@ -99,6 +130,7 @@ class MetricsStateTest {
+                                     .also { data ->
+                                         data.portnum = PortNum.NEIGHBORINFO_APP
+                                         data.request_id = requestId
++                                        data.want_response = wantResponse
+                                     }
+                                     .build()
+                         }
+@@ -113,4 +145,8 @@ class MetricsStateTest {
+             wb.local_stats = LocalStats.Builder().also { wb -> wb.noise_floor = -101 }.build()
+         }
+         .build()
++
++    private companion object {
++        const val LOCAL = MeshLog.NODE_NUM_LOCAL
++    }
  }
 ```
 
-**File**: `core/ble/src/iosMain/kotlin/org/meshtastic/core/ble/NoopStubs.kt` (modified, +3/-0)
+---
+
+### Incident Patch 2: `1547ad28` (2026-11-27)
+**Commit Message**: fix(data): log a dropped malformed radio frame as a warning (#8274)
+
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/MeshMessageProcessorImpl.kt` (modified, +6/-2)
 ```diff
-@@ -23,6 +23,9 @@ import com.juul.kable.ScannerBuilder
- // Kable's `Filter.Address` throws UnsupportedOperationException on Apple.
- internal actual val supportsNativeAddressScanFilter: Boolean = false
- 
-+// CoreBluetooth identifies a peripheral by a per-host UUID, never its MAC.
-+internal actual val bleAddressIsHardware: Boolean = false
-+
- internal actual fun ScannerBuilder.platformScanConfig() {
-     // No-op: preConflate is Android-only.
- }
+@@ -33,6 +33,7 @@ import org.meshtastic.core.common.util.handledLaunch
+ import org.meshtastic.core.common.util.nowMillis
+ import org.meshtastic.core.common.util.nowSeconds
+ import org.meshtastic.core.common.util.safeCatching
++import org.meshtastic.core.model.DeviceAddress
+ import org.meshtastic.core.model.MeshLog
+ import org.meshtastic.core.model.Node
+ import org.meshtastic.core.model.util.isLora
+@@ -121,8 +122,11 @@ class MeshMessageProcessorImpl(
+                     FromRadio.Builder().also { wb -> wb.log_record = LogRecord.ADAPTER.decode(bytes) }.build()
+                 }
+                     .getOrElse {
+-                        Logger.e(primaryException) {
+-                            "Failed to parse radio packet (len=${bytes.size}). Not a valid FromRadio or LogRecord."
++                        // A malformed frame is dropped and the session carries on: a warning, not a crash report.
++                        val transport = DeviceAddress.parse(frame.session.address)?.interfaceId ?: "unknown"
++                        Logger.w {
++                            "Dropped radio frame: not a valid FromRadio or LogRecord " +
++                                "(transport=$transport, len=${bytes.size}, ${primaryException::class.simpleName})"
+                         }
+                         return
+                     }
 ```
 
-**File**: `core/ble/src/jvmMain/kotlin/org/meshtastic/core/ble/KablePlatformSetup.kt` (modified, +5/-0)
+---
+
+### Incident Patch 3: `e0142289` (2026-11-25)
+**Commit Message**: fix(nodes): stop offering nodes the radio no longer holds as unheard (#8248)
+
+**File**: `core/database/src/commonMain/kotlin/org/meshtastic/core/database/dao/NodeInfoDao.kt` (modified, +5/-1)
 ```diff
-@@ -29,6 +29,11 @@ internal actual fun ScannerBuilder.platformScanConfig() {
- // nothing and the scan yields no advertisements at all.
- internal actual val supportsNativeAddressScanFilter: Boolean = false
- 
-+// btleplug's CoreBluetooth backend (macOS) identifies a peripheral by an Apple UUID; its BlueZ backend (Linux) by a
-+// path that carries the MAC.
-+internal actual val bleAddressIsHardware: Boolean =
-+    !System.getProperty("os.name").orEmpty().startsWith("Mac", ignoreCase = true)
-+
- internal actual fun createPeripheral(address: String, builderAction: PeripheralBuilder.() -> Unit): Peripheral =
-     com.juul.kable.Peripheral(address.toIdentifier(), builderAction)
- 
+@@ -561,7 +561,8 @@ interface NodeInfoDao {
+                         migrateNodeIdentity(from = conflicting, to = newNode)
+                         removedNums += conflicting.num
+                         result.add(newNode)
+-                    } else {
++                    } else if (conflicting.num !in existingNodesMap) {
++                        // A stored copy added after the batch's own row for that num would overwrite it.
+                         result.add(conflicting)
+                     }
+                 } else {
+@@ -658,6 +659,9 @@ interface NodeInfoDao {
+         }
+         clearMyNodeInfo()
+         setMyNodeInfo(mi)
++        // Only the radio can say a node went unheard, so a row it no longer holds rests at heard; the dump below
++        // rewrites the flag on every row it does hold.
++        markAllHeardOnCurrentLora()
+         putAll(getVerifiedNodesForUpsert(nodes, selfNum = mi.myNodeNum, removedNums = removedNums))
+         return removedNums
+     }
 ```
 
-**File**: `core/ble/src/nonWebMain/kotlin/org/meshtastic/core/ble/KableBleScanner.kt` (modified, +2/-0)
+**File**: `core/database/src/commonTest/kotlin/org/meshtastic/core/database/dao/CommonNodeInfoDaoTest.kt` (modified, +38/-0)
 ```diff
-@@ -70,6 +70,8 @@ private fun Advertisement.toScanResult(): KableScanResult =
- open class KableBleScanner(private val loggingConfig: BleLoggingConfig) : BleScanner {
-     private val scanStartLimiter = createBleScanStartLimiter()
+@@ -93,6 +93,44 @@ abstract class CommonNodeInfoDaoTest {
+         assertEquals("Test Node", result.node.longName)
+     }
  
-+    override val addressIsHardware: Boolean = bleAddressIsHardware
++    @Test
++    fun installConfigRestsRowsTheRadioNoLongerHoldsAtHeard() = runTest {
++        createDb()
++        val dropped =
++            NodeEntity(num = 1, user = User.Builder().also { it.id = "!1" }.build(), heardOnCurrentLora = false)
++        val held = NodeEntity(num = 2, user = User.Builder().also { it.id = "!2" }.build(), heardOnCurrentLora = false)
++        dao.upsert(dropped)
++        dao.upsert(held)
 +
-     internal open suspend fun reserveScanStart() = scanStartLimiter.reserveStart()
- 
-     internal open fun advertisements(filter: KableScanFilter): Flow<KableScanResult> {
-```
-
-**File**: `core/ble/src/nonWebMain/kotlin/org/meshtastic/core/ble/KableScannerPlatformSetup.kt` (modified, +6/-0)
-```diff
-@@ -26,3 +26,9 @@ internal expect fun ScannerBuilder.platformScanConfig()
-  * the JVM/btleplug backend evaluates predicates with a hardcoded null address so it matches nothing.
-  */
- internal expect val supportsNativeAddressScanFilter: Boolean
++        dao.installConfig(myNodeInfo, listOf(held.copy()))
 +
-+/**
-+ * Whether Kable's device identifier is a hardware MAC here. Android reports the MAC and Linux a BlueZ path that
-+ * [normalizeBleAddress] reduces to it; Apple's CoreBluetooth hides the MAC behind a per-host UUID.
-+ */
-+internal expect val bleAddressIsHardware: Boolean
-```
-
-**File**: `core/ble/src/wasmJsMain/kotlin/org/meshtastic/core/ble/WebBleScanner.kt` (modified, +3/-0)
-```diff
-@@ -53,6 +53,9 @@ import kotlin.uuid.Uuid
- class WebBleScanner(private val loggingConfig: BleLoggingConfig) : BleScanner {
-     override val picksDevice: Boolean = true
- 
-+    // A Web Bluetooth device id is opaque to the page and unrelated to the MAC.
-+    override val addressIsHardware: Boolean = false
++        assertTrue(assertNotNull(dao.getNodeByNum(1)).node.heardOnCurrentLora)
++        assertFalse(assertNotNull(dao.getNodeByNum(2)).node.heardOnCurrentLora)
++    }
 +
-     override fun scan(timeout: Duration, serviceUuid: Uuid?, address: String?): Flow<BleDevice> = flow {
-         val peripheral = if (address != null) granted(address) else pick(serviceUuid)
-         if (peripheral != null) emit(peripheral.toBleDevice())
++    @Test
++    fun installConfigKeepsTheDumpFlagWhenAnotherDumpRowSharesTheKey() = runTest {
++        createDb()
++        val key = ByteArray(32) { 7 }.toByteString()
++        fun node(num: Int) = NodeEntity(
++            num = num,
++            user =
++            User.Builder()
++                .also {
++                    it.id = "!$num"
++                    it.public_key = key
++                }
++                .build(),
++            heardOnCurrentLora = false,
++        )
++        dao.upsert(node(10))
++
++        // 11 is not crc32(key), so the stored 10 keeps the identity and is not migrated.
++        dao.installConfig(myNodeInfo, listOf(node(10), node(11)))
++
++        assertFalse(assertNotNull(dao.getNodeByNum(10)).node.heardOnCurrentLora)
++    }
++
+     @Test
+     fun testNodeDBbyNum() = runTest {
+         createDb()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8225** (2026-11-22): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #8223** (2026-11-22): test: cover overlapping closes, missing network fields and a row after a deselected one (@jamesarich)
-- **PR #8222** (2026-11-22): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
-- **PR #8221** (2026-11-22): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
-- **PR #8220** (2026-11-21): fix(schema-strings): give the protobufs version a line of its own and sync to 2.8.3 (@jamesarich)
-- **PR #8219** (closed): feat(data): name a virtual node's hardware without a catalog entry (@jamesarich)
+- **PR #8284** (2026-11-27): chore: Scheduled updates (Graphs, Baseline Profile) (@jamesarich)
+- **PR #8283** (2026-11-27): chore: Scheduled updates (Firmware, Hardware, Translations) (@jamesarich)
+- **PR #8282** (2026-11-27): docs: say firmware 2.7.1 and newer ignore Always point north (@NomDeTom)
+- **PR #8279** (2026-11-27): ci(web): deploy the web app to Vercel for snapshot and stable (@jamesarich)
+- **PR #8277** (2026-11-26): feat(connections): label a desktop serial radio with its last node (@jamesarich)
+- **PR #8276** (2026-11-26): chore(deps): update io.github.sceneview:arsceneview to v4.76.0 (@renovate[bot])
 
 ---
 
@@ -1979,60 +1499,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): list every LoRa change and channel sharing flag when replacing from a chann
+## X. node): stop the neighbor info log crashing on duplicate rows and chart x-values
 
 **RULE**:
-When implementing operations in `.skills/compose-ui/strings-index.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/model/MetricsState.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de21f854`: ui): list every LoRa change and channel sharing flag when replacing from a channel link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41951f6c`: node): stop the neighbor info log crashing on duplicate rows and chart x-values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.skills/compose-ui/strings-index.txt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/model/MetricsState.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-channel_import_add_description
-channel_import_confirm_add
-channel_import_confirm_replace
-channel_import_downlink
-channel_import_mode_label
-channel_import_position_approximate
-channel_import_position_precise
-channel_import_replace_description
-channel_import_title
-channel_import_uplink
-frequency_value_mhz
-lora_change_spoken
-lora_change_values
-lora_changes_alert_description
-lora_changes_alert_heading
-lora_changes_heading
-lora_fem_lna_auto
-lora_fem_lna_not_present
-lora_field_fem_lna_mode
-lora_field_frequency_offset
-lora_field_modem_preset
-lora_field_serial_hal_only
-lora_field_transparent_mode
-lora_field_unrecognized
-lora_value_none
-lora_value_not_used
+import org.meshtastic.core.model.util.TimeConstants.MS_PER_SEC
+    // On our own node's page the results are every log our radio originated, so they hold our requests too.
+    val reports = neighborInfoResults.filterNot { it.isOutgoingRequest() }
+            reply = reports.find { it.fromRadio.packet?.decoded?.request_id == id },
+    val received = reports.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
+private fun MeshLog.isOutgoingRequest() =
+    fromNum == MeshLog.NODE_NUM_LOCAL && fromRadio.packet?.decoded?.want_response == true
+
+    /**
+     * When the neighbor list arrived, or when the request went out if it never did, in whole seconds: the chart rejects
+     * x-values finer than four decimal places.
+     */
+        get() = ((report ?: log).received_date / MS_PER_SEC).toDouble()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-add_channels_description
-lora_config_change_value
-lora_config_changes
-new_channel_rcvd
-replace_channels_and_settings_description
+            reply = neighborInfoResults.find { it.fromRadio.packet?.decoded?.request_id == id },
+    val received = neighborInfoResults.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
+    /** When the neighbor list arrived, or when the request went out if it never did. */
+        get() = (report ?: log).received_date / MS_PER_SEC_DOUBLE
+
+private const val MS_PER_SEC_DOUBLE = 1000.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de21f854` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41951f6c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

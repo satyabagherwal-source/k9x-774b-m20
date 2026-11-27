@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:32:49.351Z",
+  "last_updated": "2026-11-27T12:41:51.602Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T12:32:46.169Z",
@@ -583,7 +583,7 @@
       "staged_for_review": 1
     },
     "meshtastic-meshtastic-android-learnings.md": {
-      "processed_at": "2026-11-25T03:50:58.543Z",
+      "processed_at": "2026-11-27T12:41:49.716Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1023,7 +1023,7 @@
       "staged_for_review": 1
     },
     "infracost-infracost-learnings.md": {
-      "processed_at": "2026-11-25T01:09:26.581Z",
+      "processed_at": "2026-11-27T12:41:50.686Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3153,7 +3153,7 @@
       "staged_for_review": 0
     },
     "folkbench-folkbench-learnings.md": {
-      "processed_at": "2026-11-26T12:29:12.857Z",
+      "processed_at": "2026-11-27T12:41:48.166Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4950,
+  "total_dossiers_evaluated": 4953,
   "total_canonical_promoted": 579,
-  "total_staged_for_review": 3708
+  "total_staged_for_review": 3711
 }

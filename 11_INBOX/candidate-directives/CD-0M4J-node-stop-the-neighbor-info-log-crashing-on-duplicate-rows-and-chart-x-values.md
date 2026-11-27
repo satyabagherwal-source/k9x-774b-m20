@@ -1,0 +1,192 @@
+# Candidate Directive: [CD-0M4J] node): stop the neighbor info log crashing on duplicate rows and chart x-values
+
+<!-- PROVENANCE_START
+{
+  "source_repository": "meshtastic-meshtastic-android-learnings",
+  "source_url": "unknown",
+  "source_version": "HEAD",
+  "license": "Open-Source",
+  "timestamp": "2026-11-27T12:41:49.951Z",
+  "ai_provider": "universal-multi-artifact-distributor",
+  "generator_version": "2.0.0-universal",
+  "learning_id": "LEARN-EVO-meshtastic-meshtastic-android-learnings",
+  "canonical_classification": "candidate_directive"
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshtastic-meshtastic-android-learnings](unknown) (Revision: `HEAD`).  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T12:41:49.951Z`  
+> **Learning ID**: `LEARN-EVO-meshtastic-meshtastic-android-learnings`
+
+
+## Lifecycle Status
+- **Current Status**: `QUARANTINED_REJECT`
+- **Rejection / Holding Reason**: Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records
+- **Retry Eligibility**: `YES`
+- **Candidate Domain**: Domain B
+
+## Original Learning Payload (100% Preserved)
+**RULE**:
+When implementing operations in `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/model/MetricsState.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `41951f6c`: node): stop the neighbor info log crashing on duplicate rows and chart x-values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `feature/node/src/commonMain/kotlin/org/meshtastic/feature/node/model/MetricsState.kt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+import org.meshtastic.core.model.util.TimeConstants.MS_PER_SEC
+    // On our own node's page the results are every log our radio originated, so they hold our requests too.
+    val reports = neighborInfoResults.filterNot { it.isOutgoingRequest() }
+            reply = reports.find { it.fromRadio.packet?.decoded?.request_id == id },
+    val received = reports.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
+private fun MeshLog.isOutgoingRequest() =
+    fromNum == MeshLog.NODE_NUM_LOCAL && fromRadio.packet?.decoded?.want_response == true
+
+    /**
+     * When the neighbor list arrived, or when the request went out if it never did, in whole seconds: the chart rejects
+     * x-values finer than four decimal places.
+     */
+        get() = ((report ?: log).received_date / MS_PER_SEC).toDouble()
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+            reply = neighborInfoResults.find { it.fromRadio.packet?.decoded?.request_id == id },
+    val received = neighborInfoResults.filter { it.uuid !in pairedReplies }.map { NeighborInfoEntry.Received(it) }
+    /** When the neighbor list arrived, or when the request went out if it never did. */
+        get() = (report ?: log).received_date / MS_PER_SEC_DOUBLE
+
+private const val MS_PER_SEC_DOUBLE = 1000.0
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `41951f6c` are properly handled with clean fallback behavior.
+
+## Quality Gate Validation Dimensions
+```json
+{
+  "validator_version": "0.1.0",
+  "validated_at": "2026-11-27T12:41:50.082Z",
+  "decision": "REJECT",
+  "decision_reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+  "recommended_action": "REJECT_FAIL_CLOSED",
+  "confidence_score": 0,
+  "confidence_justification": "Evaluated across 7 dimensions (Score: 0%). Source=FAIL (UNTRUSTED_EXTERNAL), Evidence=WARN (0 effective sources), Correctness=PASS, Reusability=PASS, Completeness=PASS, Freshness=WARN, Conflict=PASS.",
+  "item": {
+    "id": "cand-1795783310082",
+    "title": "node): stop the neighbor info log crashing on duplicate rows and chart x-values",
+    "category": "ENGINEERING_PATTERN",
+    "domain": "ARCHITECTURE",
+    "source_id": "meshtastic-meshtastic-android-learnings",
+    "source_uri": "",
+    "source_version": "HEAD",
+    "content_hash": "9066d303bac0cd18730f3a736b2fd3a4ef328f944808b5c6d643a63e5c3c4bc1"
+  },
+  "evidence_fingerprint": "NO_EVIDENCE",
+  "dimensions": {
+    "source_reliability": {
+      "status": "FAIL",
+      "score": 0,
+      "tier": "UNTRUSTED_EXTERNAL",
+      "findings": [
+        "MISSING_SOURCE_URI: Knowledge has no source URL or locator"
+      ],
+      "details": [
+        "Source is completely untraceable; origin cannot be verified."
+      ]
+    },
+    "evidence_quality": {
+      "status": "WARN",
+      "score": 0.2,
+      "corroboration_tier": "INDEPENDENCE_UNVERIFIED",
+      "effective_sources": 0,
+      "direct_evidence_ratio": 0,
+      "findings": [
+        "NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records"
+      ],
+      "details": [
+        "Claim is uncorroborated; relies solely on raw unverified source text."
+      ]
+    },
+    "technical_correctness": {
+      "status": "PASS",
+      "score": 1,
+      "is_adversarial": false,
+      "has_dangerous_security": false,
+      "directive_opposition": false,
+      "opposing_rule": null,
+      "unsupported_assumptions": [],
+      "findings": [],
+      "details": [
+        "No direct opposition with canonical operating directives",
+        "Substantive technical content verified (> 40 chars)"
+      ]
+    },
+    "reusability": {
+      "status": "PASS",
+      "score": 1,
+      "is_generic_pattern": true,
+      "has_local_paths": false,
+      "findings": [],
+      "details": [
+        "Free of local workstation path artifacts",
+        "Expresses generalized engineering invariants (4 architectural markers)",
+        "Explicit WHEN TO APPLY scope defined"
+      ]
+    },
+    "completeness": {
+      "status": "PASS",
+      "score": 1,
+      "has_rule": true,
+      "has_why": true,
+      "has_when": true,
+      "missing_fields": [],
+      "details": [
+        "Preserves normative RULE declaration",
+        "Preserves technical rationale (WHY)",
+        "Preserves operational boundary (WHEN TO APPLY)",
+        "Includes explicit negative example / anti-pattern contrast"
+      ]
+    },
+    "freshness": {
+      "status": "WARN",
+      "score": 1,
+      "staleness_risk": "MEDIUM",
+      "findings": [],
+      "details": [
+        "Free of known deprecated runtimes (Python 2, Node < 14, Webpack 1-3, React < 16)",
+        "Harvested/verified timestamp recorded: 2026-11-27T12:41:50.082Z"
+      ]
+    },
+    "duplication_and_conflict": {
+      "status": "PASS",
+      "score": 1,
+      "is_duplicate": false,
+      "duplicate_target": null,
+      "is_contradiction": false,
+      "conflicting_rule": null,
+      "findings": [],
+      "details": []
+    }
+  },
+  "detected_contradictions": [],
+  "missing_information": [
+    "Source provenance",
+    "Empirical evidence records"
+  ],
+  "limitations": [
+    "Staleness risk: MEDIUM"
+  ],
+  "evidence_references": [],
+  "auth_token": "f6080ca0cf6b487dfb2cc0c23652b9cf45aff2c1747e7cfb328ea25d87b686cf"
+}
+```
+
+## Remediation Checklist to Enable Promotion
+- [ ] Verify empirical reproducibility on isolated sandbox fixture.
+- [ ] Add missing implementation code block or negative constraint.
+- [ ] Authorize human signature token if targeting Core laws or Domain M.

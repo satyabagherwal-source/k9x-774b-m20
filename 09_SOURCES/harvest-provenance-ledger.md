@@ -13819,3 +13819,7 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `0f0c3c6d` | Multi-dimensional audit evidence | 2026-11-27T12:21:15.446Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `df7ba30c` | Multi-dimensional audit evidence | 2026-11-27T12:21:23.263Z |
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `99a394b3` | Multi-dimensional audit evidence | 2026-11-27T12:32:36.093Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `d9006e93` | Multi-dimensional audit evidence | 2026-11-27T12:41:31.441Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `33098634` | Multi-dimensional audit evidence | 2026-11-27T12:41:37.601Z |
+| `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `a972f623` | Multi-dimensional audit evidence | 2026-11-27T12:41:39.633Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e9e79bc6` | Multi-dimensional audit evidence | 2026-11-27T12:41:44.629Z |

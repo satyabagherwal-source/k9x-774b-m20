@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-4CZS",
-    "timestamp": "2026-11-26T05:57:10.216Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-4GVA",
-    "timestamp": "2026-11-26T05:57:15.238Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LD8Y",
-    "timestamp": "2026-11-26T06:10:23.698Z",
-    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-    "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-    "contentHash": "bf42363186cca9cfc9082c7e1aa1cd657a464ea56a420b503946ae88855a42b7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LISX",
-    "timestamp": "2026-11-26T06:10:30.897Z",
-    "repository": "iPlug2/iPlug2",
-    "learningId": "learn-github-iplug2-iplug2",
-    "contentHash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-LKDF",
     "timestamp": "2026-11-26T06:10:32.931Z",
     "repository": "k3s-io/k3s",
@@ -7490,6 +7430,66 @@
     "repository": "tuist/tuist",
     "learningId": "learn-github-tuist-tuist",
     "contentHash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-07QD",
+    "timestamp": "2026-11-27T12:41:31.429Z",
+    "repository": "Folkbench/folkbench",
+    "learningId": "learn-github-folkbench-folkbench",
+    "contentHash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-0CHF",
+    "timestamp": "2026-11-27T12:41:37.587Z",
+    "repository": "meshtastic/Meshtastic-Android",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "84d38badf78d2edacc64b449db5dcdccfd71a380799d61d82f740d5373bb0e39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-0E1W",
+    "timestamp": "2026-11-27T12:41:39.620Z",
+    "repository": "infracost/infracost",
+    "learningId": "learn-github-infracost-infracost",
+    "contentHash": "fda9e1a3677f028bfffe246c1239bef289d9f892acbcae3b850a113b218e839f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-0HWQ",
+    "timestamp": "2026-11-27T12:41:44.618Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

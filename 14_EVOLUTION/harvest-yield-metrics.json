@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:32:36.107Z",
-  "total_cycles_completed": 13085,
-  "total_learnings_persisted": 13085,
-  "total_rules_promoted": 11812,
+  "last_updated": "2026-11-27T12:41:44.638Z",
+  "total_cycles_completed": 13089,
+  "total_learnings_persisted": 13089,
+  "total_rules_promoted": 11816,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:30:12.213Z",
-      "repository": "inclusionAI/LingSante-3.1-flash",
-      "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:30:20.811Z",
-      "repository": "NihilDigit/piko",
-      "learningId": "learn-github-nihildigit-piko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:30:22.890Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:38:47.754Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:38:56.335Z",
       "repository": "keybase/client",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-27T12:32:36.107Z",
       "repository": "tuist/tuist",
       "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:41:31.451Z",
+      "repository": "Folkbench/folkbench",
+      "learningId": "learn-github-folkbench-folkbench",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:41:37.610Z",
+      "repository": "meshtastic/Meshtastic-Android",
+      "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:41:39.642Z",
+      "repository": "infracost/infracost",
+      "learningId": "learn-github-infracost-infracost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:41:44.638Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

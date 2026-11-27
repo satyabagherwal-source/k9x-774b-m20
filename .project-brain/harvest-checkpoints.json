@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:32:36.113Z",
+  "last_updated": "2026-11-27T12:41:44.642Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7416,14 +7416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infracost-infracost",
-      "content_hash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
-      "verified_at": "2026-11-25T01:09:22.071Z",
+      "content_hash": "fda9e1a3677f028bfffe246c1239bef289d9f892acbcae3b850a113b218e839f",
+      "verified_at": "2026-11-27T12:41:39.645Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:09:22.071Z"
+      "last_updated": "2026-11-27T12:41:39.645Z"
     },
     "apache/shardingsphere": {
       "repository": "apache/shardingsphere",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
-      "verified_at": "2026-11-26T18:05:53.065Z",
+      "content_hash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
+      "verified_at": "2026-11-27T12:41:44.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:05:53.065Z"
+      "last_updated": "2026-11-27T12:41:44.641Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11751,14 +11751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshtastic-meshtastic-android",
-      "content_hash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
-      "verified_at": "2026-11-25T03:50:53.286Z",
+      "content_hash": "84d38badf78d2edacc64b449db5dcdccfd71a380799d61d82f740d5373bb0e39",
+      "verified_at": "2026-11-27T12:41:37.613Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:50:53.286Z"
+      "last_updated": "2026-11-27T12:41:37.613Z"
     },
     "astral-sh/uv": {
       "repository": "astral-sh/uv",
@@ -19116,14 +19116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-folkbench-folkbench",
-      "content_hash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
-      "verified_at": "2026-11-26T12:28:57.905Z",
+      "content_hash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
+      "verified_at": "2026-11-27T12:41:31.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:28:57.905Z"
+      "last_updated": "2026-11-27T12:41:31.454Z"
     },
     "IFM/PAN2": {
       "repository": "IFM/PAN2",

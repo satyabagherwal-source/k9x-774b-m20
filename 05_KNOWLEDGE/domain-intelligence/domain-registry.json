@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:32:48.595Z",
-  "total_records": 2834,
+  "last_updated": "2026-11-27T12:41:51.239Z",
+  "total_records": 2836,
   "domains": {
     "A": {
       "total": 23,
@@ -1253,7 +1253,7 @@
       ]
     },
     "G": {
-      "total": 488,
+      "total": 490,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1742,7 +1742,9 @@
         "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants",
         "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-arrow-core-invariants",
-        "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants",
+        "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10875,8 +10877,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "0c9365d81067fe8df5d548cfa94063aa05f097d613fc6d3bca58b850bbcf9570",
-      "created_at": "2026-11-26T18:05:53.559Z"
+      "content_hash": "9b511f65c5d93071582d9d9eeb5846f6504b0e3309fcf7c9be2ccfe56e516fc2",
+      "created_at": "2026-11-27T12:41:45.078Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -24302,8 +24304,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "cef44c208591325a1c926f9f8ffe0f24310781ed7168394653dc7aba60bb96da",
-      "created_at": "2026-11-26T12:28:58.315Z"
+      "content_hash": "8a7ff200503f729dff4c0343a6e92b75979321cbb305e8582f5514e998a10fc3",
+      "created_at": "2026-11-27T12:41:31.881Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -24320,8 +24322,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "24e45366c33712b19a444dcf06c62bd6a99608e597e7a2f5fc5fc5d65624e107",
-      "created_at": "2026-11-26T12:29:13.714Z"
+      "content_hash": "e89313ed61d591a695ad4bcf87f19dd07511b041a131d66e2ee2645173a6ecd4",
+      "created_at": "2026-11-27T12:41:49.311Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -40254,8 +40256,8 @@
       "title": "Product Intelligence: meshtastic/Meshtastic-Android Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-product-intelligence-meshtastic-meshtastic-android.md",
       "repository": "meshtastic/Meshtastic-Android",
-      "content_hash": "4c19d8a885d50a371fb2db5c80ee01e9bde34fa534ec911488bc77332a32a633",
-      "created_at": "2026-11-22T17:22:08.645Z"
+      "content_hash": "fb60f601571af65ba49313cf6edc4db3364c8852a3d1771a0833b4e2ea7b68c5",
+      "created_at": "2026-11-27T12:41:38.041Z"
     },
     "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
@@ -40272,8 +40274,8 @@
       "title": "Product Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-learnings-product-intelligence-meshtastic-meshtast.md",
       "repository": "meshtastic-meshtastic-android-learnings",
-      "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
-      "created_at": "2026-11-22T17:22:16.293Z"
+      "content_hash": "b60ccfd52bdac5dd92d60ffcfee12c43b83e43d17a90621551994c4bd867d752",
+      "created_at": "2026-11-27T12:41:50.292Z"
     },
     "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
@@ -47846,6 +47848,24 @@
       "repository": "serpapi-google-search-results-python-learnings",
       "content_hash": "31b0913d967b14e7d624bceba2e35a58f42da7d8b476c8d923e093d2dcc28789",
       "created_at": "2026-11-27T12:03:50.456Z"
+    },
+    "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infracost/infracost Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infracost-infracost-architecture-intelligence-infracost-infracost-core-invariant.md",
+      "repository": "infracost/infracost",
+      "content_hash": "3703cea6de12a6a3a6473b4cca224b5af4484029f189a641d55a91801f1d650c",
+      "created_at": "2026-11-27T12:41:40.079Z"
+    },
+    "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infracost-infracost-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infracost-infracost-learnings-architecture-intelligence-infracost-infracost-lear.md",
+      "repository": "infracost-infracost-learnings",
+      "content_hash": "bcc218dcbb9f0fc42542b1d95ce2d12542f94746083b8d8dcaec13023627a66d",
+      "created_at": "2026-11-27T12:41:51.239Z"
     }
   }
 }

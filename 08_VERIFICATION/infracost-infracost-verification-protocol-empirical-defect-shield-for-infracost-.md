@@ -4,22 +4,22 @@
 {
   "source_repository": "infracost/infracost",
   "source_url": "https://github.com/infracost/infracost",
-  "source_version": "aa717670",
+  "source_version": "a972f623",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T01:09:22.325Z",
+  "timestamp": "2026-11-27T12:41:39.874Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-infracost-infracost",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [infracost/infracost](https://github.com/infracost/infracost) (Revision: `aa717670`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:09:22.325Z`  
+> **Provenance**: Harvested from [infracost/infracost](https://github.com/infracost/infracost) (Revision: `a972f623`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T12:41:39.874Z`  
 > **Learning ID**: `learn-github-infracost-infracost`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `infracost/infracost` (Commit: `aa717670`)
+- **Target Repository**: `infracost/infracost` (Commit: `a972f623`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infracost-infracost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infracost/infracost](https://github.com/infracost/infracost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:09:20.869Z  
+> **Harvest Timestamp**: 2026-11-27T12:41:38.429Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cloud cost intelligence for engineers, AI coding agents, and CI/CD 💰📉 Shift FinOps Left!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12632 stars
+- **Stars / Engagement**: 12633 stars
 
 ---
 
@@ -704,247 +704,44 @@ func regionToCDNZone(region string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa717670` (2026-11-24)
-**Commit Message**: fix(deps): bump terragrunt fork (#3650)
+### Incident Patch 1: `a972f623` (2026-11-27)
+**Commit Message**: fix(deps): update gorilla/websocket to the masking key fix (#3652)
 
-**File**: `go.mod` (modified, +81/-78)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -9,32 +9,32 @@ require (
- 	github.com/Masterminds/semver v1.5.0 // indirect
- 	github.com/Masterminds/sprig v2.22.0+incompatible
- 	github.com/Rhymond/go-money v1.0.10
--	github.com/aws/aws-sdk-go-v2 v1.41.7
--	github.com/aws/aws-sdk-go-v2/config v1.31.8
-+	github.com/aws/aws-sdk-go-v2 v1.42.1
-+	github.com/aws/aws-sdk-go-v2/config v1.32.30
- 	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.59.1
- 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.50.1
- 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.50.3
- 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.251.2
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.1
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.2
- 	github.com/awslabs/goformation/v7 v7.13.1
- 	github.com/dave/dst v0.27.2
- 	github.com/dustin/go-humanize v1.0.1
--	github.com/fatih/color v1.18.0
-+	github.com/fatih/color v1.19.0
- 	github.com/google/go-cmp v0.7.0
- 	github.com/google/uuid v1.6.0
- 	github.com/huandu/xstrings v1.3.2 // indirect
- 	github.com/jedib0t/go-pretty/v6 v6.2.1
- 	github.com/joho/godotenv v1.4.0
--	github.com/json-iterator/go v1.1.12
-+	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12
- 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
- 	github.com/kelseyhightower/envconfig v1.4.0
- 	github.com/mitchellh/copystructure v1.2.0 // indirect
- 	github.com/mitchellh/go-homedir v1.1.0
- 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
- 	github.com/pkg/errors v0.9.1
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2
--	github.com/shopspring/decimal v1.3.1
--	github.com/sirupsen/logrus v1.9.3
-+	github.com/shopspring/decimal v1.4.0
-+	github.com/sirupsen/logrus v1.9.4
- 	github.com/spf13/cobra v1.9.1
- 	github.com/spf13/pflag v1.0.6
- 	github.com/stretchr/testify v1.12.1
-@@ -55,24 +55,22 @@ require (
- 
+@@ -85,7 +85,7 @@ require (
  require (
- 	github.com/agext/levenshtein v1.2.3 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.19.29
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.11.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.23 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
--	github.com/aws/smithy-go v1.25.1
--	github.com/hashicorp/hcl v1.0.1-vault // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.31 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.32.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.44.1 // indirect
-+	github.com/aws/smithy-go v1.27.4
-+	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
- 	github.com/hashicorp/hcl/v2 v2.24.0
- 	github.com/imdario/mergo v0.3.13
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
--	github.com/jmespath/go-jmespath v0.4.0 // indirect
--	github.com/mattn/go-colorable v0.1.14 // indirect
--	github.com/mattn/go-isatty v0.0.20 // indirect
-+	github.com/mattn/go-colorable v0.1.15 // indirect
-+	github.com/mattn/go-isatty v0.0.23 // indirect
- 	github.com/mattn/go-runewidth v0.0.16 // indirect
- 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-@@ -85,8 +83,8 @@ require (
- )
- 
- require (
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.23 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30 // indirect
- 	github.com/gorilla/websocket v1.5.3 // indirect
+ 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30 // indirect
+-	github.com/gorilla/websocket v1.5.3 // indirect
++	github.com/gorilla/websocket v1.5.4-0.20240701034025-d67f41855da4 // indirect
  	golang.org/x/sync v0.24.0
  )
-@@ -103,7 +101,7 @@ require (
- 	github.com/gruntwork-io/go-commons v0.17.1
- 	github.com/gruntwork-io/terragrunt v0.52.4
- 	github.com/hashicorp/go-cty-funcs v0.0.0-20230405223818-a090f58aa992
--	github.com/hashicorp/go-retryablehttp v0.7.7
-+	github.com/hashicorp/go-retryablehttp v0.7.8
- 	github.com/hashicorp/go-terraform-address v0.0.0-20210506203813-2cc4f0f34da8
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
- 	github.com/hashicorp/terraform-svchost v0.1.1
-@@ -128,95 +126,101 @@ require (
- 
- require (
- 	cel.dev/expr v0.25.2 // indirect
--	cloud.google.com/go/auth v0.18.2 // indirect
-+	cloud.google.com/go/auth v0.22.0 // indirect
- 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
- 	c
-```
-
-**File**: `go.sum` (modified, +225/-177)
-```diff
-@@ -1,5 +1,5 @@
--c2sp.org/CCTV/age v0.0.0-20240306222714-3ec4d716e805 h1:u2qwJeEvnypw+OCPUHmoZE3IqwfuN5kgDfo5MLzpNM0=
--c2sp.org/CCTV/age v0.0.0-20240306222714-3ec4d716e805/go.mod h1:FomMrUJ2Lxt5jCLmZkG3FHa72zUprnhd3v/Z18Snm4w=
-+c2sp.org/CCTV/age v0.0.0-20251208015420-e9274a7bdbfd h1:ZLsPO6WdZ5zatV4UfVpr7oAwLGRZ+sebTUruuM4Ra3M=
-+c2sp.org/CCTV/age v0.0.0-20251208015420-e9274a7bdbfd/go.mod h1:SrHC2C7r5GkDk8R+NFVzYy/sdj0Ypg9htaPXQq5Cqeo=
- cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
- cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-@@ -40,8 +40,8 @@ cloud.google.com/go v0.104.0/go.mod h1:OO6xxXdJyvuJPcEPBLN9BJPD+jep5G1+2U5B5gkRY
- cloud.google.com/go v0.105.0/go.mod h1:PrLgOJNe5nfE9UMxKxgXj4mD3voiP+YQ6gdt6KMFOKM=
- cloud.google.com/go v0.107.0/go.mod h1:wpc2eNrD7hXUTy8EKS10jkxpZBjASrORK7goS+3YX2I=
- cloud.google.com/go v0.110.0/go.mod h1:SJnCLqQ0FCFGSZMUNUf84MV3Aia54kn7pi8st7tMzaY=
--cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
--cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
-+cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
-+cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
- cloud.google.com/go/accessapproval v1.4.0/go.mod h1:zybIuC3KpDOvotz59lFe5qxRZx6C75OtwbisN56xYB4=
- cloud.google.com/go/accessapproval v1.5.0/go.mod h1:HFy3tuiGvMdcd/u+Cu5b9NkO1pEICJ46IR82PoUdplw=
- cloud.google.com/go/accessapproval v1.6.0/go.mod h1:R0EiYnwV5fsRFiKZkPHr6mwyk2wxUJ30nL4j2pcFY2E=
-@@ -103,8 +103,8 @@ cloud.google.com/go/assuredworkloads v1.7.0/go.mod h1:z/736/oNmtGAyU47reJgGN+KVo
- cloud.google.com/go/assuredworkloads v1.8.0/go.mod h1:AsX2cqyNCOvEQC8RMPnoc0yEarXQk6WEKkxYfL6kGIo=
- cloud.google.com/go/assuredworkloads v1.9.0/go.mod h1:kFuI1P78bplYtT77Tb1hi0FMxM0vVpRC7VVoJC3ZoT0=
- cloud.google.com/go/assuredworkloads v1.10.0/go.mod h1:kwdUQuXcedVdsIaKgKTp9t0UJkE5+PAVNhdQm4ZVq2E=
--cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
--cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
-+cloud.google.com/go/auth v0.22.0 h1:Xp9wAKkLoeaYb5pYZZoQGz4E9sdPxIbzS3gywZE3ciQ=
-+cloud.google.com/go/auth v0.22.0/go.mod h1:M9o2Oz+YI2jAfxewJgb1vyI3vceHF+eohmxyzmrl+9s=
- cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
- cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
- cloud.google.com/go/automl v1.5.0/go.mod h1:34EjfoFGMZ5sgJ9EoLsRtdPSNZLcfflJR39VbVNS2M0=
-@@ -322,8 +322,8 @@ cloud.google.com/go/iam v0.8.0/go.mod h1:lga0/y3iH6CX7sYqypWJ33hf7kkfXJag67naqGE
- cloud.google.com/go/iam v0.11.0/go.mod h1:9PiLDanza5D+oWFZiH1uG+RnRCfEGKoyl6yo4cgWZGY=
- cloud.google.com/go/iam v0.12.0/go.mod h1:knyHGviacl11zrtZUoDuYpDgLjvr28sLQaG0YB2GYAY=
- cloud.google.com/go/iam v0.13.0/go.mod h1:ljOg+rcNfzZ5d6f1nAUJ8ZIxOaZUVoS14bKCtaLZ/D0=
--cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
--cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
-+cloud.google.com/go/iam v1.12.0 h1:Aki3bX9aHUDKPHfnRJfDcTdVedvy6quGBQcTqx3DRXk=
-+cloud.google.com/go/iam v1.12.0/go.mod h1:FEZ4lXpADAC2AIpQY7LANNjjwyQ2jK439CI2VaD+sLY=
- cloud.google.com/go/iap v1.4.0/go.mod h1:RGFwRJdihTINIe4wZ2iCP0zF/qu18ZwyKxrhMhygBEc=
- cloud.google.com/go/iap v1.5.0/go.mod h1:UH/CGgKd4KyohZL5Pt0jSKE4m3FR51qg6FKQ/z/Ix9A=
- cloud.google.com/go/iap v1.6.0/go.mod h1:NSuvI9C/j7UdjGjIde7t7HBz+QTwBcapPE07+sSRcLk=
-@@ -343,6 +343,8 @@ cloud.google.com/go/kms v1.8.0/go.mod h1:4xFEhYFqvW+4VMELtZyxomGSYtSQKzM178ylFW4
- cloud.google.com/go/kms v1.9.0/go.mod h1:qb1tPTgfF9RQP8e1wq4cLFErVuTJv7UsSC915J8dh3w=
- cloud.google.com/go/kms v1.10.0/go.mod h1:ng3KTUtQQU9bPX3+QGLsflZIHlkbn8amFAMY63m8d24=
- cloud.google.com/go/kms v1.10.1/go.mod h1:rIWk/TryCkR59GMC3YtHtXeLzd634lBbKenvyySAyYI=
-+cloud.google.com/go/kms v1.32.0 h1:s+rEluaaZKhLVjrIWG7uNBsnWbiitElzNzFGyp6+nIg=
-+cloud.google.com/go/kms v1.32.0/go.mod h1:CSGvW6GnMQbY+1nOHcIzhMtHSbExXlOmCKjWtYVjcpA=
- cloud.google.com/go/language v1.4.0/go.mod h1:F9dRpNFQmJbkaop6g0JhSBXCNlO90e1KWx5iDdxbWic=
- cloud.google.com/go/language v1.6.0/go.mod h1:6dJ8t3B+lUYfStgls25GusK04NLh3eDLQnWM3mdEbhI=
- cloud.google.com/go/language v1.7.0/go.mod h1:DJ6dYN/W+SQOjF8e1hLQXMF21AkH2w9wiPzPCJa2MIE=
-@@ -353,13 +355,13 @@ cloud.google.com/go/lifesciences v0.6.0/go.mod h1:ddj6tSX/7BOnhxCSd3ZcETvtNr8NZ6
- cloud.google.com/go/lifesciences v0.8.0/go.mod h1:lFxiEOMqII6XggGbOnKiyZ7IBwoIqA84ClvoezaA/bo=
- cloud.google.com/go/logging v1.6.1/go.mod h1:5ZO0mHHbvm8gEmeEUHrmDlTDSu5imF6MUP9OfilNXBw=
- cloud.google.com/go/logging v1.7.0/go.mod h1:3xjP2CjkM3ZkO73aj4ASA5wRPGGCRrPIAeNqVNkzY8M=
--cloud.google.com/go/logging v1.13.1 h1:O7LvmO0kGLaHY/gq8cV7T0dyp6zJhYAOtZPX4TF3QtY=
--cloud.google.com/go/logging v1.13.1/go.mod h1:XAQkfkMBxQRjQek96WLPNze7vsOmay9H5PqfsNYDqvw=
-+
-```
-
-**File**: `internal/output/format.go` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ func formatCost(currency string, d *decimal.Decimal) string {
- }
- 
- func formatUsageCost(out Root, cost *decimal.Decimal) string {
--	hasUsageCosts := cost != nil && !cost.Equals(decimal.Zero)
-+	hasUsageCosts := cost != nil && !cost.Equal(decimal.Zero)
- 
- 	if usageCostsEnabled(out) || hasUsageCosts {
- 		return formatCost(out.Currency, cost)
-```
-
-**File**: `internal/output/markdown.go` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ func formatMarkdownCostChange(currency string, pastCost, cost *decimal.Decimal,
- 		plusMinus = ""
- 	}
- 
--	if pastCost != nil && cost != nil && pastCost.Equals(*cost) {
-+	if pastCost != nil && cost != nil && pastCost.Equal(*cost) {
- 		return plusMinus + formatWholeDecimalCurrency(currency, decimal.Zero)
- 	}
- 
-@@ -81,7 +81,7 @@ func formatCostChangeSentence(currency string, pastCost, cost *decimal.Decimal,
- 	diff := cost.Sub(*pastCost).Abs()
- 	change := formatCost(currency, &diff)
- 
--	if pastCost.Equals(*cost) {
-+	if pastCost.Equal(*cost) {
- 		return "Monthly estimate generated"
- 	}
  
 ```
 
-**File**: `internal/resources/aws/data_transfer.go` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -155,7 +155,7 @@ func (r *DataTransfer) outboundInternetCostComponents() []*schema.CostComponent
- 	for i, usageFilter := range usageFiltersData {
- 		quantity := tiers[i]
- 
--		if quantity.Equals(decimal.Zero) {
-+		if quantity.Equal(decimal.Zero) {
- 			break
- 		}
- 
-```
-
-**File**: `internal/schema/diff.go` (modified, +1/-1)
-```diff
-@@ -236,7 +236,7 @@ func diffDecimals(current *decimal.Decimal, past *decimal.Decimal) *decimal.Deci
- 		diff = *current
- 	} else if current == nil {
- 		diff = past.Neg()
--	} else if current.Equals(*past) {
-+	} else if current.Equal(*past) {
- 		// Handling the strange behavior of decimal for easier testing.
- 		diff = decimal.Zero
- 	} else {
+@@ -1254,8 +1254,8 @@ github.com/gophercloud/utils v0.0.0-20200423144003-7c72efc7435d/go.mod h1:ehWUbL
+ github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
+ github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
+ github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+-github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
+-github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
++github.com/gorilla/websocket v1.5.4-0.20240701034025-d67f41855da4 h1:PYKzliEgITjLJoJqbV90S0YRaG8LNAsICH6fp6MApC0=
++github.com/gorilla/websocket v1.5.4-0.20240701034025-d67f41855da4/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
+ github.com/goware/prefixer v0.0.0-20160118172347-395022866408 h1:Y9iQJfEqnN3/Nce9cOegemcy/9Ai5k3huT6E80F3zaw=
+ github.com/goware/prefixer v0.0.0-20160118172347-395022866408/go.mod h1:PE1ycukgRPJ7bJ9a1fdfQ9j8i/cEcRAoLZzbxYpNB/s=
+ github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3652** (2026-11-27): fix(deps): update gorilla/websocket to the masking key fix (@3dbrows)
 - **PR #3651** (2026-11-24): test(google): update golden files for preemptible price changes (@aliscott)
 - **PR #3650** (2026-11-24): fix(deps): bump terragrunt fork (@aliscott)
 - **PR #3647** (2026-11-20): fix(aws): tighten NLB and inter-region data transfer price filters (@aliscott)
 - **PR #3646** (2026-11-20): fix(modules): move the S3 module cache to aws-sdk-go-v2 (@aliscott)
 - **PR #3645** (2026-11-20): fix(deps): bump golang.org/x/net to 0.62.0, otel to 1.47.0 and Go to 1.26.11 (@aliscott)
-- **PR #3644** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 
 ---
 
@@ -964,13 +761,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump terragrunt fork
+## X. deps): update gorilla/websocket to the masking key fix
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infracost/infracost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa717670`: deps): bump terragrunt fork. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a972f623`: deps): update gorilla/websocket to the masking key fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -978,59 +775,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2 v1.42.1
-	github.com/aws/aws-sdk-go-v2/config v1.32.30
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.105.2
-	github.com/fatih/color v1.19.0
-	github.com/json-iterator/go v1.1.13-0.20220915233716-71ac16282d12
-	github.com/shopspring/decimal v1.4.0
-	github.com/sirupsen/logrus v1.9.4
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.29
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.30 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.30 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.30 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.31 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.32.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.44.1 // indirect
-	github.com/aws/smithy-go v1.27.4
-	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
-	github.com/mattn/go-colorable v0.1.15 // indirect
-	github.com/mattn/go-isatty v0.0.23 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.14 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.30 // indirect
-	g
+	github.com/gorilla/websocket v1.5.4-0.20240701034025-d67f41855da4 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/aws/aws-sdk-go-v2 v1.41.7
-	github.com/aws/aws-sdk-go-v2/config v1.31.8
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.100.1
-	github.com/fatih/color v1.18.0
-	github.com/json-iterator/go v1.1.12
-	github.com/shopspring/decimal v1.3.1
-	github.com/sirupsen/logrus v1.9.3
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.12
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.23 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.23 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.23 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.29.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.38.4 // indirect
-	github.com/aws/smithy-go v1.25.1
-	github.com/hashicorp/hcl v1.0.1-vault // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.10 // indi
+	github.com/gorilla/websocket v1.5.3 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa717670` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a972f623` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

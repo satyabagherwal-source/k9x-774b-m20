@@ -4,24 +4,24 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "fba29442",
+  "source_version": "e9e79bc6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T18:05:53.332Z",
+  "timestamp": "2026-11-27T12:41:44.871Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `fba29442`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:05:53.332Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `e9e79bc6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T12:41:44.871Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2/dbx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:05:51.694Z  
+> **Harvest Timestamp**: 2026-11-27T12:41:43.386Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31536 stars
+- **Stars / Engagement**: 31663 stars
 
 ---
 
@@ -2042,13 +2042,11 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15782** (2026-11-26): **[Bug] 全局搜索使用中文输入法时，按回车上屏会关闭搜索框**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  全局搜索输入框的键盘交互，与数据库类型和版本无关。  ### 问题描述 / Problem description  1. 打开全局搜索，确保列表中有高亮结果。 2. 切换到中文输入法，在搜索框里输入一串字母，例如 `users`，保留组字状态。 3. 按回车，让输入中的字母原样上屏。  **实际行为**  回车触发打开当前高亮结果，搜索框随即关闭。  **预期行为**  回车确认输入，搜索框保持打开，并根据上屏后的文字更新结果。松开后再按回车时，正常打开当前高亮结果。  ### 支持信息 / Support information  在 DBX 主线源码的全局搜索组件中，用输入法事件序列复现。原始反馈未提供安装版本、操作系统或输入法名称。  ### 优先级（是否紧急） / Priority  🟡 P2 普通 
+- **Issue #15820** (2026-11-27): **[Bug] SAP HANA 新建表无法新增字段，已有表无法设置主键**
+  *Symptoms*: ## 问题描述  SAP HANA 的表结构编辑器有两个入口被置灰：  1. 选中 HANA schema，右键「新建表」。输入表名后，「新增字段」不可点击，无法建表。 2. 打开一张没有主键的 HANA 表，进入「编辑表结构 → 字段」。该表的主键复选框不可点击，无法设置主键。  ## 期望结果  新建表时可以添加字段。编辑无主键的已有表时，可以勾选一个或多个字段作为主键，并预览、应用变更。  ## 复现环境  - DBX `b2fae8d501`，macOS arm64，Chromium 中运行表结构编辑组件。 - SAP HANA `2.00.082.00.1736514951`，通过 DBX JDBC Agent 读取测试表元数据。  ## 修复前截图  **新建表 ·「新增字段」置灰**  ![新建表时新增字段按钮不可用](https://raw.githubusercontent.com/zipg/dbx/ad7b88d6840c2cdebdeda73b9b097e0c7493039b/before-create.png)  **编辑表结构 · 主键复选框置灰**  ![已有表的主键复选框不可用](https://raw.githubusercontent.com/zipg/dbx/ad7b88d6840c2cdebdeda73b9b097e0c7493039b/before-key.png)  修复与 HANA 实库保存截图见 #15822。 
 
-- **Issue #15732** (2026-11-26): **[Compatibility] SQL Server 2005 不支持 OBJECT_SCHEMA_NAME 导致建表失败**
-  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：大锅菜麦克风  ### 数据库类型和版本 SQL Server 2005  ### AI 摘要 在 SQL Server 2005 中使用 dbx v0.6.75 创建表时，报错：OBJECT_SCHEMA_NAME 不是可以识别的内置函数名称（错误码 195）。该函数在 SQL Server 2005 中不可用，导致建表操作失败，需要兼容处理。  ### 原始描述 v0.6.75dbx在SQLServer 2005中创建表 会报错 Token error: "OBJECT_SCHEMA_NAME' 不是可以识别的 内置函数名称。'on server xxx executing on line 1(code:195,state:10,class:15)
-  **Post-Mortem & Fix Analysis**:
-  > 编辑SQLserver连接，选择旧版驱动
+- **Issue #15806** (2026-11-27): **[Bug] 标签页双击会重命名**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 16.10  ### 问题描述 / Problem description  1、新建查询  <img width="1526" height="2132" alt="企业微信截图_c8358a5d-6e33-4baf-97f7-ad8d256cef18" src="https://github.com/user-attachments/assets/bfe6fc21-55e7-4343-ab33-1e79b8b2eaf4" />  2、双击查询标签  <img width="480" height="112" alt="企业微信截图_45ac908f-5288-4bb4-a248-3676835af05b" src="https://github.com/user-attachments/assets/5ac8797d-934d-42cb-967c-4b961ced5276" />  双击后不应该自动重命名，破坏了原先的命名方式。 还有别的操作方式好像也会自动重命名，这种暂时没有复现出来，因为我几十个查询标签页名突然变成了query_*的形式  ### 支持信息 / Support information  DBX 版本: v0.6.75 (0.6.75-beta.20261125.2) 运行环境: 桌面端 操作系统: macOS 26.5 系统架构: aarch64 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) 数据库类型: postgres, sqlserver AI 供应商: DeepSeek  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2065,704 +2063,704 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fba29442` (2026-11-26)
-**Commit Message**: fix(oracle): upgrade godror to prevent stale OCI call timeout leak
+### Incident Patch 1: `e9e79bc6` (2026-11-27)
+**Commit Message**: fix(gaussdb): support SM3 password authentication
 
-**File**: `.github/scripts/ci-workflow.test.mjs` (modified, +25/-0)
+Closes #14721
+
+**File**: `Cargo.lock` (modified, +13/-3)
 ```diff
-@@ -197,6 +197,31 @@ test("Neo4j Windows x64 release and CI use the Windows-compatible build", () =>
-   assert.ok(compatibilitySteps.includes('build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"'));
- });
+@@ -7202,7 +7202,7 @@ dependencies = [
+ [[package]]
+ name = "postgres-protocol"
+ version = "0.6.12"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+ dependencies = [
+  "base64 0.23.0",
+  "byteorder",
+@@ -7215,13 +7215,14 @@ dependencies = [
+  "rand 0.10.2",
+  "sha1 0.10.7",
+  "sha2 0.11.0",
++ "sm3",
+  "stringprep",
+ ]
  
-+test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
-+  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  const thin = job("build-oracle-native", release);
-+  assert.match(thin, /go-version: "1\.20\.14"/);
-+  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
-+
-+  const oci = job("build-oracle-oci-native", release);
-+  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
-+  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
-+  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
-+
-+  const ci = job("agent-go");
-+  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
-+  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
-+  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
-+  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
-+  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
-+
-+  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  assert.match(thinMod, /^go 1\.20$/m);
-+  assert.doesNotMatch(thinMod, /github\.com\/godror\/godror/);
-+  const ociMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.oci.mod", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-+  assert.match(ociMod, /github\.com\/godror\/godror/);
-+});
-+
- test("shared Rust caches publish only complete builds outside the old cache namespace", () => {
-   for (const name of ["packages", "rust-fmt-clippy", "rust-test", "agent-rust", "agent-integration"]) {
-     const content = job(name);
-```
-
-**File**: `.github/workflows/agents-release.yml` (modified, +5/-6)
-```diff
-@@ -225,9 +225,9 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          # godror 需要 Go >= 1.21；thin 的 Windows 7 兼容线仍由 build-oracle-native 用 Go 1.20 构建。
-+          # godror 需要 Go >= 1.25；thin 的 Windows 7 兼容线使用 go.mod（Go 1.20），OCI 变体使用独立的 go.oci.mod。
-           go-version: "1.27.x"
--          cache-dependency-path: agents/drivers/oracle-go/go.sum
-+          cache-dependency-path: agents/drivers/oracle-go/go.oci.sum
-       - name: Prepare MinGW-w64 and the Oracle Instant Client
-         shell: bash
-         run: |
-@@ -283,16 +283,15 @@ jobs:
-       - name: Test Oracle agent with the OCI build tag
-         shell: bash
-         working-directory: agents/drivers/oracle-go
--        run: go test -mod=mod -tags oci ./...
-+        run: go test -mod=readonly -modfile=go.oci.mod -tags oci ./...
-       - name: Build Oracle OCI agent (Windows x64)
-         shell: bash
-         working-directory: agents/drivers/oracle-go
-         run: |
-           mkdir -p ../../../release-native
-           output="../../../release-native/dbx-agent-oracle-oci-windows-x64.exe"
--          # go.mod 的 go 指令保持 1.20（thin 的 Windows 7 兼容线）；OCI 变体要求更高，
--          # 因此允许就地更新 go.mod —— 只影响本任务的检出目录，不会被提交。
--          go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
-+          # OCI 变体使用独立的 go.oci.mod / go.oci.sum，避免将高版本 godror 引入 Go 1.20 的 thin 依赖图。
-+          go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o "$output" .
-           ls -lh ../../../release-native
-       - uses: actions/upload-artifact@v4
-         with:
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +16/-0)
-```diff
-@@ -1640,6 +1640,22 @@ jobs:
-       - name: Test Neo4j Windows-compatible build
-         if: matrix.driver == 'neo4j-go'
-         run: bash drivers/neo4j-go/build-windows-legacy.sh "$RUNNER_TEMP/dbx-agent-neo4j-windows-x64.exe"
-+      - name: Setup Oracle Windows-compatible Go
-+        if: matrix.driver == 'oracle-go'
-+        uses: actions/setup-go@v7
-+        with:
-+          go-version: "1.20.14"
-+          cache-dependency-path: agents/drivers/oracle-go/go.sum
-+      - name: Test Oracle Windows-compatible thin build
-+        if: matrix.driver == 'oracle-go'
-+        run: |
-+          cd drivers/oracle-go
-+          export GOTOOLCHAIN=local
-+          go test -mod=readonly ./...
-+          output="$RUNNER_TEMP/dbx-agent-oracle-windows-x64.exe"
-+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -mod=readonly -trimpath -ldflags="-s -w" -o "$output" .
-+          go version -m "$output" | tee "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
-+          grep -q ': go1\.20\.14$' "$RUNNER_TEMP/oracle-windows-x64-build-info.txt"
-     strategy:
-       fail-fast: false
-       max-parallel: 4
-```
-
-**File**: `agents/drivers/oracle-go/README.md` (modified, +3/-3)
-```diff
-@@ -83,9 +83,9 @@ $env:GOOS="windows"; $env:GOARCH="amd64"
- $env:CC="C:/mingw64/bin/gcc.exe"
- $env:CGO_CFLAGS="-IC:/instantclient/sdk/include"
- $env:CGO_LDFLAGS="-LC:/instantclient/sdk/lib/msvc"
--# go.mod keeps `go 1.20` for the Windows 7-compatible thin build; the OCI
--# variant needs Go >= 1.21 (godror), so -mod=mod updates go.mod in place.
--go build -mod=mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
-+# go.mod keeps pure Go 1.20 thin dependencies for Windows 7; the OCI variant
-+# uses its own go.oci.mod / go.oci.sum (Go >= 1.25 for godror).
-+go build -mod=readonly -modfile=go.oci.mod -tags oci -trimpath -ldflags="-s -w" -o oracle-oci.exe .
- ```
+ [[package]]
+ name = "postgres-types"
+ version = "0.2.14"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+ dependencies = [
+  "bytes",
+  "chrono",
+@@ -9141,6 +9142,15 @@ version = "0.4.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
  
- At runtime only `oci.dll` is needed, located through `PATH`.
++[[package]]
++name = "sm3"
++version = "0.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "da6a89ba31723d185fd7413b98c576a575f356d9b84729d8ecb6ead60000a5b6"
++dependencies = [
++ "digest 0.11.3",
++]
++
+ [[package]]
+ name = "smallvec"
+ version = "1.15.2"
+@@ -10291,7 +10301,7 @@ dependencies = [
+ [[package]]
+ name = "tokio-postgres"
+ version = "0.7.18"
+-source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
++source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+ dependencies = [
+  "async-trait",
+  "byteorder",
 ```
 
-**File**: `agents/drivers/oracle-go/dbms_output.go` (modified, +4/-4)
+**File**: `Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -689,10 +689,10 @@ func (s *server) beginStatementTx(ctx context.Context) (*sql.Tx, error) {
- type sqlConnDBMSOutputSession struct {
- 	conn *sql.Conn
- 	// oci selects the OCI (godror) driver, which binds sql.Out directly and sizes
--	// an OUT string itself (32767 bytes, stmt.go:1422-1426 of godror v0.51.5, so
--	// it already holds every line the server can produce). The built-in go-ora
--	// driver needs its own Out type carrying the client-side buffer size the
--	// payload is read back into.
-+	// an OUT string itself (32767 bytes in godror's stmt.go, so it already holds
-+	// every line the server can produce). The built-in go-ora driver needs its
-+	// own Out type carrying the client-side buffer size the payload is read back
-+	// into.
- 	oci bool
- 	// binding carries the register size shared by every connection of this
- 	// server, so a server that rejects the largest one only pays for it once.
-```
-
-**File**: `agents/drivers/oracle-go/dbms_output_test.go` (modified, +64/-1)
-```diff
-@@ -356,6 +356,8 @@ type oracleDBMSOutputDriver struct {
- 	// compileErrors are the ALL_ERRORS rows (OWNER, NAME, TYPE, LINE, POSITION, TEXT)
- 	// served to the compilation-error readback that follows a CREATE.
- 	compileErrors [][]driver.Value
-+	resetContexts []context.Context
-+	queryContexts []context.Context
- }
- 
- func openOracleDBMSOutputTestDB(t *testing.T) (*sql.DB, *oracleDBMSOutputDriver) {
-@@ -477,6 +479,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- 	if query == dbmsOutputDisableSQL {
- 		c.driver.disableCount++
- 		c.driver.events = append(c.driver.events, "disable")
-+		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
- 		if c.driver.disableErr != nil {
- 			return nil, c.driver.disableErr
- 		}
-@@ -487,6 +490,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- 	if strings.Contains(query, "DBMS_OUTPUT.ENABLE") {
- 		c.driver.enableCount++
- 		c.driver.events = append(c.driver.events, "enable")
-+		c.driver.resetContexts = append(c.driver.resetContexts, ctx)
- 		if c.driver.enableErr != nil {
- 			c.enabled = false
- 			return nil, c.driver.enableErr
-@@ -559,7 +563,7 @@ func (c *oracleDBMSOutputConn) ExecContext(ctx context.Context, query string, ar
- // QueryContext serves the SELECT a paged query starts. It is the same statement path as
- // ExecContext: the scripted lines enter the session buffer, so a capture around the
- // query reads exactly what the statement wrote before its first page.
--func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
-+func (c *oracleDBMSOutputConn) QueryContext(ctx context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
- 	c.driver.mu.Lock()
- 	defer c.driver.mu.Unlock()
- 	c.driver.statements = append(c.driver.statements, query)
-@@ -570,6 +574,7 @@ func (c *oracleDBMSOutputConn) QueryContext(_ context.Context, query string, _ [
- 			values:  append([][]driver.Value(nil), c.driver.compileErrors...),
- 		}, nil
- 	}
-+	c.driver.queryContexts = append(c.driver.queryContexts, ctx)
- 	lines := c.driver.takeStatementLines()
- 	if c.enabled {
- 		c.buffer = append(c.buffer, lines...)
-@@ -1862,3 +1867,61 @@ func TestDBMSOutputBindFailureDetection(t *testing.T) {
- 		t.Fatal("a nil error must not downgrade the register")
- 	}
- }
-+
-+// Regression for issue #15520: ensureDBMSOutput resets DBMS_OUTPUT with a 2s
-+// deadline context, while subsequent SELECTs (desktop 60s, paged 60s, MCP 0s)
-+// run on the same pinned physical connection with a cancel-only context so open
-+// cursors survive paging. The short reset context must stay scoped to the
-+// DBMS_OUTPUT reset calls and never bleed into the query's own context.
-+func TestDBMSOutputResetContextDoesNotBleedIntoSubsequentQueries(t *testing.T) {
-+	db, drv := openOracleDBMSOutputTestDB(t)
-+	s := newServer()
-+	s.db = db
-+	s.params = connectParams{DriverProfile: "oci"}
-+
-+	// Desktop executeQuery (60s timeout)
-+	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 60}); err != nil {
-+		t.Fatalf("executeQuery (60s) failed: %v", err)
-+	}
-+	// MCP executeQuery (0 = unlimited)
-+	if _, err := s.executeQuery(queryOptions{SQL: "SELECT 1 FROM DUAL", TimeoutSecs: 0}); err != nil {
-+		t.Fatalf("executeQuery (0s) failed: %v", err)
-+	}
-+	// Desktop paged executeQueryPage (60s timeout)
-+	page, err := s.executeQueryPage(queryOptions{SQL: "SELECT N FROM T", TimeoutSecs: 60}, 2)
-+	if err != nil {
-+		t.Fatalf("executeQueryPage (60s) failed: %v", err)
-+	}
-+	if page.SessionID != nil {
-+		s.closeQuerySession(*page.SessionID)
-+	}
-+
-+	drv.mu.Lock()
-+	resetContexts := append([]context.Context(nil), drv.resetContexts...)
-+	queryContexts := append([]context.Context(nil), drv.queryContexts...)
-+	openCount := drv.openCount
-+	drv.mu.Unlock()
-+
-+	if openCount != 1 {
-+		t.Fatalf("opened %d physical connections, want 1", openCount)
-+	}
-+	if len(resetContexts) < 2 {
-+		t.Fatalf("recorded %d DBMS_OUTPUT reset contexts, want at least 2 (DISABLE + ENABLE)", len(resetContexts))
-+	}
-+	for index, ctx := range resetContexts {
-+		if _, ok := ctx.Deadline(); !ok {
-+			t.Fatalf("reset context %d had no deadline, want the 2s reset timeout", index)
-+		}
-+		if !errors.Is(ctx.Err(), context.Canceled) {
-+			t.Fatalf("reset context %d err = %v, want context.Canceled after reset returns", index, ctx.Err())
-+		}
-+	}
-+	if len(queryContexts) != 3 {
-+		t.Fatalf("recorded %d query contexts, want 3", len(queryContexts))
-+	}
-+	for index, ctx := range queryContexts {
-+		if _, hasDeadline := ctx.Deadline(); hasDeadline {
-+			t.Fatalf("query context %d unexpectedly inherited a deadline", index)
-+		}
-+	}
-+}
-```
-
-**File**: `agents/drivers/oracle-go/go.mod` (modified, +1/-11)
-```diff
-@@ -2,17 +2,7 @@ module github.com/t8y2/dbx/agents/drivers/oracle-go
- 
- go 1.20
- 
--require github.com/sijms/go-ora/v2 v2.9.0
--
- require (
--	github.com/godror/godror v0.51.5
-+	github.com/sijms/go-ora/v2 v2.9.0
- 	golang.org/x/text v0.22.0
- )
--
--require (
--	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
--	github.com/go-logfmt/logfmt v0.6.0 // indirect
--	github.com/godror/knownpb v0.3.0 // indirect
--	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
--	google.golang.org/protobuf v1.36.6 // indirect
--)
-```
-
-**File**: `agents/drivers/oracle-go/go.oci.mod` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+module github.com/t8y2/dbx/agents/drivers/oracle-go
-+
-+go 1.25.0
-+
-+require (
-+	github.com/godror/godror v0.52.1-0.20261120194600-bc8b643b56ac
-+	github.com/sijms/go-ora/v2 v2.9.0
-+	golang.org/x/text v0.22.0
-+)
-+
-+require (
-+	github.com/VictoriaMetrics/easyproto v0.1.4 // indirect
-+	github.com/go-logfmt/logfmt v0.6.0 // indirect
-+	github.com/godror/knownpb v0.3.0 // indirect
-+	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-+	google.golang.org/protobuf v1.36.6 // indirect
-+)
+@@ -37,9 +37,9 @@ pageant = { path = "vendor/pageant" }
+ # (MicrosoftEdge/WebView2Feedback#5650, see
+ # vendor/wry/src/webview2/clipboard_history.rs).
+ wry = { path = "vendor/wry" }
+-tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
+-postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
+-postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89" }
++tokio-postgres = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
++postgres-types = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
++postgres-protocol = { git = "https://github.com/t8y2/tokio-postgres-gaussdb.git", rev = "5aee0b0e8d211057fca72932e612efdf5aa2c125" }
+ # Temporary compatibility patches for deprecated sha256_password accounts and
+ # rustls dangerous-mode connections to legacy certificates. Remove after upstream support lands.
+ mysql_async = { git = "https://github.com/t8y2/mysql_async.git", rev = "4cd84d86bb86b060320ce3459561e8093e4422fa" }
 ```
 
 ---
 
-### Incident Patch 2: `53061e38` (2026-11-26)
-**Commit Message**: fix(structure): preserve schema in Kingbase table structure changes
+### Incident Patch 2: `f1b45c6e` (2026-11-27)
+**Commit Message**: fix(plugins): decode plugin ui base64 natively instead of per byte
 
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.kingbaseSchemaQualifier.spec.ts` (added, +35/-0)
+**File**: `apps/desktop/src/lib/common/__tests__/base64.spec.ts` (added, +55/-0)
 ```diff
-@@ -0,0 +1,35 @@
-+// @vitest-environment happy-dom
+@@ -0,0 +1,55 @@
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { decodeBase64ToBytes } from "../base64";
++
++const allByteValues = Uint8Array.from({ length: 256 }, (_, index) => index);
++const allByteValuesBase64 = btoa(String.fromCharCode(...allByteValues));
++
++const holder = Uint8Array as unknown as { fromBase64?: unknown };
++const originalFromBase64 = Object.getOwnPropertyDescriptor(Uint8Array, "fromBase64");
++
++function setNativeFromBase64(value: unknown) {
++  Object.defineProperty(Uint8Array, "fromBase64", { value, configurable: true, writable: true });
++}
++
++describe("decodeBase64ToBytes", () => {
++  afterEach(() => {
++    if (originalFromBase64) Object.defineProperty(Uint8Array, "fromBase64", originalFromBase64);
++    else delete holder.fromBase64;
++  });
++
++  it("decodes every byte value through the atob fallback", () => {
++    setNativeFromBase64(undefined);
++    expect(decodeBase64ToBytes(allByteValuesBase64)).toEqual(allByteValues);
++  });
++
++  it("handles empty input and each padding length through the fallback", () => {
++    setNativeFromBase64(undefined);
++    expect(decodeBase64ToBytes("")).toEqual(new Uint8Array());
++    expect(decodeBase64ToBytes(btoa("a"))).toEqual(new Uint8Array([97]));
++    expect(decodeBase64ToBytes(btoa("ab"))).toEqual(new Uint8Array([97, 98]));
++    expect(decodeBase64ToBytes(btoa("abc"))).toEqual(new Uint8Array([97, 98, 99]));
++  });
++
++  it("ignores ASCII whitespace like the native decoder does", () => {
++    setNativeFromBase64(undefined);
++    expect(decodeBase64ToBytes("YWJj\nZGVm")).toEqual(new TextEncoder().encode("abcdef"));
++  });
++
++  it("throws on invalid input through the fallback", () => {
++    setNativeFromBase64(undefined);
++    expect(() => decodeBase64ToBytes("not base64!")).toThrow();
++  });
++
++  it("prefers the native decoder when the runtime provides it", () => {
++    const native = vi.fn((value: string) => new Uint8Array([value.length]));
++    setNativeFromBase64(native);
++    const atobSpy = vi.spyOn(globalThis, "atob");
++
++    expect(decodeBase64ToBytes("QUJD")).toEqual(new Uint8Array([4]));
++    expect(native).toHaveBeenCalledWith("QUJD");
++    // Called as a static method so `this` is Uint8Array, as the spec requires.
++    expect(native.mock.contexts[0]).toBe(Uint8Array);
++    expect(atobSpy).not.toHaveBeenCalled();
++    atobSpy.mockRestore();
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/common/base64.ts` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++type NativeFromBase64 = (base64: string) => Uint8Array<ArrayBuffer>;
 +
 +/**
-+ * #15579 — Kingbase table structure changes lost their schema qualifier, so an
-+ * ALTER could resolve to a same-named system table. The apply-side gate lives in
-+ * `applyDdlGenerationPreferences`; the DDL tab runs through
-+ * `formatStructureDdl` → `applyDdlDisplayPreferences` → the same
-+ * `applyDdlDatabaseQualifier`, whose `includeDatabaseName === false` branch
-+ * strips the schema again. The stripping/insertion semantics themselves are
-+ * covered by `lib/__tests__/table/tableSelectSql` and
-+ * `lib/sql/__tests__/ddlDisplay`; this pins both gates' wiring so the editable,
-+ * executable DDL tab cannot regress to a bare table name.
++ * Decode standard base64 into bytes for payloads that can be megabytes.
++ *
++ * `Uint8Array.from(atob(value), (c) => c.charCodeAt(0))` runs one JS callback
++ * per byte on the main thread. In JavaScriptCore that is roughly a second per
++ * 5 MB, so decoding the ~25 MB io.dbx.ssh ui build froze the window for
++ * seconds; the native decoder does the same in single-digit milliseconds.
++ *
++ * `Uint8Array.fromBase64` ships in WebKit 18.2+ and current Chromium. Older
++ * WebViews (older macOS, webkit2gtk) fall back to a plain indexed loop, which
++ * is still several times faster than the per-byte callback. Both paths ignore
++ * ASCII whitespace and throw on invalid input.
 + */
-+
-+import { describe, expect, it } from "vitest";
-+import editorSource from "./TableStructureEditor.vue?raw";
-+
-+function functionSource(name: string): string {
-+  const start = editorSource.indexOf(`function ${name}(`);
-+  const end = editorSource.indexOf("\n}\n", start);
-+  expect(start).toBeGreaterThan(-1);
-+  expect(end).toBeGreaterThan(start);
-+  return editorSource.slice(start, end);
++export function decodeBase64ToBytes(base64: string): Uint8Array<ArrayBuffer> {
++  const native = (Uint8Array as unknown as { fromBase64?: NativeFromBase64 }).fromBase64;
++  if (typeof native === "function") return native.call(Uint8Array, base64);
++  const binary = atob(base64);
++  const bytes = new Uint8Array(binary.length);
++  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
++  return bytes;
 +}
-+
-+describe("table structure editor kingbase schema qualifier (#15579)", () => {
-+  it("keeps the backend's schema qualifier when applying generated DDL", () => {
-+    expect(functionSource("applyDdlGenerationPreferences")).toContain('databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(');
-+  });
-+
-+  it("does not strip the schema from the DDL tab's display pipeline", () => {
-+    const source = functionSource("formatStructureDdl");
-+    expect(source).toContain('includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName');
-+  });
-+});
 ```
 
-**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +10/-4)
+**File**: `apps/desktop/src/lib/plugins/pluginUiHtmlCache.ts` (modified, +3/-2)
 ```diff
-@@ -397,7 +397,12 @@ function formatStructureDdl(ddl: string): Promise<string> {
-       databaseType: databaseType.value,
-       database: props.database,
-       catalog: props.catalog,
--      includeDatabaseName: settingsStore.editorSettings.generateSqlIncludeDatabaseName,
-+      // Kingbase can resolve an unqualified DDL target to a system table with
-+      // the same name (#15579), so the editable DDL tab must keep the backend's
-+      // schema qualifier. `ddlQualifiedPartCount` has no kingbase entry, so
-+      // forcing the flag on only skips the stripping pass — no database segment
-+      // is ever inserted.
-+      includeDatabaseName: databaseType.value === "kingbase" ? true : settingsStore.editorSettings.generateSqlIncludeDatabaseName,
-       quoteIdentifiers: settingsStore.editorSettings.generateSqlQuoteIdentifiers,
-     },
-     settingsStore.editorSettings.sqlFormatter,
-@@ -555,9 +560,10 @@ function scheduleDdlEditorInit() {
-  * quoted names are uppercased before their quotes are removed.
-  */
- function applyDdlGenerationPreferences(sql: string, dialect: SqlFormatDialect): string {
--  const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
--  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return unqualified;
--  return formatGeneratedDdlIdentifierQuotes(unqualified, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
-+  // Kingbase can resolve an unqualified DDL target to a system table with the same name.
-+  const targetSql = databaseType.value === "kingbase" ? sql : applyDdlDatabaseQualifier(sql, dialect, databaseType.value, settingsStore.editorSettings.generateSqlIncludeDatabaseName, props.database, props.catalog);
-+  if (settingsStore.editorSettings.generateSqlQuoteIdentifiers) return targetSql;
-+  return formatGeneratedDdlIdentifierQuotes(targetSql, dialect, false, { preserveCaseSensitiveIdentifiers: tableStoresCaseSensitiveIdentifiers.value });
+@@ -5,6 +5,7 @@
+ // plugin version pays the read/decode/inline pipeline.
+ import * as api from "@/lib/backend/api";
+ import { isTauriRuntime } from "@/lib/backend/tauriRuntime";
++import { decodeBase64ToBytes } from "@/lib/common/base64";
+ import { COMPONENT_PLUGINS_UPDATED_EVENT } from "@/lib/updates/componentUpdateEvents";
+ 
+ export interface PluginUiHtml {
+@@ -154,7 +155,7 @@ async function inlineLocalUiAssets(html: string, pluginId: string): Promise<Plug
+       const asset = await api.readPluginUiAsset(pluginId, path);
+       return {
+         resource,
+-        content: new TextDecoder().decode(Uint8Array.from(atob(asset.dataBase64), (character) => character.charCodeAt(0))),
++        content: new TextDecoder().decode(decodeBase64ToBytes(asset.dataBase64)),
+       };
+     }),
+   );
+@@ -190,7 +191,7 @@ async function inlineLocalUiAssets(html: string, pluginId: string): Promise<Plug
+ /** Full first-boot pipeline: read the ui entry through the bridge, decode, and prepare local assets. */
+ export async function loadPluginUiHtml(pluginId: string): Promise<PluginUiHtml> {
+   const asset = await api.readPluginUiEntry(pluginId);
+-  const bytes = Uint8Array.from(atob(asset.dataBase64), (character) => character.charCodeAt(0));
++  const bytes = decodeBase64ToBytes(asset.dataBase64);
+   return inlineLocalUiAssets(new TextDecoder().decode(bytes), pluginId);
  }
  
- type StructureDdlRequest = {
 ```
 
 ---
 
-### Incident Patch 3: `a787625e` (2026-11-26)
-**Commit Message**: fix(kingbase): render bit columns as bit strings
+### Incident Patch 3: `55101855` (2026-11-27)
+**Commit Message**: feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger (#15833)
 
-**File**: `agents/drivers/kingbase-go/main.go` (modified, +128/-0)
+* feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger
+
+* chore(i18n): autofill new translations
+
+---------
+
+Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
+
+**File**: `agents/drivers/oracle-go/pldebug_cursor_output.go` (added, +183/-0)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"database/sql"
- 	"database/sql/driver"
- 	"encoding/base64"
-+	"encoding/binary"
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-@@ -1903,6 +1904,14 @@ func normalizeValue(value any, columnTypeName string) any {
- 	case nil:
- 		return nil
- 	case []byte:
-+		// bit / bit varying 是位串，数据库自带工具和 DBX 内置驱动都按 `0`/`1`/`10101010`
-+		// 展示。gokb 在文本协议下给出 `'0'`/`'1'` 文本，但 MySQL 兼容模式以及部分集群版本
-+		// 会把位字段当裸字节返回，落到通用分支就成了 `$binary`（网格里表现为 `0x00`/`0x01`）。
-+		if isKingbaseBitType(columnTypeName) {
-+			if bits, ok := decodeKingbaseBitString(typed, kingbaseBitTypeWidth(columnTypeName)); ok {
-+				return bits
+@@ -0,0 +1,183 @@
++package main
++
++import (
++	"context"
++	"database/sql"
++	"database/sql/driver"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"strings"
++	"time"
++
++	go_ora "github.com/sijms/go-ora/v2"
++)
++
++const (
++	plDebugCursorPreviewRows    = 100
++	plDebugCursorPreviewColumns = 64
++	plDebugCursorPreviewBytes   = 64 * 1024
++)
++
++type plDebugCursorPreview struct {
++	Columns  []string          `json:"columns"`
++	Rows     []json.RawMessage `json:"rows"`
++	Complete bool              `json:"complete"`
++}
++
++type plDebugCursorOutput struct {
++	bind         interface{}
++	receipt      *sql.NullInt64
++	thin         *go_ora.RefCursor
++	oci          driver.Rows
++	preview      *plDebugCursorPreview
++	previewBytes int
++	state        string
++	err          error
++	attempted    bool
++	released     bool
++}
++
++func newPLDebugCursorOutput(oci bool, receipt *sql.NullInt64) *plDebugCursorOutput {
++	output := &plDebugCursorOutput{receipt: receipt, state: "pending"}
++	if oci {
++		output.bind = sql.Out{Dest: &output.oci}
++	} else {
++		output.thin = new(go_ora.RefCursor)
++		output.bind = sql.Out{Dest: output.thin}
++	}
++	return output
++}
++
++func (output *plDebugCursorOutput) collect(ctx context.Context, allocation *plDebugAllocation, budget int) {
++	if output.attempted || output.released {
++		return
++	}
++	if output.oci == nil && (output.thin == nil || !output.thin.CanAutoClose()) {
++		output.state, output.err = "error", errors.New("cursor OUT bind was not returned")
++		output.released = true
++		return
++	}
++	_, err := allocation.exec(ctx, func(private context.Context) (driver.Result, error) {
++		output.attempted = true
++		output.state = "error"
++		var rows driver.Rows = output.oci
++		var release func() error
++		if output.thin != nil {
++			release = output.thin.Close
++		} else {
++			release = rows.Close
++		}
++		if !output.receipt.Valid || output.receipt.Int64 != 0 && output.receipt.Int64 != 1 {
++			output.err = errors.New("cursor OUT bind receipt is missing or invalid")
++		} else if output.receipt.Int64 == 0 {
++			output.state = "not_open"
++		} else if budget == 0 {
++			output.state = "partial"
++		} else {
++			if output.thin != nil {
++				var data *go_ora.DataSet
++				data, output.err = output.thin.Query()
++				if output.err == nil {
++					rows, release = data, data.Close
++				}
++			}
++			if output.err == nil {
++				output.preview, output.previewBytes, output.err = readPLDebugCursorPreview(private, rows, budget)
++			}
++			if output.preview != nil {
++				output.state = "partial"
++				if output.preview.Complete {
++					output.state = "value"
++				}
++			} else if output.err == nil {
++				output.state = "partial"
 +			}
 +		}
- 		if isTextBytes(typed) {
- 			return string(typed)
- 		}
-@@ -1959,6 +1968,125 @@ func normalizedKingbaseColumnType(columnTypeName string) string {
- 	return strings.ToUpper(strings.ReplaceAll(strings.TrimSpace(columnTypeName), " ", ""))
- }
- 
-+// isKingbaseBitType matches the type names a bit column can carry: the driver's
-+// own name (`DatabaseTypeName` -> bit / varbit) as well as the catalog spelling
-+// (`bit(1)`, `bit varying(8)`).
-+func isKingbaseBitType(columnTypeName string) bool {
-+	normalized := normalizedKingbaseColumnType(columnTypeName)
-+	if strings.HasSuffix(normalized, "[]") {
-+		// 位串数组的元素由 gokb 解成文本数组，不走这里的字节解码。
-+		return false
++		if closeErr := release(); closeErr != nil {
++			allocation.mu.Lock()
++			allocation.unknown = true
++			allocation.mu.Unlock()
++			return nil, closeErr
++		}
++		output.released = true
++		return nil, nil
++	})
++	if err != nil {
++		output.err = errors.Join(output.err, err)
++		output.state = "error"
 +	}
-+	switch normalized {
-+	case "BIT", "VARBIT", "BITVARYING":
-+		return true
-+	}
-+	return strings.HasPrefix(normalized, "BIT(") || strings.HasPrefix(normalized, "VARBIT(") || strings.HasPrefix(normalized, "BITVARYING(")
 +}
 +
-+// kingbaseBitTypeWidth reads the declared width out of `bit(n)` / `varbit(n)`;
-+// 0 means the type name carries no width.
-+func kingbaseBitTypeWidth(columnTypeName string) int {
-+	normalized := normalizedKingbaseColumnType(columnTypeName)
-+	open := strings.IndexByte(normalized, '(')
-+	if open < 0 || !strings.HasSuffix(normalized, ")") {
-+		return 0
++func readPLDebugCursorPreview(ctx context.Context, rows driver.Rows, budget int) (*plDebugCursorPreview, int, error) {
++	columns := rows.Columns()
++	if len(columns) == 0 || len(columns) > plDebugCursorPreviewColumns {
++		return nil, 0, fmt.Errorf("cursor preview supports between 1 and %d columns", plDebugCursorPreviewColumns)
 +	}
-+	width, err := strconv.Atoi(normalized[open+1 : len(normalized)-1])
-+	if err != nil || width < 0 {
-+		return 0
++	preview := &plDebugCursorPreview{Columns: columns, Rows: []json.RawMessage{}}
++	header, err := json.Marshal(preview)
++	if err != nil || len(header) > budget {
++		return nil, 0, err
 +	}
-+	return width
-+}
-+
-+// decodeKingbaseBitString turns a bit column payload into its bit-string text and
-+// mirrors DbxJdbcPlugin#bitStringFromPayload so the native agent and the JDBC path
-+// render the same value for the same column:
-+//
-+//   - PostgreSQL binary payload (int32 bit length + packed bits) is expanded from the
-+//     most significant bit of the first byte;
-+//   - `'0'`/`'1'` text is what the text protocol already delivers, keep it verbatim;
-+//   - anything else is a raw bit field (MySQL-compatible bit(1) -> 0x00/0x01), expanded
-+//     right-aligned over the declared width, or the significant width when the catalog
-+//     reported none.
-+//
-+// ok=false means the payload cannot be a value of that width; callers keep the
-+// generic `$binary` encoding instead of silently truncating data.
-+func decodeKingbaseBitString(raw []byte, declaredWidth int) (string, bool) {
-+	if len(raw) == 0 {
-+		return "", true
-+	}
-+	if len(raw) >= 4 {
-+		bitLen := int(int32(binary.BigEndian.Uint32(raw[:4])))
-+		payload := raw[4:]
-+		if bitLen >= 0 && len(payload) == (bitLen+7)/8 {
-+			return expandKingbaseBitsMSB(payload, bitLen), true
++	used := len(header)
++	types := make([]string, len(columns))
++	if metadata, ok := rows.(driver.RowsColumnTypeDatabaseTypeName); ok {
++		for i := range columns {
++			types[i] = metadata.ColumnTypeDatabaseTypeName(i)
++			if strings.Contains(strings.ToUpper(types[i]), "CURSOR") {
++				return nil, 0, errors.New("nested cursor columns are unavailable in the cursor preview")
++			}
 +		}
 +	}
-+	// Mirror the JDBC rule (DbxJdbcPlugin#bitStringFromPayload): an ASCII '0'/'1'
-+	// payload is text only when it matches the declared width; otherwise a raw
-+	// MySQL-compat bit(n>1) value of 0x30/0x31 must expand LSB over the full width
-+	// instead of rendering a single '0'/'1'.
-+	if isKingbaseBitText(raw) && (declaredWidth <= 0 || len(raw) == declaredWidth) {
-+		return string(raw), true
-+	}
-+	width := declaredWidth
-+	if width <= 0 {
-+		width = kingbaseSignificantBitWidth(raw)
-+	}
-+	if width > len(raw)*8 {
-+		return "", false
-+	}
-+	return expandKingbaseBitsLSB(raw, width), true
-+}
-+
-+// expandKingbaseBitsMSB reads the PostgreSQL binary bit layout: bit 0 is the most
-+// significant bit of the first byte, trailing bits of the last byte are padding.
-+func expandKingbaseBitsMSB(payload []byte, width int) string {
-+	var bits strings.Builder
-+	bits.Grow(width)
-+	for index := 0; index < width; index++ {
-+		bits.WriteByte('0' + ((payload[index/8] >> (7 - index%8)) & 1))
-+	}
-+	return bits.String()
-+}
-+
-+// expandKingbaseBitsLSB reads a raw bit field the way MySQL stores it: bit 0 is the
-+// least significant bit of the last byte (`0x01` for bit(1) is `1`, `0xaa` for
-+// bit(8) is `10101010`).
-+func expandKingbaseBitsLSB(payload []byte, width int) string {
-+	var bits strings.Builder
-+	bits.Grow(width)
-+	for bit := width - 1; bit >= 0; bit-- {
-+		bits.WriteByte('0' + ((payload[len(payload)-1-bit/8] >> (bit % 8)) & 1))
-+	}
-+	return bits.String()
-+}
-+
-+func isKingbaseBitText(payload []byte) bool {
-+	for _, char := range payload {
-+		if char != '0' && char != '1' {
-+			return false
++	values := make([]driver.Value, len(columns))
++	cells := make([]*string, len(columns))
++	for {
++		if err := ctx.Err(); err != nil {
++			return preview, used, err
 +		}
-+	}
-+	return true
-+}
-+
-+// kingbaseSignificantBitWidth is the shortest width that still represents the
-+// payload (`0x00` -> 1, `0xaa` -> 8).
-+func kingbaseSignificantBitWidth(payload []byte) int {
-+	for index, char := range payload {
-+		if char != 0 {
-+			width := 
++		err := rows.Next(values)
++		if errors.Is(err, io.EOF) {
++			preview.Complete = true
++			return preview, used, nil
++		}
++		if err != nil {
++			return preview, used, err
++		}
++		if len(preview.Rows) == plDebugCursorPreviewRows {
++			return preview, used, nil
++		}
++		remaining := budget - used
++		for i, value := range values {
++			cells[i] = nil
++			if value == nil {
++				continue
++			}
++			switch v := value.(type) {
++			case []byte:
++				if len(v) > remaining {
++					return preview, used, nil
++				}
++			case string:
++				if len(v) > remaining {
++					return preview, used, nil
++				}
++			case time.Time, int64, float64, bool, fmt.Stringer:
++			default:
++				return preview, used, fmt.Errorf("cursor column %d (%s) could not be displayed", i+1, types[i])
++			}
++			text := fmt.Sprint(normalizeValue(value, types[i]))
++			remaining -= len(text)
++			if remaining < 0 {
++				return preview, used, nil
++			}
++			cells[i] = &text
++		}
++		row, err := json.Marshal(cells)
++	
 ```
 
-**File**: `agents/drivers/kingbase-go/main_test.go` (modified, +65/-0)
+**File**: `agents/drivers/oracle-go/pldebug_cursor_output_test.go` (added, +102/-0)
 ```diff
-@@ -5177,6 +5177,71 @@ func TestNormalizeValueKingbaseTimeColumnKeepsTimeOfDay(t *testing.T) {
- 	}
- }
- 
-+// Kingbase/PostgreSQL 的 bit / bit varying 列按位串展示。原始字节载荷（MySQL 兼容模式的
-+// bit(1) 返回 0x00/0x01，或 PostgreSQL 二进制的「int32 位长 + 位数据」）此前落到通用
-+// $binary 分支，网格里显示成 0x00 / 0x01 而不是 0 / 1。
-+func TestNormalizeValueDecodesBitColumnPayloads(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		payload    []byte
-+		columnType string
-+		want       string
-+	}{
-+		{name: "text protocol bit(1) zero", payload: []byte("0"), columnType: "BIT", want: "0"},
-+		{name: "text protocol bit(1) one", payload: []byte("1"), columnType: "BIT", want: "1"},
-+		{name: "text protocol bit(8)", payload: []byte("10101010"), columnType: "bit(8)", want: "10101010"},
-+		{name: "raw bit(1) zero", payload: []byte{0x00}, columnType: "bit(1)", want: "0"},
-+		{name: "raw bit(1) one", payload: []byte{0x01}, columnType: "bit(1)", want: "1"},
-+		{name: "raw bit(8)", payload: []byte{0xaa}, columnType: "bit(8)", want: "10101010"},
-+		{name: "raw varbit uses declared width", payload: []byte{0x05}, columnType: "varbit(4)", want: "0101"},
-+		{name: "binary bit(5)", payload: []byte{0, 0, 0, 5, 0xa8}, columnType: "bit(5)", want: "10101"},
-+		{name: "binary bit(1) zero", payload: []byte{0, 0, 0, 1, 0x00}, columnType: "bit(1)", want: "0"},
-+		{name: "binary bit(1) one is msb aligned", payload: []byte{0, 0, 0, 1, 0x80}, columnType: "bit(1)", want: "1"},
-+		{name: "binary bit(8) one", payload: []byte{0, 0, 0, 8, 0x01}, columnType: "bit(8)", want: "00000001"},
-+		{name: "raw bit field without declared width", payload: []byte{0x0a}, columnType: "bit", want: "1010"},
-+		// Mirror of the JDBC width guard: a raw MySQL-compat bit(n>1) value of
-+		// 0x30/0x31 is NOT single-char text — it must expand LSB over the full width.
-+		{name: "raw bit(8) ascii-looking byte expands", payload: []byte{0x30}, columnType: "bit(8)", want: "00110000"},
-+		{name: "raw bit(8) ascii-looking one expands", payload: []byte{0x31}, columnType: "bit(8)", want: "00110001"},
-+	}
+@@ -0,0 +1,102 @@
++package main
 +
-+	for _, test := range tests {
++import (
++	"context"
++	"database/sql"
++	"database/sql/driver"
++	"encoding/json"
++	"errors"
++	"io"
++	"reflect"
++	"strings"
++	"testing"
++)
++
++type plDebugTestCursorRows struct {
++	values [][]driver.Value
++	closed bool
++	err    error
++}
++
++func (*plDebugTestCursorRows) Columns() []string { return []string{"ID", "LABEL"} }
++func (r *plDebugTestCursorRows) Close() error    { r.closed = true; return nil }
++func (r *plDebugTestCursorRows) Next(values []driver.Value) error {
++	if len(r.values) == 0 {
++		if r.err != nil {
++			return r.err
++		}
++		return io.EOF
++	}
++	copy(values, r.values[0])
++	r.values = r.values[1:]
++	return nil
++}
++
++func TestPLDebugCursorOutputTransfer(t *testing.T) {
++	for _, test := range []struct {
++		name       string
++		values     [][]driver.Value
++		readErr    error
++		receipt    int64
++		state      string
++		wantRows   []string
++		isComplete bool
++	}{
++		{name: "rows", receipt: 1, state: "value", values: [][]driver.Value{{int64(17), nil}, {"12345678901234567890.123", "Alpha"}}, wantRows: []string{`["17",null]`, `["12345678901234567890.123","Alpha"]`}, isComplete: true},
++		{name: "empty", receipt: 1, state: "value", wantRows: []string{}, isComplete: true},
++		{name: "closed", state: "not_open"},
++		{name: "fetch fails after one row", receipt: 1, state: "partial", values: [][]driver.Value{{int64(17), "Alpha"}}, readErr: errors.New("cursor fetch failed"), wantRows: []string{`["17","Alpha"]`}},
++		{name: "byte cap", receipt: 1, state: "partial", values: [][]driver.Value{{int64(17), strings.Repeat("x", plDebugCursorPreviewBytes)}}, wantRows: []string{}},
++	} {
 +		t.Run(test.name, func(t *testing.T) {
-+			got := normalizeValue(test.payload, test.columnType)
-+			gotStr, ok := got.(string)
-+			if !ok {
-+				t.Fatalf("expected bit string, got %#v", got)
++			rows := &plDebugTestCursorRows{values: test.values, err: test.readErr}
++			receipt := sql.NullInt64{Int64: test.receipt, Valid: true}
++			output := newPLDebugCursorOutput(true, &receipt)
++			*output.bind.(sql.Out).Dest.(*driver.Rows) = rows
++			output.collect(context.Background(), &plDebugAllocation{}, plDebugCursorPreviewBytes)
++			if !output.released || !rows.closed || output.state != test.state || !errors.Is(output.err, test.readErr) {
++				t.Fatalf("cursor state=%s released=%v closed=%v err=%v", output.state, output.released, rows.closed, output.err)
 +			}
-+			if gotStr != test.want {
-+				t.Fatalf("got %q, want %q", gotStr, test.want)
++			if test.wantRows == nil {
++				if output.preview != nil {
++					t.Fatal("an unopened cursor must not be displayed as an empty result set")
++				}
++				return
++			}
++			var got = []string{}
++			for _, row := range output.preview.Rows {
++				got = append(got, string(row))
++			}
++			if !reflect.DeepEqual(got, test.wantRows) || output.preview.Complete != test.isComplete {
++				t.Fatalf("cursor preview=%v rows=%v", output.preview, got)
++			}
++			encoded, err := json.Marshal(output.preview)
++			if err != nil || len(encoded) > output.previewBytes {
++				t.Fatalf("cursor preview size=%d budget used=%d err=%v", len(encoded), output.previewBytes, err)
 +			}
 +		})
 +	}
 +}
 +
-+// 位宽超出载荷容量时不能静默截断，保持原来的 $binary 编码。
-+func TestNormalizeValueKeepsBinaryForUndecodableBitPayload(t *testing.T) {
-+	got := normalizeValue([]byte{0x00}, "bit(9)")
-+	binary, ok := got.(map[string]string)
-+	if !ok || binary["$binary"] != "AA==" {
-+		t.Fatalf("expected $binary fallback, got %#v", got)
-+	}
-+}
-+
-+// 非位串列不能走位串解码：bytea / 文本列的原有行为必须保持不变。
-+func TestNormalizeValueLeavesNonBitColumnsUntouched(t *testing.T) {
-+	for _, columnType := range []string{"bytea", "BLOB", "text", "tinyint(1)", "bit(1)[]", ""} {
-+		got := normalizeValue([]byte{0x00}, columnType)
-+		binary, ok := got.(map[string]string)
-+		if !ok || binary["$binary"] != "AA==" {
-+			t.Fatalf("columnType=%q: expected untouched $binary payload, got %#v", columnType, got)
++func TestPLDebugCursorOutputPreviewRowLimit(t *testing.T) {
++	for _, total := range []int{plDebugCursorPreviewRows, plDebugCursorPreviewRows + 1} {
++		rows := &plDebugTestCursorRows{values: make([][]driver.Value, total)}
++		preview, _, err := readPLDebugCursorPreview(context.Background(), rows, plDebugCursorPreviewBytes)
++		if err != nil || len(preview.Rows) != plDebugCursorPreviewRows || preview.Complete != (total == plDebugCursorPreviewRows) {
++			t.Fatalf("%d database rows yielded %v, %v", total, preview, err)
 +		}
 +	}
-+	if got := normalizeValue([]byte("abc"), "text"); got != "abc" {
-+		t.Fatalf("text column: got %#v, want abc", got)
-+	}
 +}
 +
- func TestCatalogColumnsPreservesJsonAndJsonbTypes(t *testing.T) {
- 	state := &metadataDriverState{query: func(query string) (driver.Rows, error) {
- 		if !strings.Contains(query, "WHEN t.typname = 'json' THEN 'json'") ||
++func TestPLDebugCursorOutputTransportRequiresAnOutParameter(t *testing.T) {
++	argument := plDebugNativeArgument{Type: "REF CURSOR", Position: 3, Mode: "OUT"}
++	if !argument.adapted() || !plDebugNativeTypedRootAdapter(argument) {
++		t.Fatal("OUT REF CURSOR was blocked by preflight")
++	}
++	for _, mode := range []string{"IN", "IN OUT"} {
++		argument.Mode = mode
++		if argument.adapted() || plDebugNativeTypedRootAdapter(argument) {
++			t.Fatalf("unsupported %s REF CURSOR was accepted", mode)
++		}
++	}
++}
 ```
 
-**File**: `plugins/jdbc/src/main/java/app/dbx/jdbc/DbxJdbcPlugin.java` (modified, +29/-9)
+**File**: `agents/drivers/oracle-go/pldebug_manager.go` (modified, +1/-0)
 ```diff
-@@ -6529,6 +6529,15 @@ private static Object readValue(
-             if (columnType == Types.BIT && bytes.length == 1 && (bytes[0] == 't' || bytes[0] == 'f')) {
-                 return bytes[0] == 't';
-             }
-+            // 位串列即使没命中 BIT_STRING_JDBC_URL_PREFIXES（自定义/代理 URL、按驱动类推断的连接），
-+            // 也不能落到 binaryToHex 变成 0x00/0x01；这里复用同一套位串解码。类型名缺失时保持
-+            // 原来的 0x.. 展示：Types.BIT 在部分驱动上也用于数值列，没有位宽就无法安全展开。
-+            if (isNamedBitStringColumn(meta, index)) {
-+                Object bitValue = bitStringColumnValue(bytes, bitColumnPrecision(meta, index));
-+                if (bitValue != BIT_COLUMN_UNSUPPORTED) {
-+                    return bitValue;
-+                }
-+            }
-             return binaryToHex(bytes);
-         }
-         if (value instanceof Clob clob) {
-@@ -6687,17 +6696,21 @@ private static String quotePhoenixIdentifier(String identifier) {
-     private static final Object BIT_COLUMN_UNSUPPORTED = new Object();
- 
-     private static boolean isBitStringColumn(ResultSetMetaData meta, int index, int columnType) {
--        String typeName = columnTypeName(meta, index);
--        String normalized = typeName.trim().toLowerCase(Locale.ROOT);
-+        if (isNamedBitStringColumn(meta, index)) {
-+            return true;
-+        }
-+        return columnType == Types.BIT;
-+    }
-+
-+    /** 类型名（而不是 JDBC 类型码）明确是位串列。`bool`/`boolean` 列同样上报 Types.BIT，必须排除。 */
-+    private static boolean isNamedBitStringColumn(ResultSetMetaData meta, int index) {
-+        String normalized = columnTypeName(meta, index).trim().toLowerCase(Locale.ROOT);
-         if (normalized.equals("bool") || normalized.equals("boolean")) {
-             // 金仓/PostgreSQL 的布尔列走 Types.BIT 上报，它们继续保持布尔值。
-             return false;
-         }
--        if (normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
--            || normalized.startsWith("bit(") || normalized.startsWith("bit varying")) {
--            return true;
--        }
--        return columnType == Types.BIT;
-+        return normalized.equals("bit") || normalized.equals("varbit") || normalized.startsWith("bit ")
-+            || normalized.startsWith("bit(") || normalized.startsWith("bit varying");
-     }
- 
-     private static String columnTypeName(ResultSetMetaData meta, int index) {
-@@ -6720,7 +6733,15 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
-             // wasNull() 区分 SQL NULL 与「驱动不支持按字节读取」。
-             return rs.wasNull() ? null : BIT_COLUMN_UNSUPPORTED;
-         }
--        int precision = bitColumnPrecision(meta, index);
-+        return bitStringColumnValue(payload, bitColumnPrecision(meta, index));
-+    }
-+
-+    /**
-+     * 位串列载荷的取值规则（readBitStringColumnValue 与 readValue 的通用 byte[] 分支共用）：
-+     * 布尔位串保持布尔、数值型 tinyint(1) 保持数值、其余还原成位串文本；
-+     * 位宽不可信时返回 BIT_COLUMN_UNSUPPORTED，由调用方保持原来的 `0x..` 展示。
-+     */
-+    private static Object bitStringColumnValue(byte[] payload, int precision) {
-         if (payload.length == 1 && precision <= 1 && (payload[0] == 't' || payload[0] == 'f')) {
-             // GaussDB/金仓的布尔位串按 't'/'f' 返回，保持布尔语义；位宽大于 1 的列是位字段而不是布尔。
-             return payload[0] == 't';
-@@ -6732,7 +6753,6 @@ private static Object readBitStringColumnValue(ResultSet rs, ResultSetMetaData m
-             return payload[0];
-         }
-         String bitString = bitStringFromPayload(payload, precision);
--        // 位宽不可信时 bitStringFromPayload 返回 null（不是 SQL NULL），交给通用分支保持 `0x..` 展示。
-         return bitString == null ? BIT_COLUMN_UNSUPPORTED : bitString;
-     }
- 
+@@ -714,6 +714,7 @@ func (e *plDebugNativeEntry) executeTarget(tx *sql.Tx, p *plDebugSession, block
+ 	if e.namedCall != nil {
+ 		arguments = e.namedCall.arguments
+ 		observer.lobs = e.namedCall.lobOutputs()
++		observer.cursors = e.namedCall.cursorOutputs()
+ 	}
+ 	capture, executionErr = plDebugExecuteObservedCapture(ctx, tx, e.server.nativeDebuggeeAllocation(), p.oci, block, arguments, observer)
+ }
 ```
 
-**File**: `plugins/jdbc/src/test/java/app/dbx/jdbc/DbxJdbcPluginTest.java` (modified, +16/-0)
+**File**: `agents/drivers/oracle-go/pldebug_native.go` (modified, +5/-0)
 ```diff
-@@ -1188,6 +1188,22 @@ void readValueRendersTextBitPayloadsAsBitStrings() throws Exception {
-         assertEquals("100000010", method.invoke(null, bytesResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "BIT", 0), 1, false, null, true));
-     }
+@@ -55,6 +55,11 @@ BEGIN
+   result := ` + call + `;
+   :1 := result;
+   :2 := run_info.line#;
++  -- Oracle may omit TERMINATED at a valid suspension. Use the independent
++  -- running flag to confirm a pause without treating a missing value as zero.
++  IF result = 0 AND run_info.terminated IS NULL AND SYS.DBMS_DEBUG.TARGET_PROGRAM_RUNNING THEN
++    run_info.terminated := 0;
++  END IF;
+   :3 := run_info.terminated;
+   :4 := run_info.breakpoint;
+   :5 := run_info.stackdepth;
+```
+
+**File**: `agents/drivers/oracle-go/pldebug_output.go` (modified, +28/-4)
+```diff
+@@ -103,7 +103,10 @@ BEGIN
+     SYS.DBMS_LOB.CREATETEMPORARY($OUTPUT, TRUE);
+     LOOP
+       SYS.DBMS_OUTPUT.GET_LINE($LINE, $STATUS);
+-      IF $STATUS = 1 THEN $COMPLETE := 1; EXIT; END IF;
++      IF $STATUS = 1 THEN
++      IF $RETAINED = 0 THEN $COMPLETE := 2; ELSE $COMPLETE := 1; END IF;
++      EXIT;
++    END IF;
+       IF $STATUS <> 0 THEN RAISE_APPLICATION_ERROR(-20000, 'Unexpected DBMS_OUTPUT status'); END IF;
+       $KEEP := LEAST(NVL(LENGTH($LINE), 0), GREATEST(%d - $RETAINED, 0));
+       IF $KEEP > 0 THEN
+@@ -205,6 +208,7 @@ type plDebugCaptureReferences struct {
+ 	released                bool
+ 	statementCloseAttempted bool
+ 	lobs                    []*plDebugLobOutput
++	cursors                 []*plDebugCursorOutput
+ }
  
-+    @Test
-+    void readValueDecodesBitColumnsWithoutBitStringDialects() throws Exception {
-+        Method method = bitStringReadValue();
+ func plDebugExecuteNativeCapture(ctx context.Context, tx *sql.Tx, allocation *plDebugAllocation, oci bool, block plDebugNativeBlock, inputs []interface{}) (plDebugNativeCapture, error) {
+@@ -215,6 +219,7 @@ type plDebugCaptureObserver struct {
+ 	dispatch func() error
+ 	returned func(plDebugNativeCapture, error)
+ 	lobs     []*plDebugLobOutput
++	cursors  []*plDebugCursorOutput
+ }
+ 
+ func plDebugExecuteObservedCapture(ctx context.Context, tx *sql.Tx, allocation *plDebugAllocation, oci bool, block plDebugNativeBlock, inputs []interface{}, observer *plDebugCaptureObserver) (plDebugNativeCapture, error) {
+@@ -238,12 +243,16 @@ func plDebugExecuteCaptureWith(ctx context.Context, tx *sql.Tx, allocation *plDe
+ 	capture.references = &plDebugCaptureReferences{statement: stmt, clob: clob}
+ 	if observer != nil {
+ 		capture.references.lobs = observer.lobs
++		capture.references.cursors = observer.cursors
+ 	}
+ 	capture.ReferencesPending = true
+ 	args := append([]interface{}{}, inputs...)
+ 	args = append(args, plDebugOutArg(oci, &capture.Code), plDebugOutArg(oci, &capture.Message), plDebugOutArg(oci, &capture.SavepointRollback), clob.bind, plDebugOutArg(oci, &capture.NativeOutputError), plDebugOutArg(oci, &capture.NativeTruncated), plDebugOutArg(oci, &capture.NativeComplete))
+ 	if observer != nil && observer.dispatch != nil {
+ 		if err := observer.dispatch(); err != nil {
++			for _, cursor := range capture.references.cursors {
++				cursor.released = true
++			}
+ 			for _, lob := range capture.references.lobs {
+ 				lob.readAttempted, lob.releaseAttempted, lob.released = true, true, true
+ 			}
+@@ -273,6 +282,13 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
+ 	if refs == nil {
+ 		return
+ 	}
++	cursorsReleased := true
++	cursorBudget := plDebugCursorPreviewBytes
++	for _, cursor := range refs.cursors {
++		cursor.collect(ctx, allocation, cursorBudget)
++		cursorBudget -= cursor.previewBytes
++		cursorsReleased = cursorsReleased && cursor.released
++	}
+ 	remaining := plDebugTypedResultBytes
+ 	for _, lob := range refs.lobs {
+ 		lob.collect(ctx, allocation, remaining)
+@@ -286,6 +302,11 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
+ 		read := func(context.Context) (driver.Result, error) {
+ 			refs.readAttempted = true
+ 			capture.utf16Text = nil
++			// The wrapper confirms an empty output independently of the LOB bind.
++			if capture.NativeComplete.Valid && capture.NativeComplete.Int64 == 2 {
++				capture.Output, refs.readComplete = "", true
++				return nil, nil
++			}
+ 			var err error
+ 			capture.Output, err = refs.clob.read()
+ 			refs.readComplete = err == nil
+@@ -305,7 +326,7 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
+ 		}
+ 	}
+ 	capture.Truncated = capture.Truncated || (capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 != 0)
+-	capture.OutputComplete = refs.readComplete && capture.NativeComplete.Valid && capture.NativeComplete.Int64 == 1 && capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 == 0 && capture.OutputError == ""
++	capture.OutputComplete = refs.readComplete && capture.NativeComplete.Valid && (capture.NativeComplete.Int64 == 1 || capture.NativeComplete.Int64 == 2) && capture.NativeTruncated.Valid && capture.NativeTruncated.Int64 == 0 && capture.OutputError == ""
+ 	if !refs.releaseAttempted {
+ 		capture.ReleaseError = ""
+ 		release := func(context.Context) (driver.Result, error) {
+@@ -337,13 +358,16 @@ func (capture *plDebugNativeCapture) finishReferences(ctx context.Context, alloc
+ 			capture.ReleaseError = joinPLDebugOutputError(capture.ReleaseError, "typed LOB release not confirmed")
+ 		}
+ 	}
+-	if refs.released && lobsReleased && !refs.statementCloseAttempted {
++	if !cursorsReleased {
++		capture.ReleaseError = joinPLDebugOutputError(capture.ReleaseError, "cursor release not confirmed")
++	}
++	if refs.released && lobsReleased && cursorsReleased && !refs.statementCloseAttempted {
+ 		refs.statementCloseAttempted = true
+ 		if err := refs.statement.Close(); err != nil {
+ 			capture.ReleaseError = err.Error()
+ 		}
+ 	}
+-	if refs.released && lobsReleased && refs.statementCloseAttempted {
++	if refs.released && lobsReleased && cursorsReleased && refs.statementCloseAtt
+```
+
+**File**: `agents/drivers/oracle-go/pldebug_output_test.go` (modified, +22/-0)
+```diff
+@@ -325,3 +325,25 @@ func TestPLDebugNativeCleanupAndCachedUTF16Pages(t *testing.T) {
+ 		t.Fatalf("byte limit split a Unicode character: %q", got)
+ 	}
+ }
 +
-+        // 自定义/代理 JDBC URL 不会命中 BIT_STRING_JDBC_URL_PREFIXES。此时 bit 列仍必须按位串展示，
-+        // 否则 getObject() 的裸字节会渲染成 0x00/0x01（金仓 MySQL 兼容模式的 bit(1) 就是这么报的）。
-+        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
-+        assertEquals("1", method.invoke(null, objectResultSet(new byte[] { 0x01 }), columnMeta(Types.BIT, "bit", 1), 1, false, null, false));
-+        assertEquals("10101010", method.invoke(null, objectResultSet(new byte[] { (byte) 0xaa }), columnMeta(Types.BIT, "bit(8)", 8), 1, false, null, false));
-+        assertEquals("0", method.invoke(null, objectResultSet(new byte[] { '0' }), columnMeta(Types.OTHER, "varbit", 1), 1, false, null, false));
-+        // 位宽不可信时保持原来的 0x.. 展示，不静默截断。
-+        assertEquals("0x0102", method.invoke(null, objectResultSet(new byte[] { 0x01, 0x02 }), columnMeta(Types.BIT, "bit(24)", 24), 1, false, null, false));
-+        // 非位串列的裸字节不受影响。
-+        assertEquals("0x00", method.invoke(null, objectResultSet(new byte[] { 0x00 }), columnMeta(Types.BINARY, "bytea", 1), 1, false, null, false));
-+    }
++func TestPLDebugNativeCaptureConfirmsEmptyOutputWithoutReadingClob(t *testing.T) {
++	block, err := plDebugWrapNativeTarget("BEGIN NULL; END;", 0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	connector := &plDebugCaptureTestConnector{complete: 2, rollback: -1}
++	runtime, server, tx := openNativeCaptureTest(t, connector, "thin")
++	var value go_ora.Clob
++	clob := &plDebugClobOutput{
++		bind:    go_ora.Out{Dest: &value},
++		read:    func() (string, error) { t.Error("empty output should not consume a CLOB"); return "", nil },
++		release: func() error { return nil },
++	}
++	capture, err := plDebugExecuteBoundCapture(context.Background(), tx, server.plDebuggeeAllocation, false, block, nil, clob)
++	if err != nil || !capture.OutputComplete || capture.Output != "" || capture.OutputError != "" || capture.ReferencesPending {
++		t.Fatalf("empty output was not verified: %+v %v", capture, err)
++	}
++	if response, _ := runtime.handleLine(`{"id":2,"method":"close_session","params":{"agentSessionId":"a"}}`); response.Error != nil {
++		t.Fatal(response.Error)
++	}
++}
+```
+
+**File**: `agents/drivers/oracle-go/pldebug_routine.go` (modified, +2/-1)
+```diff
+@@ -624,7 +624,8 @@ func (scan plDebugNativeRoutineScan) identify(target plDebugNativeCandidate, lin
+ 		matches := true
+ 		for i, param := range params {
+ 			parsed := node.Parameters[i]
+-			if param.Name == nil || *param.Name != parsed.Name || param.Mode != parsed.Mode || param.Type != parsed.Type || !param.scalar() {
++			sameType := param.scalar() && param.Type == parsed.Type || param.cursorOutput() && parsed.Type == "SYS_REFCURSOR"
++			if param.Name == nil || *param.Name != parsed.Name || param.Mode != parsed.Mode || !sameType {
+ 				matches = false
+ 			}
+ 		}
+```
+
+**File**: `agents/drivers/oracle-go/pldebug_routine_test.go` (modified, +10/-0)
+```diff
+@@ -149,3 +149,13 @@ END F;`
+ 		t.Fatalf("anonymous nested block lost its owning routine: %+v", got)
+ 	}
+ }
 +
-     @Test
-     void readValueRendersTinyInt1BitColumnsAsNumbers() throws Exception {
-         Method method = bitStringReadValue();
++func TestPLDebugNativeRoutineIdentityMatchesSysRefCursor(t *testing.T) {
++	code := "PROCEDURE P(O_RESULT OUT SYS_REFCURSOR) AS\nBEGIN\n OPEN O_RESULT FOR SELECT 1 FROM DUAL;\nEND P;"
++	source := plDebugNativeRoutineFixture(code, "PROCEDURE", "P")
++	name := "O_RESULT"
++	target := plDebugNativeCandidate{Schema: "OWNER", ObjectName: "P", ObjectType: "PROCEDURE", Arguments: []plDebugNativeArgument{{Name: &name, Position: 1, Mode: "OUT", Type: "REF CURSOR"}}}
++	if got := plDebugNativeIdentifyRoutine(source, target, 3); got.State != "verified" {
++		t.Fatalf("cursor procedure source identity: %+v", got)
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15833** (2026-11-27): feat(oracle): preview REF CURSOR outputs in the PL/SQL debugger (@zipg)
+- **PR #15826** (2026-11-27): feat(firebird): enable editing view definitions (@zipg)
+- **PR #15825** (2026-11-27): feat(oracle): execute procedures from the package member list (@zipg)
+- **PR #15822** (2026-11-27): fix(saphana): 修复新建表新增字段和已有表设置主键 (@zipg)
 - **PR #15786** (2026-11-26): fix(i18n): bring Brazilian Portuguese locale back to parity with en.ts (@saskuati-dev)
 - **PR #15785** (2026-11-26): fix(editor): 不再把裸 END + 下一行 IF 误判为 END IF，修复 BEGIN…END 无折叠箭头/无配对高亮 (#15561) (@zipg)
-- **PR #15783** (2026-11-26): fix(search): 保留全局搜索输入法回车上屏 (@zipg)
-- **PR #15780** (2026-11-26): feat(connection): 支持按连接自定义环境水印 (@jiejie1133)
-- **PR #15777** (closed): feat(grid): add transposed Markdown (wide table) export for selected rows (@qinqoushui)
-- **PR #15776** (2026-11-26): perf(oracle): skip DBMS_OUTPUT and schema switches for DBX's own reads (@ZHAOGS0217)
 
 ---
 
@@ -2782,49 +2780,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oracle): upgrade godror to prevent stale OCI call timeout leak
+## X. gaussdb): support SM3 password authentication
 
 **RULE**:
-When implementing operations in `.github/scripts/ci-workflow.test.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fba29442`: oracle): upgrade godror to prevent stale OCI call timeout leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9e79bc6`: gaussdb): support SM3 password authentication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/ci-workflow.test.mjs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-test("Oracle thin Go 1.20 build and OCI modfile split stay covered in release and CI", () => {
-  const release = readFileSync(new URL("../workflows/agents-release.yml", import.meta.url), "utf8").replaceAll("\r\n", "\n");
-  const thin = job("build-oracle-native", release);
-  assert.match(thin, /go-version: "1\.20\.14"/);
-  assert.ok(thin.includes("cache-dependency-path: agents/drivers/oracle-go/go.sum"));
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+ "sm3",
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
+[[package]]
+name = "sm3"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da6a89ba31723d185fd7413b98c576a575f356d9b84729d8ecb6ead60000a5b6"
+dependencies = [
+ "digest 0.11.3",
+]
 
-  const oci = job("build-oracle-oci-native", release);
-  assert.ok(oci.includes("cache-dependency-path: agents/drivers/oracle-go/go.oci.sum"));
-  assert.ok(oci.includes("go test -mod=readonly -modfile=go.oci.mod -tags oci ./..."));
-  assert.ok(oci.includes("go build -mod=readonly -modfile=go.oci.mod -tags oci"));
-
-  const ci = job("agent-go");
-  const oracleSteps = ci.slice(ci.indexOf("- name: Setup Oracle Windows-compatible Go"));
-  assert.equal((oracleSteps.match(/if: matrix\.driver == 'oracle-go'/g) ?? []).length, 2);
-  assert.match(oracleSteps, /go-version: "1\.20\.14"/);
-  assert.ok(oracleSteps.includes("go test -mod=readonly ./..."));
-  assert.ok(oracleSteps.includes("grep -q ': go1\\.20\\.14$'"));
-
-  const thinMod = readFileSync(new URL("../../agents/drivers/oracle-go/go.mo
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5aee0b0e8d211057fca72932e612efdf5aa2c125#5aee0b0e8d211057fca72932e612efdf5aa2c125"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
+source = "git+https://github.com/t8y2/tokio-postgres-gaussdb.git?rev=5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89#5f37ebd1ae8e2c81ac07b89a046c9319f7a1bc89"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fba29442` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9e79bc6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

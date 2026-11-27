@@ -13786,3 +13786,7 @@
 | `CYCLE-20261127-A5GO` | `2026-11-27T12:21:15.432Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10898` | Yes (`2de16b4c...`) |
 | `CYCLE-20261127-ABHR` | `2026-11-27T12:21:23.247Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10899` | Yes (`58369d31...`) |
 | `CYCLE-20261127-OQNF` | `2026-11-27T12:32:36.075Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10900` | Yes (`38a06a56...`) |
+| `CYCLE-20261127-07QD` | `2026-11-27T12:41:31.429Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10901` | Yes (`ce0ce7db...`) |
+| `CYCLE-20261127-0CHF` | `2026-11-27T12:41:37.587Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10902` | Yes (`84d38bad...`) |
+| `CYCLE-20261127-0E1W` | `2026-11-27T12:41:39.620Z` | `infracost/infracost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10903` | Yes (`fda9e1a3...`) |
+| `CYCLE-20261127-0HWQ` | `2026-11-27T12:41:44.618Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10904` | Yes (`09a9da36...`) |

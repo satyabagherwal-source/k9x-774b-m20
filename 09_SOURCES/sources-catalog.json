@@ -4863,10 +4863,10 @@
     "repository": "infracost/infracost",
     "platform": "github",
     "sourceUrl": "https://github.com/infracost/infracost",
-    "sourceVersion": "aa717670",
+    "sourceVersion": "a972f623",
     "license": "Apache-2.0",
-    "contentHash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
-    "lastHarvestedAt": "2026-11-25T01:09:22.054Z",
+    "contentHash": "fda9e1a3677f028bfffe246c1239bef289d9f892acbcae3b850a113b218e839f",
+    "lastHarvestedAt": "2026-11-27T12:41:39.633Z",
     "learningId": "learn-github-infracost-infracost"
   },
   "apache-shardingsphere": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "fba29442",
+    "sourceVersion": "e9e79bc6",
     "license": "Apache-2.0",
-    "contentHash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
-    "lastHarvestedAt": "2026-11-26T18:05:53.042Z",
+    "contentHash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
+    "lastHarvestedAt": "2026-11-27T12:41:44.629Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "d1c4c7db",
+    "sourceVersion": "33098634",
     "license": "GPL-3.0",
-    "contentHash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
-    "lastHarvestedAt": "2026-11-25T03:50:53.267Z",
+    "contentHash": "84d38badf78d2edacc64b449db5dcdccfd71a380799d61d82f740d5373bb0e39",
+    "lastHarvestedAt": "2026-11-27T12:41:37.601Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {
@@ -12683,10 +12683,10 @@
     "repository": "Folkbench/folkbench",
     "platform": "github",
     "sourceUrl": "https://github.com/Folkbench/folkbench",
-    "sourceVersion": "d9954bb4",
+    "sourceVersion": "d9006e93",
     "license": "NOASSERTION",
-    "contentHash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
-    "lastHarvestedAt": "2026-11-26T12:28:57.885Z",
+    "contentHash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
+    "lastHarvestedAt": "2026-11-27T12:41:31.441Z",
     "learningId": "learn-github-folkbench-folkbench"
   },
   "hf-ifm-pan2": {

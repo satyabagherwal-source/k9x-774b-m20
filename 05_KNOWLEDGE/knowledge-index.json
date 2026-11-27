@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T12:32:49.115Z",
+  "last_updated": "2026-11-27T12:41:51.435Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26571,
+  "total_items": 26583,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214671,8 +214671,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "fba29442",
-      "content_hash": "0e56fd040eadf3d5add95ec2faadb2e43eea790da9e8ae61301031d4e38a8d83",
+      "source_version": "e9e79bc6",
+      "content_hash": "09a9da363227380a8f38396290267bc38e4445fb0b433886e8a1908ab8f768db",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214750,6 +214750,11 @@
           "number": 10747,
           "title": "upgrade godror to prevent stale OCI call timeout leak",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10904,
+          "title": "support SM3 password authentication",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214757,7 +214762,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:05:52.682Z",
+      "verified_at": "2026-11-27T12:41:44.367Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214799,10 +214804,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "fba29442",
-      "content_hash": "0c9365d81067fe8df5d548cfa94063aa05f097d613fc6d3bca58b850bbcf9570",
+      "source_version": "e9e79bc6",
+      "content_hash": "9b511f65c5d93071582d9d9eeb5846f6504b0e3309fcf7c9be2ccfe56e516fc2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:05:53.559Z"
+      "persisted_at": "2026-11-27T12:41:45.078Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214811,10 +214816,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "fba29442",
-      "content_hash": "38bd4ff822ec16c4aee98cf1884dcd0f602494846a44263a4464652448d8b84c",
+      "source_version": "e9e79bc6",
+      "content_hash": "066ed6a5d3bee66d426fed1edf1f40ab585bcd041a615631fe6b74b64eb5e530",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:05:53.845Z"
+      "persisted_at": "2026-11-27T12:41:45.276Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -249479,8 +249484,8 @@
       "slug": "meshtastic-meshtastic-android",
       "platform": "github",
       "source_url": "https://github.com/meshtastic/Meshtastic-Android",
-      "source_version": "d1c4c7db",
-      "content_hash": "adbbb565b71c3929bfd6cdb66ba6243b0e657bf78840efd7cce3874bda39e238",
+      "source_version": "33098634",
+      "content_hash": "84d38badf78d2edacc64b449db5dcdccfd71a380799d61d82f740d5373bb0e39",
       "dossier_path": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
       "promoted_rules": [
@@ -249513,6 +249518,11 @@
           "number": 10447,
           "title": "keep existing channels in Add and report failed imports",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10902,
+          "title": "stop the neighbor info log crashing on duplicate rows and chart x-values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249520,7 +249530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:50:52.996Z",
+      "verified_at": "2026-11-27T12:41:37.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249626,10 +249636,10 @@
       "relative_path": "08_VERIFICATION/meshtastic-meshtastic-android-verification-protocol-empirical-defect-shield-for-.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshtastic/Meshtastic-Android",
       "repository": "meshtastic/Meshtastic-Android",
-      "source_version": "d1c4c7db",
-      "content_hash": "9bb3f4d1d18e09912290cfdb95e49775fed16677233ea7c5a93a1cdfc9cfc414",
+      "source_version": "33098634",
+      "content_hash": "3ec24277b3d3ecdc891374aac080c9423dd3a266560f70ba171fac16b4f6ea7e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:50:54.082Z"
+      "persisted_at": "2026-11-27T12:41:38.247Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-learnings-core",
@@ -249651,9 +249661,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshtastic-meshtastic-android-learnings",
       "repository": "meshtastic-meshtastic-android-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a941ae4e34e6325695790ea4397d3a5c3fabec42cf4c6ee284792e9b537c7d5",
+      "content_hash": "34e9943e6c90687acbe7c029507f67be0ddddede25c4e4e6d35a7b47b88774b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:51:00.048Z"
+      "persisted_at": "2026-11-27T12:41:50.489Z"
     },
     "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-lancedb-lancedb-learnings-core-invariants",
@@ -259483,8 +259493,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "d9954bb4",
-      "content_hash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
+      "source_version": "d9006e93",
+      "content_hash": "ce0ce7dbd192126034c41f0c9c52fd00c3953386f1b8ab096c77c897f52e422f",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -259527,6 +259537,11 @@
           "number": 10676,
           "title": "数据：更新每日公开快照（快照 public-03ac8fb6ff74f38786191514ee11d8e63a1daf990c12dfe1b148afec86",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10901,
+          "title": "数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259534,7 +259549,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:28:57.656Z",
+      "verified_at": "2026-11-27T12:41:31.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259576,10 +259591,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "repository": "Folkbench/folkbench",
-      "source_version": "d9954bb4",
-      "content_hash": "cef44c208591325a1c926f9f8ffe0f24310781ed7168394653dc7aba60bb96da",
+      "source_version": "d9006e93",
+      "content_hash": "8a7ff200503f729dff4c0343a6e92b75979321cbb305e8582f5514e998a10fc3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:28:58.315Z"
+      "persisted_at": "2026-11-27T12:41:31.881Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
@@ -259588,10 +259603,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "d9954bb4",
-      "content_hash": "8f2f942892a71789ec15cd08bbc96f7f54ae4a971cc93e55debe8df5cbf79d4e",
+      "source_version": "d9006e93",
+      "content_hash": "95d86cc08c38765b1350d5732ddee652b8121f3f01a5860132d45cf2695532c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:28:58.504Z"
+      "persisted_at": "2026-11-27T12:41:32.079Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -259730,9 +259745,9 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "24e45366c33712b19a444dcf06c62bd6a99608e597e7a2f5fc5fc5d65624e107",
+      "content_hash": "e89313ed61d591a695ad4bcf87f19dd07511b041a131d66e2ee2645173a6ecd4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:29:13.714Z"
+      "persisted_at": "2026-11-27T12:41:49.311Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
@@ -259742,9 +259757,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "80bb154aeaaf3973ae002099e807dd7a4ce6fe0c2152c4c323fe8e3fa90848b6",
+      "content_hash": "e79d3add74badfc2e136a9b561f97f83ea4d58ae88c7ba9d3587c16d353fb38d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:29:13.900Z"
+      "persisted_at": "2026-11-27T12:41:49.515Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -316766,8 +316781,8 @@
       "slug": "infracost-infracost",
       "platform": "github",
       "source_url": "https://github.com/infracost/infracost",
-      "source_version": "aa717670",
-      "content_hash": "415eee6a5e6c06855d8967ec2f4bc4089f075b1cbfbfa1edc45cb5bb1d5307a4",
+      "source_version": "a972f623",
+      "content_hash": "fda9e1a3677f028bfffe246c1239bef289d9f892acbcae3b850a113b218e839f",
       "dossier_path": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infracost-infracost-learnings.md",
       "promoted_rules": [
@@ -316780,6 +316795,11 @@
           "number": 10413,
           "title": "bump terragrunt fork",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10903,
+          "title": "update gorilla/websocket to the masking key fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -316787,7 +316807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:09:21.826Z",
+      "verified_at": "2026-11-27T12:41:39.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -316841,10 +316861,10 @@
       "relative_path": "08_VERIFICATION/infracost-infracost-verification-protocol-empirical-defect-shield-for-infracost-.md",
       "title": "Verification Protocol: Empirical Defect Shield for infracost/infracost",
       "repository": "infracost/infracost",
-      "source_version": "aa717670",
-      "content_hash": "837d67846237e2887c9d8d82f097ac89fdff9d4592fba75e04a0fbde8312f17b",
+      "source_version": "a972f623",
+      "content_hash": "ffc2810688bf17ffea695844d1b7bd64d80cea74bfb4cbc4f0c827a5f3fc5435",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:09:22.717Z"
+      "persisted_at": "2026-11-27T12:41:40.273Z"
     },
     "rule-9723": {
       "learning_id": "rule-9723",
@@ -316954,9 +316974,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infracost-infracost-learnings",
       "repository": "infracost-infracost-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8e31a1c24602c230c28ca7f2146af58f4aab47a76bb59764b4473afa833ec08",
+      "content_hash": "ddccbbbbf251d862c9ff3c90cf6989bd7a4639a6a0fc6d629f984a4df9abcd3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:09:27.306Z"
+      "persisted_at": "2026-11-27T12:41:51.435Z"
     },
     "rule-9725": {
       "learning_id": "rule-9725",
@@ -326647,10 +326667,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-meshtastic-meshtastic-android-product-intelligence-meshtastic-meshtastic-android.md",
       "title": "Product Intelligence: meshtastic/Meshtastic-Android Core Invariants",
       "repository": "meshtastic/Meshtastic-Android",
-      "source_version": "836e48f7",
-      "content_hash": "4c19d8a885d50a371fb2db5c80ee01e9bde34fa534ec911488bc77332a32a633",
+      "source_version": "33098634",
+      "content_hash": "fb60f601571af65ba49313cf6edc4db3364c8852a3d1771a0833b4e2ea7b68c5",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T17:22:08.645Z"
+      "persisted_at": "2026-11-27T12:41:38.041Z"
     },
     "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
@@ -326696,9 +326716,9 @@
       "title": "Product Intelligence: meshtastic-meshtastic-android-learnings Core Invariants",
       "repository": "meshtastic-meshtastic-android-learnings",
       "source_version": "HEAD",
-      "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
+      "content_hash": "b60ccfd52bdac5dd92d60ffcfee12c43b83e43d17a90621551994c4bd867d752",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T17:22:16.293Z"
+      "persisted_at": "2026-11-27T12:41:50.292Z"
     },
     "rule-9963": {
       "learning_id": "rule-9963",
@@ -364747,6 +364767,158 @@
       "content_hash": "61883dd56a4fd3592d2c9b95ab05649cc8c48ee90f5b2145a9c678c4c4b6efcc",
       "domain_letter": "M",
       "persisted_at": "2026-11-27T12:32:45.122Z"
+    },
+    "rule-10901": {
+      "learning_id": "rule-10901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10901,
+      "title": "数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "d9006e93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:41:31.177Z"
+    },
+    "candidate_directive-public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7": {
+      "item_id": "candidate_directive-public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0LD3-public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7.md",
+      "title": "数据：更新每日公开快照（快照 public-11746bc346e14b021793baaa246cf4b5cce7d03625d00bd3cc82c9eba7",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a2e07074533dcff43f9cecdac51115f2286c5c1fdc4de12220290d06ff59ea51",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T12:41:49.096Z"
+    },
+    "rule-10902": {
+      "learning_id": "rule-10902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10902,
+      "title": "stop the neighbor info log crashing on duplicate rows and chart x-values",
+      "source_url": "https://github.com/meshtastic/Meshtastic-Android",
+      "source_version": "33098634",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:41:37.344Z"
+    },
+    "candidate_directive-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values": {
+      "item_id": "candidate_directive-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0COF-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values.md",
+      "title": "stop the neighbor info log crashing on duplicate rows and chart x-values",
+      "repository": "meshtastic/Meshtastic-Android",
+      "source_version": "33098634",
+      "content_hash": "d5d5873775ecf339314f289a64872f6574856680db4271cfe94c50e3d388aa95",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T12:41:37.843Z"
+    },
+    "rule-10903": {
+      "learning_id": "rule-10903",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10903,
+      "title": "update gorilla/websocket to the masking key fix",
+      "source_url": "https://github.com/infracost/infracost",
+      "source_version": "a972f623",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:41:39.366Z"
+    },
+    "candidate_directive-update-gorilla-websocket-to-the-masking-key-fix": {
+      "item_id": "candidate_directive-update-gorilla-websocket-to-the-masking-key-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0E8X-update-gorilla-websocket-to-the-masking-key-fix.md",
+      "title": "update gorilla/websocket to the masking key fix",
+      "repository": "infracost/infracost",
+      "source_version": "a972f623",
+      "content_hash": "0410cb42080ea1b2eba06fbfc836a3f7702321fbb10fe36fbc94a03d76662122",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T12:41:39.874Z"
+    },
+    "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-infracost-infracost-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infracost-infracost-architecture-intelligence-infracost-infracost-core-invariant.md",
+      "title": "Architecture Intelligence: infracost/infracost Core Invariants",
+      "repository": "infracost/infracost",
+      "source_version": "a972f623",
+      "content_hash": "3703cea6de12a6a3a6473b4cca224b5af4484029f189a641d55a91801f1d650c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T12:41:40.079Z"
+    },
+    "rule-10904": {
+      "learning_id": "rule-10904",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10904,
+      "title": "support SM3 password authentication",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "e9e79bc6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:41:44.367Z"
+    },
+    "candidate_directive-support-sm3-password-authentication": {
+      "item_id": "candidate_directive-support-sm3-password-authentication",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0I3R-support-sm3-password-authentication.md",
+      "title": "support SM3 password authentication",
+      "repository": "t8y2/dbx",
+      "source_version": "e9e79bc6",
+      "content_hash": "96a152ed02795094d602aec3e8ee5c8b7c7dd46b39acd4c1cc0f2794433a8eae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T12:41:44.875Z"
+    },
+    "candidate_directive-node-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values": {
+      "item_id": "candidate_directive-node-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0M4J-node-stop-the-neighbor-info-log-crashing-on-duplicate-rows-and-chart-x-values.md",
+      "title": "node): stop the neighbor info log crashing on duplicate rows and chart x-values",
+      "repository": "meshtastic-meshtastic-android-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30b3ddf9aebef43a9d4b7979b19ea1232c1c9a2f32db157d08197aee43fc806a",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T12:41:50.086Z"
+    },
+    "candidate_directive-deps-update-gorilla-websocket-to-the-masking-key-fix": {
+      "item_id": "candidate_directive-deps-update-gorilla-websocket-to-the-masking-key-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0MV3-deps-update-gorilla-websocket-to-the-masking-key-fix.md",
+      "title": "deps): update gorilla/websocket to the masking key fix",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d12c4fddab27917605b1f8ae05acbe82fc461ab4ceaa630c650f7a17d02aa36",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T12:41:51.040Z"
+    },
+    "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-infracost-infracost-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infracost-infracost-learnings-architecture-intelligence-infracost-infracost-lear.md",
+      "title": "Architecture Intelligence: infracost-infracost-learnings Core Invariants",
+      "repository": "infracost-infracost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bcc218dcbb9f0fc42542b1d95ce2d12542f94746083b8d8dcaec13023627a66d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T12:41:51.239Z"
     }
   },
   "ai-builder-brain": {
