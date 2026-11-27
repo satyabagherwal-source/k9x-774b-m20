@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:15:55.661Z",
-  "total_cycles_completed": 12917,
-  "total_learnings_persisted": 12917,
-  "total_rules_promoted": 11708,
+  "last_updated": "2026-11-27T00:24:31.121Z",
+  "total_cycles_completed": 12919,
+  "total_learnings_persisted": 12919,
+  "total_rules_promoted": 11709,
   "history": [
-    {
-      "timestamp": "2026-11-26T13:36:02.529Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:36:05.963Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T13:36:08.694Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:24:29.494Z",
+      "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+      "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:24:31.121Z",
+      "repository": "salvo-rs/salvo",
+      "learningId": "learn-github-salvo-rs-salvo",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -13642,3 +13642,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1e794b83` | Multi-dimensional audit evidence | 2026-11-27T00:07:24.726Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `14c70177` | Multi-dimensional audit evidence | 2026-11-27T00:07:31.868Z |
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-27T00:15:55.651Z |
+| `learn-huggingface-akhaliq-minimax-h3-image-character-swap` | `https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap` | `hf-akhaliq` | Multi-dimensional audit evidence | 2026-11-27T00:24:29.481Z |
+| `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `45e831e5` | Multi-dimensional audit evidence | 2026-11-27T00:24:31.102Z |

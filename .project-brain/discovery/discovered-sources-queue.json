@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T00:07:37.935Z",
+  "updated_at": "2026-11-27T00:24:41.591Z",
   "stats": {
-    "total_discovered": 10098,
-    "approved_pending_harvest": 9574,
+    "total_discovered": 10101,
+    "approved_pending_harvest": 9577,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9578,
+      "COMMUNITY_AND_EXPERT": 9581,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218515,6 +218515,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-F66BBFE96599": {
+      "id": "SRC-F66BBFE96599",
+      "url": "https://github.com/nix-rust/nix",
+      "title": "https://github.com/nix-rust/nix",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T00:24:41.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-C557FF9941A0": {
+      "id": "SRC-C557FF9941A0",
+      "url": "https://github.com/nix-rust/nix/blob/master/CHANGELOG.md",
+      "title": "https://github.com/nix-rust/nix/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T00:24:41.523Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
+      }
+    },
+    "SRC-5B0528C595A3": {
+      "id": "SRC-5B0528C595A3",
+      "url": "https://github.com/nix-rust/nix/compare/v0.31.0...v0.32.0",
+      "title": "https://github.com/nix-rust/nix/compare/v0.31.0...v0.32.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T00:24:41.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
+        "fileName": "salvo-rs-salvo-learnings.md"
       }
     }
   }

@@ -13609,3 +13609,5 @@
 | `CYCLE-20261127-2F5D` | `2026-11-27T00:07:24.721Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10798` | Yes (`b7b0cdcb...`) |
 | `CYCLE-20261127-2KNS` | `2026-11-27T00:07:31.864Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10799` | Yes (`9a144f66...`) |
 | `CYCLE-20261127-DDDR` | `2026-11-27T00:15:55.647Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`fcb75641...`) |
+| `CYCLE-20261127-ODUT` | `2026-11-27T00:24:29.477Z` | `akhaliq/MiniMax-H3-Image-Character-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md` | Yes (`4f7ef1b3...`) |
+| `CYCLE-20261127-OF3U` | `2026-11-27T00:24:31.098Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10800` | Yes (`5e20710d...`) |

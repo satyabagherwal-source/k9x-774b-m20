@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "6e2ee81a",
+    "sourceVersion": "45e831e5",
     "license": "Apache-2.0",
-    "contentHash": "51f0499ea818af710c26efa0a1a3f35c2cc50489d3a6050a3f9bd453a767ff8b",
-    "lastHarvestedAt": "2026-11-17T08:56:28.544Z",
+    "contentHash": "5e20710d123727b35506370a4c752a5c0c9fd67a634bb9589e1cae1b058f784c",
+    "lastHarvestedAt": "2026-11-27T00:24:31.102Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -12925,8 +12925,8 @@
     "sourceUrl": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
     "sourceVersion": "hf-akhaliq-minimax-h3-image-character-swap",
     "license": "Open-Source",
-    "contentHash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
-    "lastHarvestedAt": "2026-11-23T15:28:52.449Z",
+    "contentHash": "4f7ef1b33de7aec3c802a6cae1ea91e7f66c78bbb4e27f5c28bd845d62dca2e1",
+    "lastHarvestedAt": "2026-11-27T00:24:29.481Z",
     "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap"
   },
   "hf-inworld-voice-isolator": {

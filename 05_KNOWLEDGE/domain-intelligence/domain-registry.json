@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T00:16:09.354Z",
+  "last_updated": "2026-11-27T00:24:43.714Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -11085,8 +11085,8 @@
       "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
       "repository": "salvo-rs/salvo",
-      "content_hash": "9d44689492bfdee7af053f016eb0eb4d1e2de4c2e762ca7c3bb08f8f783ab560",
-      "created_at": "2026-11-17T08:56:28.910Z"
+      "content_hash": "f1bbaa50f58db3d2c0be187143ebc53fc426e1c3c9f8e8f99a126e657fb0fb92",
+      "created_at": "2026-11-27T00:24:31.561Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-core-invariants",
@@ -11112,8 +11112,8 @@
       "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-learnings-technical-construction-intelligence-salvo-rs-salvo-lear.md",
       "repository": "salvo-rs-salvo-learnings",
-      "content_hash": "cef7ae1050bc73b6ff6b6f37a96bf1a31558a8c245306e7fdf41b1d077362618",
-      "created_at": "2026-11-17T08:56:46.327Z"
+      "content_hash": "55f025cf6f21a0e7a59d78ad85db7e50ba5889cf728ff875b6398f14b0b78d96",
+      "created_at": "2026-11-27T00:24:42.089Z"
     },
     "DOM-D-A812096F": {
       "record_id": "DOM-D-A812096F",
@@ -15583,8 +15583,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "5d2a7021ee93d1ab740274aebfc3d561055c6b0b6d5de330ca6d620298bc2695",
-      "created_at": "2026-11-26T19:45:57.576Z"
+      "content_hash": "9927566a5f44ecbe2dac31dde92717ffc0331fd5c4b212fe5a29a5a3e18d16b7",
+      "created_at": "2026-11-27T00:24:43.714Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -33277,8 +33277,8 @@
       "title": "Research & Knowledge Intelligence: akhaliq/MiniMax-H3-Image-Character-Swap Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-research-knowledge-intelligence-akhal.md",
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
-      "content_hash": "5066421eb333b14b1ece2530f627df25a00e6ce11614a8adb82667b6860913cf",
-      "created_at": "2026-11-23T15:28:52.661Z"
+      "content_hash": "f0af07c6085547024d2ce95c3e861e24efb25db02e7bfc6eda834093dcf7d2c8",
+      "created_at": "2026-11-27T00:24:29.732Z"
     },
     "DOM-D-C41D220B": {
       "record_id": "DOM-D-C41D220B",
@@ -33328,8 +33328,8 @@
       "title": "Research & Knowledge Intelligence: hf-akhaliq-minimax-h3-image-character-swap-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-learnings-research-knowledge-intellig.md",
       "repository": "hf-akhaliq-minimax-h3-image-character-swap-learnings",
-      "content_hash": "d67bc409d76e2157e0d6bc2b58854893a58e24d15a03241b1d2c35bbb76bc721",
-      "created_at": "2026-11-23T15:29:11.381Z"
+      "content_hash": "53d1f6bd318e2835e663bc190d25267ec64dfb4162e307a1ec54988224cf00b4",
+      "created_at": "2026-11-27T00:24:42.895Z"
     },
     "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",

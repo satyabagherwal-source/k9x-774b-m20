@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T00:16:09.683Z",
+  "last_updated": "2026-11-27T00:24:43.905Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26273,
+  "total_items": 26275,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215317,14 +215317,19 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "6e2ee81a",
-      "content_hash": "51f0499ea818af710c26efa0a1a3f35c2cc50489d3a6050a3f9bd453a767ff8b",
+      "source_version": "45e831e5",
+      "content_hash": "5e20710d123727b35506370a4c752a5c0c9fd67a634bb9589e1cae1b058f784c",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
         {
           "number": 8642,
           "title": "Update cache save action and fix vendor spell checks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10800,
+          "title": "Update nix requirement from 0.31 to 0.32",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -215333,7 +215338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:56:28.309Z",
+      "verified_at": "2026-11-27T00:24:30.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215361,10 +215366,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-salvo-rs-salvo-technical-construction-intelligence-salvo-rs-salvo-core-invariant.md",
       "title": "Technical Construction Intelligence: salvo-rs/salvo Core Invariants",
       "repository": "salvo-rs/salvo",
-      "source_version": "6e2ee81a",
-      "content_hash": "9d44689492bfdee7af053f016eb0eb4d1e2de4c2e762ca7c3bb08f8f783ab560",
+      "source_version": "45e831e5",
+      "content_hash": "f1bbaa50f58db3d2c0be187143ebc53fc426e1c3c9f8e8f99a126e657fb0fb92",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:28.910Z"
+      "persisted_at": "2026-11-27T00:24:31.561Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo",
@@ -215373,10 +215378,10 @@
       "relative_path": "12_DECISIONS/ADR-salvo-rs-salvo-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in salvo-rs/salvo",
       "repository": "salvo-rs/salvo",
-      "source_version": "6e2ee81a",
-      "content_hash": "c450e0784ecb337d90919abfdbb1148b6ec47c7568d5a0da6069dcae07798647",
+      "source_version": "45e831e5",
+      "content_hash": "d3335e238e4dddbe9f756bf0fdd1d2b0215bf32bc822bd8bb7229c657538cd23",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:29.055Z"
+      "persisted_at": "2026-11-27T00:24:31.768Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo",
@@ -215385,10 +215390,10 @@
       "relative_path": "08_VERIFICATION/salvo-rs-salvo-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo.md",
       "title": "Verification Protocol: Empirical Defect Shield for salvo-rs/salvo",
       "repository": "salvo-rs/salvo",
-      "source_version": "6e2ee81a",
-      "content_hash": "2bc5d2d2878b9949f0de41f5292e8d7c84dba86c756f3aac7428191e502022c6",
+      "source_version": "45e831e5",
+      "content_hash": "31c0f6e60189b967513fe6a89fef3185f95b8010679998ea7e6058183cb351b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:56:29.220Z"
+      "persisted_at": "2026-11-27T00:24:31.946Z"
     },
     "learn-github-zulip-zulip": {
       "learning_id": "learn-github-zulip-zulip",
@@ -215609,9 +215614,9 @@
       "title": "Technical Construction Intelligence: salvo-rs-salvo-learnings Core Invariants",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "cef7ae1050bc73b6ff6b6f37a96bf1a31558a8c245306e7fdf41b1d077362618",
+      "content_hash": "55f025cf6f21a0e7a59d78ad85db7e50ba5889cf728ff875b6398f14b0b78d96",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:46.327Z"
+      "persisted_at": "2026-11-27T00:24:42.089Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-salvo-rs-salvo-learnings",
@@ -215621,9 +215626,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in salvo-rs-salvo-learnings",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "da19ee2bddb9269b4596ddfa2fd0b85db31cc51efec2667621a904ba4e74d822",
+      "content_hash": "738f657a09557b290296a7f9b06b9bb66cfdc9eea39766917c6c7e3796d11cfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:46.477Z"
+      "persisted_at": "2026-11-27T00:24:42.292Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-salvo-rs-salvo-learnings",
@@ -215633,9 +215638,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for salvo-rs-salvo-learnings",
       "repository": "salvo-rs-salvo-learnings",
       "source_version": "HEAD",
-      "content_hash": "d95239fff481b9924813b377b8aa13654d61330eae63dddfdad0272316627f44",
+      "content_hash": "6606cbd69e76dc6b4c043c0af1a346466218237600248b6dd172fcd39944bc1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:56:46.613Z"
+      "persisted_at": "2026-11-27T00:24:42.461Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian",
@@ -230171,9 +230176,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d2a7021ee93d1ab740274aebfc3d561055c6b0b6d5de330ca6d620298bc2695",
+      "content_hash": "9927566a5f44ecbe2dac31dde92717ffc0331fd5c4b212fe5a29a5a3e18d16b7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:45:57.576Z"
+      "persisted_at": "2026-11-27T00:24:43.714Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230183,9 +230188,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc1776dcd8cea7d07f790d2afc06ee4f0bd0525c7974370577398be9f524ab74",
+      "content_hash": "447e393ab0aded0c59f753a21012b8159337f4a919387b383f50028eb2486060",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:45:57.758Z"
+      "persisted_at": "2026-11-27T00:24:43.905Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -298554,7 +298559,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
       "source_version": "hf-akhaliq-minimax-h3-image-character-swap",
-      "content_hash": "c91a311f390fde86d0236ba3d37dfdf3f084786f345415383a90d327dd7ddf11",
+      "content_hash": "4f7ef1b33de7aec3c802a6cae1ea91e7f66c78bbb4e27f5c28bd845d62dca2e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md",
       "promoted_rules": [],
@@ -298563,7 +298568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:28:52.210Z",
+      "verified_at": "2026-11-27T00:24:29.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -298580,9 +298585,9 @@
       "title": "Research & Knowledge Intelligence: akhaliq/MiniMax-H3-Image-Character-Swap Core Invariants",
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
       "source_version": "hf-akhaliq-minimax-h3-image-character-swap",
-      "content_hash": "5066421eb333b14b1ece2530f627df25a00e6ce11614a8adb82667b6860913cf",
+      "content_hash": "f0af07c6085547024d2ce95c3e861e24efb25db02e7bfc6eda834093dcf7d2c8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:28:52.661Z"
+      "persisted_at": "2026-11-27T00:24:29.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn",
@@ -298592,9 +298597,9 @@
       "title": "Research & Knowledge Intelligence: hf-akhaliq-minimax-h3-image-character-swap-learnings Core Invariants",
       "repository": "hf-akhaliq-minimax-h3-image-character-swap-learnings",
       "source_version": "HEAD",
-      "content_hash": "d67bc409d76e2157e0d6bc2b58854893a58e24d15a03241b1d2c35bbb76bc721",
+      "content_hash": "53d1f6bd318e2835e663bc190d25267ec64dfb4162e307a1ec54988224cf00b4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:29:11.381Z"
+      "persisted_at": "2026-11-27T00:24:42.895Z"
     },
     "rule-9323": {
       "learning_id": "rule-9323",
@@ -349764,13 +349769,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-23UP-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OOOV-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2fc90253cf1689e11f47f24cf58faa837a03e9ec37f75e0dd372708ca1fdf8e5",
+      "content_hash": "123bf59dfce3f2f3df6eaf46dcb33418bf128194440e25ce7a9cd84e2eed082a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:55:13.537Z"
+      "persisted_at": "2026-11-27T00:24:43.520Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -360371,6 +360376,32 @@
       "content_hash": "d54b11eaa57db5bf395b89eafafedc7d2a273af877595f11deb1d1f5478ddc64",
       "domain_letter": "I",
       "persisted_at": "2026-11-27T00:07:36.479Z"
+    },
+    "rule-10800": {
+      "learning_id": "rule-10800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10800,
+      "title": "Update nix requirement from 0.31 to 0.32",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "45e831e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T00:24:30.838Z"
+    },
+    "candidate_directive-update-nix-requirement-from-0-31-to-0-32": {
+      "item_id": "candidate_directive-update-nix-requirement-from-0-31-to-0-32",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ONFL-update-nix-requirement-from-0-31-to-0-32.md",
+      "title": "Update nix requirement from 0.31 to 0.32",
+      "repository": "salvo-rs-salvo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a0d1f4411efdbf551ccf870441b3504d220a2fe9b8dd1f54fe9e96dbcf6236f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T00:24:41.890Z"
     }
   },
   "ai-builder-brain": {

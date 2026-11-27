@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:16:09.823Z",
+  "last_updated": "2026-11-27T00:24:44.072Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T00:16:07.753Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-26T19:45:56.972Z",
+      "processed_at": "2026-11-27T00:24:43.119Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -963,7 +963,7 @@
       "staged_for_review": 0
     },
     "salvo-rs-salvo-learnings.md": {
-      "processed_at": "2026-11-17T08:56:45.700Z",
+      "processed_at": "2026-11-27T00:24:41.079Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3483,7 +3483,7 @@
       "staged_for_review": 1
     },
     "hf-akhaliq-minimax-h3-image-character-swap-learnings.md": {
-      "processed_at": "2026-11-23T15:29:11.155Z",
+      "processed_at": "2026-11-27T00:24:42.658Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4731,
+  "total_dossiers_evaluated": 4734,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3549
+  "total_staged_for_review": 3551
 }
