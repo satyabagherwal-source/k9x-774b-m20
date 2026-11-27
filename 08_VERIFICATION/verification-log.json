@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HW6X",
-    "timestamp": "2026-11-26T11:15:37.401Z",
-    "repository": "kividbio/kividb",
-    "learningId": "learn-github-kividbio-kividb",
-    "contentHash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-I1IS",
-    "timestamp": "2026-11-26T11:15:44.308Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-I6PY",
     "timestamp": "2026-11-26T11:15:51.046Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ITCE",
+    "timestamp": "2026-11-27T21:47:51.950Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "7ea87ea70ed02ee8d8db0000a01d070694ca124867769e331e7ac07f23a757d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-IWPC",
+    "timestamp": "2026-11-27T21:47:56.304Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T21:39:12.510Z",
-    "lastVerified": "2026-11-27T21:39:12.510Z",
+    "lastChecked": "2026-11-27T21:47:59.692Z",
+    "lastVerified": "2026-11-27T21:47:59.692Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T21:11:29.627Z",
+    "lastChecked": "2026-11-27T21:47:54.682Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T21:11:29.627Z"
+    "lastVerified": "2026-11-27T21:47:54.682Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1865,12 +1865,12 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:43:57.020Z",
-    "lastVerified": "2026-11-27T03:43:57.020Z",
+    "lastChecked": "2026-11-27T21:47:50.567Z",
+    "lastVerified": "2026-11-27T21:47:50.567Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
-    "contentHash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
+    "contentHash": "7ea87ea70ed02ee8d8db0000a01d070694ca124867769e331e7ac07f23a757d3",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2355,8 +2355,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T17:32:13.933Z",
-    "lastVerified": "2026-11-27T17:32:13.933Z",
+    "lastChecked": "2026-11-27T21:47:49.555Z",
+    "lastVerified": "2026-11-27T21:47:49.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4534,9 +4534,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-26T21:44:11.989Z",
+    "lastChecked": "2026-11-27T21:47:39.543Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-26T21:44:11.989Z"
+    "lastVerified": "2026-11-27T21:47:39.543Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -5312,12 +5312,12 @@
     "officialUrl": "https://github.com/gluesql/gluesql",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:40:58.711Z",
-    "lastVerified": "2026-11-27T02:40:58.711Z",
+    "lastChecked": "2026-11-27T21:47:55.080Z",
+    "lastVerified": "2026-11-27T21:47:55.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
+    "contentHash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -10188,8 +10188,8 @@
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-25T13:05:49.794Z",
-    "lastVerified": "2026-11-25T13:05:49.794Z",
+    "lastChecked": "2026-11-27T21:47:44.551Z",
+    "lastVerified": "2026-11-27T21:47:44.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ehpanda-team-ehpanda",
@@ -10717,9 +10717,9 @@
   "joshcarty-google-searchconsole": {
     "name": "google-searchconsole",
     "officialUrl": "https://github.com/joshcarty/google-searchconsole",
-    "lastChecked": "2026-11-24T13:38:35.357Z",
+    "lastChecked": "2026-11-27T21:47:42.041Z",
     "revisionIdentifier": "9ab5a265",
-    "lastVerified": "2026-11-24T13:38:35.357Z"
+    "lastVerified": "2026-11-27T21:47:42.041Z"
   },
   "kamgurgul-cpu-info": {
     "name": "cpu-info",

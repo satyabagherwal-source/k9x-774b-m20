@@ -13878,3 +13878,5 @@
 | `CYCLE-20261127-W4TV` | `2026-11-27T21:30:13.747Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10969` | Yes (`0d4a3a2c...`) |
 | `CYCLE-20261127-79P4` | `2026-11-27T21:38:53.272Z` | `Cloudflare/clairic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | Yes (`a747855b...`) |
 | `CYCLE-20261127-7LXH` | `2026-11-27T21:39:09.125Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10970` | Yes (`fd5c67d7...`) |
+| `CYCLE-20261127-ITCE` | `2026-11-27T21:47:51.950Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10971` | Yes (`7ea87ea7...`) |
+| `CYCLE-20261127-IWPC` | `2026-11-27T21:47:56.304Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10972` | Yes (`7de45d4c...`) |

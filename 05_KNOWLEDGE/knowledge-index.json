@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:39:15.705Z",
+  "last_updated": "2026-11-27T21:48:02.838Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26772,
+  "total_items": 26779,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9ce5af18e60a09687f901924feee63712984d7836c9bf8a9dbd9cb8a844372c",
+      "content_hash": "bfdd6f8a737ff81631ef4cb268394ade216a8ccf01e17f25949c34b2645301c5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:39:15.486Z"
+      "persisted_at": "2026-11-27T21:48:02.620Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c28016760ef7eec976e1f3031743ff9814bb8c085d67f04fe9c8f47be806799c",
+      "content_hash": "aeb09dd49020478c1086dc980675a9a2765fae35b391113544db3f77508a7452",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:39:15.705Z"
+      "persisted_at": "2026-11-27T21:48:02.838Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -223527,8 +223527,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "78f21ee0",
-      "content_hash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
+      "source_version": "f38b446f",
+      "content_hash": "7ea87ea70ed02ee8d8db0000a01d070694ca124867769e331e7ac07f23a757d3",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -223561,6 +223561,11 @@
           "number": 10820,
           "title": "remove deprecated docker-login flag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10971,
+          "title": "add opt-in autoscaling of the coredns deployment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223568,7 +223573,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:43:58.032Z",
+      "verified_at": "2026-11-27T21:47:51.670Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223610,10 +223615,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "repository": "loft-sh/vcluster",
-      "source_version": "78f21ee0",
-      "content_hash": "d900782029dccf67a3ee9c1a95f1faaf82e28e4577f4f58aa2a75ee18b17ea13",
+      "source_version": "f38b446f",
+      "content_hash": "2630c7764eaef09d77b4ac7d591aeb5f3d5ab4a3383b2aea5b311167eade1f86",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T03:43:58.794Z"
+      "persisted_at": "2026-11-27T21:47:52.461Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster",
@@ -223622,10 +223627,10 @@
       "relative_path": "08_VERIFICATION/loft-sh-vcluster-verification-protocol-empirical-defect-shield-for-loft-sh-vclus.md",
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh/vcluster",
       "repository": "loft-sh/vcluster",
-      "source_version": "78f21ee0",
-      "content_hash": "b4c2f151834ea74be652bbcfc7e7382bc1c13e33636aae943bafe72b5fa27ad1",
+      "source_version": "f38b446f",
+      "content_hash": "52d05a01dae1dec9f99df877939b480f70cfcd23b2f3860622078f2e6b988acb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:43:59.009Z"
+      "persisted_at": "2026-11-27T21:47:52.854Z"
     },
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
@@ -223767,9 +223772,9 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "726ce3f325c3aed6d91deb466e9adf61160e677235ecfd5886b8669007896c0c",
+      "content_hash": "ffcccd784205aa70c1ef3a3922e893effc416ab5788438f396871ba094ba4bb7",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T03:44:41.012Z"
+      "persisted_at": "2026-11-27T21:48:00.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings",
@@ -223779,9 +223784,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh-vcluster-learnings",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a1bd8b08273dbd2b211ee088fa00a10276818b8e7f520689897ec377c9859c6",
+      "content_hash": "c52c34e65c94150df83fc46e45534adabecc66a435e5dfbf6258e422fb3b2105",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:44:41.247Z"
+      "persisted_at": "2026-11-27T21:48:00.952Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -274065,8 +274070,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "bace1272",
-      "content_hash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
+      "source_version": "40f0b84f",
+      "content_hash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -274109,6 +274114,11 @@
           "number": 10812,
           "title": "Allow UPDATE to keep a row's own UNIQUE value",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10972,
+          "title": "Align floating-point Key ordering with equality",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274116,7 +274126,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T02:40:59.712Z",
+      "verified_at": "2026-11-27T21:47:56.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274158,10 +274168,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
       "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
       "repository": "gluesql/gluesql",
-      "source_version": "bace1272",
-      "content_hash": "05a0e99c94c2766b92fd331ef4e7d80c86161b7a29d6cfb1fc6b2cc7acfd51c0",
+      "source_version": "40f0b84f",
+      "content_hash": "5913731d32b39b491c8ee0b2179dc1e89531746a255151137cb9194629d1febe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T02:41:00.582Z"
+      "persisted_at": "2026-11-27T21:47:56.785Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql",
@@ -274170,10 +274180,10 @@
       "relative_path": "08_VERIFICATION/gluesql-gluesql-verification-protocol-empirical-defect-shield-for-gluesql-gluesq.md",
       "title": "Verification Protocol: Empirical Defect Shield for gluesql/gluesql",
       "repository": "gluesql/gluesql",
-      "source_version": "bace1272",
-      "content_hash": "e8b90ce083d0cf35abb12fce15a799795aba52ae7dc6074dc8a7f450c76d371e",
+      "source_version": "40f0b84f",
+      "content_hash": "7eb336952cd370dbc4201720c6bb3268b194dbd52598a1a5743149d2d34e7a29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:41:00.805Z"
+      "persisted_at": "2026-11-27T21:47:56.992Z"
     },
     "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security": {
       "item_id": "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security",
@@ -274219,9 +274229,9 @@
       "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
       "repository": "gluesql-gluesql-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca63c90352eafc256667f264ae9f0b1012ae5021ba050778ce68ec03ea64c265",
+      "content_hash": "5258563adfe27e5e76e719315c91044f8a5c7edb19a243e6eb554d7e15c00423",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T02:41:04.890Z"
+      "persisted_at": "2026-11-27T21:48:01.668Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gluesql-gluesql-learnings",
@@ -274231,9 +274241,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gluesql-gluesql-learnings",
       "repository": "gluesql-gluesql-learnings",
       "source_version": "HEAD",
-      "content_hash": "846fafa99ddf368fa6472ffde7575f3b75467716e22a9d1e310b04959b15cf13",
+      "content_hash": "e076c4ec58a4e37606513d6165ad3ccb6edcbc0436854004beebb52de226ce46",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:41:05.110Z"
+      "persisted_at": "2026-11-27T21:48:01.876Z"
     },
     "learn-github-webdriverio-webdriverio": {
       "learning_id": "learn-github-webdriverio-webdriverio",
@@ -361508,13 +361518,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7QO8-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J1EZ-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b0cca968e23bad3be6643ed2d50bb4b544635c91c07ba7816a362f3508782b1",
+      "content_hash": "95cc7e2565faaf60efb672a0ce1507c4171352bafa1504d52d4d4c1f493e8d5e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:39:15.275Z"
+      "persisted_at": "2026-11-27T21:48:02.414Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -367702,6 +367712,94 @@
       "content_hash": "94c75fd644b8fb648c009d30432d4250801c45e9fe16c8b270e1a22e4b0e99bf",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T21:39:14.320Z"
+    },
+    "rule-10971": {
+      "learning_id": "rule-10971",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10971,
+      "title": "add opt-in autoscaling of the coredns deployment",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "f38b446f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:47:51.670Z"
+    },
+    "candidate_directive-add-opt-in-autoscaling-of-the-coredns-deployment": {
+      "item_id": "candidate_directive-add-opt-in-autoscaling-of-the-coredns-deployment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ITKG-add-opt-in-autoscaling-of-the-coredns-deployment.md",
+      "title": "add opt-in autoscaling of the coredns deployment",
+      "repository": "loft-sh/vcluster",
+      "source_version": "f38b446f",
+      "content_hash": "4abc9956bd5cb76b4a1b5b905537eccdd18327020de3bf26d898ef1f177d93ce",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:47:52.244Z"
+    },
+    "agent_contract-agent-contract-loft-sh-vcluster-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-loft-sh-vcluster-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/loft-sh-vcluster-agent-contract-loft-sh-vcluster-autonomous-specialist-persona.md",
+      "title": "Agent Contract: loft-sh/vcluster Autonomous Specialist Persona",
+      "repository": "loft-sh/vcluster",
+      "source_version": "f38b446f",
+      "content_hash": "73a1ba6dac08a3245dfe08ea7c20885c908f9a9b6bc40959ceea0c22e872d482",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:47:52.674Z"
+    },
+    "rule-10972": {
+      "learning_id": "rule-10972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10972,
+      "title": "Align floating-point Key ordering with equality",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "40f0b84f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:47:56.049Z"
+    },
+    "candidate_directive-align-floating-point-key-ordering-with-equality": {
+      "item_id": "candidate_directive-align-floating-point-key-ordering-with-equality",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J0OE-align-floating-point-key-ordering-with-equality.md",
+      "title": "Align floating-point Key ordering with equality",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e060be06147afb732fcb19f1082d103f087a787f4f495fc8a3f5c8f258dc2f5b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:48:01.457Z"
+    },
+    "candidate_directive-coredns-add-opt-in-autoscaling-of-the-coredns-deployment": {
+      "item_id": "candidate_directive-coredns-add-opt-in-autoscaling-of-the-coredns-deployment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IZSZ-coredns-add-opt-in-autoscaling-of-the-coredns-deployment.md",
+      "title": "coredns): add opt-in autoscaling of the coredns deployment",
+      "repository": "loft-sh-vcluster-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d57d0e882fa0093a3fffb5200ad8a6f750fc5d7555a576b69d7545505231bd1",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:48:00.327Z"
+    },
+    "agent_contract-agent-contract-loft-sh-vcluster-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-loft-sh-vcluster-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/loft-sh-vcluster-learnings-agent-contract-loft-sh-vcluster-learnings-autonomous-.md",
+      "title": "Agent Contract: loft-sh-vcluster-learnings Autonomous Specialist Persona",
+      "repository": "loft-sh-vcluster-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40d37420a10c4f333edb6b00fed01034b114536438aa9dd39f1a5bc0e73aa22e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:48:00.747Z"
     }
   },
   "ai-builder-brain": {

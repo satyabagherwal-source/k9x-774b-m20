@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T21:39:15.486Z",
+  "last_updated": "2026-11-27T21:48:02.620Z",
   "total_records": 2857,
   "domains": {
     "A": {
@@ -9590,8 +9590,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b9ce5af18e60a09687f901924feee63712984d7836c9bf8a9dbd9cb8a844372c",
-      "created_at": "2026-11-27T21:39:15.486Z"
+      "content_hash": "bfdd6f8a737ff81631ef4cb268394ade216a8ccf01e17f25949c34b2645301c5",
+      "created_at": "2026-11-27T21:48:02.620Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13466,8 +13466,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "d900782029dccf67a3ee9c1a95f1faaf82e28e4577f4f58aa2a75ee18b17ea13",
-      "created_at": "2026-11-27T03:43:58.794Z"
+      "content_hash": "2630c7764eaef09d77b4ac7d591aeb5f3d5ab4a3383b2aea5b311167eade1f86",
+      "created_at": "2026-11-27T21:47:52.461Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -13535,8 +13535,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
       "repository": "loft-sh-vcluster-learnings",
-      "content_hash": "726ce3f325c3aed6d91deb466e9adf61160e677235ecfd5886b8669007896c0c",
-      "created_at": "2026-11-27T03:44:41.012Z"
+      "content_hash": "ffcccd784205aa70c1ef3a3922e893effc416ab5788438f396871ba094ba4bb7",
+      "created_at": "2026-11-27T21:48:00.529Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -26828,8 +26828,8 @@
       "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "05a0e99c94c2766b92fd331ef4e7d80c86161b7a29d6cfb1fc6b2cc7acfd51c0",
-      "created_at": "2026-11-27T02:41:00.582Z"
+      "content_hash": "5913731d32b39b491c8ee0b2179dc1e89531746a255151137cb9194629d1febe",
+      "created_at": "2026-11-27T21:47:56.785Z"
     },
     "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
@@ -26846,8 +26846,8 @@
       "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-learnings-architecture-intelligence-gluesql-gluesql-learnings-co.md",
       "repository": "gluesql-gluesql-learnings",
-      "content_hash": "ca63c90352eafc256667f264ae9f0b1012ae5021ba050778ce68ec03ea64c265",
-      "created_at": "2026-11-27T02:41:04.890Z"
+      "content_hash": "5258563adfe27e5e76e719315c91044f8a5c7edb19a243e6eb554d7e15c00423",
+      "created_at": "2026-11-27T21:48:01.668Z"
     },
     "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:39:09.142Z",
-  "total_cycles_completed": 13170,
-  "total_learnings_persisted": 13170,
-  "total_rules_promoted": 11884,
+  "last_updated": "2026-11-27T21:47:56.322Z",
+  "total_cycles_completed": 13172,
+  "total_learnings_persisted": 13172,
+  "total_rules_promoted": 11886,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:18:31.818Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T04:18:33.055Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:27:10.224Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T21:39:09.142Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:47:51.969Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:47:56.322Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

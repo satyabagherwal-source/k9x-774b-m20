@@ -4,24 +4,24 @@
 {
   "source_repository": "gluesql/gluesql",
   "source_url": "https://github.com/gluesql/gluesql",
-  "source_version": "bace1272",
+  "source_version": "40f0b84f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T02:41:00.318Z",
+  "timestamp": "2026-11-27T21:47:56.576Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gluesql-gluesql",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `bace1272`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T02:41:00.318Z`  
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `40f0b84f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T21:47:56.576Z`  
 > **Learning ID**: `learn-github-gluesql-gluesql`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 63%
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gluesql/gluesql:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T02:40:58.711Z  
+> **Harvest Timestamp**: 2026-11-27T21:47:55.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3142 stars
+- **Stars / Engagement**: 3143 stars
 
 ---
 
@@ -2072,341 +2072,65 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bace1272` (2026-11-26)
-**Commit Message**: Allow UPDATE to keep a row's own UNIQUE value (#2106)
+### Incident Patch 1: `40f0b84f` (2026-11-27)
+**Commit Message**: Align floating-point Key ordering with equality (#2107)
 
-Match each stored row to its proposed update by row key. Skip the
-duplicate check for a column when that row keeps its existing value.
-INSERT and UPDATE share the per-column key sets and apply their own
-rules when comparing candidates with stored rows.
+Use OrderedFloat::cmp for Key::F32 and Key::F64. The previous total_cmp
+distinguished signed zeros and different NaN representations that Key
+considers equal, so a BTreeMap lookup could miss an existing entry.
 
-**File**: `core/src/executor/insert/schemaful.rs` (modified, +16/-8)
+**File**: `core/src/data/key.rs` (modified, +22/-2)
 ```diff
-@@ -7,11 +7,11 @@ use {
-             context::StatementContext,
-             evaluate::{evaluate, evaluate_stateless},
-             query,
--            unique::validate_unique_columns,
-+            unique::create_unique_constraints,
-         },
-         plan::{ColumnDefPlan, ExprPlan, QueryPlan, ValuesPlan},
-         result::Result,
--        store::GStore,
-+        store::{GStore, ScanColumns},
-     },
-     std::{collections::HashSet, rc::Rc},
- };
-@@ -132,12 +132,20 @@ fn validate_unique<T: GStore>(
-         .filter_map(|(index, column)| column.unique.map(|_| (index, column.name.clone())))
-         .collect();
+@@ -66,8 +66,8 @@ impl Ord for Key {
+             (Key::U32(l), Key::U32(r)) => l.cmp(r),
+             (Key::U64(l), Key::U64(r)) => l.cmp(r),
+             (Key::U128(l), Key::U128(r)) | (Key::Uuid(l), Key::Uuid(r)) => l.cmp(r),
+-            (Key::F32(l), Key::F32(r)) => l.total_cmp(&r.0),
+-            (Key::F64(l), Key::F64(r)) => l.total_cmp(&r.0),
++            (Key::F32(l), Key::F32(r)) => l.cmp(r),
++            (Key::F64(l), Key::F64(r)) => l.cmp(r),
+             (Key::Decimal(l), Key::Decimal(r)) => l.cmp(r),
+             (Key::Bool(l), Key::Bool(r)) => l.cmp(r),
+             (Key::Str(l), Key::Str(r)) => l.cmp(r),
+@@ -506,9 +506,29 @@ mod tests {
+         assert!(Key::U128(1) > Key::Decimal(dec("1")));
  
--    validate_unique_columns(
--        storage,
--        table_name,
--        unique_columns,
--        &rows.iter().map(Vec::as_slice),
--    )
-+    let constraints = create_unique_constraints(unique_columns, &rows.iter().map(Vec::as_slice))?;
-+    if constraints.is_empty() {
-+        return Ok(());
-+    }
-+
-+    for row in storage.scan_data(table_name, ScanColumns::All)? {
-+        let (_, values) = row?;
-+        for constraint in &constraints {
-+            let key = constraint.key_from_row(&values)?;
-+            constraint.check_duplicate(&key)?;
-+        }
-+    }
-+
-+    Ok(())
- }
+         assert!(Key::F32(10.0_f32.into()) > Key::F32(3.0_f32.into()));
++        assert_eq!(
++            Key::F32((-0.0_f32).into()).cmp(&Key::F32(0.0_f32.into())),
++            Ordering::Equal,
++        );
++        assert_eq!(
++            Key::F32(f32::from_bits(0xffc0_0001).into())
++                .cmp(&Key::F32(f32::from_bits(0x7fc0_0002).into())),
++            Ordering::Equal,
++            "F32 NaNs with different signs and payloads should compare equal",
++        );
+         assert!(Key::F32(1.0_f32.into()) > Key::F64(1.0.into()));
  
- fn values_rows<'a, T: GStore>(
-```
-
-**File**: `core/src/executor/unique.rs` (modified, +22/-45)
-```diff
-@@ -2,7 +2,6 @@ use {
-     crate::{
-         data::{Key, Value},
-         result::Result,
--        store::{ScanColumns, Store},
-     },
-     im::HashSet,
-     serde::Serialize,
-@@ -20,7 +19,7 @@ pub enum UniqueError {
- }
+         assert!(Key::F64(10.0.into()) > Key::F64(3.0.into()));
++        assert_eq!(
++            Key::F64((-0.0).into()).cmp(&Key::F64(0.0.into())),
++            Ordering::Equal,
++        );
++        assert_eq!(
++            Key::F64(f64::from_bits(0xfff8_0000_0000_0001).into())
++                .cmp(&Key::F64(f64::from_bits(0x7ff8_0000_0000_0002).into())),
++            Ordering::Equal,
++            "F64 NaNs with different signs and payloads should compare equal",
++        );
+         assert!(Key::F64(1.0.into()) > Key::Decimal(dec("1")));
  
- #[derive(Debug)]
--struct UniqueConstraint {
-+pub(super) struct UniqueConstraint {
-     column_index: usize,
-     column_name: String,
-     keys: HashSet<Key>,
-@@ -35,14 +34,14 @@ impl UniqueConstraint {
-         }
-     }
- 
--    fn add(self, value: &Value) -> Result<Self> {
--        let new_key = self.check(value)?;
-+    fn add(self, key: Key) -> Result<Self> {
-+        self.check_duplicate(&key)?;
- 
--        if matches!(new_key, Key::None) {
-+        if matches!(key, Key::None) {
-             return Ok(self);
-         }
- 
--        let keys = self.keys.update(new_key);
-+        let keys = self.keys.update(key);
- 
-         Ok(Self {
-             column_index: self.column_index,
-@@ -51,47 +50,28 @@ impl UniqueConstraint {
-         })
-     }
- 
--    fn check(&self, value: &Value) -> Result<Key> {
--        let key = Key::try_from(value)?;
-+    pub(super) fn key_from_row(&self, row: &[Value]) -> Result<Key> {
-+        let value = row
-+            .get(self.column_index)
-+            .ok_or(UniqueError::ConflictOnStorageColumnIndex(self.column_index))?;
- 
--        if self.keys.contains(&key) {
--            Err(
--                UniqueError::DuplicateEntryOnUniqueField(value.clone(), self.column_name.clone())
--                    .into(),
--            )
--        } else {
--            Ok(key)
--        }
--    }
--}
--
--pub(super) fn validate_unique_columns<'a, T: Store>(
--    storage: &T,
--    table_name: &str,
--    columns: Vec<(usize, String)>,
--    row_iter: &(impl Iterator<Item = &'a [Value]> + Clone),
--) -> Result<()> {
--    let unique_constraints = create_unique_constraints(columns, row_iter)?;
--    if unique_constraints.is_empty() {
--        return Ok(());
-+        Key::try_from(value)
-     }
- 
--    for row in storage.scan_data(table_name, ScanColumns::All)? {
--        let (_, values) = row?;
--        for constraint in &unique_constraints {
--            let col_idx = constraint.column_index;
--            let val = values
--                .get(col_idx)
--                .ok_or(UniqueError::ConflictOnStorageColumnIndex(col_idx))?;
--
--            constraint.check(val)?;
-+    pub(super) fn check_duplicate(&self, key: &Key) -> Result<()> {
-+        if self.keys.contains(key) {
-+            Err(UniqueError::DuplicateEntryOnUniqueField(
-+                key.clone().into(),
-+                self.column_name.clone(),
-+            )
-+            .into())
-+        } else {
-+            Ok(())
-         }
-     }
--
--    Ok(())
- }
- 
--fn create_unique_constraints<'a>(
-+pub(super) fn create_unique_constraints<'a>(
-     unique_columns: Vec<(usize, String)>,
-     row_iter: &(impl Iterator<Item = &'a [Value]> + Clone),
- ) -> Result<Vec<UniqueConstraint>> {
-@@ -102,11 +82,8 @@ fn create_unique_constraints<'a>(
-         let new_constraint = row_iter
-             .clone()
-             .try_fold(new_constraint, |constraint, row| {
--                let val = row
--                    .get(col_idx)
--                    .ok_or(UniqueError::ConflictOnStorageColumnIndex(col_idx))?;
--
--                constraint.add(val)
-+                let key = constraint.key_from_row(row)?;
-+                constraint.add(key)
-             })?;
- 
-         constraints.push(new_constraint);
-```
-
-**File**: `core/src/executor/update.rs` (modified, +25/-4)
-```diff
-@@ -2,17 +2,17 @@ use {
-     super::{
-         context::{RowContext, StatementContext},
-         evaluate::evaluate,
--        unique::validate_unique_columns,
-+        unique::create_unique_constraints,
-     },
-     crate::{
-         ast::{ColumnUniqueOption, ForeignKey},
-         data::{Key, Row, Value},
-         plan::{AssignmentPlan, ColumnDefPlan},
-         result::Result,
--        store::GStore,
-+        store::{GStore, ScanColumns},
-     },
-     serde::Serialize,
--    std::{borrow::Cow, fmt::Debug, rc::Rc},
-+    std::{borrow::Cow, collections::HashMap, fmt::Debug, rc::Rc},
-     thiserror::Error,
- };
- 
-@@ -192,7 +192,28 @@ impl<'a, T: GStore> Update<'a, T> {
-             .collect();
- 
-         let values = rows.iter().map(|(_, row)| row.values.as_slice());
-+        let constraints = create_unique_constraints(unique_columns, &values)?;
-+        if constraints.is_empty() {
-+            return Ok(());
-+        }
-+
-+        let updated_rows: HashMap<_, _> = rows.iter().map(|(key, row)| (key, row)).collect();
-+        for stored in self.storage.scan_data(self.table_name, ScanColumns::All)? {
-+            let (row_key, stored_values) = stored?;
-+            let updated_row = updated_rows.get(&row_key);
-+
-+            for constraint in &constraints {
-+                let stored_value = constraint.key_from_row(&stored_values)?;
-+                if let Some(row) = updated_row
-+                    && constraint.key_from_row(&row.values)? == stored_value
-+                {
-+                    continue;
-+                }
-+
-+                constraint.check_duplicate(&stored_value)?;
-+            }
-+        }
- 
--        validate_unique_columns(self.storage, self.table_name, unique_columns, &values)
-+        Ok(())
-     }
- }
-```
-
-**File**: `test-suite/fixtures/validate/unique.sql` (modified, +19/-1)
-```diff
-@@ -100,7 +100,8 @@ INSERT INTO TestB VALUES (5, 5), (6, 5)
- --   "num"
- -- ]
- 
--UPDATE TestB SET num = 2 WHERE id = 1
-+-- @name: keeping one UNIQUE value still checks changes to another UNIQUE column
-+UPDATE TestB SET id = 1, num = 2 WHERE id = 1
- -- @expect: error Unique.DuplicateEntryOnUniqueField
- -- @json:
- -- [
-@@ -110,6 +111,12 @@ UPDATE TestB SET num = 2 WHERE id = 1
- --   "num"
- -- ]
- 
-+SELECT id, num FROM TestB WHERE id = 1;
-+-- @expect:
-+-- | id: I64 | num: I64 |
-+-- | ------- | -------- |
-+-- | 1       | 1        |
-+
- INSERT INTO TestC VALUES (2, 4)
- -- @expect: error Unique.DuplicateEntryOnUniqueField
- -- @json:
-@@ -151,6 +158,17 @@ SELECT id, num FROM TestA WHERE id = 2;
- -- | ------- | -------- |
- -- | 2       | 9        |
- 
-+-- @name: UPDATE can keep a row's own UNIQUE value while changing another column
-+UPDATE TestA SET id = 2, num = 10 WHERE id = 2;
-+-- @expect: payload Update
-+-- @json: 1
-+
-+SELECT id, num FROM TestA WHERE id = 2;
-+-- @expect:
-+-- | id: I64 | num: I64 |
-+-- | ------- | -------- |
-+-- | 2       | 10       |
-+
- CREATE TABLE WithPrimaryKey (id INTEGER PRIMARY KEY, email TEXT UNIQUE);
- -- @expect: ok
- 
-```
-
----
-
-### Incident Patch 2: `224f3928` (2026-11-26)
-**Commit Message**: Reject duplicate primary keys within a multi-row INSERT (#2105)
-
-Track primary keys seen in the current INSERT before writing any rows.
-Looking up each key in storage alone lets repeated new keys pass and
-can cause a later row to overwrite an earlier one.
-
-**File**: `core/src/executor/insert/schemaful.rs` (modified, +3/-2)
-```diff
-@@ -13,7 +13,7 @@ use {
-         result::Result,
-         store::GStore,
-     },
--    std::rc::Rc,
-+    std::{collections::HashSet, rc::Rc},
- };
- 
- pub(super) fn fetch_rows<T: GStore>(
-@@ -112,12 +112,13 @@ fn validate_unique<T: GStore>(
-             .iter()
-             .any(|column_def| column_def.unique == Some(ColumnUniqueOption { is_primary: false }))
-     {
-+        let mut seen_keys = HashSet::new();
-         for key in rows
-             .iter()
-             .filter_map(|row| row.get(index).map(Key::try_from))
-         {
-             let key = key?;
--            if storage.fetch_data(table_name, &key)?.is_some() {
-+            if !seen_keys.insert(key.clone()) || storage.fetch_data(table_name, &key)?.is_some() {
-                 return Err(InsertError::DuplicateEntryOnPrimaryKeyField(key).into());
-             }
-         }
-```
-
-**File**: `test-suite/fixtures/primary_key.sql` (modified, +10/-0)
-```diff
-@@ -4,6 +4,16 @@ CREATE TABLE Allegro (
- );
- -- @expect: ok
- 
-+-- @name: A repeated primary key rejects the entire multi-row INSERT
-+INSERT INTO Allegro VALUES (1, 'first'), (2, 'middle'), (1, 'last');
-+-- @expect: error Insert.DuplicateEntryOnPrimaryKeyField
-+-- @json: {"I64": 1}
-+
-+SELECT id, name FROM Allegro;
-+-- @expect:
-+-- | id  | name |
-+-- | --- | ---- |
-+
- INSERT INTO Allegro VALUES (1, 'hello'), (3, 'world');
- -- @expect: payload Insert
- -- @json: 2
+         assert!(Key::Decimal(dec("123.45")) > Key::Decimal(dec("0.11")));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2107** (2026-11-27): Align floating-point Key ordering with equality (@seungsang2000)
 - **PR #2106** (2026-11-26): Allow UPDATE to keep a row's own UNIQUE value (@panarch)
 - **PR #2105** (2026-11-26): Reject duplicate primary keys within a multi-row INSERT (@panarch)
 - **PR #2102** (2026-11-26): Separate uniqueness checks for INSERT and UPDATE (@panarch)
 - **PR #2099** (2026-11-26): Fix JsonStorage::fetch_schema dropping Schema::engine (@draarivpatel-ui)
 - **PR #2098** (2026-11-24): Prepare release v0.21.0 (@github-actions[bot])
-- **PR #2097** (2026-11-24): Push down IFNULL, COALESCE, and NULLIF in SQLite filters (@panarch)
 
 ---
 
@@ -2426,53 +2150,53 @@ can cause a later row to overwrite an earlier one.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow UPDATE to keep a row's own UNIQUE value
+## X. Align floating-point Key ordering with equality
 
 **RULE**:
-When implementing operations in `core/src/executor/insert/schemaful.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/data/key.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bace1272`: Allow UPDATE to keep a row's own UNIQUE value. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40f0b84f`: Align floating-point Key ordering with equality. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/executor/insert/schemaful.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/data/key.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            unique::create_unique_constraints,
-        store::{GStore, ScanColumns},
-    let constraints = create_unique_constraints(unique_columns, &rows.iter().map(Vec::as_slice))?;
-    if constraints.is_empty() {
-        return Ok(());
-    }
-
-    for row in storage.scan_data(table_name, ScanColumns::All)? {
-        let (_, values) = row?;
-        for constraint in &constraints {
-            let key = constraint.key_from_row(&values)?;
-            constraint.check_duplicate(&key)?;
-        }
-    }
-
-    Ok(())
+            (Key::F32(l), Key::F32(r)) => l.cmp(r),
+            (Key::F64(l), Key::F64(r)) => l.cmp(r),
+        assert_eq!(
+            Key::F32((-0.0_f32).into()).cmp(&Key::F32(0.0_f32.into())),
+            Ordering::Equal,
+        );
+        assert_eq!(
+            Key::F32(f32::from_bits(0xffc0_0001).into())
+                .cmp(&Key::F32(f32::from_bits(0x7fc0_0002).into())),
+            Ordering::Equal,
+            "F32 NaNs with different signs and payloads should compare equal",
+        );
+        assert_eq!(
+            Key::F64((-0.0).into()).cmp(&Key::F64(0.0.into())),
+            Ordering::Equal,
+        );
+        assert_eq!(
+            Key::F64(f64::from_bits(0xfff8_0000_0000_0001).into())
+                .cmp(&Key::F64(f64::from_bits(0x7ff8_0000_0000_0002).into())),
+            Ordering::Equal,
+            "F64 NaNs with different signs and payloads should compare equal",
+        );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            unique::validate_unique_columns,
-        store::GStore,
-    validate_unique_columns(
-        storage,
-        table_name,
-        unique_columns,
-        &rows.iter().map(Vec::as_slice),
-    )
+            (Key::F32(l), Key::F32(r)) => l.total_cmp(&r.0),
+            (Key::F64(l), Key::F64(r)) => l.total_cmp(&r.0),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bace1272` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40f0b84f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

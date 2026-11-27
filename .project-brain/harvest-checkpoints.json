@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T21:39:09.145Z",
+  "last_updated": "2026-11-27T21:47:56.326Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
-      "verified_at": "2026-11-27T02:41:00.057Z",
+      "content_hash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
+      "verified_at": "2026-11-27T21:47:56.325Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T02:41:00.057Z"
+      "last_updated": "2026-11-27T21:47:56.325Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
-      "verified_at": "2026-11-27T03:43:58.335Z",
+      "content_hash": "7ea87ea70ed02ee8d8db0000a01d070694ca124867769e331e7ac07f23a757d3",
+      "verified_at": "2026-11-27T21:47:51.971Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:43:58.335Z"
+      "last_updated": "2026-11-27T21:47:51.971Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

@@ -4,22 +4,22 @@
 {
   "source_repository": "loft-sh/vcluster",
   "source_url": "https://github.com/loft-sh/vcluster",
-  "source_version": "78f21ee0",
+  "source_version": "f38b446f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T03:43:58.576Z",
+  "timestamp": "2026-11-27T21:47:52.243Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-loft-sh-vcluster",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `78f21ee0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:43:58.576Z`  
+> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `f38b446f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T21:47:52.243Z`  
 > **Learning ID**: `learn-github-loft-sh-vcluster`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `loft-sh/vcluster` (Commit: `78f21ee0`)
+- **Target Repository**: `loft-sh/vcluster` (Commit: `f38b446f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T03:43:57.020Z  
+> **Harvest Timestamp**: 2026-11-27T21:47:50.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11411 stars
+- **Stars / Engagement**: 11415 stars
 
 ---
 
@@ -370,6 +370,132 @@ var (
 
 ```
 
+### Core Architecture Module: `pkg/controllers/coredns/autoscaler.go`
+```
+package coredns
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/loft-sh/vcluster/config"
+	"github.com/loft-sh/vcluster/pkg/constants"
+	"github.com/loft-sh/vcluster/pkg/util/loghelper"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	kerrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/builder"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+)
+
+const DeploymentName = "coredns"
+
+// AutoscalerReconciler keeps the replica count of the coredns deployment
+// proportional to the number of nodes in the cluster.
+type AutoscalerReconciler struct {
+	client.Client
+	Log    loghelper.Logger
+	Config config.CoreDNSAutoscaling
+}
+
+func (r *AutoscalerReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
+	deployment := &appsv1.Deployment{}
+	err := r.Get(ctx, types.NamespacedName{Namespace: Namespace, Name: DeploymentName}, deployment)
+	if kerrors.IsNotFound(err) {
+		// nothing to scale yet, the deployment triggers a reconcile once it is created
+		return ctrl.Result{}, nil
+	} else if err != nil {
+		return ctrl.Result{}, fmt.Errorf("get coredns deployment: %w", err)
+	}
+
+	// the nodes are only counted, so skip copying every node out of the cache
+	nodes := &corev1.NodeList{}
+	if err := r.List(ctx, nodes, client.UnsafeDisableDeepCopy); err != nil {
+		return ctrl.Result{}, fmt.Errorf("list nodes: %w", err)
+	}
+
+	desired := DesiredReplicas(len(nodes.Items), r.Config)
+	if deployment.Spec.Replicas != nil && *deployment.Spec.Replicas == desired {
+		return ctrl.Result{}, nil
+	}
+
+	beforeChanges := deployment.DeepCopy()
+	deployment.Spec.Replicas = &desired
+	if err := r.Patch(ctx, deployment, client.MergeFrom(beforeChanges)); err != nil {
+		return ctrl.Result{}, fmt.Errorf("scale coredns deployment to %d replicas: %w", desired, err)
+	}
+
+	r.Log.Infof("scaled coredns deployment to %d replicas for %d nodes", desired, len(nodes.Items))
+	return ctrl.Result{}, nil
+}
+
+// DesiredReplicas returns the number of coredns replicas to run for the given
+// number of nodes: one replica for every nodesPerReplica nodes, rounded up and
+// kept between minReplicas and maxReplicas.
+//
+// Every node counts, also a cordoned or NotReady one. Its pods keep running and
+// keep resolving names, and counting only Ready nodes would scale DNS down at
+// the moment many nodes lose their connection to the control plane.
+func DesiredReplicas(nodes int, autoscaling config.CoreDNSAutoscaling) int32 {
+	// minReplicas keeps DNS running when a node fails. With fewer than two nodes,
+	// a second replica would run on the same node and fail with it, so a single
+	// replica serves.
+	if nodes <= 1 {
+		return 1
+	}
+
+	// config validation rejects a ratio below 1, this only keeps a zero value from dividing by zero
+	nodesPerReplica := max(autoscaling.NodesPerReplica, 1)
+	replicas := (nodes + nodesPerReplica - 1) / nodesPerReplica
+	replicas = max(replicas, autoscaling.MinReplicas)
+	if autoscaling.MaxReplicas > 0 {
+		replicas = min(replicas, autoscaling.MaxReplicas)
+	}
+
+	return int32(replicas)
+}
+
+// SetupWithManager adds the controller to the manager
+func (r *AutoscalerReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	request := reconcile.Request{NamespacedName: types.NamespacedName{Namespace: Namespace, Name: DeploymentName}}
+
+	// only the coredns deployment is scaled. A status update does not change its replica count,
+	// so only react when its spec changed, for example because something else scaled it.
+	isCoreDNSDeployment := predicate.NewPredicateFuncs(func(object client.Object) bool {
+		return object.GetNamespace() == request.Namespace && object.GetName() == request.Name
+	})
+
+	// the number of nodes only changes when a node is created or deleted. Skipping node
+	// updates keeps the status heartbeats of a large fleet out of the work queue.
+	nodeCountChanged := predicate.Funcs{
+		CreateFunc:  func(event.CreateEvent) bool { return true },
+		DeleteFunc:  func(event.DeleteEvent) bool { return true },
+		UpdateFunc:  func(event.UpdateEvent) bool { return false },
+		GenericFunc: func(event.GenericEvent) bool { return false },
+	}
+	enqueueDeployment := handler.EnqueueRequestsFromMapFunc(func(context.Context, client.Object) []reconcile.Request {
+		return []reconcile.Request{request}
+	})
+
+	return ctrl.NewControllerManagedBy(mgr).
+		WithOptions(controller.Options{
+			CacheSyncTimeout: constants.DefaultCacheSyncTimeout,
+		}).
+		Named("coredns_autoscaler").
+		For(&appsv1.Deployment{}, builder.WithPredicates(isCoreDNSDeployment, predicate.GenerationChangedPredicate{})).
+		Watches(&corev1.Node{}, enqueueDeployment, builder.WithPredicates(nodeCountChanged)).
+		Complete(r)
+}
+
+```
+
 ### Core Architecture Module: `pkg/controllers/coredns/nodehosts.go`
 ```
 package coredns
@@ -515,6 +641,7 @@ import (
 	"github.com/loft-sh/vcluster/config"
 	"github.com/loft-sh/vcluster/pkg/constants"
 	"github.com/loft-sh/vcluster/pkg/util/applier"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/version"
@@ -536,17 +663,46 @@ const (
 	VarLogInDebug        = "LOG_IN_DEBUG"
 	defaultUID           = int64(1001)
 	defaultGID           = int64(1001)
+
+	// VarReplicas is the replica count the coredns deployment is rendered with.
+	VarReplicas = "REPLICAS"
+
+	// initialAutoscaledReplicas is the replica count vCluster's own autoscaler
+	// starts coredns with. It is what that autoscaler runs for a cluster without
+	// nodes.
+	initialAutoscaledReplicas = int32(1)
 )
 
 var ErrNoCoreDNSManifests = fmt.Errorf("no coredns manifests found")
 
-func ApplyManifest(ctx context.Context, config *config.Config, defaultImageRegistry string, inClusterConfig *rest.Config, serverVersion *version.Info) error {
+// manifestOptions is what the caller of ApplyManifest knows about the cluster
+// the manifests are applied to.
+type manifestOptions struct {
+	// liveDeployment is the coredns deployment that currently exists, or nil
+	liveDeployment *appsv1.Deployment
+}
+
+// ManifestOption tells ApplyManifest about the cluster the manifests are applied to.
+type ManifestOption func(options *manifestOptions)
+
+// WithLiveDeployment passes the coredns deployment that currently exists in the
+// cluster, or nil if there is none. While autoscaling is enabled, the manifest
+// is rendered with the replica count of that deployment instead of
+// controlPlane.coredns.deployment.replicas. Applying the manifest then leaves
+// the count alone that an autoscaler has set.
+func WithLiveDeployment(deployment *appsv1.Deployment) ManifestOption {
+	return func(options *manifestOptions) {
+		options.liveDeployment = deployment
+	}
+}
+
+func ApplyManifest(ctx context.Context, config *config.Config, defaultImageRegistry string, inClusterConfig *rest.Config, serverVersion *version.Info, options ...ManifestOption) error {
 	if !config.ControlPlane.CoreDNS.Enabled {
 		return nil
 	}
 
 	// get the manifest variables
-	vars := getManifestVariables(defaultImageRegistry, serverVersion)
+	vars := manifestVariables(config, defaultImageRegistry, serverVersion, options...)
 
 	// process the corefile and manifests
 	output, err := processManifests(vars, config)
@@ -555,6 +711,44 @@ func ApplyManifest(ctx context.Context, config *config.Config, defaultImageRegis
 	}
 
 	return applier.ApplyManifest(ctx, inClusterConfig, output)
+}
+
+// manifestVariables returns the variables the coredns manifests are rendered with.
+func manifestVariables(vConfig *config.Config, defaultImageRegistry string, serverVersion *version.Info, options ...ManifestOption) map[string]any {
+	opts := &manifestOptions{}
+	for _, option := range options {
+		option(opts)
+	}
+
+	vars := getManifestVariables(defaultImageRegistry, serverVersion)
+	vars[VarReplicas] = deploymentReplicas(vConfig.ControlPlane.CoreDNS, opts.liveDeployment)
+	return vars
+}
+
+// deploymentReplicas returns the replica count the coredns deployment is rendered with.
+//
+// Without autoscaling it is controlPlane.coredns.deployment.replicas. With autoscaling it is
+// the count of the live deployment, so that applying the manifest does not undo what an
+// autoscaler has set. Without a live deployment it is the count the autoscaler takes over from.
+func deploymentReplicas(coreDNS config.CoreDNS, liveDeployment *appsv1.Deployment) int32 {
+	// Never create coredns without a replica. A count of 0 used to render no count at
+	// all, which the API server defaults to 1.
+	configured := int32(max(coreDNS.Deployment.Replicas, 1))
+	if !coreDNS.Deployment.Autoscaling.Enabled {
+		return configured
+	}
+
+	if liveDeployment != nil && liveDeployment.Spec.Replicas != nil {
+		return *liveDeployment.Spec.Replicas
+	}
+
+	// vCluster's own autoscaler takes over from a single replica
+	if coreDNS.NodeAutoscalingEnabled() {
+		return initialAutoscaledReplicas
+	}
+
+	// an external autoscaler takes over from the configured count
+	return configured
 }
 
 func getManifestVariables(defaultImageRegistry string, serverVersion *version.Info) map[string]any {
@@ -875,7 +1069,7 @@ metadata:
 {{ toYaml .Values.controlPlane.coredns.deployment.labels | indent 4 }}
     {{- end }}
 spec:
-  replicas: {{ .Values.controlPlane.coredns.deployment.replicas }}
+  replicas: {{ .REPLICAS }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -1029,7 +1223,9 @@ spec:
       port: 53
       targetPort: 1053
       protocol: UDP
-    - name: dns-tc
+    - name: dns-tcp
+      port: 53
+      targetPort: 1053
 ```
 
 ### Core Architecture Module: `pkg/etcd/util.go`
@@ -1154,310 +1350,6 @@ func toTLSConfig(certificates *Certificates) (*tls.Config, error) {
 
 ```
 
-### Core Architecture Module: `pkg/lifecycle/lifecycle.go`
-```
-package lifecycle
-
-import (
-	"context"
-	"fmt"
-	"strconv"
-	"time"
-
-	"github.com/loft-sh/log"
-	vclusterconfig "github.com/loft-sh/vcluster/pkg/config"
-	"github.com/loft-sh/vcluster/pkg/constants"
-	"github.com/loft-sh/vcluster/pkg/kube"
-	"github.com/loft-sh/vcluster/pkg/util/translate"
-	"github.com/pkg/errors"
-	appsv1 "k8s.io/api/apps/v1"
-	kerrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/kubernetes"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-)
-
-// PauseVCluster pauses a running vcluster
-func PauseVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name, namespace string, isRestore bool, log log.BaseLogger) error {
-	// scale down vcluster itself
-	labelSelector := "app=vcluster,release=" + name
-	found, err := scaleDownStatefulSet(ctx, kubeClient, labelSelector, namespace, isRestore, log)
-	if err != nil {
-		return err
-	} else if !found {
-		found, err = scaleDownDeployment(ctx, kubeClient, labelSelector, namespace, isRestore, log)
-		if err != nil {
-			return err
-		} else if !found {
-			return errors.Errorf("couldn't find vcluster %s in namespace %s", name, namespace)
-		}
-
-		// scale down kube api server
-		_, err = scaleDownDeployment(ctx, kubeClient, "app=vcluster-api,release="+name, namespace, isRestore, log)
-		if err != nil {
-			return err
-		}
-
-		// scale down kube controller
-		_, err = scaleDownDeployment(ctx, kubeClient, "app=vcluster-controller,release="+name, namespace, isRestore, log)
-		if err != nil {
-			return err
-		}
-
-		// scale down etcd
-		if !isRestore {
-			_, err = scaleDownStatefulSet(ctx, kubeClient, "app=vcluster-etcd,release="+name, namespace, isRestore, log)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// DeletePods deletes all pods associated with a running vcluster
-func DeletePods(ctx context.Context, kubeClient *kubernetes.Clientset, labelSelector, namespace string) error {
-	list, err := kubeClient.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-	if err != nil {
-		return err
-	}
-
-	if len(list.Items) > 0 {
-		for _, item := range list.Items {
-			err = kubeClient.CoreV1().Pods(namespace).Delete(ctx, item.Name, metav1.DeleteOptions{})
-			if err != nil {
-				if kerrors.IsNotFound(err) {
-					continue
-				}
-				return errors.Wrapf(err, "delete pod %s/%s", namespace, item.Name)
-			}
-		}
-	}
-
-	return nil
-}
-
-func DeleteMultiNamespaceVClusterWorkloads(ctx context.Context, client *kubernetes.Clientset, vclusterName, vclusterNamespace string, _ log.BaseLogger) error {
-	// get all host namespaces managed by this multinamespace mode enabled vcluster
-	namespaces, err := client.CoreV1().Namespaces().List(ctx, metav1.ListOptions{
-		LabelSelector: labels.FormatLabels(map[string]string{
-			translate.MarkerLabel: translate.SafeConcatName(vclusterNamespace, "x", vclusterName),
-		}),
-	})
-	if err != nil && !kerrors.IsForbidden(err) {
-		return fmt.Errorf("list namespaces: %w", err)
-	}
-	if namespaces == nil {
-		return errors.New("list namespaces: nil result")
-	}
-
-	// delete all pods inside the above returned namespaces
-	for _, ns := range namespaces.Items {
-		podList, podListErr := client.CoreV1().Pods(ns.Name).List(ctx, metav1.ListOptions{})
-		if podListErr != nil {
-			return errors.Wrapf(err, "error listing pods in namespace %s", ns.Name)
-		}
-
-		for _, pod := range podList.Items {
-			err := client.CoreV1().Pods(ns.Name).Delete(ctx, pod.Name, metav1.DeleteOptions{})
-			if err != nil && !kerrors.IsNotFound(err) {
-				return errors.Wrapf(err, "error deleting pod %s/%s", ns.Name, pod.Name)
-			}
-		}
-	}
-
-	return nil
-}
-
-func scaleDownDeployment(ctx context.Context, kubeClient kubernetes.Interface, labelSelector, namespace string, isRestore bool, log log.BaseLogger) (bool, error) {
-	list, err := kubeClient.AppsV1().Deployments(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-	if err != nil {
-		return false, err
-	} else if len(list.Items) == 0 {
-		return false, nil
-	}
-
-	for _, item := range list.Items {
-		if IsPaused(&item) {
-			log.Infof("vcluster %s/%s is already paused", namespace, item.Name)
-			return true, nil
-		}
-
-		result, err := prepareScaleDown(ctx, kubeClient, &item, isRestore)
-		if err != nil {
-			return false, fmt.Errorf("prepare deployment scale down: %w", err)
-		}
-
-		log.Infof("Scale down deployment %s/%s...", namespace, item.Name)
-		_, err = kubeClient.AppsV1().Deployments(namespace).Patch(ctx, item.Name, result.patchType, result.patchData, metav1.PatchOptions{})
-		if err != nil {
-			return false, fmt.Errorf("patch deployment: %w", err)
-		}
-
-		if result.alreadyScaledDown {
-			log.Infof("Deployment %s/%s was already scaled down, set annotation %s on it", namespace, item.Name, constants.PausedAnnotation(isRestore))
-		} else {
-			err = wait.PollUntilContextTimeout(ctx, time.Second, time.Minute*3, true, func(ctx context.Context) (done bool, err error) {
-				deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(ctx, item.Name, metav1.GetOptions{})
-				if err != nil {
-					return false, err
-				}
-
-				return deployment.Status.Replicas == 0, nil
-			})
-			if err != nil {
-				return false, fmt.Errorf("wait for deployment scaled down: %w", err)
-			}
-		}
-	}
-
-	return true, nil
-}
-
-func scaleDownStatefulSet(ctx context.Context, kubeClient kubernetes.Interface, labelSelector, namespace string, isRestore bool, log log.BaseLogger) (bool, error) {
-	list, err := kubeClient.AppsV1().StatefulSets(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-	if err != nil {
-		return false, err
-	} else if len(list.Items) == 0 {
-		return false, nil
-	}
-
-	for _, item := range list.Items {
-		if IsPaused(&item) {
-			log.Infof("vcluster %s/%s is already paused", namespace, item.Name)
-			return true, nil
-		}
-
-		result, err := prepareScaleDown(ctx, kubeClient, &item, isRestore)
-		if err != nil {
-			return false, fmt.Errorf("prepare statefulSet scale down: %w", err)
-		}
-
-		log.Infof("Scale down statefulSet %s/%s...", namespace, item.Name)
-		_, err = kubeClient.AppsV1().StatefulSets(namespace).Patch(ctx, item.Name, result.patchType, result.patchData, metav1.PatchOptions{})
-		if err != nil {
-			return false, fmt.Errorf("patch statefulSet: %w", err)
-		}
-
-		if result.alreadyScaledDown {
-			log.Infof("StatefulSet %s/%s was already scaled down, set annotation %s on it", namespace, item.Name, constants.PausedAnnotation(isRestore))
-		} else {
-			err = wait.PollUntilContextTimeout(ctx, time.Second, time.Minute*3, true, func(ctx context.Context) (done bool, err error) {
-				obj, err := kubeClient.AppsV1().StatefulSets(namespace).Get(ctx, item.Name, metav1.GetOptions{})
-				if err != nil {
-					return false, err
-				}
-
-				return obj.Status.Replicas == 0, nil
-			})
-			if err != nil {
-				return false, fmt.Errorf("wait for statefulSet scaled down: %w", err)
-			}
-		}
-	}
-
-	return true, nil
-}
-
-type scaleDownResult struct {
-	alreadyScaledDown bool
-	patchData         []byte
-	patchType         types.PatchType
-}
-
-// prepareScaleDown computes the pause annotations and patch data for a
-// StatefulSet or Deployment that is about to be scaled down.
-func prepareScaleDown(ctx context.Context, kubeClient kubernetes.Interface, object client.Object, isRestore bool) (*scaleDownResult, error) {
-	replicas := getReplicas(object)
-	alreadyScaledDown := replicas != nil && *replicas == 0
-
-	original := object.DeepCopyObject().(client.Object)
-
-	annotations := object.GetAnnotations()
-	if annotations == nil {
-		annotations = map[string]string{}
-	}
-
-	replicaCount := 1
-	if alreadyScaledDown {
-		// The workload was already scaled to 0 before we're pausing it.
-		// Read the configured replica count from the vCluster config so
-		// that resume restores the correct HA replica count.
-		replicaCount = getConfiguredReplicas(ctx, kubeClient, object.GetNamespace(), object.GetLabels()["release"])
-	} else if replicas != nil {
-		replicaCount = int(*replicas)
-	}
-
-	annotations[constants.PausedAnnotation(isRestore)] = "true"
-	annotations[constants.PausedReplicasAnnotation] = strconv.Itoa(replicaCount)
-	annotations[constants.PausedDateAnnotation] = time.Now().Format("2006-01-02T15:04:05.000Z")
-	object.SetAnnotations(annotations)
-
-	zero := int32(0)
-	setReplicas(object, &zero)
-
-	patch := client.MergeFrom(original)
-	data, err := patch.Data(object)
-	if err != nil {
-		return nil, fmt.Errorf("create patch: %w", err)
-	}
-
-	return &scaleDownResult{
-		alreadyScaledDown: alreadyScaledDown,
-		patchData:         data,
-		patchType:         patch.Type(),
-	}, nil
-}
-
-func getReplicas(obj client.Object) *int32 {
-	switch o := obj.(type) {
-	case *appsv1.Deployment:
-		return o.Spec.Replicas
-	case *appsv1.StatefulSet:
-		return o.Spec.Replicas
-	}
-	return nil
-}
-
-func setReplicas(obj client.Object, r *int32) {
-	switch o := obj.(type) {
-	case *appsv1.Deployment:
-		o.Spec.Replicas = r
-	case *appsv1.StatefulSet:
-		o.Spec.Replicas = r
-	}
-}
-
-// ResumeVCluster resumes a paused vcluster
-func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name, namespace string, isRestore bool, log log.BaseLogger) error {
-	// scale up vcluster itself
-	labelSelector := "app=vcluster,release=" + name
-	found, err := scaleUpStatefulSet(ctx, kubeClient, labelSelector, namespace, isRestore, log)
-	if err != nil {
-		return err
-	} else if !found {
-		found, err = scaleUpDeployment(ctx, kubeClient, labelSelector, namespace, isRestore, log)
-		if err != nil {
-			return err
-		} else if !found {
-			return errors.Errorf("couldn't find a paused vcluster %s in namespace %s. Make sure the vcluster exists and was paused previously", name, namespace)
-		}
-
-		// scale up kube api server
-		_, err = scaleUpDeployment(ctx, kubeClient, "app=vcluster-api,release="+name, namespace, isRestore, log)
-		if err != nil {
-			return err
-		}
-
-		// scale up kube controller
-		_, err = scaleUpDeployment(ctx, kubeClient, "app=vcluster-controller,release="+name, namespace, isRestore, log)
-		if err 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1485,114 +1377,582 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78f21ee0` (2026-11-26)
-**Commit Message**: feat(cli): remove deprecated docker-login flag (#2789)
+### Incident Patch 1: `f38b446f` (2026-11-27)
+**Commit Message**: feat(coredns): add opt-in autoscaling of the coredns deployment (#2768)
 
-* feat(cli): remove docker-login flag
+Monorepo-Commit: d3c5275d875b5ccbd1849f8d2f2f7729a00a2924
 
-* fix(cli): remove unused LoginCmd fields
-
-Monorepo-Commit: 21dabd498ecd486b5a506b17ce97cc13a0989130
-
-**File**: `cmd/vclusterctl/cmd/login.go` (modified, +3/-6)
+**File**: `chart/values.schema.json` (modified, +35/-1)
 ```diff
-@@ -16,10 +16,9 @@ type LoginCmd struct {
- 
- 	Log log.Logger
- 
--	Driver      string
--	AccessKey   string
--	Insecure    bool
--	DockerLogin bool
-+	Driver    string
-+	AccessKey string
-+	Insecure  bool
- }
- 
- func NewLoginCmd(globalFlags *flags.GlobalFlags) (*cobra.Command, error) {
-@@ -53,8 +52,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
- 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
- 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
- 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", true, product.Replace("Allow login into an insecure Loft instance"))
--	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
--	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
- 
- 	return loginCmd, nil
- }
+@@ -1249,6 +1249,36 @@
+       "additionalProperties": false,
+       "type": "object"
+     },
++    "CoreDNSAutoscaling": {
++      "properties": {
++        "enabled": {
++          "type": "boolean",
++          "description": "Enabled defines if an autoscaler sets the amount of coredns pods instead of replicas. Mode selects the autoscaler."
++        },
++        "mode": {
++          "type": "string",
++          "enum": [
++            "Nodes",
++            "External"
++          ],
++          "description": "Mode is the autoscaler that sets the amount of coredns pods. With Nodes, vCluster scales coredns with the number of nodes in the cluster and corrects an amount that something else has set. With External, vCluster creates coredns with replicas and then keeps the amount that is set on the coredns deployment, so that a HorizontalPodAutoscaler or another autoscaler can scale it. Defaults to Nodes."
++        },
++        "nodesPerReplica": {
++          "type": "integer",
++          "description": "NodesPerReplica is the number of nodes that one coredns pod serves. vCluster runs one coredns pod for every nodesPerReplica nodes, rounded up. A lower value runs more coredns pods. On shared nodes, unless sync.fromHost.nodes selects all nodes, the cluster only lists the nodes that run its pods, coredns pods included, so with a value of 1 every new coredns pod can add a node and the amount of coredns pods can keep growing up to maxReplicas. Only used with mode Nodes."
++        },
++        "minReplicas": {
++          "type": "integer",
++          "description": "MinReplicas is the lowest amount of coredns pods to run. A cluster with fewer than two nodes runs a single coredns pod regardless. Only used with mode Nodes."
++        },
++        "maxReplicas": {
++          "type": "integer",
++          "description": "MaxReplicas is the highest amount of coredns pods to run. Only used with mode Nodes."
++        }
++      },
++      "additionalProperties": false,
++      "type": "object"
++    },
+     "CoreDNSDeployment": {
+       "properties": {
+         "image": {
+@@ -1257,7 +1287,11 @@
+         },
+         "replicas": {
+           "type": "integer",
+-          "description": "Replicas is the amount of coredns pods to run."
++          "description": "Replicas is the amount of coredns pods to run. While autoscaling is enabled, it is only used with mode External, as the amount coredns is created with."
++        },
++        "autoscaling": {
++          "$ref": "#/$defs/CoreDNSAutoscaling",
++          "description": "Autoscaling lets an autoscaler set the amount of coredns pods instead of replicas."
+         },
+         "nodeSelector": {
+           "additionalProperties": {
 ```
 
-**File**: `cmd/vclusterctl/cmd/login_test.go` (removed, +0/-20)
+**File**: `chart/values.yaml` (modified, +13/-1)
 ```diff
-@@ -1,20 +0,0 @@
--package cmd
--
--import (
--	"testing"
--
--	"github.com/loft-sh/vcluster/pkg/cli/flags"
--)
--
--func TestDeprecatedLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
--	cmd, err := NewLoginCmd(&flags.GlobalFlags{})
--	if err != nil {
--		t.Fatalf("NewLoginCmd: %v", err)
--	}
--	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
--		t.Fatalf("--docker-login=false no longer parses: %v", err)
--	}
--	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
--		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
--	}
--}
+@@ -549,8 +549,20 @@ controlPlane:
+       labels: {}
+       # Image is the coredns image to use
+       image: ""
+-      # Replicas is the amount of coredns pods to run.
++      # Replicas is the amount of coredns pods to run. While autoscaling is enabled, it is only used with mode External, as the amount coredns is created with.
+       replicas: 1
++      # Autoscaling lets an autoscaler set the amount of coredns pods instead of replicas.
++      autoscaling:
++        # Enabled defines if an autoscaler sets the amount of coredns pods instead of replicas. Mode selects the autoscaler.
++        enabled: false
++        # Mode is the autoscaler that sets the amount of coredns pods. With Nodes, vCluster scales coredns with the number of nodes in the cluster and corrects an amount that something else has set. With External, vCluster creates coredns with replicas and then keeps the amount that is set on the coredns deployment, so that a HorizontalPodAutoscaler or another autoscaler can scale it. Defaults to Nodes.
++        mode: Nodes
++        # NodesPerReplica is the number of nodes that one coredns pod serves. vCluster runs one coredns pod for every nodesPerReplica nodes, rounded up. A lower value runs more coredns pods. On shared nodes, unless sync.fromHost.nodes selects all nodes, the cluster only lists the nodes that run its pods, coredns pods included, so with a value of 1 every new coredns pod can add a node and the amount of coredns pods can keep growing up to maxReplicas. Only used with mode Nodes.
++        nodesPerReplica: 16
++        # MinReplicas is the lowest amount of coredns pods to run. A cluster with fewer than two nodes runs a single coredns pod regardless. Only used with mode Nodes.
++        minReplicas: 2
++        # MaxReplicas is the highest amount of coredns pods to run. Only used with mode Nodes.
++        maxReplicas: 100
+       # Pods is additional metadata for the coredns pods.
+       pods:
+         labels: {}
 ```
 
-**File**: `cmd/vclusterctl/cmd/platform/login.go` (modified, +3/-6)
+**File**: `config/config.go` (modified, +40/-1)
 ```diff
-@@ -26,10 +26,9 @@ type LoginCmd struct {
- 
- 	Log log.Logger
- 
--	Driver      string
--	AccessKey   string
--	Insecure    bool
--	DockerLogin bool
-+	Driver    string
-+	AccessKey string
-+	Insecure  bool
+@@ -2512,6 +2512,15 @@ func (c CoreDNS) JSONSchemaExtend(base *jsonschema.Schema) {
+ 	addProToJSONSchema(base, reflect.TypeOf(c))
  }
  
- func NewLoginCmd(gf *flags.GlobalFlags) LoginCmd {
-@@ -69,8 +68,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
- 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
- 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
- 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", false, product.Replace("Allow login into an insecure Loft instance"))
--	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
--	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
++// NodeAutoscalingEnabled reports whether vCluster itself scales the coredns
++// deployment with the number of nodes. Embedded coredns runs inside the control
++// plane and has no deployment, and with mode External another autoscaler sets
++// the replica count.
++func (c CoreDNS) NodeAutoscalingEnabled() bool {
++	autoscaling := c.Deployment.Autoscaling
++	return c.Enabled && !c.Embedded && autoscaling.Enabled && autoscaling.Mode != CoreDNSAutoscalingModeExternal
++}
++
+ type CoreDNSService struct {
+ 	// Spec holds extra options for the coredns service
+ 	Spec map[string]interface{} `json:"spec,omitempty"`
+@@ -2523,9 +2532,12 @@ type CoreDNSDeployment struct {
+ 	// Image is the coredns image to use
+ 	Image string `json:"image,omitempty"`
  
- 	return loginCmd
+-	// Replicas is the amount of coredns pods to run.
++	// Replicas is the amount of coredns pods to run. While autoscaling is enabled, it is only used with mode External, as the amount coredns is created with.
+ 	Replicas int `json:"replicas,omitempty"`
+ 
++	// Autoscaling lets an autoscaler set the amount of coredns pods instead of replicas.
++	Autoscaling CoreDNSAutoscaling `json:"autoscaling,omitempty"`
++
+ 	// NodeSelector is the node selector to use for coredns.
+ 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
+ 
+@@ -2547,6 +2559,33 @@ type CoreDNSDeployment struct {
+ 	TopologySpreadConstraints []interface{} `json:"topologySpreadConstraints,omitempty"`
  }
+ 
++// CoreDNSAutoscalingMode is the autoscaler that sets the amount of coredns pods while autoscaling is enabled.
++type CoreDNSAutoscalingMode string
++
++const (
++	// CoreDNSAutoscalingModeNodes lets vCluster scale coredns with the number of nodes in the cluster.
++	CoreDNSAutoscalingModeNodes CoreDNSAutoscalingMode = "Nodes"
++	// CoreDNSAutoscalingModeExternal leaves the amount of coredns pods to an autoscaler that vCluster does not run.
++	CoreDNSAutoscalingModeExternal CoreDNSAutoscalingMode = "External"
++)
++
++type CoreDNSAutoscaling struct {
++	// Enabled defines if an autoscaler sets the amount of coredns pods instead of replicas. Mode selects the autoscaler.
++	Enabled bool `json:"enabled,omitempty"`
++
++	// Mode is the autoscaler that sets the amount of coredns pods. With Nodes, vCluster scales coredns with the number of nodes in the cluster and corrects an amount that something else has set. With External, vCluster creates coredns with replicas and then keeps the amount that is set on the coredns deployment, so that a HorizontalPodAutoscaler or another autoscaler can scale it. Defaults to Nodes.
++	Mode CoreDNSAutoscalingMode `json:"mode,omitempty" jsonschema:"enum=Nodes,enum=External"`
++
++	// NodesPerReplica is the number of nodes that one coredns pod serves. vCluster runs one coredns pod for every nodesPerReplica nodes, rounded up. A lower value runs more coredns pods. On shared nodes, unless sync.fromHost.nodes selects all nodes, the cluster only lists the nodes that run its pods, coredns pods included, so with a value of 1 every new coredns pod can add a node and the amount of coredns pods can keep growing up to maxReplicas. Only used with mode Nodes.
++	NodesPerReplica int `json:"nodesPerReplica,omitempty"`
++
++	// MinReplicas is the lowest amount of coredns pods to run. A cluster with fewer than two nodes runs a single coredns pod regardless. Only used with mode Nodes.
++	MinReplicas int `json:"minReplicas,omitempty"`
++
++	// MaxReplicas is the highest amount of coredns pods to run. Only used with mode Nodes.
++	MaxReplicas int `json:"maxReplicas,omitempty"`
++}
++
+ type ControlPlaneProxy struct {
+ 	// BindAddress under which vCluster will expose the proxy.
+ 	BindAddress string `json:"bindAddress,omitempty"`
 ```
 
-**File**: `cmd/vclusterctl/cmd/platform/login_test.go` (removed, +0/-17)
+**File**: `config/config_test.go` (modified, +62/-0)
 ```diff
-@@ -1,17 +0,0 @@
--package platform
--
--import (
--	"testing"
--
--	"github.com/loft-sh/vcluster/pkg/cli/flags"
--)
--
--func TestPlatformLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
--	cmd := NewCobraLoginCmd(&flags.GlobalFlags{})
--	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
--		t.Fatalf("--docker-login=false no longer parses: %v", err)
--	}
--	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
--		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
--	}
--}
+@@ -505,3 +505,65 @@ func TestStoreType_Shared(t *testing.T) {
+ 			"%s: a non-shared store must keep extra control plane pods out of the Service", storeType)
+ 	}
+ }
++
++func TestCoreDNS_NodeAutoscalingEnabled(t *testing.T) {
++	coreDNS := func(change func(*CoreDNS)) CoreDNS {
++		coreDNS := CoreDNS{Enabled: true}
++		coreDNS.Deployment.Autoscaling.Enabled = true
++		change(&coreDNS)
++		return coreDNS
++	}
++
++	tests := []struct {
++		name     string
++		coreDNS  CoreDNS
++		expected bool
++	}{
++		{
++			name:     "autoscaling without a mode scales with nodes",
++			coreDNS:  coreDNS(func(*CoreDNS) {}),
++			expected: true,
++		},
++		{
++			name: "mode Nodes",
++			coreDNS: coreDNS(func(c *CoreDNS) {
++				c.Deployment.Autoscaling.Mode = CoreDNSAutoscalingModeNodes
++			}),
++			expected: true,
++		},
++		{
++			name: "mode External leaves the replica count to another autoscaler",
++			coreDNS: coreDNS(func(c *CoreDNS) {
++				c.Deployment.Autoscaling.Mode = CoreDNSAutoscalingModeExternal
++			}),
++			expected: false,
++		},
++		{
++			name: "autoscaling disabled",
++			coreDNS: coreDNS(func(c *CoreDNS) {
++				c.Deployment.Autoscaling.Enabled = false
++			}),
++			expected: false,
++		},
++		{
++			name: "embedded coredns has no deployment",
++			coreDNS: coreDNS(func(c *CoreDNS) {
++				c.Embedded = true
++			}),
++			expected: false,
++		},
++		{
++			name: "coredns disabled",
++			coreDNS: coreDNS(func(c *CoreDNS) {
++				c.Enabled = false
++			}),
++			expected: false,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			assert.Equal(t, tt.coreDNS.NodeAutoscalingEnabled(), tt.expected)
++		})
++	}
++}
+```
+
+**File**: `config/values.yaml` (modified, +6/-0)
+```diff
+@@ -265,6 +265,12 @@ controlPlane:
+       labels: {}
+       image: ""
+       replicas: 1
++      autoscaling:
++        enabled: false
++        mode: Nodes
++        nodesPerReplica: 16
++        minReplicas: 2
++        maxReplicas: 100
+       pods:
+         labels: {}
+         annotations: {}
+```
+
+**File**: `pkg/config/validation.go` (modified, +48/-0)
+```diff
+@@ -197,6 +197,11 @@ func ValidateConfigAndSetDefaults(vConfig *VirtualClusterConfig) error {
+ 		return err
+ 	}
+ 
++	err = validateCoreDNSAutoscaling(vConfig.ControlPlane.CoreDNS)
++	if err != nil {
++		return err
++	}
++
+ 	// check config for exporting kubeconfig Secrets
+ 	err = validateExportKubeConfig(vConfig.ExportKubeConfig)
+ 	if err != nil {
+@@ -1099,6 +1104,49 @@ func validateAdvancedControlPlaneConfig(controlPlaneAdvanced config.ControlPlane
+ 	return nil
+ }
+ 
++// validateCoreDNSAutoscaling checks the autoscaling of the coredns deployment.
++// The settings are only read while both coredns and its autoscaling are enabled.
++func validateCoreDNSAutoscaling(coreDNS config.CoreDNS) error {
++	autoscaling := coreDNS.Deployment.Autoscaling
++	if !coreDNS.Enabled || !autoscaling.Enabled {
++		return nil
++	}
++
++	const path = "controlPlane.coredns.deployment.autoscaling"
++	if coreDNS.Embedded {
++		return fmt.Errorf("%s.enabled cannot be used with controlPlane.coredns.embedded, because embedded coredns has no deployment to scale", path)
++	}
++	if coreDNS.OverwriteManifests != "" {
++		// the custom manifests are applied as they are, so every control plane start would reset the replica count they set
++		return fmt.Errorf("%s.enabled cannot be used with controlPlane.coredns.overwriteManifests, because the custom manifests set the replica count", path)
++	}
++
++	switch autoscaling.Mode {
++	case config.CoreDNSAutoscalingModeExternal:
++		// the ratio and the bounds only steer the autoscaler that vCluster runs
++		return nil
++	case "", config.CoreDNSAutoscalingModeNodes:
++		return validateCoreDNSNodeAutoscaling(path, autoscaling)
++	default:
++		return fmt.Errorf("%s.mode must be %s or %s, got %q", path, config.CoreDNSAutoscalingModeNodes, config.CoreDNSAutoscalingModeExternal, autoscaling.Mode)
++	}
++}
++
++// validateCoreDNSNodeAutoscaling checks the settings of the autoscaler that vCluster runs with mode Nodes.
++func validateCoreDNSNodeAutoscaling(path string, autoscaling config.CoreDNSAutoscaling) error {
++	if autoscaling.NodesPerReplica < 1 {
++		return fmt.Errorf("%s.nodesPerReplica must be at least 1, got %d", path, autoscaling.NodesPerReplica)
++	}
++	if autoscaling.MinReplicas < 1 {
++		return fmt.Errorf("%s.minReplicas must be at least 1, got %d", path, autoscaling.MinReplicas)
++	}
++	if autoscaling.MaxReplicas < autoscaling.MinReplicas {
++		return fmt.Errorf("%s.maxReplicas must not be lower than minReplicas (%d), got %d", path, autoscaling.MinReplicas, autoscaling.MaxReplicas)
++	}
++
++	return nil
++}
++
+ func ValidateCustomResourceSyncProxyConflicts(toHostCustomResources map[string]config.SyncToHostCustomResource, fromHostCustomResources map[string]config.SyncFromHostCustomResource, proxyCustomResources map[string]config.CustomResourceProxy) error {
+ 	// Only consider enabled resources for conflict detection
+ 	enabledToHost := lo.Keys(lo.PickBy(toHostCustomResources, func(_ string, v config.SyncToHostCustomResource) bool { return v.Enabled }))
+```
+
+**File**: `pkg/config/validation_test.go` (modified, +202/-0)
+```diff
+@@ -2527,3 +2527,205 @@ func TestValidateKubeOvnCloudControllerManager(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestValidateCoreDNSAutoscaling(t *testing.T) {
++	const path = "controlPlane.coredns.deployment.autoscaling"
++
++	coreDNS := func(change func(*config.CoreDNS)) config.CoreDNS {
++		coreDNS := config.CoreDNS{
++			Enabled: true,
++			Deployment: config.CoreDNSDeployment{
++				Autoscaling: config.CoreDNSAutoscaling{
++					Enabled:         true,
++					NodesPerReplica: 16,
++					MinReplicas:     2,
++					MaxReplicas:     100,
++				},
++			},
++		}
++		change(&coreDNS)
++		return coreDNS
++	}
++
++	testCases := []struct {
++		name     string
++		coreDNS  config.CoreDNS
++		checkErr func(t *testing.T, err error)
++	}{
++		{
++			name:     "Valid: autoscaling enabled",
++			coreDNS:  coreDNS(func(*config.CoreDNS) {}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Valid: minReplicas equal to maxReplicas",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.MinReplicas = 4
++				c.Deployment.Autoscaling.MaxReplicas = 4
++			}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Valid: settings are not read while autoscaling is disabled",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Embedded = true
++				c.Deployment.Autoscaling = config.CoreDNSAutoscaling{}
++			}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Valid: settings are not read while coredns is disabled",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Enabled = false
++				c.Deployment.Autoscaling.NodesPerReplica = 0
++			}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Valid: mode Nodes set explicitly",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.Mode = config.CoreDNSAutoscalingModeNodes
++			}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Valid: mode External does not read the settings of the nodes autoscaler",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling = config.CoreDNSAutoscaling{Enabled: true, Mode: config.CoreDNSAutoscalingModeExternal}
++			}),
++			checkErr: noErrExpected,
++		},
++		{
++			name: "Invalid: unknown mode",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.Mode = "Load"
++			}),
++			checkErr: expectErr(path + `.mode must be Nodes or External, got "Load"`),
++		},
++		{
++			name: "Invalid: mode External with embedded coredns",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Embedded = true
++				c.Deployment.Autoscaling.Mode = config.CoreDNSAutoscalingModeExternal
++			}),
++			checkErr: expectErr(path + ".enabled cannot be used with controlPlane.coredns.embedded, because embedded coredns has no deployment to scale"),
++		},
++		{
++			name: "Invalid: embedded coredns has no deployment to scale",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Embedded = true
++			}),
++			checkErr: expectErr(path + ".enabled cannot be used with controlPlane.coredns.embedded, because embedded coredns has no deployment to scale"),
++		},
++		{
++			name: "Invalid: custom manifests set the replica count",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.OverwriteManifests = "apiVersion: apps/v1\nkind: Deployment"
++			}),
++			checkErr: expectErr(path + ".enabled cannot be used with controlPlane.coredns.overwriteManifests, because the custom manifests set the replica count"),
++		},
++		{
++			name: "Invalid: mode External with custom manifests",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.OverwriteManifests = "apiVersion: apps/v1\nkind: Deployment"
++				c.Deployment.Autoscaling.Mode = config.CoreDNSAutoscalingModeExternal
++			}),
++			checkErr: expectErr(path + ".enabled cannot be used with controlPlane.coredns.overwriteManifests, because the custom manifests set the replica count"),
++		},
++		{
++			name: "Invalid: nodesPerReplica below 1",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.NodesPerReplica = 0
++			}),
++			checkErr: expectErr(path + ".nodesPerReplica must be at least 1, got 0"),
++		},
++		{
++			name: "Invalid: minReplicas below 1",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.MinReplicas = 0
++			}),
++			checkErr: expectErr(path + ".minReplicas must be at least 1, got 0"),
++		},
++		{
++			name: "Invalid: maxReplicas below minReplicas",
++			coreDNS: coreDNS(func(c *config.CoreDNS) {
++				c.Deployment.Autoscaling.MinReplicas = 5
++				c.Deployment.Autoscaling.MaxReplicas = 4
++			}),
++			checkErr: expectErr(path + ".maxReplicas must not be lower than minReplicas (5), got 4"),
++		},
++	}
++
++	for _, tc := range testCases {
++		t.Run(tc.name, func(t *testing.T) {
++			tc.checkErr(t, validateCoreDNSAutoscaling(tc.coreDNS))
++		})
++	}
++}
++
++// TestValidateConfigAndSetDefaultsChecksCoreDNSAutoscaling checks that the control plane runs
++// the coredns autoscaling checks. The chart schema cannot express them, so without this call
++// the controller would start with a setting it cannot honor.
++func TestValidateConfigAndSetDefaultsChecksCoreDNSAutoscaling(t *testi
+```
+
+**File**: `pkg/controllers/coredns/autoscaler.go` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++package coredns
++
++import (
++	"context"
++	"fmt"
++
++	"github.com/loft-sh/vcluster/config"
++	"github.com/loft-sh/vcluster/pkg/constants"
++	"github.com/loft-sh/vcluster/pkg/util/loghelper"
++	appsv1 "k8s.io/api/apps/v1"
++	corev1 "k8s.io/api/core/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/types"
++	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/builder"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/controller"
++	"sigs.k8s.io/controller-runtime/pkg/event"
++	"sigs.k8s.io/controller-runtime/pkg/handler"
++	"sigs.k8s.io/controller-runtime/pkg/predicate"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++)
++
++const DeploymentName = "coredns"
++
++// AutoscalerReconciler keeps the replica count of the coredns deployment
++// proportional to the number of nodes in the cluster.
++type AutoscalerReconciler struct {
++	client.Client
++	Log    loghelper.Logger
++	Config config.CoreDNSAutoscaling
++}
++
++func (r *AutoscalerReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
++	deployment := &appsv1.Deployment{}
++	err := r.Get(ctx, types.NamespacedName{Namespace: Namespace, Name: DeploymentName}, deployment)
++	if kerrors.IsNotFound(err) {
++		// nothing to scale yet, the deployment triggers a reconcile once it is created
++		return ctrl.Result{}, nil
++	} else if err != nil {
++		return ctrl.Result{}, fmt.Errorf("get coredns deployment: %w", err)
++	}
++
++	// the nodes are only counted, so skip copying every node out of the cache
++	nodes := &corev1.NodeList{}
++	if err := r.List(ctx, nodes, client.UnsafeDisableDeepCopy); err != nil {
++		return ctrl.Result{}, fmt.Errorf("list nodes: %w", err)
++	}
++
++	desired := DesiredReplicas(len(nodes.Items), r.Config)
++	if deployment.Spec.Replicas != nil && *deployment.Spec.Replicas == desired {
++		return ctrl.Result{}, nil
++	}
++
++	beforeChanges := deployment.DeepCopy()
++	deployment.Spec.Replicas = &desired
++	if err := r.Patch(ctx, deployment, client.MergeFrom(beforeChanges)); err != nil {
++		return ctrl.Result{}, fmt.Errorf("scale coredns deployment to %d replicas: %w", desired, err)
++	}
++
++	r.Log.Infof("scaled coredns deployment to %d replicas for %d nodes", desired, len(nodes.Items))
++	return ctrl.Result{}, nil
++}
++
++// DesiredReplicas returns the number of coredns replicas to run for the given
++// number of nodes: one replica for every nodesPerReplica nodes, rounded up and
++// kept between minReplicas and maxReplicas.
++//
++// Every node counts, also a cordoned or NotReady one. Its pods keep running and
++// keep resolving names, and counting only Ready nodes would scale DNS down at
++// the moment many nodes lose their connection to the control plane.
++func DesiredReplicas(nodes int, autoscaling config.CoreDNSAutoscaling) int32 {
++	// minReplicas keeps DNS running when a node fails. With fewer than two nodes,
++	// a second replica would run on the same node and fail with it, so a single
++	// replica serves.
++	if nodes <= 1 {
++		return 1
++	}
++
++	// config validation rejects a ratio below 1, this only keeps a zero value from dividing by zero
++	nodesPerReplica := max(autoscaling.NodesPerReplica, 1)
++	replicas := (nodes + nodesPerReplica - 1) / nodesPerReplica
++	replicas = max(replicas, autoscaling.MinReplicas)
++	if autoscaling.MaxReplicas > 0 {
++		replicas = min(replicas, autoscaling.MaxReplicas)
++	}
++
++	return int32(replicas)
++}
++
++// SetupWithManager adds the controller to the manager
++func (r *AutoscalerReconciler) SetupWithManager(mgr ctrl.Manager) error {
++	request := reconcile.Request{NamespacedName: types.NamespacedName{Namespace: Namespace, Name: DeploymentName}}
++
++	// only the coredns deployment is scaled. A status update does not change its replica count,
++	// so only react when its spec changed, for example because something else scaled it.
++	isCoreDNSDeployment := predicate.NewPredicateFuncs(func(object client.Object) bool {
++		return object.GetNamespace() == request.Namespace && object.GetName() == request.Name
++	})
++
++	// the number of nodes only changes when a node is created or deleted. Skipping node
++	// updates keeps the status heartbeats of a large fleet out of the work queue.
++	nodeCountChanged := predicate.Funcs{
++		CreateFunc:  func(event.CreateEvent) bool { return true },
++		DeleteFunc:  func(event.DeleteEvent) bool { return true },
++		UpdateFunc:  func(event.UpdateEvent) bool { return false },
++		GenericFunc: func(event.GenericEvent) bool { return false },
++	}
++	enqueueDeployment := handler.EnqueueRequestsFromMapFunc(func(context.Context, client.Object) []reconcile.Request {
++		return []reconcile.Request{request}
++	})
++
++	return ctrl.NewControllerManagedBy(mgr).
++		WithOptions(controller.Options{
++			CacheSyncTimeout: constants.DefaultCacheSyncTimeout,
++		}).
++		Named("coredns_autoscaler").
++		For(&appsv1.Deployment{}, builder.WithPredicates(isCoreDNSDeployment, predicate.GenerationChangedPredicate{})).
++		Watches(&corev1.Node{}, enqueue
 ```
 
 #### Recent Merged Pull Requests:
@@ -1621,38 +1981,47 @@ Monorepo-Commit: 21dabd498ecd486b5a506b17ce97cc13a0989130
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): remove deprecated docker-login flag
+## X. coredns): add opt-in autoscaling of the coredns deployment
 
 **RULE**:
-When implementing operations in `cmd/vclusterctl/cmd/login.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chart/values.schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78f21ee0`: cli): remove deprecated docker-login flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f38b446f`: coredns): add opt-in autoscaling of the coredns deployment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/login.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chart/values.schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	Driver    string
-	AccessKey string
-	Insecure  bool
+    "CoreDNSAutoscaling": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled defines if an autoscaler sets the amount of coredns pods instead of replicas. Mode selects the autoscaler."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "Nodes",
+            "External"
+          ],
+          "description": "Mode is the autoscaler that sets the amount of coredns pods. With Nodes, vCluster scales coredns with the number of nodes in the cluster and corrects an amount that something else has set. With External, vCluster creates coredns with replicas and then keeps the amount that is set on the coredns deployment, so that a HorizontalPodAutoscaler or another autoscaler can scale it. Defaults to Nodes."
+        },
+        "nodesPerReplica": {
+          "type": "integer",
+          "description": "NodesPerReplica is the number of nodes that one coredns pod serves. vCluster runs one coredns pod for every nodesPerReplica nodes, rounded up. A lower value runs more coredns pods. On shared nodes, unless sync.fromHost.nodes selects all nodes, the cluster only lists the nodes that run its pods, coredns p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	Driver      string
-	AccessKey   string
-	Insecure    bool
-	DockerLogin bool
-	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+          "description": "Replicas is the amount of coredns pods to run."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78f21ee0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f38b446f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

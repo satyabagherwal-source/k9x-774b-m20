@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "bace1272",
+    "sourceVersion": "40f0b84f",
     "license": "Apache-2.0",
-    "contentHash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
-    "lastHarvestedAt": "2026-11-27T02:41:00.041Z",
+    "contentHash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
+    "lastHarvestedAt": "2026-11-27T21:47:56.317Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "78f21ee0",
+    "sourceVersion": "f38b446f",
     "license": "Apache-2.0",
-    "contentHash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
-    "lastHarvestedAt": "2026-11-27T03:43:58.311Z",
+    "contentHash": "7ea87ea70ed02ee8d8db0000a01d070694ca124867769e331e7ac07f23a757d3",
+    "lastHarvestedAt": "2026-11-27T21:47:51.963Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {
