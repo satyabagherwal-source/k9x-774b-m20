@@ -13834,3 +13834,4 @@ Every entry in this ledger must capture:
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `fdc8041b` | Multi-dimensional audit evidence | 2026-11-27T14:05:10.676Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2b63882d` | Multi-dimensional audit evidence | 2026-11-27T14:06:59.256Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `541579bf` | Multi-dimensional audit evidence | 2026-11-27T14:16:53.143Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `c4eaf89c` | Multi-dimensional audit evidence | 2026-11-27T14:39:33.115Z |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-SOWZ",
-    "timestamp": "2026-11-26T06:44:05.027Z",
-    "repository": "sozercan/kaset",
-    "learningId": "learn-github-sozercan-kaset",
-    "contentHash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-SQX9",
     "timestamp": "2026-11-26T06:44:07.629Z",
     "repository": "DNSControl/dnscontrol",
@@ -7490,6 +7475,21 @@
     "repository": "max-sixty/worktrunk",
     "learningId": "learn-github-max-sixty-worktrunk",
     "contentHash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7ZZH",
+    "timestamp": "2026-11-27T14:39:33.101Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
