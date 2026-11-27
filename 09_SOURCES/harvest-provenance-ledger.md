@@ -13808,3 +13808,7 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `daddd4e1` | Multi-dimensional audit evidence | 2026-11-27T11:44:31.298Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `d0d659bf` | Multi-dimensional audit evidence | 2026-11-27T11:44:32.736Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `8fe14014` | Multi-dimensional audit evidence | 2026-11-27T11:54:25.279Z |
+| `learn-github-serpapi-google-search-results-python` | `https://github.com/serpapi/google-search-results-python` | `cbd94525` | Multi-dimensional audit evidence | 2026-11-27T12:03:35.827Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `e7c77205` | Multi-dimensional audit evidence | 2026-11-27T12:03:39.854Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5f2ffdd2` | Multi-dimensional audit evidence | 2026-11-27T12:03:44.232Z |
+| `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `0d511ea7` | Multi-dimensional audit evidence | 2026-11-27T12:03:45.856Z |

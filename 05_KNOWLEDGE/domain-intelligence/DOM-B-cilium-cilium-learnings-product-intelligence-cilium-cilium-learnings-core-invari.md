@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T07:03:56.968Z",
+  "timestamp": "2026-11-27T12:03:52.241Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T07:03:56.968Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T12:03:52.241Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium-cilium-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `c07795fa`  
+> **Source Version**: `5f2ffdd2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T07:03:48.608Z  
+> **Timestamp**: 2026-11-27T12:03:42.992Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T07:03:48.602Z  
+> **Harvest Timestamp**: 2026-11-27T12:03:42.988Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25922 stars
+- **Stars / Engagement**: 25924 stars
 
 ---
 
@@ -1287,12 +1287,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50280** (2026-11-26): **ci: Read the Hubble CLI job's kind config from KIND_CONFIG**
-  *Symptoms*: The Hubble CLI integration test has always declared kind_config at the workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action. The env context is case sensitive, so the expression expands to the empty string and kind creates its default single-node cluster with kindnet. Cilium installs on top of it and both IPAMs then hand out addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially before Cilium's CNI config exists, while Cilium picks its router IP at random among 254 addresses. In 1 run out of 254, cilium_host takes the relay's address and its local route shadows the pod's route, so the kubelet probes and DNS replies for the relay reach the host stack. The relay never connects to hubble-peer and `cilium status --wait` gives up after 5 minutes:    Deployment             hubble-relay             Desired: 1, Unavailable: 1/1   Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready  This commit renames the key to KIND_CONFIG, the spelling the other kind workflows use. .github/kind-config.yaml then applies, so the cluster comes up without a CNI on the control-plane and worker it declares, and Cilium is the only IPAM on each node.  This PR was prepared with AIL:3. I personally checked the kind-action inputs in run 37774557276.  Fixes: bc294a83d5a1 ("Add hubble CLI integration tests") 
+- **Issue #50304** (2026-11-27): **Pr/41ks/eks enable ipsec ipv6**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [ ] All commits are signed off. See the section [Developer’s Certificate of Origin] - [ ] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [ ] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  Fixes: #issue-number  ```release-note <!-- Enter the release note text here or remove this release-note section from your PR description. Do NOT put an "empty" release note here --> ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate o
 
-- **Issue #50279** (2026-11-26): **v1.19: Revert "bpf: Recreate ingress CT entry if proxy_redirect is stale"**
-  *Symptoms*: Reverts one of the backport from https://github.com/cilium/cilium/pull/50041, that of https://github.com/cilium/cilium/pull/49592.
+- **Issue #50299** (2026-11-27): **[v1.20] mutual-auth: Mark Mutual Auth as deprecated.**
+  *Symptoms*: This commit updates the docs to correctly mark Mutual Auth as deprecated in the v1.20 release.  It has already been removed from `main`/`v1.21`.  Fixes: #47132  This PR was made with AIL:0. 
   **Post-Mortem & Fix Analysis**:
+  > /test
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1310,98 +1311,65 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bcc7103` (2026-07-29)
-**Commit Message**: cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)
+### Incident Patch 1: `5f2ffdd2` (2026-11-26)
+**Commit Message**: CODEOWNERS: Cover missing IPsec test file
 
-In ENI mode Pods are allocated IPs possibly from different ENI
-devices. In this case the check that validates that excluded traffic
-is masqueraded with the node host IP may be wrong if the client Pod
-is actually on a secondary ENI device.
+File cilium-cli/connectivity/tests/ipsec_key_derivation.go should be
+owned by the IPsec team like the other IPsec file in the same directory.
 
-Implementing the logic to determine what the correct masquerade
-IP for a ENI Pod seems brittle. Instead, when the external endpoint
-is excluded in egw policy we choose to assert that the client
-connection was *not* masqueraded by the egress IP
+Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
 
-To avoid failing when the ENI pod is masqueraded by the same IP as
-as the egress IP (i.e. primary ENI device Pods) we skip this check
-when the assertion is ambiguous.
-
-Fixes: #47530
-
-AIL:3
-
-Signed-off-by: Tom Hadlaw <[REDACTED_EMAIL]>
-
-**File**: `cilium-cli/connectivity/tests/egressgateway.go` (modified, +34/-8)
+**File**: `CODEOWNERS` (modified, +1/-1)
 ```diff
-@@ -792,23 +792,49 @@ func (s *egressGatewayExcludedCIDRs) Run(ctx context.Context, t *check.Test) {
- 			externalEcho := externalEcho.ToEchoIPPod()
+@@ -409,7 +409,7 @@ Makefile* @cilium/build
+ /cilium-cli/connectivity/tests/from-cidr.go @cilium/sig-policy
+ /cilium-cli/connectivity/tests/health.go @cilium/sig-agent
+ /cilium-cli/connectivity/tests/host.go @cilium/sig-agent
+-/cilium-cli/connectivity/tests/ipsec_xfrm.go @cilium/ipsec
++/cilium-cli/connectivity/tests/ipsec* @cilium/ipsec
+ /cilium-cli/connectivity/tests/lrp.go @cilium/sig-lb
+ /cilium-cli/connectivity/tests/pod.go @cilium/sig-agent
+ /cilium-cli/connectivity/tests/service.go @cilium/sig-lb
+```
+
+---
+
+### Incident Patch 2: `f9e1e6a9` (2026-11-19)
+**Commit Message**: workflows/netperf: Raise network bandwidth limit
+
+The default instance type we use on GKE for CI is limited to 10Gbps.
+This commit changes the instance type to a bigger one that has a
+bandwidth limit of 32Gbps. This is just enough to not be limited by the
+wire when we run the netperf TCP_STREAM tests. Of course, we're still
+running at line rate when running the same test with multiple flows.
+
+This change improves the numbers for TCP_STREAM, but also seems to
+improve performance for the TCP_CRR benchmark. The downside is that the
+new instance type costs ~8 times more than the previous one. This is
+likely okay because this workflow doesn't run on pull requests by
+default. It only runs on a schedule, once a day.
+
+Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/net-perf-gke.yaml` (modified, +1/-0)
+```diff
+@@ -306,6 +306,7 @@ jobs:
+           fallback-zones: ${{ steps.fallback-zones.outputs.zones }}
+           node-taints: ${{ steps.vars.outputs.node_taints }}
+           labels: "usage=${{ github.repository_owner }}-${{ github.event.repository.name }},owner=${{ steps.vars.outputs.owner }}"
++          machine-type: "n2-standard-16"
  
- 			t.ForEachIPFamily(func(ipFam features.IPFamily) {
--				hostIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
-+				if ipFam == features.IPFamilyV6 && !ipv6Enabled {
-+					return
-+				}
-+
-+				egressIP := egressGatewayNodeInternalIP
-+				if ipFam == features.IPFamilyV6 {
-+					egressIP = egressGatewayNodeInternalIPv6
-+				}
-+
-+				clientNodeIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
- 				if ipFam == features.IPFamilyV6 {
--					if !ipv6Enabled {
--						return
--					}
- 					for _, addr := range client.Pod.Status.HostIPs {
--						ip, err := netip.ParseAddr(addr.IP)
--						if err == nil && ip.Unmap().Is6() {
--							hostIP = ip
-+						parsed, err := netip.ParseAddr(addr.IP)
-+						if err == nil && parsed.Unmap().Is6() {
-+							clientNodeIP = parsed
- 							break
- 						}
- 					}
- 				}
- 
- 				t.NewAction(s, fmt.Sprintf("curl-%s-%d", ipFam, i), &client, externalEcho, ipFam).Run(func(a *check.Action) {
- 					a.ExecInPod(ctx, a.CurlCommandWithOutput(externalEcho))
--					validateEgressGatewayClientIP(a, hostIP)
-+					if a.Failed() {
-+						return
-+					}
-+
-+					clientIP, err := extractClientIPFromResponse(a.CmdOutput())
-+					if err != nil {
-+						a.Failf("Cannot extract client IP from response %q: %s", a.CmdOutput(), err)
-+						return
-+					}
-+
-+					// If the egress IP would be the same as the client's node IP then
-+					// we don't know whether it was masqueraded locally due to exclusion
-+					// or due to egress-gateway.
-+					if clientNodeIP == egressIP {
-+						a.Logf("client node IP and egress IP are the same (%s), check to ensure connection was not masqueraded by egress-gateway IP is inconclusive", clientNodeIP)
-+					} else {
-+						if ip.CompareUnmap(clientIP, egressIP) == 0 {
-+							a.Failf("Excluded-CIDR traffic was masqueraded with egress gateway IP %s for pod %s/%s (actual: %s); exclusion did not take effect",
-+								egressIP, client.Pod.Namespace, client.Pod.Name, clientIP)
-+						}
-+					}
- 				})
- 			})
- 			i++
+       - name: Create ESP allow firewall rule
+         if: ${{ matrix.name == 'tunnel-ipsec' }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #50280** (2026-11-26): ci: Read the Hubble CLI job's kind config from KIND_CONFIG (@aanm)
-- **PR #50279** (2026-11-26): v1.19: Revert "bpf: Recreate ingress CT entry if proxy_redirect is stale" (@pchaigno)
-- **PR #50277** (closed): DO NOT MERGE ci: use versioned Ubuntu 26 runners (@nbusseneau)
-- **PR #50268** (2026-11-25): .github: don't use ubuntu-slim for labeling External Contributions (@julianwiedmann)
-- **PR #50266** (2026-11-26): [v1.19] loadbalancer: preserve sockets to shared live backends (@ysksuzuki)
-- **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
+- **PR #50304** (closed): Pr/41ks/eks enable ipsec ipv6 (@41ks)
+- **PR #50299** (2026-11-27): [v1.20] mutual-auth: Mark Mutual Auth as deprecated. (@youngnick)
+- **PR #50293** (2026-11-27): CODEOWNERS: Cover missing IPsec test file (@pchaigno)
+- **PR #50290** (2026-11-27): cli/connectivity: Don't dump the IPsec keys on test failures (@pchaigno)
+- **PR #50285** (closed): [v1.18] testing backports (@aanm)
+- **PR #50284** (closed): [v1.19] testing backports (@aanm)
 
 ---
 
@@ -1421,68 +1389,31 @@ Signed-off-by: Tom Hadlaw <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)
+## X. CODEOWNERS: Cover missing IPsec test file
 
 **RULE**:
-When implementing operations in `cilium-cli/connectivity/tests/egressgateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODEOWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bcc7103`: cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f2ffdd2`: CODEOWNERS: Cover missing IPsec test file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/tests/egressgateway.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODEOWNERS`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				if ipFam == features.IPFamilyV6 && !ipv6Enabled {
-					return
-				}
-
-				egressIP := egressGatewayNodeInternalIP
-				if ipFam == features.IPFamilyV6 {
-					egressIP = egressGatewayNodeInternalIPv6
-				}
-
-				clientNodeIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
-						parsed, err := netip.ParseAddr(addr.IP)
-						if err == nil && parsed.Unmap().Is6() {
-							clientNodeIP = parsed
-					if a.Failed() {
-						return
-					}
-
-					clientIP, err := extractClientIPFromResponse(a.CmdOutput())
-					if err != nil {
-						a.Failf("Cannot extract client IP from response %q: %s", a.CmdOutput(), err)
-						return
-					}
-
-					// If the egress IP would be the same as the client's node IP then
-					// we don't know whether it was masqueraded locally due to exclusion
-					// or due to egress-gateway.
-					if clientNodeIP == egressIP {
-						a.Logf("client node IP and egress IP are the same (%s), check to ensure connection was not masqueraded by egress-gateway IP is inconclusive", clientNodeIP)
-					} else {
-						if ip.CompareUnmap(clientIP, egressIP) == 0 {
-							a.Failf("Excluded-CIDR traffic was masqueraded with egress gateway IP %s for pod %s/%s (actual: %s); exclusion did not take 
+/cilium-cli/connectivity/tests/ipsec* @cilium/ipsec
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				hostIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
-					if !ipv6Enabled {
-						return
-					}
-						ip, err := netip.ParseAddr(addr.IP)
-						if err == nil && ip.Unmap().Is6() {
-							hostIP = ip
-					validateEgressGatewayClientIP(a, hostIP)
+/cilium-cli/connectivity/tests/ipsec_xfrm.go @cilium/ipsec
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bcc7103` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f2ffdd2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

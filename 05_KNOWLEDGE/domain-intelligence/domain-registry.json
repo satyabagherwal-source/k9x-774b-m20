@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T11:54:32.928Z",
-  "total_records": 2831,
+  "last_updated": "2026-11-27T12:03:52.590Z",
+  "total_records": 2834,
   "domains": {
     "A": {
       "total": 23,
@@ -1746,7 +1746,7 @@
       ]
     },
     "H": {
-      "total": 689,
+      "total": 690,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2436,7 +2436,8 @@
         "DOM-H-BDBEDA9A",
         "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv",
         "DOM-H-FD509F0F",
-        "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn"
+        "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn",
+        "domain_intelligence-technical-construction-intelligence-chroma-core-chroma-core-invariants"
       ]
     },
     "I": {
@@ -2612,7 +2613,7 @@
       ]
     },
     "J": {
-      "total": 58,
+      "total": 60,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2671,7 +2672,9 @@
         "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-core-invariants",
         "domain_intelligence-search-distribution-intelligence-appwrite-appwrite-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-core-invar",
+        "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-"
       ]
     },
     "K": {
@@ -8574,8 +8577,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "94e53a68e5cfcb106341f4bde7a2ec07675839b73515cde7b19f9703a50a1d47",
-      "created_at": "2026-11-27T07:03:50.277Z"
+      "content_hash": "556051149a77a726c2e2f9a2ce52a93eb836246ea37bb1fff089552f0a3bfab5",
+      "created_at": "2026-11-27T12:03:44.690Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8592,8 +8595,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "fce2c5a31fa416a3f0b9d6ddd1c4b638f17461e5a8b009b9d9694440e646db00",
-      "created_at": "2026-11-27T07:03:57.323Z"
+      "content_hash": "7a292fff66a7062cf490301d21bee6a1e3fbd291a5ba55c62f25bb4715391a3e",
+      "created_at": "2026-11-27T12:03:52.590Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -18193,8 +18196,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "3a42576ac85a7aec2b8136f0e1878b602e71e7b123491927723dba0881b9a15e",
-      "created_at": "2026-11-26T18:33:02.687Z"
+      "content_hash": "b628ad581d24bcc6b42d85e6074e0c433ece261c5c02eec35c11f2d43a317756",
+      "created_at": "2026-11-27T12:03:40.321Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -18220,8 +18223,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "9127488655071aaa4b0b737b0dfaf7c3eeccc9c3d406ee003d22f34eed123497",
-      "created_at": "2026-11-26T18:33:07.226Z"
+      "content_hash": "f3a3937f8c522c63d4636b0835a94759f289da459db0e2737c8e6a061f6c5156",
+      "created_at": "2026-11-27T12:03:51.632Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -47816,6 +47819,33 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T11:34:28.701Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-core-invar": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-core-invar",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: serpapi/google-search-results-python Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-serpapi-google-search-results-python-search-distribution-intelligence-serpapi-go.md",
+      "repository": "serpapi/google-search-results-python",
+      "content_hash": "0ea5967f524ff497d43c58e0e93b036dd6501a465fdd45d3927da5df0cb68c7f",
+      "created_at": "2026-11-27T12:03:36.287Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-chroma-core-chroma-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-chroma-core-chroma-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: chroma-core/chroma Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-chroma-core-chroma-technical-construction-intelligence-chroma-core-chroma-core-i.md",
+      "repository": "chroma-core/chroma",
+      "content_hash": "7c38ee96b99c8912c87018c996ad3e4dde09073ee931412935a75a58aadfe3d1",
+      "created_at": "2026-11-27T12:03:46.309Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: serpapi-google-search-results-python-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-serpapi-google-search-results-python-learnings-search-distribution-intelligence-.md",
+      "repository": "serpapi-google-search-results-python-learnings",
+      "content_hash": "31b0913d967b14e7d624bceba2e35a58f42da7d8b476c8d923e093d2dcc28789",
+      "created_at": "2026-11-27T12:03:50.456Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `f94c2ef2`  
+> **Source Version**: `e7c77205`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:33:00.982Z  
+> **Timestamp**: 2026-11-27T12:03:38.615Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:33:00.977Z  
+> **Harvest Timestamp**: 2026-11-27T12:03:38.610Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39790 stars
+- **Stars / Engagement**: 39814 stars
 
 ---
 
@@ -1002,441 +1002,194 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f94c2ef2` (2026-11-26)
-**Commit Message**: fix(terraform): parse TF_VAR_ values for variables of complex types as HCL (#11701)
+### Incident Patch 1: `e7c77205` (2026-11-27)
+**Commit Message**: docs: describe package digests and their sources (#11674)
 
-Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
-
-**File**: `pkg/iac/scanners/terraform/parser/load_vars.go` (modified, +44/-10)
+**File**: `docs/guide/configuration/reporting.md` (modified, +44/-2)
 ```diff
-@@ -12,25 +12,59 @@ import (
- 	"github.com/hashicorp/hcl/v2/hclsyntax"
- 	hcljson "github.com/hashicorp/hcl/v2/json"
- 	"github.com/zclconf/go-cty/cty"
-+	"github.com/zclconf/go-cty/cty/convert"
-+
-+	"github.com/aquasecurity/trivy/pkg/iac/terraform"
-+	"github.com/aquasecurity/trivy/pkg/log"
- )
+@@ -338,14 +338,51 @@ $ trivy image -f json -o results.json alpine:latest
+       "Target": "alpine:latest (alpine 3.20.3)",
+       "Class": "os-pkgs",
+       "Type": "alpine",
++      "Packages": [
++        {
++          "ID": "libssl3@3.3.2-r0",
++          "Name": "libssl3",
++          "Identifier": {
++            "PURL": "pkg:apk/alpine/libssl3@3.3.2-r0?arch=aarch64\u0026distro=3.20.3",
++            "UID": "c063faeb15a10ea8"
++          },
++          "Version": "3.3.2-r0",
++          "Arch": "aarch64",
++          "SrcName": "openssl",
++          "SrcVersion": "3.3.2-r0",
++          "Licenses": [
++            "Apache-2.0"
++          ],
++          "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
++          "DependsOn": [
++            "libcrypto3@3.3.2-r0",
++            "musl@1.2.5-r0"
++          ],
++          "Layer": {
++            "DiffID": "sha256:651d9022c23486dfbd396c13db293af6845731cbd098a5f5606db4bc9f5573e8"
++          },
++          "Digest": "sha1:5dd7435b217a4f82c2320879582d7c266a9c4b20",
++          "Digests": [
++            {
++              "Digest": "sha1:5dd7435b217a4f82c2320879582d7c266a9c4b20",
++              "Source": "apk-installed-db"
++            }
++          ],
++          "InstalledFiles": [
++            "lib/libssl.so.3",
++            "usr/lib/libssl.so.3"
++          ],
++          "AnalyzedBy": "apk"
++        }
++      ],
+       "Vulnerabilities": [
+         {
+           "VulnerabilityID": "CVE-2024-9143",
+           "PkgID": "libcrypto3@3.3.2-r0",
+           "PkgName": "libcrypto3",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libcrypto3@3.3.2-r0?arch=aarch64\u0026distro=3.20.3",
+-            "UID": "f705555b49cd2259"
++            "UID": "6046f49632a11363"
+           },
+           "InstalledVersion": "3.3.2-r0",
+           "FixedVersion": "3.3.2-r1",
+@@ -397,7 +434,7 @@ $ trivy image -f json -o results.json alpine:latest
+           "PkgName": "libssl3",
+           "PkgIdentifier": {
+             "PURL": "pkg:apk/alpine/libssl3@3.3.2-r0?arch=aarch64\u0026distro=3.20.3",
+-            "UID": "c4a39ef718e71832"
++            "UID": "c063faeb15a10ea8"
+           },
+           "InstalledVersion": "3.3.2-r0",
+           "FixedVersion": "3.3.2-r1",
+@@ -454,6 +491,11 @@ $ trivy image -f json -o results.json alpine:latest
  
--func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
--	combinedVars := make(map[string]cty.Value)
-+func parseEnvVar(name, val string, ty cty.Type) (cty.Value, error) {
-+	if ty == cty.NilType || ty.IsPrimitiveType() {
-+		return cty.StringVal(val), nil
-+	}
-+	expr, diags := hclsyntax.ParseExpression([]byte(val), "<TF_VAR_"+name+">", hcl.InitialPos)
-+	if diags.HasErrors() {
-+		return cty.NilVal, fmt.Errorf("parse HCL expression: %w", diags)
-+	}
-+	v, diags := expr.Value(nil)
-+	if diags.HasErrors() {
-+		return cty.NilVal, fmt.Errorf("evaluate HCL expression: %w", diags)
-+	}
-+	v, err := convert.Convert(v, ty)
-+	if err != nil {
-+		return cty.NilVal, fmt.Errorf("convert to %s: %w", ty.FriendlyName(), err)
-+	}
-+	return v, nil
-+}
-+
-+func loadEnvVars(logger *log.Logger, blocks terraform.Blocks) map[string]cty.Value {
-+	envVars := make(map[string]cty.Value)
-+	varTypes := make(map[string]cty.Type)
-+
-+	for _, block := range blocks.OfType("variable") {
-+		varTypes[block.TypeLabel()] = inputVariableType(block)
-+	}
+ `VulnerabilityID`, `PkgName`, `InstalledVersion`, and `Severity` in `Vulnerabilities` are always filled with values, but other fields might be empty.
  
- 	for _, env := range os.Environ() {
--		split := strings.Split(env, "=")
--		key := split[0]
--		if !strings.HasPrefix(key, "TF_VAR_") {
-+		key, val, _ := strings.Cut(env, "=")
-+		name, ok := strings.CutPrefix(key, "TF_VAR_")
-+		if !ok {
- 			continue
- 		}
--		key = strings.TrimPrefix(key, "TF_VAR_")
--		var val string
--		if len(split) > 1 {
--			val = split[1]
-+		v, err := parseEnvVar(name, val, varTypes[name])
-+		if err != nil {
-+			logger.Warn("Ignoring TF_VAR environment variable", log.String("name", "TF_VAR_"+name), log.Err(err))
-+			continue
- 		}
--		combinedVars[key] = cty.StringVal(val)
-+		envVars[name] = v
- 	}
- 
-+	return envVars
-+}
++The `Digests` field of each package in `Packages` holds the [package digests](../supply-chain/package-digests.md).
 +
-+func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
-+	combinedVars := make(map[string]cty.Value)
++!!! warning
++    The `Digest` field of a package is deprecated. Use `Digests` instead. `Digest` holds a single value without its source and is not filled for digests from newer sources, such as `go-module-h1`.
 +
- 	for _, filename := range filenames {
- 		vars, err := loadTFVarsFile(srcFS, filename)
- 		if err != nil {
+ ### SARIF
+ |     Scanner      | Supported |
+ |:----------------:|:---------:|
 ```
 
-**File**: `pkg/iac/scanners/terraform/parser/parser.go` (modified, +7/-2)
+**File**: `docs/guide/coverage/language/golang.md` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"io"
- 	"io/fs"
- 	"log/slog"
-+	"maps"
- 	"os"
- 	"path"
- 	"path/filepath"
-@@ -281,11 +282,15 @@ func (p *Parser) Load(_ context.Context) (*evaluator, error) {
- 		inputVars = p.tfvars
- 		p.logger.Debug("Added input variables from tfvars.", log.Int("count", len(inputVars)))
- 	default:
--		inputVars, err = loadTFVars(p.configsFS, p.tfvarsPaths)
-+		var fileVars map[string]cty.Value
-+		fileVars, err = loadTFVars(p.configsFS, p.tfvarsPaths)
- 		if err != nil {
- 			return nil, err
- 		}
--		p.logger.Debug("Added input variables from tfvars", log.Int("count", len(inputVars)))
-+		inputVars = loadEnvVars(p.logger, blocks)
-+		p.logger.Debug("Added input variables from environment", log.Int("count", len(inputVars)))
-+		p.logger.Debug("Added input variables from tfvars", log.Int("count", len(fileVars)))
-+		maps.Copy(inputVars, fileVars)
- 		p.setFallbackValuesForMissingVars(inputVars, blocks)
- 	}
+@@ -131,7 +131,7 @@ It possibly produces false positives.
+ See [the caveat](#stdlib-vulnerabilities) for details.
+ 
+ ## Module Checksums
+-Trivy records the h1 checksum of a Go module as a SHA-256 digest of the package with the `go-module-h1` source. For a replaced module, Trivy reports the replacement and its checksum. The h1 checksum is a SHA-256 hash over the list of the module files and their SHA-256 hashes, so it does not match the SHA-256 of the module zip file. See [go.sum files](https://go.dev/ref/mod#go-sum-files) for details.
++Trivy records the h1 checksum of a Go module as a SHA-256 [digest](../../supply-chain/package-digests.md) of the package with the `go-module-h1` source. For a replaced module, Trivy reports the replacement and its checksum. The h1 checksum is a SHA-256 hash over the list of the module files and their SHA-256 hashes, so it does not match the SHA-256 of the module zip file. See [go.sum files](https://go.dev/ref/mod#go-sum-files) for details.
+ 
+ For Go modules, Trivy takes the checksum from the `go.sum` file next to `go.mod`. A module gets no checksum if `go.sum` has only its `/go.mod` line, because that line covers only the `go.mod` file of the module.
  
 ```
 
-**File**: `pkg/iac/scanners/terraform/parser/parser_test.go` (modified, +112/-0)
+**File**: `docs/guide/supply-chain/package-digests.md` (added, +20/-0)
 ```diff
-@@ -3418,3 +3418,115 @@ resource "aws_s3_bucket" "test" {}`,
- 	assert.Len(t, modules.GetResourcesByType("aws_security_group"), 1)
- 	assert.Len(t, modules.GetResourcesByType("aws_s3_bucket"), 1)
- }
+@@ -0,0 +1,20 @@
++# Package Digests
 +
-+func Test_VariableValueFromEnv(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		variable string
-+		env      string
-+		tfvars   string
-+		want     cty.Value
-+	}{
-+		{
-+			name:     "map(string) with = in the value",
-+			variable: `type = map(string)`,
-+			env:      `{env="prod"}`,
-+			want:     cty.MapVal(map[string]cty.Value{"env": cty.StringVal("prod")}),
-+		},
-+		{
-+			name:     "list(number)",
-+			variable: `type = list(number)`,
-+			env:      `[1, 2]`,
-+			want:     cty.ListVal([]cty.Value{cty.NumberIntVal(1), cty.NumberIntVal(2)}),
-+		},
-+		{
-+			name:     "object",
-+			variable: `type = object({ a = number })`,
-+			env:      `{a=1}`,
-+			want:     cty.ObjectVal(map[string]cty.Value{"a": cty.NumberIntVal(1)}),
-+		},
-+		{
-+			name:     "any is parsed as HCL",
-+			variable: `type = any`,
-+			env:      `["a","b"]`,
-+			want:     cty.TupleVal([]cty.Value{cty.StringVal("a"), cty.StringVal("b")}),
-+		},
-+		{
-+			name: "variable without type stays a literal",
-+			env:  `{a=1}`,
-+			want: cty.StringVal(`{a=1}`),
-+		},
-+		{
-+			name:     "string that looks like HCL stays a string",
-+			variable: `type = string`,
-+			env:      `["a"]`,
-+			want:     cty.StringVal(`["a"]`),
-+		},
-+		{
-+			name:     "string keeps = in the value",
-+			variable: `type = string`,
-+			env:      `a=b`,
-+			want:     cty.StringVal(`a=b`),
-+		},
-+		{
-+			name:     "number",
-+			variable: `type = number`,
-+			env:      `5`,
-+			want:     cty.NumberIntVal(5),
-+		},
-+		{
-+			name: "invalid value falls back to the default",
-+			variable: `type    = map(string)
-+default = { env = "default" }`,
-+			env:  `[oops`,
-+			want: cty.MapVal(map[string]cty.Value{"env": cty.StringVal("default")}),
-+		},
-+		{
-+			name: "value with wrong type falls back to the default",
-+			variable: `type    = map(string)
-+default = { env = "default" }`,
-+			env:  `["a"]`,
-+			want: cty.MapVal(map[string]cty.Value{"env": cty.StringVal("default")}),
-+		},
-+		{
-+			name:     "tfvars file overrides environment variable",
-+			variable: `type = map(string)`,
-+			env:      `{env="prod"}`,
-+			tfvars:   `x = { env = "dev" }`,
-+			want:     cty.MapVal(map[string]cty.Value{"env": cty.StringVal("dev")}),
-+		},
-+	}
++Trivy reports the digests it collects for a package. Each digest has an algorithm, a value and a source. The source tells where Trivy got the value and which bytes the value covers. Two digests with the same algorithm can cover different bytes.
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("TF_VAR_x", tt.env)
++| Source | Algorithm | Where the value comes from | What the value covers |
++|---|---|---|---|
++| `rpm-sigmd5` | MD5 | The `SIGMD5` tag of the RPM database | The header and the payload of the `.rpm` file, without the signature header |
++| `dpkg-available-sha256` | SHA-256 | The `SHA256` field of `/var/lib/dpkg/available` | The whole `.deb` file |
++| `apk-installed-db` | SHA-1, or MD5 in old databases | The `C:` field of `/lib/apk/db/installed` or `/usr/lib/apk/db/installed` | The compressed control section of the `.apk` file |
++| `java-archive` | SHA-1 | Trivy computes it | The whole JAR, WAR, EAR or PAR file, including a nested one |
++| `file-content` | SHA-1 | Trivy computes it | The metadata file that Trivy read, such as `METADATA`, `PKG-INFO`, `package.json`, a `.gemspec` file or a conda meta file. It does not cover the package archive. |
++| `go-module-h1` | SHA-256 | The `go.sum` file or the build info of a Go binary | The list of the module files and their SHA-256 hashes. It does not match the SHA-256 of the module zip file. See [Module Checksums](../coverage/language/golang.md#module-checksums). |
++| `sbom` | As stated in the SBOM | An SBOM that Trivy scanned, found in the target or fetched with `--sbom-sources`, for a hash without a `SourcedDigest` record | Unknown |
++| `unknown` | Any | A JSON report of an older Trivy version, such as one passed to `trivy convert` | Unknown |
 +
-+			files := map[string]string{
-+				"main.tf": fmt.Sprintf(`
-+variable "x" {
-+%s
-+}
++Trivy computes `java-archive` and `file-content` digests only for the SBOM formats: `cyclonedx`, `spdx` and `spdx-json`. Trivy does not verify any of the digests.
 +
-+resource "test" "this" {
-+  value = var.x
-+}
-+`, tt.variable),
-+			}
-+			var opts []Option
-+			if tt.tfvars != "" {
-+				files["main.tfvars"] = tt.tfvars
-+				opts = append(opts, OptionWithTFVarsPaths("main.tfvars"))
-+			}
++A package has no digest when its source has no value for the installed version. For example, `/var/lib/dpkg/available` is not updated when a package is upgraded, so an upgraded Debian or Ubuntu package often has no `dpkg-available-sha256` digest.
 +
-+			resources := parse(t, files, opts...).GetResourcesByType("test")
-+			require.Len(t, resources, 1)
-+
-+			attr := resources[0].GetAttribute("value")
-+			require.NotNil(t, attr)
-+			require.True(t, attr.IsResolvable())
-+
-+			got := attr.Value()
-+			assert.True(t, tt.want.RawEquals(got), "want %#v, got %#v", tt.want, got)
-+		})
-+	}
-+}
++See [JSON](../configuration/reporting.md#json) and [SBOM](sbom.md#package-digests) for how the digests appear in each format.
 ```
 
----
-
-### Incident Patch 2: `38b8e97f` (2026-11-26)
-**Commit Message**: fix(image): use ACR audience for Azure registry tokens (#11598)
-
-**File**: `pkg/fanal/image/registry/azure/azure.go` (modified, +4/-7)
+**File**: `docs/guide/supply-chain/sbom.md` (modified, +39/-0)
 ```diff
-@@ -20,7 +20,6 @@ import (
+@@ -1740,6 +1740,45 @@ $ trivy image --format spdx-json --output result.spdx alpine:3.15
  
- type RegistryClient struct {
- 	domain string
--	scope  string
- 	cloud  cloud.Configuration
- }
+ </details>
  
-@@ -30,22 +29,20 @@ type Registry struct {
- const (
- 	azureURL      = ".azurecr.io"
- 	chinaAzureURL = ".azurecr.cn"
--	scope         = "https://management.azure.com/.default"
--	chinaScope    = "https://management.chinacloudapi.cn/.default"
--	scheme        = "https"
-+	// Use the ACR audience because a registry always accepts it, while ARM audience tokens can be disabled.
-+	scope  = "https://containerregistry.azure.net/.default"
-+	scheme = "https"
- )
- 
- func (r *Registry) CheckOptions(domain string, _ types.RegistryOptions) (intf.RegistryClient, error) {
- 	if strings.HasSuffix(domain, azureURL) {
- 		return &RegistryClient{
- 			domain: domain,
--			scope:  scope,
- 			cloud:  cloud.AzurePublic,
- 		}, nil
- 	} else if strings.HasSuffix(domain, chinaAzureURL) {
- 		return &RegistryClient{
- 			domain: domain,
--			scope:  chinaScope,
- 			cloud:  cloud.AzureChina,
- 		}, nil
- 	}
-@@ -59,7 +56,7 @@ func (r *RegistryClient) GetCredential(ctx context.Context) (string, string, err
- 	if err != nil {
- 		return "", "", xerrors.Errorf("unable to generate acr credential error: %w", err)
- 	}
--	aadToken, err := cred.GetToken(ctx, policy.TokenRequestOptions{Scopes: []string{r.scope}})
-+	aadToken, err := cred.GetToken(ctx, policy.TokenRequestOptions{Scopes: []string{scope}})
- 	if err != nil {
- 		return "", "", xerrors.Errorf("unable to get an access token: %w", err)
- 	}
-```
-
----
-
-### Incident Patch 3: `87ab02ca` (2026-11-26)
-**Commit Message**: fix(go): parse `-X` ldflags values without CSV splitting (#11727)
-
-**File**: `pkg/dependency/parser/golang/binary/parse.go` (modified, +29/-14)
-```diff
-@@ -224,25 +224,26 @@ func (p *Parser) ParseLDFlags(name string, flags []string) string {
- 	fset.ParseErrorsAllowlist.UnknownFlags = true
- 	// The shorthand name is needed here because setting the full name
- 	// to `X` will cause the flag set to look for `--X` instead of `-X`.
--	// The flag can also be set multiple times, so a string slice is needed
--	// to handle that edge case.
--	var x map[string]string
--	fset.StringToStringVarP(&x, "", "X", nil, "")
-+	// The flag can also be set multiple times, so a string array is needed
-+	// to handle that edge case. Each value is kept as is (no CSV splitting)
-+	// and split on the first `=` below, the same way the Go linker does.
-+	// cf. https://pkg.go.dev/cmd/link (`-X importpath.name=value`)
-+	var xFlags []string
-+	fset.StringArrayVarP(&xFlags, "", "X", nil, "")
- 	// Init `help` flag to avoid error in flags with `h` (e.g. `-lpthread`)
- 	fset.BoolP("help", "h", false, "just to disable the built-in help flag")
- 	if err := fset.Parse(flags); err != nil {
- 		p.logger.Error("Could not parse -ldflags found in build info", log.Err(err))
- 		return ""
- 	}
- 
--	// foundVersions contains discovered versions by type.
--	// foundVersions doesn't contain duplicates. Versions are filled into first corresponding category.
--	// Possible elements(categories):
--	//   [0]: Versions using format `github.com/<module_owner>/<module_name>/cmd/**/*.<version>=x.x.x`
--	//   [1]: Versions that use prefixes from `defaultVersionPrefixes`
--	//   [2]: Other versions
--	var foundVersions = make([][]string, 3)
--	for key, val := range x {
-+	// The last value wins for a repeated key, as in the Go linker.
-+	x := make(map[string]string, len(xFlags))
-+	for _, f := range xFlags {
-+		key, val, ok := strings.Cut(f, "=")
-+		if !ok {
-+			continue
-+		}
- 		// It's valid to set the -X flags with quotes so we trim any that might
- 		// have been provided: Ex:
- 		//
-@@ -252,8 +253,22 @@ func (p *Parser) ParseLDFlags(name string, flags []string) string {
- 		// -X='main.version=1.0.0'
- 		// -X="main.version=1.0.0"
- 		// -X "main.version=1.0.0"
--		key = strings.TrimLeft(key, `'`)
--		val = strings.TrimRight(val, `'`)
-+		//
-+		// Quotes are trimmed before the assignment so that quoted and unquoted
-+		// forms of the same key overwrite each other.
-+		key = strings.TrimLeft(key, `'"`)
-+		val = strings.TrimRight(val, `'"`)
-+		x[key] = val
-+	}
++### Package Digests
++Trivy writes the [package digests](package-digests.md) to CycloneDX `hashes` and SPDX `checksums`. These fields cannot hold the source of a digest, so Trivy writes it to the `aquasecurity:trivy:SourcedDigest` property in CycloneDX and to the `SourcedDigest` annotation in SPDX. The value has the `<source>:<algorithm>:<value>` form and refers to the hash with the same value. A hash without such a property has no known source.
 +
-+	// foundVersions contains discovered versions by type.
-+	// foundVersions doesn't contain duplicates. Versions are filled into first corresponding category.
-+	// Possible elements(categories):
-+	//   [0]: Versions using format `github.com/<module_owner>/<module_name>/cmd/**/*.<version>=x.x.x`
-+	//   [1]: Versions that use prefixes from `defaultVersionPrefixes`
-+	//   [2]: Other versions
-+	var foundVersions = make([][]string, 3)
-+	for key, val := range x {
- 		if isVersionXKey(key) && isValidSemVer(val) {
- 			classifyVersion(foundVersions, key, name, val)
- 		}
++```json
++"hashes": [
++  {
++    "alg": "SHA-1",
++    "content": "237db0da53131e4548cb1181337fa0f420299e1f"
++  }
++],
++"properties": [
++  {
++    "name": "aquasecurity:trivy:SourcedDigest",
++    "value": "file-content:sha1:237db0da53131e4548cb1181337fa0f420299e1f"
++  }
++]
++```
++
++In SPDX, if a package was read from its own file, such as a JAR or a metadata file, Trivy puts the digests of the package on the file element that the package contains, for example the `java-archive` and `file-content` digests. The `SourcedDigest` annotations stay on the package. Packages from lock files and binaries, such as `go.mod` or a Go binary, and OS packages have their digests in the package `checksums`. The annotation holds the value in `comment` after the `SourcedDigest: ` prefix.
++
++```json
++"checksums": [
++  {
++    "algorithm": "SHA1",
++    "checksumValue": "b1d943abdafd90a5481993600d7ea690f64c6871"
++  }
++],
++"annotations": [
++  {
++    "annotator": "Tool: trivy-dev",
++    "annotationDate": "2026-11-26T07:33:39Z",
++    "annotationType": "OTHER",
++    "comment": "SourcedDigest: apk-installed-db:sha1:b1d943abdafd90a5481993600d7ea690f64c6871"
++  }
++]
++```
++
++When Trivy reads an SBOM, it restores the sources from these properties. The restored source is what the SBOM claims, and Trivy does not verify it. A hash without a property gets the `sbom` source.
++
+ ## Scanning
+ 
+ ### SBOM as Target
 ```
 
-**File**: `pkg/dependency/parser/golang/binary/parse_test.go` (modified, +63/-0)
+**File**: `mkdocs.yml` (modified, +1/-0)
 ```diff
-@@ -617,6 +617,69 @@ func TestParser_ParseLDFlags(t *testing.T) {
- 			},
- 			want: "v1.28.6+k3s2",
- 		},
-+		{
-+			name: "with multi-line flag value containing `=`",
-+			args: args{
-+				name: "github.com/aquasecurity/test",
-+				flags: []string{
-+					"-X",
-+					"main.banner=key=value\nmore",
-+					"-X",
-+					"main.version=1.2.3",
-+				},
-+			},
-+			want: "1.2.3",
-+		},
-+		{
-+			name: "with comma in flag value containing `=`",
-+			args: args{
-+				name: "github.com/aquasecurity/test",
-+				flags: []string{
-+					"-X",
-+					"main.banner=a=b,c",
-+					"-X",
-+					"main.version=1.2.3",
-+				},
-+			},
-+			want: "1.2.3",
-+		},
-+		{
-+			name: "with flag value without `=`",
-+			args: args{
-+				name: "github.com/aquasecurity/test",
-+				flags: []string{
-+					"-X",
-+					"novalue",
-+					"-X",
-+					"main.version=1.2.3",
-+				},
-+			},
-+			want: "1.2.3",
-+		},
-+		{
-+			name: "with quoted and unquoted assignments to the same key",
-+			args: args{
-+				name: "github.com/aquasecurity/test",
-+				flags: []string{
-+					"-X",
-+					`"main.version=1.2.3"`,
-+					"-X",
-+					"main.version=2.0.0",
-+				},
-+			},
-+			want: "2.0.0",
-+		},
-+		{
-+			name: "with comma-separated assignments in a single flag value",
-+			args: args{
-+				name: "github.com/aquasecurity/test",
-+				flags: []string{
-+					"-X",
-+					"main.banner=x,main.version=1.2.3",
-+				},
-+			},
-+			want: "",
-+		},
- 		{
- 			name: "with no flags",
- 			args: args{
+@@ -136,6 +136,7 @@ nav:
+           - Others: guide/configuration/others.md
+       - Supply Chain:
+           - SBOM: guide/supply-chain/sbom.md
++          - Package Digests: guide/supply-chain/package-digests.md
+           - Attestation:
+               - SBOM: guide/supply-chain/attestation/sbom.md
+               - Cosign Vulnerability Scan Record: guide/supply-chain/attestation/vuln.md
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11767** (closed): feat(misconf): adapt control_plane_endpoints_config.ip_endpoints_config.enabled for GKE (@adityagupta26)
 - **PR #11727** (2026-11-26): fix(go): parse `-X` ldflags values without CSV splitting (@DmitriyLewen)
 - **PR #11726** (2026-11-24): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
 - **PR #11725** (2026-11-24): chore(deps): bump the github-actions group across 1 directory with 11 updates (@dependabot[bot])
 - **PR #11722** (2026-11-24): fix(cloudformation): read SqsManagedSseEnabled for SQS queues (@NarenAdithya14)
 - **PR #11720** (closed): fix(misconf): read SqsManagedSseEnabled in CloudFormation SQS adapter (@jtoledo3970)
-- **PR #11716** (closed): fix(report): add license handling to HTML template (@ghs)
 
 ---
 
@@ -1456,72 +1209,66 @@ Signed-off-by: Aakarsh Maurya <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. terraform): parse TF_VAR_ values for variables of complex types as HCL
+## X. docs: describe package digests and their sources
 
 **RULE**:
-When implementing operations in `pkg/iac/scanners/terraform/parser/load_vars.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/configuration/reporting.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f94c2ef2`: terraform): parse TF_VAR_ values for variables of complex types as HCL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7c77205`: docs: describe package digests and their sources. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/iac/scanners/terraform/parser/load_vars.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/configuration/reporting.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/zclconf/go-cty/cty/convert"
-
-	"github.com/aquasecurity/trivy/pkg/iac/terraform"
-	"github.com/aquasecurity/trivy/pkg/log"
-func parseEnvVar(name, val string, ty cty.Type) (cty.Value, error) {
-	if ty == cty.NilType || ty.IsPrimitiveType() {
-		return cty.StringVal(val), nil
-	}
-	expr, diags := hclsyntax.ParseExpression([]byte(val), "<TF_VAR_"+name+">", hcl.InitialPos)
-	if diags.HasErrors() {
-		return cty.NilVal, fmt.Errorf("parse HCL expression: %w", diags)
-	}
-	v, diags := expr.Value(nil)
-	if diags.HasErrors() {
-		return cty.NilVal, fmt.Errorf("evaluate HCL expression: %w", diags)
-	}
-	v, err := convert.Convert(v, ty)
-	if err != nil {
-		return cty.NilVal, fmt.Errorf("convert to %s: %w", ty.FriendlyName(), err)
-	}
-	return v, nil
-}
-
-func loadEnvVars(logger *log.Logger, blocks terraform.Blocks) map[string]cty.Value {
-	envVars := make(map[string]cty.Value)
-	varTypes := make(map[string]cty.Type)
-
-	for _, block := range blocks.OfType("variable") {
-		varTypes[block.TypeLabel()] = inputVariableType(block)
-	}
-		key, val, _ := strings.Cut(env, "=")
-		name, ok := strings.CutPrefix(key, "TF_VAR_")
-		if !ok {
-		v, err := parseEnvVar(name, val, varTypes[name])
-		if err != nil {
-			logger.
+      "Packages": [
+        {
+          "ID": "libssl3@3.3.2-r0",
+          "Name": "libssl3",
+          "Identifier": {
+            "PURL": "pkg:apk/alpine/libssl3@3.3.2-r0?arch=aarch64\u0026distro=3.20.3",
+            "UID": "c063faeb15a10ea8"
+          },
+          "Version": "3.3.2-r0",
+          "Arch": "aarch64",
+          "SrcName": "openssl",
+          "SrcVersion": "3.3.2-r0",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
+          "DependsOn": [
+            "libcrypto3@3.3.2-r0",
+            "musl@1.2.5-r0"
+          ],
+          "Layer": {
+            "DiffID": "sha256:651d9022c23486dfbd396c13db293af6845731cbd098a5f5606db4bc9f5573e8"
+          },
+          "Digest": "sha1:5dd7435b217a4f82c2320879582d7c266a9c4b20",
+          "Digests": [
+            {
+              "Digest": "sha1:5dd7435b217a4f82c2320879582d7c266a9c4b20",
+              "Source": "apk-installed-db"
+            }
+          ],
+          "InstalledFiles": [
+            "lib/libssl.so.3",
+            "usr/lib/libssl.so.3"
+          ],
+          "AnalyzedBy": "apk"
+        }
+      ],
+            "UID": "6046f49632a11363"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-func loadTFVars(srcFS fs.FS, filenames []string) (map[string]cty.Value, error) {
-	combinedVars := make(map[string]cty.Value)
-		split := strings.Split(env, "=")
-		key := split[0]
-		if !strings.HasPrefix(key, "TF_VAR_") {
-		key = strings.TrimPrefix(key, "TF_VAR_")
-		var val string
-		if len(split) > 1 {
-			val = split[1]
-		combinedVars[key] = cty.StringVal(val)
+            "UID": "f705555b49cd2259"
+            "UID": "c4a39ef718e71832"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f94c2ef2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7c77205` are properly handled with clean fallback behavior.

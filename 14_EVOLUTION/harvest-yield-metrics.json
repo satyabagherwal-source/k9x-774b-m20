@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:54:25.293Z",
-  "total_cycles_completed": 13074,
-  "total_learnings_persisted": 13074,
-  "total_rules_promoted": 11802,
+  "last_updated": "2026-11-27T12:03:45.866Z",
+  "total_cycles_completed": 13078,
+  "total_learnings_persisted": 13078,
+  "total_rules_promoted": 11806,
   "history": [
-    {
-      "timestamp": "2026-11-26T21:26:03.221Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T21:44:15.200Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T21:52:40.500Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T21:52:42.647Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T21:52:54.742Z",
       "repository": "lioensky/VCPToolBox",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-27T11:54:25.293Z",
       "repository": "hashicorp/terraform",
       "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:03:35.837Z",
+      "repository": "serpapi/google-search-results-python",
+      "learningId": "learn-github-serpapi-google-search-results-python",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:03:39.864Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:03:44.242Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:03:45.866Z",
+      "repository": "chroma-core/chroma",
+      "learningId": "learn-github-chroma-core-chroma",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

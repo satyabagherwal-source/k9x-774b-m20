@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-OU00",
-    "timestamp": "2026-11-26T05:17:06.144Z",
-    "repository": "crate-ci/typos",
-    "learningId": "learn-github-crate-ci-typos",
-    "contentHash": "15c1cd60e2750e56cf734ca5cf5f704b745d79b1c87ff7e498dc39aa6873af22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-P4AV",
-    "timestamp": "2026-11-26T05:17:19.495Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "1a2aa2a8994db5458a43a6c8223e7b920bf37d65d409f7e0ed78aa8564530880",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-QAJF",
-    "timestamp": "2026-11-26T05:18:14.235Z",
-    "repository": "adventists-ai/Sophon-Realtime-v1",
-    "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-    "contentHash": "cb8b3ba3ebc7342ac1da7e9827c33ada4c6655c79ceab551803214b19e7a42d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-488Q",
-    "timestamp": "2026-11-26T05:29:04.442Z",
-    "repository": "deepseek-ai/DeepSeek-V3.2",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-    "contentHash": "bf7103da8cebdd3a2a7c10d6ed3ed316b84ce3292c3d208a1711a78b30604f83",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-4EZL",
     "timestamp": "2026-11-26T05:29:13.185Z",
     "repository": "linkerd/linkerd2",
@@ -7490,6 +7430,66 @@
     "repository": "hashicorp/terraform",
     "learningId": "learn-github-hashicorp-terraform",
     "contentHash": "b0ac7a1cc71b4a631058a573010d19830a847768a15e5fd4d245e92500c2b9ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-NFUS",
+    "timestamp": "2026-11-27T12:03:35.812Z",
+    "repository": "serpapi/google-search-results-python",
+    "learningId": "learn-github-serpapi-google-search-results-python",
+    "contentHash": "c39aeb66f76f320e10cc0ee7ee2a648c7c3c8f49e1f2fc7981fe09990004fed2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-NIYN",
+    "timestamp": "2026-11-27T12:03:39.839Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "d4e93ad8bd6957ca297b6466c8c3d037547a5a87c921e74ac00bad4a7f642952",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-NMCA",
+    "timestamp": "2026-11-27T12:03:44.218Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "338e41e091096c916d469f74d70091752f523f45c0e370f61135e6d620d0e69e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-NNLF",
+    "timestamp": "2026-11-27T12:03:45.843Z",
+    "repository": "chroma-core/chroma",
+    "learningId": "learn-github-chroma-core-chroma",
+    "contentHash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

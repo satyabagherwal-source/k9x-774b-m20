@@ -1833,10 +1833,10 @@
     "repository": "serpapi/google-search-results-python",
     "platform": "github",
     "sourceUrl": "https://github.com/serpapi/google-search-results-python",
-    "sourceVersion": "345d31a9",
+    "sourceVersion": "cbd94525",
     "license": "MIT",
-    "contentHash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
-    "lastHarvestedAt": "2026-10-26T02:33:55.759Z",
+    "contentHash": "c39aeb66f76f320e10cc0ee7ee2a648c7c3c8f49e1f2fc7981fe09990004fed2",
+    "lastHarvestedAt": "2026-11-27T12:03:35.827Z",
     "learningId": "learn-github-serpapi-google-search-results-python"
   },
   "serpapi-google-search-results-ruby": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "c07795fa",
+    "sourceVersion": "5f2ffdd2",
     "license": "Apache-2.0",
-    "contentHash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
-    "lastHarvestedAt": "2026-11-27T07:03:49.835Z",
+    "contentHash": "338e41e091096c916d469f74d70091752f523f45c0e370f61135e6d620d0e69e",
+    "lastHarvestedAt": "2026-11-27T12:03:44.232Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "f94c2ef2",
+    "sourceVersion": "e7c77205",
     "license": "Apache-2.0",
-    "contentHash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
-    "lastHarvestedAt": "2026-11-26T18:33:02.216Z",
+    "contentHash": "d4e93ad8bd6957ca297b6466c8c3d037547a5a87c921e74ac00bad4a7f642952",
+    "lastHarvestedAt": "2026-11-27T12:03:39.854Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -6973,10 +6973,10 @@
     "repository": "chroma-core/chroma",
     "platform": "github",
     "sourceUrl": "https://github.com/chroma-core/chroma",
-    "sourceVersion": "1a3ac2c7",
+    "sourceVersion": "0d511ea7",
     "license": "Apache-2.0",
-    "contentHash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
-    "lastHarvestedAt": "2026-11-08T03:43:27.728Z",
+    "contentHash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
+    "lastHarvestedAt": "2026-11-27T12:03:45.856Z",
     "learningId": "learn-github-chroma-core-chroma"
   },
   "restatedev-restate": {

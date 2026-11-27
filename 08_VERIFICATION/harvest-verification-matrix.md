@@ -13775,3 +13775,7 @@
 | `CYCLE-20261127-YWQ9` | `2026-11-27T11:44:31.281Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10888` | Yes (`9fa43264...`) |
 | `CYCLE-20261127-YXU8` | `2026-11-27T11:44:32.720Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10889` | Yes (`1da26c3d...`) |
 | `CYCLE-20261127-BN1P` | `2026-11-27T11:54:25.261Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10890` | Yes (`b0ac7a1c...`) |
+| `CYCLE-20261127-NFUS` | `2026-11-27T12:03:35.812Z` | `serpapi/google-search-results-python` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10891` | Yes (`c39aeb66...`) |
+| `CYCLE-20261127-NIYN` | `2026-11-27T12:03:39.839Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10892` | Yes (`d4e93ad8...`) |
+| `CYCLE-20261127-NMCA` | `2026-11-27T12:03:44.218Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10893` | Yes (`338e41e0...`) |
+| `CYCLE-20261127-NNLF` | `2026-11-27T12:03:45.843Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10894` | Yes (`0a55dcd8...`) |

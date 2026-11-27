@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T11:54:25.298Z",
+  "last_updated": "2026-11-27T12:03:45.869Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2886,14 +2886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-serpapi-google-search-results-python",
-      "content_hash": "d1ac3b52a8f4d6ead7f8d70248c4ddbf9be40902f754232b37059bb4ff69f8f6",
-      "verified_at": "2026-10-26T02:33:55.767Z",
+      "content_hash": "c39aeb66f76f320e10cc0ee7ee2a648c7c3c8f49e1f2fc7981fe09990004fed2",
+      "verified_at": "2026-11-27T12:03:35.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:33:55.767Z"
+      "last_updated": "2026-11-27T12:03:35.840Z"
     },
     "serpapi/google-search-results-ruby": {
       "repository": "serpapi/google-search-results-ruby",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
-      "verified_at": "2026-11-27T07:03:49.847Z",
+      "content_hash": "338e41e091096c916d469f74d70091752f523f45c0e370f61135e6d620d0e69e",
+      "verified_at": "2026-11-27T12:03:44.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:03:49.847Z"
+      "last_updated": "2026-11-27T12:03:44.244Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "fa4989470005cf082cad070ea85fee23745c5c0e308560aec201550e2015c15f",
-      "verified_at": "2026-11-26T18:33:02.239Z",
+      "content_hash": "d4e93ad8bd6957ca297b6466c8c3d037547a5a87c921e74ac00bad4a7f642952",
+      "verified_at": "2026-11-27T12:03:39.867Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:33:02.239Z"
+      "last_updated": "2026-11-27T12:03:39.867Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -10521,14 +10521,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chroma-core-chroma",
-      "content_hash": "a9912ebdaaa07be4ccb8807c5c76a21480a5fdb7dc23b8442acecf68a9b6cc48",
-      "verified_at": "2026-11-08T03:43:27.738Z",
+      "content_hash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
+      "verified_at": "2026-11-27T12:03:45.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:43:27.738Z"
+      "last_updated": "2026-11-27T12:03:45.869Z"
     },
     "restatedev/restate": {
       "repository": "restatedev/restate",
