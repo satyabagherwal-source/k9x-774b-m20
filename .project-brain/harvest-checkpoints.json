@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T13:23:10.868Z",
+  "last_updated": "2026-11-27T13:36:53.820Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
-      "verified_at": "2026-11-26T18:41:52.406Z",
+      "content_hash": "8ae27b8b5c05997a346eaac0862735e7eb3e9066b5c4c814944e49872d8616cf",
+      "verified_at": "2026-11-27T13:36:53.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:41:52.406Z"
+      "last_updated": "2026-11-27T13:36:53.819Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -11871,14 +11871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-darrylmorley-whatcable",
-      "content_hash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
-      "verified_at": "2026-11-25T04:31:12.061Z",
+      "content_hash": "50b385339c1c60ba4123454de948b5d95e78a390e4eaa38f64001187515c1524",
+      "verified_at": "2026-11-27T13:36:47.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:31:12.061Z"
+      "last_updated": "2026-11-27T13:36:47.416Z"
     },
     "XcodesOrg/XcodesApp": {
       "repository": "XcodesOrg/XcodesApp",

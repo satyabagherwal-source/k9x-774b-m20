@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-VSTM",
-    "timestamp": "2026-11-26T06:18:30.442Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-6JIQ",
-    "timestamp": "2026-11-26T06:26:51.602Z",
-    "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
-    "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-    "contentHash": "e3adb7fc1d39e3b7b249ef5dbd45befadafa6d465090fc06251eff02560499cb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-6KYK",
     "timestamp": "2026-11-26T06:26:53.468Z",
     "repository": "oshai/kotlin-logging",
@@ -7490,6 +7460,36 @@
     "repository": "meshery/meshery",
     "learningId": "learn-github-meshery-meshery",
     "contentHash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ZACD",
+    "timestamp": "2026-11-27T13:36:47.389Z",
+    "repository": "darrylmorley/whatcable",
+    "learningId": "learn-github-darrylmorley-whatcable",
+    "contentHash": "50b385339c1c60ba4123454de948b5d95e78a390e4eaa38f64001187515c1524",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-ZFA8",
+    "timestamp": "2026-11-27T13:36:53.792Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "8ae27b8b5c05997a346eaac0862735e7eb3e9066b5c4c814944e49872d8616cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

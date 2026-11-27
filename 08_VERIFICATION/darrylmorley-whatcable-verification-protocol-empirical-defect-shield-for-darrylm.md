@@ -4,22 +4,22 @@
 {
   "source_repository": "darrylmorley/whatcable",
   "source_url": "https://github.com/darrylmorley/whatcable",
-  "source_version": "0cf0a678",
+  "source_version": "40e18b81",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T04:31:12.383Z",
+  "timestamp": "2026-11-27T13:36:47.658Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-darrylmorley-whatcable",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `0cf0a678`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T04:31:12.383Z`  
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `40e18b81`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T13:36:47.658Z`  
 > **Learning ID**: `learn-github-darrylmorley-whatcable`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `darrylmorley/whatcable` (Commit: `0cf0a678`)
+- **Target Repository**: `darrylmorley/whatcable` (Commit: `40e18b81`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:31:10.591Z  
+> **Harvest Timestamp**: 2026-11-27T13:36:45.997Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: macOS menu bar app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9165 stars
+- **Stars / Engagement**: 9368 stars
 
 ---
 
@@ -1743,99 +1743,365 @@ public enum ConnectedDeviceTree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cf0a678` (2026-11-24)
-**Commit Message**: Mirror from private (471d687d)
+### Incident Patch 1: `40e18b81` (2026-11-26)
+**Commit Message**: Mirror from private (1d3f2156)
 
-**File**: `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift` (modified, +8/-3)
+**File**: `Sources/WhatCableCore/Port/PortNumberingCorrection.swift` (modified, +13/-0)
 ```diff
-@@ -29,7 +29,11 @@ import Testing
+@@ -21,6 +21,19 @@ import Foundation
  ///
- /// The Python cross-check (a second parser that reads probe 19's decoded text,
- /// not its raw words) found the same 8 signature folders on 2026-11-21. Seven
--/// of them reach the diagnostic. The eighth, `m4_macos15.7.7`, shows the
-+/// of them reach the diagnostic. A ninth, `m4pro_macos27.0.1_e` (96 W at
-+/// 20 V x 3 A, SOP' node with no identity), came with the 2026-11-12 ingest,
-+/// which the 2026-11-21 corpus did not yet hold; it reaches the diagnostic,
-+/// re-derived by hand from probes 19, 32 and 01 on 2026-11-24, so eight do.
-+/// The one that does not, `m4_macos15.7.7`, shows the
- /// signature in PortControllerInfo and AdapterDetails, but macOS 15.7.7
- /// published no USB-PD power-source node for that port (only Brick ID and
- /// TypeC, neither with a winning option), so `ChargingDiagnostic` sees no
-@@ -50,9 +54,10 @@ struct ChargerCableHintCorpusTests {
-         "m2pro_macos26.5.1": (67, 60),
-         "m4pro_macos26.5.2_k": (70, 60),
-         "m4pro_macos26.6.2_k": (70, 60),
-+        "m4pro_macos27.0.1_e": (96, 60),
-     ]
+ /// Pure: no IOKit. The Darwin backend resolves the model and applies these
+ /// functions at each reader that names these sockets.
++///
++/// If Apple fixes the names: this table would then swap correct names back
++/// to wrong ones, so the entry must come out. The tripwire is
++/// `PortNumberingCorrectionCorpusTests` ("Mac17,14 still names hub port 2
++/// C@6 and hub port 4 A@2"): it fails as soon as an ingested Mac17,14 run
++/// shows the internal hub ports carrying different socket names, and says
++/// which run and macOS version. Before removing anything, have an owner on
++/// that macOS version confirm which physical socket each device is in. To
++/// roll back for every macOS version, delete the `"Mac17,14"` entry and the
++/// tests that expect the swap (PortNumberingCorrectionTests,
++/// PortNumberingCorrectionReplayTests, and T4 in the corpus tests). If only
++/// newer macOS versions are fixed, the table needs a macOS version bound
++/// instead, which is a design change.
+ public enum PortNumberingCorrection {
  
--    /// The eighth signature capture (96 W at 20 V x 3 A): no USB-PD node in
-+    /// The signature capture that cannot fire (96 W at 20 V x 3 A): no USB-PD node in
-     /// probe 17, so no contract for the diagnostic to judge. See the type doc.
-     static let signatureWithoutUSBPDNode = "m4_macos15.7.7"
- 
-@@ -125,7 +130,7 @@ struct ChargerCableHintCorpusTests {
- 
-     // MARK: - Tests
- 
--    @Test("Exactly the 7 reachable signature captures fire, with the expected wattages")
-+    @Test("Exactly the 8 reachable signature captures fire, with the expected wattages")
-     func signatureFoldersFire() {
-         guard !Self.cases.isEmpty else {
-             Issue.record("corpus not linked: run scripts/link-research.sh"); return
+     /// One socket as a `PortType` code and an `@N` number.
 ```
 
-**File**: `Tests/WhatCableCoreTests/SnapshotCorpusTests.swift` (modified, +14/-2)
+**File**: `Tests/WhatCableCoreTests/PortNumberingCorrectionCorpusTests.swift` (modified, +48/-0)
 ```diff
-@@ -120,8 +120,8 @@ struct SnapshotCorpusTests {
-         // runs folder that exists but holds no runs is a broken link, and must
-         // fail rather than pass on nothing.
-         //
--        // Two shapes are not complete snapshots and are still correct
--        // (first met 2026-11-12):
-+        // Three shapes are not complete snapshots and are still correct
-+        // (the byte-cap stop below; the other two first met 2026-11-12):
-         // - stopped with `identifiers_incomplete`: FORMAT.md lets any probe
-         //   stop that way, header then footer, no records, `step` naming the
-         //   lookup that failed. Every probe on an Intel Mac with Bluetooth
-@@ -153,6 +153,18 @@ struct SnapshotCorpusTests {
-                 #expect(step.count > 0, "\(name): stopped for identifiers with no step")
-                 continue
-             }
-+            // Stopped at the probe's byte cap (first met 2026-11-24, two runs
-+            // from one Mac with a large registry): FORMAT.md allows it, at a
-+            // record boundary, with `records` counting what was written. It is
-+            // a partial snapshot, so it is checked but not counted complete.
-+            if file.footer?["status"] as? String == "stopped",
-+               file.footer?["reason"] as? String == "byte_cap" {
-+                #expect(!file.records.isEmpty, "\(name): stopped at the byte cap with no records")
-+                #expect(file.footer?["records"] as? Int == file.records.count,
-+                        "\(name): byte-cap footer's record count does not match the file")
-+                #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): byte-capped with no entries")
-+                continue
+@@ -192,6 +192,54 @@ struct PortNumberingCorrectionCorpusTests {
+         #expect(total >= 14, "only \(total) other-model runs name C@6 or A@2: \(runsNamingSockets)")
+     }
+ 
++    /// Rollback tripwire. The correction is only right while macOS keeps the
++    /// wrong names: Apple's internal hub port 2 (physically the rear USB-A by
++    /// the power cable) named `Port-USB-C@6`, and hub port 4 (physically the
++    /// front USB-C by the card reader) named `Port-USB-A@2`, on both the
++    /// USB 2 and USB 3 sides. Every Mac17,14 run in the corpus, including
++    /// ones ingested later, must still show that. If one does not, Apple may
++    /// have fixed the names, and the table would now be swapping correct
++    /// names back to wrong ones: see the note on `PortNumberingCorrection`.
++    @Test("Mac17,14 still names hub port 2 C@6 and hub port 4 A@2 (rollback tripwire)")
++    func rollbackTripwire() throws {
++        guard corpusLinked() else { return }
++        let expected: [String: String] = [
++            "usb2-hub-port2": "Port-USB-C@6", "usb3-hub-port2": "Port-USB-C@6",
++            "usb2-hub-port4": "Port-USB-A@2", "usb3-hub-port4": "Port-USB-A@2",
++        ]
++        var checkedRuns: [String] = []
++        for run in SnapshotCorpus.allRuns() where SnapshotCorpus.model(run: run) == "Mac17,14" {
++            guard let file = try SnapshotCorpus.load(run: run, probe: "50_registry_snapshot") else { continue }
++            let name = run.lastPathComponent
++            let macOS = (try? JSONSerialization.jsonObject(with: Data(contentsOf: run.appendingPathComponent("run.json"))))
++                .flatMap { ($0 as? [String: Any])?["summary"] as? [String: Any] }?["macos"] as? String ?? "unknown"
++            let snapshot = try RegistrySnapshot(file)
++            var linkNames: [UInt64: String] = [:]
++            for link in snapshot.links where link.plane == "IOService" { linkNames[link.id] = link.name }
++
++            // Every hub port whose UsbIOPort names C@6 or A@2, by its own
++            // IOService name, and every expected hub port by the socket it names.
++            var socketByHubPort: [String: String] = [:]
++            for entry in snapshot.entries.values {
++                let props = properties(entry.properties)
++                let path = (props["UsbIOPort"] as? String)
++                    ?? (props["UsbIOPort"] as? Data).flatMap { String(data: $0, encoding: .utf8) }
++                guard let socket = path?.split(separator: "/").last.map({ String($0).trimmingCharacters(in: .controlCharacters) }),
++                      let hubPort = linkNames[entry.id] else { continue }
++                if namesSwappedSocket(socket) || expected[hubPort] != nil { socketByHubPort[hubPort] = socket }
 +            }
-             #expect(file.isComplete, "\(name): snapshot was cut off")
-             #expect(try RegistrySnapshot(file).entries.count > 0, "\(name): no entries")
-             complete += 1
++            #expect(socketByHubPort == expected, """
++                \(name) (Mac17,14, macOS \(macOS)): internal hub ports no longer carry the swapped names. \
++                Apple may have fixed them on this macOS version, and PortNumberingCorrection would now \
++                swap correct names back to wrong ones. Confirm the physical sockets with an owner, then \
++                remove or bound the Mac17,14 entry. Seen: \(socketByHubPort.sorted { $0.key < $1.key })
++                """)
++            checkedRuns.append(name)
++        }
++        // The two known runs must be among those checked: an empty sweep is not a pass.
++        #expect(Set(mac17_14Runs).isSubset(of: Set(checkedRuns)), "checked \(checkedRuns)")
++    }
++
+     /// Both Mac17,14 runs must be present when the corpus is linked.
+     @Test("The two Mac17,14 runs are present and have the right model", arguments: mac17_14Runs)
+     func runsPresent(runID: String) {
 ```
 
 ---
 
-### Incident Patch 2: `18d6ad0c` (2026-11-24)
-**Commit Message**: Mirror from private (30f625be)
+### Incident Patch 2: `6dd991b8` (2026-11-25)
+**Commit Message**: Mirror from private (f8d5fed7)
 
-**File**: `scripts/smoke-test.sh` (modified, +2/-2)
+**File**: `Sources/WhatCableCore/Output/JSONFormatter.swift` (modified, +5/-0)
 ```diff
-@@ -24,8 +24,8 @@ fi
+@@ -231,6 +231,10 @@ private struct BulletGroupDTO: Codable {
+ private struct PortDTO: Codable {
+     let name: String
+     let type: String?
++    /// macOS's own name for this port, present only when a per-model
++    /// correction renamed it (issue #627). Explains why `name` differs from
++    /// `rawProperties.PortDescription`. Omitted when nil.
++    let registryPortName: String?
+     let className: String
+     let connectionActive: Bool
+     let pdCapable: Bool
+@@ -321,6 +325,7 @@ private struct PortDTO: Codable {
+     ) {
+         self.name = port.portDescription ?? port.serviceName
+         self.type = port.portTypeDescription
++        self.registryPortName = port.registryPortName
+         self.className = port.className
+         self.connectionActive = port.connectionActive ?? false
+         self.pdCapable = port.transportsSupported.contains("CC")
+```
+
+**File**: `Sources/WhatCableCore/Output/TextFormatter.swift` (modified, +5/-0)
+```diff
+@@ -465,6 +465,11 @@ public enum TextFormatter {
+             }
  
- APP_NAME="WhatCable"
- BUNDLE_ID="uk.whatcable.whatcable"
--VERSION="1.5.0"
--BUILD_NUMBER="140"
-+VERSION="1.5.1"
-+BUILD_NUMBER="141"
- MIN_OS="14.0"
- CLI_PRODUCT="whatcable-cli"
- CLI_BIN_NAME="whatcable"
+             out += "\n" + ANSI.wrap(ANSI.bold, String(localized: "Raw IOKit properties:", bundle: _coreLocalizedBundle)) + "\n"
++            if let registryName = port.registryPortName {
++                // The raw keys below are macOS's own; say why the card's name
++                // differs from them (issue #627).
++                out += "  " + ANSI.wrap(ANSI.dim, terminalField(String(localized: "macOS names this port \(registryName); corrected for this Mac model", bundle: _coreLocalizedBundle))) + "\n"
++            }
+             for key in port.redactedRawProperties.keys.sorted() {
+                 let value = port.redactedRawProperties[key] ?? ""
+                 out += "  " + ANSI.wrap(ANSI.gray, terminalField(key)) + " = \(terminalField(value))\n"
+```
+
+**File**: `Sources/WhatCableCore/Port/AppleHPMInterface.swift` (modified, +21/-3)
+```diff
+@@ -58,6 +58,17 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
+     /// is fine because the value is only used as a live join key, never persisted.
+     public let hpmControllerUUID: String?
+     public let rawProperties: [String: String]
++    /// `PortType` as read through the per-key read, so it carries a
++    /// per-model correction (`PortNumberingCorrection`) where one applies.
++    /// `identity` prefers it over `rawProperties["PortType"]`, which stays
++    /// exactly what macOS published. Nil for fixtures built memberwise, which
++    /// then fall back to `rawProperties` as before.
++    public let reportedTypeCode: Int?
++    /// macOS's own name for this port node, set only when a per-model
++    /// correction renamed it (e.g. `Port-USB-A@2` on `Mac17,14`, shown as
++    /// `Port-USB-C@6`). Nil when no correction applied. Lets `--raw` and
++    /// `--json` say why `serviceName` differs from the raw `PortDescription`.
++    public let registryPortName: String?
+ 
+     /// Build from a parsed IOKit property dictionary. Returns nil
+     /// if the entry isn't a real physical Type-C / MagSafe port. Lives in
+@@ -94,7 +105,8 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
+         read: (String) -> Any?,
+         readAll: (() -> [String: Any]?)? = nil,
+         busIndex: Int? = nil,
+-        hpmControllerUUID: String? = nil
++        hpmControllerUUID: String? = nil,
++        registryPortName: String? = nil
+     ) -> AppleHPMInterface? {
+         // Only return things that actually look like a physical Type-C or
+         // MagSafe port. Real ports have a `PortTypeDescription` and a name
+@@ -158,7 +170,9 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
+             accessoryActivePowerMode: (read("IOAccessoryActivePowerMode") as? NSNumber)?.intValue,
+             busIndex: busIndex,
+             hpmControllerUUID: hpmControllerUUID,
+-            rawProperties: raw
++            rawProperties: raw,
++            reportedTypeCode: (read("PortType") as? NSNumber)?.intValue,
++            registryPortName: registryPortName
+         )
+     }
+ 
+@@ -194,7 +208,9 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
+         accessoryActivePowerMode: Int? = nil,
+         busIndex: Int? = nil,
+         hpmControllerUUID: String? = nil,
+-        rawProperties: [String: String]
++        rawProperties: [String: String],
++        reportedTypeCode: Int? = nil,
++        registryPortName: String? = nil
+     ) {
+         self.id = id
+         self.serviceName = serviceName
+@@ -228,6 +244,8 @@ public struct AppleHPMInterface: Identifiable, Hashable, Sendable {
+         self.busIndex = busIndex
+         self.hpmControllerUUID = hpmControllerUUID
+         self.rawProperties = rawProperties
++        self.reportedTypeCode = reportedTypeCode
++        self.registryPortName = registryPortName
+     }
+ 
+     // Keys that are internal join keys used to correlate data across IOKit
+```
+
+**File**: `Sources/WhatCableCore/Port/PortNumberingCorrection.swift` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++import Foundation
++
++/// Per-model corrections for built-in sockets that macOS names the wrong way
++/// round.
++///
++/// On the M5 Max Mac Studio (`Mac17,14`) macOS swaps two sockets on the
++/// Mac's internal USB hub. Hub port 4 is the front USB-C socket next to the
++/// card reader, but macOS names it `Port-USB-A@2`. Hub port 2 is the rear
++/// USB-A socket next to the power cable, but macOS names it `Port-USB-C@6`.
++/// Two owners checked the sockets by hand (public issue #627;
++/// format-1 run `397cf7be-d888-4b06-b64d-d5adac29f7ba`, and the older
++/// `m5max_macos27.0.1` submission). A third run,
++/// `305e3a4f-8992-487e-8d8e-2124b87c2b89`, has the same registry map but no
++/// physical check.
++///
++/// Nothing in the registry contradicts the wrong names: the hub port's
++/// `UsbIOPort`, the IOAccessoryManager port node and its transport children
++/// all agree with each other. So the fix is a table keyed by exact `hw.model`.
++/// Only the two confirmed sockets are listed. `Port-USB-C@5` and
++/// `Port-USB-A@1` stay as macOS names them.
++///
++/// Pure: no IOKit. The Darwin backend resolves the model and applies these
++/// functions at each reader that names these sockets.
++public enum PortNumberingCorrection {
++
++    /// One socket as a `PortType` code and an `@N` number.
++    public struct Socket: Hashable, Sendable {
++        public let type: Int
++        public let number: Int
++
++        public init(type: Int, number: Int) {
++            self.type = type
++            self.number = number
++        }
++    }
++
++    /// `PortType` code for USB-C, the code `PortIdentity` and the transport
++    /// keys already use.
++    static let usbCType = PortIdentity.usbCTypeCode
++    /// `PortType` code for USB-A.
++    static let usbAType = 0x3
++
++    /// Exact `hw.model` -> socket swaps. Each swap is listed both ways.
++    static let table: [String: [Socket: Socket]] = [
++        "Mac17,14": [
++            Socket(type: usbCType, number: 6): Socket(type: usbAType, number: 2),
++            Socket(type: usbAType, number: 2): Socket(type: usbCType, number: 6),
++        ],
++    ]
++
++    /// The connector names macOS uses in node names and `*TypeDescription`
++    /// keys, for the type codes the table uses.
++    private static let typeDescriptions: [Int: String] = [
++        usbCType: "USB-C",
++        usbAType: "USB-A",
++    ]
++
++    private static func swaps(for model: String?) -> [Socket: Socket]? {
++        guard let model, let swaps = table[model], !swaps.isEmpty else { return nil }
++        return swaps
++    }
++
++    /// The socket this Mac model really means by `type` / `number`. A nil or
++    /// unlisted model returns the input unchanged.
++    public static func corrected(type: Int, number: Int, model: String?) -> (type: Int, number: Int) {
++        guard let target = swaps(for: model)?[Socket(type: type, number: number)] else {
++            return (type, number)
++        }
++        return (target.type, target.number)
++    }
++
++    /// The node name this Mac model really means, e.g. `Port-USB-A@2` ->
++    /// `Port-USB-C@6` on `Mac17,14`. Every other name, and every name on any
++    /// other model, is returned unchanged.
++    public static func corrected(portNodeName: String, model: String?) -> String {
++        guard let swaps = swaps(for: model),
++              let socket = socket(fromPortNodeName: portNodeName),
++              let target = swaps[socket],
++              let name = Self.portNodeName(for: target) else {
++            return portNodeName
++        }
++        return name
++    }
++
++    /// Runs `body` with a per-key read that returns corrected values for the
++    /// keys that name a port, and macOS's own values for every other key.
++    ///
++    /// Rewritten keys, on `Mac17,14` and only for the two swapped sockets:
++    /// - the port node's own `PortType`, `PortNumber`, `PortTypeDescription`,
++    ///   `PortDescription` and `Description`;
++    /// - a transport node's `ParentPortType` / `ParentPortNumber`, the
++    ///   `ParentBuiltIn*` variants, both `*TypeDescription` keys, and
++    ///   `TransportDescription`.
++    ///
++    /// Each type key is judged with its own number key (and each number key
++    /// with its own type key), both as macOS reported them. On any other
++    /// model `body` receives `read` itself.
++    ///
++    /// Takes a body closure, not a returned closure, so it works with the
++    /// non-escaping `read` parameters the watchers' parse functions take.
++    public static func correctingRead<R>(
++        _ read: (String) -> Any?,
++        model: String?,
++        _ body: ((String) -> Any?) throws -> R
++    ) rethrows -> R {
++        try withoutActuallyEscaping(read) { read in
++            guard let swaps = swaps(for: model) else { return try body(read) }
++            func target(typeKey: String, numberKey: String) -> Socket? {
++                guard let type = (read(typeKey) as? NSNumber)?.intValue,
++                      let number = (read(numberKey) a
+```
+
+**File**: `Sources/WhatCableCore/Power/PowerSource.swift` (modified, +7/-1)
+```diff
+@@ -329,11 +329,17 @@ extension PowerSource {
+ extension AppleHPMInterface {
+     /// This port's identity, or nil when the port has no number (so nothing can
+     /// be keyed to it at all).
++    ///
++    /// The type code comes from `reportedTypeCode` (the per-key read, which
++    /// carries a per-model correction) before `rawProperties["PortType"]`
++    /// (macOS's own value, kept raw for `--raw`). Otherwise a corrected port
++    /// would be keyed by its uncorrected type while its transports carry the
++    /// corrected one, and the two would never join (issue #627).
+     public var identity: PortIdentity? {
+         guard let n = portNumber else { return nil }
+         return PortIdentity.from(
+             typeDescription: portTypeDescription,
+-            reportedTypeCode: rawProperties["PortType"].flatMap { Int($0) },
++            reportedTypeCode: reportedTypeCode ?? rawProperties["PortType"].flatMap { Int($0) },
+             number: n
+         )
+     }
+```
+
+**File**: `Sources/WhatCableCore/Resources/de.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -915,3 +915,5 @@
+ "Cable may be limiting charging speed" = "Kabel begrenzt möglicherweise die Ladegeschwindigkeit";
+ /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+ "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Dieses %1$lld-W-Ladegerät bietet nur bis zu %2$lld W an. Das tun Ladegeräte, wenn sie nicht bestätigen können, dass das Kabel für 5 A ausgelegt ist. Probiere ein Kabel, das für 5 A ausgelegt ist, 100 W oder mehr.";
++/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
++"macOS names this port %@; corrected for this Mac model" = "macOS nennt diesen Anschluss %@; für dieses Mac-Modell korrigiert";
+```
+
+**File**: `Sources/WhatCableCore/Resources/en.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -919,3 +919,5 @@
+ "Cable may be limiting charging speed" = "Cable may be limiting charging speed";
+ /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+ "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "This %1$lldW charger is only offering up to %2$lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more.";
++/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
++"macOS names this port %@; corrected for this Mac model" = "macOS names this port %@; corrected for this Mac model";
+```
+
+**File**: `Sources/WhatCableCore/Resources/es.lproj/Localizable.strings` (modified, +2/-0)
+```diff
+@@ -915,3 +915,5 @@
+ "Cable may be limiting charging speed" = "Puede que el cable esté limitando la velocidad de carga";
+ /* Charging banner detail (#672): %1$lld = the charger's own rating in watts, %2$lld = the most it is offering now. 5A and 100W are cable ratings. */
+ "This %lldW charger is only offering up to %lldW. Chargers do that when they can't confirm the cable is rated for 5A. Try a cable rated for 5A, 100W or more." = "Este cargador de %1$lld W solo ofrece hasta %2$lld W. Los cargadores hacen esto cuando no pueden confirmar que el cable admite 5 A. Prueba un cable que admita 5 A, 100 W o más.";
++/* --raw note (issue #627): %@ = the port name macOS publishes, e.g. Port-USB-A@2. The card shows the corrected name. */
++"macOS names this port %@; corrected for this Mac model" = "macOS llama a este puerto %@; corregido para este modelo de Mac";
 ```
 
 #### Recent Merged Pull Requests:
@@ -1864,40 +2130,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mirror from private (471d687d)
+## X. Mirror from private (1d3f2156)
 
 **RULE**:
-When implementing operations in `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/WhatCableCore/Port/PortNumberingCorrection.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cf0a678`: Mirror from private (471d687d). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40e18b81`: Mirror from private (1d3f2156). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/WhatCableCoreTests/ChargerCableHintCorpusTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCableCore/Port/PortNumberingCorrection.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-/// of them reach the diagnostic. A ninth, `m4pro_macos27.0.1_e` (96 W at
-/// 20 V x 3 A, SOP' node with no identity), came with the 2026-11-12 ingest,
-/// which the 2026-11-21 corpus did not yet hold; it reaches the diagnostic,
-/// re-derived by hand from probes 19, 32 and 01 on 2026-11-24, so eight do.
-/// The one that does not, `m4_macos15.7.7`, shows the
-        "m4pro_macos27.0.1_e": (96, 60),
-    /// The signature capture that cannot fire (96 W at 20 V x 3 A): no USB-PD node in
-    @Test("Exactly the 8 reachable signature captures fire, with the expected wattages")
+///
+/// If Apple fixes the names: this table would then swap correct names back
+/// to wrong ones, so the entry must come out. The tripwire is
+/// `PortNumberingCorrectionCorpusTests` ("Mac17,14 still names hub port 2
+/// C@6 and hub port 4 A@2"): it fails as soon as an ingested Mac17,14 run
+/// shows the internal hub ports carrying different socket names, and says
+/// which run and macOS version. Before removing anything, have an owner on
+/// that macOS version confirm which physical socket each device is in. To
+/// roll back for every macOS version, delete the `"Mac17,14"` entry and the
+/// tests that expect the swap (PortNumberingCorrectionTests,
+/// PortNumberingCorrectionReplayTests, and T4 in the corpus tests). If only
+/// newer macOS versions are fixed, the table needs a macOS version bound
+/// instead, which is a design change.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-/// of them reach the diagnostic. The eighth, `m4_macos15.7.7`, shows the
-    /// The eighth signature capture (96 W at 20 V x 3 A): no USB-PD node in
-    @Test("Exactly the 7 reachable signature captures fire, with the expected wattages")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cf0a678` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40e18b81` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

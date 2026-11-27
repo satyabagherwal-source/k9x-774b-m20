@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T13:23:17.066Z",
+  "last_updated": "2026-11-27T13:37:00.010Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -21645,8 +21645,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
       "repository": "darrylmorley/whatcable",
-      "content_hash": "192db6a763a9ef2858edcfcec1c2bebb1ee2c85da3effc07fd621150ba6fbc29",
-      "created_at": "2026-11-25T04:31:12.617Z"
+      "content_hash": "c24639cfc05aafc066e943df5f05b360d4abfcd196b9e9a98d5e678c6ded54fb",
+      "created_at": "2026-11-27T13:36:47.868Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
@@ -21807,8 +21807,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-learnings-research-knowledge-intelligence-darrylmorley-wh.md",
       "repository": "darrylmorley-whatcable-learnings",
-      "content_hash": "67412947dca7dc05111b31d7f60e8ae298d43ad6e8422dea4f19d7542a985ea4",
-      "created_at": "2026-11-25T04:31:21.237Z"
+      "content_hash": "c9aa03b81903d5a8dbda031f7e16a61c3e29ff2bf24556d01464167de8b8c8ea",
+      "created_at": "2026-11-27T13:36:57.978Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
@@ -25213,8 +25213,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "a25f1be1479c17e1a487993a5ca244df51917768d4e7c5ac9db89cfea1edc9fe",
-      "created_at": "2026-11-26T18:41:52.894Z"
+      "content_hash": "324cd018ae5272975092a6e7ad567425cb27b2638a70d0fdcc67362ce9e24572",
+      "created_at": "2026-11-27T13:36:54.276Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -37210,8 +37210,8 @@
       "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-learnings-technical-construction-intelligence-alibaba-zvec-learning.md",
       "repository": "alibaba-zvec-learnings",
-      "content_hash": "886f4e25f44b8ca1c1974ac5ace391cb704dd644c275be6834ac9fa9d1c41f4d",
-      "created_at": "2026-11-24T22:42:44.507Z"
+      "content_hash": "602209347ec5e7d96f1796fb88bc2b2c23d19601ebaf0e9650f0c2efa01d5d88",
+      "created_at": "2026-11-27T13:36:58.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",
@@ -46785,8 +46785,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "4630edae7657f2f2ab661ae1ae86b13c3d4def851b22a102857c950872b55c2c",
-      "created_at": "2026-11-27T13:14:09.040Z"
+      "content_hash": "acb5a8c547df8296e6be6316631b9f138f25178b2db35784dcc0bcab0953fe23",
+      "created_at": "2026-11-27T13:37:00.010Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

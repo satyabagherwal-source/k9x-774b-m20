@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `ee15ab0a`  
+> **Source Version**: `2b1e274d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:41:51.028Z  
+> **Timestamp**: 2026-11-27T13:36:52.582Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:41:51.021Z  
+> **Harvest Timestamp**: 2026-11-27T13:36:52.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16295 stars
+- **Stars / Engagement**: 16298 stars
 
 ---
 
@@ -1096,802 +1096,894 @@ inline const std::string MULTI_CHUNK_CLUSTER_MARKOV_CHAIN_LENGTH =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee15ab0a` (2026-11-26)
-**Commit Message**: perf(fts): reduce embedded Jieba startup time and memory use (#929)
+### Incident Patch 1: `2b1e274d` (2026-11-27)
+**Commit Message**: fix(diskann): separate read workspace from the page cache budget (#936)
 
-**File**: `scripts/generate_jieba_embedded_dict.py` (modified, +103/-4)
+**File**: `src/ailego/buffer/block_eviction_queue.cc` (modified, +25/-8)
 ```diff
-@@ -13,7 +13,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
+@@ -1540,7 +1540,11 @@ size_t BlockEvictionQueue::cleanup_dead_entries(size_t max_attempts) {
+ bool BlockEvictionQueue::add_single_block(const BlockType &block,
+                                           int queue_index) {
+   if (queue_index < 0 || queue_index >= static_cast<int>(kQueueCount)) {
+-    LOG_ERROR("invalid eviction priority: %d", queue_index);
++    try {
++      LOG_ERROR("invalid eviction priority: %d", queue_index);
++    } catch (...) {
++      // A diagnostic must not interrupt the caller's queue recovery.
++    }
+     return false;
+   }
+   BlockType queued = block;
+@@ -1552,7 +1556,8 @@ bool BlockEvictionQueue::add_single_block(const BlockType &block,
+   if (!ok) {
+     approximate_queue_sizes_[queue_index].fetch_sub(1,
+                                                     std::memory_order_relaxed);
+-    LOG_DEBUG("Eviction queue enqueue rejected under allocation pressure.");
++    // Queue admission failed under memory pressure. Return that failure
++    // without allocating again to log it.
+     return false;
+   }
+   return true;
+@@ -1833,7 +1838,11 @@ MemoryLimitPool::PageAllocation MemoryLimitPool::acquire_slab_buffer(
+   AlignedSlabMapping mapping = reserve_aligned_slab(page_size);
+   if (mapping.base == nullptr) {
+     release_fixed(page_size, &metadata_used_size_, Backing::kPending);
+-    LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
++    try {
++      LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
++    } catch (...) {
++      // The caller must still cancel its payload reservation.
++    }
+     return {nullptr, true};
+   }
+   ReclaimableSlab *slab = new (mapping.base) ReclaimableSlab(
+@@ -2384,6 +2393,16 @@ bool MemoryLimitPool::try_acquire_buffer(size_t buffer_size, char *&buffer,
+     return false;
+   }
  
--"""Generate embedded Jieba dictionaries as raw LZ4 blocks.
-+"""Generate the precompiled Jieba main dictionary and embedded HMM model.
- 
- Run from any directory:
-     python3 scripts/generate_jieba_embedded_dict.py
-@@ -29,7 +29,9 @@
- import ctypes
- import ctypes.util
- import hashlib
-+import itertools
- import logging
-+import struct
- from pathlib import Path
- 
- 
-@@ -78,13 +80,96 @@ def compress(library, original: bytes) -> bytes:
-     return destination.raw[:size]
- 
- 
-+def compile_dictionary(source: bytes) -> tuple[bytes, str]:
-+    """Store cppjieba entries in source order, in little-endian columns.
-+
-+    Each entry has a uint16 rune count, uint16 tag byte count and uint32
-+    frequency. The variable-length columns hold UTF-32LE words and UTF-8 tags.
-+    """
-+    word_lengths = bytearray()
-+    tag_lengths = bytearray()
-+    frequencies = bytearray()
-+    words = bytearray()
-+    tags = bytearray()
-+    counts = []
-+    spellings = []
-+    for line in source.splitlines():
-+        word, count, tag = line.split()
-+        spelling = word.decode("utf-8")
-+        spellings.append(spelling)
-+        runes = spelling.encode("utf-32-le")
-+        frequency = int(count)
-+        if not (0 < frequency <= 0xFFFFFFFF):
-+            raise ValueError(f"invalid dictionary frequency: {count!r}")
-+        word_lengths.extend(struct.pack("<H", len(runes) // 4))
-+        tag_lengths.extend(struct.pack("<H", len(tag)))
-+        frequencies.extend(struct.pack("<I", frequency))
-+        words.extend(runes)
-+        tags.extend(tag)
-+        counts.append(frequency)
-+
-+    if not counts:
-+        raise ValueError("empty main dictionary")
-+    counts.sort()
-+    total = sum(counts)
-+    if total > 2**53:
-+        raise ValueError("dictionary frequency sum must fit exactly in a double")
-+    metadata = (
-+        f"constexpr std::size_t kJiebaWordCount = {len(counts)};\n"
-+        f"constexpr std::size_t kJiebaRuneCount = {len(words) // 4};\n"
-+        f"constexpr double kJiebaFrequencySum = {total}.0;\n"
-+        f"constexpr unsigned kJiebaMinFrequency = {counts[0]};\n"
-+        f"constexpr unsigned kJiebaMedianFrequency = {counts[len(counts) // 2]};\n"
-+        f"constexpr unsigned kJiebaMaxFrequency = {counts[-1]};\n"
-+    )
-+    metadata += trie_layout(spellings)
-+    return b"".join((word_lengths, tag_lengths, frequencies, words, tags)), metadata
-+
-+
-+def trie_layout(words: list[str]) -> str:
-+    """Locate each trie level and encode lexical order as runs of source rows."""
-+    level_sizes = [0] * max(map(len, words))
-+    ranges = []
-+    previous = ""
-+    # Stable order preserves cppjieba's last-entry-wins rule for duplicates.
-+    for row in sorted(range(len(words)), key=words.__getitem__):
-+        word = words[row]
-+        shared = 0
-+        limit = min(len(word), len(previous))
-+        while shared < limit and word[shared] == previous[shared]:
-+            shared += 1
-+        for depth in range(shared, len(word)):
-+            level_sizes[depth] += 1
-+        if ranges and ranges[-1][1] == row:
-+            ranges[-1][1] += 1
-+        else:
-+            ranges.append([row, row + 1])
-+        previous = word
-+
-+    # Node zero is the root.
-+    offsets = list(itertools.accumulate(level_sizes, initial=1))
-+    if offsets[-1] > 0xFFFFFFFF or len(words) > 0xFFFFFFFF:
-+        raise ValueError("embedded trie indices must fit in uint32")
-+    level_offsets = ", ".join(map(str, offsets))
-+    row_ranges = "".join(f"    {{{start}, {end}}},\n" for start, end in ranges)
-+    root_size = max(ord(word[0]) for word in words) + 1
-+    return (
-+        f"constexpr std::array<uint32_t, {len(offsets)}> kJiebaLevelOffsets = "
-+        f"{{{level_offsets}}};\n"
-+        f"constexpr uint32_t kJiebaSortedRowRanges[][2] = {{\n{row_ranges}}};\n"
-+        f"constexpr std::size_t kJiebaRootSize = {root_size};\n"
-+    )
-+
-+
- def write_include(
-     output: Path,
-     symbol: str,
-     source_name: str,
-     original: bytes,
-     compressed: bytes,
-     lz4_version: int,
-+    payload_size: int,
-+    metadata: str,
- ):
-     with output.open("w", encoding="ascii", newline="\n") as stream:
-         stream.write("// Generated by scripts/generate_jieba_embedded_dict.py.\n")
-@@ -98,7 +183,8 @@ def write_include(
-             chunk = compressed[offset : offset + 16]
-             stream.write("    " + ", ".join(f"0x{byte:02x}" for byte in chunk) + ",\n")
-         stream.write("};\n")
--        stream.write(f"constexpr std::size_t {symbol}OriginalSize = {len(original)};\n")
-+        stream.write(f"constexpr std::size_t {symbol}OriginalSize = {payload_size};\n")
-+        stream.write(metadata)
-         stream.write("// clang-format on\n")
- 
- 
-@@ -125,16 +211,29 @@ def main():
-         ("hmm_model.utf8", "jieba_hmm_model_lz4.inc", "kJiebaHmmModelLz4"),
-     ):
-         original = (args.dict_dir / source_name).read_bytes()
-- 
++  bool backing_reserved = false;
++  bool attempted_backing = true;
++  const auto rollback = ScopeGuard::Make([&] {
++    if (buffer) return;
++    if (backing_reserved) {
++      cancel_buffer_reservation(buffer_size, attempted_backing);
++    } else {
++      release_buffer(nullptr, buffer_size);
++    }
++  });
+   if (cacheable) {
+     buffer = pop_reusable_buffer(pick_shard(), buffer_size);
+     if (buffer) {
+@@ -2397,21 +2416,19 @@ bool MemoryLimitPool::try_acquire_buffer(size_t buffer_size, char *&buffer,
+     // size, all currently visible free buffers were already checked above.
+     trim_free_buffers(buffer_size);
+     if (!try_reserve_committed(buffer_size, Backing::kPending)) {
+-      release_buffer(nullptr, buffer_size);
+       high_watermark_hits_.fetch_add(1, std::memory_order_relaxed);
+       return false;
+     }
+   }
++  backing_reserved = true;
+   const auto allocation =
+       cacheable ? acquire_slab_buffer()
+                 : PageAllocation{static_cast<char *>(ailego_aligned_malloc(
+                                      buffer_size, kMinimumPageBytes)),
+                                  true};
++  attempted_backing = allocation.attempted_backing;
+   buffer = allocation.buffer;
+-  if (!buffer) {
+-    cancel_buffer_reservation(buffer_size, allocation.attempted_backing);
+-    return false;
+-  }
++  if (!buffer) return false;
+   if (!cacheable) process_rss_.finish_reservation(buffer_size, true);
+   alloc_from_slab_.fetch_add(1, std::memory_order_relaxed);
+   return true;
 ```
 
-**File**: `src/db/index/column/fts_column/fts_column_indexer.cc` (modified, +15/-8)
+**File**: `src/ailego/buffer/vector_page_table.cc` (modified, +54/-43)
 ```diff
-@@ -123,7 +123,7 @@ Result<void> FtsColumnIndexer::open(FieldSchema::Ptr field_meta,
-         field_meta->name()));
+@@ -21,6 +21,7 @@
+ #include <cstring>
+ #include <iterator>
+ #include <thread>
++#include <utility>
+ #include <ailego/pattern/defer.h>
+ #include <ailego/pattern/scope_guard.h>
+ #include <ailego/utility/memory_helper.h>
+@@ -713,12 +714,12 @@ char *VectorPageTable::publish_claimed_block(block_id_t block_id, char *buffer,
+   assert(buffer != nullptr);
+   Entry &entry = entry_at(block_id);
+   if (entry.ref_count.load(std::memory_order_acquire) != kLoadingRefCount) {
++    MemoryLimitPool::get_instance().release_buffer(buffer, kVectorPageSize);
+     LOG_ERROR(
+         "publish_claimed_block: block_id=%zu is not owned by a loader, "
+         "state=%d",
+         static_cast<size_t>(block_id),
+         entry.ref_count.load(std::memory_order_relaxed));
+-    MemoryLimitPool::get_instance().release_buffer(buffer, kVectorPageSize);
+     return nullptr;
    }
  
--  auto pipeline_result = zvec::detail::AcquireFtsPipeline(*fts_param);
-+  auto pipeline_result = zvec::detail::PrepareFtsPipeline(*fts_param);
-   if (!pipeline_result.has_value()) {
-     return tl::make_unexpected(Status::InternalError(
-         "FtsColumnIndexer: failed to create tokenizer pipeline. field=",
-@@ -153,7 +153,7 @@ Result<void> FtsColumnIndexer::close() {
+@@ -2190,15 +2191,17 @@ VecBufferPool::ReadPageClaim VecBufferPool::claim_read_page(block_id_t id,
+   const auto claim = page_table_.try_claim_block_load(id);
+   if (claim != VectorPageTable::LoadClaimResult::kClaimed)
+     return ReadPageClaim::kJoin;
++  bool claimed = false;
++  const auto rollback = ScopeGuard::Make([&] {
++    if (!claimed) cancel_read_page(id, std::exchange(buffer, nullptr));
++  });
+   auto &memory = MemoryLimitPool::get_instance();
+   if (!memory.try_acquire_buffer(kVectorPageSize, buffer)) {
+     BlockEvictionQueue::get_instance().batch_recycle(1);
+     (void)memory.try_acquire_buffer(kVectorPageSize, buffer);
    }
+-  if (!buffer) {
+-    (void)page_table_.cancel_block_load(id);
+-    return ReadPageClaim::kBypass;
+-  }
++  if (!buffer) return ReadPageClaim::kBypass;
++  claimed = true;
+   miss_count_.fetch_add(1, std::memory_order_relaxed);
+   return ReadPageClaim::kClaimed;
+ }
+@@ -2214,10 +2217,7 @@ void VecBufferPool::complete_read_page(block_id_t id, char *buffer,
+   std::memcpy(buffer, data, kVectorPageSize);
+   char *page =
+       page_table_.publish_claimed_block(id, buffer, id * kVectorPageSize);
+-  if (page)
+-    page_table_.release_block(id);
+-  else
+-    cancel_read_page(id, buffer);
++  if (page) page_table_.release_block(id);
+ }
  
-   ctx_ = nullptr;
--  tokenizer_pipeline_.reset();
-+  tokenizer_pipeline_ = {};
-   postings_cf_ = nullptr;
-   positions_cf_ = nullptr;
-   term_freq_cf_.store(nullptr, std::memory_order_release);
-@@ -603,11 +603,9 @@ Result<DocIteratorPtr> FtsColumnIndexer::build_or_iterator(
- // Write operations
- // ============================================================
+ bool VecBufferPool::acquire_pages_impl(const block_id_t *page_ids, size_t count,
+@@ -2227,20 +2227,20 @@ bool VecBufferPool::acquire_pages_impl(const block_id_t *page_ids, size_t count,
+   if (!page_ids || !pages) return false;
  
--Result<void> FtsColumnIndexer::insert(uint64_t seg_doc_id,
--                                      const std::string &text) {
--  // safe access check
--
--  if (!tokenizer_pipeline_ || !ctx_) {
-+Result<TokenizerPipelinePtr> FtsColumnIndexer::write_pipeline() const {
-+  // Check that the indexer can still accept writes.
-+  if (!tokenizer_pipeline_.valid() || !ctx_) {
-     return tl::make_unexpected(Status::InternalError(
-         "FtsColumnIndexer::insert: not opened. field=", field_name_));
+   std::fill_n(pages, count, nullptr);
++  bool acquired_all = false;
++  const auto release_on_failure = ScopeGuard::Make([&] {
++    if (acquired_all) return;
++    for (size_t i = 0; i < count; ++i) {
++      if (std::exchange(pages[i], nullptr))
++        page_table_.release_block(page_ids[i]);
++    }
++  });
+   std::array<block_id_t, kBlockingAioBatchSize> miss_batch{};
+   size_t miss_count = 0;
+ 
+   // Pin hits before I/O so eviction cannot reclaim them before delivery.
+   for (size_t i = 0; i < count; ++i) {
+-    if (page_ids[i] >= page_table_.entry_num()) {
+-      for (size_t j = 0; j < i; ++j) {
+-        if (pages[j]) {
+-          page_table_.release_block(page_ids[j]);
+-          pages[j] = nullptr;
+-        }
+-      }
+-      return false;
+-    }
++    if (page_ids[i] >= page_table_.entry_num()) return false;
+     pages[i] = try_acquire_buffer(page_ids[i]);
+     if (!pages[i]) {
+       miss_batch[miss_count++] = page_ids[i];
+@@ -2265,16 +2265,9 @@ bool VecBufferPool::acquire_pages_impl(const block_id_t *page_ids, size_t count,
+     // leave the page in kLoadingRefCount while scanning the global queue.
+     pages[i] = acquire_buffer(page_ids[i], retry, /*record_reuse=*/false,
+                               allocation_failed);
+-    if (!pages[i]) {
+-      for (size_t j = 0; j < count; ++j) {
+-        if (pages[j]) {
+-          page_table_.release_block(page_ids[j]);
+-          pages[j] = nullptr;
+-        }
+-      }
+-      return false;
+-    }
++    if (!pages[i]) return false;
    }
-@@ -617,8 +615,17 @@ Result<void> FtsColumnIndexer::insert(uint64_t seg_doc_id,
-         "FtsColumnIndexer::insert: field is sealed. field=", field_name_));
-   }
++  acquired_all = true;
+   return true;
+ }
  
-+  return tokenizer_pipeline_.get();
-+}
-+
-+Result<void> FtsColumnIndexer::insert(uint64_t seg_doc_id,
-+                                      const std::string &text) {
-+  auto pipeline = write_pipeline();
-+  if (!pipeline) {
-+    return tl::make_unexpected(pipeline.error());
-+  }
-   // Tokenize
--  std::vector<Token> tokens = tokenizer_pipeline_->process(text);
-+  std::vector<Token> tokens = (*pipeline)->process(text);
-   const uint32_t doc_len = static_cast<uint32_t>(tokens.size());
- 
-   // Aggregate position lists by term
+@@ -3409,14 +3402,24 @@ VecBufferPool::PrepareResult VecBufferPool::prepare_pages_if_fits(
+           VectorPageTable::LoadClaimResult::kClaimed)
+         continue;
+       char *buffer = nullptr;
+-      if (!budget.try_acquire_buffer(kVectorPageSize, buffer)) {
+-        (void)page_table_.cancel_block_load(id);
++      bool owns_claim = true;
++      const auto rollback = ScopeGuard::Make([&] {
++        if (owns_claim) cancel_read_page(id, buffer);
++      });
++      bool acquired = false;
++      try {
++        acquired = budget.try_acquire_buffer(kVectorPageSize, buffer);
++      } catch (const std::bad_alloc &) {
++        // Optional preparation can fall back to foreground reads.
++      }
++      if (!acquired) {
+         result.status = PrepareStatus::kPressure;
+         break;
+       }
+       std::memcpy(buffer, scratch.data() + (id - first) * kVectorPageSize,
+                   kVectorPageSize);
+       page_table_.promote_evict_priority(id, priority);
++      owns_claim = false;
+       if (!page_table_.publish_claimed_block(id, buffer,
+                           
 ```
 
-**File**: `src/db/index/column/fts_column/fts_column_indexer.h` (modified, +3/-1)
+**File**: `src/ailego/io/iouring_loader.cc` (modified, +171/-1)
 ```diff
-@@ -134,6 +134,8 @@ class FtsColumnIndexer {
-   // Write
-   // -----------------------------------------------------------------
- 
-+  Result<TokenizerPipelinePtr> write_pipeline() const;
-+
-   /*! Insert FTS field content for a document
-    *  \param seg_doc_id  Segment-local document ID
-    *  \param text        UTF-8 encoded text content
-@@ -207,7 +209,7 @@ class FtsColumnIndexer {
- 
-   // --- Tokenizer (write path only) ---
-   FieldSchema::Ptr field_meta_{};
--  TokenizerPipelinePtr tokenizer_pipeline_{nullptr};
-+  PreparedTokenizerPipeline tokenizer_pipeline_;
-   std::shared_ptr<zvec::FtsIndexParams> fts_params_;
- 
-   // --- Reader state ---
-```
-
-**File**: `src/db/index/column/fts_column/fts_indexer.cc` (modified, +16/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- #include "fts_indexer.h"
+@@ -26,6 +26,7 @@
+ #include <ailego/io/iouring_loader.h>
+ #include <ailego/pattern/scope_guard.h>
+ #include <zvec/ailego/buffer/block_eviction_queue.h>
++#include <zvec/ailego/buffer/budgeted_buffer.h>
+ #include <zvec/ailego/buffer/budgeted_mapped_buffer.h>
  #include <zvec/ailego/logger/logger.h>
-+#include <zvec/db/doc.h>
- #include "db/common/constants.h"
- #include "db/common/file_helper.h"
- #include "fts_rocksdb_merge.h"
-@@ -257,6 +258,21 @@ Status FtsIndexer::remove_field_indexer(const std::string &field_name) {
-   return Status::OK();
- }
  
-+Status FtsIndexer::prepare_write(const Doc &doc) const {
-+  if (doc.get_operator() == Operator::DELETE) {
-+    return Status::OK();
-+  }
-+  for (const auto &[name, indexer] : indexers_) {
-+    if (doc.has_value(name)) {
-+      auto pipeline = indexer->write_pipeline();
-+      if (!pipeline) {
-+        return pipeline.error();
-+      }
-+    }
-+  }
-+  return Status::OK();
-+}
-+
- Status FtsIndexer::insert(const std::string &field_name, uint32_t seg_doc_id,
-                           const std::string &text) {
-   auto it = indexers_.find(field_name);
-```
-
-**File**: `src/db/index/column/fts_column/fts_indexer.h` (modified, +5/-0)
-```diff
-@@ -25,6 +25,8 @@
+@@ -36,6 +37,18 @@ namespace ailego {
+ // returning EAGAIN/EBUSY (100 us sleep per retry, about one second total).
+ static constexpr size_t kIoUringDrainRetries = 10000;
  
- namespace zvec {
- 
-+class Doc;
-+
- // Manages the per-segment FTS RocksDB instance and all FtsColumnIndexers.
- // Analogous to InvertedIndexer for scalar invert indexes.
- class FtsIndexer {
-@@ -59,6 +61,9 @@ class FtsIndexer {
-   // Remove a field's CFs and stat keys from the RocksDB.
-   Status remove_field_indexer(const std::string &field_name);
- 
-+  // Resolve the pipelines this document needs before its write becomes durable.
-+  Status prepare_write(const Doc &doc) const;
-+
-   // Insert a document's text into a specific field's indexer.
-   Status insert(const std::string &field_name, uint32_t seg_doc_id,
-                 const std::string &text);
-```
-
-**File**: `src/db/index/column/fts_column/fts_pipeline.h` (modified, +4/-4)
-```diff
-@@ -17,15 +17,15 @@
- #include <memory>
- #include <zvec/db/index_params.h>
- #include <zvec/db/status.h>
-+#include "tokenizer/tokenizer_factory.h"
- 
- namespace zvec {
- 
--namespace fts {
--class TokenizerPipeline;
--}  // namespace fts
--
- namespace detail {
- 
-+Result<fts::PreparedTokenizerPipeline> PrepareFtsPipeline(
-+    FtsIndexParams &params);
-+
- // Internal entry to lazily acquire (and cache, per FtsIndexParams instance)
- // the tokenizer pipeline.  Thread-safe; same params instance returns the
- // same shared_ptr on subsequent calls; the manager-side reference is
-```
-
-**File**: `src/db/index/column/fts_column/tokenizer/jieba_embedded_dict.cc` (modified, +198/-10)
-```diff
-@@ -14,11 +14,16 @@
- 
- #include "jieba_embedded_dict.h"
- #include <lz4.h>
-+#include <algorithm>
-+#include <array>
-+#include <cmath>
- #include <cstddef>
-+#include <cstdint>
- #include <istream>
- #include <limits>
- #include <streambuf>
- #include <string>
-+#include <vector>
- 
- namespace zvec::fts {
- namespace {
-@@ -56,21 +61,204 @@ Result<std::string> decompress(const unsigned char (&data)[N],
-   return text;
- }
- 
-+uint32_t read_u16(const unsigned char *p) {
-+  return uint32_t{p[0]} | (uint32_t{p[1]} << 8);
-+}
-+
-+uint32_t read_u32(const unsigned char *p) {
-+  return read_u16(p) | (read_u16(p + 2) << 16);
-+}
-+
-+class EmbeddedTrie final : public cppjieba::DictTrie::ReadOnlyTrie {
-+ public:
-+  explicit EmbeddedTrie(const std::vector<cppjieba::DictUnit> &entries)
-+      : entries_(entries) {}
-+
-+  Status build() {
-+    static_assert(kJiebaRootSize <= 0x110000);
-+    auto next = kJiebaLevelOffsets;
-+    nodes_.resize(static_cast<size_t>(next.back()) + 1);
-+    nodes_.front().first_child = 1;
-+    nodes_.back().first_child = next.back();
-+
-+    const cppjieba::Unicode empty;
-+    const auto *previous = &empty;
-+    for (const auto &[first, end] : kJiebaSortedRowRanges) {
-+      if (end > entries_.size()) {
-+        return Status::InternalError("Invalid embedded Jieba row range");
-+      }
-+      for (uint32_t row = first; row < end; ++row) {
-+        const auto &word = entries_[row].word;
-+        if (word.empty() || word.size() >= next.size()) {
-+          return Status::InternalError("Invalid embedded Jieba word length");
-+        }
-+        const auto mismatch = std::mismatch(word.begin(), word.end(),
-+                                            previous->begin(), previous->end());
-+        // In lexical order only the suffix introduces new nodes. Each level
-+        // has its own cursor, so siblings land together in rune order.
-+        for (size_t depth = mismatch.first - word.begin(); depth < word.size();
-+             ++depth) {
-+          if (next[depth] == kJiebaLevelOffsets[depth + 1]) {
-+            return Status::InternalError("Invalid embedded Jieba trie level");
-+          }
-+          nodes_[next[depth]++] = {next[depth + 1], word[depth], 0};
-+        }
-+        nodes_[next[word.size() - 1] - 1].entry = row + 1;
-+        previous = &word;
-+      }
-+    }
-+    if (!std::equal(next.begin(), next.end() - 1,
-+                    kJiebaLevelOffsets.begin() + 1)) {
-+      return Status::InternalError("Incomplete embedded Jieba trie");
-+    }
-+
-+    // Most lookups start a new word. Index the root's wide fanout directly.
-+    roots_.resize(kJiebaRootSize);
-+    for (uint32_t i = 1; i < nodes_[1].first_child; ++i) {
-+      if (nodes_[i].rune >= roots_.size()) {
-+        return Status::InternalError("Invalid embedded Jieba trie root");
-+      }
-+      roots_[nodes_[i].rune] = i;
-+    }
-+    return Status::OK();
-+  }
-+
-+  const cppjieba::DictUnit *Find(Iterator begin, Iterator end) const override {
-+    if (begin == end) {
-+      return nullptr;
-+    }
-+    uint32_t node = root_child(begin->rune);
-+    for (++begin; node && begin != end; ++begin) {
-+      node = child(node, begin->rune);
-+    }
-+    return entry(node);
-+  }
-+
-+  void Find(Iterator begin, Iterator end, std::vector<cppjieba::Dag> &dags,
-+            size_t max_word_len) const override {
-+    const size_t size = end - begin;
-+    dags.resize(size);
-+    for (size_t i = 0; i < size; ++i) {
-+      auto &dag = dags[i];
-+      dag.runestr = begin[i];
-+      uint32_t node = root_child(begin[i].rune);
-+      // cppjieba always emits the single-rune edge, including unknown words.
-+      dag.nexts.push_back(std::make_pair(i, entry(node)));
-+      for (size_t j = i + 1; node && j < size && j - i < max_word_len; ++j) {
-+        node = child(node, begin[j].rune);
-+        if (const auto *word = entry(node)) {
-+          dag.nexts.push_back(std::make_pair(j, word));
-+        }
-+      }
-+    }
-+  }
-+
-+ private:
-+  struct Node {
-+    uint32_t first_child;
-+    uint32_t rune;
-+    uint32_t entry;
++struct IoUringRing::AsyncReads {
++  MemoryReservation memory;
++  struct Slot {
++    IoUringRead request;
++    size_t offset;
++    bool seen{false};
 +  };
-+
-+  uint32_t root_child(uint32_t rune) const {
-+    return rune < roots_.size() ? roots_[rune] : 0;
-+  }
-+
-+  uint32_t child(uint32_t node, uint32_t rune) const {
-+    const auto begin = nodes_.begin() + nodes_[node].first_child;
-+    const auto end = nodes_.begin() + nodes_[node + 1].first_child;
-+    const auto it = std::lower_bound(
-+        begin, end, rune,
-+        [](const Node &n, uint32_t key) { return n.rune < key; });
-+    return it != end && it->rune == rune
-+               ? static_cast<uint32_t>(it - nodes_.begin())
-+               : 0;
-+  }
-+
-+  const cppjieba::DictUnit *entry(uint32_t node) const {
-+    const uint32_t row = nodes_[node].entry;
-+    return row ? &entries_[row - 1] : nullptr;
-+  }
-+
-+  // DictTrie owns the dictionary entries and the lookup together.
-+  const std::vector<cppjieba::DictUnit> &entries_;
-+  std::vector<Node> nodes_;
-+  std::vector<uint32_t> roots_;
++  OptionalBudgetedVector<Slot> slots;
++  size_t submitted{0};
++  size_t completed{0};
 +};
 +
-+Result<EmbeddedJiebaDict> load_compiled_dictionary() {
-+  auto da
-```
-
-**File**: `src/db/index/column/fts_column/tokenizer/jieba_embedded_dict.h` (modified, +4/-2)
-```diff
-@@ -25,9 +25,11 @@ using EmbeddedJiebaDict =
-     std::shared_ptr<const cppjieba::DictTrie::DictCacheEntry>;
- using EmbeddedJiebaHmmModel = std::shared_ptr<const cppjieba::HMMModel>;
+ IoUringRing::IoUringRing() = default;
  
--// Lazily decompress and parse each default resource once. The returned data
--// is immutable and shared; the decompressed text is released after parsing.
-+// Lazily load each default resource once. The returned data is immutable
-+// and shared; temporary decompression buffers are released after loading.
- Result<EmbeddedJiebaDict> get_embedded_jieba_dict();
-+// Tokenizers without user words can also share the completed read-only trie.
-+Result<std::shared_ptr<const cppjieba::DictTrie>> get_embedded_jieba_trie();
- Result<EmbeddedJiebaHmmModel> get_embedded_jieba_hmm_model();
- 
- }  // namespace zvec::fts
-```
-
----
-
-### Incident Patch 2: `15d01c15` (2026-11-26)
-**Commit Message**: fix(storage): propagate write errors on forward store close (#926)
-
-**File**: `src/db/index/storage/memory_forward_store.cc` (modified, +6/-1)
-```diff
-@@ -389,12 +389,17 @@ Status MemForwardStore::close() {
-   // Exclusive: flush_locked() and the clears below rewrite cache_/batches_.
-   std::lock_guard lock(cache_mtx_);
-   if (!cache_.empty() || !batches_.empty()) {
--    flush_locked();
-+    auto status = flush_locked();
-+    if (!status.ok()) {
-+      return status;
-+    }
-   }
-   if (writer_) {
-     auto status = writer_->close();
-     if (!status.ok()) {
-       LOG_WARN("failed to close writer: %s", status.ToString().c_str());
-+      return Status::InternalError("failed to close forward writer: ",
-+                                   status.ToString());
-     }
-     writer_.reset();
-   }
-```
-
-**File**: `tests/db/index/storage/mem_store_test.cc` (modified, +41/-0)
-```diff
-@@ -97,6 +97,47 @@ class MemStoreTest : public testing::Test {
-   std::shared_ptr<MemForwardStore> store_;
- };
- 
-+// A failed checkpoint must retain its buffers and propagate the I/O error.
-+TEST_F(MemStoreTest, ClosePropagatesFlushAndFooterFailures) {
-+  class FailingWriter : public ChunkedFileWriter {
-+   public:
-+    explicit FailingWriter(bool fail_write)
-+        : ChunkedFileWriter(nullptr), fail_write_(fail_write) {}
-+    arrow::Status write(const arrow::RecordBatch &) override {
-+      return result();
-+    }
-+    arrow::Status write(const arrow::Table &) override {
-+      return result();
-+    }
-+    arrow::Status close() override {
-+      return fail_write_ ? arrow::Status::OK()
-+                         : arrow::Status::IOError("injected footer failure");
-+    }
-+
-+   private:
-+    arrow::Status result() const {
-+      return fail_write_ ? arrow::Status::IOError("injected write failure")
-+                         : arrow::Status::OK();
-+    }
-+    bool fail_write_;
-+  };
-+  ASSERT_TRUE(store_->writer_->close().ok());
-+  for (bool fail_write : {true, false}) {
-+    store_->writer_ = std::make_unique<FailingWriter>(fail_write);
-+    if (fail_write) {
-+      auto doc = CreateDoc(0);
-+      ASSERT_TRUE(store_->insert(doc).ok());
-+    }
-+    auto status = store_->close();
-+    EXPECT_FALSE(status.ok());
-+    EXPECT_NE(std::string::npos,
-+              status.message().find(fail_write ? "injected write failure"
-+                                               : "injected footer failure"));
-+    EXPECT_NE(nullptr, store_->writer_);
-+    EXPECT_FALSE(store_->batches_.empty());
-+  }
-+}
-+
- // Test constructor
- TEST_F(MemStoreTest, ConstructorTest) {
-   auto schema = GetCollectionSchema();
-```
-
----
-
-### Incident Patch 3: `ca653777` (2026-11-26)
-**Commit Message**: fix(pq): normalize inner-product scores and thresholds (#935)
-
-**File**: `python/tests/test_hnsw_pq_scores.py` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+"""PQ inner-product scores and radii must use caller-facing dot products."""
-+
-+import numpy as np
-+import pytest
-+
-+import zvec
-+
-+
-+@pytest.mark.parametrize("bits", [4, 8])
-+@pytest.mark.parametrize("rotate", [False, True])
-+@pytest.mark.parametrize("count", [300, 1100])
-+def test_hnsw_pq_inner_product_scores_and_radius(tmp_path, bits, rotate, count):
-+    rng = np.random.default_rng(903)
-+    vectors = rng.uniform(0.25, 1.5, size=(count, 16)).astype(np.float32)
-+    schema = zvec.CollectionSchema(
-+        "pq_ip_scores",
-+        vectors=[
-+            zvec.VectorSchema(
-+                "vector",
-+                zvec.DataType.VECTOR_FP32,
-+                16,
-+                index_param=zvec.HnswIndexParam(
-+                    metric_type=zvec.MetricType.IP,
-+                    m=16,
-+                    ef_construction=100,
-+                    quantize_type=zvec.QuantizeType.PQ,
-+                    quantizer_param=zvec.QuantizerParam(
-+                        num_chunk=4,
-+                        num_bits=bits,
-+                        enable_rotate=rotate,
-+                        opq_iter=2,
-+                        opq_pq_iter=2,
-+                    ),
-+                ),
-+            )
-+        ],
-+    )
-+    path = str(tmp_path / "index")
-+    topk = 40
-+    writer = zvec.create_and_open(path, schema)
-+    query = zvec.Query("vector", vector=vectors[0], param=zvec.HnswQueryParam(ef=2000))
-+    try:
-+        for start in range(0, count, 200):
-+            assert all(
-+                status.ok()
-+                for status in writer.insert(
-+                    [
-+                        zvec.Doc(id=str(i), vectors={"vector": vectors[i]})
-+                        for i in range(start, min(start + 200, count))
-+                    ]
-+                )
-+            )
-+        writer.optimize()
-+        before = writer.query(query, topk=topk, output_fields=[])
-+        # Positive inputs have positive approximate inner products. Comparing
-+        # two query routes alone would miss a score-sign error shared by both.
-+        assert len(before) == topk
-+        assert all(doc.score > 0 for doc in before)
-+        assert [doc.score for doc in before] == sorted(
-+            (doc.score for doc in before), reverse=True
-+        )
-+    finally:
-+        writer.close()
-+    reader = zvec.open(path, zvec.CollectionOption(read_only=True))
-+    try:
-+        after = reader.query(query, topk=topk, output_fields=[])
-+        assert [doc.id for doc in after] == [doc.id for doc in before]
-+        np.testing.assert_allclose(
-+            [doc.score for doc in after], [doc.score for doc in before]
-+        )
-+        for radius in (after[topk // 2].score, after[0].score + 1.0):
-+            limited = zvec.Query(
-+                "vector",
-+                vector=vectors[0],
-+                param=zvec.HnswQueryParam(ef=2000, radius=radius),
-+            )
-+            expected = {int(doc.id): doc.score for doc in after if doc.score >= radius}
-+            docs = reader.query(limited, topk=topk, output_fields=[])
-+            assert {int(doc.id): doc.score for doc in docs} == expected
-+            ids, scores = reader.query_internal_ids(
-+                limited, topk=topk, return_scores=True
-+            )
-+            assert dict(zip(ids[ids >= 0], scores[ids >= 0])) == expected
-+            assert np.all(ids[len(expected) :] == -1)
-+            assert np.all(np.isnan(scores[len(expected) :]))
-+    finally:
-+        reader.close()
-```
-
-**File**: `src/turbo/quantizer/pq_fast_quantizer/pq_fast_quantizer.h` (modified, +13/-0)
-```diff
-@@ -155,6 +155,19 @@ class PqFastQuantizer : public Quantizer,
-   int dequantize(const void *in, const IndexQueryMeta &qmeta,
-                  std::string *out) const override;
- 
-+  // IP kernels return a negated dot product for nearest-distance search.
-+  void normalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  void denormalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  bool support_score_normalization() const override {
-+    return meta_.metric_name() == "InnerProduct";
-+  }
-+
-   int serialize(std::string *out) const override;
- 
-   int deserialize(std::string &in) override;
-```
-
-**File**: `src/turbo/quantizer/pq_int4_quantizer/pq_int4_quantizer.h` (modified, +13/-0)
-```diff
-@@ -133,6 +133,19 @@ class PqInt4Quantizer : public Quantizer, public PrecomputeTableQuantizer {
-                                  size_t centroid_id,
-                                  std::string *out) const override;
- 
-+  // IP kernels return a negated dot product for nearest-distance search.
-+  void normalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  void denormalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  bool support_score_normalization() const override {
-+    return meta_.metric_name() == "InnerProduct";
-+  }
-+
-   int serialize(std::string *out) const override;
- 
-   int deserialize(std::string &in) override;
-```
-
-**File**: `src/turbo/quantizer/pq_int8_quantizer/pq_int8_quantizer.h` (modified, +13/-0)
-```diff
-@@ -128,6 +128,19 @@ class PqInt8Quantizer : public Quantizer, public PrecomputeTableQuantizer {
-   DistanceImpl sym_distance(const void *query,
-                             const IndexQueryMeta &qmeta) const;
- 
-+  // IP kernels return a negated dot product for nearest-distance search.
-+  void normalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  void denormalize_score(float *score) const override {
-+    *score = -(*score);
-+  }
-+
-+  bool support_score_normalization() const override {
-+    return meta_.metric_name() == "InnerProduct";
-+  }
-+
-   int serialize(std::string *out) const override;
- 
-   int deserialize(std::string &in) override;
-```
-
-**File**: `tests/core/interface/hnsw_turbo_index_test.cc` (modified, +25/-0)
-```diff
-@@ -2185,6 +2185,31 @@ TEST_P(HnswPqLifecycleTest, TrainMergeReopenAndAppend) {
-     EXPECT_FLOAT_EQ(expected_rows.doc_list_[i].score(), scores[i]);
-   }
- 
-+  if (metric == MetricType::kInnerProduct) {
-+    // Compare against reconstructed PQ vectors, not another search route that
-+    // could share the same missing score conversion.
-+    for (const auto &doc : expected_rows.doc_list_) {
-+      VectorDataBuffer decoded;
-+      ASSERT_EQ(0, index->fetch(doc.key(), &decoded));
-+      const auto &data =
-+          std::get<DenseVectorBuffer>(decoded.vector_buffer).data;
-+      const auto *reconstructed = reinterpret_cast<const float *>(data.data());
-+      float dot = 0.0f;
-+      for (size_t d = 0; d < kDimension; ++d) {
-+        dot += vectors[11][d] * reconstructed[d];
-+      }
-+      EXPECT_NEAR(dot, doc.score(), 1e-4f * std::max(1.0f, std::abs(dot)));
-+    }
-+    ASSERT_GT(scores.front(), 0.0f);
-+    query_param->radius = scores.front() + 1.0f;
-+    ASSERT_EQ(0, index->search(query, query_param, &expected_rows));
-+    EXPECT_TRUE(expected_rows.doc_list_.empty());
-+    ASSERT_EQ(0, index->search_internal_ids(query, query_param, ids.data(),
-+                                            scores.data()));
-+    EXPECT_TRUE(std::all_of(ids.begin(), ids.end(),
-+                            [](int64_t id) { return id == -1; }));
-+  }
-+
-   // Train a separate codebook from reconstructed source vectors. Codes from
-   // the first index must be decoded and encoded again, even with equal layout.
-   auto merged = IndexFactory::CreateAndInitIndex(*param);
-```
-
-**File**: `tests/turbo/turbo_pq_int8_quantizer_test.cc` (modified, +26/-0)
-```diff
-@@ -101,6 +101,32 @@ TEST(PqInt8Quantizer, InitInvalidParams) {
-   EXPECT_NE(0, q2->init(meta, params));
+ int IoUringRing::enter(unsigned submit, unsigned minimum, unsigned flags) {
+@@ -44,6 +57,160 @@ int IoUringRing::enter(unsigned submit, unsigned minimum, unsigned flags) {
+                                   minimum, flags, nullptr, size_t{0}));
  }
  
-+TEST(PqQuantizer, PublicScoresAndThresholds) {
-+  for (const char *name :
-+       {"PqInt4Quantizer", "PqInt8Quantizer", "PqFastQuantizer"}) {
-+    for (const char *metric : {"SquaredEuclidean", "InnerProduct", "Cosine"}) {
-+      SCOPED_TRACE(std::string(name) + "/" + metric);
-+      auto quantizer = IndexFactory::CreateQuantizer(name);
-+      ASSERT_NE(nullptr, quantizer);
-+      IndexMeta meta;
-+      meta.set_meta(IndexMeta::DataType::DT_FP32, 16);
-+      meta.set_metric(metric, 0, Params());
-+      Params params;
-+      params.set("num_chunk", uint32_t{4});
-+      ASSERT_EQ(0, quantizer->init(meta, params));
-+      const bool inner_product = std::string(metric) == "InnerProduct";
-+      ASSERT_EQ(inner_product, quantizer->support_score_normalization());
-+      if (inner_product) {
-+        float score = -3.25f;
-+        quantizer->normalize_score(&score);
-+        EXPECT_FLOAT_EQ(3.25f, score);
-+        quantizer->denormalize_score(&score);
-+        EXPECT_FLOAT_EQ(-3.25f, score);
-+      }
++bool IoUringRing::has_pending_reads() const {
++  return async_reads_ != nullptr;
++}
++
++int IoUringRing::submit_reads(int fd, const IoUringRead *reads, size_t count) {
++  if (async_reads_ || !is_valid() || !reads || count == 0 ||
++      count > std::min<size_t>(sq_entries_, kIoUringMaxBatch))
++    return -1;
++  try {
++    MemoryReservation memory;
++    std::unique_ptr<AsyncReads> state;
++    memory.add_for_allocation<false>(
++        sizeof(AsyncReads), [&] { state = std::make_unique<AsyncReads>(); });
++    state->memory.swap(memory);
++    state->slots.reserve(count);
++    size_t bytes = 0;
++    for (size_t i = 0; i < count; ++i) {
++      const auto &read = reads[i];
++      if (!read.buf || !read.len || read.offset % 512 || read.len % 512 ||
++          reinterpret_cast<uintptr_t>(read.buf) % 512 ||
++          read.len > std::numeric_limits<uint32_t>::max() ||
++          read.expected_len > read.len)
++        return -1;
++      const size_t size =
++          (read.len + kIoUringStagingAlign - 1) & ~(kIoUringStagingAlign - 1);
++      if (bytes > SIZE_MAX - size) return -1;
++      state->slots.push_back({read, bytes, false});
++      bytes += size;
 +    }
++    if (!ensure_staging(bytes)) return -1;
++    const unsigned tail = __atomic_load_n(sq_tail_, __ATOMIC_ACQUIRE);
++    const unsigned mask = *sq_ring_mask_;
++    for (size_t i = 0; i < count; ++i) {
++      auto *sqe = &sqes_[sq_array_[(tail + i) & mask]];
++      io_uring_prep_read(sqe, fd, staging_ + state->slots[i].offset,
++                         static_cast<uint32_t>(reads[i].len), reads[i].offset);
++      sqe->user_data = i;
++    }
++    async_reads_ = std::move(state);
++    __atomic_store_n(sq_tail_, tail + static_cast<unsigned>(count),
++                     __ATOMIC_RELEASE);
++    size_t retries = 0;
++    while (async_reads_->submitted < count) {
++      const unsigned remaining = count - async_reads_->submitted;
++      const int ret = enter(remaining, 0, 0);
++      if (ret > 0 && static_cast<unsigned>(ret) <= remaining) {
++        async_reads_->submitted += ret;
++        retries = 0;
++        continue;
++      }
++      if ((ret == 0 || errno == EINTR || errno == EAGAIN || errno == EBUSY) &&
++          retries++ < 8)
++        continue;
++      // Remove the unsubmitted suffix before retiring accepted requests.
++      __atomic_store_n(sq_tail_, tail + async_reads_->submitted,
++                       __ATOMIC_RELEASE);
++      if (ret > 0) {
++        abandon_staging();
++        async_reads_.reset();
++        teardown();
++      } else {
++        cancel_reads();
++      }
++      return -1;
++    }
++    return 0;
++  } catch (const std::bad_alloc &) {
++    return -1;
 +  }
 +}
 +
- TEST(PqInt8Quantizer, TrainAndEncode) {
-   const size_t DIM = 16;
-   const size_t NSQ = 4;
++int IoUringRing::reap_reads(size_t minimum, uint32_t *indices, size_t capacity,
++                            bool deliver) {
++  if (!async_reads_ || (capacity && !indices)) return -1;
++  auto &state = *async_reads_;
++  minimum = std::min({minimum, capacity, state.submitted - state.completed});
++  size_t count = 0;
++  for (;;) {
++    unsigned head = __atomic_load_n(cq_head_, __ATOMIC_ACQUIRE);
++    const unsigned tail = __atomic_load_n(cq_tail_, __ATOMIC_ACQUIRE);
++    while (head != tail && count < capacity) {
++      const auto event = cqes_[head & *cq_ring_mask_];
++      const size_t id = event.user_data;
++      if (id >= state.submitted || state.slots[id].seen) {
++        abandon_staging();
++        async_reads_.reset();
++        teardown();
++        return -1;
++      }
++      auto &slot = state.slots[id];
++      slot.seen = true;
++      ++state.completed;
++      ++head;
++      __atomic_store_n(cq_head_, head, __ATOMIC_RELEASE);
++      const auto &request = slot.request;
++      const size_t expected =
++          request.expected_len ? request.expected_len : request.len;
++      if (deliver &&
++          (event.res < 0 || static_cast<size_t>(event.res) != expected)) {
++        cancel_reads();
++        return -1;
++      }
++      if (deliver) {
++        std::memcpy(request.buf, staging_ + slot.offset, 
+```
+
+**File**: `src/ailego/io/iouring_loader.h` (modified, +13/-0)
+```diff
+@@ -31,6 +31,7 @@
+ #include <cstddef>
+ #include <cstdint>
+ #include <cstdlib>
++#include <memory>
+ #include <vector>
+ #include <ailego/io/iouring_def.h>
+ #include <zvec/ailego/buffer/process_rss_budget.h>
+@@ -140,6 +141,14 @@ class IoUringRing {
+     return execute(fd, read_reqs.data(), read_reqs.size());
+   }
+ 
++  // One bounded batch may remain in flight while the caller computes.
++  // Requests are copied and the kernel only sees charged ring-owned staging.
++  // Destinations must remain alive until completion or cancel_reads().
++  int submit_reads(int fd, const IoUringRead *reads, size_t count);
++  int get_completed_reads(size_t minimum, uint32_t *indices, size_t capacity);
++  void cancel_reads();
++  bool has_pending_reads() const;
++
+   // Execute a batch of aligned writes via io_uring. The call blocks until all
+   // accepted requests have completed, but the requests execute concurrently
+   // in the kernel. A quarantined write can still modify the file after return.
+@@ -156,6 +165,10 @@ class IoUringRing {
+   bool release_staging();
+   int execute_impl(int fd, const IoUringRead *read_reqs,
+                    const IoUringWrite *write_reqs, size_t count);
++  struct AsyncReads;
++  std::unique_ptr<AsyncReads> async_reads_;
++  int reap_reads(size_t minimum, uint32_t *indices, size_t capacity,
++                 bool deliver);
+   int enter(unsigned submit, unsigned minimum, unsigned flags);
+   int (*enter_override_)(int, unsigned, unsigned, unsigned){nullptr};
+ 
+```
+
+**File**: `src/core/algorithm/diskann/diskann_context.cc` (modified, +191/-48)
+```diff
+@@ -16,6 +16,7 @@
+ #include <chrono>
+ #include <new>
+ #include "diskann_params.h"
++#include "diskann_result_payloads.h"
+ #include "diskann_util.h"
+ 
+ namespace zvec {
+@@ -29,20 +30,182 @@ DiskAnnContext::DiskAnnContext(const IndexMeta &meta,
+       dc_(entity.get(), meta, measure, data_quantizer),
+       entity_{entity} {}
+ 
++DiskAnnContext::SearchResults::SearchResults(DiskAnnContext &context)
++    : context_(context) {
++  context_.clear_scratch();
++  context_.staged_results_ = this;
++}
++
++DiskAnnContext::SearchResults::~SearchResults() {
++  context_.staged_results_ = nullptr;
++  if (committed_) {
++    context_.release_result_scratch();
++  } else {
++    context_.clear_scratch(/*discard_slots=*/true);
++  }
++}
++
++void DiskAnnContext::SearchResults::commit() {
++  const auto publish = [](auto &current, auto &staged) {
++    // Grow before publishing any document. Swap individual lists so a caller
++    // that holds result(i) across searches can still use that reference.
++    current.resize(staged.size());
++    for (size_t i = 0; i < staged.size(); ++i) current[i].swap(staged[i]);
++  };
++  if (context_.group_by_search()) {
++    publish(context_.group_results_, group_results_);
++    for (auto &result : context_.results_) result.clear();
++  } else {
++    publish(context_.results_, results_);
++    for (auto &result : context_.group_results_) result.clear();
++  }
++  committed_ = true;
++}
++
++void DiskAnnContext::clear_scratch(bool discard_slots) {
++  const size_t capacity = candidate_vectors_.capacity();
++  release_result_scratch(
++      discard_slots ||
++      (capacity &&
++       (capacity / 2 > topk_ ||
++        ailego::MemoryLimitPool::get_instance().under_process_rss_pressure())));
++  best_list_nodes_.clear();
++  expanded_nodes_.clear();
++  visit_filter_.clear();
++  error_code_ = 0;
++}
++
++void DiskAnnContext::release_result_scratch(bool discard_slots) {
++  release_candidates();
++  topk_heap_.clear();
++  // Keep small allocations for reuse when the context returns to the pool.
++  constexpr size_t kRetainedEntries = 256;
++  auto &entries = topk_heap_.mutable_container();
++  if (entries.capacity() > kRetainedEntries) {
++    std::decay_t<decltype(entries)>{}.swap(entries);
++  }
++  if (discard_slots || candidate_vectors_.capacity() > kRetainedEntries) {
++    decltype(candidate_vectors_){}.swap(candidate_vectors_);
++  }
++  group_topk_heaps_.clear();
++}
++
++void DiskAnnContext::prepare_vector_candidates() {
++  // Prepay at most one sector of small result vectors. Under RSS pressure,
++  // or if the batch does not fit, allocate each slot only when needed.
++  const size_t bytes_per_slot = size_t{element_size_} + 1;
++  const size_t count =
++      std::min<size_t>(topk_, DiskAnnUtil::kSectorSize / bytes_per_slot);
++  auto &pool = ailego::MemoryLimitPool::get_instance();
++  if (count < 2 || element_size_ <= std::string{}.capacity() ||
++      pool.under_process_rss_pressure())
++    return;
++
++  const size_t maximum = 2 * count * bytes_per_slot;
++  if (!pool.try_reserve_process_backing(maximum)) return;
++  size_t bytes = 0;
++  try {
++    candidate_vectors_.resize(count);
++    for (auto &candidate : candidate_vectors_) {
++      candidate.bytes.resize(element_size_);
++      const size_t allocated = candidate.bytes.capacity() + 1;
++      if (allocated > maximum - bytes) throw std::bad_alloc();
++      bytes += allocated;
++    }
++  } catch (const std::bad_alloc &) {
++    candidate_vectors_.clear();
++    pool.finish_process_backing(maximum, false);
++    return;
++  }
++  const auto stamp = pool.finish_reserved_process_backing(maximum, bytes);
++  for (auto &candidate : candidate_vectors_) {
++    candidate.memory.adopt(candidate.bytes.capacity() + 1, stamp);
++  }
++}
++
++void DiskAnnContext::emplace_vector_candidate(diskann_id_t id, float score,
++                                              const void *src) {
++  if (topk_heap_.full() && !(score < topk_heap_.front().second.dist_)) return;
++  diskann_id_t slot =
++      topk_heap_.full() ? topk_heap_.front().second.vector_slot_ : kInvalidId;
++  if (slot == kInvalidId) {
++    if (candidate_vectors_.empty()) prepare_vector_candidates();
++    slot = candidate_slots_used_;
++    if (slot == candidate_vectors_.size()) {
++      auto &candidate = candidate_vectors_.emplace_back();
++      candidate.memory.resize(candidate.bytes, element_size_);
++    }
++    ++candidate_slots_used_;
++  }
++  std::memcpy(candidate_vectors_[slot].bytes.data(), src, element_size_);
++  topk_heap_.emplace(id, VectorInfo(score, slot));
++}
++
++void DiskAnnContext::topk_to_result(uint32_t idx) {
++  using Builder = TopkResultBuilder<DiskAnnContext, TopkHeap>;
++  if (!use_vector_candidates()) {
++    Builder::topk_to_result(idx);
++    return;
++  }
++  auto release = ailego::ScopeGuard::Make([&] { release_candidates(); });
++  candidate_vectors_.resize(candidate_slots_used_);
++  Builder::topk_to_single_result(
++      idx, [&](IndexDocumentList &docs, TopkHeap &heap, uint32_t size) {
++        uint32_t accepted = 0;
++        while (acc
+```
+
+**File**: `src/core/algorithm/diskann/diskann_context.h` (modified, +101/-45)
+```diff
+@@ -13,6 +13,7 @@
+ // limitations under the License.
+ #pragma once
+ 
++#include <zvec/ailego/buffer/budgeted_buffer.h>
+ #include <zvec/core/framework/index_context.h>
+ #include "utility/topk_result_builder.h"
+ #include "diskann_dist_calculator.h"
+@@ -62,7 +63,8 @@ class DiskAnnContext : public IndexContext,
+   //! Create a lightweight context for reading vectors by id.
+   static Pointer create_fetch_context(const IndexMeta &meta,
+                                       const IndexMetric::Pointer &measure,
+-                                      const DiskAnnEntity::Pointer &entity);
++                                      const DiskAnnEntity::Pointer &entity,
++                                      int *status = nullptr);
+ 
+  public:
+   //! Init
+@@ -75,14 +77,37 @@ class DiskAnnContext : public IndexContext,
+                      const DiskAnnEntity::Pointer &entity, uint32_t magic_num,
+                      const turbo::Quantizer::Pointer &data_quantizer = nullptr);
+ 
++  class SearchResults {
++   public:
++    explicit SearchResults(DiskAnnContext &context);
++    ~SearchResults();
++    SearchResults(const SearchResults &) = delete;
++    SearchResults &operator=(const SearchResults &) = delete;
++
++    void commit();
++
++   private:
++    friend class DiskAnnContext;
++    DiskAnnContext &context_;
++    std::vector<IndexDocumentList> results_;
++    std::vector<IndexGroupDocumentList> group_results_;
++    bool committed_{false};
++  };
++
++  void swap_results(DiskAnnContext &other) noexcept {
++    results_.swap(other.results_);
++    group_results_.swap(other.group_results_);
++  }
++
+   //! Retrieve search result
+   const IndexDocumentList &result() const override {
+-    return results_[0];
++    return result(0);
+   }
+ 
+   //! Retrieve search result
+   const IndexDocumentList &result(size_t idx) const override {
+-    return results_[idx];
++    static const IndexDocumentList empty;
++    return idx < results_.size() ? results_[idx] : empty;
+   }
+ 
+   //! Retrieve result object for output
+@@ -93,12 +118,13 @@ class DiskAnnContext : public IndexContext,
+ 
+   //! Retrieve search group result with index
+   const IndexGroupDocumentList &group_result() const override {
+-    return group_results_[0];
++    return group_result(0);
+   }
+ 
+   //! Retrieve search group result with index
+   const IndexGroupDocumentList &group_result(size_t idx) const override {
+-    return group_results_[idx];
++    static const IndexGroupDocumentList empty;
++    return idx < group_results_.size() ? group_results_[idx] : empty;
+   }
+ 
+   IndexGroupDocumentList *mutable_group_result() override {
+@@ -143,7 +169,8 @@ class DiskAnnContext : public IndexContext,
+   //! Set topk of search result
+   void set_topk(uint32_t val) override {
+     topk_ = val;
+-    topk_heap_.limit(val);
++    topk_heap_.clear();
++    topk_heap_.limit_on_demand(val);
+   }
+ 
+   void set_list_size(uint32_t list_size) {
+@@ -154,6 +181,10 @@ class DiskAnnContext : public IndexContext,
+     fetch_vector_ = v;
+   }
+ 
++  bool fetch_vector() const override {
++    return fetch_vector_;
++  }
++
+   //! Get topk
+   inline uint32_t topk() const override {
+     return topk_;
+@@ -186,12 +217,14 @@ class DiskAnnContext : public IndexContext,
+     return coord_buffer_;
+   }
+ 
++  int ensure_sector_buffer(size_t sectors);
++
+   inline void *sector_buffer() {
+-    return sector_buffer_;
++    return sector_buffer_.data();
+   }
+ 
+   inline size_t sector_buffer_size() const {
+-    return sector_buffer_size_;
++    return sector_buffer_.size();
+   }
+ 
+   inline IOContext &io_ctx() {
+@@ -204,43 +237,39 @@ class DiskAnnContext : public IndexContext,
+ 
+   inline void resize_results(size_t size) {
+     if (group_by_search()) {
+-      group_results_.resize(size);
++      mutable_group_results().resize(size);
+     } else {
+-      results_.resize(size);
++      mutable_results().resize(size);
+     }
+   }
+ 
+   inline bool error() const {
+-    return has_error_;
++    return error_code_ != 0;
+   }
+ 
+   inline void set_error(bool err) {
+-    has_error_ = err;
++    error_code_ = err ? IndexError_Runtime : 0;
+   }
+ 
+-  inline void clear() {
+-    for (auto &it : results_) {
+-      it.clear();
+-    }
+-    for (auto &it : group_results_) {
+-      it.clear();
+-    }
++  int error_code() const {
++    return error_code_;
++  }
+ 
+-    best_list_nodes_.clear();
+-    expanded_nodes_.clear();
+-    visit_filter_.clear();
+-    group_topk_heaps_.clear();
+-    has_error_ = false;
++  void set_error_code(int status) {
++    error_code_ = status;
++  }
++
++  inline void clear() {
++    clear_scratch();
++    for (auto &it : results_) it.clear();
++    for (auto &it : group_results_) it.clear();
+   }
+ 
+   //! Preserve query-time options when replacing an incompatible pooled
+-  //! context. Search scratch space and previous results are intentionally not
+-  //! copied.
++  //! context. Search scratch space is always owned by the original context.
+   void copy_query_options_from(const DiskAnnContext &rhs) {
+     copy_common_query_options_from(rhs);
+-    
+```
+
+**File**: `src/core/algorithm/diskann/diskann_dist_calculator.h` (modified, +61/-8)
+```diff
+@@ -15,12 +15,16 @@
+ 
+ #include <memory>
+ #include <vector>
++#include <ailego/pattern/scope_guard.h>
+ #include <turbo/quantizer/quantizer.h>
+ #include <zvec/ailego/utility/float_helper.h>
+ #include <zvec/core/framework/index_context.h>
+ #include <zvec/core/framework/index_factory.h>
+ #include <zvec/core/framework/index_meta.h>
+ #include "diskann_entity.h"
++#include "diskann_pq_read_batch.h"
++#include "diskann_resident_pq_batch.h"
++#include "diskann_visit_filter.h"
+ 
+ namespace zvec {
+ namespace core {
+@@ -118,29 +122,74 @@ class DistCalculator {
+     return dist(vec);
+   }
+ 
+-  inline void bind_quantizer(const turbo::Quantizer *quantizer,
+-                             const uint8_t *codes, uint32_t code_size) {
++  void bind_quantizer(const turbo::Quantizer *quantizer, const uint8_t *codes,
++                      uint32_t code_size,
++                      IndexStorage::Segment::Pointer paged_codes = nullptr,
++                      ailego::VecBufferPool *pool = nullptr) {
+     quantizer_ = quantizer;
+     quant_codes_ = codes;
+     quant_code_size_ = code_size;
++    paged_codes_ = std::move(paged_codes);
++    pq_pool_ = pool;
+   }
+ 
+-  int quantize_query(const void *query_rotated) {
++  int quantize_query(const void *query_rotated) try {
+     if (!quantizer_ || !query_rotated) return IndexError_InvalidArgument;
+     quant_query_scratch_.resize(quantizer_->quantized_query_vector_length());
+     quantizer_->quantize_query(query_rotated, quant_query_scratch_.data());
+     quant_dist_impl_ = quantizer_->distance(quant_query_scratch_.data(),
+                                             quantizer_->quantized_query_meta());
+     return quant_dist_impl_.valid() ? 0 : IndexError_Unsupported;
++  } catch (const std::bad_alloc &) {
++    return IndexError_NoMemory;
+   }
+ 
+-  void quantized_dist(const diskann_id_t *ids, uint32_t n, float *dists) {
++  int quantized_dist(const diskann_id_t *ids, uint32_t n, float *dists) try {
++    if (n == 0) return 0;
++    auto release =
++        ailego::ScopeGuard::Make([&] { resident_pq_batch_.release(); });
+     quant_dp_list_.resize(n);
+     for (uint32_t i = 0; i < n; ++i) {
+-      quant_dp_list_[i] =
+-          quant_codes_ + static_cast<size_t>(ids[i]) * quant_code_size_;
++      if (entity_ && ids[i] >= entity_->doc_cnt())
++        return IndexError_InvalidFormat;
++      if (!paged_codes_) {
++        if (!quant_codes_) return IndexError_NoReady;
++        quant_dp_list_[i] =
++            quant_codes_ + static_cast<size_t>(ids[i]) * quant_code_size_;
++      }
++    }
++    if (paged_codes_ &&
++        !(pq_pool_ && pq_pool_->cache_enabled() &&
++          resident_pq_batch_.read(*pq_pool_, *paged_codes_, ids, n,
++                                  quant_code_size_, quant_dp_list_, true))) {
++      const int status =
++          ReadPagedQuantizedCodes(*paged_codes_, ids, n, quant_code_size_,
++                                  quant_code_scratch_, quant_dp_list_.data());
++      if (status != 0) return status;
+     }
+     quant_dist_impl_.batch(quant_dp_list_.data(), n, dists);
++    return 0;
++  } catch (const std::bad_alloc &) {
++    return IndexError_NoMemory;
++  }
++
++  int quantized_dist_unvisited(const diskann_id_t *ids, uint32_t n,
++                               DiskAnnSearchVisitFilter &visited,
++                               DiskAnnReadVector<diskann_id_t> &unvisited,
++                               DiskAnnReadVector<float> &distances) try {
++    unvisited.clear();
++    for (uint32_t i = 0; i < n; ++i) {
++      if (entity_ && ids[i] >= entity_->doc_cnt())
++        return IndexError_InvalidFormat;
++      if (!visited.visited(ids[i])) {
++        visited.set_visited(ids[i]);
++        unvisited.push_back(ids[i]);
++      }
++    }
++    distances.resize(unvisited.size());
++    return quantized_dist(unvisited.data(), unvisited.size(), distances.data());
++  } catch (const std::bad_alloc &) {
++    return IndexError_NoMemory;
+   }
+ 
+   inline void clear() {
+@@ -248,8 +297,12 @@ class DistCalculator {
+ 
+   turbo::DistanceImpl quant_dist_impl_{};
+ 
+-  std::vector<const void *> quant_dp_list_;
+-  std::vector<uint8_t> quant_query_scratch_;
++  DiskAnnReadVector<const void *> quant_dp_list_;
++  DiskAnnReadVector<uint8_t> quant_query_scratch_;
++  DiskAnnReadVector<uint8_t> quant_code_scratch_;
++  IndexStorage::Segment::Pointer paged_codes_;
++  ailego::VecBufferPool *pq_pool_{nullptr};
++  ResidentPqBatch resident_pq_batch_;
+ };
+ 
+ }  // namespace core
+```
+
+**File**: `src/core/algorithm/diskann/diskann_entity.h` (modified, +20/-2)
+```diff
+@@ -15,6 +15,7 @@
+ 
+ #include <utility>
+ #include <zvec/core/framework/index_framework.h>
++#include "diskann_read_memory.h"
+ 
+ namespace zvec {
+ namespace core {
+@@ -28,9 +29,11 @@ constexpr diskann_key_t kInvalidKey = static_cast<diskann_key_t>(-1);
+ 
+ struct VectorInfo {
+   float dist_;
++  diskann_id_t vector_slot_{kInvalidId};
+   std::string vec_;
+ 
+   VectorInfo() = default;
++  VectorInfo(float dist, diskann_id_t slot) : dist_{dist}, vector_slot_{slot} {}
+   VectorInfo(float dist, const std::string &vec) : dist_{dist}, vec_{vec} {}
+   VectorInfo(float dist, std::string &&vec)
+       : dist_{dist}, vec_{std::move(vec)} {}
+@@ -51,8 +54,10 @@ struct KeyValueVectorHeapComparer {
+ 
+ /*! Key Value Vector Heap
+  */
+-using TopkHeap = ailego::Heap<std::pair<diskann_id_t, VectorInfo>,
+-                              KeyValueVectorHeapComparer>;
++using TopkHeap =
++    ailego::Heap<std::pair<diskann_id_t, VectorInfo>,
++                 KeyValueVectorHeapComparer,
++                 DiskAnnReadVector<std::pair<diskann_id_t, VectorInfo>>>;
+ 
+ struct DiskAnnMetaHeader {
+  public:
+@@ -173,6 +178,19 @@ class DiskAnnEntity {
+   //! Get primary key of the node id
+   virtual diskann_key_t get_key(diskann_id_t id) const = 0;
+ 
++  virtual int read_key(diskann_id_t id, diskann_key_t *key) const {
++    if (!key || id >= doc_cnt()) return IndexError_InvalidArgument;
++    *key = get_key(id);
++    return 0;
++  }
++
++  virtual int find_id(diskann_key_t key, diskann_id_t *id) const {
++    if (!id) return IndexError_InvalidArgument;
++    *id = get_id(key);
++    return 0;
++  }
++
++
+  public:
+   uint64_t max_node_size() const {
+     return meta_header_.max_node_size;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #936** (2026-11-27): fix(diskann): separate read workspace from the page cache budget (@iaojnh)
 - **PR #935** (2026-11-26): fix(pq): normalize inner-product scores and thresholds (@JalinWang)
 - **PR #932** (2026-11-25): perf(vamana): pass query parameters directly and compact neighbor candidates (@JalinWang)
 - **PR #931** (2026-11-24): perf(flat): skip key tables for contiguous identity layouts (@luoxiaojian)
 - **PR #930** (2026-11-24): perf(turbo): fold four UINT4 distance sums in AVX-512 lanes (@luoxiaojian)
 - **PR #929** (2026-11-26): perf(fts): reduce embedded Jieba startup time and memory use (@egolearner)
-- **PR #926** (2026-11-26): fix(storage): propagate write errors on forward store close (@egolearner)
 
 ---
 
@@ -1911,61 +2003,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fts): reduce embedded Jieba startup time and memory use
+## X. diskann): separate read workspace from the page cache budget
 
 **RULE**:
-When implementing operations in `scripts/generate_jieba_embedded_dict.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ailego/buffer/block_eviction_queue.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee15ab0a`: fts): reduce embedded Jieba startup time and memory use. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b1e274d`: diskann): separate read workspace from the page cache budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/generate_jieba_embedded_dict.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/buffer/block_eviction_queue.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-"""Generate the precompiled Jieba main dictionary and embedded HMM model.
-import itertools
-import struct
-def compile_dictionary(source: bytes) -> tuple[bytes, str]:
-    """Store cppjieba entries in source order, in little-endian columns.
-
-    Each entry has a uint16 rune count, uint16 tag byte count and uint32
-    frequency. The variable-length columns hold UTF-32LE words and UTF-8 tags.
-    """
-    word_lengths = bytearray()
-    tag_lengths = bytearray()
-    frequencies = bytearray()
-    words = bytearray()
-    tags = bytearray()
-    counts = []
-    spellings = []
-    for line in source.splitlines():
-        word, count, tag = line.split()
-        spelling = word.decode("utf-8")
-        spellings.append(spelling)
-        runes = spelling.encode("utf-32-le")
-        frequency = int(count)
-        if not (0 < frequency <= 0xFFFFFFFF):
-            raise ValueError(f"invalid dictionary frequency: {count!r}")
-        word_lengths.extend(struct.pack("<H", len(runes) // 4))
-        tag_lengths.extend(struct.pack("<H", len(tag)))
-        frequencies.extend(struct.pack("<I", frequency))
-        words.extend(runes)
-        tags.extend(tag)
-        counts.append(frequency)
-
-    if not counts
+    try {
+      LOG_ERROR("invalid eviction priority: %d", queue_index);
+    } catch (...) {
+      // A diagnostic must not interrupt the caller's queue recovery.
+    }
+    // Queue admission failed under memory pressure. Return that failure
+    // without allocating again to log it.
+    try {
+      LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
+    } catch (...) {
+      // The caller must still cancel its payload reservation.
+    }
+  bool backing_reserved = false;
+  bool attempted_backing = true;
+  const auto rollback = ScopeGuard::Make([&] {
+    if (buffer) return;
+    if (backing_reserved) {
+      cancel_buffer_reservation(buffer_size, attempted_backing);
+    } else {
+      release_buffer(nullptr, buffer_size);
+    }
+  });
+  backing_reserved = true;
+  attempted_backing = allocation.attempted_backing;
+  if (!buffer) return false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-"""Generate embedded Jieba dictionaries as raw LZ4 blocks.
-        stream.write(f"constexpr std::size_t {symbol}OriginalSize = {len(original)};\n")
- 
+    LOG_ERROR("invalid eviction priority: %d", queue_index);
+    LOG_DEBUG("Eviction queue enqueue rejected under allocation pressure.");
+    LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
+      release_buffer(nullptr, buffer_size);
+  if (!buffer) {
+    cancel_buffer_reservation(buffer_size, allocation.attempted_backing);
+    return false;
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee15ab0a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b1e274d` are properly handled with clean fallback behavior.

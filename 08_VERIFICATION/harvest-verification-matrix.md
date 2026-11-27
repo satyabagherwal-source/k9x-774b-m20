@@ -13794,3 +13794,5 @@
 | `CYCLE-20261127-N3PK` | `2026-11-27T12:59:19.304Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10906` | Yes (`11c569e1...`) |
 | `CYCLE-20261127-60G6` | `2026-11-27T13:14:01.542Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10907` | Yes (`a87b5580...`) |
 | `CYCLE-20261127-HSAG` | `2026-11-27T13:23:10.840Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`8116d396...`) |
+| `CYCLE-20261127-ZACD` | `2026-11-27T13:36:47.389Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10908` | Yes (`50b38533...`) |
+| `CYCLE-20261127-ZFA8` | `2026-11-27T13:36:53.792Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10909` | Yes (`8ae27b8b...`) |

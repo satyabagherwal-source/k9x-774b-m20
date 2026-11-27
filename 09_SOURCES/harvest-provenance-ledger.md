@@ -13827,3 +13827,5 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `c74830ff` | Multi-dimensional audit evidence | 2026-11-27T12:59:19.321Z |
 | `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `26c04faf` | Multi-dimensional audit evidence | 2026-11-27T13:14:01.561Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `b5047de7` | Multi-dimensional audit evidence | 2026-11-27T13:23:10.854Z |
+| `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `40e18b81` | Multi-dimensional audit evidence | 2026-11-27T13:36:47.403Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `2b1e274d` | Multi-dimensional audit evidence | 2026-11-27T13:36:53.807Z |

@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "ee15ab0a",
+    "sourceVersion": "2b1e274d",
     "license": "Apache-2.0",
-    "contentHash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
-    "lastHarvestedAt": "2026-11-26T18:41:52.383Z",
+    "contentHash": "8ae27b8b5c05997a346eaac0862735e7eb3e9066b5c4c814944e49872d8616cf",
+    "lastHarvestedAt": "2026-11-27T13:36:53.807Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "0cf0a678",
+    "sourceVersion": "40e18b81",
     "license": "NOASSERTION",
-    "contentHash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
-    "lastHarvestedAt": "2026-11-25T04:31:12.040Z",
+    "contentHash": "50b385339c1c60ba4123454de948b5d95e78a390e4eaa38f64001187515c1524",
+    "lastHarvestedAt": "2026-11-27T13:36:47.403Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T13:23:10.865Z",
-  "total_cycles_completed": 13093,
-  "total_learnings_persisted": 13093,
-  "total_rules_promoted": 11820,
+  "last_updated": "2026-11-27T13:36:53.817Z",
+  "total_cycles_completed": 13095,
+  "total_learnings_persisted": 13095,
+  "total_rules_promoted": 11822,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:50:52.432Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:59:47.731Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:59:57.339Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T13:23:10.865Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:36:47.414Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:36:53.817Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T13:23:17.293Z",
+  "last_updated": "2026-11-27T13:37:00.212Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26594,
+  "total_items": 26599,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "660140fddc1091aa257524b6f939f068fe510fa8d27ffb1622aa2d918074a21d",
+      "content_hash": "ba2b62f1d8e4acfa41ebac9a4a2f2f22ea085656a88f6ff850059c7a81f919c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:14:09.335Z"
+      "persisted_at": "2026-11-27T13:37:00.212Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215876,8 +215876,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "ee15ab0a",
-      "content_hash": "203fd4c9b04584c92f94c5e9598fa1b0f6bd65323a5647b945ad23454f54b8ac",
+      "source_version": "2b1e274d",
+      "content_hash": "8ae27b8b5c05997a346eaac0862735e7eb3e9066b5c4c814944e49872d8616cf",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215920,6 +215920,11 @@
           "number": 10757,
           "title": "reduce embedded Jieba startup time and memory use",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10909,
+          "title": "separate read workspace from the page cache budget",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215927,7 +215932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:41:52.043Z",
+      "verified_at": "2026-11-27T13:36:53.540Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215981,10 +215986,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "ee15ab0a",
-      "content_hash": "26f3b795c612e76092841b6f50e011d9b90a244f68fe94deeb5e8fb4e05a7e68",
+      "source_version": "2b1e274d",
+      "content_hash": "f9b16df9b6a9d03322e4e1329dc2e38545417c7eae49a4bdccb484eb0668a4f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:41:53.116Z"
+      "persisted_at": "2026-11-27T13:36:54.479Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -216054,9 +216059,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for alibaba-zvec-learnings",
       "repository": "alibaba-zvec-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5eeb443b32a84520d571e1c14eb3462171e753e710f3b4eca3d3fb035ac6050",
+      "content_hash": "baff0c6e70853443e8e75aa18566329086f70876284ad2a642f453e1fbb1588f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:42:44.737Z"
+      "persisted_at": "2026-11-27T13:36:59.123Z"
     },
     "learn-huggingface-google-electra-base-discriminator": {
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
@@ -250314,8 +250319,8 @@
       "slug": "darrylmorley-whatcable",
       "platform": "github",
       "source_url": "https://github.com/darrylmorley/whatcable",
-      "source_version": "0cf0a678",
-      "content_hash": "13fc8620da9625427e235272d83e74fddc99e40f2c0e0f037ca16565229b8f06",
+      "source_version": "40e18b81",
+      "content_hash": "50b385339c1c60ba4123454de948b5d95e78a390e4eaa38f64001187515c1524",
       "dossier_path": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
       "promoted_rules": [
@@ -250333,6 +250338,11 @@
           "number": 10452,
           "title": "Mirror from private (471d687d)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10908,
+          "title": "Mirror from private (1d3f2156)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250340,7 +250350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:31:11.759Z",
+      "verified_at": "2026-11-27T13:36:47.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250356,10 +250366,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
       "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
       "repository": "darrylmorley/whatcable",
-      "source_version": "0cf0a678",
-      "content_hash": "192db6a763a9ef2858edcfcec1c2bebb1ee2c85da3effc07fd621150ba6fbc29",
+      "source_version": "40e18b81",
+      "content_hash": "c24639cfc05aafc066e943df5f05b360d4abfcd196b9e9a98d5e678c6ded54fb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T04:31:12.617Z"
+      "persisted_at": "2026-11-27T13:36:47.868Z"
     },
     "rule-8609": {
       "learning_id": "rule-8609",
@@ -250457,9 +250467,9 @@
       "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
       "repository": "darrylmorley-whatcable-learnings",
       "source_version": "HEAD",
-      "content_hash": "67412947dca7dc05111b31d7f60e8ae298d43ad6e8422dea4f19d7542a985ea4",
+      "content_hash": "c9aa03b81903d5a8dbda031f7e16a61c3e29ff2bf24556d01464167de8b8c8ea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T04:31:21.237Z"
+      "persisted_at": "2026-11-27T13:36:57.978Z"
     },
     "learn-github-nasiko-labs-nasiko": {
       "learning_id": "learn-github-nasiko-labs-nasiko",
@@ -264978,10 +264988,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "ee15ab0a",
-      "content_hash": "a25f1be1479c17e1a487993a5ca244df51917768d4e7c5ac9db89cfea1edc9fe",
+      "source_version": "2b1e274d",
+      "content_hash": "324cd018ae5272975092a6e7ad567425cb27b2638a70d0fdcc67362ce9e24572",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:41:52.894Z"
+      "persisted_at": "2026-11-27T13:36:54.276Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -302671,10 +302681,10 @@
       "relative_path": "08_VERIFICATION/darrylmorley-whatcable-verification-protocol-empirical-defect-shield-for-darrylm.md",
       "title": "Verification Protocol: Empirical Defect Shield for darrylmorley/whatcable",
       "repository": "darrylmorley/whatcable",
-      "source_version": "0cf0a678",
-      "content_hash": "8a41bb5803506fcbb72c6d9855b9fda3ef1dbaa6a8d7bb79a3e72568d65d0a3d",
+      "source_version": "40e18b81",
+      "content_hash": "5056e4c93d3554f146bf6009c75630c00dc8b2cd9a19cf4216822c4aafce7ceb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:12.851Z"
+      "persisted_at": "2026-11-27T13:36:48.071Z"
     },
     "rule-9410": {
       "learning_id": "rule-9410",
@@ -302774,9 +302784,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for darrylmorley-whatcable-learnings",
       "repository": "darrylmorley-whatcable-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d61d629fc4a69a506d84cd7e6baf5a1ac6f28fcc7cecac844209caf71998646",
+      "content_hash": "6a065fd896e5b59ed3e0140e4e4be9867a1837061bb25ec1c8e68a18b4833c4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:21.472Z"
+      "persisted_at": "2026-11-27T13:36:58.190Z"
     },
     "rule-9413": {
       "learning_id": "rule-9413",
@@ -313007,9 +313017,9 @@
       "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
       "repository": "alibaba-zvec-learnings",
       "source_version": "HEAD",
-      "content_hash": "886f4e25f44b8ca1c1974ac5ace391cb704dd644c275be6834ac9fa9d1c41f4d",
+      "content_hash": "602209347ec5e7d96f1796fb88bc2b2c23d19601ebaf0e9650f0c2efa01d5d88",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T22:42:44.507Z"
+      "persisted_at": "2026-11-27T13:36:58.903Z"
     },
     "rule-9637": {
       "learning_id": "rule-9637",
@@ -358291,13 +358301,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-660J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZJX4-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0db71dcf2be259f2e979c03ef7911717535a90f38f4c07619e2381550df31490",
+      "content_hash": "824ea4f23bde9f358c04b777294ec3ada6397edf93a0430e79a0f7c4f3d5b89c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:14:08.761Z"
+      "persisted_at": "2026-11-27T13:36:59.803Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358307,9 +358317,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4630edae7657f2f2ab661ae1ae86b13c3d4def851b22a102857c950872b55c2c",
+      "content_hash": "acb5a8c547df8296e6be6316631b9f138f25178b2db35784dcc0bcab0953fe23",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:14:09.040Z"
+      "persisted_at": "2026-11-27T13:37:00.010Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -365079,6 +365089,70 @@
       "content_hash": "7226b1865d91c2711b838e6d17cb5253f471f86c76b4bca8c629faa22eff6901",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T13:23:15.092Z"
+    },
+    "rule-10908": {
+      "learning_id": "rule-10908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10908,
+      "title": "Mirror from private (1d3f2156)",
+      "source_url": "https://github.com/darrylmorley/whatcable",
+      "source_version": "40e18b81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T13:36:47.128Z"
+    },
+    "candidate_directive-mirror-from-private-1d3f2156": {
+      "item_id": "candidate_directive-mirror-from-private-1d3f2156",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZICL-mirror-from-private-1d3f2156.md",
+      "title": "Mirror from private (1d3f2156)",
+      "repository": "darrylmorley-whatcable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01733901082fd57f497cd0ea18a6dd1d7094c8eba4f2250be18d291ca5deb0e3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T13:36:57.769Z"
+    },
+    "rule-10909": {
+      "learning_id": "rule-10909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10909,
+      "title": "separate read workspace from the page cache budget",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "2b1e274d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T13:36:53.540Z"
+    },
+    "candidate_directive-separate-read-workspace-from-the-page-cache-budget": {
+      "item_id": "candidate_directive-separate-read-workspace-from-the-page-cache-budget",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZFHQ-separate-read-workspace-from-the-page-cache-budget.md",
+      "title": "separate read workspace from the page cache budget",
+      "repository": "alibaba/zvec",
+      "source_version": "2b1e274d",
+      "content_hash": "4a44264cf347f8f18dd3065f9c34101515c4b480bf19b799cf88e34702b1bb96",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T13:36:54.066Z"
+    },
+    "candidate_directive-diskann-separate-read-workspace-from-the-page-cache-budget": {
+      "item_id": "candidate_directive-diskann-separate-read-workspace-from-the-page-cache-budget",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZJ2C-diskann-separate-read-workspace-from-the-page-cache-budget.md",
+      "title": "diskann): separate read workspace from the page cache budget",
+      "repository": "alibaba-zvec-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32c83223de2076d04826587a47efc15e4ce5dc577365b502bf7728162e273063",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T13:36:58.695Z"
     }
   },
   "ai-builder-brain": {

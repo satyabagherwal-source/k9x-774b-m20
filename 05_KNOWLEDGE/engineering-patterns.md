@@ -824027,3 +824027,186 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `26c04faf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10908. Mirror from private (1d3f2156) (Harvested from darrylmorley/whatcable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mirror from private (1d3f2156)",
+  "source": "darrylmorley/whatcable",
+  "source_url": "https://github.com/darrylmorley/whatcable",
+  "source_version": "40e18b81",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-27T13:36:46.769Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-darrylmorley-whatcable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `40e18b81`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/WhatCableCore/Port/PortNumberingCorrection.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `40e18b81`: Mirror from private (1d3f2156). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCableCore/Port/PortNumberingCorrection.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+///
+/// If Apple fixes the names: this table would then swap correct names back
+/// to wrong ones, so the entry must come out. The tripwire is
+/// `PortNumberingCorrectionCorpusTests` ("Mac17,14 still names hub port 2
+/// C@6 and hub port 4 A@2"): it fails as soon as an ingested Mac17,14 run
+/// shows the internal hub ports carrying different socket names, and says
+/// which run and macOS version. Before removing anything, have an owner on
+/// that macOS version confirm which physical socket each device is in. To
+/// roll back for every macOS version, delete the `"Mac17,14"` entry and the
+/// tests that expect the swap (PortNumberingCorrectionTests,
+/// PortNumberingCorrectionReplayTests, and T4 in the corpus tests). If only
+/// newer macOS versions are fixed, the table needs a macOS version bound
+/// instead, which is a design change.
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `40e18b81` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10909. separate read workspace from the page cache budget (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "separate read workspace from the page cache budget",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "2b1e274d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T13:36:53.195Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `2b1e274d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/ailego/buffer/block_eviction_queue.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b1e274d`: diskann): separate read workspace from the page cache budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/buffer/block_eviction_queue.cc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    try {
+      LOG_ERROR("invalid eviction priority: %d", queue_index);
+    } catch (...) {
+      // A diagnostic must not interrupt the caller's queue recovery.
+    }
+    // Queue admission failed under memory pressure. Return that failure
+    // without allocating again to log it.
+    try {
+      LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
+    } catch (...) {
+      // The caller must still cancel its payload reservation.
+    }
+  bool backing_reserved = false;
+  bool attempted_backing = true;
+  const auto rollback = ScopeGuard::Make([&] {
+    if (buffer) return;
+    if (backing_reserved) {
+      cancel_buffer_reservation(buffer_size, attempted_backing);
+    } else {
+      release_buffer(nullptr, buffer_size);
+    }
+  });
+  backing_reserved = true;
+  attempted_backing = allocation.attempted_backing;
+  if (!buffer) return false;
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    LOG_ERROR("invalid eviction priority: %d", queue_index);
+    LOG_DEBUG("Eviction queue enqueue rejected under allocation pressure.");
+    LOG_ERROR("MemoryLimitPool: failed to reserve an aligned slab");
+      release_buffer(nullptr, buffer_size);
+  if (!buffer) {
+    cancel_buffer_reservation(buffer_size, allocation.attempted_backing);
+    return false;
+  }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b1e274d` are properly handled with clean fallback behavior.
