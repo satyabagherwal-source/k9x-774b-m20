@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T23:04:23.466Z",
+  "last_updated": "2026-11-27T23:13:04.277Z",
   "total_records": 2862,
   "domains": {
     "A": {
@@ -22510,8 +22510,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "repository": "nats-io/nats.go",
-      "content_hash": "e477067be42159a9730c3c3fa77ab8043171d703fc2ff078d19451ccaf6bcca7",
-      "created_at": "2026-11-26T12:20:07.380Z"
+      "content_hash": "9328c9d6307de85e7e97b38cda8617dc9c125c0aeeaa1c716d00f3ec8b0f8073",
+      "created_at": "2026-11-27T23:12:59.121Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -22519,8 +22519,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-learnings-technical-construction-intelligence-nats-io-nats-go-le.md",
       "repository": "nats-io-nats.go-learnings",
-      "content_hash": "8694203fd7075ee9a782e69906b570ec1c205c64b263e0e9e4a6965a895f63bb",
-      "created_at": "2026-11-18T14:24:29.324Z"
+      "content_hash": "61ad4269c499f5ba7583186599e23e2bd1ded91984d9d72a48d46f8aae7d99d8",
+      "created_at": "2026-11-27T23:13:04.277Z"
     },
     "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",
@@ -36634,8 +36634,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-research-knowledge-intelligence-microsoft-ai.md",
       "repository": "microsoft/Aion-1.0-Instruct-2.3B",
-      "content_hash": "deab2bd2c3100eb36426260c0718f69911f4d8e1983c7d0ec6281b40c48a30ef",
-      "created_at": "2026-11-24T14:59:31.395Z"
+      "content_hash": "7f788738d7554aecf2201a45e7e3265af87cb293cb6f30cdd468a248fa446fae",
+      "created_at": "2026-11-27T23:12:50.636Z"
     },
     "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in": {
       "record_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
@@ -36694,8 +36694,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
-      "content_hash": "ead6113381eb59d31e601179c00286066f2684b07de3fcd804dae44a44e48bc5",
-      "created_at": "2026-11-24T14:59:48.708Z"
+      "content_hash": "038b7794422d8c02f9243fc345037f04190e1d79a160345a22fe445e5e3ff54f",
+      "created_at": "2026-11-27T23:13:03.430Z"
     },
     "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
@@ -40935,8 +40935,8 @@
       "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
       "repository": "EL4CTEO/fast-anything",
-      "content_hash": "2dbf22ceabbcc6394948f47afc622fa7069fde092a4a06ca35c95f331698ce43",
-      "created_at": "2026-11-26T23:11:37.023Z"
+      "content_hash": "4d3ed6f7042b2d413a217badf5a8e2dbd0a5877373fc37c19b009185c804a534",
+      "created_at": "2026-11-27T23:12:51.756Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
@@ -40953,8 +40953,8 @@
       "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-learnings-architecture-intelligence-el4cteo-fast-anything-.md",
       "repository": "el4cteo-fast-anything-learnings",
-      "content_hash": "2c563aa78d3886876f81644a6edf270bc01733c02d46cb71b3f47555db3a6e04",
-      "created_at": "2026-11-26T23:11:52.843Z"
+      "content_hash": "713c5f1583ab3e09ee890d570cb93892384c5b0c9ac13f157d79a4d39d7a08d0",
+      "created_at": "2026-11-27T23:13:02.760Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",

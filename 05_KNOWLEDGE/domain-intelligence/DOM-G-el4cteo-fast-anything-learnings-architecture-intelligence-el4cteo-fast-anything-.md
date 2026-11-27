@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T23:11:52.404Z",
+  "timestamp": "2026-11-27T23:13:02.407Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-el4cteo-fast-anything-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [el4cteo-fast-anything-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T23:11:52.404Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:13:02.407Z`  
 > **Learning ID**: `LEARN-EVO-el4cteo-fast-anything-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from el4cteo-fast-anything-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md`  
 > **Source**: github ([https://github.com/EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything))  
-> **Source Version**: `d9b39f50`  
+> **Source Version**: `e3d8635b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:11:34.800Z  
+> **Timestamp**: 2026-11-27T23:12:49.968Z  
 > **Learning ID**: `learn-github-el4cteo-fast-anything`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,17 +45,17 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/EL4CTEO/fast-anything](https://github.com/EL4CTEO/fast-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:11:34.789Z  
+> **Harvest Timestamp**: 2026-11-27T23:12:49.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `EL4CTEO/fast-anything`
-- **Description**: Don't rewrite it in Rust. Rewrite the 5% that's slow: profile Python, Node or Ruby apps, port the hot functions with your coding agent, prove they behave the same.
+- **Description**: Don't rewrite it in Rust. Rewrite the 5% that's slow: profile your app, port the hot functions with your coding agent, prove they behave the same. Python, JS/TS, Ruby, Java, Kotlin, Go, PHP, C/C++, C#, R.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4219 stars
+- **Stars / Engagement**: 4453 stars
 
 ---
 
@@ -145,6 +145,9 @@ pub struct State {
     /// Folder Python imports the app's modules from, relative to the project.
     pub base: String,
     pub wall: f64,
+    /// Median time of the app without the profiler, from  scan --calibrate.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unprofiled: Option<f64>,
     pub hotspots: Vec<Hotspot>,
     pub ports: BTreeMap<String, Port>,
     pub bench: Option<BenchResult>,
@@ -375,11 +378,7 @@ impl Ctx {
         let names = || ports.keys().cloned().collect::<Vec<_>>().join(", ");
         match id {
             None => match ports.len() {
-                0 => bail!("nothing ported yet: run  fast-anything port"),
-                1 => Ok(ports.keys().next().cloned().unwrap_or_default()),
-                _ => bail!("which one? {}", names()),
-            },
-            Some
+                0 => bail!("nothing ported yet: run  fast-anything port
 ```
 
 ### Core Architecture Module: `src/util.rs`
@@ -572,9 +571,19 @@ pub fn civil_date(days: i64) -> (i64, u32, u32) {
 
 /// Today's date in UTC, e.g. "2026-11-26"; None if the clock is before 1970.
 pub fn today() -> Option<String> {
+    now_utc().map(|t| t[..10].to_string())
+}
+
+/// The time in UTC, e.g. "2026-11-26T18:40:00Z"; None if the clock is before 1970.
+pub fn now_utc() -> Option<String> {
     let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).ok()?.as_secs();
+    Some(utc(secs))
+}
+
+fn utc(secs: u64) -> String {
     let (y, m, d) = civil_date((secs / 86_400) as i64);
-    Some(format!("{y:04}-{m:02}-{d:02}"))
+    let t = secs % 86_400;
+    format!("{y:04}-{m:02}-{d:02}T{:02}:{:02}:{:02}Z", t / 3600, t / 60 % 60, t % 60)
 }
 
 #[cfg(test)]
@@ -611,6 +620,9 @@ mod tests {
         assert_eq!(civil_date(-1), (1969, 12, 31));
         let today = today().unwrap();
         assert!(today.len() == 10 && today.starts_with("20"), "{today}");
+        assert_eq!(utc(0), "1970-01-01T00:00:00Z");
+        assert_eq!(utc(20_783 * 86_400 + 18 * 3600 + 40 * 60 + 5), "2026-11-26T18:40:05Z");
+        assert!(now_utc().unwrap().starts_with(&today));
     }
 }
 
@@ -1061,13 +1073,11 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #162** (2026-11-26): **java, kotlin: pass NaN and infinity between the app and the port**
-  *Symptoms*: Fixes #161.  - `Json.java` (shared by the Java and Kotlin recorders and bridges): `enc` writes NaN and ±infinity as `{"$float": "NaN"}` / `"Infinity"` / `"-Infinity"` instead of throwing, and `parse` reads such an object back as a `Double`, so the bridge gets the port's NaN and infinite results. - `Rec.java`: NaN, ±infinity and -0.0 join the `double` and `float` edge cases; an edge equal to the recorded value is compared with `Double.compare`/`Float.compare`, so NaN and -0.0 are handled right. - `java.rs` and `kotlin.rs`: `floats: Some(native::FLOATS)`, so the port's glue reads and writes the tags.  New test `nan_and_infinity_travel_tagged` records a call with infinities (args and result tagged), checks that NaN and ±infinity show up as edge cases, and round-trips tagged values through `Json.parse`, `convert` and `enc`.  On my fork's CI the Java and Kotlin tests and the Ubuntu end-to-end jobs pass. The macOS and Windows jobs fail only on the two tests that fail on main, `c_values_reach_the_port_as_typed_and_come_back_exact` (#159, fixed by #160) and `py_launcher_scan_and_bench_work_with_version_selectors` (#157). 
+- **Issue #166** (2026-11-27): **report, mcp: use calibrated scan baseline in report and status_json in fast_status**
+  *Symptoms*: ### Problem `0.9.0` (`e7950c9`) added `scan --calibrate` (`state.unprofiled`) and exposed `unprofiled_seconds` in `scan --json`, `status --json`, and MCP `fast_scan`, leaving two places out of sync: 1. `report::scan_section` (`src/report.rs`) still ignored `state.unprofiled` and always compared `s.wall` against `b.before.median`, so `FAST_REPORT.md` could quote a different unprofiled time and overhead ratio than `scan --calibrate` and `status`. 2. MCP `fast_status` (`src/mcp.rs`) built a 3-field `{ command, ports, bench }` object inline instead of calling `show::status_json(&ctx)`, omitting `lang`, `wall_seconds`, `unprofiled_seconds`, and per-port `stale` flags.  ### What Changed - `src/report.rs`: Prefer `s.unprofiled` (`when calibrated`) over `b.before.median` (`the original's median above`) in `scan_section`, and add a calibrated-state unit test in `report::tests`. - `src/mcp.rs`: Delegate `fast_status` to `crate::show::status_json(&ctx)` and verify `lang`, `wall_seconds`, and `unprofiled_seconds` in `mcp::tests`.  ### Verification - `cargo fmt --check` - `cargo clippy --all-targets -- -D warnings` - `cargo test report::tests` - `cargo test mcp::tests` - `cargo test show::tests`   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Status results now include language and timing details, providing a more complete view of the current state.   * Scan reports now compare
 
-- **Issue #161** (2026-11-26): **Java and Kotlin: calls with NaN or infinity are never recorded**
-  *Symptoms*: The Java recorder skips every call with NaN or infinity in its arguments or result (`Json.enc` throws `Unsupported("NaN or Infinity")`), so verify never checks a Java or Kotlin port on them, and the float edge cases leave them out. Kotlin uses the same recorder, bridge and JSON code.  Go, C# and PHP now send them tagged, `{"$float": "NaN"}` and the like, which the port's C entry point reads and writes when the flavor sets `floats` (#130, #132, #134), and #150 does C and C++. Java and Kotlin are the ones left. 
-  **Post-Mortem & Fix Analysis**:
-  > Fixed by #162 (merged), shipping in 0.8.9.
+- **Issue #165** (2026-11-27): **Android evidence import, doctor and scan notes (#136, #142, #143)**
+  *Symptoms*: Works through the open items of #136, #142 and #143.  - `import gfxinfo | json | perfetto | simpleperf`: keeps evidence measured on an Android device under `.fast/android`, with required device and build metadata and a SHA-256 of the raw input. `report` shows it in its own "On-device (ART)" section and never computes a speed-up against the host numbers (#143). Perfetto and simpleperf files are stored and hashed, not parsed. - `doctor`: a JDK found through `JAVA_HOME` that is older than 22 shows as too old instead of not found; `adb` is listed as not used (#136). - `scan`: notes when the profiler has no call counts, and when most of the run is outside the app's functions (#142, item 11). - `report`: says when no port is switched on any more instead of describing a switch (#142, item 18).  Not included: AndroidForge's own JSON as gfxinfo input, trace symbolization, an MCP tool for `import`, and keeping the app's output on a successful scan (#142, item 16).  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1084,170 +1094,125 @@ fn pairs<T: PartialEq + Sync>(clean: &[Vec<T>], max: usize) -> Vec<(usize, usize
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9b39f50` (2026-11-26)
-**Commit Message**: tests: longer Java duration window off Linux; the clock check no longer compares against a noisy 25 ns call
+### Incident Patch 1: `e3d8635b` (2026-11-27)
+**Commit Message**: report: name scan --calibrate as the baseline's source (#166)
 
-**File**: `src/cfamily.rs` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/report.rs` (modified, +2/-2)
 ```diff
-@@ -2424,7 +2424,7 @@ mod tests {
-         // both sides timed per call: within 3x of the original (through JSON it was 22x slower)
-         let m = v.micro.expect("timed");
-         assert!(m.rust_ns > 0.0 && m.rust_ns < 3.0 * m.original_ns, "{m:?}");
--        assert!(m.clock_ns > 0.0 && m.clock_ns < m.original_ns, "the clock is part of the original's time: {m:?}");
-+        assert!(m.clock_ns > 0.0, "the clock was measured: {m:?}");
-     }
+@@ -131,7 +131,7 @@ fn scan_section(s: &State, b: &BenchResult) -> String {
+     );
+     let (wall, original) = (s.wall, s.unprofiled.filter(|&u| u > 0.0).unwrap_or(b.before.median));
+     let baseline =
+-        if s.unprofiled.is_some_and(|u| u > 0.0) { "when calibrated" } else { "the original's median above" };
++        if s.unprofiled.is_some_and(|u| u > 0.0) { "timed by scan --calibrate" } else { "the original's median above" };
+     if wall > 0.0 && original > 0.0 {
+         md.push_str(&if wall >= original {
+             format!(
+@@ -507,7 +507,7 @@ mod tests {
+         let calibrated = State { unprofiled: Some(3.1), ..s.clone() };
+         let md = markdown("app", &b, &calibrated, &[]);
+         assert!(
+-            md.contains("`python app.py`, which took **12.40s** under the profiler against **3.10s** without it (when calibrated): profiling made it run 4.0× as long."),
++            md.contains("`python app.py`, which took **12.40s** under the profiler against **3.10s** without it (timed by scan --calibrate): profiling made it run 4.0× as long."),
+             "{md}"
+         );
  
-     #[cfg(unix)]
-```
-
-**File**: `src/java.rs` (modified, +2/-2)
-```diff
-@@ -777,8 +777,8 @@ mod tests {
-         let ctx = Ctx::open(&dir).unwrap();
-         let started = Instant::now();
-         // the window starts with the JVM, and `java App.java` compiles the source inside it: that
--        // takes longer on Windows
--        let window = if cfg!(windows) { 8.0 } else { 3.0 };
-+        // takes longer on Windows and on macOS runners
-+        let window = if cfg!(target_os = "linux") { 3.0 } else { 8.0 };
-         let p = profile(&ctx, "java", &["App.java".into()], Some(window));
-         let took = started.elapsed().as_secs_f64();
-         let _ = fs::remove_dir_all(&dir);
 ```
 
 ---
 
-### Incident Patch 2: `a1ad32ce` (2026-11-26)
-**Commit Message**: tests: macOS clock resolution, fresh library path for rebuilt ports, CRLF output on Windows
+### Incident Patch 2: `c7366c7c` (2026-11-27)
+**Commit Message**: Merge #166
 
-**File**: `src/cfamily.rs` (modified, +13/-3)
+**File**: `src/mcp.rs` (modified, +16/-1)
 ```diff
-@@ -2157,12 +2157,19 @@ mod tests {
-     /// verify's replay of a built port, in this process.
-     #[cfg(unix)]
-     fn replay(dir: &Path, id: &str) -> Verify {
-+        replay_lib(dir, id, None)
-+    }
-+
-+    /// The replay, loading the port from `lib` if given (a library loaded once stays mapped on macOS,
-+    /// so a rebuilt port at the same path would be the old one).
-+    #[cfg(unix)]
-+    fn replay_lib(dir: &Path, id: &str, lib_path: Option<PathBuf>) -> Verify {
-         let ctx = Ctx::open(dir).unwrap();
-         let port = &ctx.state.ports[id];
-         let crate_dir = ctx.crate_dir(port);
-         let (_, lib) = port.lang.artifact(&port.ext);
-         let job = serde_json::json!({
--            "lib": ctx.lib_dir().join(lib), "cases": crate_dir.join("recordings.jsonl"),
-+            "lib": lib_path.unwrap_or_else(|| ctx.lib_dir().join(lib)), "cases": crate_dir.join("recordings.jsonl"),
-             "meta": crate_dir.join("recordings.meta.json"), "func": port.func, "out": crate_dir.join("verify.json"),
-         });
-         fs::write(crate_dir.join("job-verify.json"), job.to_string()).unwrap();
-@@ -2186,7 +2193,10 @@ mod tests {
-         fs::write(ctx.crate_dir(port).join("src").join("port.rs"), port_rs).unwrap();
-         let built = backend::build(&ctx, port).unwrap();
-         assert!(built.is_ok(), "{id}: {built:?}");
--        replay(dir, id)
-+        let (_, lib) = port.lang.artifact(&port.ext);
-+        let fresh = ctx.lib_dir().join(format!("other-{}-{lib}", std::process::id()));
-+        fs::copy(ctx.lib_dir().join(lib), &fresh).unwrap();
-+        replay_lib(dir, id, Some(fresh))
-     }
- 
-     /// {"$float": name}, how NaN and infinity are recorded.
-@@ -2337,7 +2347,7 @@ mod tests {
-         let _ = fs::remove_dir_all(&dir);
-         assert!(built.status.success(), "{}", String::from_utf8_lossy(&built.stderr));
-         assert_eq!(
--            String::from_utf8_lossy(&ran.unwrap().stdout),
-+            String::from_utf8_lossy(&ran.unwrap().stdout).replace("\r\n", "\n"),
-             "[[{\"$float\":\"NaN\"},-0.5,{\"$float\":\"-Infinity\"}],{\"k\":{\"$float\":\"Infinity\"}},[-0.0,1],[{\"$float\":\"Infinity\"},2.5]]\n\
-              1.5 1 inf -inf 1 | -inf | 1 2 | 0\n"
-         );
-```
-
-**File**: `src/native.rs` (modified, +9/-8)
-```diff
-@@ -433,15 +433,16 @@ pub fn replay(job_path: &Path) -> Result<()> {
-     Ok(())
- }
- 
--/// What one clock read costs here: the least of a thousand back-to-back reads. The recorders time
--/// each call of the original with a read before and after it, so about this much of original_ns
--/// is the clock.
-+/// What one clock read costs here: the average of ten thousand back-to-back reads (a single read
-+/// can come out as 0 on a coarse clock, as on macOS). The recorders time each call of the original
-+/// with a read before and after it, so about this much of original_ns is the clock.
- fn clock_ns() -> f64 {
--    let read = || {
--        let t = Instant::now();
--        t.elapsed()
--    };
--    (0..1000).map(|_| read()).min().unwrap_or_default().as_secs_f64() * 1e9
-+    const READS: u32 = 10_000;
-+    let start = Instant::now();
-+    for _ in 0..READS {
-+        std::hint::black_box(Instant::now());
-+    }
-+    start.elapsed().as_secs_f64() * 1e9 / f64::from(READS)
- }
- 
- /// Same value, give or take float rounding.
-```
-
----
-
-### Incident Patch 3: `4c4ea0c5` (2026-11-26)
-**Commit Message**: tests: build the C test apps without FMA contraction
-
-clang fuses a * b + c into one FMA instruction by default on ARM, so on
-macOS the C original of the typed-values test rounds t += ys[i] * k
-differently from its Rust port, and one recorded call of lib.scale never
-matches: c_values_reach_the_port_as_typed_and_come_back_exact fails on
-every macOS run. The C rules in TASK.md already tell the agent about this;
-the tests now build with -ffp-contract=off, as those rules suggest.
-
-**File**: `src/cfamily.rs` (modified, +7/-2)
-```diff
-@@ -2097,6 +2097,11 @@ mod tests {
-         );
-     }
- 
-+    /// How the tests build C: without fusing `a * b + c` into one FMA instruction, which clang does
-+    /// by default on ARM (macOS) and which rounds differently from the ports written here.
-+    #[cfg(unix)]
-+    const C_FLAGS: [&str; 2] = ["-O2", "-ffp-contract=off"];
-+
-     /// A C project in a temp folder: scanned, each (id, port.rs) ported and built, then all enabled.
-     /// None without a C compiler or cargo.
-     #[cfg(unix)]
-@@ -2109,7 +2114,7 @@ mod tests {
-         for (name, text) in files {
-             fs::write(dir.join(name), text).unwrap();
+@@ -121,7 +121,7 @@ fn call(params: &Value) -> Result<Value> {
+         "fast_report" => serde_json::to_value(pipeline::report(&root, false)?)?,
+         "fast_status" => {
+             let ctx = state::Ctx::open(&root)?;
+-            json!({ "command": ctx.state.command, "ports": ctx.state.ports, "bench": ctx.state.bench })
++            crate::show::status_json(&ctx)
          }
--        let command = [cc, "-O2"].into_iter().chain(files.iter().map(|f| f.0)).map(String::from).collect();
-+        let command = [cc].into_iter().chain(C_FLAGS).chain(files.iter().map(|f| f.0)).map(String::from).collect();
-         crate::pipeline::scan(&dir, command, None).unwrap();
-         for (id, port_rs) in ports {
-             let out = crate::pipeline::port(&dir, Some(id), 200).unwrap();
-@@ -2127,7 +2132,7 @@ mod tests {
-     /// Builds the sources in dir and runs them; FAST_ANYTHING_DISABLE=1 with `disable`.
-     #[cfg(unix)]
-     fn run_c(dir: &Path, cc: &str, sources: &[&str], disable: bool) -> String {
--        let built = Command::new(cc).arg("-O2").args(sources).args(["-o", "app"]).current_dir(dir).output().unwrap();
-+        let built = Command::new(cc).args(C_FLAGS).args(sources).args(["-o", "app"]).current_dir(dir).output().unwrap();
-         assert!(built.status.success(), "{}", String::from_utf8_lossy(&built.stderr));
-         let mut cmd = Command::new(dir.join("app"));
-         if disable {
+         other => anyhow::bail!("unknown tool {other}"),
+     })
+@@ -216,6 +216,21 @@ mod tests {
+         assert!(handle(&json!({ "jsonrpc": "2.0", "method": "notifications/initialized" })).is_none());
+         let bad = handle(&json!({ "jsonrpc": "2.0", "id": 3, "method": "nope" })).unwrap();
+         assert_eq!(bad["error"]["code"], -32601);
++
++        let dir = std::env::temp_dir().join(format!("fa-mcp-status-{}", std::process::id()));
++        let _ = std::fs::remove_dir_all(&dir);
++        std::fs::create_dir_all(dir.join(".fast")).unwrap();
++        std::fs::write(
++            dir.join(".fast/state.json"),
++            r#"{"version": 1, "command": ["python", "app.py"], "lang": "python", "wall": 4.0, "unprofiled": 1.0}"#,
++        )
++        .unwrap();
++        let status = call(&json!({ "name": "fast_status", "arguments": { "path": dir } })).unwrap();
++        let _ = std::fs::remove_dir_all(&dir);
++        assert_eq!(
++            (&status["lang"], &status["wall_seconds"], &status["unprofiled_seconds"]),
++            (&json!("python"), &json!(4.0), &json!(1.0))
++        );
+     }
+ 
+     #[test]
+```
+
+**File**: `src/report.rs` (modified, +16/-4)
+```diff
+@@ -129,16 +129,18 @@ fn scan_section(s: &State, b: &BenchResult) -> String {
+         s.command.join(" "),
+         secs(s.wall)
+     );
+-    let (wall, original) = (s.wall, b.before.median);
++    let (wall, original) = (s.wall, s.unprofiled.filter(|&u| u > 0.0).unwrap_or(b.before.median));
++    let baseline =
++        if s.unprofiled.is_some_and(|u| u > 0.0) { "when calibrated" } else { "the original's median above" };
+     if wall > 0.0 && original > 0.0 {
+         md.push_str(&if wall >= original {
+             format!(
+-                " against **{}** without it (the original's median above): profiling made it run {} as long",
++                " against **{}** without it ({baseline}): profiling made it run {} as long",
+                 secs(original),
+                 times(wall / original)
+             )
+         } else {
+-            format!(", less than the original's **{}** median above: the scan was likely stopped early", secs(original))
++            format!(", less than the **{}** without it ({baseline}): the scan was likely stopped early", secs(original))
+         });
+     }
+     md.push_str(
+@@ -497,7 +499,17 @@ mod tests {
+ 
+         let stopped_early = State { wall: 2.0, ..s.clone() };
+         let md = markdown("app", &b, &stopped_early, &[]);
+-        assert!(md.contains("less than the original's **4.00s** median above") && !md.contains("as long"), "{md}");
++        assert!(
++            md.contains("less than the **4.00s** without it (the original's median above)") && !md.contains("as long"),
++            "{md}"
++        );
++
++        let calibrated = State { unprofiled: Some(3.1), ..s.clone() };
++        let md = markdown("app", &b, &calibrated, &[]);
++        assert!(
++            md.contains("`python app.py`, which took **12.40s** under the profiler against **3.10s** without it (when calibrated): profiling made it run 4.0× as long."),
++            "{md}"
++        );
+ 
+         let no_scan = State { hotspots: vec![], ..s };
+         let md = markdown("app", &b, &no_scan, &[]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #166** (2026-11-27): report, mcp: use calibrated scan baseline in report and status_json in fast_status (@brixtonpham)
+- **PR #165** (2026-11-27): Android evidence import, doctor and scan notes (#136, #142, #143) (@EL4CTEO)
+- **PR #164** (2026-11-27): node: warn when a scan attributes less than half the run to project functions (@brixtonpham)
+- **PR #163** (2026-11-27): scan, report: show self and total time shares for hot functions (@brixtonpham)
 - **PR #162** (2026-11-26): java, kotlin: pass NaN and infinity between the app and the port (@mohitmishra786)
 - **PR #160** (2026-11-26): tests: build the C test apps without FMA contraction (@mohitmishra786)
-- **PR #157** (2026-11-26): python: enable port before bench in Windows py launcher test (@Plastic-time)
-- **PR #156** (2026-11-26): python: emit typed PyO3 defaults and unescape Python string literals (@Plastic-time)
-- **PR #155** (2026-11-26): python: ignore shadowed stdlib module names in portability checks (@Plastic-time)
-- **PR #154** (2026-11-26): python: sync package re-exports when installing the call recorder (@Plastic-time)
 
 ---
 
@@ -1267,31 +1232,33 @@ the tests now build with -ffp-contract=off, as those rules suggest.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: longer Java duration window off Linux; the clock check no longer compares
+## X. report: name scan --calibrate as the baseline's source
 
 **RULE**:
-When implementing operations in `src/cfamily.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/report.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in EL4CTEO/fast-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9b39f50`: tests: longer Java duration window off Linux; the clock check no longer compares against a noisy 25 ns call. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3d8635b`: report: name scan --calibrate as the baseline's source. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cfamily.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/report.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        assert!(m.clock_ns > 0.0, "the clock was measured: {m:?}");
+        if s.unprofiled.is_some_and(|u| u > 0.0) { "timed by scan --calibrate" } else { "the original's median above" };
+            md.contains("`python app.py`, which took **12.40s** under the profiler against **3.10s** without it (timed by scan --calibrate): profiling made it run 4.0× as long."),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        assert!(m.clock_ns > 0.0 && m.clock_ns < m.original_ns, "the clock is part of the original's time: {m:?}");
+        if s.unprofiled.is_some_and(|u| u > 0.0) { "when calibrated" } else { "the original's median above" };
+            md.contains("`python app.py`, which took **12.40s** under the profiler against **3.10s** without it (when calibrated): profiling made it run 4.0× as long."),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9b39f50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3d8635b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

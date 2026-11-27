@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T23:04:23.682Z",
+  "last_updated": "2026-11-27T23:13:04.496Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26809,
+  "total_items": 26814,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -253069,8 +253069,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "eb29cd1f",
-      "content_hash": "4ebd2f99a753d22b617dc3b9011742b7868a32498a598f717692ac2f0e8b4523",
+      "source_version": "0360c971",
+      "content_hash": "f5c2a3f152da3a3e2dbe59cf8d1ef389a892c9887440c6657eadff94114c5a54",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -253103,6 +253103,11 @@
           "number": 10674,
           "title": "[FIXED] Unblock KV watcher when stopped with a full updates channel",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10985,
+          "title": "[FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -253110,7 +253115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:20:06.659Z",
+      "verified_at": "2026-11-27T23:12:58.391Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253152,10 +253157,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "repository": "nats-io/nats.go",
-      "source_version": "eb29cd1f",
-      "content_hash": "e477067be42159a9730c3c3fa77ab8043171d703fc2ff078d19451ccaf6bcca7",
+      "source_version": "0360c971",
+      "content_hash": "9328c9d6307de85e7e97b38cda8617dc9c125c0aeeaa1c716d00f3ec8b0f8073",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:20:07.380Z"
+      "persisted_at": "2026-11-27T23:12:59.121Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go",
@@ -253164,10 +253169,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-go-verification-protocol-empirical-defect-shield-for-nats-io-nats-g.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats.go",
       "repository": "nats-io/nats.go",
-      "source_version": "eb29cd1f",
-      "content_hash": "1e5bd943bb6fec3196d64113734f93a67cc054cd8d2d69d411d1c95ba712cb46",
+      "source_version": "0360c971",
+      "content_hash": "270c11999520681227e7935af82b78034397cebde570a6a947450242dca0c21e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:20:07.583Z"
+      "persisted_at": "2026-11-27T23:12:59.345Z"
     },
     "rule-8635": {
       "learning_id": "rule-8635",
@@ -253215,9 +253220,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
       "repository": "nats-io-nats.go-learnings",
       "source_version": "HEAD",
-      "content_hash": "8694203fd7075ee9a782e69906b570ec1c205c64b263e0e9e4a6965a895f63bb",
+      "content_hash": "61ad4269c499f5ba7583186599e23e2bd1ded91984d9d72a48d46f8aae7d99d8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:24:29.324Z"
+      "persisted_at": "2026-11-27T23:13:04.277Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings",
@@ -253227,9 +253232,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats.go-learnings",
       "repository": "nats-io-nats.go-learnings",
       "source_version": "HEAD",
-      "content_hash": "82c7977f106331b3b239657450b5f700481b9ba7219af2a8e0920e7c32cc3cfb",
+      "content_hash": "bf2fbdb9a66cea47bf764af8717642f7aae8d792550aec8daa3bd75c588b6380",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:24:29.504Z"
+      "persisted_at": "2026-11-27T23:13:04.496Z"
     },
     "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py": {
       "item_id": "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py",
@@ -310507,7 +310512,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
       "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
-      "content_hash": "95b6294dc6eb25da5574395b1111cc4185a93a1eb87eed0a89fa6240a2bfcb67",
+      "content_hash": "95e1047f0f91d51cb1b91157591d9dd6216a84a90eaa8766f4529281b89583b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
       "promoted_rules": [],
@@ -310516,7 +310521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:59:30.948Z",
+      "verified_at": "2026-11-27T23:12:50.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310533,9 +310538,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
       "repository": "microsoft/Aion-1.0-Instruct-2.3B",
       "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
-      "content_hash": "deab2bd2c3100eb36426260c0718f69911f4d8e1983c7d0ec6281b40c48a30ef",
+      "content_hash": "7f788738d7554aecf2201a45e7e3265af87cb293cb6f30cdd468a248fa446fae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T14:59:31.395Z"
+      "persisted_at": "2026-11-27T23:12:50.636Z"
     },
     "rule-9575": {
       "learning_id": "rule-9575",
@@ -310595,9 +310600,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
       "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "ead6113381eb59d31e601179c00286066f2684b07de3fcd804dae44a44e48bc5",
+      "content_hash": "038b7794422d8c02f9243fc345037f04190e1d79a160345a22fe445e5e3ff54f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T14:59:48.708Z"
+      "persisted_at": "2026-11-27T23:13:03.430Z"
     },
     "rule-9576": {
       "learning_id": "rule-9576",
@@ -330594,8 +330599,8 @@
       "slug": "el4cteo-fast-anything",
       "platform": "github",
       "source_url": "https://github.com/EL4CTEO/fast-anything",
-      "source_version": "d9b39f50",
-      "content_hash": "61e82582957375dd13a5a476590ce96d71164bb38c59c719dad282c8b65ece46",
+      "source_version": "e3d8635b",
+      "content_hash": "2b9ad466df372bbcd567dd7ee2ee1a67c8a5afb1e23c1c534d15b3aa22e4afcd",
       "dossier_path": "07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/el4cteo-fast-anything-learnings.md",
       "promoted_rules": [
@@ -330613,6 +330618,11 @@
           "number": 10789,
           "title": "longer Java duration window off Linux; the clock check no longer compares",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10984,
+          "title": "name scan --calibrate as the baseline's source",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -330620,7 +330630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T23:11:36.027Z",
+      "verified_at": "2026-11-27T23:12:51.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -330662,10 +330672,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-el4cteo-fast-anything-architecture-intelligence-el4cteo-fast-anything-core-invar.md",
       "title": "Architecture Intelligence: EL4CTEO/fast-anything Core Invariants",
       "repository": "EL4CTEO/fast-anything",
-      "source_version": "d9b39f50",
-      "content_hash": "2dbf22ceabbcc6394948f47afc622fa7069fde092a4a06ca35c95f331698ce43",
+      "source_version": "e3d8635b",
+      "content_hash": "4d3ed6f7042b2d413a217badf5a8e2dbd0a5877373fc37c19b009185c804a534",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T23:11:37.023Z"
+      "persisted_at": "2026-11-27T23:12:51.756Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything",
@@ -330674,10 +330684,10 @@
       "relative_path": "08_VERIFICATION/el4cteo-fast-anything-verification-protocol-empirical-defect-shield-for-el4cteo-.md",
       "title": "Verification Protocol: Empirical Defect Shield for EL4CTEO/fast-anything",
       "repository": "EL4CTEO/fast-anything",
-      "source_version": "d9b39f50",
-      "content_hash": "8da283d27f3ef6813aaaf4556d34d4c1e708f2402bf3118a01d70368a70e4a1e",
+      "source_version": "e3d8635b",
+      "content_hash": "b7bdcccf8f683dd312a2a8b6315ad882aaa84d1f27137dabbc951b0561cbe86c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:11:37.295Z"
+      "persisted_at": "2026-11-27T23:12:51.987Z"
     },
     "rule-10043": {
       "learning_id": "rule-10043",
@@ -330737,9 +330747,9 @@
       "title": "Architecture Intelligence: el4cteo-fast-anything-learnings Core Invariants",
       "repository": "el4cteo-fast-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c563aa78d3886876f81644a6edf270bc01733c02d46cb71b3f47555db3a6e04",
+      "content_hash": "713c5f1583ab3e09ee890d570cb93892384c5b0c9ac13f157d79a4d39d7a08d0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T23:11:52.843Z"
+      "persisted_at": "2026-11-27T23:13:02.760Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-el4cteo-fast-anything-learning",
@@ -330749,9 +330759,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for el4cteo-fast-anything-learnings",
       "repository": "el4cteo-fast-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7b681f0eefefdd91f0d2e3389da113c9694909cd776026f52d9979bc80f6951",
+      "content_hash": "03c3937f1514bf48b6e920f6b0fee1c18f5313e46c396e31b1a2a6c3327b43c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:11:53.133Z"
+      "persisted_at": "2026-11-27T23:13:02.988Z"
     },
     "candidate_directive-general-support-cyclonedx-python-lib-up-to-11-x": {
       "item_id": "candidate_directive-general-support-cyclonedx-python-lib-up-to-11-x",
@@ -368237,6 +368247,70 @@
       "content_hash": "6b0203a15b079a0f99377c1aa5f0f7fb576d5ecde654b548ffb9ad0f41f67769",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T23:04:21.047Z"
+    },
+    "rule-10984": {
+      "learning_id": "rule-10984",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10984,
+      "title": "name scan --calibrate as the baseline's source",
+      "source_url": "https://github.com/EL4CTEO/fast-anything",
+      "source_version": "e3d8635b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:12:51.021Z"
+    },
+    "candidate_directive-name-scan-calibrate-as-the-baseline-s-source": {
+      "item_id": "candidate_directive-name-scan-calibrate-as-the-baseline-s-source",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K47Q-name-scan-calibrate-as-the-baseline-s-source.md",
+      "title": "name scan --calibrate as the baseline's source",
+      "repository": "EL4CTEO/fast-anything",
+      "source_version": "e3d8635b",
+      "content_hash": "3dac7cce083c08e81f7733af6d279c642481cb8740d23708355feed648b1f7de",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T23:12:51.543Z"
+    },
+    "rule-10985": {
+      "learning_id": "rule-10985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10985,
+      "title": "[FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "0360c971",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:12:58.391Z"
+    },
+    "candidate_directive-fixed-micro-queuegroupdisabled-on-config-endpoint-is-ignored": {
+      "item_id": "candidate_directive-fixed-micro-queuegroupdisabled-on-config-endpoint-is-ignored",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KDVI-fixed-micro-queuegroupdisabled-on-config-endpoint-is-ignored.md",
+      "title": "[FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5b5690c0685be05e8a233d0deaeb12bccafd8e4f023cb1fa77320e3561c6aba",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T23:13:04.062Z"
+    },
+    "candidate_directive-report-name-scan-calibrate-as-the-baseline-s-source": {
+      "item_id": "candidate_directive-report-name-scan-calibrate-as-the-baseline-s-source",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KCPI-report-name-scan-calibrate-as-the-baseline-s-source.md",
+      "title": "report: name scan --calibrate as the baseline's source",
+      "repository": "el4cteo-fast-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d41010fe6013bc1562cbc970fa1ed4e5887a7f0e09ad47076a79df345a4dda2f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T23:13:02.551Z"
     }
   },
   "ai-builder-brain": {

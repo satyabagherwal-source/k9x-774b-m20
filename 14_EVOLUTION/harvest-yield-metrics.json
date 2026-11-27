@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:04:16.882Z",
-  "total_cycles_completed": 13186,
-  "total_learnings_persisted": 13186,
-  "total_rules_promoted": 11898,
+  "last_updated": "2026-11-27T23:12:58.671Z",
+  "total_cycles_completed": 13189,
+  "total_learnings_persisted": 13189,
+  "total_rules_promoted": 11900,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:21:23.802Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:21:25.191Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:21:39.397Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:30:04.029Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T23:04:16.882Z",
       "repository": "authzed/spicedb",
       "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:12:50.388Z",
+      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+      "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:12:51.307Z",
+      "repository": "EL4CTEO/fast-anything",
+      "learningId": "learn-github-el4cteo-fast-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:12:58.671Z",
+      "repository": "nats-io/nats.go",
+      "learningId": "learn-github-nats-io-nats-go",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

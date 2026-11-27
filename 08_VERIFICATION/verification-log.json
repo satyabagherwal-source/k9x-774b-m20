@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HSGZ",
-    "timestamp": "2026-11-26T12:11:31.811Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "80455e28bc434a076ec63b671cd59cb21d310eba3778076f44d45e45ceaaef93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-HTMO",
-    "timestamp": "2026-11-26T12:11:33.312Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "6591ad9cb7f29b26462a658339785ca23b1b3efcec79705382ccf06795c9a5b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-SMGB",
-    "timestamp": "2026-11-26T12:19:57.227Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "6774490567a62a50c1c705ea01da3c4ac41aa27cd24c0e849f10312fb08904e4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-SOWA",
     "timestamp": "2026-11-26T12:20:00.394Z",
     "repository": "tuist/tuist",
@@ -7490,6 +7445,51 @@
     "repository": "authzed/spicedb",
     "learningId": "learn-github-authzed-spicedb",
     "contentHash": "3ff5263217bc3db095e79e6cac7ebfc57ffced8801b82165b7472cec7939fb70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-K3B4",
+    "timestamp": "2026-11-27T23:12:50.368Z",
+    "repository": "microsoft/Aion-1.0-Instruct-2.3B",
+    "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
+    "contentHash": "95e1047f0f91d51cb1b91157591d9dd6216a84a90eaa8766f4529281b89583b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-K40O",
+    "timestamp": "2026-11-27T23:12:51.288Z",
+    "repository": "EL4CTEO/fast-anything",
+    "learningId": "learn-github-el4cteo-fast-anything",
+    "contentHash": "2b9ad466df372bbcd567dd7ee2ee1a67c8a5afb1e23c1c534d15b3aa22e4afcd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-K9P9",
+    "timestamp": "2026-11-27T23:12:58.653Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "f5c2a3f152da3a3e2dbe59cf8d1ef389a892c9887440c6657eadff94114c5a54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

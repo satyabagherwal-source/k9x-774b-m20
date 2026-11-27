@@ -13928,3 +13928,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `23809a00` | Multi-dimensional audit evidence | 2026-11-27T22:54:50.857Z |
 | `learn-dom-j-068f8bd9` | `project://scrapy-scrapy` | `d2052b86` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md` | 2026-11-27T22:55:24.940Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `9116c889` | Multi-dimensional audit evidence | 2026-11-27T23:04:16.877Z |
+| `learn-huggingface-microsoft-aion-1-0-instruct-2-3b` | `https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-27T23:12:50.382Z |
+| `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `e3d8635b` | Multi-dimensional audit evidence | 2026-11-27T23:12:51.300Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `0360c971` | Multi-dimensional audit evidence | 2026-11-27T23:12:58.666Z |

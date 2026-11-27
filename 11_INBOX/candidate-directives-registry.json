@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:04:23.239Z",
+  "last_updated": "2026-11-27T23:13:04.062Z",
   "directives": [
     {
       "id": "CD-001",
@@ -73085,6 +73085,48 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2FA2AE-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-K47Q",
+      "directive_title": "name scan --calibrate as the baseline's source",
+      "source_repo": "EL4CTEO/fast-anything",
+      "source_commit": "e3d8635b",
+      "staged_file": "11_INBOX/candidate-directives/CD-K47Q-name-scan-calibrate-as-the-baseline-s-source.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-KDVI",
+      "directive_title": "[FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored",
+      "source_repo": "nats-io-nats.go-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KDVI-fixed-micro-queuegroupdisabled-on-config-endpoint-is-ignored.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-KCPI",
+      "directive_title": "report: name scan --calibrate as the baseline's source",
+      "source_repo": "el4cteo-fast-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KCPI-report-name-scan-calibrate-as-the-baseline-s-source.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-A77506",
+      "directive_title": "[FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats.go",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A77506--fixed-micro-queuegroupdisabled-on-confi.md",
       "staged_date": "2026-11-27"
     }
   ]

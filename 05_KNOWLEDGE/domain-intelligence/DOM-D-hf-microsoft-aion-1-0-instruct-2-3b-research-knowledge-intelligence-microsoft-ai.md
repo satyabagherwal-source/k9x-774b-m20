@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
   "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:59:31.394Z",
+  "timestamp": "2026-11-27T23:12:50.635Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft/Aion-1.0-Instruct-2.3B](https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B) (Revision: `hf-microso`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:59:31.394Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:12:50.635Z`  
 > **Learning ID**: `learn-huggingface-microsoft-aion-1-0-instruct-2-3b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B](https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:59:30.521Z  
+> **Harvest Timestamp**: 2026-11-27T23:12:49.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5476 downloads | 277 likes
+- **Stars / Engagement**: 7054 downloads | 408 likes
 
 ---
 

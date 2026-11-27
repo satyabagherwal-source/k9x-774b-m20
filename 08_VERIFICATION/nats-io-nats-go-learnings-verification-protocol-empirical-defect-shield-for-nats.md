@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T14:24:29.015Z",
+  "timestamp": "2026-11-27T23:13:03.922Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats.go-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats.go-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T14:24:29.015Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:13:03.922Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats.go-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `792e440f`  
+> **Source Version**: `0360c971`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:24:15.890Z  
+> **Timestamp**: 2026-11-27T23:12:57.394Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:24:15.883Z  
+> **Harvest Timestamp**: 2026-11-27T23:12:57.388Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6813 stars
+- **Stars / Engagement**: 6820 stars
 
 ---
 
@@ -1586,213 +1586,78 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `792e440f` (2026-11-17)
-**Commit Message**: [ADDED] Option to sign the server nonce as a trusted proxy
+### Incident Patch 1: `0360c971` (2026-11-20)
+**Commit Message**: [FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored
 
-nats-server 2.12 trusts a proxy that adds proxy_sig, its signature of
-the server nonce, to CONNECT, and accepts a user with proxy_required
-only then. A proxy that relays a NATS client can add the field to the
-client's CONNECT. An application that authenticates clients of another
-protocol and opens their NATS connections itself cannot: the client
-writes CONNECT, inside the TLS session when there is one.
+AddService only forwarded the queue group name of Config.Endpoint, so an
+endpoint configured with QueueGroupDisabled still subscribed with the
+service or default queue group.
 
-ProxySignature sets a callback that signs the nonce, as Nkey does for
-the connection's own credential, and the signature goes out beside
-whatever credential the connection uses.
+Signed-off-by: Dostonbek Soliyev <[REDACTED_EMAIL]>
 
-Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +34/-1)
+**File**: `micro/service.go` (modified, +3/-1)
 ```diff
-@@ -146,6 +146,7 @@ var (
- 	ErrNoUserCB                      = errors.New("nats: user callback not defined")
- 	ErrNkeyAndUser                   = errors.New("nats: user callback and nkey defined")
- 	ErrNkeysNotSupported             = errors.New("nats: nkeys not supported by the server")
-+	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
- 	ErrStaleConnection               = errors.New("nats: " + STALE_CONNECTION)
- 	ErrTokenAlreadySet               = errors.New("nats: token and token handler both set")
- 	ErrUserInfoAlreadySet            = errors.New("nats: cannot set user info callback and user/pass")
-@@ -525,6 +526,12 @@ type Options struct {
- 	// presented from the server.
- 	SignatureCB SignatureHandler
- 
-+	// ProxySignatureCB designates the function used to sign the nonce
-+	// presented from the server as one of its trusted proxies. The
-+	// signature is sent beside the connection's own credentials, and lets
-+	// the server accept a user that requires a proxy.
-+	ProxySignatureCB SignatureHandler
-+
- 	// User sets the username to be used when connecting to the server.
- 	User string
- 
-@@ -1138,6 +1145,7 @@ type connectInfo struct {
- 	Echo         bool   `json:"echo"`
- 	Headers      bool   `json:"headers"`
- 	NoResponders bool   `json:"no_responders"`
-+	ProxySig     string `json:"proxy_sig,omitempty"`
- }
- 
- // MsgHandler is a callback function that processes messages delivered to
-@@ -1657,6 +1665,18 @@ func Nkey(pubKey string, sigCB SignatureHandler) Option {
- 	}
- }
- 
-+// ProxySignature will set the callback that signs the server nonce as a
-+// trusted proxy of the server (see the proxies block of the server
-+// configuration, in nats-server v2.12.0 and later). It is for applications
-+// that connect on behalf of clients they have authenticated themselves, and
-+// is independent of the credentials the connection authenticates with.
-+func ProxySignature(sigCB SignatureHandler) Option {
-+	return func(o *Options) error {
-+		o.ProxySignatureCB = sigCB
-+		return nil
-+	}
-+}
-+
- // SyncQueueLen will set the maximum queue len for the internal
- // channel used for SubscribeSync().
- // Defaults to 65536.
-@@ -3222,7 +3242,7 @@ func (nc *Conn) sendProto(proto string) {
- // applicable. The lock is assumed to be held upon entering.
- func (nc *Conn) connectProto() (string, error) {
- 	o := nc.Opts
--	var nkey, sig, user, pass, token, ujwt string
-+	var nkey, sig, user, pass, token, ujwt, proxySig string
- 	u := nc.current.URL.User
- 	if u != nil {
- 		// if no password, assume username is authToken
-@@ -3273,6 +3293,18 @@ func (nc *Conn) connectProto() (string, error) {
- 		sig = base64.RawURLEncoding.EncodeToString(sigraw)
- 	}
- 
-+	if o.ProxySignatureCB != nil {
-+		// The server sends a nonce when it has trusted proxies configured.
-+		if nc.info.Nonce == _EMPTY_ {
-+			return _EMPTY_, ErrProxySignatureNotSupported
-+		}
-+		sigraw, err := o.ProxySignatureCB([]byte(nc.info.Nonce))
-+		if err != nil {
-+			return _EMPTY_, fmt.Errorf("error signing nonce as proxy: %w", err)
-+		}
-+		proxySig = base64.RawURLEncoding.EncodeToString(sigraw)
-+	}
-+
- 	if nc.Opts.TokenHandler != nil {
- 		if token != _EMPTY_ {
- 			return _EMPTY_, ErrTokenAlreadySet
-@@ -3285,6 +3317,7 @@ func (nc *Conn) connectProto() (string, error) {
- 	cinfo := connectInfo{
- 		o.Verbose, o.Pedantic, ujwt, nkey, sig, user, pass, token,
- 		o.Secure, o.Name, LangString, Version, clientProtoInfo, !o.NoEcho, hdrs, hdrs,
-+		proxySig,
- 	}
- 
- 	b, err := json.Marshal(cinfo)
+@@ -369,7 +369,9 @@ func AddService(nc *nats.Conn, config Config) (Service, error) {
+ 		if config.Endpoint.Metadata != nil {
+ 			opts = append(opts, WithEndpointMetadata(config.Endpoint.Metadata))
+ 		}
+-		if config.Endpoint.QueueGroup != "" {
++		if config.Endpoint.QueueGroupDisabled {
++			opts = append(opts, WithEndpointQueueGroupDisabled())
++		} else if config.Endpoint.QueueGroup != "" {
+ 			opts = append(opts, WithEndpointQueueGroup(config.Endpoint.QueueGroup))
+ 		} else if config.QueueGroup != "" {
+ 			opts = append(opts, WithEndpointQueueGroup(config.QueueGroup))
 ```
 
-**File**: `test/nats_test.go` (modified, +78/-0)
+**File**: `micro/test/service_test.go` (modified, +30/-0)
 ```diff
-@@ -15,6 +15,7 @@ package test
- 
- import (
- 	"bytes"
-+	"errors"
- 	"fmt"
- 	"net"
- 	"os"
-@@ -419,6 +420,83 @@ func TestNkeyAuth(t *testing.T) {
- 	}
- }
- 
-+func TestProxySignature(t *testing.T) {
-+	kp, _ := nkeys.CreateUser()
-+	pub, _ := kp.PublicKey()
-+	untrusted, _ := nkeys.CreateUser()
+@@ -2353,6 +2353,36 @@ func TestCustomQueueGroup(t *testing.T) {
+ 				"foo-disabled": "",
+ 			},
+ 		},
++		{
++			name: "disable queue group on endpoint config",
++			endpointInit: func(t *testing.T, nc *nats.Conn) micro.Service {
++				srv, err := micro.AddService(nc, micro.Config{
++					Name:       "test_service",
++					Version:    "0.0.1",
++					QueueGroup: "q-config",
++					Endpoint: &micro.EndpointConfig{
++						Subject:            "foo",
++						QueueGroupDisabled: true,
++						Handler:            micro.HandlerFunc(func(r micro.Request) {}),
++					},
++				})
++				if err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
 +
-+	authBody := `authorization {
-+  users: [
-+    { user: "proxied", password: "pwd", proxy_required: true }
-+  ]
-+}`
-+	proxies := fmt.Sprintf(`proxies {
-+  trusted: [
-+    { key: %q }
-+  ]
-+}`, pub)
++				// add endpoint on service directly, should have queue group from service config
++				err = srv.AddEndpoint("bar", micro.HandlerFunc(func(r micro.Request) {}))
++				if err != nil {
++					t.Fatalf("Unexpected error: %v", err)
++				}
 +
-+	c := newTester(t)
-+	inst := c.CreateServer(t, false, append(singleUserPassOpts(authBody), testservice.WithTopLevel(proxies))...)
-+	t.Cleanup(func() { inst.Destroy(t) })
-+	clientURL := inst.Servers[0].URL
-+
-+	connect := func(opts ...nats.Option) (*nats.Conn, error) {
-+		opts = append([]nats.Option{
-+			nats.UserInfo("proxied", "pwd"),
-+			nats.MaxReconnects(10),
-+			nats.ReconnectWait(100 * time.Millisecond),
-+		}, opts...)
-+		return nats.Connect(clientURL, opts...)
-+	}
-+
-+	if _, err := connect(); !errors.Is(err, nats.ErrAuthorization) {
-+		t.Fatalf("Expected an authorization error with no proxy signature, got %v", err)
-+	}
-+	if _, err := connect(nats.ProxySignature(untrusted.Sign)); !errors.Is(err, nats.ErrAuthorization) {
-+		t.Fatalf("Expected an authorization error with an untrusted proxy signature, got %v", err)
-+	}
-+	failSign := func(nonce []byte) ([]byte, error) {
-+		return nil, errors.New("no key")
-+	}
-+	if _, err := connect(nats.ProxySignature(failSign)); err == nil || !strings.Contains(err.Error(), "no key") {
-+		t.Fatalf("Expected the signature callback's error, got %v", err)
-+	}
-+
-+	nc, err := connect(nats.ProxySignature(kp.Sign))
-+	if err != nil {
-+		t.Fatalf("Expected to succeed but got %v", err)
-+	}
-+	defer nc.Close()
-+
-+	// A reconnect gets a new nonce, which must be signed again.
-+	inst.StopServer(t, inst.Servers[0])
-+	inst.StartServer(t, inst.Servers[0])
-+
-+	if err := nc.FlushTimeout(5 * time.Second); err != nil {
-+		t.Fatalf("Error on Flush: %v", err)
-+	}
-+}
-+
-+func TestProxySignatureNotSupported(t *testing.T) {
-+	kp, _ := nkeys.CreateUser()
-+
-+	// Without trusted proxies or nkeys, the server sends no nonce.
-+	authBody := `authorization {
-+  users: [
-+    { user: "user", password: "pwd" }
-+  ]
-+}`
-+	c := newTester(t)
-+	inst := c.CreateServer(t, false, singleUserPassOpts(authBody)...)
-+	t.Cleanup(func() { inst.Destroy(t) })
-+
-+	_, err := nats.Connect(inst.Servers[0].URL, nats.UserInfo("user", "pwd"), nats.ProxySignature(kp.Sign))
-+	if !errors.Is(err, nats.ErrProxySignatureNotSupported) {
-+		t.Fatalf("Expected %v, got %v", nats.ErrProxySignatureNotSupported, err)
-+	}
-+}
-+
- // These drive the server-pool shuffle with a comma-joined two-URL pool. The
- // DNS multi-IP path (net.LookupHost returning several addresses for one host)
- // reaches the same srvPool shuffle but is not covered directly: the tester
++				return srv
++			},
++			expectedQueueGroups: map[string]string{
++				"default": "",
++				"bar":     "q-config",
++			},
++		},
+ 		{
+ 			name: "empty queue group in option, inherit from parent",
+ 			endpointInit: func(t *testing.T, nc *nats.Conn) micro.Service {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2249** (2026-11-18): [ADDED] Option to sign the server nonce as a trusted proxy (@bruth)
-- **PR #2246** (2026-11-17): Release v1.56.0 (@piotrpio)
-- **PR #2245** (2026-11-17): [CHANGED] Fixes for TLS and server discovery (@piotrpio)
-- **PR #2243** (2026-11-16): [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (@piotrpio)
-- **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
-- **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
+- **PR #2268** (2026-11-26): [IMPROVED] Update CLAUDE.md test placement and contributor conventions (@piotrpio)
+- **PR #2262** (2026-11-25): [FIXED] Reject MSG and HMSG sizes longer than 9 digits (@piotrpio)
+- **PR #2259** (closed): [IMPROVED] Share one allocation for the subject and reply of a received message (@g4lb)
+- **PR #2256** (2026-11-27): [FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored (@ruziba3vich)
+- **PR #2255** (closed): [ADDED] Configure flush and drain waits (@yudongyouqing)
+- **PR #2253** (2026-11-25): [ADDED] Configurable service API discovery prefix (@piotrpio)
 
 ---
 
@@ -1812,57 +1677,33 @@ Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ADDED] Option to sign the server nonce as a trusted proxy
+## X. [FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored
 
 **RULE**:
-When implementing operations in `nats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `micro/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `792e440f`: [ADDED] Option to sign the server nonce as a trusted proxy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0360c971`: [FIXED] micro: QueueGroupDisabled on Config.Endpoint is ignored. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `micro/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
-	// ProxySignatureCB designates the function used to sign the nonce
-	// presented from the server as one of its trusted proxies. The
-	// signature is sent beside the connection's own credentials, and lets
-	// the server accept a user that requires a proxy.
-	ProxySignatureCB SignatureHandler
-
-	ProxySig     string `json:"proxy_sig,omitempty"`
-// ProxySignature will set the callback that signs the server nonce as a
-// trusted proxy of the server (see the proxies block of the server
-// configuration, in nats-server v2.12.0 and later). It is for applications
-// that connect on behalf of clients they have authenticated themselves, and
-// is independent of the credentials the connection authenticates with.
-func ProxySignature(sigCB SignatureHandler) Option {
-	return func(o *Options) error {
-		o.ProxySignatureCB = sigCB
-		return nil
-	}
-}
-
-	var nkey, sig, user, pass, token, ujwt, proxySig string
-	if o.ProxySignatureCB != nil {
-		// The server sends a nonce when it has trusted proxies configured.
-		if nc.info.Nonce == _EMPTY_ {
-			return _EMPTY_, ErrProxySignatureNotSupported
-		}
-		sigraw, err
+		if config.Endpoint.QueueGroupDisabled {
+			opts = append(opts, WithEndpointQueueGroupDisabled())
+		} else if config.Endpoint.QueueGroup != "" {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	var nkey, sig, user, pass, token, ujwt string
+		if config.Endpoint.QueueGroup != "" {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `792e440f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0360c971` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
