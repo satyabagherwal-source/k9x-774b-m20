@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-U719",
-    "timestamp": "2026-11-25T15:21:27.837Z",
-    "repository": "sensenova/SenseNova-Loop-9B-Preview",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-    "contentHash": "49f693080870828846368dbfef6e822c2a6c81978a542d759e26c1075449f7f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-UCQC",
-    "timestamp": "2026-11-25T15:21:35.220Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "080082ea48390b7d3c72a4fbea613cb933c233cdddb0e919658319dd80e862db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-5253",
     "timestamp": "2026-11-25T15:29:54.711Z",
     "repository": "pyannote/speaker-diarization-3.1",
@@ -7492,6 +7462,36 @@
     "contentHash": "363442bb345d9bcb967fdd0a7a0dfe8f8f96ffceac077cf3a86d1798bb7ef20d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-49TI",
+    "timestamp": "2026-11-27T03:24:48.438Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "3c0bf75f2d827d2a8c8d352ed1b060587beadeeaf41d1ba2d63740b6c48ad1c6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-4GU3",
+    "timestamp": "2026-11-27T03:24:57.531Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

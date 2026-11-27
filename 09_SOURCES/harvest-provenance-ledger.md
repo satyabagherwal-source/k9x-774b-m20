@@ -13682,3 +13682,5 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `7ab87806` | Multi-dimensional audit evidence | 2026-11-27T03:07:45.403Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c5c3f409` | Multi-dimensional audit evidence | 2026-11-27T03:07:50.439Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T03:16:15.470Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T03:24:48.443Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `4d459637` | Multi-dimensional audit evidence | 2026-11-27T03:24:57.546Z |

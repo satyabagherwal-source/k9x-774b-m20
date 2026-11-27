@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:19:59.740Z",
+  "timestamp": "2026-11-27T03:25:02.167Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats-server-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:19:59.740Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:25:02.167Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats-server-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `44f6fc4d`  
+> **Source Version**: `4d459637`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:19:53.709Z  
+> **Timestamp**: 2026-11-27T03:24:56.254Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:19:53.703Z  
+> **Harvest Timestamp**: 2026-11-27T03:24:56.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21130 stars
+- **Stars / Engagement**: 21171 stars
 
 ---
 
@@ -2751,511 +2751,180 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `253bc39b` (2026-11-24)
-**Commit Message**: [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8929)
+### Incident Patch 1: `4d459637` (2026-11-26)
+**Commit Message**: Look up consumers without taking the stream lock (#8939)
 
-### Problem
-In `newServiceReply`, `a.mu` was unlocked after generating the wildcard
-prefix but before registering the `_R_.>` subscription in the internal
-client sublist. When multiple concurrent requests arrived on a freshly
-started server, the first caller returned the reply subject and
-published before the subscription was active, causing early replies to
-be dropped.
+`lookupConsumer` was taking the stream read lock so it could get stuck
+behind a stream writer holding the lock while waiting on the store (e.g.
+loading a cold block from disk). This caused consumer info requests to
+tie up all the 16 JS API workers, as well as stalling the meta snapshot
+apply when removing consumers.
 
-### Solution
-- I added a `sync.Once` (`siReplyOnce`) on `Account` to synchronize the
-service import reply wildcard setup and subscription.
-- Concurrent callers now wait until the `_R_.>` subscription is fully
-registered before receiving their reply subject.
-- Added a regression test
-`TestAccountNewServiceReplyWaitsForSubscription` to verify concurrent
-callers block until the subscription is active.
+Changes to the consumers map are now done holding both the stream lock
+and `clsMu`, so `lookupConsumer` only needs `clsMu`.
 
-Resolves #8823
+Signed-off-by: Waldemar Quevedo <[REDACTED_EMAIL]>
 
-**File**: `locksordering.txt` (modified, +9/-0)
+**File**: `server/jetstream_consumer_test.go` (modified, +45/-0)
 ```diff
-@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
- 
-     cmu -> Account
-     cmu -> client
-+
-+The "siReplyOnce" in the Account serializes the initialization of the service
-+reply wildcard prefix and its wildcard subscription for service import responses,
-+so that concurrent callers wait until the subscription is registered.
-+It must be acquired before the Account and client locks, and neither must be
-+held when calling newServiceReply.
-+
-+    siReplyOnce -> Account
-+    siReplyOnce -> client
-```
-
-**File**: `server/accounts.go` (modified, +15/-17)
-```diff
-@@ -100,6 +100,7 @@ type Account struct {
- 	srv          *Server // server this account is registered with (possibly nil)
- 	lds          string  // loop detection subject for leaf nodes
- 	siReply      []byte  // service reply prefix, will form wildcard subscription.
-+	siReplyOnce  sync.Once
- 	eventIds     *nuid.NUID
- 	eventIdsMu   sync.Mutex
- 	defaultPerms *Permissions
-@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
- // Generate a new service reply from the wildcard prefix.
- // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
- func (a *Account) newServiceReply(tracking bool) []byte {
--	a.mu.Lock()
--	s := a.srv
--	rn := rand.Uint64()
-+	a.siReplyOnce.Do(func() {
-+		a.mu.Lock()
-+		if a.siReply == nil {
-+			a.createRespWildcard()
-+		}
-+		replyPre := a.siReply
-+		a.mu.Unlock()
-+		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
-+	})
- 
--	// Check if we need to create the reply here.
--	var createdSiReply bool
--	if a.siReply == nil {
--		a.createRespWildcard()
--		createdSiReply = true
--	}
-+	a.mu.RLock()
-+	s := a.srv
- 	replyPre := a.siReply
--	a.mu.Unlock()
--
--	// If we created the siReply and we are not bound to a leafnode
--	// we need to do the wildcard subscription.
--	if createdSiReply {
--		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
--	}
-+	a.mu.RUnlock()
- 
-+	rn := rand.Uint64()
- 	var b [replyLen]byte
- 	for i, l := 0, rn; i < len(b); i++ {
- 		b[i] = digits[l%base]
-@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
- 	reply = append(reply, replyPre...)
- 	reply = append(reply, b[:]...)
- 
--	if tracking {
-+	if tracking && s != nil {
- 		if shash := s.Node(); shash != _EMPTY_ {
- 			// Add in our tracking identifier. This allows the metrics to get back to only
- 			// this server without needless SUBS/UNSUBS.
-```
-
-**File**: `server/accounts_test.go` (modified, +60/-0)
-```diff
-@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
- 	}
- }
- 
-+// A reply prefix must not be handed out before the wildcard subscription
-+// for service import responses is registered, otherwise replies published
-+// to it are dropped.
-+func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
-+	opts := defaultServerOptions
-+	s := New(&opts)
-+	a, err := s.RegisterAccount("SVC_REPLY")
-+	require_NoError(t, err)
-+
-+	a.mu.Lock()
-+	require_True(t, a.siReply == nil)
-+	ic := a.internalClient()
-+	a.mu.Unlock()
-+	require_NotNil(t, ic)
-+
-+	// Block the first caller while it registers the subscription.
-+	ic.mu.Lock()
-+	unlocked := false
-+	defer func() {
-+		if !unlocked {
-+			ic.mu.Unlock()
-+		}
-+	}()
-+
-+	replies := make(chan []byte, 2)
-+	go func() { replies <- a.newServiceReply(false) }()
-+
-+	// Wait for the first caller to have created the prefix.
-+	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
-+		a.mu.RLock()
-+		defer a.mu.RUnlock()
-+		if a.siReply == nil {
-+			return fmt.Errorf("reply prefix not created yet")
-+		}
-+		return nil
-+	})
-+
-+	// A second caller must wait, the subscription is not registered yet.
-+	go func() { replies <- a.newServiceReply(false) }()
-+	select {
-+	case r := <-replies:
-+		t.Fatalf("Got reply %q before the subscription was registered", r)
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+
-+	ic.mu.Unlock()
-+	unlocked = true
-+
-+	for i := 0; i < 2; i++ {
-+		select {
-+		case r := <-replies:
-+			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
-+				t.Fatalf("No subscription for reply %q", r)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("Timed out waiting for replies")
-+		}
-+	}
-+}
-+
- func TestSamplingHeader(t *testing.T) {
- 	test := func(expectSampling bool, h http.Header) {
- 		t.Helper()
-```
-
----
-
-### Incident Patch 2: `ed85c34e` (2026-11-23)
-**Commit Message**: [FIXED] Replies to the first concurrent requests on a new server can be dropped
-
-newServiceReply released the account lock before registering the _R_ wildcard subscription, so concurrent callers could get a reply prefix before it was subscribed. Use a sync.Once so they wait for the subscription.
-
-Resolves #8823
-
-Signed-off-by: Anshul Jagota <[REDACTED_EMAIL]>
-
-**File**: `locksordering.txt` (modified, +9/-0)
-```diff
-@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
- 
-     cmu -> Account
-     cmu -> client
-+
-+The "siReplyOnce" in the Account serializes the initialization of the service
-+reply wildcard prefix and its wildcard subscription for service import responses,
-+so that concurrent callers wait until the subscription is registered.
-+It must be acquired before the Account and client locks, and neither must be
-+held when calling newServiceReply.
-+
-+    siReplyOnce -> Account
-+    siReplyOnce -> client
-```
-
-**File**: `server/accounts.go` (modified, +15/-17)
-```diff
-@@ -100,6 +100,7 @@ type Account struct {
- 	srv          *Server // server this account is registered with (possibly nil)
- 	lds          string  // loop detection subject for leaf nodes
- 	siReply      []byte  // service reply prefix, will form wildcard subscription.
-+	siReplyOnce  sync.Once
- 	eventIds     *nuid.NUID
- 	eventIdsMu   sync.Mutex
- 	defaultPerms *Permissions
-@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
- // Generate a new service reply from the wildcard prefix.
- // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
- func (a *Account) newServiceReply(tracking bool) []byte {
--	a.mu.Lock()
--	s := a.srv
--	rn := rand.Uint64()
-+	a.siReplyOnce.Do(func() {
-+		a.mu.Lock()
-+		if a.siReply == nil {
-+			a.createRespWildcard()
-+		}
-+		replyPre := a.siReply
-+		a.mu.Unlock()
-+		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
-+	})
- 
--	// Check if we need to create the reply here.
--	var createdSiReply bool
--	if a.siReply == nil {
--		a.createRespWildcard()
--		createdSiReply = true
--	}
-+	a.mu.RLock()
-+	s := a.srv
- 	replyPre := a.siReply
--	a.mu.Unlock()
--
--	// If we created the siReply and we are not bound to a leafnode
--	// we need to do the wildcard subscription.
--	if createdSiReply {
--		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
--	}
-+	a.mu.RUnlock()
- 
-+	rn := rand.Uint64()
- 	var b [replyLen]byte
- 	for i, l := 0, rn; i < len(b); i++ {
- 		b[i] = digits[l%base]
-@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
- 	reply = append(reply, replyPre...)
- 	reply = append(reply, b[:]...)
- 
--	if tracking {
-+	if tracking && s != nil {
- 		if shash := s.Node(); shash != _EMPTY_ {
- 			// Add in our tracking identifier. This allows the metrics to get back to only
- 			// this server without needless SUBS/UNSUBS.
-```
-
-**File**: `server/accounts_test.go` (modified, +60/-0)
-```diff
-@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
- 	}
- }
- 
-+// A reply prefix must not be handed out before the wildcard subscription
-+// for service import responses is registered, otherwise replies published
-+// to it are dropped.
-+func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
-+	opts := defaultServerOptions
-+	s := New(&opts)
-+	a, err := s.RegisterAccount("SVC_REPLY")
-+	require_NoError(t, err)
-+
-+	a.mu.Lock()
-+	require_True(t, a.siReply == nil)
-+	ic := a.internalClient()
-+	a.mu.Unlock()
-+	require_NotNil(t, ic)
-+
-+	// Block the first caller while it registers the subscription.
-+	ic.mu.Lock()
-+	unlocked := false
-+	defer func() {
-+		if !unlocked {
-+			ic.mu.Unlock()
-+		}
-+	}()
-+
-+	replies := make(chan []byte, 2)
-+	go func() { replies <- a.newServiceReply(false) }()
-+
-+	// Wait for the first caller to have created the prefix.
-+	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
-+		a.mu.RLock()
-+		defer a.mu.RUnlock()
-+		if a.siReply == nil {
-+			return fmt.Errorf("reply prefix not created yet")
-+		}
-+		return nil
-+	})
-+
-+	// A second caller must wait, the subscription is not registered yet.
-+	go func() { replies <- a.newServiceReply(false) }()
-+	select {
-+	case r := <-replies:
-+		t.Fatalf("Got reply %q before the subscription was registered", r)
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+
-+	ic.mu.Unlock()
-+	unlocked = true
-+
-+	for i := 0; i < 2; i++ {
-+		select {
-+		case r := <-replies:
-+			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
-+				t.Fatalf("No subscription for reply %q", r)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("Timed out waiting for replies")
-+		}
-+	}
-+}
-+
- func TestSamplingHeader(t *testing.T) {
- 	test := func(expectSampling bool, h http.Header) {
- 		t.Helper()
-```
-
----
-
-### Incident Patch 3: `44f6fc4d` (2026-11-24)
-**Commit Message**: [FIXED] Deferred pull statuses lost on a shared reply subject (#8935)
-
-`waitingDelivery` held a single deferred pull status per reply subject,
-so a second status queued while replicated deliveries were still pending
-replaced the first. Clients like `jetstream` `Consume`/`Messages` reuse
-one inbox across pull requests, so a dropped status (e.g. `408 Request
-Timeout`) left the client's pending counts too high, stalling refills
-until the missed heartbeat reset them.
-
-This PR keeps all deferred statuses and sends them in order after the
-last pending delivery.
-
-**File**: `server/consumer.go` (modified, +6/-5)
-```diff
-@@ -3229,7 +3229,8 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
- // Lock should be held.
- func (o *consumer) sendPullStatus(reply string, hdr []byte) {
- 	if wd, ok := o.waitingDeliveries[reply]; ok {
--		wd.hdr = hdr
-+		// Pulls can share a reply subject, so keep every status.
-+		wd.hdrs = append(wd.hdrs, hdr)
- 		return
- 	}
- 	o.outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
-@@ -4217,10 +4218,10 @@ func (wr *waitingRequest) recycle() {
- 	}
- }
- 
--// Tracks the last pending delivery for a reply and its optional pull status.
-+// Tracks the last pending delivery for a reply and its deferred pull statuses.
- type waitingDelivery struct {
--	seq uint64
--	hdr []byte
-+	seq  uint64
-+	hdrs [][]byte
- }
- 
- // sync.Pool for waiting deliveries.
-@@ -4233,7 +4234,7 @@ var wdPool = sync.Pool{
- // Force a recycle.
- func (wd *waitingDelivery) recycle() {
- 	if wd != nil {
--		wd.seq, wd.hdr = 0, nil
-+		wd.seq, wd.hdrs = 0, nil
- 		wdPool.Put(wd)
- 	}
- }
-```
-
-**File**: `server/jetstream_cluster.go` (modified, +2/-2)
-```diff
-@@ -9265,8 +9265,8 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
- 
- 			// Send any deferred pull status after the last replicated delivery.
- 			if wd, ok := o.waitingDeliveries[dsubj]; ok && wd.seq == seq {
--				if wd.hdr != nil {
--					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, wd.hdr, nil, nil, 0))
-+				for _, hdr := range wd.hdrs {
-+					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
- 				}
- 				wd.recycle()
- 				delete(o.waitingDeliveries, dsubj)
-```
-
-**File**: `server/jetstream_cluster_1_test.go` (modified, +2/-2)
-```diff
-@@ -12253,8 +12253,8 @@ func TestJetStreamClusterConsumerPendingDeliveriesOnMaxAckPendingUpdate(t *testi
- 	l = len(o.pendingDeliveries)
- 	wd := o.waitingDeliveries[reply]
- 	var queuedStatus string
--	if wd != nil {
--		queuedStatus = string(wd.hdr)
-+	if wd != nil && len(wd.hdrs) == 1 {
-+		queuedStatus = string(wd.hdrs[0])
- 	}
- 	o.mu.Unlock()
- 	require_Equal(t, l, 1)
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +68/-1)
-```diff
-@@ -10267,7 +10267,7 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
- 	})
- 	require_NoError(t, err)
- 	data := bytes.Repeat([]byte("x"), 200)
--	for i := 0; i < 3; i++ {
-+	for range 3 {
- 		_, err := js.Publish("TEST", data)
- 		require_NoError(t, err)
- 	}
-@@ -10339,6 +10339,73 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
- 			require_Equal(t, status.Header.Get("Description"), test.description)
+@@ -15100,3 +15100,48 @@ func BenchmarkJetStreamConsumerRedeliveryQueue(b *testing.B) {
  		})
  	}
+ }
 +
-+	// Two pull requests on the same reply subject, each ending with a status.
-+	t.Run("Shared Reply", func(t *testing.T) {
-+		for range 2 {
-+			_, err := js.Publish("TEST", data)
-+			require_NoError(t, err)
++// A stream writer can hold the stream lock while it waits on the store (for
++// example on a cold block read from disk). Consumer lookups, and with them
++// consumer info requests and consumer removal from the meta layer, must not
++// queue behind it.
++func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	nc, js := jsClientConnect(t, s)
++	defer nc.Close()
++
++	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
++	require_NoError(t, err)
++	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
++	require_NoError(t, err)
++
++	mset, err := s.GlobalAccount().lookupStream("TEST")
++	require_NoError(t, err)
++
++	// Simulate a stream writer stuck while holding the stream lock.
++	mset.mu.Lock()
++	unlocked := false
++	unlock := func() {
++		if !unlocked {
++			unlocked = true
++			mset.mu.Unlock()
 +		}
++	}
++	defer unlock()
 +
-+		reply := nc.NewInbox()
-+		sub, err := nc.SubscribeSync(reply)
-+		require_NoError(t, err)
-+		defer sub.Unsubscribe()
++	done := make(chan *consumer, 1)
++	go func() { done <- mset.lookupConsumer("CONSUMER") }()
++	select {
++	case o := <-done:
++		require_True(t, o != nil)
++	case <-time.After(2 * time.Second):
++		unlock()
++		t.Fatalf("lookupConsumer blocked behind the stream lock")
++	}
 +
-+		o.mu.Lock()
-+		o.switching = true
-+		o.mu.Unlock()
-+		resumeProposals := func() {
-+			o.mu.Lock()
-+			defer o.mu.Unlock()
-+			o.switching = false
-+			select {
-+			case o.pch <- struct{}{}:
-+			default:
-+			}
-+		}
-+		defer resumeProposals()
-+
-+		for _, r := range []JSApiConsumerGetNextRequest{
-+			{Batch: 1, MaxBytes: 10_000, Expires: 2 * time.Second},
-+			{Batch: 2, Expires: 200 * time.Millisecond},
-+		} {
-+			req, err := json.Marshal(r)
-+			require_NoError(t, err)
-+			require_NoError(t, nc.PublishRequest(fmt.Sprintf(JSApiRequestNextT, "TEST", "C"), reply, req))
-+		}
-+
-+		checkFor(t, time.Second, 10*time.Millisecond, func() error {
-+			o.mu.RLock()
-+			defer o.mu.RUnlock()
-+			if wd := o.waitingDeliveries[reply]; wd == nil || len(wd.hdrs) != 2 {
-+				return errors.New("pull statuses have not finished queueing")
-+			}
-+			return nil
-+		})
-+		_, err = sub.NextMsg(100 * time.Millisecond)
-+		require_Error(t, err, nats.ErrTimeout)
-+
-+		resumeProposals()
-+		for range 2 {
-+			msg, err := sub.NextMsg(time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, msg.Header.Get("Description"), "")
-+			require_Equal(t, string(msg.Data), string(data))
-+		}
-+		for _, expected := range []struct {
-+			status      string
-+			description string
-+		}{
-+			{"409", "Batch Completed"},
-+			{"408", "Request Timeout"},
-+		} {
-+			status, err := sub.NextMsg(time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, status.Header.Get("Status"), expected.status)
-+			require_Equal(t, status.Header.Get("Description"), expected.description)
-+		}
-+	})
++	ci, err := js.ConsumerInfo("TEST", "CONSUMER", nats.MaxWait(2*time.Second))
++	require_NoError(t, err)
++	require_Equal(t, ci.Name, "CONSUMER")
++}
+```
+
+**File**: `server/jetstream_test.go` (modified, +4/-3)
+```diff
+@@ -27451,7 +27451,7 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
+ 	stop := make(chan struct{})
+ 
+ 	// Writer: repeatedly create and delete consumers in the stream's map,
+-	// holding mset.mu just like setConsumer/removeConsumer.
++	// through setConsumer/removeConsumer like the server does.
+ 	wg.Add(1)
+ 	go func() {
+ 		defer wg.Done()
+@@ -27464,11 +27464,12 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
+ 			}
+ 			name := fmt.Sprintf("C-%d", i)
+ 			i++
++			o := &consumer{name: name}
+ 			mset.mu.Lock()
+-			mset.consumers[name] = &consumer{name: name}
++			mset.setConsumer(o)
+ 			mset.mu.Unlock()
+ 			mset.mu.Lock()
+-			delete(mset.consumers, name)
++			mset.removeConsumer(o)
+ 			mset.mu.Unlock()
+ 		}
+ 	}()
+```
+
+**File**: `server/stream.go` (modified, +14/-6)
+```diff
+@@ -9111,7 +9111,11 @@ func (mset *stream) numConsumers() int {
  }
  
- func TestJetStreamConsumerPullMaxBytes(t *testing.T) {
+ // Lock should be held.
++// The consumers map is written under both the stream lock and clsMu,
++// so it can be read under either one. See lookupConsumer.
+ func (mset *stream) setConsumer(o *consumer) {
++	mset.clsMu.Lock()
++	defer mset.clsMu.Unlock()
+ 	if _, ok := mset.consumers[o.name]; ok {
+ 		return
+ 	}
+@@ -9120,19 +9124,21 @@ func (mset *stream) setConsumer(o *consumer) {
+ 		mset.sourcingConsumers++
+ 	}
+ 	// Now update consumers list as well
+-	mset.clsMu.Lock()
+ 	mset.cList = append(mset.cList, o)
+ 	if mset.csl == nil {
+ 		mset.csl = gsl.NewSublist[*consumer]()
+ 	}
+ 	for _, sub := range o.signalSubs() {
+ 		mset.csl.Insert(sub, o)
+ 	}
+-	mset.clsMu.Unlock()
+ }
+ 
+ // Lock should be held.
++// The consumers map is written under both the stream lock and clsMu,
++// so it can be read under either one. See lookupConsumer.
+ func (mset *stream) removeConsumer(o *consumer) {
++	mset.clsMu.Lock()
++	defer mset.clsMu.Unlock()
+ 	if c, ok := mset.consumers[o.name]; !ok || c != o {
+ 		return
+ 	}
+@@ -9143,7 +9149,6 @@ func (mset *stream) removeConsumer(o *consumer) {
+ 	}
+ 
+ 	// Now update consumers list as well
+-	mset.clsMu.Lock()
+ 	for i, ol := range mset.cList {
+ 		if ol == o {
+ 			mset.cList = append(mset.cList[:i], mset.cList[i+1:]...)
+@@ -9156,7 +9161,6 @@ func (mset *stream) removeConsumer(o *consumer) {
+ 			mset.csl.Remove(sub, o)
+ 		}
+ 	}
+-	mset.clsMu.Unlock()
+ }
+ 
+ // swapSigSubs will update signal Subs for a new subject filter.
+@@ -9199,9 +9203,13 @@ func (mset *stream) swapSigSubs(o *consumer, newFilters []string) {
+ }
+ 
+ // lookupConsumer will retrieve a consumer by name.
++// Uses clsMu instead of the stream lock, so a lookup does not queue
++// behind a stream writer that holds the stream lock while it waits on
++// the store (for example on disk I/O). Consumer info requests, consumer
++// removal in the meta layer and other API handlers call this.
+ func (mset *stream) lookupConsumer(name string) *consumer {
+-	mset.mu.RLock()
+-	defer mset.mu.RUnlock()
++	mset.clsMu.RLock()
++	defer mset.clsMu.RUnlock()
+ 	return mset.consumers[name]
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8940** (2026-11-25): Fix temporary directory usage for MQTT benchmarks (@neilalexander)
+- **PR #8939** (2026-11-26): Look up consumers without taking the stream lock (@wallyqs)
+- **PR #8938** (2026-11-25): Optimise update ack floor walk to bound by pending size (@neilalexander)
 - **PR #8935** (2026-11-24): [FIXED] Deferred pull statuses lost on a shared reply subject (@MauriceVanVeen)
 - **PR #8933** (closed): Fix typo in MQTT README (@Dani-Google)
 - **PR #8932** (2026-11-24): Data race on parse() max_control_line (@huynguyen7)
-- **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
-- **PR #8929** (2026-11-24): [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8823) (@ansh0014)
-- **PR #8927** (2026-11-23): [FIXED] JetStream: Avoid stream option races during reload (@Zitniks)
 
 ---
 
@@ -3275,29 +2944,59 @@ last pending delivery.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Replies to first concurrent requests on fresh server can be dropped
+## X. Look up consumers without taking the stream lock
 
 **RULE**:
-When implementing operations in `locksordering.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/jetstream_consumer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `253bc39b`: [FIXED] Replies to first concurrent requests on fresh server can be dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d459637`: Look up consumers without taking the stream lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `locksordering.txt`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_consumer_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 
-The "siReplyOnce" in the Account serializes the initialization of the service
-reply wildcard prefix and its wildcard subscription for service import responses,
-so that concurrent callers wait until the subscription is registered.
-It must be acquired before the Account and client locks, and neither must be
-held when calling newServiceReply.
+// A stream writer can hold the stream lock while it waits on the store (for
+// example on a cold block read from disk). Consumer lookups, and with them
+// consumer info requests and consumer removal from the meta layer, must not
+// queue behind it.
+func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
+	s := RunBasicJetStreamServer(t)
+	defer s.Shutdown()
 
-    siReplyOnce -> Account
-    siReplyOnce -> client
+	nc, js := jsClientConnect(t, s)
+	defer nc.Close()
+
+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
+	require_NoError(t, err)
+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
+	require_NoError(t, err)
+
+	mset, err := s.GlobalAccount().lookupStream("TEST")
+	require_NoError(t, err)
+
+	// Simulate a stream writer stuck while holding the stream lock.
+	mset.mu.Lock()
+	unlocked := false
+	unlock := func() {
+		if !unlocked {
+			unlocked = true
+			mset.mu.Unlock()
+		}
+	}
+	defer unlock()
+
+	done := make(chan *consumer, 1)
+	go func() { done <- mset.lookupConsumer("CONSUMER") }()
+	select {
+	case o := <-done:
+		require_True(t, o != nil)
+	case <-time.After(2 * time.Second):
+		unlock()
+		t.Fatalf("lookupConsumer blocked behind the stre
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3307,7 +3006,7 @@ held when calling newServiceReply.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `253bc39b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d459637` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

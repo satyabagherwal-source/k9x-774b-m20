@@ -4,22 +4,22 @@
 {
   "source_repository": "nats-io/nats-server",
   "source_url": "https://github.com/nats-io/nats-server",
-  "source_version": "12a5e8c5",
+  "source_version": "4d459637",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T10:19:23.003Z",
+  "timestamp": "2026-11-27T03:24:57.800Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-server",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `12a5e8c5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:19:23.003Z`  
+> **Provenance**: Harvested from [nats-io/nats-server](https://github.com/nats-io/nats-server) (Revision: `4d459637`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:24:57.800Z`  
 > **Learning ID**: `learn-github-nats-io-nats-server`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nats-io/nats-server` (Commit: `12a5e8c5`)
+- **Target Repository**: `nats-io/nats-server` (Commit: `4d459637`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:19:21.430Z  
+> **Harvest Timestamp**: 2026-11-27T03:24:56.249Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21157 stars
+- **Stars / Engagement**: 21171 stars
 
 ---
 
@@ -2737,122 +2737,180 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12a5e8c5` (2026-11-25)
-**Commit Message**: Fix temporary directory usage for MQTT benchmarks (#8940)
+### Incident Patch 1: `4d459637` (2026-11-26)
+**Commit Message**: Look up consumers without taking the stream lock (#8939)
 
-These benchmarks were using `/tmp` and then failing to clean up after,
-as the deferred helper was reading a nil `StoreDir`. Using the test
-helpers to get a temporary directory instead ensures they clean up
-properly.
+`lookupConsumer` was taking the stream read lock so it could get stuck
+behind a stream writer holding the lock while waiting on the store (e.g.
+loading a cold block from disk). This caused consumer info requests to
+tie up all the 16 JS API workers, as well as stalling the meta snapshot
+apply when removing consumers.
 
-[skip ci]
+Changes to the consumers map are now done holding both the stream lock
+and `clsMu`, so `lookupConsumer` only needs `clsMu`.
 
-**File**: `server/mqtt_test.go` (modified, +4/-4)
+Signed-off-by: Waldemar Quevedo <[REDACTED_EMAIL]>
+
+**File**: `server/jetstream_consumer_test.go` (modified, +45/-0)
 ```diff
-@@ -10799,8 +10799,9 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
- 	b.StopTimer()
- 	b.ReportAllocs()
- 	o := testMQTTDefaultOptions()
-+	o.StoreDir = b.TempDir()
- 	s := RunServer(o)
--	defer testMQTTShutdownServer(s)
-+	defer s.Shutdown()
- 
- 	ci := &mqttConnInfo{clientID: "pub", cleanSess: true}
- 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
-@@ -10851,7 +10852,6 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
+@@ -15100,3 +15100,48 @@ func BenchmarkJetStreamConsumerRedeliveryQueue(b *testing.B) {
+ 		})
  	}
- 	b.StopTimer()
- 	c.Close()
--	s.Shutdown()
  }
- 
- func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
-@@ -10871,9 +10871,10 @@ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
- func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
- 	b.StopTimer()
- 	o := testMQTTDefaultOptions()
-+	o.StoreDir = b.TempDir()
- 	o.MQTT.MaxAckPending = 0xFFFF
- 	s := RunServer(o)
--	defer testMQTTShutdownServer(s)
++
++// A stream writer can hold the stream lock while it waits on the store (for
++// example on a cold block read from disk). Consumer lookups, and with them
++// consumer info requests and consumer removal from the meta layer, must not
++// queue behind it.
++func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
 +	defer s.Shutdown()
- 
- 	ci := &mqttConnInfo{cleanSess: true}
- 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
-@@ -10960,7 +10961,6 @@ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
- 	}
- 	b.StopTimer()
- 	c.Close()
--	s.Shutdown()
- }
- 
- func mqttBenchConsumeMsgQos1(c net.Conn, total, size int, dch chan<- error) {
++
++	nc, js := jsClientConnect(t, s)
++	defer nc.Close()
++
++	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
++	require_NoError(t, err)
++	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
++	require_NoError(t, err)
++
++	mset, err := s.GlobalAccount().lookupStream("TEST")
++	require_NoError(t, err)
++
++	// Simulate a stream writer stuck while holding the stream lock.
++	mset.mu.Lock()
++	unlocked := false
++	unlock := func() {
++		if !unlocked {
++			unlocked = true
++			mset.mu.Unlock()
++		}
++	}
++	defer unlock()
++
++	done := make(chan *consumer, 1)
++	go func() { done <- mset.lookupConsumer("CONSUMER") }()
++	select {
++	case o := <-done:
++		require_True(t, o != nil)
++	case <-time.After(2 * time.Second):
++		unlock()
++		t.Fatalf("lookupConsumer blocked behind the stream lock")
++	}
++
++	ci, err := js.ConsumerInfo("TEST", "CONSUMER", nats.MaxWait(2*time.Second))
++	require_NoError(t, err)
++	require_Equal(t, ci.Name, "CONSUMER")
++}
 ```
 
----
-
-### Incident Patch 2: `0727a168` (2026-11-25)
-**Commit Message**: Fix temporary directory usage for MQTT benchmarks
-
-These benchmarks were using `/tmp` and then failing to clean up after,
-as the deferred helper was reading a nil `StoreDir`. Using the test helpers
-to get a temporary directory instead ensures they clean up properly.
-
-[skip ci]
-
-Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
-
-**File**: `server/mqtt_test.go` (modified, +4/-4)
+**File**: `server/jetstream_test.go` (modified, +4/-3)
 ```diff
-@@ -10799,8 +10799,9 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
- 	b.StopTimer()
- 	b.ReportAllocs()
- 	o := testMQTTDefaultOptions()
-+	o.StoreDir = b.TempDir()
- 	s := RunServer(o)
--	defer testMQTTShutdownServer(s)
-+	defer s.Shutdown()
+@@ -27451,7 +27451,7 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
+ 	stop := make(chan struct{})
  
- 	ci := &mqttConnInfo{clientID: "pub", cleanSess: true}
- 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
-@@ -10851,7 +10852,6 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
- 	}
- 	b.StopTimer()
- 	c.Close()
--	s.Shutdown()
+ 	// Writer: repeatedly create and delete consumers in the stream's map,
+-	// holding mset.mu just like setConsumer/removeConsumer.
++	// through setConsumer/removeConsumer like the server does.
+ 	wg.Add(1)
+ 	go func() {
+ 		defer wg.Done()
+@@ -27464,11 +27464,12 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
+ 			}
+ 			name := fmt.Sprintf("C-%d", i)
+ 			i++
++			o := &consumer{name: name}
+ 			mset.mu.Lock()
+-			mset.consumers[name] = &consumer{name: name}
++			mset.setConsumer(o)
+ 			mset.mu.Unlock()
+ 			mset.mu.Lock()
+-			delete(mset.consumers, name)
++			mset.removeConsumer(o)
+ 			mset.mu.Unlock()
+ 		}
+ 	}()
+```
+
+**File**: `server/stream.go` (modified, +14/-6)
+```diff
+@@ -9111,7 +9111,11 @@ func (mset *stream) numConsumers() int {
  }
  
- func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
-@@ -10871,9 +10871,10 @@ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
- func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
- 	b.StopTimer()
- 	o := testMQTTDefaultOptions()
-+	o.StoreDir = b.TempDir()
- 	o.MQTT.MaxAckPending = 0xFFFF
- 	s := RunServer(o)
--	defer testMQTTShutdownServer(s)
-+	defer s.Shutdown()
- 
- 	ci := &mqttConnInfo{cleanSess: true}
- 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
-@@ -10960,7 +10961,6 @@ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
+ // Lock should be held.
++// The consumers map is written under both the stream lock and clsMu,
++// so it can be read under either one. See lookupConsumer.
+ func (mset *stream) setConsumer(o *consumer) {
++	mset.clsMu.Lock()
++	defer mset.clsMu.Unlock()
+ 	if _, ok := mset.consumers[o.name]; ok {
+ 		return
  	}
- 	b.StopTimer()
- 	c.Close()
--	s.Shutdown()
+@@ -9120,19 +9124,21 @@ func (mset *stream) setConsumer(o *consumer) {
+ 		mset.sourcingConsumers++
+ 	}
+ 	// Now update consumers list as well
+-	mset.clsMu.Lock()
+ 	mset.cList = append(mset.cList, o)
+ 	if mset.csl == nil {
+ 		mset.csl = gsl.NewSublist[*consumer]()
+ 	}
+ 	for _, sub := range o.signalSubs() {
+ 		mset.csl.Insert(sub, o)
+ 	}
+-	mset.clsMu.Unlock()
  }
  
- func mqttBenchConsumeMsgQos1(c net.Conn, total, size int, dch chan<- error) {
+ // Lock should be held.
++// The consumers map is written under both the stream lock and clsMu,
++// so it can be read under either one. See lookupConsumer.
+ func (mset *stream) removeConsumer(o *consumer) {
++	mset.clsMu.Lock()
++	defer mset.clsMu.Unlock()
+ 	if c, ok := mset.consumers[o.name]; !ok || c != o {
+ 		return
+ 	}
+@@ -9143,7 +9149,6 @@ func (mset *stream) removeConsumer(o *consumer) {
+ 	}
+ 
+ 	// Now update consumers list as well
+-	mset.clsMu.Lock()
+ 	for i, ol := range mset.cList {
+ 		if ol == o {
+ 			mset.cList = append(mset.cList[:i], mset.cList[i+1:]...)
+@@ -9156,7 +9161,6 @@ func (mset *stream) removeConsumer(o *consumer) {
+ 			mset.csl.Remove(sub, o)
+ 		}
+ 	}
+-	mset.clsMu.Unlock()
+ }
+ 
+ // swapSigSubs will update signal Subs for a new subject filter.
+@@ -9199,9 +9203,13 @@ func (mset *stream) swapSigSubs(o *consumer, newFilters []string) {
+ }
+ 
+ // lookupConsumer will retrieve a consumer by name.
++// Uses clsMu instead of the stream lock, so a lookup does not queue
++// behind a stream writer that holds the stream lock while it waits on
++// the store (for example on disk I/O). Consumer info requests, consumer
++// removal in the meta layer and other API handlers call this.
+ func (mset *stream) lookupConsumer(name string) *consumer {
+-	mset.mu.RLock()
+-	defer mset.mu.RUnlock()
++	mset.clsMu.RLock()
++	defer mset.clsMu.RUnlock()
+ 	return mset.consumers[name]
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8940** (2026-11-25): Fix temporary directory usage for MQTT benchmarks (@neilalexander)
+- **PR #8939** (2026-11-26): Look up consumers without taking the stream lock (@wallyqs)
 - **PR #8938** (2026-11-25): Optimise update ack floor walk to bound by pending size (@neilalexander)
 - **PR #8935** (2026-11-24): [FIXED] Deferred pull statuses lost on a shared reply subject (@MauriceVanVeen)
 - **PR #8933** (closed): Fix typo in MQTT README (@Dani-Google)
 - **PR #8932** (2026-11-24): Data race on parse() max_control_line (@huynguyen7)
-- **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
 
 ---
 
@@ -2872,37 +2930,69 @@ Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. temporary directory usage for MQTT benchmarks
+## X. Look up consumers without taking the stream lock
 
 **RULE**:
-When implementing operations in `server/mqtt_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/jetstream_consumer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12a5e8c5`: temporary directory usage for MQTT benchmarks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d459637`: Look up consumers without taking the stream lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/mqtt_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_consumer_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	o.StoreDir = b.TempDir()
+
+// A stream writer can hold the stream lock while it waits on the store (for
+// example on a cold block read from disk). Consumer lookups, and with them
+// consumer info requests and consumer removal from the meta layer, must not
+// queue behind it.
+func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
+	s := RunBasicJetStreamServer(t)
 	defer s.Shutdown()
-	o.StoreDir = b.TempDir()
-	defer s.Shutdown()
+
+	nc, js := jsClientConnect(t, s)
+	defer nc.Close()
+
+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
+	require_NoError(t, err)
+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
+	require_NoError(t, err)
+
+	mset, err := s.GlobalAccount().lookupStream("TEST")
+	require_NoError(t, err)
+
+	// Simulate a stream writer stuck while holding the stream lock.
+	mset.mu.Lock()
+	unlocked := false
+	unlock := func() {
+		if !unlocked {
+			unlocked = true
+			mset.mu.Unlock()
+		}
+	}
+	defer unlock()
+
+	done := make(chan *consumer, 1)
+	go func() { done <- mset.lookupConsumer("CONSUMER") }()
+	select {
+	case o := <-done:
+		require_True(t, o != nil)
+	case <-time.After(2 * time.Second):
+		unlock()
+		t.Fatalf("lookupConsumer blocked behind the stre
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	defer testMQTTShutdownServer(s)
-	s.Shutdown()
-	defer testMQTTShutdownServer(s)
-	s.Shutdown()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12a5e8c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d459637` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

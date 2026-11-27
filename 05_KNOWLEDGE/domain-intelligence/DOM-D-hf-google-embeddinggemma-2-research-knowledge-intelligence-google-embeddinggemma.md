@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/google/embeddinggemma-2",
   "source_version": "hf-google-embeddinggemma-2",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T18:15:55.838Z",
+  "timestamp": "2026-11-27T03:24:48.687Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-google-embeddinggemma-2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2) (Revision: `hf-google-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T18:15:55.838Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:24:48.687Z`  
 > **Learning ID**: `learn-huggingface-google-embeddinggemma-2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:15:52.285Z  
+> **Harvest Timestamp**: 2026-11-27T03:24:47.700Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 611079 downloads | 3451 likes
+- **Stars / Engagement**: 586665 downloads | 3511 likes
 
 ---
 

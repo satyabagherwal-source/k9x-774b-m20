@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "5f4b1cd153df9739c37a255ab635a1b23469bf62ae6913d67c0de7cc4eb60ba7",
-    "lastHarvestedAt": "2026-11-23T18:15:55.621Z",
+    "contentHash": "3c0bf75f2d827d2a8c8d352ed1b060587beadeeaf41d1ba2d63740b6c48ad1c6",
+    "lastHarvestedAt": "2026-11-27T03:24:48.443Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "12a5e8c5",
+    "sourceVersion": "4d459637",
     "license": "Apache-2.0",
-    "contentHash": "668b0ede6e569e02511ee0cb7efbe1c4062ce226c62b3dc87f55400eb9c2a453",
-    "lastHarvestedAt": "2026-11-26T10:19:22.753Z",
+    "contentHash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
+    "lastHarvestedAt": "2026-11-27T03:24:57.546Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
