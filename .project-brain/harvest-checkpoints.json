@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T00:41:43.004Z",
+  "last_updated": "2026-11-27T00:50:22.377Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1595,14 +1595,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
-      "verified_at": "2026-11-23T15:54:41.505Z",
+      "content_hash": "d5199c68ff1a7f8cc9cbd435d5600197a6b26ca94a79f8caf3128b47516a3b07",
+      "verified_at": "2026-11-27T00:50:08.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:54:41.505Z"
+      "last_updated": "2026-11-27T00:50:08.004Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
-      "verified_at": "2026-11-26T06:10:38.627Z",
+      "content_hash": "7d745df17b2b252c84644e6664e649a60788a889b2bc835a8d1d99661bd241b9",
+      "verified_at": "2026-11-27T00:50:22.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:10:38.627Z"
+      "last_updated": "2026-11-27T00:50:22.376Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -20151,14 +20151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-indexable-inc-blaze",
-      "content_hash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
-      "verified_at": "2026-11-26T00:34:46.704Z",
+      "content_hash": "ef4d89904c508f44918b1843068b2fa106066bfdeefdbce6797d92a4d12d4e43",
+      "verified_at": "2026-11-27T00:50:10.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:34:46.704Z"
+      "last_updated": "2026-11-27T00:50:10.810Z"
     },
     "Aleph-Alpha/Kolibri-1.1": {
       "repository": "Aleph-Alpha/Kolibri-1.1",

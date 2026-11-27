@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "cfd4a294bd7dc3a190582dfa7c203ba2e427780cdce092ac33d5336a85dd6e31",
-    "lastHarvestedAt": "2026-11-23T15:54:41.495Z",
+    "contentHash": "d5199c68ff1a7f8cc9cbd435d5600197a6b26ca94a79f8caf3128b47516a3b07",
+    "lastHarvestedAt": "2026-11-27T00:50:07.989Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "03c4e07f",
+    "sourceVersion": "76904050",
     "license": "Apache-2.0",
-    "contentHash": "9de75ac2c7671476a68c4e06bccfd804dfa3c3702d4187d9015eafc2571efaea",
-    "lastHarvestedAt": "2026-11-26T06:10:38.612Z",
+    "contentHash": "7d745df17b2b252c84644e6664e649a60788a889b2bc835a8d1d99661bd241b9",
+    "lastHarvestedAt": "2026-11-27T00:50:22.353Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -13353,10 +13353,10 @@
     "repository": "indexable-inc/blaze",
     "platform": "github",
     "sourceUrl": "https://github.com/indexable-inc/blaze",
-    "sourceVersion": "a5b3c536",
+    "sourceVersion": "d358ce89",
     "license": "Apache-2.0",
-    "contentHash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
-    "lastHarvestedAt": "2026-11-26T00:34:46.687Z",
+    "contentHash": "ef4d89904c508f44918b1843068b2fa106066bfdeefdbce6797d92a4d12d4e43",
+    "lastHarvestedAt": "2026-11-27T00:50:10.789Z",
     "learningId": "learn-github-indexable-inc-blaze"
   },
   "hf-aleph-alpha-kolibri-1.1": {

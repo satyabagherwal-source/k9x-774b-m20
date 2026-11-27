@@ -13614,3 +13614,6 @@
 | `CYCLE-20261127-ZAEO` | `2026-11-27T00:32:58.224Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`343df2b4...`) |
 | `CYCLE-20261127-A87K` | `2026-11-27T00:41:28.592Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`14b5932a...`) |
 | `CYCLE-20261127-AJB5` | `2026-11-27T00:41:42.977Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10801` | Yes (`b86b4486...`) |
+| `CYCLE-20261127-LCZ4` | `2026-11-27T00:50:07.984Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`d5199c68...`) |
+| `CYCLE-20261127-LF4W` | `2026-11-27T00:50:10.784Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10802` | Yes (`ef4d8990...`) |
+| `CYCLE-20261127-LO25` | `2026-11-27T00:50:22.349Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10803` | Yes (`7d745df1...`) |

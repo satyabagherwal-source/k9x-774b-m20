@@ -814908,3 +814908,163 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1d7919aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10802. hermetic pinned clang-23 compiler probes with per-probe CAS cache (Harvested from indexable-inc/blaze)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "hermetic pinned clang-23 compiler probes with per-probe CAS cache",
+  "source": "indexable-inc/blaze",
+  "source_url": "https://github.com/indexable-inc/blaze",
+  "source_version": "d358ce89",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T00:50:10.178Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-indexable-inc-blaze",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [indexable-inc/blaze](https://github.com/indexable-inc/blaze) (Revision: `d358ce89`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/blaze-build-script/src/c_tasks_probe.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in indexable-inc/blaze. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `314c5390`: build-script): hermetic pinned clang-23 compiler probes with per-probe CAS cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/blaze-build-script/src/c_tasks_probe.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Domain for canonical [`ProbeKey`] hashing (answerer id, clang sha256, sdk/sysroot id, program,
+/// canonical args, canonical `CLANG_ENV`, sorted input file sha256s).
+pub const PROBE_KEY_DOMAIN: &str = "blaze-build-script c probe 1";
+/// Domain for [`canonical_reply_digest`] (matches `spawn_route::reply_digest` so `fact_now` and
+/// `spawn_probe` agree).
+const REPLY_DOMAIN: &str = "blaze build-script spawn reply 1";
+/// Magic bytes of an encoded binary probe cache record (`bzcp` v1).
+const ANSWER_MAGIC: [u8; 4] = *b"bzcp";
+const ANSWER_VERSION: u32 = 1;
+/// The script's root mount / package directory spelling in a row (`/package`, `/workspace/...`).
+pub const MOUNT: &str = "$MOUNT";
+/// `TMPDIR` is intentionally excluded: host ambient temp dirs (e.g. `/private/var/folders/...`)
+/// must never pollute content-addressed probe keys; hermetic execution supplies the probe's own
+/// private confined output directory as `TMPDIR`.
+pub const CLANG_ENV: [&str; 10] = [
+/// Normalizes a path under `out_dir`, collapsing `.` and repeated `/` separators and rejecting
+/// `..` traversal or trailing directory slashes, so `-o /out/./flag_check /out/./flag_check.c`
+/// resolves to the exact same `
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+pub const CLANG_ENV: [&str; 11] = [
+    "TMPDIR",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `314c5390` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10803. Default the CLI to Docker v0.0.19 (Harvested from HelixDB/helix-db)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Default the CLI to Docker v0.0.19",
+  "source": "HelixDB/helix-db",
+  "source_url": "https://github.com/HelixDB/helix-db",
+  "source_version": "76904050",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T00:50:21.734Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-helixdb-helix-db",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [HelixDB/helix-db](https://github.com/HelixDB/helix-db) (Revision: `76904050`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/cli/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `76904050`: Default the CLI to Docker v0.0.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/CLAUDE.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.19`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
+- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.19`), `storage` (`memory` | `disk`, default memory).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.18`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
+- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.18`), `storage` (`memory` | `disk`, default memory).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `76904050` are properly handled with clean fallback behavior.

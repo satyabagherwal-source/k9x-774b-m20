@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:41:49.480Z",
+  "last_updated": "2026-11-27T00:50:28.364Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T00:41:48.418Z",
@@ -2473,7 +2473,7 @@
       "staged_for_review": 0
     },
     "helixdb-helix-db-learnings.md": {
-      "processed_at": "2026-11-25T05:01:26.883Z",
+      "processed_at": "2026-11-27T00:50:27.503Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2578,7 +2578,7 @@
       "staged_for_review": 0
     },
     "hf-argmaxinc-whisperkit-coreml-learnings.md": {
-      "processed_at": "2026-11-23T15:54:53.910Z",
+      "processed_at": "2026-11-27T00:50:27.016Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     },
     "indexable-inc-blaze-learnings.md": {
-      "processed_at": "2026-11-26T00:35:01.623Z",
+      "processed_at": "2026-11-27T00:50:25.922Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4740,
+  "total_dossiers_evaluated": 4743,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3555
+  "total_staged_for_review": 3557
 }

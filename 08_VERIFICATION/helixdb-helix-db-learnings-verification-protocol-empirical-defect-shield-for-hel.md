@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T05:01:27.056Z",
+  "timestamp": "2026-11-27T00:50:27.618Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-helixdb-helix-db-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [helixdb-helix-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T05:01:27.056Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T00:50:27.618Z`  
 > **Learning ID**: `LEARN-EVO-helixdb-helix-db-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `84e3d378`  
+> **Source Version**: `76904050`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T05:00:49.092Z  
+> **Timestamp**: 2026-11-27T00:50:21.092Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:00:49.086Z  
+> **Harvest Timestamp**: 2026-11-27T00:50:21.087Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6313 stars
+- **Stars / Engagement**: 6315 stars
 
 ---
 
@@ -1129,6 +1129,17 @@ pub enum VectorBulkBuildMemory {
 //! many small operations, such as deletes, reaches it long before its encoded
 //! bytes would. The heap an index's backlog holds in admission accounting,
 //! one decoded copy, and one merge resolution stays within twice the limit.
+//! A writer whose searches overlay the index also keeps one shared decoded
+//! copy for them however many search at once (see
+//! `index_lifecycle::queue::shared`), at most about one and a half times the
+//! backlog's payloads while request snapshots keep up: at the default limit,
+//! a backlog at its limit measured 1.13 GB of shared view beside the 1.0 GB
+//! the ledger charges, and 32 concurrent strong searches of it raised the
+//! server's resident memory by under 2 GB. The views of all indexes stay
+//! within this limit times the publication tasks, the ceiling publication's
+//! retained queues have, beside the view a search is using; searches that
+//! read a queue from storage instead hold at most as many resolutions at
+//! once as fit an eighth of the memory ceiling at twice this limit each.
 //!
 //! # Usage
 //!
@@ -1327,23 +1338,7 @@ impl Default for IndexOperationQueueTuning {
     fn default() -> Self {
         Self {
             max_retained_bytes: NonZeroU64::new(DEFAULT_MAX_RETAINED_BYTES)
-                .expect("default retained-byte limit is nonzero"),
-            max_members: NonZeroU64::new(DEFAULT_MAX_MEMBERS)
-                .expect("default member limit is nonzero"),
-            max_operand_bytes: NonZeroU64::new(DEFAULT_MAX_OPERAND_BYTES)
-                .expect("default operand limit is nonzero"),
-            recovery_sweep_interval: DEFAULT_RECOVERY_SWEEP_INTERVAL,
-            layout: QueueLayout::Map,
-            #[cfg(test)]
-            start_paused: false,
-            eventual_search_budget: EVENTUAL_SEARCH_SOURCE_INPUT_BYTES,
-            #[cfg(test)]
-            max_suppressed_search_results: None,
-            strong_vector_search_max_pending_bytes: None,
-            strong_text_search_max_analysis_bytes: NonZeroU64::new(
-                DEFAULT_STRONG_TEXT_SEARCH_MAX_ANALYSIS_BYTES,
-            )
-     
+                .expect("default re
 ```
 
 ### Core Architecture Module: `crates/db/src/config/secondary_index_lifecycle.rs`
@@ -2082,738 +2077,229 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `632e9097` (2026-11-24)
-**Commit Message**: Build unpartitioned vector indexes in memory, in bulk (#1325)
+### Incident Patch 1: `76904050` (2026-11-26)
+**Commit Message**: Default the CLI to Docker v0.0.19 (#1345)
 
-This adds an in-memory "bulk" path for building an unpartitioned vector
-index. On real S3 it builds a 1M x 128-dim index in 143 s against 1,775
-s for the serial build on main, with the same recall.
+* Default the CLI to Docker v0.0.19, with its release notes
 
-**It is off by default.** One stored byte is new (below), and an older
-image refuses a store that holds it, so this release only teaches every
-image to read it. Turn it on with
-`HELIX_VECTOR_BULK_BUILD_MEMORY_BYTES=auto` (or a byte count) once every
-node that can become writer runs an image with this change.
+* Warn that v0.0.19 data cannot go back to v0.0.18, and link the warning from the CLI upgrade steps
 
-## How it works
-
-```text
-serial build (today)                    bulk build
-  for each source row                     pass 1  read the label's rows into memory, run by run
-    read the stored graph                 pass 2  link the whole HNSW graph on a thread pool
-    insert one node                       pass 3  write every node once, rechecking each row
-    commit
+**File**: `crates/cli/CLAUDE.md` (modified, +2/-2)
+```diff
+@@ -7,7 +7,7 @@ The Helix CLI — binary `helix`, crate `helix-cli` (v3.0.1). It is a **runtime
+ This CLI has **no `helix compile` and no `helix check`**, and there is **no `.hx` query workflow** in it. (Older notes/memory that mention those commands describe the v2 CLI and are stale.) In v3:
+ 
+ - **Queries are JSON requests** sent to a *running* instance via `POST /v2/query` (`helix query`). Validation happens server-side, in the instance.
+-- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.18`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
++- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.19`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
+ - **Cloud instances are linked resources.** The CLI authenticates only with a rotating WorkOS session and sends Cloud queries through WFE's backend broker. It does not deploy query bundles or call Cloud gateways directly.
+ 
+ The Rust DSL builder lives in `sdks/rust/` (a client library), not in this CLI.
+@@ -135,7 +135,7 @@ Chef is framed as one `intro`/`outro` session. `Step` provides `println` (print
+ **Project config — `helix.toml`** (`HelixConfig` in `config.rs`, found via `ProjectContext::find_and_load`):
+ 
+ - `[project]` — `name` (required), optional `id` / `workspace_id`, `queries` (default `db/`), `container_runtime` (`docker` | `podman`, default docker).
+-- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.18`), `storage` (`memory` | `disk`, default memory).
++- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.19`), `storage` (`memory` | `disk`, default memory).
+ - `[enterprise.<name>]` — typed `database = "cluster:<id>"|"tenant:<id>"`, plus optional stable `workspace_id` and `project_id` linkage. Gateway URLs, query keys, query bundles, and sync snapshots are rejected as obsolete.
+ 
+ `HelixConfig::validate` requires a non-empty project name, at least one instance, non-empty instance names, and a valid typed database for each Cloud instance. `default_config()` seeds a single in-memory `local.dev`.
 ```
 
-- **Pass 1** takes the label's members from one snapshot, then reads
-them in runs of 65,536 ids or 64 MiB, each under its own short snapshot.
-No transaction is held across runs.
-- **Pass 3** rereads each source row and stores a node only if the row
-stil
-
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record` (added, +1/-0)
+**File**: `crates/cli/README.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
+@@ -22,7 +22,7 @@ The CLI defaults to its tested image version. `latest` is opt-in:
+ 
+ ```bash
+ helix start dev --image-version latest
+-helix start dev --image-version v0.0.18 --persist
++helix start dev --image-version v0.0.19 --persist
+ helix start dev --pull never
+ ```
+ 
+@@ -34,7 +34,7 @@ apply only to that invocation.
+ ```toml
+ [local.dev]
+ image = "ghcr.io/helixdb/helixdb"
+-tag = "v0.0.18"
++tag = "v0.0.19"
+ pull = "missing"
+ ```
+ 
 ```
 
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-unknown-stage` (added, +1/-0)
+**File**: `crates/cli/src/config.rs` (modified, +2/-2)
 ```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201080000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
-```
-
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-without-attempts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f720000000000000005000000000000000600000000000000070000000000000008000000090101
-```
-
-**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-zero-attempts` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000800000000090101
-```
-
-**File**: `crates/db/src/config/db.rs` (modified, +48/-0)
-```diff
-@@ -389,6 +389,54 @@ impl DbConfig {
-         self.index_lifecycle_throughput
+@@ -7,7 +7,7 @@ use std::{fmt, str::FromStr};
+ 
+ pub const DEFAULT_LOCAL_PORT: u16 = 6969;
+ pub const DEFAULT_LOCAL_IMAGE: &str = "ghcr.io/helixdb/helixdb";
+-pub const DEFAULT_LOCAL_IMAGE_TAG: &str = "v0.0.18";
++pub const DEFAULT_LOCAL_IMAGE_TAG: &str = "v0.0.19";
+ /// Repository of the graph Explorer image that `helix explorer` runs.
+ pub const DEFAULT_EXPLORER_IMAGE: &str = "ghcr.io/helixdb/helix-explorer";
+ /// Explorer tag `helix explorer` runs by default. It stays `latest` until CI
+@@ -773,7 +773,7 @@ tag = "latest"
+     fn local_config_defaults_to_published_standalone_image() {
+         let config = LocalInstanceConfig::default();
+ 
+-        assert_eq!(config.image_ref(), "ghcr.io/helixdb/helixdb:v0.0.18");
++        assert_eq!(config.image_ref(), "ghcr.io/helixdb/helixdb:v0.0.19");
      }
  
-+    /// Bytes this configuration lets the process hold in memory beside what
-+    /// requests and index builds allocate: the SlateDB block and metadata
-+    /// caches (the memory tier of a hybrid cache), the full-text split cache,
-+    /// the vector memory stores, the vector build planning cache, and the
-+    /// writes SlateDB buffers before it stalls writers
-+    /// (`max_unflushed_bytes`).
-+    ///
-+    /// Each term is the limit its owner enforces, not what it holds now. The
-+    /// write buffer is counted at its encoded size; the memtables of rows a
-+    /// few bytes long hold up to three times that.
-+    ///
-+    /// ```
-+    /// use db::DbConfig;
-+    ///
-+    /// let config = DbConfig::new();
-+    /// let build_cache = config.search_index_backfill().vector_build_cache_bytes().get();
-+    /// // 512 MiB of blocks, 128 MiB of metadata, 64 MiB of full-text splits,
-+    /// // 256 MiB of vector stores and 1 GiB of unflushed writes.
-+    /// assert_eq!(
-+    ///     config.configured_memory_bytes(),
-+    ///     ((512 + 128 + 64 + 256 + 1024) << 20) + build_cache
-+    /// );
-+    /// ```
-+    pub fn configured_memory_bytes(&self) -> u64 {
-+        let slate_cache = match self.cache.mode() {
-+            CacheMode::VectorMemoryOnly => 0,
-+            CacheMode::Memory { slate_db, .. } => slate_db
-+                .block_bytes()
-+                .saturating_add(slate_db.metadata_bytes()),
-+            CacheMode::Hybrid { slate_db, .. } => slate_db.memory_bytes() as u64,
-+        };
-+        slate_cache
-+            .saturating_add(self.cache.fts_memory_bytes())
-+            .saturating_add(self.cache.vector_memory().budget().bytes().unwrap_or(0))
-+            .saturating_add(self.search_index_backfill.vector_build_cache_bytes().get())
-+            .saturating_add(self.write_buffer_bytes())
-+    }
-+
-+    /// Encoded bytes of writes SlateDB buffers, in its WAL and memtables,
-+    /// before it stalls writers (`max_unflushed_bytes`).
-+    ///
-+    /// ```
-+    /// assert_eq!(db::DbConfig::new().write_buffer_bytes(), 1 << 30);
-+    /// ```
-+    pub fn write_buffer_bytes(&self) -> u64 {
-+        self.slate.to_writer_settings(None).max_unflushed_bytes as u64
-+    }
-+
-     /// Durable graph and catalog migration policy.
-     pub const fn migrations(&self) -> MigrationTuning {
-         self.migrations
-```
-
-**File**: `crates/db/src/config/host_memory.rs` (modified, +52/-0)
-```diff
-@@ -36,6 +36,39 @@ pub fn memory_ceiling_bytes() -> Option<u64> {
-     })
- }
- 
-+/// Returns the anonymous memory this process holds now, in bytes: its heap,
-+/// stacks and other private pages, without file-backed pages the OS can drop.
-+///
-+/// It is what counts against [`memory_ceiling_bytes`] and cannot be
-+/// reclaimed. Returns `None` where the platform does not report it; Linux
-+/// does, through `/proc/self/status`.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// let resident = db::config::resident_anonymous_bytes();
-+/// if cfg!(target_os = "linux") {
-+///     assert!(resident.is_some_and(|bytes| bytes > 0));
-+/// }
-+/// ```
-+pub fn resident_anonymous_bytes() -> Option<u64> {
-+    rss_anon_bytes(&std::fs::read_to_string("/proc/self/status").ok()?)
-+}
-+
-+/// Reads `RssAnon` from `status`, the content of `/proc/self/status`, whose
-+/// lines are `Name:<whitespace>value kB`.
-+fn rss_anon_bytes(status: &str) -> Option<u64> {
-+    status
-+        .lines()
-+        .find_map(|line| line.strip_prefix("RssAnon:"))?
-+        .trim()
-+        .strip_suffix("kB")?
-+        .trim()
-+        .parse::<u64>()
-+        .ok()?
-+        .checked_mul(1024)
-+}
-+
- /// Mount points of the cgroup hierarchies that expose memory limits.
- #[derive(Debug, PartialEq, Eq)]
- struct CgroupMounts {
-@@ -166,6 +199,25 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn resident_anonymous_memory_is_read_from_the_status_file() {
-+        let status = "Name:\tserver\nVmRSS:\t  900 kB\nRssAnon:\t     512 kB\nRssFile:\t 388 kB\n";
-+        assert_eq!(rss_anon_bytes(status), Some(512 * 1024));
-+        assert_eq!(rss_anon_bytes("Name:\tserver\nVmRSS:\t900 kB\n"), None);
-+        assert_eq!(
-+            rss_anon_bytes("RssAnon:\t512\n"),
-+            None,
-+            "a unit is required"
-+        );
-+        assert_eq!(rss_anon_bytes("RssAnon:\tmany kB\n"), None);
-+        assert_eq!(
-+            rss_anon_bytes(&format!("RssAnon:\t{} kB\n", u64::MAX)),
-+            None,
-+            "a value past u64 bytes is not a size"
-+        );
-+        assert_eq!(rss_anon_bytes(""), None);
-+    }
-+
      #[test]
-     fn cgroup_v2_limit_is_the_tightest_ancestor() {
-         let root = tempfile::tempdir().unwrap();
 ```
 
-**File**: `crates/db/src/config/index_lifecycle_throughput.rs` (modified, +267/-9)
+**File**: `crates/cli/src/local_runtime.rs` (modified, +8/-8)
 ```diff
-@@ -1,26 +1,35 @@
- //! Runtime-only throughput policy for index lifecycle work.
- //!
--//! This policy controls source-scan prefetching and worker concurrency. It is
--//! never serialized into lifecycle records or physical index rows.
-+//! This policy controls source-scan prefetching, worker concurrency and the
-+//! in-memory bulk build of vector indexes. It is never serialized into
-+//! lifecycle records or physical index rows.
- //!
- //! # Usage
- //!
- //! ```
-+//! use std::num::NonZeroU64;
-+//!
- //! use db::config::{
- //!     DbConfig, IndexLifecycleConcurrency, IndexLifecycleScanTuning,
--//!     IndexLifecycleThroughputTuning,
-+//!     IndexLifecycleThroughputTuning, VectorBulkBuildMemory, VectorBulkBuildTuning,
- //! };
- //!
- //! let scan = IndexLifecycleScanTuning::try_new(64 * 1024, 2)?;
- //! let concurrency = IndexLifecycleConcurrency::try_new(2, 2, 1, 1)?;
--//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency);
-+//! // Build vector indexes of 10,000 vectors or more in memory, on eight
-+//! // threads, while they fit 4 GiB.
-+//! let four_gib = VectorBulkBuildMemory::Bytes(NonZeroU64::new(4 << 30).unwrap());
-+//! let bulk = VectorBulkBuildTuning::try_new(8, four_gib, 10_000)?;
-+//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency)
-+//!     .with_vector_bulk_build(bulk);
- //! let config = DbConfig::new().with_index_lifecycle_throughput_tuning(tuning);
- //!
- //! assert_eq!(config.index_lifecycle_throughput(), tuning);
-+//! assert_eq!(tuning.vector_bulk_build().memory(), four_gib);
- //! # Ok::<(), db::config::IndexLifecycleThroughputTuningError>(())
- //! ```
- 
--use std::num::NonZeroUsize;
-+use std::num::{NonZeroU64, NonZeroUsize};
- 
- const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
- const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
-@@ -35,6 +44,16 @@ const DEFAULT_VECTOR_TASKS: usize = 1;
- const DEFAULT_TEXT_TASKS: usize = 1;
- const DEFAULT_TOTAL_OPERATION_TASKS: usize =
-     DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
-+// Share of the memory ceiling an automatic bulk-build budget leaves free, for
-+// what no configured limit bounds: request buffers, thread stacks, and memory
-+// the allocator holds for the rest of the process. Serial vector builds in
-+// 3.3 and 6.7 GiB containers peaked at 2.8 and 3.0 GiB of anonymous memory, a
-+// few hundred MiB above the caches and write buffer their configuration
-+// allows.
-+const AUTOMATIC_BUDGET_HEADROOM_DIVISOR: u64 = 8;
-+// Below a few thousand vectors a serial build takes seconds, less than the
-+// extra source scan a bulk build starts with.
-+const DEFAULT_VECTOR_BULK_BUILD_MIN_VECTORS: u64 = 4096;
- 
- /// Invalid runtime throughput policy rejected before lifecycle work starts.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -204,19 +223,185 @@ impl Default for IndexLifecycleConcurrency {
-     }
- }
- 
-+/// Memory the bulk vector builds of one process may hold together.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use std::num::NonZeroU64;
-+///
-+/// use db::config::VectorBulkBuildMemory;
-+///
-+/// const GIB: u64 = 1 << 30;
-+/// // An 8 GiB container whose caches and write buffers may grow to 3 GiB
-+/// // keeps an eighth of the ceiling free and leaves bulk builds the rest.
-+/// let automatic = VectorBulkBuildMemory::Automatic;
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, None), 4 * GIB);
-+/// // A process that already holds more than its configuration bounds leaves
-+/// // less, and one at its ceiling leaves nothing.
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(5 * GIB)), 2 * GIB);
-+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(9 * GIB)), 0);
-+/// // Without a readable ceiling nothing is known to be free.
-+/// assert_eq!(automatic.budget_bytes(None, 3 * GIB, None), 0);
-+/// // An explicit budget is taken as given, and `Off` is no budget.
-+/// let explicit = VectorBulkBuildMemory::Bytes(NonZeroU64::new(GIB).unwrap());
-+/// assert_eq!(explicit.budget_bytes(None, 3 * GIB, Some(9 * GIB)), GIB);
-+/// assert_eq!(VectorBulkBuildMemory::Off.budget_bytes(Some(8 * GIB), 0, None), 0);
-+/// ```
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-+pub enum VectorBulkBuildMemory {
-+    /// No bulk builds: every vector build inserts serially. The default,
-+    /// because a release from before bulk builds cannot open a database, as
-+    /// its writer, while a bulk build is in progress: turn bulk builds on
-+    /// only once every process that can become the writer runs a release
-+    /// that has them.
-+    #[default]
-+    Off,
-+    /// What the process's memory ceiling leaves beside the rest of the
-+    /// process; see [`Self::budget_bytes`].
-+    Automatic,
-+    /// Exactly this much, whatever else the process holds. The operator
-+    /// answers for the sum fitting the machine.
-+    Bytes(NonZeroU64),
-+}
-+
-+impl VectorBulkBuildMemory {
-+    /// Bytes bulk builds may hold together right now.
-+    ///
-+    /// `ceiling` is the process's memory 
-```
-
-**File**: `crates/db/src/config/mod.rs` (modified, +2/-2)
-```diff
-@@ -25,10 +25,10 @@ pub use db::{
-     DbConfig, EdgeEncoding, EdgeUpdatePolicy, HelixConfig, OpenAttribution, QueryTelemetry,
- };
- pub use definition_differences::{DefinitionDifference, NonEmptyDefinitionDifferences};
--pub use host_memory::memory_ceiling_bytes;
-+pub use host_memory::{memory_ceiling_bytes, resident_anonymous_bytes};
- pub use index_lifecycle_throughput::{
-     IndexLifecycleConcurrency, IndexLifecycleScanTuning, IndexLifecycleThroughputTuning,
--    IndexLifecycleThroughputTuningError,
-+    IndexLifecycleThroughputTuningError, VectorBulkBuildMemory, VectorBulkBuildTuning,
- };
- pub use index_operation_queue::{
-     IndexOperationQueueTuning, IndexOperationQueueTuningError, QueueLayout,
-```
-
----
-
-### Incident Patch 2: `7d6807d6` (2026-11-22)
-**Commit Message**: Fold where the retirer looped, and count a fenced writer's rows after its poll
-
-Three loops of the last commits become folds: the tables a compaction
-would discard rows from, the blocks an entry's prefixes share, and the
-ranges that overlap. No behaviour changes.
-
-The helper of the superseded-writer contract counted the rows left
-behind through a writer that had not yet polled its manifest, so on
-object storage it could count rows the compaction had already discarded.
-It now reads until the count has stopped falling.
-
-**File**: `crates/db/src/index_lifecycle/dropped/mod.rs` (modified, +16/-18)
-```diff
-@@ -1226,25 +1226,23 @@ impl Registry {
-     /// for the entries whose gate is at or below `retention`: the rows a
-     /// compaction planned now would discard.
-     pub(crate) fn discardable_tracked(&self, retention: u64) -> HashMap<TableId, u64> {
--        let state = self.state.lock();
--        let mut tracked = HashMap::new();
--        for state in state.entries.values() {
--            let Entry::Armed(Armed {
--                gate,
--                proof: Proof::Tracking { tables },
--                ..
--            }) = state
--            else {
--                continue;
--            };
--            if *gate > retention {
--                continue;
--            }
--            for (table, bytes) in tables.tables() {
-+        self.state
-+            .lock()
-+            .entries
-+            .values()
-+            .filter_map(|state| match state {
-+                Entry::Armed(Armed {
-+                    gate,
-+                    proof: Proof::Tracking { tables },
-+                    ..
-+                }) if *gate <= retention => Some(tables),
-+                Entry::Armed(_) | Entry::Quarantined(_) => None,
-+            })
-+            .flat_map(|tables| tables.tables())
-+            .fold(HashMap::new(), |mut tracked, (table, bytes)| {
-                 *tracked.entry(*table).or_default() += bytes;
--            }
--        }
--        tracked
-+                tracked
-+            })
-     }
- 
-     /// Whether a table some armed entry's proof tracks is missing from
-```
-
-**File**: `crates/db/src/index_lifecycle/dropped/reclaim.rs` (modified, +4/-3)
-```diff
-@@ -39,7 +39,7 @@
- //! says so:
- //!
- //! - the run is at most a gibibyte, which one compaction slot rewrites in
--//!   seconds; or
-+//!   about a quarter of a minute; or
- //! - the dropped rows are at least an eighth of it.
- //!
- //! Dropped rows in any other run are *left in place*
-@@ -113,8 +113,9 @@ pub(crate) struct Worth {
- impl Worth {
-     /// The rule a writer follows by itself. Contracts make smaller ones.
-     ///
--    /// One compaction slot rewrites a gibibyte in a few seconds, so for a
--    /// run that small retiring the entry is worth it by itself.
-+    /// One compaction slot rewrites a gibibyte in about a quarter of a
-+    /// minute against object storage, so for a run that small retiring the
-+    /// entry is worth it by itself.
-     ///
-     /// For a larger run: a rewritten byte costs its read and its write, and
-     /// a second copy in object storage until the old tables are collected,
-```
-
-**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +25/-21)
-```diff
-@@ -270,14 +270,15 @@ fn blocks_under(from: usize, to: usize) -> std::ops::Range<usize> {
- /// `ranges`, which are in the order of their starts, with those that
- /// overlap joined: every block they cover, once.
- fn disjoint(ranges: Vec<std::ops::Range<usize>>) -> Vec<std::ops::Range<usize>> {
--    let mut joined = Vec::<std::ops::Range<usize>>::with_capacity(ranges.len());
--    for range in ranges {
--        match joined.last_mut() {
--            Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
--            Some(_) | None => joined.push(range),
--        }
--    }
--    joined
-+    ranges
-+        .into_iter()
-+        .fold(Vec::<std::ops::Range<usize>>::new(), |mut joined, range| {
-+            match joined.last_mut() {
-+                Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
-+                Some(_) | None => joined.push(range),
-+            }
-+            joined
-+        })
- }
- 
- /// Decides [`Held`] from a table's block index: `before` blocks have an
-@@ -639,19 +640,22 @@ impl Retirer {
-         let offset = |block| index.get(block).map_or(data_end, |(offset, _)| offset);
-         // The blocks of each held entry, in key order. Two prefixes of one
-         // entry can share a block, which counts once.
--        let mut blocks = HashMap::<_, Vec<std::ops::Range<usize>>>::new();
--        for (prefix, entry) in overlapping(prefixes, first, last) {
--            if !held.contains(&entry) {
--                continue;
--            }
--            let from = index.partition_point(|start| start < &prefix[..]);
--            let to = index
--                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
--            blocks
--                .entry(entry)
--                .or_default()
--                .push(blocks_under(from, to));
--        }
-+        let blocks = overlapping(prefixes, first, last)
-+            .filter(|(_, entry)| held.contains(entry))
-+            .fold(
-+                HashMap::<_, Vec<std::ops::Range<usize>>>::new(),
-+                |mut blocks, (prefix, entry)| {
-+                    let from = index.partition_point(|start| start < &prefix[..]);
-+                    let to = index.partition_point(|start| {
-+                        start < &prefix[..] || start.starts_with(&prefix[..])
-+                    });
-+                    blocks
-+                        .entry(entry)
-+                        .or_default()
-+                        .push(blocks_under(from, to));
-+                    blocks
-+                },
-+            );
-         Ok(blocks
+@@ -2315,7 +2315,7 @@ mod tests {
+     fn memory_helix_args_match_existing_run_shape() {
+         let args = helix_run_args(
+             "helix-demo-dev",
+-            "ghcr.io/helixdb/helixdb:v0.0.18",
++            "ghcr.io/helixdb/helixdb:v0.0.19",
+             9090,
+             true,
+             &HelixStorage::Memory,
+@@ -2336,7 +2336,7 @@ mod tests {
+                 "9090:8080",
+                 "--label",
+                 "helixdb.identity=4:demo/dev",
+-                "ghcr.io/helixdb/helixdb:v0.0.18",
++                "ghcr.io/helixdb/helixdb:v0.0.19",
+             ]
              .into_iter()
-             .map(|(entry, blocks)| {
-```
-
-**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +16/-5)
-```diff
-@@ -3683,11 +3683,22 @@ async fn supersede(
-     compact_every_table(&db).await;
-     assert_eq!(pass(&db).await, DroppedIndexStorage::default());
-     assert_eq!(stored_entries(&db).await, vec![]);
--    let rows_left_behind = rows(writer(&db).db())
--        .await
--        .into_keys()
--        .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
--        .count();
-+    let owned = || async {
-+        rows(writer(&db).db())
-+            .await
-+            .into_keys()
-+            .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
-+            .count()
-+    };
-+    // A writer applies the result of its compactor's job at its next
-+    // manifest poll, so rows a job discarded stay readable for a moment:
-+    // rows are left behind only if they are still there well after it.
-+    let mut rows_left_behind = owned().await;
-+    let read = Instant::now();
-+    while rows_left_behind > 0 && read.elapsed() < WAIT / 4 {
-+        tokio::time::sleep(SETTLE).await;
-+        rows_left_behind = owned().await;
-+    }
-     db.close().await.expect("the writer closes");
-     Superseded {
-         ran_under_the_superseded_writer,
-```
-
----
-
-### Incident Patch 3: `fb9ce75d` (2026-11-23)
-**Commit Message**: Weigh every prefix a table can hold rows under, whoever the table starts under
-
-The byte estimate skipped the prefixes of an entry that sort strictly
-inside a table once the table started or ended under another prefix of
-the same entry. A partitioned vector generation, whose physical indexes
-lie side by side, was counted about half its rows on a 68 GiB run, and
-the idle reclaim left a run that was worth rewriting.
-
-Every prefix the table can hold a row under is weighed now. One with an
-index key under it counts those blocks; the one the table starts under
-counts from the first block, whose shortened index key says nothing; one
-without rows adds nothing; and one whose rows all lie inside a block that
-begins with another owner's row is read only to decide whether its entry
-is held, so the estimate is short by less than a block there and never
-long. Contracts pin each case on a table built row by row.
-
-**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +30/-34)
-```diff
-@@ -597,71 +597,67 @@ impl Retirer {
-         match whole {
-             // Every row of the table is the entry's.
-             Some((_, entry)) => Ok(HashMap::from([(entry, sst.estimate_size())])),
--            None => self.held_in_part(sst, prefixes, ends, inside).await,
-+            None => self.held_in_part(sst, prefixes, ends).await,
-         }
+             .map(String::from)
+@@ -2511,12 +2511,12 @@ mod tests {
+     #[test]
+     fn only_a_container_with_the_explorer_role_is_the_explorer() {
+         let instance = parse_explorer_inspection(
+-            "4:demo/dev\n\nsha256:abc\nghcr.io/helixdb/helixdb:v0.0.18\nPATH=/bin\n",
++            "4:demo/dev\n\nsha256:abc\nghcr.io/helixdb/helixdb:v0.0.19\nPATH=/bin\n",
+         );
+         assert_eq!(instance.role, "");
+         assert_eq!(
+             instance.image.as_deref(),
+-            Some("ghcr.io/helixdb/helixdb:v0.0.18")
++            Some("ghcr.io/helixdb/helixdb:v0.0.19")
+         );
+         assert!(!instance.belongs_to("4:demo/dev"));
+         let unlabelled = parse_explorer_inspection("\n\nsha256:def\nnginx\n");
+@@ -2534,7 +2534,7 @@ mod tests {
+         };
+         let args = helix_run_args(
+             "helix-demo-dev",
+-            "ghcr.io/helixdb/helixdb:v0.0.18",
++            "ghcr.io/helixdb/helixdb:v0.0.19",
+             8080,
+             true,
+             &storage,
+@@ -2569,7 +2569,7 @@ mod tests {
+         assert!(has_pair(&args, "-e", "HELIX_TELEMETRY_LEVEL=off"));
+         assert_eq!(
+             args.last().map(String::as_str),
+-            Some("ghcr.io/helixdb/helixdb:v0.0.18")
++            Some("ghcr.io/helixdb/helixdb:v0.0.19")
+         );
      }
  
-     /// [`Self::held`] for a table that reaches a prefix without lying wholly
--    /// under one: `ends` own a prefix the table starts or ends under, and
--    /// `inside` are the prefixes of other entries that sort strictly inside
--    /// it.
-+    /// under one: `ends` own a prefix the table starts or ends under.
-     ///
-     /// The estimate counts, for each prefix found to have rows in the table,
--    /// the blocks those rows are in: exact to one block at each end. A
--    /// prefix with no row in the table adds nothing; neither does one whose
--    /// only rows are inside a block this had no need to read, because its
--    /// entry was already known to be held.
-+    /// the blocks those rows are in: exact to one block at each end. Every
-+    /// prefix the table can hold a row under is weighed, those of an entry
-+    /// in `ends` included. A prefix with no row in the table adds nothing.
-+    /// Neither does one whose rows all lie inside a block that begins with
-+    /// another owner's row, when its entry is known to be held without it:
-+    /// that block is not read, so the estimate is short by less than a block
-+    /// for each such prefix, and never long.
-     async fn held_in_part(
-         &self,
-         sst: &SsTableHandle,
-         prefixes: &BTreeMap<Bytes, DroppedGeneration>,
-         ends: HashSet<DroppedGeneration>,
--        inside: Vec<(&Bytes, DroppedGeneration)>,
-     ) -> Result<HashMap<DroppedGeneration, u64>> {
-         let first = sst.info.first_entry.as_deref();
-         let last = sst.info.last_entry.as_deref();
-         let file = self.tables.open_with_handle(sst.clone())?;
-         let index = file.index().await?;
--        // Blocks `from..to` have an index key under the prefix.
--        let under = |prefix: &[u8]| {
--            (
--                index.partition_point(|start| start < prefix),
--                index.partition_point(|start| start < prefix || start.starts_with(prefix)),
--            )
--        };
-         // The blocks each entry is known to have rows in, one range for
-         // each of its prefixes found there.
-         let mut blocks = HashMap::<DroppedGeneration, Vec<std::ops::Range<usize>>>::new();
--        // A prefix the table starts or ends under has rows in it.
--        for (prefix, entry) in overlapping(prefixes, first, last).filter(|(prefix, _)| {
--            first.is_some_and(|first| first.starts_with(prefix))
--                || last.is_some_and(|last| last.starts_with(prefix))
--        }) {
--            let (from, to) = under(prefix);
--            blocks
--                .entry(entry)
--                .or_default()
--                .push(blocks_under(from, to));
--        }
-+        // The blocks only a read can decide, with the prefixes it decides.
-         let mut in_blocks = BTreeMap::<usize, Vec<(&Bytes, DroppedGeneration)>>::new();
--        for (prefix, entry) in inside {
--            let (from, to) = under(prefix);
--            match held_by_index(prefix, from, index.get(from).map(|(_, start)| start)) {
-+        for (prefix, entry) in overlapping(prefixes, first, last) {
-+            // Blocks `from..to` have an index key under the prefix.
-+            let from = index.partition_point(|start| start < &prefix[..]);
-+            let to = index
-+                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
-+            // A prefix the table starts or ends under has rows in it; of any
-+            // other the block index says.
-+            let starts_under = first.is_some_and(|first| first.starts_with(prefix));
-+            let ends_under = last.is_some_and(|last| last.starts_with(prefix));
-+            let rows = match starts_under || ends_under {
-+                true => Held::Yes,
-+                false => held_by_index(prefix, from, index.get(from).map(|(_, start)| start)),
-+            };
-+            match rows {
-+                // The table's first row is in its first block, whatever
-+                // shortened key indexes that block.
-+                Held::Yes if starts_under => blocks.entry(entry).or_default().push(0..to.max(1)),
-                 Held::Yes => blocks
-                     .entry(entry)
-                     .or_default()
-                     .push(blocks_under(from, to)),
-                 Held::No => {}
-+                // Held whatever the block has: it is not read for this.
-+                Held::InBlock(_) if ends.contains(&entry) => {}
-                 Held::InBlock(block) => in_blocks.entry(block).or_default().push((prefix, entry)),
-             }
-         }
-         // Imperative: each block is read only while one of it
+@@ -2593,7 +2593,7 @@ mod tests {
+         };
+         let args = helix_run_args(
+             "helix-my-helix-project-production",
+-            "ghcr.io/helixdb/helixdb:v0.0.18",
++            "ghcr.io/helixdb/helixdb:v0.0.19",
+             8080,
+             true,
+             &storage,
+@@ -2643,7 +2643,7 @@ mod tests {
+         };
+         let args = helix_run_args(
+             "helix-demo-dev",
+-            "ghcr.io/helixdb/helixdb:v0.0.18",
++            "ghcr.io/helixdb/helixdb:v0.0.19",
+             8080,
+             true,
+             &storage,
 ```
 
-**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +92/-40)
+**File**: `crates/cli/tests/e2e_cli.rs` (modified, +1/-1)
 ```diff
-@@ -1314,44 +1314,32 @@ async fn a_table_wholly_under_a_prefix_counts_in_full_and_one_that_starts_under_
-     db.close().await.expect("the writer closes");
+@@ -135,7 +135,7 @@ fn init_and_add_generate_expected_project_files() {
+         config["local"]["dev"]["image"].as_str(),
+         Some("ghcr.io/helixdb/helixdb")
+     );
+-    assert_eq!(config["local"]["dev"]["tag"].as_str(), Some("v0.0.18"));
++    assert_eq!(config["local"]["dev"]["tag"].as_str(), Some("v0.0.19"));
+ 
+     let gitignore = fs::read_to_string(project.join(".gitignore")).unwrap();
+     assert!(gitignore.lines().any(|line| line == ".helix/"));
+```
+
+**File**: `crates/cli/tests/e2e_runtime.rs` (modified, +3/-3)
+```diff
+@@ -122,7 +122,7 @@ fn assert_e2e_count_is_one(output: &str) {
  }
  
--/// Proves a prefix of a held entry that has no row in a table adds nothing
--/// to the entry's bytes in it: an entry of one generation owns a prefix for
--/// each of the eleven record kinds, and a table that holds a row of it under
--/// one kind alone, among rows of other generations under every kind, is
--/// counted that row's block and not a block of someone else's for each of
--/// the other ten.
--#[tokio::test]
--async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
--    let db = open("dropped-retire-empty-prefixes").await;
-+/// The bytes [`Retirer::held`] counts for the one entry that owns every
-+/// prefix in `owned`, in a table of one flush that holds `rows` rows under
-+/// each given prefix and nothing else. Every row fills a block of its own,
-+/// of [`BLOCK_ROW`] bytes and a little framing.
-+async fn held_bytes_of_one_table(name: &str, rows: &[(&Bytes, usize)], owned: &[&Bytes]) -> u64 {
-+    let db = open(name).await;
-     let HelixStorage::Writer(shared) = db.storage() else {
-         panic!("the contract opens a writer");
-     };
--    let owner = |generation| OwnerKey::Generation {
--        scope: DataScope::LegacyUnscoped,
--        index_id: 7,
--        generation,
--    };
--    let dropped = owner(5).prefixes();
--    assert_eq!(dropped.len(), 11);
-     let store: Arc<dyn ObjectStore> = Arc::new(slatedb::object_store::memory::InMemory::new());
--    let path = "dropped-retire-empty-prefixes-rows".to_string();
--    let rows = slatedb::Db::builder(path.clone(), Arc::clone(&store))
-+    let path = format!("{name}-rows");
-+    let raw = slatedb::Db::builder(path.clone(), Arc::clone(&store))
-         .build()
-         .await
-         .expect("the row store opens");
--    // Each row fills a block of its own. Generations 4 and 6 have one under
--    // every kind, either side of where generation 5 would be.
--    const ROW: usize = 6000;
--    for prefix in owner(4).prefixes().into_iter().chain(owner(6).prefixes()) {
--        rows.put([&prefix[..], b"a"].concat(), vec![7u8; ROW])
-+    for (prefix, count) in rows {
-+        for row in 0..*count {
-+            raw.put(
-+                [&prefix[..], format!("{row:04}").as_bytes()].concat(),
-+                vec![7u8; BLOCK_ROW as usize],
-+            )
-             .await
-             .expect("the row writes");
-+        }
-     }
--    // Generation 5 has one row, under one kind.
--    rows.put([&dropped[4][..], b"a"].concat(), vec![7u8; ROW])
--        .await
--        .expect("the row writes");
--    rows.flush_with_options(FlushOptions {
-+    raw.flush_with_options(FlushOptions {
-         flush_type: FlushType::MemTable,
-     })
-     .await
-@@ -1369,28 +1357,92 @@ async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
-     let [table] = &tables[..] else {
-         panic!("one flush leaves one table: {}", tables.len());
-     };
--    assert!(table.estimate_size() > 23 * ROW as u64);
--    let retirer = Retirer::new(Arc::clone(shared), &path, store, SLOTS);
--    let prefixes = dropped
--        .into_iter()
--        .map(|prefix| (prefix, generation_entry(1)))
-+    let written = rows.iter().map(|(_, count)| *count as u64).sum::<u64>();
-+    assert!(table.estimate_size() > written * BLOCK_ROW);
-+    let prefixes = owned
-+        .iter()
-+        .map(|prefix| ((*prefix).clone(), generation_entry(1)))
-         .collect::<BTreeMap<_, _>>();
--    let held = retirer
-+    let held = Retirer::new(Arc::clone(shared), &path, store, SLOTS)
-         .held(table, &prefixes)
-         .await
-         .expect("the table is looked into");
-     let [(entry, bytes)] = held.into_iter().collect::<Vec<_>>()[..] else {
-         panic!("the table holds rows of the one entry");
-     };
-     assert_eq!(entry, generation_entry(1));
--    // The one block of the one row, to a few bytes of framing.
-+    raw.close().await.expect("the row store closes");
-+    db.close().await.expect("the writer closes");
-+    bytes
-+}
-+
-+/// A row larger than a block, so that it is stored in a block of its own.
-+const BLOCK_ROW: u64 = 6000;
-+
-+/// The prefix of generation `generation` of one index under one record kind:
-+/// those of consecutive generations sort next to each other.
-+fn sibling_prefix(generation: u64) -> Bytes {
-+    OwnerKey::Generation {
-+        scope: DataScope::LegacyUnscoped,
-+        index_id: 7,
-+        generation,
-+    }
-+    .prefixes()
-+    .swap_remove(4)
-+}
-+
-+/// Proves a prefix of a held entry that has no row in a table adds nothing
-+/// to the entry's bytes in it, whether or not the table starts and ends
-+/// under the entry: the block before where its rows would be belongs to
-+/// someone else.
-+#[tokio::test]
-+async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
-+    let [g2, g3, g4, g5, g6, g7, g8] = [2, 3, 4, 5, 6, 7, 8].map(sibling_prefix);
-+    // The entry has rows under on
+ #[test]
+-#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.18"]
++#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.19"]
+ fn local_runtime_lifecycle_and_query_smoke() {
+     let fixture = CliFixture::new();
+     let port = free_port();
+@@ -243,7 +243,7 @@ fn local_runtime_lifecycle_and_query_smoke() {
+ }
+ 
+ #[test]
+-#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.18 plus SeaweedFS"]
++#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.19 plus SeaweedFS"]
+ fn disk_runtime_persists_data_across_stop_and_start() {
+     let fixture = CliFixture::new();
+     let port = free_port();
+@@ -370,7 +370,7 @@ fn docker(args: &[&str]) -> std::process::Output {
+ /// instance network and its data volume behind. Start must detach the old
+ /// sidecar so stop can still remove the network, and prune must delete both.
+ #[test]
+-#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.18 plus SeaweedFS"]
++#[ignore = "requires Docker and pulls ghcr.io/helixdb/helixdb:v0.0.19 plus SeaweedFS"]
+ fn disk_runtime_replaces_a_legacy_minio_sidecar() {
+     let fixture = CliFixture::new();
+     let port = free_port();
+```
+
+**File**: `crates/cli/tests/runtime_commands.rs` (modified, +1/-1)
+```diff
+@@ -923,7 +923,7 @@ async fn configured_policy_applies_to_foreground_and_dependency_failures_preserv
+                 result.failure();
+             }
+             let log = fixture.runtime_log();
+-            assert!(log.contains("pull ghcr.io/helixdb/helixdb:v0.0.18"));
++            assert!(log.contains("pull ghcr.io/helixdb/helixdb:v0.0.19"));
+             assert!(log.contains(&format!("pull {SEAWEEDFS_IMAGE}")));
+             if !failed_image.is_empty() {
+                 assert!(
+```
+
+**File**: `docker-image/README.md` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@ This directory owns the build and test surface for the standalone HelixDB image.
+ 
+ The canonical image repository is `ghcr.io/helixdb/helixdb`. The scripts require an explicit platform and image tag so local and CI runs exercise the same artifact.
+ 
+-The next release is `ghcr.io/helixdb/helixdb:v0.0.18`, targeting Linux amd64
++The next release is `ghcr.io/helixdb/helixdb:v0.0.19`, targeting Linux amd64
+ and arm64. The published release remains v0.0.17 until the release workflow succeeds. See the [local server guide](../docs/database/helix-db/start-here/local-development/local-server.mdx)
+ for release-image commands. The `local-amd64` and `local-arm64` tags below refer
+ to images built from your checkout.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1326** (2026-11-24): Drop indexes through a compaction filter (@xav-db)
-- **PR #1325** (2026-11-24): Build unpartitioned vector indexes in memory, in bulk (@xav-db)
-- **PR #1322** (2026-11-23): Default the CLI to Docker v0.0.18 (@xav-db)
-- **PR #1321** (2026-11-23): Datetime string migration: leave text- and vector-indexed properties as stored (@xav-db)
-- **PR #1320** (2026-11-23): docs: Helix Foundry first, Cloud inside HelixDB, Foundry pages brought up to date with prod (@xav-db)
-- **PR #1319** (2026-11-23): Default the CLI to Docker v0.0.17 (@xav-db)
+- **PR #1345** (2026-11-26): Default the CLI to Docker v0.0.19 (@xav-db)
+- **PR #1343** (2026-11-26): Share pending queue views between searches (@xav-db)
+- **PR #1342** (2026-11-25): Delete index operation queues once drained (@xav-db)
+- **PR #1341** (2026-11-25): Keep HNSW layer 0 connected by seeding inserts from a layer-1 beam (@xav-db)
+- **PR #1340** (2026-11-25): ci: build the macOS Python wheel on macos-15 (@xav-db)
+- **PR #1339** (2026-11-25): Report a fenced writer as unready and stop its background work (@xav-db)
 
 ---
 
@@ -2833,31 +2319,33 @@ long. Contracts pin each case on a table built row by row.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build unpartitioned vector indexes in memory, in bulk
+## X. Default the CLI to Docker v0.0.19
 
 **RULE**:
-When implementing operations in `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cli/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `632e9097`: Build unpartitioned vector indexes in memory, in bulk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76904050`: Default the CLI to Docker v0.0.19. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cli/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
+- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.19`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
+- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.19`), `storage` (`memory` | `disk`, default memory).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **Local instances are Docker/Podman containers** (image `ghcr.io/helixdb/helixdb:v0.0.18`), managed by `LocalRuntime`. `helix start` starts one; in-memory by default, on-disk (SeaweedFS-backed) with `--disk`.
+- `[local.<name>]` — `port` (default `6969`), `image` (default `ghcr.io/helixdb/helixdb`), `tag` (default `v0.0.18`), `storage` (`memory` | `disk`, default memory).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `632e9097` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76904050` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

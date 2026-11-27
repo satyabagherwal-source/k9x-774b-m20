@@ -13647,3 +13647,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T00:32:58.229Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-27T00:41:28.598Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `3ec1df58` | Multi-dimensional audit evidence | 2026-11-27T00:41:42.990Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-27T00:50:07.989Z |
+| `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `d358ce89` | Multi-dimensional audit evidence | 2026-11-27T00:50:10.789Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `76904050` | Multi-dimensional audit evidence | 2026-11-27T00:50:22.353Z |
