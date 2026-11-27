@@ -13801,3 +13801,5 @@ Every entry in this ledger must capture:
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `343ee79d` | Multi-dimensional audit evidence | 2026-11-27T10:51:56.632Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `83b4c539` | Multi-dimensional audit evidence | 2026-11-27T11:03:06.711Z |
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `af9c9650` | Multi-dimensional audit evidence | 2026-11-27T11:14:30.670Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `0ad4751d` | Multi-dimensional audit evidence | 2026-11-27T11:24:50.794Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `ec4dbd34` | Multi-dimensional audit evidence | 2026-11-27T11:25:06.447Z |

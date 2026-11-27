@@ -4,24 +4,24 @@
 {
   "source_repository": "topoteretes/cognee",
   "source_url": "https://github.com/topoteretes/cognee",
-  "source_version": "4053f6cc",
+  "source_version": "ec4dbd34",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T18:34:59.974Z",
+  "timestamp": "2026-11-27T11:25:06.808Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-topoteretes-cognee",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `4053f6cc`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T18:34:59.974Z`  
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `ec4dbd34`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T11:25:06.808Z`  
 > **Learning ID**: `learn-github-topoteretes-cognee`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from topoteretes/cognee:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:34:59.086Z  
+> **Harvest Timestamp**: 2026-11-27T11:24:50.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33293 stars
+- **Stars / Engagement**: 33667 stars
 
 ---
 
@@ -217,19 +217,19 @@ __all__ = [
 """Slack request signature verification, on the core webhook verifier.
 
 Copied from cognee.modules.integrations.slack.verify_slack_signature (cognee dev,
-2026-10-27). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
+2026-11-12). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
 with the ``slack_v0`` scheme, the one ``CONNECTOR`` declares, so the hand-written
 Slack routes and a host serving the generic ``/events`` route verify deliveries the
 same way. The FastAPI dependency that sat next to the check lives in
 :mod:`cognee_connector_slack.cognee_host.verify_slack_signature`.
 
-Every inbound Slack payload — slash commands, Events API, interactivity — is
+Every inbound Slack payload — Events API, interactivity — is
 authenticated by an HMAC over ``v0:{timestamp}:{raw_body}`` keyed with the
 app's signing secret, compared against the ``X-Slack-Signature`` header
 (https://docs.slack.dev/authentication/verifying-requests-from-slack).
 
-The check MUST run over the raw request bytes, before any parsing: slash
-commands arrive form-encoded, and re-serializing a parsed dict changes key
+The check MUST run over the raw request bytes, before any parsing: interactive
+payloads arrive form-encoded, and re-serializing a parsed dict changes key
 order/escaping and breaks the HMAC. Handlers therefore take the verified raw
 body from the host's ``verify_slack_request`` dependency and parse it
 themselves instead of declaring parsed body parameters.
@@ -1518,11 +1518,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6791** (2026-11-23): **Deleting one document's graph reads the whole dataset into memory; table loads run out of memory on a large graph**
+  *Symptoms*: ## Summary  `delete_by_document` finds the nodes and edges of one data item by fetching the source references of every node and every edge in the dataset and filtering them in Python. Its cost depends on the size of the dataset, not on the size of the document.  Cognify runs it once per table item through `purge_stale_dlt_source_artifacts`, also on a first load when nothing can be stale. Loading tables into a large dataset is therefore slow, and with several items in parallel the server runs out of memory.  ## Versions  - cognee 1.6.8, and the code path is unchanged in 1.6.9 (line numbers below are from 1.6.9) - Postgres graph store with pgvector, backend access control on  ## What happens  1. Cognify's table branch runs `purge_stale_dlt_source_artifacts` for every `DltSourceDocument` (`cognee/api/v1/cognify/cognify.py:815`). 2. That calls `delete_data_nodes_and_edges` → `try_delete_data_by_graph_provenance` → `unified.delete_by_document(dataset_id, data_id)`. 3. `delete_by_document` (`cognee/infrastructure/databases/unified/unified_store_engine.py:163`) calls `graph.find_node_source_refs_by_dataset(dataset_id)` and `graph.find_edge_source_refs_by_dataset(dataset_id)` (lines 192 and 197) and keeps the refs whose parsed data id equals `data_id`. 4. The Postgres adapter answers both with an unfiltered read of the dataset (`cognee/infrastructure/databases/graph/postgres_demo/adapter.py:1550` and `:1572`):  ```sql SELECT id, source_ref_keys FROM graph_node WHERE :dataset_id = ANY
+
 - **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
   *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
-
-- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
-  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1539,699 +1539,265 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cc10f9f3` (2026-11-12)
-**Commit Message**: fix(update): Remove stored files no document points at (SDK-1541) (#6674)
-
-Stacked on #6667, which is stacked on #5350. #6667 now has `dev` merged
-in, so these two commits sit on current `dev` plus the ledger changes.
-It was first opened against `dev`, where the full CI ran on the same two
-commits.
-
-`forget()` removes the files a `Data` row points at. A stored file that
-no row points at stays under the data root for good, with the content of
-a document the user updated or deleted. This PR removes those files at
-the points where they lose their row.
-
-## What was left behind on `dev`
-
-Files under the data root after `forget()` (mock LLM, one document):
-
-| Input | Two chunk-level updates | Two full rebuilds | Unchanged update
-| Failed update |
-|---|---|---|---|---|
-| Raw text | 2 | 0 | 0 | 1 |
-| Upload | 4 | 2 | 1 | 2 |
-| File path | 2 | 2 | not run | not run |
-
-With this PR every cell is 0. Re-adding the same upload under another
-filename also leaves 1 file, on `dev` and still here; see below.
-
-## Causes and fixes
-
-- **Chunk-level update.** It pointed the row at the new files and never
-removed the ones it pointed at, so every update kept the previous
-version on disk. `_run_incrementa
-
-**File**: `.env.template` (modified, +18/-2)
-```diff
-@@ -803,9 +803,25 @@ WEB_SCRAPER_MAX_DELAY=10.0
- # Which pipeline run / task wrote each graph node, stamped as source_* fields
- # on the node itself. lightweight (default) | deep | disabled.
- #COGNEE_PROVENANCE_MODE=lightweight
--# Audit ledger: append-only, hash-chained provenance_entries table written by
--# an opt-in cognify task. For compliance/lineage history, not retrieval.
-+# Audit ledger: append-only, hash-chained provenance_entries table with one
-+# row per data item (ids and the content hash, nothing the item produced). It
-+# is written at the add_data_points storage seam, gets a new version when an
-+# update changes the content, and a tombstone when the item is deleted
-+# (written once its row is gone; dropping only its memory writes none). For
-+# compliance history, not retrieval. With it on, a ledger write that fails
-+# fails the ingestion, the update or the delete. With it off (the default)
-+# the ledger is neither written nor read: deletes do not touch it, and the
-+# routes and CLI below answer that it is off. Read it with
-+# `cognee-cli provenance ...` or /api/v1/provenance.
- #PROVENANCE_TRACKING=false
-+# External anchoring of the ledger's hash chain. With a key set,
-+# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
-+# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
-+# verify --anchors` then detects a ledger that was rewritten AND re-chained.
-+# Keep the key out of the database host; point the path somewhere it cannot
-+# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
-+#PROVENANCE_ANCHOR_KEY=
-+#PROVENANCE_ANCHOR_PATH=
- # Edge evidence: which document chunk supports each graph edge, stored in
- # provenance_edge_evidence and returned as citations when include_references
- # is on. Captured only for edges extracted from document chunks.
-```
-
-**File**: `CLAUDE.md` (modified, +6/-3)
-```diff
-@@ -276,7 +276,7 @@ The stages below are the Low level operations these call underneath.
- #### ADD: Data Ingestion
- `add()` → `resolve_data_directories` → `ingest_data` → `save_data_item_to_storage` → Create Dataset + Data records in relational DB
- 
--Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync.
-+Re-adding a document that already exists (same `data_id`, through `add()`, `remember()` or `update()`'s full rebuild) follows the PATCH rule described under UPDATE below: `node_set` and a `DataItem`'s `label`, `external_metadata` and `node_set` keep their stored values when not passed, clear on an explicit empty value, and are replaced by a value. Content-derived metadata always refreshes; `_cognee.source_uri` takes the new content's location, and new content without one (an upload, raw text) drops the old one. Connector document rows state their full node sets, so a row with none reports `[]` and clears the stored ones on re-sync. A re-ingested row that points at new stored files releases the ones it pointed at, the original and the text derived from it: `forget()` removes the files a row points at, so a file no row points at would otherwise stay on disk.
- 
- Key files: `cognee/api/v1/add/add.py`, `cognee/tasks/ingestion/ingest_data.py`
- 
-@@ -299,7 +299,7 @@ A document-mode row (Notion today) may carry a `cognee_structure` json column, `
- A stored connection syncs on a schedule when a sync policy covers it (`cognee/modules/integrations/sync_policy/`, worker opt-in with `INTEGRATIONS_SYNC_SCHEDULER_ENABLED`). Run the API that enables it as one process per database: a slot starts once across processes, but two runs of one connection are kept apart only in-process (`ingestion.exclusive_sync`), so more processes can run a connection twice over one dlt working directory and cursor. Full guide: `docs/integration-sync-schedule.md`.
- 
- #### UPDATE: Chunk-Level Incremental Updates
--`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their boundaries and ids cannot drift. Unaffected chunks keep their node ids, entities, summaries, and embeddings; surviving chunks are renumbered so `chunk_index` stays contiguous. Chunk identity is content-derived (`uuid5(doc : sha256(text) : occurrence)`, see `cognee/modules/chunking/chunk_id.py`), so unchanged content keeps its identity across edits. Both incremental and full fallback paths preserve `data_id`.
-+`update(data_id, data, dataset_id)` diffs the new content against the stored processed text (`Data.raw_data_location`) and replaces only the chunks the edits touched: a paragraph-anchored multi-region diff (near-linear for any change shape, including repeated-line-heavy content) finds every disjoint changed span (so edits at the top, middle, and end of a document are three small regions, not one giant one), each span is expanded to chunk boundaries and re-chunked with the standard TextChunker (same boundary semantics as pipeline chunks, cut against the token budget recorded on the chunks it replaces — every chunk stores `max_chunk_tokens`, so documents stay self-consistent across config changes; legacy chunks without the field fall back to the current config; only a region's last chunk may be under-filled), replaced chunks (plus their summaries, chunk-orphaned entities, and legacy triplet embeddings) are deleted, and only the new chunks run through LLM extraction. Chunks between regions are kept without being re-chunked, so their bou
-```
-
-**File**: `cognee/api/client.py` (modified, +3/-0)
-```diff
-@@ -45,6 +45,7 @@
- from cognee.api.v1.ontologies.routers.get_ontology_router import get_ontology_router
- from cognee.api.v1.permissions.routers import get_permissions_router
- from cognee.api.v1.proposals.routers import get_proposals_router
-+from cognee.api.v1.provenance.routers import get_provenance_router
- from cognee.api.v1.recall.routers import get_recall_router
- from cognee.api.v1.remember.routers import get_remember_router
- from cognee.api.v1.responses.routers import get_responses_router
-@@ -425,6 +426,8 @@ async def exception_handler(request: Request, exc: CogneeApiError) -> JSONRespon
- 
- app.include_router(get_schema_router(), prefix="/api/v1/schema", tags=["schema"])
- 
-+app.include_router(get_provenance_router(), prefix="/api/v1/provenance", tags=["provenance"])
-+
- app.include_router(get_skills_router(), prefix="/api/v1/skills", tags=["skills"])
- app.include_router(get_proposals_router(), prefix="/api/v1/proposals", tags=["skills"])
- 
-```
-
-**File**: `cognee/api/v1/cognify/cognify.py` (modified, +2/-7)
-```diff
-@@ -54,7 +54,6 @@
- )
- from cognee.tasks.graph.extract_graph_and_summarize import extract_graph_and_summarize
- from cognee.tasks.ingestion.document_structure import reconcile_document_structure
--from cognee.tasks.provenance import record_provenance
- from cognee.tasks.storage import add_data_points, find_indexed_chunks, index_chunks_for_search
- 
- logger = get_logger("cognify")
-@@ -692,7 +691,6 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
- ) -> list[Task]:
-     cognify_config = get_cognify_config()
-     summary_method = summary_method or cognify_config.summary_method
--    track_provenance = cognify_config.provenance_tracking
-     if early_chunk_indexing is None:
-         early_chunk_indexing = cognify_config.early_chunk_indexing
-     chunks_per_batch = resolve_chunks_per_batch(chunks_per_batch)
-@@ -734,11 +732,8 @@ async def get_default_tasks(  # TODO: Find out a better way to do this (Boris's
-             needs_llm=False,
-         ),
-     ]
--
--    if track_provenance:
--        tasks.append(
--            Task(record_provenance, task_config={"batch_size": chunks_per_batch}, needs_llm=False)
--        )
-+    # The audit ledger (PROVENANCE_TRACKING) is not a task here: add_data_points
-+    # records it at the storage seam, so every writer is covered, not just cognify.
- 
-     return tasks
- 
-```
-
-**File**: `cognee/api/v1/datasets/datasets.py` (modified, +22/-4)
-```diff
-@@ -31,6 +31,7 @@
-     get_pipeline_progress,
-     get_pipeline_status,
- )
-+from cognee.modules.provenance.tombstones import tombstone_data_item, tombstone_dataset
- from cognee.modules.users.exceptions import PermissionDeniedError
- from cognee.modules.users.methods import get_default_user
- from cognee.modules.users.models import User
-@@ -125,12 +126,12 @@ async def _retire_forgotten_decisions(
-     )
- 
- 
--async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
-+async def _delete_dataset_if_empty(dataset, requested: bool, user: User) -> bool:
-     """Drop ``dataset`` when the caller asked for it and no Data row is left.
- 
-     One count query, never a listing: the receipt only needs to know whether
-     the dataset went away. As in ``empty_dataset``, the dataset's search
--    history goes first, then the dataset.
-+    history goes first, then the dataset, then its audit-ledger tombstones.
-     """
-     if not requested or await has_dataset_data(dataset.id):
-         return False
-@@ -139,6 +140,7 @@ async def _delete_dataset_if_empty(dataset, requested: bool) -> bool:
- 
-     await delete_dataset_search_history(dataset.id)
-     await delete_dataset(dataset)
-+    await tombstone_dataset(dataset.id, user=user)
-     return True
- 
- 
-@@ -451,6 +453,11 @@ async def empty_dataset(dataset_id: UUID, user: User | None = None):
-             # (files refcounted by raw_data_location) with the record.
-             result = await delete_dataset(dataset)
- 
-+            # Last, once the rows are gone: the audit ledger retracts every
-+            # data item of the dataset (a no-op unless PROVENANCE_TRACKING
-+            # recorded them). It raises when the tombstones cannot be written.
-+            await tombstone_dataset(dataset.id, user=user)
-+
-         return result
- 
-     @staticmethod
-@@ -543,8 +550,13 @@ async def delete_data(
-                             await _invalidate_sessions_for_deleted_data_nonfatal(
-                                 dataset.id, invalidated, user.id
-                             )
-+                        # No Data row, so the document is gone. A ledger row
-+                        # still live for the id (a delete whose tombstone
-+                        # could not be written, or an id that only ever owned
-+                        # graph elements) is retracted here.
-+                        await tombstone_data_item(dataset_id, data_id, user=user)
-                         dataset_deleted = await _delete_dataset_if_empty(
--                            dataset, delete_dataset_if_empty
-+                            dataset, delete_dataset_if_empty, user
-                         )
- 
-                     return _delete_data_receipt(
-@@ -601,9 +613,15 @@ async def delete_data(
-                     # the delete must never come back as a success receipt.
-                     if await has_data(dataset.id, data_id):
-                         raise DataDeletionIncompleteError(data_id, dataset.id)
-+                    # The row is checked to be gone, so the audit ledger can
-+                    # say so (a no-op unless PROVENANCE_TRACKING recorded the
-+                    # item). Written last: a delete that failed above leaves
-+                    # the ledger row live. It raises when it cannot be written,
-+                    # and deleting the same id again writes it.
-+                    await tombstone_data_item(dataset_id, data_id, user=user)
-                     # Search history first, then the dataset (see the helper).
-                     dataset_deleted = await _delete_dataset_if_empty(
--                        dataset, delete_dataset_if_empty
-+                        dataset, delete_dataset_if_empty, user
-                     )
- 
-                 # A dataset's code repositories are extracted together, so the
-```
-
-**File**: `cognee/api/v1/provenance/routers/__init__.py` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+from .get_provenance_router import get_provenance_router
-+
-+__all__ = ["get_provenance_router"]
-```
-
-**File**: `cognee/api/v1/provenance/routers/get_provenance_router.py` (added, +201/-0)
-```diff
-@@ -0,0 +1,201 @@
-+"""Read surface of the audit-grade provenance ledger.
-+
-+Every endpoint is read-only — the ledger is written by ingestion and by the
-+delete paths (tombstones), never through HTTP. Access control follows the
-+dataset namespace baked into every ledger key
-+(``{dataset_id}:data_item:{data_id}``): a per-entity lookup is allowed when the caller can
-+read the dataset the key belongs to, and the ledger-wide walks (verify,
-+statistics, export) require a ``dataset_id`` unless the caller is a
-+superuser. Keys without a dataset prefix (custom pipelines that bypass the
-+writer's namespacing) are superuser-only for the same reason. The rule itself
-+lives in ``cognee.modules.provenance.access`` and is shared with the CLI.
-+
-+The ledger is off by default (``PROVENANCE_TRACKING``). While it is off every
-+route but ``/status`` answers 409 with that reason, instead of reading a
-+ledger nobody is writing: "valid, 0 rows" would look like a verified ledger.
-+"""
-+
-+import json
-+from collections.abc import Awaitable
-+from typing import Any
-+from uuid import UUID
-+
-+from fastapi import APIRouter, Depends, HTTPException, Query
-+from fastapi import Path as PathParam
-+from fastapi.responses import JSONResponse, StreamingResponse
-+
-+from cognee.modules.provenance import get_provenance_manager
-+from cognee.modules.provenance.access import (
-+    authorize_anchoring,
-+    authorize_ledger_key,
-+    authorize_ledger_scope,
-+)
-+from cognee.modules.provenance.tracking import (
-+    ProvenanceTrackingDisabledError,
-+    provenance_tracking_enabled,
-+    require_provenance_tracking,
-+)
-+from cognee.modules.users.exceptions import PermissionDeniedError
-+from cognee.modules.users.methods import get_authenticated_user
-+from cognee.modules.users.models import User
-+from cognee.shared.logging_utils import get_logger
-+from cognee.shared.usage_logger import log_usage
-+
-+logger = get_logger()
-+
-+
-+async def _authorize(check: Awaitable[None]) -> None:
-+    """Run one ledger access check (``cognee.modules.provenance.access``); a denial is a 403."""
-+    try:
-+        await check
-+    except PermissionDeniedError as error:
-+        raise HTTPException(status_code=403, detail=error.message) from error
-+
-+
-+def _require_ledger_on() -> None:
-+    """Answer 409 with the reason while the ledger is off (see the module docstring)."""
-+    try:
-+        require_provenance_tracking()
-+    except ProvenanceTrackingDisabledError as error:
-+        raise HTTPException(status_code=409, detail=str(error)) from error
-+
-+
-+def get_provenance_router() -> APIRouter:
-+    router = APIRouter(
-+        responses={
-+            409: {
-+                "description": "The audit ledger is off: set `PROVENANCE_TRACKING=true` "
-+                "(it is off by default). On the anchor routes, also returned when "
-+                "anchoring is not configured."
-+            }
-+        }
-+    )
-+
-+    @router.get("/entry/{entity_id:path}", summary="Current ledger row of one entity")
-+    @log_usage(function_name="GET /v1/provenance/entry", log_type="api_endpoint")
-+    async def get_entry(
-+        entity_id: str = PathParam(
-+            ..., description="Ledger key, e.g. `{dataset_id}:data_item:{data_id}`"
-+        ),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> dict[str, Any]:
-+        """The live row (or current tombstone) for a ledger key; 404 if never tracked."""
-+        _require_ledger_on()
-+        await _authorize(authorize_ledger_key(user, entity_id))
-+        entry = await get_provenance_manager().get_provenance(entity_id)
-+        if entry is None:
-+            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
-+        return entry
-+
-+    @router.get("/history/{entity_id:path}", summary="Version history of one entity")
-+    @log_usage(function_name="GET /v1/provenance/history", log_type="api_endpoint")
-+    async def get_history(
-+        entity_id: str = PathParam(..., description="Ledger key"),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> list[dict[str, Any]]:
-+        """Oldest-first versions; tombstone versions carry `invalidated_by` /
-+        `invalidation_reason`, so a row reads "asserted by A, retracted by B"."""
-+        _require_ledger_on()
-+        await _authorize(authorize_ledger_key(user, entity_id))
-+        history = await get_provenance_manager().revision_history(entity_id)
-+        if not history:
-+            raise HTTPException(status_code=404, detail="Entity is not in the ledger.")
-+        return history
-+
-+    @router.get("/verify", summary="Verify checksums and the hash chain")
-+    @log_usage(function_name="GET /v1/provenance/verify", log_type="api_endpoint")
-+    async def verify(
-+        dataset_id: UUID | None = Query(default=None),
-+        user: User = Depends(get_authenticated_user),
-+    ) -> dict[str, Any]:
-+        """Tamper evidence. Without `dataset_id` (superusers) the whole chain is
-+        walked; with it, each of the dataset's rows is checked
-```
-
-**File**: `cognee/api/v1/update/incremental.py` (modified, +225/-121)
-```diff
-@@ -58,6 +58,7 @@
- from cognee.infrastructure.databases.provenance import make_chunk_source_ref_key
- from cognee.infrastructure.databases.provenance.markers import stores_provenance_in_graph
- from cognee.infrastructure.databases.vector import get_vector_engine_async
-+from cognee.infrastructure.files.stored_file_claims import holding_stored_files
- from cognee.infrastructure.files.utils.get_data_file_path import get_data_file_path
- from cognee.infrastructure.files.utils.open_data_file import open_data_file
- from cognee.infrastructure.llm.utils import get_max_chunk_tokens
-@@ -89,6 +90,7 @@
-     publish_updated_data,
- )
- from cognee.modules.data.methods.get_dataset_data import get_dataset_data
-+from cognee.modules.data.methods.remove_unreferenced_files import remove_unreferenced_files
- from cognee.modules.data.models import Data
- from cognee.modules.data.processing.document_types.Document import Document
- from cognee.modules.engine.utils.temporal_hints import document_temporal_hints
-@@ -122,6 +124,7 @@
- from cognee.tasks.ingestion.data_item import DataItem
- from cognee.tasks.ingestion.data_item_to_text_file import data_item_to_text_file
- from cognee.tasks.ingestion.save_data_item_to_storage import save_data_item_to_storage
-+from cognee.tasks.provenance.record_provenance import record_data_item_content
- from cognee.tasks.storage.add_data_points import add_data_points
- 
- logger = get_logger("incremental_update")
-@@ -532,6 +535,31 @@ async def _restore_repositioned_chunks(chunks: list[DocumentChunk], _context) ->
-     )
- 
- 
-+UPDATE_APPLIED = "The update was applied: the document holds its new content."
-+UPDATE_NOT_APPLIED = "The update was not applied: the document keeps its previous content."
-+
-+
-+async def _remove_unreferenced_files(*versions: Data | StagedContent, update_applied: bool) -> None:
-+    """Remove the stored files of ``versions`` that no ``Data`` row points at.
-+
-+    A version is a row as it was, or content that was staged: both name a
-+    processed text file and an original (see ``remove_unreferenced_files``).
-+
-+    A file that cannot be removed raises ``StoredFileNotRemovedError``, and no
-+    caller catches it: a stored file cognee cannot delete is never an
-+    acceptable outcome. ``update_applied`` is what that error tells the caller
-+    first, because by then the update may already be in effect.
-+    """
-+    await remove_unreferenced_files(
-+        [
-+            location
-+            for version in versions
-+            for location in (version.raw_data_location, version.original_data_location)
-+        ],
-+        UPDATE_APPLIED if update_applied else UPDATE_NOT_APPLIED,
-+    )
-+
-+
- async def _stage_new_content(data, preferred_loaders) -> StagedContent:
-     """Run the input through ingestion's loader machinery without row writes.
- 
-@@ -766,20 +794,41 @@ async def incremental_update(
-                 "the selected graph does not store ownership provenance in-graph",
-                 RefusalReason.UNSUPPORTED_BACKEND,
-             )
--        return await _run_incremental_update(
--            data_id,
--            data,
--            dataset,
--            user,
--            old_data,
--            node_set,
--            preferred_loaders,
--            graph_model,
--            custom_prompt,
--            chunker,
--            policy,
--            extractor,
--        )
-+        # The staged files are stored long before the row points at them (the
-+        # publish comes after extraction): claimed until the update is over, so
-+        # no removal in another dataset takes them. The update's own cleanup
-+        # still removes the ones it did not use.
-+        async with holding_stored_files():
-+            return await _run_incremental_update(
-+                data_id,
-+                data,
-+                dataset,
-+                user,
-+                old_data,
-+                node_set,
-+                preferred_loaders,
-+                graph_model,
-+                custom_prompt,
-+                chunker,
-+                policy,
-+                extractor,
-+            )
-+
-+
-+async def _record_content_in_ledger(
-+    content_hash: str, bundle: dict, dataset, user: User, pipeline_run_id: UUID | None = None
-+) -> None:
-+    """Tell the audit ledger which content the document holds (a no-op when it is off)."""
-+    await record_data_item_content(
-+        PipelineContext(
-+            user=user,
-+            data_item=bundle["data_item"],
-+            dataset=dataset,
-+            pipeline_run_id=pipeline_run_id,
-+            pipeline_name=PIPELINE_NAME,
-+        ),
-+        content_hash,
-+    )
- 
- 
- async def _run_incremental_update(
-@@ -806,59 +855,101 @@ async def _run_incremental_update(
-     bundle = await _stage_and_plan(
-         data_id, data, dataset, user, node_set, preferred_loaders, chunker, policy
-     )
--
--    # A no-op with nothing to repair is the only path that writes nothing, and
--    # so the only one that records no run.
--    if bundle.get("status") == "unchanged
-```
-
----
-
-### Incident Patch 2: `eab0d282` (2026-11-12)
-**Commit Message**: fix(update): Remove released files 16 at a time
-
-The previous commit started every removal at once. A re-sync that changes
-5,000 documents releases about 10,000 files, and their storage calls all
-queue on the process's shared thread pool: measured on a local S3 server
-with 30 ms added per call, a no-op submitted to that pool by another
-request waited up to 38 s while the release ran. On local storage the
-removals never wait, so the event loop ran all of them in one go and
-stalled for 1.5 s (the one-after-another loop before it did the same).
-
-The removals now run in slices of 16. Nothing queues behind them on the
-thread pool (0.00 s wait in the same measurement), and awaiting each
-slice gives the event loop its turn (0.02 s longest stall on local
-storage). The 10,000 files take 80 s on S3 instead of 60 s all at once.
-The width only spaces the work out: every file is still removed, and
-every failure still reported.
-
-**File**: `cognee/modules/data/methods/remove_unreferenced_files.py` (modified, +21/-6)
-```diff
-@@ -11,16 +11,23 @@
- 
- logger = get_logger("remove_unreferenced_files")
- 
-+# How many removals run at once. Their storage calls run on the process's shared
-+# thread pool, and local storage does them on the event loop itself, so the
-+# files of a large re-sync started all together make every other request in the
-+# worker wait behind them. A width, not a cutoff: every file is still removed.
-+_REMOVALS_AT_ONCE = 16
-+
- 
- async def remove_unreferenced_files(locations: Iterable[str | None], outcome: str) -> None:
-     """Remove each stored file in ``locations`` that no ``Data`` row points at.
- 
-     For the files a document leaves behind when its row moves on, or that were
-     staged for a row that never took them. A file a row still uses stays, and
-     so does a file outside the data root (the user's own). The references of
--    all the files are read in one query, and the removals run at the same
--    time: each is a few storage round trips, and a re-sync can release two
--    files per changed document while it holds the dataset lock.
-+    all the files are read in one query, and the removals run
-+    ``_REMOVALS_AT_ONCE`` at a time: each is a few storage round trips, and a
-+    re-sync can release two files per changed document while it holds the
-+    dataset lock.
- 
-     Every file is tried. The ones that could not be removed are then raised
-     together as one ``StoredFileNotRemovedError``, each with its own error, and
-@@ -46,9 +53,17 @@ async def remove_unreferenced_files(locations: Iterable[str | None], outcome: st
-         raise StoredFileNotRemovedError(dict.fromkeys(candidates, reason), outcome) from error
- 
-     unreferenced = [location for location in candidates if location not in referenced]
--    errors = await asyncio.gather(
--        *(_remove_data_file(db_engine, location) for location in unreferenced)
--    )
-+    errors: list[Exception | None] = []
-+    # One slice after another, not a sliding window: awaiting each slice is what
-+    # gives the event loop its turn when the removals themselves never wait
-+    # (local storage).
-+    for start in range(0, len(unreferenced), _REMOVALS_AT_ONCE):
-+        errors += await asyncio.gather(
-+            *(
-+                _remove_data_file(db_engine, location)
-+                for location in unreferenced[start : start + _REMOVALS_AT_ONCE]
-+            )
-+        )
-     not_removed = {
-         location: f"{type(error).__name__}: {error}"
-         for location, error in zip(unreferenced, errors)
-```
-
-**File**: `cognee/tests/unit/modules/data/test_remove_unreferenced_files.py` (modified, +50/-0)
-```diff
-@@ -89,6 +89,56 @@ async def remove_data_file(location):
-     assert most_in_flight == 3
- 
- 
-+@pytest.mark.asyncio
-+async def test_a_large_release_runs_a_few_at_a_time_and_removes_every_file(monkeypatch):
-+    engine = _engine(monkeypatch)
-+    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
-+    in_flight = 0
-+    most_in_flight = 0
-+
-+    async def remove_data_file(location):
-+        nonlocal in_flight, most_in_flight
-+        in_flight += 1
-+        most_in_flight = max(most_in_flight, in_flight)
-+        await asyncio.sleep(0)
-+        in_flight -= 1
-+        engine.removed.append(location)
-+
-+    engine.remove_data_file = remove_data_file
-+    locations = [f"/data/{index}" for index in range(10)]
-+
-+    await removal.remove_unreferenced_files(locations, OUTCOME)
-+
-+    # Never more than the width in flight, and the width drops no file.
-+    assert most_in_flight == 4
-+    assert engine.removed == locations
-+
-+
-+@pytest.mark.asyncio
-+async def test_removals_that_never_wait_still_give_other_work_its_turn(monkeypatch):
-+    """Local storage removes a file without awaiting anything."""
-+    engine = _engine(monkeypatch)
-+    monkeypatch.setattr(removal, "_REMOVALS_AT_ONCE", 4)
-+    turns = 0
-+
-+    async def other_request():
-+        nonlocal turns
-+        while True:
-+            turns += 1
-+            await asyncio.sleep(0)
-+
-+    other = asyncio.create_task(other_request())
-+    try:
-+        await removal.remove_unreferenced_files([f"/data/{index}" for index in range(40)], OUTCOME)
-+    finally:
-+        other.cancel()
-+
-+    # Ten slices of four: the other request runs between them, not only once the
-+    # last file is gone.
-+    assert len(engine.removed) == 40
-+    assert turns >= 10
-+
-+
- @pytest.mark.asyncio
- async def test_a_reference_check_that_fails_reports_every_file(monkeypatch):
-     engine = _engine(monkeypatch)
-```
-
----
-
-### Incident Patch 3: `44e9180f` (2026-11-12)
-**Commit Message**: fix(ci): Run weekly proposals without a shell (SDK-1548) (#6695)
+### Incident Patch 1: `7b3c04eb` (2026-11-27)
+**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6876)
 
 <!-- .github/pull_request_template.md -->
 
 ## Description
+<!--
+Please provide a clear, human-generated description of the changes in
+this PR.
+DO NOT use AI-generated descriptions. We want to understand your thought
+process and reasoning.
+-->
+MCP will now have a fixed cognee version, not a range. Always fixed to
+the latest cognee release. When we do a cognee release, we also bump mcp
+and release it as well.
 
-The weekly ticket proposals workflow runs Claude Code over a digest of
-docs-assistant chats. That digest is text typed by anonymous users, so
-the Claude steps should not be able to run commands or change what the
-job runs next.
+## Acceptance Criteria
+<!--
+* Key requirements to the new feature or modification;
+* Proof that the changes work and meet the requirements;
+-->
 
-- Both Claude steps (Variant A and Variant B) drop
-`--dangerously-skip-permissions` and run with `--restricted`, `--tools
-"Read,Grep,Glob,Write"`, `--allowedTools
-"Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)"` and
-`--permission-prompts none`. Claude has no shell and no web access,
-reads only inside the checkout, and can write only its two output files.
-- The write limit matters because the next step runs
-`scripts/weekly_tickets/issue_body.py` from the same checkout. With a
-general write permission Claude could have changed that script.
-- The Variant B install line names only `cognee`. `cognee-cli` is a
-command of that package, not a package of its own.
+## Type of Change
+<!-- Please check the relevant option -->
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Code refactoring
+- [ ] Other (please specify):
 
-This targets `main` because the weekly schedule runs the copy of the
-workflow on the default branch. It needs a back-merge to `dev`.
+## Screenshots
+<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
 
-Linear: SDK-1548
+## Pre-submission Checklist
+<!-- Please check all boxes that apply before submitting your PR -->
+- [ ] **I have tested my changes thoroughly before submitting this PR**
+(See `CONTRIBUTING.md`)
+- [ ] **This PR contains minimal changes necessary to address the
+issue/feature**
+- [ ] My code
 
-## Accepta
-
-**File**: `.github/workflows/weekly-ticket-proposals.yml` (modified, +16/-3)
+**File**: `cognee-mcp/README.md` (modified, +1/-1)
 ```diff
-@@ -60,9 +60,15 @@ jobs:
-       - name: Analyze and propose tickets
-         env:
-           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-+        # digest.md is text typed by anonymous docs users: Claude gets no shell
-+        # and no web access, reads only inside the checkout, and can write only
-+        # its two output files, so it cannot change the script the next step runs.
-         run: |
-           claude -p "$(cat scripts/weekly_tickets/prompt.md)" \
--            --dangerously-skip-permissions \
-+            --restricted \
-+            --tools "Read,Grep,Glob,Write" \
-+            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
-+            --permission-prompts none \
-             --output-format text
-       - name: Shape issue section (tables, length cap)
-         env:
-@@ -96,7 +102,8 @@ jobs:
-       - name: Install Claude Code and cognee
-         run: |
-           npm install -g @anthropic-ai/claude-code
--          pip install cognee cognee-cli
-+          # cognee-cli is a command of the cognee package, not a package of its own.
-+          pip install cognee
-       - name: Install the cognee memory plugin
-         # Adjust the marketplace/plugin name if it differs in your setup.
-         run: |
-@@ -111,6 +118,9 @@ jobs:
-         env:
-           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-+        # digest.md is text typed by anonymous docs users: Claude gets no shell
-+        # and no web access, reads only inside the checkout, and can write only
-+        # its two output files, so it cannot change the script the next step runs.
-         run: |
-           {
-             cat scripts/weekly_tickets/prompt.md
-@@ -124,7 +134,10 @@ jobs:
-             echo "answer."
-           } > /tmp/prompt-cognee.md
-           claude -p "$(cat /tmp/prompt-cognee.md)" \
--            --dangerously-skip-permissions \
-+            --restricted \
-+            --tools "Read,Grep,Glob,Write" \
-+            --allowedTools "Read,Grep,Glob,Edit(proposals-report.md),Edit(proposals-issue.md)" \
-+            --permission-prompts none \
-             --output-format text
-       - name: Shape issue section (tables, length cap)
-         env:
+@@ -757,7 +757,7 @@ In order to use local cognee:
+     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
+     ```
+     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
+-    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
++    comment out the released `"cognee[...]==1.6.11"` line directly below it —
+     otherwise both requirements apply and uv resolves the published package instead.
+ 
+ 2. Install dependencies with uv in the mcp folder
+```
+
+**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+```diff
+@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
+ dependencies = [
+     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
+     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
+-    # Raise this floor to the first cognee release with SDK-1226 once it is on
+-    # PyPI, and release cognee-mcp only after it: older releases return no
+-    # structured evidence for the default recall answer, so it gets no refs.
+-    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
++    "cognee[postgres-binary,docs,neo4j]==1.6.11",
+     # FastMCP 3 ships tag-based visibility and the tool-search transform this
+     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
+     # that has neither. `mcp` is still a direct dependency for its wire types.
+```
+
+**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+```diff
+@@ -989,7 +989,7 @@ wheels = [
+ 
+ [[package]]
+ name = "cognee"
+-version = "1.6.9"
++version = "1.6.11"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "aiofiles" },
+@@ -1052,15 +1052,16 @@ dependencies = [
+     { name = "uvicorn" },
+     { name = "websockets" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
++    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
+ ]
+ 
+ [package.optional-dependencies]
+ docs = [
+     { name = "lxml" },
+     { name = "nltk" },
++    { name = "pandas" },
+     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
+     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
+ ]
+@@ -1108,7 +1109,7 @@ postgres-binary = [
+ [package.metadata]
+ requires-dist = [
+     { name = "certifi", specifier = ">=2026.10.19" },
+-    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
++    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
+     { name = "dateparser", specifier = ">=1.2,<2" },
+     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
+     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
+@@ -1785,16 +1786,16 @@ wheels = [
+ 
+ [[package]]
+ name = "enola-cli"
+-version = "0.5.1"
++version = "0.5.4"
+ source = { registry = "https://pypi.org/simple" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
+-    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
+-    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
+-    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
+-    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
+-    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
+```
+
+---
+
+### Incident Patch 2: `bed2666e` (2026-11-26)
+**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6877)
+
+<!-- .github/pull_request_template.md -->
+
+## Description
+<!--
+Please provide a clear, human-generated description of the changes in
+this PR.
+DO NOT use AI-generated descriptions. We want to understand your thought
+process and reasoning.
+-->
+MCP will now have a fixed cognee version, not a range. Always fixed to
+the latest cognee release. When we do a cognee release, we also bump mcp
+and release it as well.
+
+## Acceptance Criteria
+<!--
+* Key requirements to the new feature or modification;
+* Proof that the changes work and meet the requirements;
+-->
+
+## Type of Change
+<!-- Please check the relevant option -->
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Code refactoring
+- [ ] Other (please specify):
+
+## Screenshots
+<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
+
+## Pre-submission Checklist
+<!-- Please check all boxes that apply before submitting your PR -->
+- [ ] **I have tested my changes thoroughly before submitting this PR**
+(See `CONTRIBUTING.md`)
+- [ ] **This PR contains minimal changes necessary to address the
+issue/feature**
+- [ ] My code
+
+**File**: `cognee-mcp/README.md` (modified, +1/-1)
+```diff
+@@ -757,7 +757,7 @@ In order to use local cognee:
+     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
+     ```
+     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
+-    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
++    comment out the released `"cognee[...]==1.6.11"` line directly below it —
+     otherwise both requirements apply and uv resolves the published package instead.
+ 
+ 2. Install dependencies with uv in the mcp folder
+```
+
+**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+```diff
+@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
+ dependencies = [
+     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
+     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
+-    # Raise this floor to the first cognee release with SDK-1226 once it is on
+-    # PyPI, and release cognee-mcp only after it: older releases return no
+-    # structured evidence for the default recall answer, so it gets no refs.
+-    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
++    "cognee[postgres-binary,docs,neo4j]==1.6.11",
+     # FastMCP 3 ships tag-based visibility and the tool-search transform this
+     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
+     # that has neither. `mcp` is still a direct dependency for its wire types.
+```
+
+**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+```diff
+@@ -989,7 +989,7 @@ wheels = [
+ 
+ [[package]]
+ name = "cognee"
+-version = "1.6.9"
++version = "1.6.11"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "aiofiles" },
+@@ -1052,15 +1052,16 @@ dependencies = [
+     { name = "uvicorn" },
+     { name = "websockets" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
++    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
+ ]
+ 
+ [package.optional-dependencies]
+ docs = [
+     { name = "lxml" },
+     { name = "nltk" },
++    { name = "pandas" },
+     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
+     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
+ ]
+@@ -1108,7 +1109,7 @@ postgres-binary = [
+ [package.metadata]
+ requires-dist = [
+     { name = "certifi", specifier = ">=2026.10.19" },
+-    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
++    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
+     { name = "dateparser", specifier = ">=1.2,<2" },
+     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
+     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
+@@ -1785,16 +1786,16 @@ wheels = [
+ 
+ [[package]]
+ name = "enola-cli"
+-version = "0.5.1"
++version = "0.5.4"
+ source = { registry = "https://pypi.org/simple" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
+-    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
+-    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
+-    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
+-    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
+-    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6705** (2026-11-13): feat: Add the Vercel connector (SDK-1568) (@goran-radonic)
-- **PR #6704** (2026-11-13): fix: Delete forgotten dlt table's staging copy and state (SDK-1549) (@goran-radonic)
-- **PR #6702** (2026-11-13): chore: sync cognee mcp lock to cognee 1.6.8 (@siillee)
-- **PR #6701** (2026-11-13): chore: bump mcp lock (@siillee)
-- **PR #6700** (2026-11-13): feat: Add the Dropbox connector package (SDK-1512) (@goran-radonic)
-- **PR #6698** (closed): chore: release v1.6.8.rc1 (@goran-radonic)
+- **PR #6888** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6887** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6883** (2026-11-26): fix(ci): Provide the Ladybug v0.17.0 JSON extension to the migration test (SDK-1760) (@siillee)
+- **PR #6882** (2026-11-26): fix(code_graph): Read enola 0.5.4 cluster output (SDK-1759) (@Vasilije1990)
+- **PR #6880** (2026-11-26): chore: bump enola-cli to 0.5.4 (@siillee)
+- **PR #6879** (2026-11-26): chore: release v1.6.11 (@siillee)
 
 ---
 
@@ -2251,49 +1817,31 @@ Linear: SDK-1548
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update): Remove stored files no document points at (SDK-1541) (#6674)
+## X. fix cognee version in mcp; bump mcp version
 
 **RULE**:
-When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee-mcp/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cc10f9f3`: update): Remove stored files no document points at (SDK-1541) (#6674). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b3c04eb`: fix cognee version in mcp; bump mcp version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee-mcp/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Audit ledger: append-only, hash-chained provenance_entries table with one
-# row per data item (ids and the content hash, nothing the item produced). It
-# is written at the add_data_points storage seam, gets a new version when an
-# update changes the content, and a tombstone when the item is deleted
-# (written once its row is gone; dropping only its memory writes none). For
-# compliance history, not retrieval. With it on, a ledger write that fails
-# fails the ingestion, the update or the delete. With it off (the default)
-# the ledger is neither written nor read: deletes do not touch it, and the
-# routes and CLI below answer that it is off. Read it with
-# `cognee-cli provenance ...` or /api/v1/provenance.
-# External anchoring of the ledger's hash chain. With a key set,
-# `cognee-cli provenance anchor` (or POST /api/v1/provenance/anchor) signs the
-# chain head with HMAC-SHA256 and appends it to the anchor file; `provenance
-# verify --anchors` then detects a ledger that was rewritten AND re-chained.
-# Keep the key out of the database host; point the path somewhere it cannot
-# write. Default path: {SYSTEM_ROOT_DIRECTORY}/provenance_anchors.jsonl
-#PROVENANCE_ANCHOR_KEY=
-#PROVENANCE_ANC
+    comment out the released `"cognee[...]==1.6.11"` line directly below it —
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-# Audit ledger: append-only, hash-chained provenance_entries table written by
-# an opt-in cognify task. For compliance/lineage history, not retrieval.
+// Induced defect failure mode:
+    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cc10f9f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b3c04eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

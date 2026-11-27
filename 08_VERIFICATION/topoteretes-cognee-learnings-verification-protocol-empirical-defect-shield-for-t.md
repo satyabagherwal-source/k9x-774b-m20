@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T17:37:29.271Z",
+  "timestamp": "2026-11-27T11:25:13.792Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-topoteretes-cognee-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [topoteretes-cognee-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T17:37:29.271Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T11:25:13.792Z`  
 > **Learning ID**: `LEARN-EVO-topoteretes-cognee-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `1961133d`  
+> **Source Version**: `ec4dbd34`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:37:22.493Z  
+> **Timestamp**: 2026-11-27T11:25:04.799Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:37:22.488Z  
+> **Harvest Timestamp**: 2026-11-27T11:24:50.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33431 stars
+- **Stars / Engagement**: 33667 stars
 
 ---
 
@@ -1529,11 +1529,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6791** (2026-11-23): **Deleting one document's graph reads the whole dataset into memory; table loads run out of memory on a large graph**
+  *Symptoms*: ## Summary  `delete_by_document` finds the nodes and edges of one data item by fetching the source references of every node and every edge in the dataset and filtering them in Python. Its cost depends on the size of the dataset, not on the size of the document.  Cognify runs it once per table item through `purge_stale_dlt_source_artifacts`, also on a first load when nothing can be stale. Loading tables into a large dataset is therefore slow, and with several items in parallel the server runs out of memory.  ## Versions  - cognee 1.6.8, and the code path is unchanged in 1.6.9 (line numbers below are from 1.6.9) - Postgres graph store with pgvector, backend access control on  ## What happens  1. Cognify's table branch runs `purge_stale_dlt_source_artifacts` for every `DltSourceDocument` (`cognee/api/v1/cognify/cognify.py:815`). 2. That calls `delete_data_nodes_and_edges` → `try_delete_data_by_graph_provenance` → `unified.delete_by_document(dataset_id, data_id)`. 3. `delete_by_document` (`cognee/infrastructure/databases/unified/unified_store_engine.py:163`) calls `graph.find_node_source_refs_by_dataset(dataset_id)` and `graph.find_edge_source_refs_by_dataset(dataset_id)` (lines 192 and 197) and keeps the refs whose parsed data id equals `data_id`. 4. The Postgres adapter answers both with an unfiltered read of the dataset (`cognee/infrastructure/databases/graph/postgres_demo/adapter.py:1550` and `:1572`):  ```sql SELECT id, source_ref_keys FROM graph_node WHERE :dataset_id = ANY
+
 - **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
   *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
-
-- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
-  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1550,89 +1550,265 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1961133d` (2026-11-20)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552) (#6800)
+### Incident Patch 1: `7b3c04eb` (2026-11-27)
+**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6876)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+<!-- .github/pull_request_template.md -->
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+## Description
+<!--
+Please provide a clear, human-generated description of the changes in
+this PR.
+DO NOT use AI-generated descriptions. We want to understand your thought
+process and reasoning.
+-->
+MCP will now have a fixed cognee version, not a range. Always fixed to
+the latest cognee release. When we do a cognee release, we also bump mcp
+and release it as well.
+
+## Acceptance Criteria
+<!--
+* Key requirements to the new feature or modification;
+* Proof that the changes work and meet the requirements;
+-->
+
+## Type of Change
+<!-- Please check the relevant option -->
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Code refactoring
+- [ ] Other (please specify):
+
+## Screenshots
+<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
+
+## Pre-submission Checklist
+<!-- Please check all boxes that apply before submitting your PR -->
+- [ ] **I have tested my changes thoroughly before submitting this PR**
+(See `CONTRIBUTING.md`)
+- [ ] **This PR contains minimal changes necessary to address the
+issue/feature**
+- [ ] My code
+
+**File**: `cognee-mcp/README.md` (modified, +1/-1)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
-+
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+@@ -757,7 +757,7 @@ In order to use local cognee:
+     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
+     ```
+     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
+-    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
++    comment out the released `"cognee[...]==1.6.11"` line directly below it —
+     otherwise both requirements apply and uv resolves the published package instead.
  
- ## 1. Introduction
+ 2. Install dependencies with uv in the mcp folder
+```
+
+**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+```diff
+@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
+ dependencies = [
+     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
+     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
+-    # Raise this floor to the first cognee release with SDK-1226 once it is on
+-    # PyPI, and release cognee-mcp only after it: older releases return no
+-    # structured evidence for the default recall answer, so it gets no refs.
+-    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
++    "cognee[postgres-binary,docs,neo4j]==1.6.11",
+     # FastMCP 3 ships tag-based visibility and the tool-search transform this
+     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
+     # that has neither. `mcp` is still a direct dependency for its wire types.
+```
+
+**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+```diff
+@@ -989,7 +989,7 @@ wheels = [
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+ [[package]]
+ name = "cognee"
+-version = "1.6.9"
++version = "1.6.11"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "aiofiles" },
+@@ -1052,15 +1052,16 @@ dependencies = [
+     { name = "uvicorn" },
+     { name = "websockets" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
++    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
+ ]
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+ [package.optional-dependencies]
+ docs = [
+     { name = "lxml" },
+     { name = "nltk" },
++    { name = "pandas" },
+     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
+     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
+ ]
+@@ -1108,7 +1109,7 @@ postgres-binary = [
+ [package.metadata]
+ requires-dist = [
+     { name = "certifi", specifier = ">=2026.10.19" },
+-    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
++    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
+     { name = "dateparser", specifier = ">=1.2,<2" },
+     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
+     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
+@@ -1785,16 +1786,16 @@ wheels = [
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
- 
- ## 2. Preliminaries
- 
- ### 2.1 LoCoMo
- 
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+ [[package]]
+ name = "enola-cli"
+-version = "0.5.1"
++version = "0.5.4"
+ source = { registry = "https://pypi.org/simple" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
+-    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
+-    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
+-    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
+-    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
+-    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
 ```
 
 ---
 
-### Incident Patch 2: `013199f4` (2026-11-19)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552)
+### Incident Patch 2: `bed2666e` (2026-11-26)
+**Commit Message**: chore: fix cognee version in mcp; bump mcp version (#6877)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+<!-- .github/pull_request_template.md -->
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+## Description
+<!--
+Please provide a clear, human-generated description of the changes in
+this PR.
+DO NOT use AI-generated descriptions. We want to understand your thought
+process and reasoning.
+-->
+MCP will now have a fixed cognee version, not a range. Always fixed to
+the latest cognee release. When we do a cognee release, we also bump mcp
+and release it as well.
+
+## Acceptance Criteria
+<!--
+* Key requirements to the new feature or modification;
+* Proof that the changes work and meet the requirements;
+-->
+
+## Type of Change
+<!-- Please check the relevant option -->
+- [ ] Bug fix (non-breaking change that fixes an issue)
+- [ ] New feature (non-breaking change that adds functionality)
+- [ ] Code refactoring
+- [ ] Other (please specify):
+
+## Screenshots
+<!-- ADD SCREENSHOT OF LOCAL TESTS PASSING-->
+
+## Pre-submission Checklist
+<!-- Please check all boxes that apply before submitting your PR -->
+- [ ] **I have tested my changes thoroughly before submitting this PR**
+(See `CONTRIBUTING.md`)
+- [ ] **This PR contains minimal changes necessary to address the
+issue/feature**
+- [ ] My code
+
+**File**: `cognee-mcp/README.md` (modified, +1/-1)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
-+
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
+@@ -757,7 +757,7 @@ In order to use local cognee:
+     #"cognee[postgres-binary,docs,neo4j] @ file:/path/to/your/cognee"
+     ```
+     Replace `/path/to/your/cognee` with the absolute path to your cognee checkout, and
+-    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
++    comment out the released `"cognee[...]==1.6.11"` line directly below it —
+     otherwise both requirements apply and uv resolves the published package instead.
  
- ## 1. Introduction
+ 2. Install dependencies with uv in the mcp folder
+```
+
+**File**: `cognee-mcp/pyproject.toml` (modified, +1/-4)
+```diff
+@@ -11,10 +11,7 @@ requires-python = ">=3.10,<3.14"
+ dependencies = [
+     # For local cognee repo usage remove comment below and add absolute path to cognee. Then run `uv sync --reinstall` in the mcp folder on local cognee changes.
+     #"cognee[postgres,docs,neo4j] @ file:/Users/igorilic/Desktop/cognee",
+-    # Raise this floor to the first cognee release with SDK-1226 once it is on
+-    # PyPI, and release cognee-mcp only after it: older releases return no
+-    # structured evidence for the default recall answer, so it gets no refs.
+-    "cognee[postgres-binary,docs,neo4j]>=1.5.4,<2.0.0",
++    "cognee[postgres-binary,docs,neo4j]==1.6.11",
+     # FastMCP 3 ships tag-based visibility and the tool-search transform this
+     # server relies on; the FastMCP vendored in the `mcp` SDK is an older fork
+     # that has neither. `mcp` is still a direct dependency for its wire types.
+```
+
+**File**: `cognee-mcp/uv.lock` (modified, +13/-12)
+```diff
+@@ -989,7 +989,7 @@ wheels = [
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+ [[package]]
+ name = "cognee"
+-version = "1.6.9"
++version = "1.6.11"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "aiofiles" },
+@@ -1052,15 +1052,16 @@ dependencies = [
+     { name = "uvicorn" },
+     { name = "websockets" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/1b/33/51f53dc617154f819a069943366955691d210f752cd93d85b367ecec15ef/cognee-1.6.9.tar.gz", hash = "sha256:a2ca5d8e539dfd8575a977a6d205fece26b8bfb2de7720dbe7886d758b5d9df3", size = 43159695, upload-time = "2026-11-18T11:56:44.181Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/8e/41/0be19a22592dd8f974bd75220b0d2500368502a804686f6eb5a81aebe87c/cognee-1.6.11.tar.gz", hash = "sha256:21057ab36646579e4c8a7fcfba7972410403c3331ec14869cd0acc26268f71f8", size = 43471452, upload-time = "2026-11-26T17:12:13.74Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/82/c8/a6039e0c7b86b5ecd5c2c6b2e9458586cc9b0c85ef93c710131e036081dc/cognee-1.6.9-py3-none-any.whl", hash = "sha256:f1a7dcedbeee4f847d0bb5733807b02676f56123231b8ce073614eeff5fb16ac", size = 24801166, upload-time = "2026-11-18T11:56:40.23Z" },
++    { url = "https://files.pythonhosted.org/packages/34/95/07a550a50903fadb6ff90894586c703908a64a2c9a872d6a8ced9810c0c0/cognee-1.6.11-py3-none-any.whl", hash = "sha256:d182df702670caec98f4ca3e53e78741df8ff6aa3a286f067c9f51295f0b2931", size = 25173607, upload-time = "2026-11-26T17:12:09.226Z" },
+ ]
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+ [package.optional-dependencies]
+ docs = [
+     { name = "lxml" },
+     { name = "nltk" },
++    { name = "pandas" },
+     { name = "unstructured", version = "0.18.32", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version < '3.11'" },
+     { name = "unstructured", version = "0.22.23", source = { registry = "https://pypi.org/simple" }, extra = ["csv", "doc", "docx", "epub", "md", "odt", "org", "pdf", "ppt", "pptx", "rst", "rtf", "tsv", "xlsx"], marker = "python_full_version >= '3.11'" },
+ ]
+@@ -1108,7 +1109,7 @@ postgres-binary = [
+ [package.metadata]
+ requires-dist = [
+     { name = "certifi", specifier = ">=2026.10.19" },
+-    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = ">=1.5.4,<2.0.0" },
++    { name = "cognee", extras = ["postgres-binary", "docs", "neo4j"], specifier = "==1.6.11" },
+     { name = "dateparser", specifier = ">=1.2,<2" },
+     { name = "fastmcp", specifier = ">=3.4.0,<4.0.0" },
+     { name = "httpx", specifier = ">=0.27.0,<1.0.0" },
+@@ -1785,16 +1786,16 @@ wheels = [
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
- 
- ## 2. Preliminaries
- 
- ### 2.1 LoCoMo
- 
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+ [[package]]
+ name = "enola-cli"
+-version = "0.5.1"
++version = "0.5.4"
+ source = { registry = "https://pypi.org/simple" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/a9/95/1e67f8146434e71aac9a35b7bc687d579653845dca6aad1f403edb08d868/enola_cli-0.5.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:b72959c951c2eb9510d3cc5edfd8ef484716a5cffe9dc3a57db62488db4658cd", size = 13006808, upload-time = "2026-11-11T08:13:03.019Z" },
+-    { url = "https://files.pythonhosted.org/packages/d6/89/2d872e3bd5d0325aad37ae2506752263288160411b7097f8463d5024f761/enola_cli-0.5.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:a75c305ee70f51b4e3c0de7ff4adb8646eb225146477bd2d722dffee895ffcb7", size = 13797010, upload-time = "2026-11-11T08:13:05.853Z" },
+-    { url = "https://files.pythonhosted.org/packages/b6/ce/1cc7bff6aa2d008b1423dea0f7117d9c4ace95c2e9537d794c0998ca6f97/enola_cli-0.5.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e10f7e79f56d663ee5c81f1b03e4c1833f8d2a4c31a0ce195191fccbae7d6a9a", size = 12546566, upload-time = "2026-11-11T08:13:08.805Z" },
+-    { url = "https://files.pythonhosted.org/packages/b8/2c/3bbe69b1cb0fc684d5bd3971f56f26c863377ad508379324c9dca9e58125/enola_cli-0.5.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a1e0c0bbbaa1269a5c38802317dc039eed48337dd9d4099e1c8a917ea583d62d", size = 13767631, upload-time = "2026-11-11T08:13:11.63Z" },
+-    { url = "https://files.pythonhosted.org/packages/f6/bb/16705b7aa974284350cdb142eb13330bdcec44998b4603a38572a1e95f81/enola_cli-0.5.1-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e82ecf446181674bff56f2743efe14947550770b4b85e540b70211a3f593c209", size = 12547345, upload-time = "2026-11-11T08:13:14.303Z" },
+-    { url = "https://files.pythonhosted.org/packages/c4/1f/5c001b42e0c520da2f23f1dbe909d05144138a9d6222adb85e4cd586fb17/enola_cli-0.5.1-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c7b581ffee39be05bbdd3bb60ae193ba5415bf54bc643e8fcf720bf4cc1fa158", size = 13764243, upload-time = "2026-11-11T08:13:17.265Z" },
+-    { url = "https://files.pythonhosted.org/packages/71/ff/c3bad27520754d6d3b8f14df2253e8a4c257df8d787fb881681d332b4aa6/enola_cli-0.5.1-py3-none-win_amd64.whl", hash = "sha256:ea74233628bdda55841e91beb76d51e592de117872b9abfc17faf3baa7cabd5d", size = 13971949, upload-t
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6807** (closed): fix(chunks): run the date-hint pass off the event loop (@pazonex)
-- **PR #6806** (2026-11-20): docs(graph): Describe Node neighbours as a copy (SDK-1684) (@dexters1)
-- **PR #6805** (2026-11-20): chore: Change default LLM model to gpt-6-luna (@dexters1)
-- **PR #6801** (2026-11-20): fix(graph): Look up one document's source refs (@dexters1)
-- **PR #6800** (2026-11-20): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
-- **PR #6799** (closed): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
+- **PR #6888** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6887** (2026-11-27): chore: bump mcp to 0.5.10 (@siillee)
+- **PR #6883** (2026-11-26): fix(ci): Provide the Ladybug v0.17.0 JSON extension to the migration test (SDK-1760) (@siillee)
+- **PR #6882** (2026-11-26): fix(code_graph): Read enola 0.5.4 cluster output (SDK-1759) (@Vasilije1990)
+- **PR #6880** (2026-11-26): chore: bump enola-cli to 0.5.4 (@siillee)
+- **PR #6879** (2026-11-26): chore: release v1.6.11 (@siillee)
 
 ---
 
@@ -1652,38 +1828,31 @@ records don't back, such as the default depth being more economical.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Revise the LoCoMo technical report (COG-7552)
+## X. fix cognee version in mcp; bump mcp version
 
 **RULE**:
-When implementing operations in `cognee/eval_framework/locomo/REPORT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee-mcp/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1961133d`: docs: Revise the LoCoMo technical report (COG-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b3c04eb`: fix cognee version in mcp; bump mcp version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/eval_framework/locomo/REPORT.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee-mcp/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Benchmarking cognee on LoCoMo - Technical Evaluation Report
-
-*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
-This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
-cognee answered **~91%** of the 1,762 evaluated questions correctly according to the 
+    comment out the released `"cognee[...]==1.6.11"` line directly below it —
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-# Cognee on LoCoMo - Technical Evaluation Report
-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation 
+    comment out the released `"cognee[...]>=1.5.0,<2.0.0"` line directly below it —
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1961133d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b3c04eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-N22L",
-    "timestamp": "2026-11-26T04:47:43.677Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-XRCJ",
-    "timestamp": "2026-11-26T04:56:02.995Z",
-    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-    "contentHash": "ec1c9e229c9a82a75b6cc5f0c5504dcb7d32a54457b482e563412f08d6ab2e77",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-XSBQ",
     "timestamp": "2026-11-26T04:56:04.262Z",
     "repository": "restatedev/restate",
@@ -7490,6 +7460,36 @@
     "repository": "meta/folly",
     "learningId": "learn-github-meta-folly",
     "contentHash": "f8382e60d3013ed492da15f7c0f9d338dee291fe4cc9c12ba0aee36977039a04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9LUF",
+    "timestamp": "2026-11-27T11:24:50.775Z",
+    "repository": "msasikanth/twine",
+    "learningId": "learn-github-msasikanth-twine",
+    "contentHash": "d3c810030d3c7dffffe4e85034b1d29e39f506c590188255e92375261142c7e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9XX8",
+    "timestamp": "2026-11-27T11:25:06.428Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

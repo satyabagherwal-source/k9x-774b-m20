@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T02:29:35.546Z",
+  "timestamp": "2026-11-27T11:25:11.185Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-msasikanth-twine-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [msasikanth-twine-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T02:29:35.546Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T11:25:11.185Z`  
 > **Learning ID**: `LEARN-EVO-msasikanth-twine-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source**: github ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
-> **Source Version**: `18235a59`  
+> **Source Version**: `0ad4751d`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:28:50.476Z  
+> **Timestamp**: 2026-11-27T11:24:49.130Z  
 > **Learning ID**: `learn-github-msasikanth-twine`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:28:50.471Z  
+> **Harvest Timestamp**: 2026-11-27T11:24:43.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Twine: A multiplatform RSS reader built using Kotlin and Compose
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2451 stars
+- **Stars / Engagement**: 2452 stars
 
 ---
 
@@ -698,123 +698,466 @@ object PermissionRequestBridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18235a59` (2026-11-24)
-**Commit Message**: Keep list-detail scene active when expanding reader pane
+### Incident Patch 1: `e390a95b` (2026-11-25)
+**Commit Message**: Add debug overrides for billing, in-app rating, and cache clearing
 
-Set shouldHandleSinglePaneLayout on ListDetailSceneStrategy for split-capable, desktop, and previously split layouts so expanding and collapsing the reader stays within ThreePaneScaffoldScene's LookaheadScope instead of switching to SinglePaneScene. Also clear horizontal spacer and hinge excluded bounds when expanded and add directive unit tests.
+- Support ForcePro/ForceFree subscription overrides across all BillingHandler implementations and refresh SettingsViewModel when changed.
+- Add ignoreCriteria option to InAppRating.request() to trigger prompts on demand in debug builds.
+- Add clearCache helpers to FavIconImageLoader and SeedColorExtractor.
 
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt` (modified, +77/-16)
+**File**: `shared/src/androidFoss/kotlin/dev/sasikanth/rss/reader/billing/BillingHandler.kt` (modified, +15/-2)
 ```diff
-@@ -40,14 +40,17 @@ import androidx.compose.material3.SnackbarHostState
- import androidx.compose.material3.VerticalDragHandle
- import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
- import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
-+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
- import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
- import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
- import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
- import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.CompositionLocalProvider
- import androidx.compose.runtime.LaunchedEffect
-+import androidx.compose.runtime.SideEffect
- import androidx.compose.runtime.compositionLocalOf
-+import androidx.compose.runtime.derivedStateOf
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableFloatStateOf
- import androidx.compose.runtime.mutableStateOf
-@@ -639,36 +642,62 @@ fun App(
-       val windowWidth = with(density) { LocalWindowInfo.current.containerSize.width.toDp() }
-       val minReaderPaneWidth = 360.dp
-       val minListPaneContentWidth = 320.dp
-+      val isSplitCapableWindow =
-+        windowInfo.windowSizeClass.isWidthAtLeastBreakpoint(
-+          WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND
-+        )
-+      val hasReaderOnBackStack by remember {
-+        derivedStateOf { backStack.any { it is Screen.Reader } }
-+      }
-+      val isReaderExpanded =
-+        isSplitCapableWindow && isReaderPaneExpanded.value && hasReaderOnBackStack
-+      val baseDirective = remember(windowInfo) { calculatePaneScaffoldDirective(windowInfo) }
-       val paneScaffoldDirective =
--        remember(
--          windowInfo,
--          windowWidth,
--          isReaderPaneExpanded.value,
--          isSideNavigationExpanded.value,
--        ) {
--          val directive = calculatePaneScaffoldDirective(windowInfo)
--          val requiredTwoPaneWidth =
--            listPaneWidth + directive.horizontalPartitionSpacerSize + minReaderPaneWidth
--          when {
--            isReaderPaneExpanded.value -> directive.copy(maxHorizontalPartitions = 1)
--            windowWidth < requiredTwoPaneWidth -> directive.copy(maxHorizontalPartitions = 1)
--            else -> directive
--          }
-+        remember(baseDirective, windowWidth, listPaneWidth, isReaderExpanded) {
-+          calculateReaderPaneScaffoldDirective(
-+            baseDirective = baseDirective,
-+            windowWidth = windowWidth,
-+            listPaneWidth = listPaneWidth,
-+            minReaderPaneWidth = minReaderPaneWidth,
-+            isReaderExpanded = isReaderExpanded,
-+          )
-         }
-+      var hasEnteredListDetailScaffold by remember {
-+        mutableStateOf(
-+          shouldUseListDetailForSinglePane(
-+            isDesktop = platform == Platform.Desktop,
-+            isSplitCapableWindow = isSplitCapableWindow,
-+            hasEnteredListDetailScaffold = false,
-+            isReaderExpanded = isReaderExpanded,
-+          )
-+        )
-+      }
-+      SideEffect {
-+        if (paneScaffoldDirective.maxHorizontalPartitions > 1 && !hasEnteredListDetailScaffold) {
-+          hasEnteredListDetailScaffold = true
-+        }
-+      }
-+      val shouldHandleSinglePaneLayout =
-+        shouldUseListDetailForSinglePane(
-+          isDesktop = platform == Platform.Desktop,
-+          isSplitCapableWindow = isSplitCapableWindow,
-+          hasEnteredListDetailScaffold = hasEnteredListDetailScaffold,
-+          isReaderExpanded = isReaderExpanded,
-+        )
+@@ -11,22 +11,35 @@
  
-       var listPaneContentWidth by rememberSaveable { mutableStateOf(420f) }
-       val navigationPaneWidth = if (hasInlineNavigation) navigationWidth else 0.dp
-       val listPaneWidthLimits =
-         with(density) {
-           val min = (navigationPaneWidth + minListPaneContentWidth).roundToPx()
-           val max =
--            (windowWidth - paneScaffoldDirective.horizontalPartitionSpacerSize - minReaderPaneWidth)
-+            (windowWidth - baseDirective.horizontalPartitionSpacerSize - minReaderPaneWidth)
-               .roundToPx()
-               .coerceAtLeast(min)
-           min..max
-         }
-       val halfSpacerPx =
--        with(density) { paneScaffoldDirective.horizontalPartitionSpacerSize.roundToPx() } / 2
-+        with(density) { baseDirective.horizontalPartitionSpacerSize.roundToPx() } / 2
-       val dividerCenterPx = remember { mutableFloatStateOf(Float.NaN) }
-       val paneExpansionState =
-         rememberPaneExpansionState(
-@@ -693,6 +722,7 @@ fun App(
-       }
-       val listDetailSceneStrategy =
-         rememberListDetailSceneStrategy<NavKey>(
-+          shouldHandleSinglePaneLayout = shouldHandleSinglePaneLayout,
-           directive = paneScaffoldDirective,
-           paneExpansionState = paneExpansionState,
-          
+ package dev.sasikanth.rss.reader.billing
+ 
++import dev.sasikanth.rss.reader.app.AppInfo
++import dev.sasikanth.rss.reader.data.repository.DebugSettingsRepository
++import dev.sasikanth.rss.reader.data.repository.DebugSubscriptionOverride
+ import dev.sasikanth.rss.reader.di.scopes.AppScope
+ import me.tatarka.inject.annotations.Inject
+ 
+ @Inject
+ @AppScope
+-actual class BillingHandler {
++actual class BillingHandler(
++  private val appInfo: AppInfo,
++  private val debugSettingsRepository: DebugSettingsRepository,
++) {
+ 
+   actual suspend fun isSubscribed(): Boolean {
+-    return true
++    return customerResult() is SubscriptionResult.Subscribed
+   }
+ 
+   actual suspend fun canSubscribe(): Boolean {
+     return false
+   }
+ 
+   actual suspend fun customerResult(): SubscriptionResult {
++    if (appInfo.isDebugBuild) {
++      return when (debugSettingsRepository.subscriptionOverrideImmediate()) {
++        DebugSubscriptionOverride.ForceFree -> SubscriptionResult.NotSubscribed
++        DebugSubscriptionOverride.ForcePro,
++        DebugSubscriptionOverride.Default -> SubscriptionResult.Subscribed
++      }
++    }
+     return SubscriptionResult.Subscribed
+   }
+ 
 ```
 
-**File**: `shared/src/commonTest/kotlin/dev/sasikanth/rss/reader/app/ListDetailPaneDirectiveTest.kt` (added, +146/-0)
+**File**: `shared/src/androidFoss/kotlin/dev/sasikanth/rss/reader/utils/AndroidInAppRating.kt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,146 @@
+@@ -19,7 +19,7 @@ import me.tatarka.inject.annotations.Inject
+ @ActivityScope
+ class AndroidInAppRating(private val activity: ComponentActivity) : InAppRating {
+ 
+-  override suspend fun request() {
++  override suspend fun request(ignoreCriteria: Boolean) {
+     // No-op
+   }
+ }
+```
+
+**File**: `shared/src/androidFull/kotlin/dev/sasikanth/rss/reader/billing/BillingHandler.kt` (modified, +16/-1)
+```diff
+@@ -24,6 +24,9 @@ import com.revenuecat.purchases.kmp.ktx.awaitPurchase
+ import com.revenuecat.purchases.kmp.ktx.awaitRestore
+ import com.revenuecat.purchases.kmp.models.CacheFetchPolicy
+ import com.revenuecat.purchases.kmp.models.PackageType as RCPackageType
++import dev.sasikanth.rss.reader.app.AppInfo
++import dev.sasikanth.rss.reader.data.repository.DebugSettingsRepository
++import dev.sasikanth.rss.reader.data.repository.DebugSubscriptionOverride
+ import dev.sasikanth.rss.reader.di.scopes.AppScope
+ import dev.sasikanth.rss.reader.util.DispatchersProvider
+ import dev.sasikanth.rss.reader.utils.Constants.ENTITLEMENT_PREMIUM
+@@ -37,7 +40,11 @@ import twine.shared.generated.resources.premiumPaywallPackageYearly
+ 
+ @Inject
+ @AppScope
+-actual class BillingHandler(private val dispatchersProvider: DispatchersProvider) {
++actual class BillingHandler(
++  private val appInfo: AppInfo,
++  private val debugSettingsRepository: DebugSettingsRepository,
++  private val dispatchersProvider: DispatchersProvider,
++) {
+ 
+   private val purchases by lazy { Purchases.sharedInstance }
+ 
+@@ -50,6 +57,14 @@ actual class BillingHandler(private val dispatchersProvider: DispatchersProvider
+   }
+ 
+   actual suspend fun customerResult(): SubscriptionResult {
++    if (appInfo.isDebugBuild) {
++      when (debugSettingsRepository.subscriptionOverrideImmediate()) {
++        DebugSubscriptionOverride.ForcePro -> return SubscriptionResult.Subscribed
++        DebugSubscriptionOverride.ForceFree -> return SubscriptionResult.NotSubscribed
++        DebugSubscriptionOverride.Default -> Unit
++      }
++    }
++
+     try {
+       val customerInfo =
+         withContext(dispatchersProvider.io) {
+```
+
+**File**: `shared/src/androidFull/kotlin/dev/sasikanth/rss/reader/utils/AndroidInAppRating.kt` (modified, +18/-14)
+```diff
+@@ -36,21 +36,23 @@ class AndroidInAppRating(
+   private val settingsRepository: SettingsRepository,
+ ) : InAppRating {
+ 
+-  override suspend fun request() {
++  override suspend fun request(ignoreCriteria: Boolean) {
+     val now = Clock.System.now()
+-    val installDate = settingsRepository.installDate.firstOrNull() ?: now
+-    val lastPromptDate =
+-      settingsRepository.lastReviewPromptDate.firstOrNull() ?: Instant.DISTANT_PAST
+-    val sessionCount = settingsRepository.userSessionCount.first()
+-    val canShowReviewPrompt =
+-      canShowReviewPrompt(
+-        currentTime = now,
+-        installDate = installDate,
+-        lastPromptDate = lastPromptDate,
+-        sessionCount = sessionCount,
+-      )
++    if (!ignoreCriteria) {
++      val installDate = settingsRepository.installDate.firstOrNull() ?: now
++      val lastPromptDate =
++        settingsRepository.lastReviewPromptDate.firstOrNull() ?: Instant.DISTANT_PAST
++      val sessionCount = settingsRepository.userSessionCount.first()
++      val canShowReviewPrompt =
++        canShowReviewPrompt(
++          currentTime = now,
++          installDate = installDate,
++          lastPromptDate = lastPromptDate,
++          sessionCount = sessionCount,
++        )
+ 
+-    if (!canShowReviewPrompt) return
++      if (!canShowReviewPrompt) return
++    }
+ 
+     val manager = ReviewManagerFactory.create(activity)
+     val request = suspendCancellableCoroutine { continuation ->
+@@ -65,7 +67,9 @@ class AndroidInAppRating(
+ 
+     if (request != null) {
+       manager.launchReviewFlow(activity, request)
+-      settingsRepository.updateLastReviewPromptDate(now)
++      if (!ignoreCriteria) {
++        settingsRepository.updateLastReviewPromptDate(now)
++      }
+     }
+   }
+ }
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/favicons/FavIconImageLoader.kt` (modified, +6/-0)
+```diff
+@@ -51,6 +51,12 @@ object FavIconImageLoader {
+     reference.value?.memoryCache?.clear()
+   }
+ 
++  fun clearCache(context: PlatformContext) {
++    val loader = get(context)
++    loader.memoryCache?.clear()
++    loader.diskCache?.clear()
++  }
++
+   @OptIn(ExperimentalCoilApi::class)
+   private fun newImageLoader(context: PlatformContext): ImageLoader {
+     var imageLoader: ImageLoader? = null
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/settings/SettingsViewModel.kt` (modified, +10/-0)
+```diff
+@@ -40,6 +40,7 @@ import dev.sasikanth.rss.reader.data.repository.AppThemeMode
+ import dev.sasikanth.rss.reader.data.repository.AudioMarkAsReadThreshold
+ import dev.sasikanth.rss.reader.data.repository.BlockedWordsRepository
+ import dev.sasikanth.rss.reader.data.repository.BrowserType
++import dev.sasikanth.rss.reader.data.repository.DebugSettingsRepository
+ import dev.sasikanth.rss.reader.data.repository.FeedsOrderBy
+ import dev.sasikanth.rss.reader.data.repository.HomeViewMode
+ import dev.sasikanth.rss.reader.data.repository.MarkAsReadOn
+@@ -59,6 +60,7 @@ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.StateFlow
+ import kotlinx.coroutines.flow.combine
++import kotlinx.coroutines.flow.drop
+ import kotlinx.coroutines.flow.first
+ import kotlinx.coroutines.flow.flatMapLatest
+ import kotlinx.coroutines.flow.flowOf
+@@ -75,6 +77,7 @@ class SettingsViewModel(
+   private val rssRepository: RssRepository,
+   val appInfo: AppInfo,
+   private val settingsRepository: SettingsRepository,
++  private val debugSettingsRepository: DebugSettingsRepository,
+   private val userRepository: UserRepository,
+   private val opmlManager: OpmlManager,
+   private val billingHandler: BillingHandler,
+@@ -264,6 +267,13 @@ class SettingsViewModel(
+       }
+       .onEach { defaultSource -> _state.update { it.copy(defaultSource = defaultSource) } }
+       .launchIn(viewModelScope)
++
++    if (appInfo.isDebugBuild) {
++      debugSettingsRepository.subscriptionOverride
++        .drop(1)
++        .onEach { loadSubscriptionStatus() }
++        .launchIn(viewModelScope)
++    }
+   }
+ 
+   fun dispatch(event: SettingsEvent) {
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/ui/SeedColorExtractor.kt` (modified, +4/-0)
+```diff
+@@ -90,6 +90,10 @@ class SeedColorExtractor(
+       lruCache[url]
+     }
+ 
++  fun clearCache() {
++    lruCache.evictAll()
++  }
++
+   private suspend fun extractSeedColor(url: String): Color? {
+     val request =
+       ImageRequest.Builder(platformContext.value)
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/utils/InAppRating.kt` (modified, +2/-2)
+```diff
+@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.hours
+ import kotlin.time.Instant
+ 
+ interface InAppRating {
+-  suspend fun request()
++  suspend fun request(ignoreCriteria: Boolean = false)
+ 
+   fun canShowReviewPrompt(
+     currentTime: Instant,
+@@ -46,5 +46,5 @@ interface InAppRating {
+ val LocalInAppRating = staticCompositionLocalOf<InAppRating> { NoopInAppRating }
+ 
+ private object NoopInAppRating : InAppRating {
+-  override suspend fun request() {}
++  override suspend fun request(ignoreCriteria: Boolean) {}
+ }
+```
+
+---
+
+### Incident Patch 2: `0ad4751d` (2026-11-25)
+**Commit Message**: Add Developer Settings screen and wire debug overlays
+
+- Add DebugSettingsViewModel, DebugSettingsScreen, and Screen.SettingsDebug navigation entry exposed in Settings on debug/staging builds.
+- Wire FPS/window-size overlays and runtime Kermit minimum log severity into AppViewModel and App.
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt` (modified, +18/-0)
+```diff
+@@ -117,6 +117,8 @@ import dev.sasikanth.rss.reader.changelog.ui.ChangelogSheet
+ import dev.sasikanth.rss.reader.core.model.local.ResolvedPost
+ import dev.sasikanth.rss.reader.core.model.local.ThemeVariant
+ import dev.sasikanth.rss.reader.data.repository.AppThemeMode
++import dev.sasikanth.rss.reader.debug.DebugSettingsViewModel
++import dev.sasikanth.rss.reader.debug.ui.DebugPerformanceOverlay
+ import dev.sasikanth.rss.reader.discovery.DiscoveryViewModel
+ import dev.sasikanth.rss.reader.feed.FeedViewModel
+ import dev.sasikanth.rss.reader.feeds.FeedsViewModel
+@@ -218,6 +220,7 @@ fun App(
+   searchViewModel: () -> SearchViewModel,
+   bookmarksViewModel: () -> BookmarksViewModel,
+   settingsViewModel: () -> SettingsViewModel,
++  debugSettingsViewModel: () -> DebugSettingsViewModel,
+   accountSelectionViewModel: () -> AccountSelectionViewModel,
+   freshRssLoginViewModel: () -> FreshRssLoginViewModel,
+   minifluxLoginViewModel: () -> MinifluxLoginViewModel,
+@@ -686,6 +689,13 @@ fun App(
+               navigator = navigator,
+             )
+ 
++            settingsDebugScreen(
++              modifier = screenModifier,
++              debugSettingsViewModel = debugSettingsViewModel,
++              openChangelog = openChangelog,
++              navigator = navigator,
++            )
++
+             feedInfoDialog(feedViewModel = feedViewModel, navigator = navigator)
+ 
+             groupSelectionDialog(
+@@ -838,6 +848,14 @@ fun App(
+           modifier =
+             Modifier.align(Alignment.BottomCenter).windowInsetsPadding(WindowInsets.safeDrawing),
+         )
++
++        if (appState.showFpsOverlay || appState.showWindowSizeOverlay) {
++          DebugPerformanceOverlay(
++            showFps = appState.showFpsOverlay,
++            showWindowSize = appState.showWindowSizeOverlay,
++            modifier = Modifier.fillMaxSize(),
++          )
++        }
+       }
+ 
+       if (appState.showChangelog) {
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/AppState.kt` (modified, +4/-0)
+```diff
+@@ -29,6 +29,8 @@ data class AppState(
+   val blockImages: Boolean,
+   val showChangelog: Boolean,
+   val versionName: String,
++  val showFpsOverlay: Boolean = false,
++  val showWindowSizeOverlay: Boolean = false,
+ ) {
+ 
+   companion object {
+@@ -42,6 +44,8 @@ data class AppState(
+         blockImages = false,
+         showChangelog = false,
+         versionName = "",
++        showFpsOverlay = false,
++        showWindowSizeOverlay = false,
+       )
+   }
+ }
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/AppViewModel.kt` (modified, +23/-0)
+```diff
+@@ -19,18 +19,21 @@ package dev.sasikanth.rss.reader.app
+ import androidx.compose.runtime.Stable
+ import androidx.lifecycle.ViewModel
+ import androidx.lifecycle.viewModelScope
++import co.touchlab.kermit.Logger
+ import dev.sasikanth.rss.reader.core.model.local.Feed
+ import dev.sasikanth.rss.reader.core.model.local.FeedGroup
+ import dev.sasikanth.rss.reader.core.model.local.PostsType
+ import dev.sasikanth.rss.reader.core.model.local.ThemeVariant
+ import dev.sasikanth.rss.reader.data.refreshpolicy.RefreshPolicy
+ import dev.sasikanth.rss.reader.data.repository.AppThemeMode
++import dev.sasikanth.rss.reader.data.repository.DebugSettingsRepository
+ import dev.sasikanth.rss.reader.data.repository.ObservableActiveSource
+ import dev.sasikanth.rss.reader.data.repository.RssRepository
+ import dev.sasikanth.rss.reader.data.repository.SettingsRepository
+ import dev.sasikanth.rss.reader.data.sync.SyncCoordinator
+ import dev.sasikanth.rss.reader.data.sync.auth.OAuthManager
+ import dev.sasikanth.rss.reader.data.utils.PostsFilterUtils
++import dev.sasikanth.rss.reader.debug.toKermitSeverity
+ import dev.sasikanth.rss.reader.di.scopes.ActivityScope
+ import dev.sasikanth.rss.reader.platform.LinkHandler
+ import dev.sasikanth.rss.reader.reader.ReaderScreenArgs
+@@ -46,6 +49,7 @@ import kotlinx.coroutines.flow.combine
+ import kotlinx.coroutines.flow.filter
+ import kotlinx.coroutines.flow.first
+ import kotlinx.coroutines.flow.launchIn
++import kotlinx.coroutines.flow.onEach
+ import kotlinx.coroutines.flow.update
+ import kotlinx.coroutines.launch
+ import kotlinx.datetime.TimeZone
+@@ -59,6 +63,7 @@ class AppViewModel(
+   private val refreshPolicy: RefreshPolicy,
+   private val rssRepository: RssRepository,
+   private val settingsRepository: SettingsRepository,
++  private val debugSettingsRepository: DebugSettingsRepository,
+   private val observableActiveSource: ObservableActiveSource,
+   private val syncCoordinator: SyncCoordinator,
+   private val oAuthManager: OAuthManager,
+@@ -111,6 +116,24 @@ class AppViewModel(
+         }
+       }
+       .launchIn(viewModelScope)
++
++    if (appInfo.isDebugBuild) {
++      combine(
++          debugSettingsRepository.showFpsOverlay,
++          debugSettingsRepository.showWindowSizeOverlay,
++          ::Pair,
++        )
++        .onEach { (showFpsOverlay, showWindowSizeOverlay) ->
++          _state.update {
++            it.copy(showFpsOverlay = showFpsOverlay, showWindowSizeOverlay = showWindowSizeOverlay)
++          }
++        }
++        .launchIn(viewModelScope)
++
++      debugSettingsRepository.logSeverity
++        .onEach { severity -> Logger.setMinSeverity(severity.toKermitSeverity()) }
++        .launchIn(viewModelScope)
++    }
+   }
+ 
+   fun onPostOpened(postId: String) {
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/Navigation.kt` (modified, +22/-0)
+```diff
+@@ -54,6 +54,8 @@ import dev.sasikanth.rss.reader.blockedwords.BlockedWordsViewModel
+ import dev.sasikanth.rss.reader.bookmarks.BookmarksViewModel
+ import dev.sasikanth.rss.reader.bookmarks.ui.BookmarksScreen
+ import dev.sasikanth.rss.reader.core.model.local.ResolvedPost
++import dev.sasikanth.rss.reader.debug.DebugSettingsViewModel
++import dev.sasikanth.rss.reader.debug.ui.DebugSettingsScreen
+ import dev.sasikanth.rss.reader.discovery.DiscoveryViewModel
+ import dev.sasikanth.rss.reader.discovery.ui.DiscoveryScreen
+ import dev.sasikanth.rss.reader.feed.FeedViewModel
+@@ -314,6 +316,7 @@ fun EntryProviderScope<NavKey>.mainScreen(
+             openServicesSettings = { navigator.navigate(Screen.SettingsServices) },
+             openDataSettings = { navigator.navigate(Screen.SettingsData) },
+             openAppInfoSettings = { navigator.navigate(Screen.SettingsAppInfo) },
++            openDebugSettings = { navigator.navigate(Screen.SettingsDebug) },
+             openPaywall = { navigator.navigate(Screen.Paywall) },
+             modifier = screenModifier,
+           )
+@@ -426,6 +429,25 @@ fun EntryProviderScope<NavKey>.settingsAppInfoScreen(
+   }
+ }
+ 
++fun EntryProviderScope<NavKey>.settingsDebugScreen(
++  debugSettingsViewModel: () -> DebugSettingsViewModel,
++  openChangelog: () -> Unit,
++  navigator: AppNavigator,
++  modifier: Modifier = Modifier,
++) {
++  entry<Screen.SettingsDebug> {
++    val viewModel = viewModel { debugSettingsViewModel() }
++    DebugSettingsScreen(
++      modifier = modifier,
++      viewModel = viewModel,
++      goBack = { navigator.goBack() },
++      openPaywall = { navigator.navigate(Screen.Paywall) },
++      openChangelog = openChangelog,
++      navigateToOnboarding = { navigator.navigateToOnboarding() },
++    )
++  }
++}
++
+ fun EntryProviderScope<NavKey>.freshRssLoginScreen(
+   freshRssLoginViewModel: () -> FreshRssLoginViewModel,
+   navigator: AppNavigator,
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/Screens.kt` (modified, +2/-0)
+```diff
+@@ -65,6 +65,8 @@ sealed interface Screen : NavKey {
+ 
+   @Serializable data object SettingsAppInfo : Screen
+ 
++  @Serializable data object SettingsDebug : Screen
++
+   @Serializable data object AccountSelection : Screen
+ 
+   @Serializable data class Discovery(val isFromOnboarding: Boolean = false) : Screen
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/debug/DebugLogSeverityExt.kt` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
 +/*
 + * Copyright 2026 Sasikanth Miriyampalli
 + *
@@ -831,145 +1174,323 @@ Set shouldHandleSinglePaneLayout on ListDetailSceneStrategy for split-capable, d
 + * limitations under the License.
 + *
 + */
++package dev.sasikanth.rss.reader.debug
 +
-+package dev.sasikanth.rss.reader.app
++import co.touchlab.kermit.Severity
++import dev.sasikanth.rss.reader.data.repository.DebugLogSeverity
 +
-+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
-+import androidx.compose.ui.geometry.Rect
-+import androidx.compose.ui.unit.dp
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
-+
-+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-+class ListDetailPaneDirectiveTest {
-+
-+  private val hingeBounds = listOf(Rect(left = 530f, top = 0f, right = 550f, bottom = 1000f))
-+
-+  private val twoPaneBaseDirective =
-+    PaneScaffoldDirective(
-+      maxHorizontalPartitions = 2,
-+      horizontalPartitionSpacerSize = 24.dp,
-+      maxVerticalPartitions = 1,
-+      verticalPartitionSpacerSize = 0.dp,
-+      defaultPanePreferredWidth = 360.dp,
-+      excludedBounds = hingeBounds,
-+    )
-+
-+  @Test
-+  fun calculateReaderPaneScaffoldDirective_whenExpanded_switchesToSingleFullWidthPane() {
-+    val result =
-+      calculateReaderPaneScaffoldDirective(
-+        baseDirective = twoPaneBaseDirective,
-+        windowWidth = 900.dp,
-+        listPaneWidth = 420.dp,
-+        minReaderPaneWidth = 360.dp,
-+        isReaderExpanded = true,
-+      )
-+
-+    assertEquals(1, result.maxHorizontalPartitions)
-+    assertEquals(0.dp, result.horizontalPartitionSpacerSize)
-+    assertTrue(result.excludedBounds.isEmpty())
-+  }
-+
-+  @Test
-+  fun calculateReaderPaneScaffoldDirective_whenCollapsedAndWideEnough_keepsBaseDirective() {
-+    val result =
-+      calculateReaderPaneScaffoldDirective(
-+        baseDirective = twoPaneBaseDirective,
-+        windowWidth = 900.dp,
-+        listPaneWidth = 420.dp,
-+        minReaderPaneWidth = 360.dp,
-+        isReaderExpanded = false,
-+      )
-+
-+    assertEquals(twoPaneBaseDirective, result)
-+    assertEquals(2, result.maxHorizontalPartitions)
-+    assertEquals(24.dp, result.horizontalPartitionSpacerSize)
-+    assertEquals(hingeBounds, result.excludedBounds)
-+  }
-+
-+  @Test
-+  fun calculateReaderPaneScaffoldDirective_whenTooNarrowForTwoPanes_usesSinglePartition() {
-+    val result =
-+      calculateReaderPaneScaffoldDirective(
-+        baseDirective = twoPaneBaseDirective,
-+        windowWidth = 780.dp,
-+        listPaneWidth = 420.dp,
-+        minReaderPaneWidth = 360.dp,
-+        isReaderExpanded = false,
-+      )
-+
-+    assertEquals(1, result.maxHorizontalPartitions)
-+  }
-+
-+  @Test
-+  fun shouldUseListDetailForSinglePane_returnsFalseForCompactNonDesktop() {
-+    assertFalse(
-+      shouldUseListDetailForSinglePane(
-+        isDesktop = false,
-+        isSplitCapableWindow = false,
-+        hasEnteredListDetailScaffold = false,
-+        isReaderExpanded = false,
-+      )
-+    )
-+  }
-+
-+  @Test
-+  fun shouldUseListDetailForSinglePane_returnsTrueForSplitCapableWindowCollapsedOrExpanded() {
-+    assertTrue(
-+      shouldUseListDetailForSinglePane(
-+        isDesktop = false,
-+        isSplitCapableWindow = true,
-+        hasEnteredListDetailScaffold = false,
-+        isReaderExpanded = false,
-+      )
-+    )
-+    assertTrue(
-+      shouldUseListDetailForSinglePane(
-+        isDesktop = false,
-+        isSplitCapableWindow = true,
-+        hasEnteredListDetailScaffold = true,
-+        isReaderExpanded = true,
-+      )
-+    )
-+  }
-+
-+  @Test
-+  fun shouldUseListDetailForSinglePane_returnsTrueForDesktopEvenWhenNarrow() {
-+    assertTrue(
-+      shouldUseListDetailForSinglePane(
-+        isDesktop = true,
-+        isSplitCapableWindow = false,
-+        hasEnteredListDetailScaffold = false,
-+        isReaderExpanded = false,
-+      )
-+    )
-+  }
-+
-+  @Test
-+  fun shouldUseListDetailForSinglePane_staysTrueAfterEnteringListDetailScaffold() {
-+    assertTrue(
-+      shouldUseListDetailForSinglePane(
-+        isDesktop = false,
-+        isSplitCapableWindow = false,
-+        hasEnteredListDetailScaffold = true,
-+        isReaderExpanded = false,
-+      )
-+    )
++internal fun DebugLogSeverity.toKermitSeverity(): Severity {
++  return when (this) {
++    DebugLogSeverity.Verbose -> Severity.Verbose
++    DebugLogSeverity.Debug -> Severity.Debug
++    DebugLogSeverity.Info -> Severity.Info
++    DebugLogSeverity.Warn -> Severity.Warn
++    DebugLogSeverity.Error -> Severity.Error
 +  }
 +}
 ```
 
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/debug/DebugSettingsEvent.kt` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++/*
++ * Copyright 2026 Sasikanth Miriyampalli
++ *
++ * Licensed under the GPL, Version 3.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     https://www.gnu.org/licenses/gpl-3.0.en.html
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++package dev.sasikanth.rss.reader.debug
++
++import dev.sasikanth.rss.reader.data.repository.DebugLogSeverity
++import dev.sasikanth.rss.reader.data.repository.DebugSubscriptionOverride
++
++sealed interface DebugSettingsEvent {
++  data class ToggleFpsOverlay(val value: Boolean) : DebugSettingsEvent
++
++  data class ToggleWindowSizeOverlay(val value: Boolean) : DebugSettingsEvent
++
++  data class UpdateSubscriptionOverride(val override: DebugSubscriptionOverride) :
++    DebugSettingsEvent
++
++  data class UpdateLogSeverity(val severity: DebugLogSeverity) : DebugSettingsEvent
++
++  data object ClearImageAndFavIconCaches : DebugSettingsEvent
++
++  data object ClearSeedColorCache : DebugSettingsEvent
++
++  data object ClearCachedArticleContent : DebugSettingsEvent
++
++  data object ClearDiscoveryCache : DebugSettingsEvent
++
++  data object ForceFullSync : DebugSettingsEvent
++
++  data object ResetRefreshPolicy : DebugSettingsEvent
++
++  data object RefreshWidgets : DebugSettingsEvent
++
++  data object ResetOnboarding : DebugSettingsEvent
++
++  data object ResetChangelogState : DebugSettingsEvent
++
++  data object SendTestNotification : DebugSettingsEvent
++
++  data object ResetInAppRatingState : DebugSettingsEvent
++
++  data object RefreshDiagnostics : DebugSettingsEvent
++}
++
++sealed interface DebugSettingsEffect {
++  data class ShowSnackbar(val message: String) : DebugSettingsEffect
++
++  data object NavigateToOnboarding : DebugSettingsEffect
++}
+```
+
+**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/debug/DebugSettingsState.kt` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++/*
++ * Copyright 2026 Sasikanth Miriyampalli
++ *
++ * Licensed under the GPL, Version 3.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     https://www.gnu.org/licenses/gpl-3.0.en.html
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ *
++ */
++package dev.sasikanth.rss.reader.debug
++
++import androidx.compose.runtime.Immutable
++import dev.sasikanth.rss.reader.app.AppInfo
++import dev.sasikanth.rss.reader.billing.SubscriptionResult
++import dev.sasikanth.rss.reader.core.model.local.ServiceType
++import dev.sasikanth.rss.reader.data.repository.DatabaseStats
++import dev.sasikanth.rss.reader.data.repository.DebugLogSeverity
++import dev.sasikanth.rss.reader.data.repository.DebugSubscriptionOverride
++import dev.sasikanth.rss.reader.data.sync.SyncState
++import kotlin.time.Instant
++
++@Immutable
++data class DebugSettingsState(
++  val appInfo: AppInfo,
++  val showFpsOverlay: Boolean = false,
++  val showWindowSizeOverlay: Boolean = false,
++  val subscriptionOverride: DebugSubscriptionOverride = DebugSubscriptionOverride.Default,
++  val effectiveSubscriptionResult: SubscriptionResult? = null,
++  val logSeverity: DebugLogSeverity = DebugLogSeverity.Info,
++  val syncState: SyncState = SyncState.Idle,
++  val databaseStats: DatabaseStats? = null,
++  val lastSyncedAt: Instant? = null,
++  val lastRefreshedAt: Instant? = null,
++  val signedInService: ServiceType? = null,
++  val installDate: Instant? = null,
++  val lastReviewPromptDate: Instant? = null,
++  val userSessionCount: Int = 0,
++) {
++  companion object {
++    fun default(appInfo: AppInfo) = DebugSettingsState(appInfo = appInfo)
++  }
++}
+```
+
+---
+
+### Incident Patch 3: `42726284` (2026-11-25)
+**Commit Message**: Add Android staging build type and debug build detection
+
+- Add a profileable Android staging build type with ENABLE_DEBUG_SETTINGS enabled and Bugsnag disabled.
+- Expose ENABLE_DEBUG_SETTINGS via manifest metadata for Android AppInfo.isDebugBuild and detect unpackaged Desktop debug runs.
+
+**File**: `androidApp/build.gradle.kts` (modified, +25/-1)
+```diff
+@@ -71,6 +71,9 @@ android {
+       } else {
+         "1.0.0"
+       }
++
++    manifestPlaceholders["enableDebugSettings"] = "false"
++    buildConfigField("boolean", "ENABLE_DEBUG_SETTINGS", "false")
+   }
+ 
+   flavorDimensions += "version"
+@@ -101,7 +104,20 @@ android {
+ 
+       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+     }
+-    debug { applicationIdSuffix = ".debug" }
++    debug {
++      applicationIdSuffix = ".debug"
++      manifestPlaceholders["enableDebugSettings"] = "true"
++      buildConfigField("boolean", "ENABLE_DEBUG_SETTINGS", "true")
++    }
++    create("staging") {
++      initWith(getByName("release"))
++      signingConfig = signingConfigs.getByName("debug")
++      applicationIdSuffix = ".staging"
++      matchingFallbacks += listOf("release")
++      isProfileable = true
++      manifestPlaceholders["enableDebugSettings"] = "true"
++      buildConfigField("boolean", "ENABLE_DEBUG_SETTINGS", "true")
++    }
+   }
+ 
+   packaging {
+@@ -121,6 +137,14 @@ android {
+   }
+ }
+ 
++bugsnag {
++  variantFilter {
++    if (name.contains("debug", ignoreCase = true) || name.contains("staging", ignoreCase = true)) {
++      setEnabled(false)
++    }
++  }
++}
++
+ dependencies {
+   debugImplementation(libs.leakcanary)
+ 
+```
+
+**File**: `androidApp/src/full/kotlin/dev/sasikanth/rss/reader/BugsnagInitializer.kt` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ import com.bugsnag.android.Bugsnag
+ 
+ object BugsnagInitializer {
+   fun start(application: Application) {
+-    if (!BuildConfig.DEBUG) {
++    if (!BuildConfig.DEBUG && !BuildConfig.ENABLE_DEBUG_SETTINGS) {
+       Bugsnag.start(application)
+       enableBugsnag()
+     }
+```
+
+**File**: `androidApp/src/main/AndroidManifest.xml` (modified, +4/-0)
+```diff
+@@ -54,6 +54,10 @@
+         android:name="com.bugsnag.android.API_KEY"
+         android:value="${BUGSNAG_API_KEY}" />
+ 
++    <meta-data
++        android:name="dev.sasikanth.rss.reader.ENABLE_DEBUG_SETTINGS"
++        android:value="${enableDebugSettings}" />
++
+     <activity
+         android:name="dev.sasikanth.rss.reader.MainActivity"
+         android:exported="true"
+```
+
+**File**: `androidApp/src/staging/res/values/strings.xml` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++<!--
++  ~ Copyright 2026 Sasikanth Miriyampalli
++  ~
++  ~ Licensed under the GPL, Version 3.0 (the "License");
++  ~ you may not use this file except in compliance with the License.
++  ~ You may obtain a copy of the License at
++  ~
++  ~     https://www.gnu.org/licenses/gpl-3.0.en.html
++  ~
++  ~ Unless required by applicable law or agreed to in writing, software
++  ~ distributed under the License is distributed on an "AS IS" BASIS,
++  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++  ~ See the License for the specific language governing permissions and
++  ~ limitations under the License.
++  ~
++  -->
++
++<resources>
++    <string name="app_name" translatable="false">Twine(S)</string>
++</resources>
+```
+
+**File**: `shared/src/androidMain/kotlin/dev/sasikanth/rss/reader/di/ApplicationComponent.kt` (modified, +9/-2)
+```diff
+@@ -18,6 +18,7 @@ package dev.sasikanth.rss.reader.di
+ 
+ import android.content.Context
+ import android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE
++import android.content.pm.PackageManager
+ import android.os.Build
+ import dev.sasikanth.rss.reader.app.AppInfo
+ import dev.sasikanth.rss.reader.app.AppPlatform
+@@ -61,7 +62,13 @@ abstract class ApplicationComponent(@get:Provides val context: Context) :
+   fun providesAppInfo(context: Context): AppInfo {
+     val packageManager = context.packageManager
+     val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+-    val applicationInfo = packageManager.getApplicationInfo(context.packageName, 0)
++    val applicationInfo =
++      packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
++    val isDebugSettingsEnabled =
++      applicationInfo.metaData?.getBoolean(
++        "dev.sasikanth.rss.reader.ENABLE_DEBUG_SETTINGS",
++        false,
++      ) == true
+ 
+     val versionCode =
+       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+@@ -73,7 +80,7 @@ abstract class ApplicationComponent(@get:Provides val context: Context) :
+     return AppInfo(
+       versionName = packageInfo.versionName ?: "0.0.1",
+       versionCode = versionCode,
+-      isDebugBuild = (applicationInfo.flags and FLAG_DEBUGGABLE) != 0,
++      isDebugBuild = ((applicationInfo.flags and FLAG_DEBUGGABLE) != 0) || isDebugSettingsEnabled,
+       isFoss = isFoss,
+       isGoogleDriveSupported = isGoogleDriveSupported,
+       cachePath = { context.cacheDir.absolutePath },
+```
+
+**File**: `shared/src/jvmMain/kotlin/dev/sasikanth/rss/reader/di/ApplicationComponent.kt` (modified, +8/-1)
+```diff
+@@ -60,7 +60,7 @@ abstract class ApplicationComponent : SharedApplicationComponent(), WidgetPlatfo
+     AppInfo(
+       versionCode = DESKTOP_VERSION_CODE,
+       versionName = DESKTOP_VERSION_NAME,
+-      isDebugBuild = false,
++      isDebugBuild = isDesktopDebugBuild(),
+       isFoss = isFoss,
+       isGoogleDriveSupported = isGoogleDriveSupported,
+       cachePath = {
+@@ -73,5 +73,12 @@ abstract class ApplicationComponent : SharedApplicationComponent(), WidgetPlatfo
+       platform = AppPlatform.Desktop,
+     )
+ 
++  private fun isDesktopDebugBuild(): Boolean {
++    System.getProperty("twine.debug")?.toBooleanStrictOrNull()?.let {
++      return it
++    }
++    return System.getProperty("jpackage.app-path") == null
++  }
++
+   companion object
+ }
+```
+
 #### Recent Merged Pull Requests:
+- **PR #2000** (2026-11-27): [300.127.*] Pre-release merge (@tramline-github[bot])
 - **PR #1999** (2026-11-25): [300.126.*] Pre-release merge (@tramline-github[bot])
 - **PR #1997** (2026-11-16): [300.125.*] Pre-release merge (@tramline-github[bot])
 - **PR #1995** (2026-11-16): [300.124.*] Pre-release merge (@tramline-github[bot])
 - **PR #1994** (2026-11-15): [300.123.*] Pre-release merge (@tramline-github[bot])
 - **PR #1989** (2026-11-09): [300.122.*] Pre-release merge (@tramline-github[bot])
-- **PR #1986** (closed): fix: make Windows desktop scrollbar thumb and track draggable (@mvanhorn)
 
 ---
 
@@ -989,71 +1510,46 @@ Set shouldHandleSinglePaneLayout on ListDetailSceneStrategy for split-capable, d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep list-detail scene active when expanding reader pane
+## X. Add debug overrides for billing, in-app rating, and cache clearing
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/androidFoss/kotlin/dev/sasikanth/rss/reader/billing/BillingHandler.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `18235a59`: Keep list-detail scene active when expanding reader pane. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e390a95b`: Add debug overrides for billing, in-app rating, and cache clearing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/androidFoss/kotlin/dev/sasikanth/rss/reader/billing/BillingHandler.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.derivedStateOf
-      val isSplitCapableWindow =
-        windowInfo.windowSizeClass.isWidthAtLeastBreakpoint(
-          WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND
-        )
-      val hasReaderOnBackStack by remember {
-        derivedStateOf { backStack.any { it is Screen.Reader } }
+import dev.sasikanth.rss.reader.app.AppInfo
+import dev.sasikanth.rss.reader.data.repository.DebugSettingsRepository
+import dev.sasikanth.rss.reader.data.repository.DebugSubscriptionOverride
+actual class BillingHandler(
+  private val appInfo: AppInfo,
+  private val debugSettingsRepository: DebugSettingsRepository,
+) {
+    return customerResult() is SubscriptionResult.Subscribed
+    if (appInfo.isDebugBuild) {
+      return when (debugSettingsRepository.subscriptionOverrideImmediate()) {
+        DebugSubscriptionOverride.ForceFree -> SubscriptionResult.NotSubscribed
+        DebugSubscriptionOverride.ForcePro,
+        DebugSubscriptionOverride.Default -> SubscriptionResult.Subscribed
       }
-      val isReaderExpanded =
-        isSplitCapableWindow && isReaderPaneExpanded.value && hasReaderOnBackStack
-      val baseDirective = remember(windowInfo) { calculatePaneScaffoldDirective(windowInfo) }
-        remember(baseDirective, windowWidth, listPaneWidth, isReaderExpanded) {
-          calculateReaderPaneScaffoldDirective(
-            baseDirective = baseDirective,
-            windowWidth = windowWidth,
-            listPaneWidth = listPaneWidth,
-            minReaderPaneWidth = minReaderPaneWidth,
-            isReaderExpanded = isReaderExpanded,
-          )
-      var hasEnteredListDetailScaffold by remember {
-        mutableStateOf(
-          shouldUseListDetailForSinglePane(
-            isDesktop = platform == Platform.Desktop,
-            
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        remember(
-          windowInfo,
-          windowWidth,
-          isReaderPaneExpanded.value,
-          isSideNavigationExpanded.value,
-        ) {
-          val directive = calculatePaneScaffoldDirective(windowInfo)
-          val requiredTwoPaneWidth =
-            listPaneWidth + directive.horizontalPartitionSpacerSize + minReaderPaneWidth
-          when {
-            isReaderPaneExpanded.value -> directive.copy(maxHorizontalPartitions = 1)
-            windowWidth < requiredTwoPaneWidth -> directive.copy(maxHorizontalPartitions = 1)
-            else -> directive
-          }
-            (windowWidth - paneScaffoldDirective.horizontalPartitionSpacerSize - minReaderPaneWidth)
-        with(density) { paneScaffoldDirective.horizontalPartitionSpacerSize.roundToPx() } / 2
+actual class BillingHandler {
+    return true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `18235a59` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e390a95b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

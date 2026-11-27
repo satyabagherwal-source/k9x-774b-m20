@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:14:30.682Z",
-  "total_cycles_completed": 13068,
-  "total_learnings_persisted": 13068,
-  "total_rules_promoted": 11797,
+  "last_updated": "2026-11-27T11:25:06.462Z",
+  "total_cycles_completed": 13070,
+  "total_learnings_persisted": 13070,
+  "total_rules_promoted": 11799,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:59:41.582Z",
-      "repository": "Checkmarx/kics",
-      "learningId": "learn-github-checkmarx-kics",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T21:08:50.103Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T21:09:01.723Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T11:14:30.682Z",
       "repository": "meta/folly",
       "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:24:50.810Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:25:06.462Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

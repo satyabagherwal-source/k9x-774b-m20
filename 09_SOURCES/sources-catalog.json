@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "c78a56ff",
+    "sourceVersion": "ec4dbd34",
     "license": "Apache-2.0",
-    "contentHash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
-    "lastHarvestedAt": "2026-11-26T16:58:30.788Z",
+    "contentHash": "db0f3afa8720f62df9d2dae26775bb42a245d937aa6d543478e4646c3bced2ae",
+    "lastHarvestedAt": "2026-11-27T11:25:06.447Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "18235a59",
+    "sourceVersion": "0ad4751d",
     "license": "GPL-3.0",
-    "contentHash": "030de6565f285c4cf69f43b9bf21782e0baa6f445f92dc1b5be6e1e6825df86f",
-    "lastHarvestedAt": "2026-11-25T02:28:51.628Z",
+    "contentHash": "d3c810030d3c7dffffe4e85034b1d29e39f506c590188255e92375261142c7e0",
+    "lastHarvestedAt": "2026-11-27T11:24:50.794Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {

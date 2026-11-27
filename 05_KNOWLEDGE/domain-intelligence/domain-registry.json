@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T11:14:41.294Z",
-  "total_records": 2829,
+  "last_updated": "2026-11-27T11:25:15.603Z",
+  "total_records": 2830,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1039,
+      "total": 1040,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1112,7 +1112,8 @@
         "DOM-D-D749CB6F",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c",
-        "DOM-D-E7237660"
+        "DOM-D-E7237660",
+        "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants"
       ]
     },
     "E": {
@@ -9562,8 +9563,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "731446c5ccae66c17a837c1eeb64f1230b38833c4f6611b861a1fc6d337b53f9",
-      "created_at": "2026-11-27T11:03:12.041Z"
+      "content_hash": "0e6b55b99f734de961039f1dbe5e4937a404626936ebef2d81556c0dcd5d8c44",
+      "created_at": "2026-11-27T11:25:15.603Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10204,8 +10205,8 @@
       "title": "Research & Knowledge Intelligence: topoteretes/cognee Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-topoteretes-cognee-research-knowledge-intelligence-topoteretes-cognee-core-invar.md",
       "repository": "topoteretes/cognee",
-      "content_hash": "1a090e2c4d4bd138ebeab08874ac46a9db97a92a2d055fe8a892145d5e2434ee",
-      "created_at": "2026-11-13T18:35:00.109Z"
+      "content_hash": "bf7b1ecb001d315ff3e987eb8ab061670363c9f5dd6ba46324afe08611fa1f67",
+      "created_at": "2026-11-27T11:25:07.097Z"
     },
     "DOM-D-20558436": {
       "record_id": "DOM-D-20558436",
@@ -44184,8 +44185,8 @@
       "title": "Search & Distribution Intelligence: msasikanth/twine Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-search-distribution-intelligence-msasikanth-twine-core-invarian.md",
       "repository": "msasikanth/twine",
-      "content_hash": "c61a5a7988a8fc945607a78e52c05375abd407aa366ff9093238a44a7256dd4e",
-      "created_at": "2026-11-25T02:28:52.049Z"
+      "content_hash": "158ae148fff8117a5484ff8d4888d366f5b630fe47a28822ec4ba4223a6b0eaa",
+      "created_at": "2026-11-27T11:24:51.446Z"
     },
     "DOM-D-95A94518": {
       "record_id": "DOM-D-95A94518",
@@ -44244,8 +44245,8 @@
       "title": "Search & Distribution Intelligence: msasikanth-twine-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-msasikanth-twine-learnings-search-distribution-intelligence-msasikanth-twine-lea.md",
       "repository": "msasikanth-twine-learnings",
-      "content_hash": "926decbbd282542e56bd9e5e0c4817ecab7b75ed8d8f2220f96174f6d7cc1bec",
-      "created_at": "2026-11-25T02:29:35.884Z"
+      "content_hash": "0c6f2ac347abaa70a5dd5e94a814cd43fb67c55a9285b1b587c008da2ee12079",
+      "created_at": "2026-11-27T11:25:11.651Z"
     },
     "DOM-D-615F4579": {
       "record_id": "DOM-D-615F4579",
@@ -47763,6 +47764,15 @@
       "repository": "apache-arrow-learnings",
       "content_hash": "bab24869d4edc11e8af1627c8447fb9f8a3fe60429fb2a87faa76cb17b3dc680",
       "created_at": "2026-11-27T11:03:11.250Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: topoteretes-cognee-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-topoteretes-cognee-learnings-research-knowledge-intelligence-topoteretes-cognee-.md",
+      "repository": "topoteretes-cognee-learnings",
+      "content_hash": "4ae059938e399c15b9eeb7f84344a362a3ecf877a7dc849c4ab1cc0bfb7695cc",
+      "created_at": "2026-11-27T11:25:14.254Z"
     }
   }
 }

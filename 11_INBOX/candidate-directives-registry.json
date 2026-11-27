@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:14:40.992Z",
+  "last_updated": "2026-11-27T11:25:15.319Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-HRLQ",
+      "id": "CD-A4S0",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HRLQ-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-A4S0-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -70100,6 +70100,55 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EE6958-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-A1Q2",
+      "directive_title": "Add debug overrides for billing, in-app rating, and cache clearing",
+      "source_repo": "msasikanth-twine-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A1Q2-add-debug-overrides-for-billing-in-app-rating-and-cache-clearing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-A3QI",
+      "directive_title": "fix cognee version in mcp; bump mcp version",
+      "source_repo": "topoteretes-cognee-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A3QI-fix-cognee-version-in-mcp-bump-mcp-version.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-537AAB",
+      "directive_title": "Add debug overrides for billing, in-app rating, and cache clearing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "msasikanth-twine",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-537AAB-add-debug-overrides-for-billing-in-app-r.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-62AA92",
+      "directive_title": "fix cognee version in mcp; bump mcp version",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "topoteretes-cognee",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-62AA92-fix-cognee-version-in-mcp-bump-mcp-versi.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-B3953C",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B3953C-renderer-refuse-last-error-reads-off-the.md",
       "staged_date": "2026-11-27"
     }
   ]
