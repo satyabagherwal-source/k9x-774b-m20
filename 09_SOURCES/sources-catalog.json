@@ -1245,8 +1245,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
-    "lastHarvestedAt": "2026-11-23T16:36:55.918Z",
+    "contentHash": "14425045483d3a054daf1675fd9915795b76d6ee2e7e4635289246a82595db13",
+    "lastHarvestedAt": "2026-11-27T01:37:03.277Z",
     "learningId": "learn-huggingface-google-gemma-4-31b-it"
   },
   "hf-baai-bge-base-en-v1.5": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "a41117e7",
+    "sourceVersion": "f38ec06c",
     "license": "Apache-2.0",
-    "contentHash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
-    "lastHarvestedAt": "2026-11-26T01:26:20.976Z",
+    "contentHash": "23265c91f708cb503296c435b8cb0021cab0a0e01a5f4aca85f9499c2faa9256",
+    "lastHarvestedAt": "2026-11-27T01:37:07.026Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "1f2f7af9",
+    "sourceVersion": "b64eea09",
     "license": "Apache-2.0",
-    "contentHash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
-    "lastHarvestedAt": "2026-11-23T19:09:21.270Z",
+    "contentHash": "691cd71c7e7471c231e46eb5c40ea0c4c2e4e5bbc04ebbd79815e7585bbeac1f",
+    "lastHarvestedAt": "2026-11-27T01:37:16.997Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {

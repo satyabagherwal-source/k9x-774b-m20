@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-FXOC",
-    "timestamp": "2026-11-25T14:14:23.292Z",
-    "repository": "SulphurAI/Sulphur-3",
-    "learningId": "learn-huggingface-sulphurai-sulphur-3",
-    "contentHash": "891bcc8c9c7ba7bba451f73eb0a6faf28f8d3be01db74ee670efb2347052d42b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-G4WQ",
-    "timestamp": "2026-11-25T14:14:32.666Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "ecad88ff0f1ae0876abba866d05399c08072c47187b609751c39b71478dfbd89",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-G783",
-    "timestamp": "2026-11-25T14:14:35.667Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "b07f392d10de6c794cb41c678b3aaf409a3abbade1421d171529fa2a836d9fbb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-RZ6E",
     "timestamp": "2026-11-25T14:23:45.110Z",
     "repository": "Edge0/Audio8-TTS-Realistic-Air",
@@ -7490,6 +7445,51 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9P9K",
+    "timestamp": "2026-11-27T01:37:03.272Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "14425045483d3a054daf1675fd9915795b76d6ee2e7e4635289246a82595db13",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9S5P",
+    "timestamp": "2026-11-27T01:37:07.021Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "23265c91f708cb503296c435b8cb0021cab0a0e01a5f4aca85f9499c2faa9256",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9ZUO",
+    "timestamp": "2026-11-27T01:37:16.992Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "691cd71c7e7471c231e46eb5c40ea0c4c2e4e5bbc04ebbd79815e7585bbeac1f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

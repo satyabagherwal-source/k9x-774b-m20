@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:25:37.608Z",
+  "last_updated": "2026-11-27T01:37:25.638Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T01:17:07.578Z",
@@ -333,7 +333,7 @@
       "staged_for_review": 1
     },
     "projectcontour-contour-learnings.md": {
-      "processed_at": "2026-11-23T19:09:25.729Z",
+      "processed_at": "2026-11-27T01:37:22.934Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1028,7 +1028,7 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-26T01:26:33.036Z",
+      "processed_at": "2026-11-27T01:37:20.887Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2608,7 +2608,7 @@
       "staged_for_review": 0
     },
     "hf-google-gemma-4-31b-it-learnings.md": {
-      "processed_at": "2026-11-23T16:37:13.719Z",
+      "processed_at": "2026-11-27T01:37:22.285Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4755,
+  "total_dossiers_evaluated": 4758,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3565
+  "total_staged_for_review": 3567
 }

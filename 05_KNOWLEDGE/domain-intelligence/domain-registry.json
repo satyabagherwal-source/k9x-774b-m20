@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T01:25:37.194Z",
+  "last_updated": "2026-11-27T01:37:25.126Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -11763,8 +11763,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "bfcd02734c6c7e17224b1de79dae51484ee1fa32a78c0e1079f0d7ba27be1d90",
-      "created_at": "2026-11-24T18:00:23.074Z"
+      "content_hash": "48dc7a1e2ac19ec5ee0a9ce7e2722acc26fe5a42ba68f215205fdb73000d11a7",
+      "created_at": "2026-11-27T01:37:07.734Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -11799,8 +11799,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "9df7f7de59303878e198b147568ae55a72030f8ca4d5e201811f941683b9fcba",
-      "created_at": "2026-11-24T18:00:42.415Z"
+      "content_hash": "5f7a2e82574dc767ec7034e93470c9eaac6db3a4fe0628640db604c855a6d603",
+      "created_at": "2026-11-27T01:37:21.775Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -16546,8 +16546,8 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-research-knowledge-intelligence-google-gemma-4-31b-it-c.md",
       "repository": "google/gemma-4-31B-it",
-      "content_hash": "b938d4437fa47e997da828c9b99fd21efa945724ed60f0aac2e005f422ac3a1f",
-      "created_at": "2026-11-23T16:36:56.130Z"
+      "content_hash": "660c56969bfa9a40fb2be0ed763875bb1eb341f6bc365c01380f8c18b09fda0f",
+      "created_at": "2026-11-27T01:37:03.606Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -16606,8 +16606,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-learnings-research-knowledge-intelligence-hf-google-gem.md",
       "repository": "hf-google-gemma-4-31b-it-learnings",
-      "content_hash": "58f078d8a675b3c6a8f9568d700a805894b8cf6187a2b74aa1558f8f671fb61e",
-      "created_at": "2026-11-23T16:37:13.934Z"
+      "content_hash": "d4b69b6b90e94b1730163b7f43b3dd8875f2a12762c0ab2d2cbfcbfcaf5dd8e1",
+      "created_at": "2026-11-27T01:37:22.621Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
@@ -31639,8 +31639,8 @@
       "title": "Content & Information Intelligence: projectcontour/contour Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-content-information-intelligence-projectcontour-contour-c.md",
       "repository": "projectcontour/contour",
-      "content_hash": "0bd53b9872399bde07126e13963afddf5e0732baad9f53499587a7e0e58b90e4",
-      "created_at": "2026-11-23T19:09:21.633Z"
+      "content_hash": "800be093da2667ffb58c935716dd3da352e2f0603fc1fc9f6ee333e39ef1e611",
+      "created_at": "2026-11-27T01:37:17.614Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant": {
       "record_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
@@ -31648,8 +31648,8 @@
       "title": "Content & Information Intelligence: projectcontour-contour-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-learnings-content-information-intelligence-projectcontour.md",
       "repository": "projectcontour-contour-learnings",
-      "content_hash": "27f2877e7e549cf989463def35a7cc876bfda7da95e111d0ecb95b2920ded0d8",
-      "created_at": "2026-11-23T19:09:26.614Z"
+      "content_hash": "2477c476ff9e2305eff83f5af1d5989be713af0b95e300038a0145c6e1daf711",
+      "created_at": "2026-11-27T01:37:25.126Z"
     },
     "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",

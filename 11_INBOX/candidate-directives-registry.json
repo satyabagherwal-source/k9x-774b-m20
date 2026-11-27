@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:25:36.982Z",
+  "last_updated": "2026-11-27T01:37:24.857Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54856,14 +54856,14 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-FNII",
+      "id": "CD-A5X1",
       "directive_title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
-      "source_repo": "etcd-io-etcd-learnings",
+      "source_repo": "projectcontour-contour-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FNII-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-A5X1-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-24",
+      "date_staged": "2026-11-27",
       "domain_letter": "I"
     },
     {
@@ -68079,6 +68079,37 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-9SHC",
+      "directive_title": "`hash_key()` computes the `Sec-WebSocket-Accept` value about 3x faster",
+      "source_repo": "ntex-rs/ntex",
+      "source_commit": "f38ec06c",
+      "staged_file": "11_INBOX/candidate-directives/CD-9SHC-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-A3BY",
+      "directive_title": "ws: `hash_key()` computes the `Sec-WebSocket-Accept` value about 3x faster",
+      "source_repo": "ntex-rs-ntex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-A3BY-ws-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-2628C1",
+      "directive_title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "projectcontour-contour",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2628C1-build-deps-bump-ossf-scorecard-action-fr.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }

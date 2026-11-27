@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/google/gemma-4-31B-it",
   "source_version": "hf-google-gemma-4-31b-it",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T16:36:56.130Z",
+  "timestamp": "2026-11-27T01:37:03.605Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-google-gemma-4-31b-it",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it) (Revision: `hf-google-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T16:36:56.130Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T01:37:03.605Z`  
 > **Learning ID**: `learn-huggingface-google-gemma-4-31b-it`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:36:55.221Z  
+> **Harvest Timestamp**: 2026-11-27T01:37:02.304Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5678445 downloads | 4453 likes
+- **Stars / Engagement**: 5237916 downloads | 4463 likes
 
 ---
 

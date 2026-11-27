@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T01:06:58.469Z",
+  "updated_at": "2026-11-27T01:37:24.443Z",
   "stats": {
-    "total_discovered": 10105,
-    "approved_pending_harvest": 9581,
+    "total_discovered": 10109,
+    "approved_pending_harvest": 9585,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9585,
+      "COMMUNITY_AND_EXPERT": 9589,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218669,6 +218669,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
         "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-3C23A68A360B": {
+      "id": "SRC-3C23A68A360B",
+      "url": "https://github.com/kubernetes-sigs/controller-runtime/releases",
+      "title": "https://github.com/kubernetes-sigs/controller-runtime/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T01:37:24.009Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-D5F0AF909B86": {
+      "id": "SRC-D5F0AF909B86",
+      "url": "https://github.com/kubernetes-sigs/controller-runtime/blob/main/RELEASE.md",
+      "title": "https://github.com/kubernetes-sigs/controller-runtime/blob/main/RELEASE.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T01:37:24.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-B487B2311C49": {
+      "id": "SRC-B487B2311C49",
+      "url": "https://github.com/kubernetes-sigs/controller-runtime/compare/v0.25.2...v0.25.3",
+      "title": "https://github.com/kubernetes-sigs/controller-runtime/compare/v0.25.2...v0.25.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T01:37:24.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-CABFD1510BE2": {
+      "id": "SRC-CABFD1510BE2",
+      "url": "https://github.com/prometheus/common/compare/v0.73.1...v0.74.0",
+      "title": "https://github.com/prometheus/common/compare/v0.73.1...v0.74.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T01:37:24.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
       }
     }
   }

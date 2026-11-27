@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T01:25:37.406Z",
+  "last_updated": "2026-11-27T01:37:25.390Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26298,
+  "total_items": 26300,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217928,8 +217928,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "a41117e7",
-      "content_hash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
+      "source_version": "f38ec06c",
+      "content_hash": "23265c91f708cb503296c435b8cb0021cab0a0e01a5f4aca85f9499c2faa9256",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -217959,7 +217959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T01:26:20.777Z",
+      "verified_at": "2026-11-27T01:37:06.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218001,10 +218001,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "repository": "ntex-rs/ntex",
-      "source_version": "53f7a3d9",
-      "content_hash": "bfcd02734c6c7e17224b1de79dae51484ee1fa32a78c0e1079f0d7ba27be1d90",
+      "source_version": "f38ec06c",
+      "content_hash": "48dc7a1e2ac19ec5ee0a9ce7e2722acc26fe5a42ba68f215205fdb73000d11a7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T18:00:23.074Z"
+      "persisted_at": "2026-11-27T01:37:07.734Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex",
@@ -218013,10 +218013,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "a41117e7",
-      "content_hash": "6324cc929b83575b17e84867dc21a1f02c5b3a77e514cc4cfead7abcb9e5c4aa",
+      "source_version": "f38ec06c",
+      "content_hash": "d2436693bbf18879a6bf9e408e2534e0e0849f03bb9b6ad8e10e8edf3d01136c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:26:21.618Z"
+      "persisted_at": "2026-11-27T01:37:08.027Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -218298,9 +218298,9 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "9df7f7de59303878e198b147568ae55a72030f8ca4d5e201811f941683b9fcba",
+      "content_hash": "5f7a2e82574dc767ec7034e93470c9eaac6db3a4fe0628640db604c855a6d603",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T18:00:42.415Z"
+      "persisted_at": "2026-11-27T01:37:21.775Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings",
@@ -218310,9 +218310,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "86684ea9a431eb9acca434dfa76a0f8ae47e67bd1e13f200b2c50187b77c0cc8",
+      "content_hash": "760833cab6e9e60970e259702d271fe675666d94c408a43d6fa2875b0ace2aeb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T01:26:33.802Z"
+      "persisted_at": "2026-11-27T01:37:22.037Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -233246,7 +233246,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
+      "content_hash": "14425045483d3a054daf1675fd9915795b76d6ee2e7e4635289246a82595db13",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [],
@@ -233255,7 +233255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:36:55.676Z",
+      "verified_at": "2026-11-27T01:37:02.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233272,9 +233272,9 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "repository": "google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "b938d4437fa47e997da828c9b99fd21efa945724ed60f0aac2e005f422ac3a1f",
+      "content_hash": "660c56969bfa9a40fb2be0ed763875bb1eb341f6bc365c01380f8c18b09fda0f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:36:56.130Z"
+      "persisted_at": "2026-11-27T01:37:03.606Z"
     },
     "candidate_directive-nuc-105-list-and-population-sorting-by-key": {
       "item_id": "candidate_directive-nuc-105-list-and-population-sorting-by-key",
@@ -233308,9 +233308,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "repository": "hf-google-gemma-4-31b-it-learnings",
       "source_version": "HEAD",
-      "content_hash": "58f078d8a675b3c6a8f9568d700a805894b8cf6187a2b74aa1558f8f671fb61e",
+      "content_hash": "d4b69b6b90e94b1730163b7f43b3dd8875f2a12762c0ab2d2cbfcbfcaf5dd8e1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:37:13.934Z"
+      "persisted_at": "2026-11-27T01:37:22.621Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
@@ -292683,8 +292683,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "1f2f7af9",
-      "content_hash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
+      "source_version": "b64eea09",
+      "content_hash": "691cd71c7e7471c231e46eb5c40ea0c4c2e4e5bbc04ebbd79815e7585bbeac1f",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -292697,6 +292697,11 @@
           "number": 10099,
           "title": "build(deps): bump golang.org/x/net from 0.62.0 to 0.63.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10267,
+          "title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -292704,7 +292709,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:09:21.095Z",
+      "verified_at": "2026-11-27T01:37:16.657Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -292746,10 +292751,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-content-information-intelligence-projectcontour-contour-c.md",
       "title": "Content & Information Intelligence: projectcontour/contour Core Invariants",
       "repository": "projectcontour/contour",
-      "source_version": "1f2f7af9",
-      "content_hash": "0bd53b9872399bde07126e13963afddf5e0732baad9f53499587a7e0e58b90e4",
+      "source_version": "b64eea09",
+      "content_hash": "800be093da2667ffb58c935716dd3da352e2f0603fc1fc9f6ee333e39ef1e611",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T19:09:21.633Z"
+      "persisted_at": "2026-11-27T01:37:17.614Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour",
@@ -292758,10 +292763,10 @@
       "relative_path": "08_VERIFICATION/projectcontour-contour-verification-protocol-empirical-defect-shield-for-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectcontour/contour",
       "repository": "projectcontour/contour",
-      "source_version": "1f2f7af9",
-      "content_hash": "57170c37ec9d91863bf13661db7dc3ae7f172e5c69310326941b119881fb906c",
+      "source_version": "b64eea09",
+      "content_hash": "569a60cd8a71208fd954a4c3ac3f7d58f4bfe8357eacc1c4cf4d06b4f9f0297e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:09:21.792Z"
+      "persisted_at": "2026-11-27T01:37:17.876Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant": {
       "item_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
@@ -292771,9 +292776,9 @@
       "title": "Content & Information Intelligence: projectcontour-contour-learnings Core Invariants",
       "repository": "projectcontour-contour-learnings",
       "source_version": "HEAD",
-      "content_hash": "27f2877e7e549cf989463def35a7cc876bfda7da95e111d0ecb95b2920ded0d8",
+      "content_hash": "2477c476ff9e2305eff83f5af1d5989be713af0b95e300038a0145c6e1daf711",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T19:09:26.614Z"
+      "persisted_at": "2026-11-27T01:37:25.126Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin",
@@ -292783,9 +292788,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectcontour-contour-learnings",
       "repository": "projectcontour-contour-learnings",
       "source_version": "HEAD",
-      "content_hash": "d42c112a74bae99be4163a865ab40496ebb6d0c2cdcdea1ffdc7e9ef47f2e39c",
+      "content_hash": "937b1bb9ea0d20a894a40cb3cbd983ec8a67b941fc5f6313de76f5a8a61c0618",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:09:26.779Z"
+      "persisted_at": "2026-11-27T01:37:25.390Z"
     },
     "rule-9202": {
       "learning_id": "rule-9202",
@@ -338950,26 +338955,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10267,
       "title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
-      "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "776d2ee8",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "b64eea09",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T13:30:21.438Z"
+      "verified_at": "2026-11-27T01:37:16.657Z"
     },
     "candidate_directive-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0": {
       "item_id": "candidate_directive-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FNII-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-A5X1-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0.md",
       "title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
-      "repository": "etcd-io-etcd-learnings",
+      "repository": "projectcontour-contour-learnings",
       "source_version": "HEAD",
-      "content_hash": "feed977b6bf78d139c9c18fa94ffbc799d2cec2f1995e52bd0b1dbf707706997",
+      "content_hash": "d1e09b08be52034f1953b59e9acce30b52853059d898108ea1af70b299b0346e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T13:30:30.475Z"
+      "persisted_at": "2026-11-27T01:37:24.857Z"
     },
     "rule-10268": {
       "learning_id": "rule-10268",
@@ -360741,6 +360746,30 @@
       "content_hash": "547586e78038533badc79b21813d25320e7027f6cbf52cfcf4f89937c41c3eb7",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T01:25:36.982Z"
+    },
+    "candidate_directive-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster": {
+      "item_id": "candidate_directive-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9SHC-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster.md",
+      "title": "`hash_key()` computes the `Sec-WebSocket-Accept` value about 3x faster",
+      "repository": "ntex-rs/ntex",
+      "source_version": "f38ec06c",
+      "content_hash": "f11ed3b86a0d20da01ed983a7d499b4c28b4adb0f025065396c754ae8a143e84",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T01:37:07.445Z"
+    },
+    "candidate_directive-ws-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster": {
+      "item_id": "candidate_directive-ws-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A3BY-ws-hash_key-computes-the-sec-websocket-accept-value-about-3x-faster.md",
+      "title": "ws: `hash_key()` computes the `Sec-WebSocket-Accept` value about 3x faster",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca7b7090f0b9078df2fd0dd2293f7345f8ba36cda7704be3d32061fa9daccf64",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T01:37:21.508Z"
     }
   },
   "ai-builder-brain": {

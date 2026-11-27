@@ -13660,3 +13660,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inworld-voice-isolator` | `https://huggingface.co/inworld/voice-isolator` | `hf-inworld` | Multi-dimensional audit evidence | 2026-11-27T01:25:19.959Z |
 | `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `638fd3b6` | Multi-dimensional audit evidence | 2026-11-27T01:25:26.390Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f1ef04b9` | Multi-dimensional audit evidence | 2026-11-27T01:25:31.721Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T01:37:03.277Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `f38ec06c` | Multi-dimensional audit evidence | 2026-11-27T01:37:07.026Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `b64eea09` | Multi-dimensional audit evidence | 2026-11-27T01:37:16.997Z |

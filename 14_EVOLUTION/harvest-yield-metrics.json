@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:25:31.741Z",
-  "total_cycles_completed": 12935,
-  "total_learnings_persisted": 12935,
-  "total_rules_promoted": 11718,
+  "last_updated": "2026-11-27T01:37:17.021Z",
+  "total_cycles_completed": 12938,
+  "total_learnings_persisted": 12938,
+  "total_rules_promoted": 11719,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:13:37.161Z",
-      "repository": "sceneview/sceneview",
-      "learningId": "learn-github-sceneview-sceneview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:22:05.419Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:22:13.467Z",
-      "repository": "lingyired/status-trio",
-      "learningId": "learn-github-lingyired-status-trio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:22:22.456Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T01:25:31.741Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:37:03.293Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:37:07.095Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:37:17.021Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

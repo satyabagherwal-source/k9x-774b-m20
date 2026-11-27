@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T01:25:31.744Z",
+  "last_updated": "2026-11-27T01:37:17.025Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "ba60c8bbf91435731478b2d1ecdf04e48458be52d8bc9eb2ec06feec46b1d9a5",
-      "verified_at": "2026-11-23T16:36:55.927Z",
+      "content_hash": "14425045483d3a054daf1675fd9915795b76d6ee2e7e4635289246a82595db13",
+      "verified_at": "2026-11-27T01:37:03.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:36:55.927Z"
+      "last_updated": "2026-11-27T01:37:03.297Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
-      "verified_at": "2026-11-26T01:26:21.027Z",
+      "content_hash": "23265c91f708cb503296c435b8cb0021cab0a0e01a5f4aca85f9499c2faa9256",
+      "verified_at": "2026-11-27T01:37:07.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:26:21.027Z"
+      "last_updated": "2026-11-27T01:37:07.103Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "8eadb334fa4950804a2bfa568e352a91b9469610417b2363b333c1d5fb79823d",
-      "verified_at": "2026-11-23T19:09:21.278Z",
+      "content_hash": "691cd71c7e7471c231e46eb5c40ea0c4c2e4e5bbc04ebbd79815e7585bbeac1f",
+      "verified_at": "2026-11-27T01:37:17.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:09:21.278Z"
+      "last_updated": "2026-11-27T01:37:17.024Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
