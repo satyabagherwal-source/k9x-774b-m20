@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T18:14:42.328Z",
+  "timestamp": "2026-11-27T18:26:19.645Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-orange-opensource-hurl-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orange-opensource-hurl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T18:14:42.328Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T18:26:19.645Z`  
 > **Learning ID**: `LEARN-EVO-orange-opensource-hurl-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `08733868`  
+> **Source Version**: `d25c9cce`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:14:25.731Z  
+> **Timestamp**: 2026-11-27T18:25:59.981Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:14:25.725Z  
+> **Harvest Timestamp**: 2026-11-27T18:25:59.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19369 stars
+- **Stars / Engagement**: 19379 stars
 
 ---
 
@@ -1893,304 +1893,327 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ba855ec` (2026-11-25)
-**Commit Message**: Add RequestCookie::new and RequestCookie::from builder.
+### Incident Patch 1: `d25c9cce` (2026-11-27)
+**Commit Message**: Use PathBuf instead of String for --netrc-file
 
-**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +4/-4)
+**File**: `packages/hurl/src/cli/options/args.rs` (modified, +28/-41)
 ```diff
-@@ -1351,10 +1351,10 @@ mod tests {
-         let request = RequestSpec {
-             method: Method("GET".to_string()),
-             url: Url::from_str("http://localhost:8000/hello").unwrap(),
--            cookies: vec![crate::http::RequestCookie {
--                name: "cookie1".to_string(),
--                value: "value'with'quotes".to_string(),
--            }],
-+            cookies: vec![crate::http::RequestCookie::new(
-+                "cookie1",
-+                "value'with'quotes",
-+            )],
-             ..Default::default()
-         };
- 
-```
-
-**File**: `packages/hurl/src/http/request.rs` (modified, +7/-41)
-```diff
-@@ -220,20 +220,9 @@ impl Request {
- }
- 
- fn parse_cookies(s: &str) -> Vec<RequestCookie> {
--    s.split(';').map(|t| parse_cookie(t.trim())).collect()
--}
--
--fn parse_cookie(s: &str) -> RequestCookie {
--    match s.find('=') {
--        Some(i) => RequestCookie {
--            name: s.split_at(i).0.to_string(),
--            value: s.split_at(i + 1).1.to_string(),
--        },
--        None => RequestCookie {
--            name: s.to_string(),
--            value: String::new(),
--        },
--    }
-+    s.split(';')
-+        .map(|t| RequestCookie::from_str(t.trim()))
-+        .collect()
- }
- 
- #[cfg(test)]
-@@ -281,14 +270,8 @@ mod tests {
-         assert_eq!(
-             cookies_request().cookies(),
-             vec![
--                RequestCookie {
--                    name: "cookie1".to_string(),
--                    value: "value1".to_string(),
--                },
--                RequestCookie {
--                    name: "cookie2".to_string(),
--                    value: "value2".to_string(),
--                },
-+                RequestCookie::new("cookie1", "value1"),
-+                RequestCookie::new("cookie2", "value2"),
-             ]
-         );
-     }
-@@ -298,29 +281,12 @@ mod tests {
-         assert_eq!(
-             parse_cookies("cookie1=value1; cookie2=value2"),
-             vec![
--                RequestCookie {
--                    name: "cookie1".to_string(),
--                    value: "value1".to_string(),
--                },
--                RequestCookie {
--                    name: "cookie2".to_string(),
--                    value: "value2".to_string(),
--                },
-+                RequestCookie::new("cookie1", "value1"),
-+                RequestCookie::new("cookie2", "value2"),
-             ]
-         );
-     }
- 
--    #[test]
--    fn test_parse_cookie() {
--        assert_eq!(
--            parse_cookie("cookie1=value1"),
--            RequestCookie {
--                name: "cookie1".to_string(),
--                value: "value1".to_string(),
--            },
--        );
--    }
--
-     #[test]
-     fn test_tls_version() {
-         assert_eq!("1.0".parse(), Ok(TlsVersion::Tls10));
-```
-
-**File**: `packages/hurl/src/http/request_cookie.rs` (modified, +35/-0)
-```diff
-@@ -24,8 +24,43 @@ pub struct RequestCookie {
-     pub value: String,
- }
- 
-+impl RequestCookie {
-+    /// Creates a new request cookie.
-+    pub fn new(name: &str, value: &str) -> Self {
-+        RequestCookie {
-+            name: name.to_string(),
-+            value: value.to_string(),
-+        }
-+    }
-+
-+    /// Creates a new instance from a string with format `name=value`.
-+    pub fn from_str(s: &str) -> Self {
-+        match s.find('=') {
-+            Some(i) => {
-+                let name = s.split_at(i).0;
-+                let value = s.split_at(i + 1).1;
-+                RequestCookie::new(name, value)
-+            }
-+            None => RequestCookie::new(s, ""),
-+        }
-+    }
-+}
-+
- impl fmt::Display for RequestCookie {
-     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-         write!(f, "{}={}", self.name, self.value)
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use crate::http::RequestCookie;
-+
-+    #[test]
-+    fn test_parse_cookie() {
-+        assert_eq!(
-+            RequestCookie::from_str("cookie1=value1"),
-+            RequestCookie::new("cookie1", "value1"),
-+        );
-+    }
-+}
-```
-
-**File**: `packages/hurl/src/http/tests/mod.rs` (modified, +2/-8)
-```diff
-@@ -170,14 +170,8 @@ pub fn custom_http_request() -> RequestSpec {
-         url: Url::from_str("http://localhost/custom").unwrap(),
-         headers,
-         cookies: vec![
--            RequestCookie {
--                name: String::from("theme"),
--                value: String::from("light"),
--            },
--            RequestCookie {
--                name: String::from("sessionToken"),
--                value: String::from("abc123"),
--            },
-+            RequestCookie::new("theme", "light"),
-+            RequestCookie::new("sessionToken", "abc123"),
-         ],
-         ..Default::default()
-     }
-```
-
-**File**: `packages/hurl/src/runner/request.rs` (modified, +30/-19)
-```diff
-@@ -94,7 +94,7 @@ pub fn eval_request(
-     for cookie in request.cookies() {
-         let name = template::eval_template(&cookie.name, variables)?;
-         let value = template::eval_template(&cookie.value, variables)?;
--        let cookie = RequestCookie { name, value };
-+        let cookie = RequestCookie::new(&name, &value);
-         cookies.push(cookie);
-     }
-     for cookie in option_cookies {
-@@ -439,13 +439,6 @@ mod tests {
-         hurl_file.entries[0].request.clone()
-     }
- 
--    fn new_cookie(name: &str, value: &str) -> RequestCookie {
--        RequestCookie {
--            name: name.to_string(),
--            value: value.to_string(),
+@@ -340,18 +340,8 @@ fn cacert_file(
+     default_value: Option<PathBuf>,
+ ) -> Result<Option<PathBuf>, CliOptionsError> {
+     match get_string(arg_matches, "cacert_file") {
++        Some(filename) => to_path_buf(&filename).map(Some),
+         None => Ok(default_value),
+-        Some(filename) => {
+-            let path = PathBuf::from(&filename);
+-            if path.exists() {
+-                Ok(Some(path))
+-            } else {
+-                Err(CliOptionsError::Error(format!(
+-                    "Input file {} does not exist",
+-                    path.display()
+-                )))
+-            }
 -        }
--    }
--
-     fn eval_cookies(content: &str, option_cookies: &[RequestCookie]) -> Vec<RequestCookie> {
-         let request = parse_request(content);
-         let variables = VariableSet::new();
-@@ -463,17 +456,23 @@ fruit: lemon
- ";
-         assert_eq!(
-             eval_cookies(content, &[]),
--            vec![new_cookie("fruit", "lemon")]
-+            vec![RequestCookie::new("fruit", "lemon")]
-         );
+     }
+ }
+ 
+@@ -366,11 +356,12 @@ fn client_cert_file(
+     match get::<String>(arg_matches, "client_cert_file") {
+         None => Ok(default_value),
+         Some(filename) => {
+-            if !Path::new(&filename).is_file() {
+-                let message = format!("File {filename} does not exist");
+-                Err(CliOptionsError::Error(message))
+-            } else {
++            // TODO: cert args can be in the form `certificate[:password]`
++            if Path::new(&filename).is_file() {
+                 Ok(Some(filename))
++            } else {
++                let message = format!("File {filename} is not a file");
++                Err(CliOptionsError::Error(message))
+             }
+         }
+     }
+@@ -381,16 +372,8 @@ fn client_key_file(
+     default_value: Option<PathBuf>,
+ ) -> Result<Option<PathBuf>, CliOptionsError> {
+     match get::<String>(arg_matches, "client_key_file") {
++        Some(filename) => to_path_buf(&filename).map(Some),
+         None => Ok(default_value),
+-        Some(filename) => {
+-            let path = PathBuf::from(&filename);
+-            if !path.is_file() {
+-                let message = format!("File {filename} does not exist");
+-                Err(CliOptionsError::Error(message))
+-            } else {
+-                Ok(Some(path))
+-            }
+-        }
+     }
+ }
+ 
+@@ -605,15 +588,15 @@ fn input_files(
+     let mut files = vec![];
+     if let Some(filenames) = get_strings(arg_matches, "input_files") {
+         for filename in &filenames {
+-            let filename = Path::new(filename);
+-            if !filename.exists() {
+-                return Err(CliOptionsError::InvalidInputFile(filename.to_path_buf()));
++            let path = Path::new(filename);
++            if !path.exists() {
++                return Err(CliOptionsError::InvalidInputFile(path.to_path_buf()));
+             }
+-            if filename.is_file() {
+-                let file = Input::from(filename);
++            if path.is_file() {
++                let file = Input::from(path);
+                 files.push(file);
+-            } else if filename.is_dir() {
+-                walks_hurl_files(filename, &mut files)?;
++            } else if path.is_dir() {
++                walks_hurl_files(path, &mut files)?;
+             }
+         }
+     }
+@@ -744,18 +727,11 @@ fn netrc(arg_matches: &ArgMatches, default_value: bool) -> bool {
+ 
+ fn netrc_file(
+     arg_matches: &ArgMatches,
+-    default_value: Option<String>,
+-) -> Result<Option<String>, CliOptionsError> {
++    default_value: Option<PathBuf>,
++) -> Result<Option<PathBuf>, CliOptionsError> {
+     match get::<String>(arg_matches, "netrc_file") {
++        Some(filename) => to_path_buf(&filename).map(Some),
+         None => Ok(default_value),
+-        Some(filename) => {
+-            if !Path::new(&filename).is_file() {
+-                let message = format!("File {filename} does not exist");
+-                Err(CliOptionsError::Error(message))
+-            } else {
+-                Ok(Some(filename))
+-            }
+-        }
+     }
+ }
+ 
+@@ -1103,3 +1079,14 @@ fn get_strings(matches: &ArgMatches, name: &str) -> Option<Vec<String>> {
+         .get_many::<String>(name)
+         .map(|v| v.map(|x| x.to_string()).collect())
+ }
++
++/// Given a `filename`, returns a [`PathBuf`] if it's a file or an error
++fn to_path_buf(filename: &str) -> Result<PathBuf, CliOptionsError> {
++    let path = PathBuf::from(filename);
++    if path.is_file() {
++        Ok(path)
++    } else {
++        let message = format!("File {} is not a file", path.display());
++        Err(CliOptionsError::Error(message))
++    }
++}
+```
+
+**File**: `packages/hurl/src/cli/options/mod.rs` (modified, +1/-1)
+```diff
+@@ -100,7 +100,7 @@ pub struct CliOptions {
+     pub max_redirect: Count,
+     pub negotiate: bool,
+     pub netrc: bool,
+-    pub netrc_file: Option<String>,
++    pub netrc_file: Option<PathBuf>,
+     pub netrc_optional: bool,
+     pub no_cookie_store: bool,
+     pub no_headers: Vec<String>,
+```
+
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +2/-2)
+```diff
+@@ -563,7 +563,7 @@ impl ClientOptions {
+         }
+         if let Some(filename) = &self.netrc_file {
+             args.push(Arg::plain("--netrc-file"));
+-            args.push(Arg::quoted(filename));
++            args.push(Arg::quoted(&filename.to_string_lossy()));
+         }
+         if self.netrc_optional {
+             args.push(Arg::plain("--netrc-optional"));
+@@ -785,7 +785,7 @@ mod tests {
+             max_send_speed: Some(BytesPerSec(8000)),
+             negotiate: true,
+             netrc: false,
+-            netrc_file: Some("/var/run/netrc".to_string()),
++            netrc_file: Some(PathBuf::from("/var/run/netrc")),
+             netrc_optional: true,
+             no_headers: Vec::new(),
+             ntlm: true,
+```
+
+**File**: `packages/hurl/src/http/easy_ext.rs` (modified, +10/-1)
+```diff
+@@ -16,6 +16,7 @@
+  *
+  */
+ use std::ffi::{CStr, CString};
++use std::path::Path;
+ use std::ptr;
+ use std::time::Duration;
+ 
+@@ -214,7 +215,15 @@ pub fn total_time_t(easy: &mut Easy) -> Result<Duration, Error> {
+ }
+ 
+ /// Read .netrc information from a file.
+-pub fn netrc_file(easy: &mut Easy, filename: &str) -> Result<(), Error> {
++pub fn netrc_file(easy: &mut Easy, filename: &Path) -> Result<(), Error> {
++    let Some(filename) = filename.to_str() else {
++        let mut err = Error::new(curl_sys::CURLE_CONV_FAILED);
++        err.set_extra(format!(
++            "netrc file path is not valid UTF-8: {}",
++            filename.display()
++        ));
++        return Err(err);
++    };
+     let filename = CString::new(filename)?;
+     cvt(easy, unsafe {
+         curl_sys::curl_easy_setopt(easy.raw(), CURLOPT_NETRC_FILE, filename.as_ptr())
+```
+
+**File**: `packages/hurl/src/http/options.rs` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ pub struct ClientOptions {
+     pub max_send_speed: Option<BytesPerSec>,
+     pub negotiate: bool,
+     pub netrc: bool,
+-    pub netrc_file: Option<String>,
++    pub netrc_file: Option<PathBuf>,
+     pub netrc_optional: bool,
+     pub no_headers: Vec<String>,
+     pub no_proxy: Option<String>,
+```
+
+**File**: `packages/hurl/src/http/request.rs` (modified, +1/-0)
+```diff
+@@ -129,6 +129,7 @@ pub struct CertFile {
+ 
+ impl From<&str> for CertFile {
+     /// Parses a certificate file from a "curl" option string `PATH:PASSWORD`
++    // TODO: check on Windows with drive letter
+     fn from(value: &str) -> Self {
+         let mut iter = value.chars();
+         let mut cert = String::new();
+```
+
+**File**: `packages/hurl/src/runner/options.rs` (modified, +1/-1)
+```diff
+@@ -242,7 +242,7 @@ pub fn get_entry_options(
+             }
+             OptionKind::NetRcFile(value) => {
+                 let filename = eval_template(value, variables)?;
+-                entry_options.netrc_file = Some(filename);
++                entry_options.netrc_file = Some(PathBuf::from(filename));
+             }
+             OptionKind::NetRcOptional(value) => {
+                 let value = eval_boolean_option(value, variables)?;
+```
+
+**File**: `packages/hurl/src/runner/runner_options.rs` (modified, +3/-3)
+```diff
+@@ -58,7 +58,7 @@ pub struct RunnerOptionsBuilder {
+     max_send_speed: Option<BytesPerSec>,
+     negotiate: bool,
+     netrc: bool,
+-    netrc_file: Option<String>,
++    netrc_file: Option<PathBuf>,
+     netrc_optional: bool,
+     no_assert: bool,
+     no_headers: Vec<String>,
+@@ -377,7 +377,7 @@ impl RunnerOptionsBuilder {
      }
  
-     #[test]
-     fn test_eval_cookies_only_option_cookies() {
-         let content = "GET http://localhost:8000/hello\n";
--        let option_cookies = [new_cookie("fruit", "lemon"), new_cookie("color", "green")];
-+        let option_cookies = [
-+            RequestCookie::new("fruit", "lemon"),
-+            RequestCookie::new("color", "green"),
-+        ];
-         assert_eq!(
-             eval_cookies(content, &option_cookies),
--            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
-+            vec![
-+                RequestCookie::new("fruit", "lemon"),
-+                RequestCookie::new("color", "green")
-+            ]
-         );
+     /// Sets the netrc file.
+-    pub fn netrc_file(&mut self, netrc_file: Option<String>) -> &mut Self {
++    pub fn netrc_file(&mut self, netrc_file: Option<PathBuf>) -> &mut Self {
+         self.netrc_file = netrc_file;
+         self
      }
+@@ -659,7 +659,7 @@ pub struct RunnerOptions {
+     /// Sets the netrc flag.
+     pub(crate) netrc: bool,
+     /// Sets the netrc file.
+-    pub(crate) netrc_file: Option<String>,
++    pub(crate) netrc_file: Option<PathBuf>,
+     /// Sets the optional netrc flag.
+     pub(crate) netrc_optional: bool,
+     /// Ignores all asserts defined in the Hurl file.
+```
+
+---
+
+### Incident Patch 2: `05ec1570` (2026-11-27)
+**Commit Message**: Update crates
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -238,9 +238,9 @@ dependencies = [
  
-@@ -484,10 +483,13 @@ GET http://localhost:8000/hello
- [Cookies]
- fruit: lemon
- ";
--        let option_cookies = [new_cookie("color", "green")];
-+        let option_cookies = [RequestCookie::new("color", "green")];
-         assert_eq!(
-             eval_cookies(content, &option_cookies),
--            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
-+            vec![
-+                RequestCookie::new("fruit", "lemon"),
-+                RequestCookie::new("color", "green")
-+            ]
-         );
-     }
+ [[package]]
+ name = "clap"
+-version = "4.6.8"
++version = "4.6.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
++checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+ dependencies = [
+  "clap_builder",
+ ]
+@@ -871,9 +871,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
  
-@@ -498,10 +500,16 @@ GET http://localhost:8000/hello
- [Cookies]
- fruit: lemon
- ";
--        let option_cookies = [new_cookie("fruit", "apple"), new_cookie("color", "green")];
-+        let option_cookies = [
-+            RequestCookie::new("fruit", "apple"),
-+            RequestCookie::new("color", "green"),
-+        ];
-         assert_eq!(
-             eval_cookies(content, &option_cookies),
--            vec![new_cookie("fruit", "lemon"), new_cookie("color", "green")]
-+            vec![
-+                RequestCookie::new("fruit", "lemon"),
-+                RequestCookie::new("color", "green")
-+            ]
-         );
-     }
+ [[package]]
+ name = "pin-project-lite"
+-version = "0.2.17"
++version = "0.2.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
++checksum = "c938015719552d665fd0553b90d96cd7ff58e83e4c061ca99e6bb78865a72752"
  
-@@ -512,10 +520,13 @@ GET http://localhost:8000/hello
- [Cookies]
- Fruit: lemon
- ";
--        let option_cookies = [new_cookie("fruit", "apple")];
-+        let option_cookies = [RequestCookie::new("fruit", "apple")];
-         assert_eq!(
-             eval_cookies(content, &option_cookies),
--            vec![new_cookie("Fruit", "lemon"), new_cookie("fruit", "apple")]
-+            vec![
-+                RequestCookie::new("Fruit", "lemon"),
-+                RequestCookie::new("fruit", "apple")
-+            ]
-         );
-     }
+ [[package]]
+ name = "pkg-config"
+```
+
+**File**: `packages/hurl/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ static-openssl = ["curl/static-ssl", "curl-sys/static-ssl"]
+ base64 = "0.23.1"
+ brotli = "9.1.3"
+ chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
+-clap = { version = "4.6.8", features = ["string", "wrap_help"] }
++clap = { version = "4.6.9", features = ["string", "wrap_help"] }
+ curl = "0.4.51"
+ curl-sys = "0.4.91"
+ encoding_rs = "0.8.44"
+```
+
+**File**: `packages/hurlfmt/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ rust-version = "1.100.0"
  
-@@ -530,7 +541,7 @@ GET http://localhost:8000/hello
-         let mut variables = VariableSet::new();
-         variables.insert("name".to_string(), Value::String("fruit".to_string()));
-         variables.insert("value".to_string(), Value::String("lemon".to_string()));
--        let option_cookies = [new_cookie("fruit", "apple")];
-+        let option_cookies = [RequestCookie::new("fruit", "apple")];
-         let cookies = eval_request(
-             &request,
-             &option_cookies,
-@@ -539,7 +550,7 @@ GET http://localhost:8000/hello
-         )
-         .unwrap()
-         .cookies;
--        assert_eq!(cookies, vec![new_cookie("fruit", "lemon")]);
-+        assert_eq!(cookies, vec![RequestCookie::new("fruit", "lemon")]);
-     }
+ [dependencies]
+ base64 = "0.23.1"
+-clap = { version = "4.6.8", features = ["cargo", "wrap_help"] }
++clap = { version = "4.6.9", features = ["cargo", "wrap_help"] }
+ hurl_core = { version = "9.0.0", path = "../hurl_core" }
+ regex = "1.13.2"
  
-     #[test]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5464** (2026-11-27): Use PathBuf instead of String for --netrc-file (@jcamiel)
+- **PR #5463** (2026-11-27): Update crates (@hurl-bot)
 - **PR #5462** (2026-11-26): Delete headers field from ClientOptions (redundant with the headers in RequestSpec) (@jcamiel)
 - **PR #5461** (2026-11-26): Update crates (@hurl-bot)
 - **PR #5460** (2026-11-25): Add cookies on runner (@jcamiel)
 - **PR #5458** (2026-11-25): Update crates (@hurl-bot)
-- **PR #5457** (2026-11-24): Better integration test with --cookie and --location/--location-trusted (@jcamiel)
-- **PR #5456** (2026-11-24): Update crates (@hurl-bot)
 
 ---
 
@@ -2210,37 +2233,86 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add RequestCookie::new and RequestCookie::from builder.
+## X. Use PathBuf instead of String for --netrc-file
 
 **RULE**:
-When implementing operations in `packages/hurl/src/http/curl_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/cli/options/args.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ba855ec`: Add RequestCookie::new and RequestCookie::from builder.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d25c9cce`: Use PathBuf instead of String for --netrc-file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/http/curl_cmd.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/cli/options/args.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            cookies: vec![crate::http::RequestCookie::new(
-                "cookie1",
-                "value'with'quotes",
-            )],
+        Some(filename) => to_path_buf(&filename).map(Some),
+            // TODO: cert args can be in the form `certificate[:password]`
+            if Path::new(&filename).is_file() {
+            } else {
+                let message = format!("File {filename} is not a file");
+                Err(CliOptionsError::Error(message))
+        Some(filename) => to_path_buf(&filename).map(Some),
+            let path = Path::new(filename);
+            if !path.exists() {
+                return Err(CliOptionsError::InvalidInputFile(path.to_path_buf()));
+            if path.is_file() {
+                let file = Input::from(path);
+            } else if path.is_dir() {
+                walks_hurl_files(path, &mut files)?;
+    default_value: Option<PathBuf>,
+) -> Result<Option<PathBuf>, CliOptionsError> {
+        Some(filename) => to_path_buf(&filename).map(Some),
+
+/// Given a `filename`, returns a [`PathBuf`] if it's a file or an error
+fn to_path_buf(filename: &str) -> Result<PathBuf, CliOptionsError> {
+    let path = PathBuf::from(filename);
+    if path.is_file() {
+        Ok(path)
+    } else {
+        let message = format!("File {} is not a file", path.display());
+        Err(CliOptionsError::E
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            cookies: vec![crate::http::RequestCookie {
-                name: "cookie1".to_string(),
-                value: "value'with'quotes".to_string(),
-            }],
+        Some(filename) => {
+            let path = PathBuf::from(&filename);
+            if path.exists() {
+                Ok(Some(path))
+            } else {
+                Err(CliOptionsError::Error(format!(
+                    "Input file {} does not exist",
+                    path.display()
+                )))
+            }
+        }
+            if !Path::new(&filename).is_file() {
+                let message = format!("File {filename} does not exist");
+                Err(CliOptionsError::Error(message))
+            } else {
+        Some(filename) => {
+            let path = PathBuf::from(&filename);
+            if !path.is_file() {
+                let message = format!("File {filename} does not exist");
+                Err(CliOptionsError::Error(message))
+            } else {
+                Ok(Some(path))
+            }
+        }
+            let filename = Path::new(filename);
+            if !filename.exists() {
+                return Err(CliOptionsError::InvalidInputFile(filename.to_path_buf()));
+            if filename.is_file() {
+                let file = Input::from(filename);
+            } else if filename.is_dir() {
+                walks_hurl_files(filename, &mut fi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ba855ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d25c9cce` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

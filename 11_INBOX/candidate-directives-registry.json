@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:17:30.991Z",
+  "last_updated": "2026-11-27T18:26:22.166Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61418,11 +61418,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-DJH8",
+      "id": "CD-BOT1",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DJH8-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BOT1-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -71864,6 +71864,57 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BB3AD8-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-BMYY",
+      "directive_title": "Use PathBuf instead of String for --netrc-file",
+      "source_repo": "orange-opensource-hurl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BMYY-use-pathbuf-instead-of-string-for-netrc-file.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-BJPG",
+      "directive_title": "ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+      "source_repo": "dathere/qsv",
+      "source_commit": "e7bc9f3a",
+      "staged_file": "11_INBOX/candidate-directives/CD-BJPG-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DC346B",
+      "directive_title": "Use PathBuf instead of String for --netrc-file",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DC346B-use-pathbuf-instead-of-string-for-netrc-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-BO0N",
+      "directive_title": "audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BO0N-audit-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-865ED4",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-865ED4-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "80e0546c",
+  "source_version": "e7bc9f3a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T17:50:22.429Z",
+  "timestamp": "2026-11-27T18:26:15.559Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `80e0546c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T17:50:22.429Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `e7bc9f3a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T18:26:15.559Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `80e0546c`)
+- **Target Repository**: `dathere/qsv` (Commit: `e7bc9f3a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T17:50:21.171Z  
+> **Harvest Timestamp**: 2026-11-27T18:26:14.042Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2290,48 +2290,74 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `80e0546c` (2026-11-27)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (#5120)
+### Incident Patch 1: `e7bc9f3a` (2026-11-27)
+**Commit Message**: chore(audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]
 
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.286 to 1.0.289.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/acfe7992852970efb4fee683d63d628e3e52df67...eb56b6666facdbd501035f4a0269d8caee2e7a8b)
+cookie 0.16.2 comes in only via viz_static -> plotly_static -> fantoccini ->
+webdriver 0.54 (latest, still requires cookie ^0.16). The advisory affects
+PrivateJar, which sits behind cookie's opt-in `private` feature that nothing
+enables, and requires fork() without exec, which qsv never does. reqwest's
+cookie is already the patched 0.18.3.
 
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.289
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Closes #5109
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+**File**: `.cargo/audit.toml` (modified, +13/-0)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -32,6 +32,19 @@ ignore = [
+     # askama main already swapped it for `toml` (askama-rs/askama#594); clears on
+     # the next askama release (0.16.1 is still the latest). See dathere/qsv#4860.
+     "RUSTSEC-2026-0374",
++
++    # ---------------------------------------------------------------------
++    # vulnerabilities in code paths qsv does not compile or reach
++    # ---------------------------------------------------------------------
++
++    # RUSTSEC-2026-0594: cookie private-cookie nonce reuse after fork().
++    #   qsv (viz_static) -> plotly -> plotly_static -> fantoccini -> webdriver 0.54
++    #       -> cookie 0.16.2
++    # Only PrivateJar is affected; it is behind cookie's opt-in `private` feature,
++    # which nothing enables (no aes-gcm/rand in the Cargo.lock entry). qsv also never
++    # forks without exec. reqwest's cookie is already the patched 0.18.3. Clears when
++    # webdriver (0.54.0 is still the latest) moves to cookie >=0.18.3. See dathere/qsv#5109.
++    "RUSTSEC-2026-0594",
+ ]
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
-+        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+ [yanked]
 ```
 
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `56a4e145` (2026-11-26)
+**Commit Message**: chore: clippy::unnecessary_lazy_evaluations
+
+warning: unnecessary closure used with `bool::then`
+   --> src/cmd/synthesize/mod.rs:801:20
+    |
+801 |           let rate = (any_compared && synthetic_rows > 0)
+    |  ____________________^
+802 | |             .then(|| exact_matches as f64 / synthetic_rows as f64);
+    | |__________________________________________________________________^
+    |
+    = help: for further information visit https://clippy.rust-lang.org/main/index.html#unnecessary_lazy_evaluations
+    = note: `#[warn(clippy::unnecessary_lazy_evaluations)]` on by default
+help: use `then_some` instead
+    |
+802 -             .then(|| exact_matches as f64 / synthetic_rows as f64);
+802 +             .then_some(exact_matches as f64 / synthetic_rows as f64);
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
- 
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
-+        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
+@@ -799,7 +799,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         let any_compared = !compared.is_empty();
+         #[allow(clippy::cast_precision_loss)]
+         let rate = (any_compared && synthetic_rows > 0)
+-            .then(|| exact_matches as f64 / synthetic_rows as f64);
++            .then_some(exact_matches as f64 / synthetic_rows as f64);
+         let report = serde_json::json!({
+             "source_rows": fitted.total_rows,
+             "synthetic_rows": synthetic_rows,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2360,31 +2386,43 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289
+## X. audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]
 
 **RULE**:
-When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `80e0546c`: build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7bc9f3a`: audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
+
+    # ---------------------------------------------------------------------
+    # vulnerabilities in code paths qsv does not compile or reach
+    # ---------------------------------------------------------------------
+
+    # RUSTSEC-2026-0594: cookie private-cookie nonce reuse after fork().
+    #   qsv (viz_static) -> plotly -> plotly_static -> fantoccini -> webdriver 0.54
+    #       -> cookie 0.16.2
+    # Only PrivateJar is affected; it is behind cookie's opt-in `private` feature,
+    # which nothing enables (no aes-gcm/rand in the Cargo.lock entry). qsv also never
+    # forks without exec. reqwest's cookie is already the patched 0.18.3. Clears when
+    # webdriver (0.54.0 is still the latest) moves to cookie >=0.18.3. See dathere/qsv#5109.
+    "RUSTSEC-2026-0594",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `80e0546c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7bc9f3a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

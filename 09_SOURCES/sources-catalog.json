@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "80e0546c",
+    "sourceVersion": "e7bc9f3a",
     "license": "NOASSERTION",
-    "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
-    "lastHarvestedAt": "2026-11-27T17:50:22.203Z",
+    "contentHash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
+    "lastHarvestedAt": "2026-11-27T18:26:15.309Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "08733868",
+    "sourceVersion": "d25c9cce",
     "license": "Apache-2.0",
-    "contentHash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
-    "lastHarvestedAt": "2026-11-26T18:14:26.971Z",
+    "contentHash": "7549703d1403d7f02be7f224633490b7eb5f400e31609a92cfc200ddbe674430",
+    "lastHarvestedAt": "2026-11-27T18:26:01.261Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

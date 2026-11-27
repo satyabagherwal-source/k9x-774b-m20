@@ -13842,3 +13842,5 @@
 | `CYCLE-20261127-OM3R` | `2026-11-27T18:08:25.575Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10943` | Yes (`fcd5bab9...`) |
 | `CYCLE-20261127-OPE7` | `2026-11-27T18:08:29.839Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10944` | Yes (`daddb870...`) |
 | `CYCLE-20261127-OQJO` | `2026-11-27T18:08:31.332Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`6057cae8...`) |
+| `CYCLE-20261127-B8O1` | `2026-11-27T18:26:01.249Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10945` | Yes (`7549703d...`) |
+| `CYCLE-20261127-BJI8` | `2026-11-27T18:26:15.296Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10946` | Yes (`5884bc74...`) |

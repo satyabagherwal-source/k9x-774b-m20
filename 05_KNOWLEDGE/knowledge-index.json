@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T18:17:32.300Z",
+  "last_updated": "2026-11-27T18:26:22.610Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26696,
+  "total_items": 26701,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "80e0546c",
-      "content_hash": "917d1a3c2934f76d29cd700203542c1fb0b68c5d36876e54da9fd2b9752a7fb1",
+      "source_version": "e7bc9f3a",
+      "content_hash": "e38bc72fd14f3a2bd2d213045224c3879f6992e384ad143123e7ee2efe3742ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:50:22.825Z"
+      "persisted_at": "2026-11-27T18:26:15.995Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "6cee5ad1882fd35663a489da66d8bd214da35f0a680213edce5cca11acaf7f2f",
+      "content_hash": "e74112152af0244714377e086084abbc41dfb1925adca9983b70a4a4efe4cc25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:50:58.100Z"
+      "persisted_at": "2026-11-27T18:26:21.590Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219772,9 +219772,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2a708cd50d7a0085cdf811fc449f67f119b432325ef208761356805ddf8ba96",
+      "content_hash": "575fb02032a995c2a8cbfad6193bd2bd183c49500ff17b5c0fe0739213fcde27",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:59:49.167Z"
+      "persisted_at": "2026-11-27T18:26:22.399Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219784,9 +219784,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "17c2fcab7a5802adf44f52f0b639e5243d8fe48eee9b443e5322b623e7f0ed27",
+      "content_hash": "f0e0037afff16f5835bb58747b167e869c74c1d2ec4abe51fe93e3a4a66eeeab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:59:49.377Z"
+      "persisted_at": "2026-11-27T18:26:22.610Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220814,8 +220814,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "80e0546c",
-      "content_hash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
+      "source_version": "e7bc9f3a",
+      "content_hash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221053,6 +221053,11 @@
           "number": 10941,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10946,
+          "title": "ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221060,7 +221065,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T17:50:21.962Z",
+      "verified_at": "2026-11-27T18:26:15.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222207,10 +222212,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "80e0546c",
-      "content_hash": "14b1b456f20780d723f1f0ebe699f9f02551b1b884973428f32e7b31a15ca010",
+      "source_version": "e7bc9f3a",
+      "content_hash": "1bc980e0d26d25967312d4157130489a6a4b420d3ea08d6b795d6dd2583db446",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T17:50:22.612Z"
+      "persisted_at": "2026-11-27T18:26:15.769Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222280,9 +222285,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "d18db571e0be7b510a310589652c81fa15c1bd94750697385562cb6e34a3c934",
+      "content_hash": "62dfebc68959131f5e33ff771a947a535fe0c8fa8df84e3f34425d234844902a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T17:50:57.892Z"
+      "persisted_at": "2026-11-27T18:26:21.375Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -247768,8 +247773,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "08733868",
-      "content_hash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
+      "source_version": "d25c9cce",
+      "content_hash": "7549703d1403d7f02be7f224633490b7eb5f400e31609a92cfc200ddbe674430",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -247807,6 +247812,11 @@
           "number": 10748,
           "title": "Add RequestCookie::new and RequestCookie::from builder.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10945,
+          "title": "Use PathBuf instead of String for --netrc-file",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247814,7 +247824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:14:26.712Z",
+      "verified_at": "2026-11-27T18:26:00.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247868,10 +247878,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "08733868",
-      "content_hash": "2dd1f05b1651f2817ee0765fd8b1203310a5b8daa7a069314b01dc1e8919db36",
+      "source_version": "d25c9cce",
+      "content_hash": "f91e8ee3a08774f2648d040cb18e61df46f3549171894797ae945e5b7099c58e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:14:27.656Z"
+      "persisted_at": "2026-11-27T18:26:01.978Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -247893,9 +247903,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fa22716e33d34a061be8cf2cd0986bd6e68e41b05433ed93b6a1c49034de35e",
+      "content_hash": "4a20af89aa6aded598cae8cc9cc1a80987717a6e5fec2dd9eca4909d44cdcc38",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:14:42.888Z"
+      "persisted_at": "2026-11-27T18:26:20.226Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -290910,10 +290920,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "08733868",
-      "content_hash": "c314d79d99f2c0581df70ab9899cf144b4652ec945a4b5d9afa3b26f15ef2152",
+      "source_version": "d25c9cce",
+      "content_hash": "800eed73797c21f292be68e4674c55a145e9b7809838ed738edec73176d70bfd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:14:27.448Z"
+      "persisted_at": "2026-11-27T18:26:01.765Z"
     },
     "rule-9147": {
       "learning_id": "rule-9147",
@@ -290961,9 +290971,9 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "41914283c258333fded61ba6181d7f85627b9a43d21805374a5cd1fb17c4845c",
+      "content_hash": "98e7d2de94e67dc9a4a9e1fd721fb1a209357e1b8214ee34675990597a3d3056",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:14:42.678Z"
+      "persisted_at": "2026-11-27T18:26:20.005Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
@@ -350470,13 +350480,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DJH8-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BOT1-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "121ea2a151dc62ab211973f31a8c612f832b220ee9c4f34ceaff7bd9830286e9",
+      "content_hash": "72b65595f4700a9c23eec2692f9b3d10ed8d79bd7298f1c15055631be8cec675",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:59:48.956Z"
+      "persisted_at": "2026-11-27T18:26:22.166Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -366577,6 +366587,70 @@
       "content_hash": "51b7d962f26efda98d8790e268dd98366c6de77e486045f45726bb99d073e364",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T18:08:37.158Z"
+    },
+    "rule-10945": {
+      "learning_id": "rule-10945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10945,
+      "title": "Use PathBuf instead of String for --netrc-file",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "d25c9cce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:26:00.961Z"
+    },
+    "candidate_directive-use-pathbuf-instead-of-string-for-netrc-file": {
+      "item_id": "candidate_directive-use-pathbuf-instead-of-string-for-netrc-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BMYY-use-pathbuf-instead-of-string-for-netrc-file.md",
+      "title": "Use PathBuf instead of String for --netrc-file",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "234ae917067478f35c7280890c872f05ec4578618ac599a84dfa083d1f5bb97a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:26:19.790Z"
+    },
+    "rule-10946": {
+      "learning_id": "rule-10946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10946,
+      "title": "ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "e7bc9f3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:26:15.029Z"
+    },
+    "candidate_directive-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci": {
+      "item_id": "candidate_directive-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BJPG-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci.md",
+      "title": "ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+      "repository": "dathere/qsv",
+      "source_version": "e7bc9f3a",
+      "content_hash": "5f04d85698912267546c3ba629d6b4b8b9fdf3ad86c5125d21e852cdc77037bc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:26:15.560Z"
+    },
+    "candidate_directive-audit-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci": {
+      "item_id": "candidate_directive-audit-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BO0N-audit-ignore-rustsec-2026-0594-cookie-0-16-2-unreachable-skip-ci.md",
+      "title": "audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "edf900d27c29193b58a44aa9f45bdd2d25faedf2c7fbc963ad603ab223a79063",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T18:26:21.146Z"
     }
   },
   "ai-builder-brain": {

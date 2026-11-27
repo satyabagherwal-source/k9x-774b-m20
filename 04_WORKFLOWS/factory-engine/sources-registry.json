@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T18:17:27.787Z",
-    "lastVerified": "2026-11-27T18:17:27.787Z",
+    "lastChecked": "2026-11-27T18:26:18.702Z",
+    "lastVerified": "2026-11-27T18:26:18.702Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,14 +199,14 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T17:50:21.171Z",
-    "lastVerified": "2026-11-27T17:50:21.171Z",
+    "lastChecked": "2026-11-27T18:26:14.042Z",
+    "lastVerified": "2026-11-27T18:26:14.042Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
+    "contentHash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -479,8 +479,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T13:55:24.037Z",
-    "lastVerified": "2026-11-27T13:55:24.037Z",
+    "lastChecked": "2026-11-27T18:26:04.260Z",
+    "lastVerified": "2026-11-27T18:26:04.260Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -3076,14 +3076,14 @@
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T18:14:25.725Z",
-    "lastVerified": "2026-11-26T18:14:25.725Z",
+    "lastChecked": "2026-11-27T18:25:59.835Z",
+    "lastVerified": "2026-11-27T18:25:59.835Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "28b6ae4a3a0f9ea56a9bc81bfaf0ebcadb3afb21b8c98a67f40e90172c83a0b2",
+    "contentHash": "7549703d1403d7f02be7f224633490b7eb5f400e31609a92cfc200ddbe674430",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3950,9 +3950,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-26T23:24:09.959Z",
+    "lastChecked": "2026-11-27T18:26:06.589Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-26T23:24:09.959Z"
+    "lastVerified": "2026-11-27T18:26:06.589Z"
   },
   "nasiko-labs-nasiko": {
     "name": "Nasiko-Labs/nasiko",
@@ -7659,9 +7659,9 @@
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
-    "lastChecked": "2026-11-27T00:24:33.586Z",
+    "lastChecked": "2026-11-27T18:26:01.837Z",
     "revisionIdentifier": "689215dd",
-    "lastVerified": "2026-11-27T00:24:33.586Z"
+    "lastVerified": "2026-11-27T18:26:01.837Z"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -9807,8 +9807,8 @@
     "officialUrl": "https://github.com/vinceglb/FileKit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T09:07:50.168Z",
-    "lastVerified": "2026-11-25T09:07:50.168Z",
+    "lastChecked": "2026-11-27T18:25:59.101Z",
+    "lastVerified": "2026-11-27T18:25:59.101Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vinceglb-filekit",
@@ -10305,9 +10305,9 @@
   "raghav453-multilipi-hreflang-generator": {
     "name": "multilipi-hreflang-generator",
     "officialUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
-    "lastChecked": "2026-11-24T09:40:58.489Z",
+    "lastChecked": "2026-11-27T18:25:56.596Z",
     "revisionIdentifier": "ca4d146c",
-    "lastVerified": "2026-11-24T09:40:58.489Z"
+    "lastVerified": "2026-11-27T18:25:56.596Z"
   },
   "kdchang-reactjs101": {
     "name": "reactjs101",

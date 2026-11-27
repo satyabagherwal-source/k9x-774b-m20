@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:17:32.601Z",
+  "last_updated": "2026-11-27T18:26:22.800Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T18:17:27.965Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-27T17:59:48.603Z",
+      "processed_at": "2026-11-27T18:26:21.797Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-26T18:14:41.519Z",
+      "processed_at": "2026-11-27T18:26:18.885Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-27T17:50:56.613Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T18:26:20.445Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-27T07:39:28.640Z",
@@ -4048,7 +4048,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5049,
+  "total_dossiers_evaluated": 5052,
   "total_canonical_promoted": 584,
-  "total_staged_for_review": 3802
+  "total_staged_for_review": 3805
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T18:17:32.300Z",
+  "last_updated": "2026-11-27T18:26:22.399Z",
   "total_records": 2847,
   "domains": {
     "A": {
@@ -12238,8 +12238,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "d2a708cd50d7a0085cdf811fc449f67f119b432325ef208761356805ddf8ba96",
-      "created_at": "2026-11-27T17:59:49.167Z"
+      "content_hash": "575fb02032a995c2a8cbfad6193bd2bd183c49500ff17b5c0fe0739213fcde27",
+      "created_at": "2026-11-27T18:26:22.399Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -12904,8 +12904,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "14b1b456f20780d723f1f0ebe699f9f02551b1b884973428f32e7b31a15ca010",
-      "created_at": "2026-11-27T17:50:22.612Z"
+      "content_hash": "1bc980e0d26d25967312d4157130489a6a4b420d3ea08d6b795d6dd2583db446",
+      "created_at": "2026-11-27T18:26:15.769Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12973,8 +12973,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "d18db571e0be7b510a310589652c81fa15c1bd94750697385562cb6e34a3c934",
-      "created_at": "2026-11-27T17:50:57.892Z"
+      "content_hash": "62dfebc68959131f5e33ff771a947a535fe0c8fa8df84e3f34425d234844902a",
+      "created_at": "2026-11-27T18:26:21.375Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -30806,8 +30806,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "c314d79d99f2c0581df70ab9899cf144b4652ec945a4b5d9afa3b26f15ef2152",
-      "created_at": "2026-11-26T18:14:27.448Z"
+      "content_hash": "800eed73797c21f292be68e4674c55a145e9b7809838ed738edec73176d70bfd",
+      "created_at": "2026-11-27T18:26:01.765Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30824,8 +30824,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "41914283c258333fded61ba6181d7f85627b9a43d21805374a5cd1fb17c4845c",
-      "created_at": "2026-11-26T18:14:42.678Z"
+      "content_hash": "98e7d2de94e67dc9a4a9e1fd721fb1a209357e1b8214ee34675990597a3d3056",
+      "created_at": "2026-11-27T18:26:20.005Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

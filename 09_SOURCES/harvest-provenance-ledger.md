@@ -13875,3 +13875,5 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ccdfcea8` | Multi-dimensional audit evidence | 2026-11-27T18:08:25.585Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `6847d593` | Multi-dimensional audit evidence | 2026-11-27T18:08:29.849Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a0377489` | Multi-dimensional audit evidence | 2026-11-27T18:08:31.346Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `d25c9cce` | Multi-dimensional audit evidence | 2026-11-27T18:26:01.261Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `e7bc9f3a` | Multi-dimensional audit evidence | 2026-11-27T18:26:15.309Z |
