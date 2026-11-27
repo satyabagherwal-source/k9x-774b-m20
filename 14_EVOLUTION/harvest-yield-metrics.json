@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T13:14:01.575Z",
-  "total_cycles_completed": 13092,
-  "total_learnings_persisted": 13092,
-  "total_rules_promoted": 11819,
+  "last_updated": "2026-11-27T13:23:10.865Z",
+  "total_cycles_completed": 13093,
+  "total_learnings_persisted": 13093,
+  "total_rules_promoted": 11820,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:50:49.565Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:50:52.432Z",
       "repository": "actix/actix-web",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T13:14:01.575Z",
       "repository": "gravitl/netmaker",
       "learningId": "learn-github-gravitl-netmaker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:23:10.865Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

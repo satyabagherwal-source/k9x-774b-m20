@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-VOU0",
-    "timestamp": "2026-11-26T06:18:25.272Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-VSTM",
     "timestamp": "2026-11-26T06:18:30.442Z",
     "repository": "trailbaseio/trailbase",
@@ -7490,6 +7475,21 @@
     "repository": "gravitl/netmaker",
     "learningId": "learn-github-gravitl-netmaker",
     "contentHash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-HSAG",
+    "timestamp": "2026-11-27T13:23:10.840Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

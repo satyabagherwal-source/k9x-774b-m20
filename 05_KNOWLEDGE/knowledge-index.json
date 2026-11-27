@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T13:14:09.335Z",
+  "last_updated": "2026-11-27T13:23:17.293Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26590,
+  "total_items": 26594,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "0847ca73330b6cc487b3c12e7710c8cc8567abe85f37f25ac9301f716e7e95cf",
+      "content_hash": "b0031c33e8d006fd1f667d4b2b678cd8716db2ac82cafa12a5e1ba1976e33c46",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:37:27.912Z"
+      "persisted_at": "2026-11-27T13:23:15.315Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "412c4fe98f4b6a23bf1a6587375890ce2371a33d0e6e8cbd77c76b7a8aabe124",
+      "content_hash": "54d3735d0a21e7d54c775cd927ce2d7bbdd1f0d9794ea48b3ac8eab6e99b7f1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:14:07.529Z"
+      "persisted_at": "2026-11-27T13:23:17.066Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18a7089ce986766093d66591cc231d0ccfa46f8557476092e4f33dab69ebb6dc",
+      "content_hash": "32777bac32567b8ab2bb2bef2de55ff6ced4493bb1580c12403eec77612e3c0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:14:07.805Z"
+      "persisted_at": "2026-11-27T13:23:17.293Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219717,9 +219717,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "84a4cba5be79ad26b86fde620be5b012460df7276e3faf259587eec5acdddfff",
+      "content_hash": "1ac7d1be72a6c8189a37a37a86ea4af6b922b644220203a484051e1692751368",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:44:39.029Z"
+      "persisted_at": "2026-11-27T13:23:16.104Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219729,9 +219729,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "82ed9256ee2326622cbf4700e3a61c75d4c3e25ab1ef5e51aa9bc0d5ab79f642",
+      "content_hash": "d5d213ca77331d668ba45731819c6f358b509ce3ae1692d29aa303f019fcc3c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:44:39.245Z"
+      "persisted_at": "2026-11-27T13:23:16.318Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -240520,11 +240520,16 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "c3d07784",
-      "content_hash": "9a84341c30ac424e13d18fd98a9d42a280e97ad22c600031b53df826172709da",
+      "source_version": "b5047de7",
+      "content_hash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7973,
+          "title": "Empirical Invariant Guard in package.json",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8533,
           "title": "keep breadcrumb trail on one row with spaced separators",
@@ -240596,7 +240601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T19:37:18.271Z",
+      "verified_at": "2026-11-27T13:23:10.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240650,10 +240655,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "c3d07784",
-      "content_hash": "6ebbe3a99eaedd058f6b17663662ac0a765e89b4a6cdb0a305b3dd037203485a",
+      "source_version": "b5047de7",
+      "content_hash": "87efb22fe998d267c9b76943eab1386ce51b09aa712ae891e28ed09dc770b740",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:37:19.208Z"
+      "persisted_at": "2026-11-27T13:23:11.517Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -350280,13 +350285,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Z2J3-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HW6S-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "3dc5526fd5c539cb15f618d58a29dfc711ade62e6d30d64ec9fc23933e6ef1b0",
+      "content_hash": "37367eac2efbee8d16f21e96f5372e2edf0ce8463820962dae4869a928f1a256",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T11:44:38.799Z"
+      "persisted_at": "2026-11-27T13:23:15.892Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361193,13 +361198,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-64UG-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HWXG-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c73e9613a932683d861cacb7b496cb4788326d88c9e47315aa9027c4c64c47f2",
+      "content_hash": "9340433f53cdfc1728a7321eb9f13136278bf6f14bfea892e58f53b25b0f6e9f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:14:07.247Z"
+      "persisted_at": "2026-11-27T13:23:16.856Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365024,6 +365029,56 @@
       "content_hash": "a0637b645c77bfcfa4aee7de0d0ff618ee2b79a1d6b4173211cf2fd7d0280efe",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T13:14:05.930Z"
+    },
+    "rule-7973": {
+      "learning_id": "rule-7973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 7973,
+      "title": "Empirical Invariant Guard in package.json",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "b5047de7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T13:23:10.574Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-package-json": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-package-json",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HVEF-empirical-invariant-guard-in-package-json.md",
+      "title": "Empirical Invariant Guard in package.json",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d6caa588827ba6370723d8999980f24fbd1a9ab2e37a11253cda1ab67cfbfb0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T13:23:14.872Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshery-meshery-quality-verification-intelligence-meshery-meshery-core-invariant.md",
+      "title": "Quality & Verification Intelligence: meshery/meshery Core Invariants",
+      "repository": "meshery/meshery",
+      "source_version": "b5047de7",
+      "content_hash": "e656cca08cf1625e94d71f87e2016ea626ecbb07cdd0de201e9231bacbbc04df",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T13:23:11.309Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshery-meshery-learnings-quality-verification-intelligence-meshery-meshery-lear.md",
+      "title": "Quality & Verification Intelligence: meshery-meshery-learnings Core Invariants",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7226b1865d91c2711b838e6d17cb5253f471f86c76b4bca8c629faa22eff6901",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T13:23:15.092Z"
     }
   },
   "ai-builder-brain": {

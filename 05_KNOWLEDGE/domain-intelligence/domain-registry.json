@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T13:14:09.040Z",
-  "total_records": 2836,
+  "last_updated": "2026-11-27T13:23:17.066Z",
+  "total_records": 2838,
   "domains": {
     "A": {
       "total": 23,
@@ -2680,7 +2680,7 @@
       ]
     },
     "K": {
-      "total": 182,
+      "total": 184,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2863,7 +2863,9 @@
         "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants",
         "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian",
         "domain_intelligence-quality-verification-intelligence-kividbio-kividb-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-kividbio-kividb-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-kividbio-kividb-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants"
       ]
     },
     "L": {
@@ -9569,8 +9571,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "412c4fe98f4b6a23bf1a6587375890ce2371a33d0e6e8cbd77c76b7a8aabe124",
-      "created_at": "2026-11-27T13:14:07.529Z"
+      "content_hash": "54d3735d0a21e7d54c775cd927ce2d7bbdd1f0d9794ea48b3ac8eab6e99b7f1b",
+      "created_at": "2026-11-27T13:23:17.066Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12227,8 +12229,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "84a4cba5be79ad26b86fde620be5b012460df7276e3faf259587eec5acdddfff",
-      "created_at": "2026-11-27T11:44:39.029Z"
+      "content_hash": "1ac7d1be72a6c8189a37a37a86ea4af6b922b644220203a484051e1692751368",
+      "created_at": "2026-11-27T13:23:16.104Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -47866,6 +47868,24 @@
       "repository": "infracost-infracost-learnings",
       "content_hash": "bcc218dcbb9f0fc42542b1d95ce2d12542f94746083b8d8dcaec13023627a66d",
       "created_at": "2026-11-27T12:41:51.239Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: meshery/meshery Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshery-meshery-quality-verification-intelligence-meshery-meshery-core-invariant.md",
+      "repository": "meshery/meshery",
+      "content_hash": "e656cca08cf1625e94d71f87e2016ea626ecbb07cdd0de201e9231bacbbc04df",
+      "created_at": "2026-11-27T13:23:11.309Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: meshery-meshery-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-meshery-meshery-learnings-quality-verification-intelligence-meshery-meshery-lear.md",
+      "repository": "meshery-meshery-learnings",
+      "content_hash": "7226b1865d91c2711b838e6d17cb5253f471f86c76b4bca8c629faa22eff6901",
+      "created_at": "2026-11-27T13:23:15.092Z"
     }
   }
 }
