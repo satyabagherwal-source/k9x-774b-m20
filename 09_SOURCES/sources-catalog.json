@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
-    "lastHarvestedAt": "2026-11-23T19:42:50.415Z",
+    "contentHash": "f4ac34c35c2068b0606bd229c5ed479743539f965749478983e6f90b883a4d52",
+    "lastHarvestedAt": "2026-11-27T05:02:36.491Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -13163,10 +13163,10 @@
     "repository": "apache/maka",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/maka",
-    "sourceVersion": "00c6027a",
+    "sourceVersion": "218225f5",
     "license": "Apache-2.0",
-    "contentHash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
-    "lastHarvestedAt": "2026-11-26T04:13:24.138Z",
+    "contentHash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
+    "lastHarvestedAt": "2026-11-27T05:02:38.960Z",
     "learningId": "learn-github-apache-maka"
   },
   "hf-lakonik-pi-h3": {

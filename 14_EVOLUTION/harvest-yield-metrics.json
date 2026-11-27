@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:54:08.170Z",
-  "total_cycles_completed": 12981,
-  "total_learnings_persisted": 12981,
-  "total_rules_promoted": 11739,
+  "last_updated": "2026-11-27T05:02:38.970Z",
+  "total_cycles_completed": 12983,
+  "total_learnings_persisted": 12983,
+  "total_rules_promoted": 11740,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:40:30.803Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:40:33.444Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:40:37.738Z",
       "repository": "react-hook-form/react-hook-form",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T04:54:08.170Z",
       "repository": "StarRocks/starrocks",
       "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:02:36.504Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T05:02:38.970Z",
+      "repository": "apache/maka",
+      "learningId": "learn-github-apache-maka",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

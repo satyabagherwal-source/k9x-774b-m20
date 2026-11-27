@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T04:54:08.173Z",
+  "last_updated": "2026-11-27T05:02:38.973Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1355,14 +1355,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
-      "content_hash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
-      "verified_at": "2026-11-23T19:42:50.424Z",
+      "content_hash": "f4ac34c35c2068b0606bd229c5ed479743539f965749478983e6f90b883a4d52",
+      "verified_at": "2026-11-27T05:02:36.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:42:50.424Z"
+      "last_updated": "2026-11-27T05:02:36.506Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",
@@ -19866,14 +19866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-maka",
-      "content_hash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
-      "verified_at": "2026-11-26T04:13:24.154Z",
+      "content_hash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
+      "verified_at": "2026-11-27T05:02:38.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T04:13:24.154Z"
+      "last_updated": "2026-11-27T05:02:38.973Z"
     },
     "Lakonik/pi-H3": {
       "repository": "Lakonik/pi-H3",

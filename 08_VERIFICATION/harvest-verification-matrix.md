@@ -13675,3 +13675,5 @@
 | `CYCLE-20261127-00M4` | `2026-11-27T04:45:28.732Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10828` | Yes (`863ed10f...`) |
 | `CYCLE-20261127-ATU9` | `2026-11-27T04:53:53.169Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`6da1ef7e...`) |
 | `CYCLE-20261127-B5EC` | `2026-11-27T04:54:08.148Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10829` | Yes (`61087e51...`) |
+| `CYCLE-20261127-M1MU` | `2026-11-27T05:02:36.486Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`f4ac34c3...`) |
+| `CYCLE-20261127-M3J6` | `2026-11-27T05:02:38.946Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10830` | Yes (`4ddd7396...`) |

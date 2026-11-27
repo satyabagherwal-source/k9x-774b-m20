@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T04:13:40.096Z",
+  "timestamp": "2026-11-27T05:02:48.297Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-maka-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-maka-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T04:13:40.096Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:02:48.297Z`  
 > **Learning ID**: `LEARN-EVO-apache-maka-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source**: github ([https://github.com/apache/maka](https://github.com/apache/maka))  
-> **Source Version**: `00c6027a`  
+> **Source Version**: `218225f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T04:13:22.998Z  
+> **Timestamp**: 2026-11-27T05:02:37.704Z  
 > **Learning ID**: `learn-github-apache-maka`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-maka-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/maka](https://github.com/apache/maka))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:13:22.992Z  
+> **Harvest Timestamp**: 2026-11-27T05:02:37.698Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Maka (Incubating) is a high-performance agent workspace that keeps a complete record of everything it did.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 6008 stars
+- **Stars / Engagement**: 6014 stars
 
 ---
 
@@ -2923,1427 +2923,1218 @@ impl Lifecycle {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9bd44203` (2026-11-26)
-**Commit Message**: feat(workbench): show left-side Markdown TOC for overflowing turn replies (#7256)
+### Incident Patch 1: `85f66c80` (2026-11-26)
+**Commit Message**: fix(agent): observe original CodeMode cells before retiring replaced Antigravity runs (#7308)
 
-Add a left-side Markdown table of contents overlay in Conversation for
-whichever turn's final assistant or bot output is currently viewed when
-it contains Markdown headings and its rendered height exceeds the
-viewport height.
+Observe original unsettled CodeMode cells via the already-constructed RunCells before attempting to retire a replaced external Antigravity run, keep unobservable child outcomes blocked instead of failing through fail_after_driver_error, preserve fenced cell cleanup checks in reconcile, and arm preflight RunCells cleanup signals once.
 
-- Expose native TextView heading and block-navigation primitives in NSH
-  (HeadingsChange, VisibleBlocksChange, TextView::headings(), and
-  scroll_to_block() backed by virtual_list.scroll_to_index()) so headings
-  come directly from TextView's parsed document without re-parsing
-  Markdown in JS, mutating extensions during streaming, or reporting
-  off-screen blocks when only footnotes are visible.
-- Coordinate turn-level TOC state in turnToc.ts by combining live mounted
-  TextView bindings (with per-instance spare-cell isolation) with
-  cached native-parsed outlines for virtualized output rows of the same
-  turn, gating active-heading selection on both outer-row and inner-block
-  visibility, and relaying cross-row jumps from outer List scroll to
-  inner TextView scrollToBlock.
-- Render MarkdownToc as a desktop left-margin overlay that adapts
-  between a docked quiet heading lis
+Generated-by: Maka
 
-**File**: `plugins/agent/conversations/ui/Conversation.tsx` (modified, +121/-17)
+**File**: `plugins/agent/engine/src/driver/preflight.rs` (modified, +18/-1)
 ```diff
-@@ -117,6 +117,7 @@ import {
-   acceptedSend,
-   activityMessage,
-   applyWorkTailThought,
-+  hasTextPrefix,
-   sameHistoryRow,
-   compareHistoryOrder,
-   historyTurnKey,
-@@ -223,6 +224,8 @@ import {
-   MessageRow,
-   type MessageViewState,
- } from '../../../../products/maka/workbench/app/MessageRow';
-+import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
-+import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
- import { compactTranscriptSize } from '../../../../products/maka/workbench/app/QuickBar';
- import { FinalActions } from '../../../../products/maka/workbench/app/FinalActions';
- import { SideNotes, SideQuoteTray } from '../../../../products/maka/workbench/app/SideQuestionCard';
-@@ -1800,6 +1803,7 @@ export function Conversation(props: ConversationProps) {
-   const entryTurn = (key: string) => {
-     const entry = displayEntry(key);
-     if (entry?.kind === 'process') return entry.group.turnKey;
-+    if (entry?.kind === 'bot') return entry.turnId;
-     if (entry && 'turnKey' in entry) return entry.turnKey ?? null;
-     return null;
-   };
-@@ -4894,18 +4898,70 @@ export function Conversation(props: ConversationProps) {
-       cancel={inputAction(cancelNavigation, navigatingTurn())}
-     />
-   );
-+  const turnToc = createTurnToc({
-+    enabled: () => !props.compact && ready() && reading() === 'chat',
-+    listRef: () => list,
-+    listWidth: historyWidth,
-+    viewportHeight: () => readingSize().height,
-+    railInset,
-+    atBottom: () => !historyBelow(),
-+    isTerminal: () => platform.idiom === 'terminal',
-+    rowTurnKey: entryTurn,
-+    turnOutputRowKeys: (turnKey) => {
-+      if (botView() === 'bot') {
-+        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
-+      }
-+      const turn = projectedTurn(turnKey);
-+      if (!turn) return [];
-+      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
-+      return ids.filter((id) => !currentRow(id)?.sourceCitation);
-+    },
-+    rowOutputSources: (rowKey) => {
-+      if (rowKey.startsWith('bot/')) {
-+        const turnKey = rowKey.slice(4);
-+        return bot.forTurn(turnKey).map((message) => ({
-+          keyPrefix: `${message.sequence}:`,
-+          text: message.text,
-+          streaming: false,
-+        }));
-+      }
-+      if (rowStates.get(rowKey)?.sourceMode()) return [];
-+      const row = currentRow(rowKey);
-+      if (
-+        !row ||
-+        row.role !== 'assistant' ||
-+        row.field !== 'body' ||
-+        row.tool ||
-+        row.sourceCitation ||
-+        !hasTextPrefix(row)
-+      ) {
-+        return [];
-+      }
-+      return [{ keyPrefix: '', text: row.text, streaming: true }];
-+    },
-+    scrollToRow: (rowKey) => {
-+      const index = displayKeys().indexOf(rowKey);
-+      if (index < 0 || !list) return false;
-+      list.scrollToIndex({ index, viewPosition: 0, animated: false });
-+      return true;
-+    },
-+    onBeforeJump: () => {
-+      cancelNavigation();
-+      historyScrollInput = 'idle';
-+      batch(() => {
-+        historyFollowPaused.set(true);
-+        innerReader.set(null);
-+      });
-+    },
-+  });
-   const transcriptSize = props.compact ? compactTranscriptSize() : undefined;
-   const entryRow = (key: () => string) => (
--    <View
--      style={readingColumn}
--      onLayout={
--        transcriptSize
--          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
--          : undefined
--      }
--    >
--      <Each of={[key()]} key={(id: string) => id}>
--        {(ownedKey) => {
-+    <Each of={[key()]} key={(id: string) => id}>
-+      {(ownedKey) => {
-+        const rowId = ownedKey();
-+        const tocRow = !props.compact ? turnToc.bindRow(rowId) : undefined;
-+        if (tocRow) cleanup(tocRow.dispose);
-+        const renderEntryBody = () => {
-           const initial = displayEntry(ownedKey());
-           if (!initial) return <View />;
-           const entry = () => displayEntry(ownedKey()) ?? initial;
-@@ -5185,6 +5241,7 @@ export function Conversation(props: ConversationProps) {
+@@ -256,7 +256,10 @@ impl Engine {
+                     "Expected a native external executor Run".into(),
+                 ));
+             }
+-            if view.has_unsettled_recovery() || view.cells.values().any(|cell| cell.pending()) {
++            if self.resolve_recovered_cells(claim, &view, at).await? {
++                continue;
++            }
++            if view.has_unsettled_recovery() {
+                 return Ok(None);
+             }
+             let diagnostic = "The external executor changed while the run was interrupted";
+@@ -283,6 +286,11 @@ impl Engine {
+                         }
+                     }
+                     None => {
++                        if task.cleanup != OperationCleanup::Confirmed
++                            || task.effects.values().any(|effect| effect.unsettled())
++                        {
++                            return Ok(None);
++                        }
+                         if !view.stopped {
+                             facts.push(Fact::StopRequested {
+                                 diagnostic: diagnostic.into(),
+@@ -295,6 +303,15 @@ impl Engine {
+                 None if view.stopped => (Terminal::Cancelled, Some(diagnostic.into())),
+                 None => (Terminal::Failed, Some(diagnostic.into())),
              };
-             return (
-               <BotReply
-+                bindToc={tocRow?.bindTextView}
-                 metrics={
-                   props.compact
-                     ? (at) => {
-@@ -5253,11 +5310,20 @@ export function Conversation(props: ConversationProps) {
-           const first = currentRow(initial.rowId);
-           if (!first) return <View />;
-           const row = () => currentRow(initial.rowId) ?? first;
-+          const bindToc =
-+            tocRow &&
-+            first.role === 'assistant' &&
-+            first.field === 'body' &&
-+            !first.tool &&
-+            !first.sourceCitation
-+              ? tocRow.bindTextView
-+              : undefined;
-           return (
-             <MessageRow
-               item={row}
-               compactChat={props.compact}
-               beside={props.side}
-+              bindToc={bindToc}
-               hasSources={() => {
-      
++            let pending_cells = match terminal {
++                Terminal::Completed => view.cells.values().any(|cell| cell.pending()),
++                Terminal::Cancelled | Terminal::Failed => {
++                    view.cells.values().any(|cell| cell.has_unsettled_effects())
++                }
++            };
++            if pending_cells {
++                return Ok(None);
++            }
+             facts.extend(
+                 view.waits
+                     .iter()
 ```
 
-**File**: `products/maka/terminal-shell/tests/real_host/desktop_new_session.rs` (modified, +642/-0)
+**File**: `plugins/agent/engine/src/reconcile.rs` (modified, +3/-5)
 ```diff
-@@ -3099,6 +3099,640 @@ async fn desktop_external_agent_satisfies_new_session_connection_prompt() {
-     fixture.finish().await;
+@@ -547,11 +547,9 @@ fn cell_action(view: &RunView, live: &Live, fenced: bool) -> Option<Action> {
+                 )
+             })
+             || (interrupted && cell.children.values().any(|child| !child.known()));
+-        let blocked = if fenced {
+-            unknown || cell.children.values().any(|child| !child.known())
+-        } else {
+-            cell.blocks_effect_admission() || unknown
+-        };
++        let blocked = cell.blocks_effect_admission()
++            || unknown
++            || (fenced && cell.children.values().any(|child| !child.known()));
+         if blocked && !acknowledged {
+             return Some(
+                 if view
+```
+
+**File**: `plugins/agent/native/src/owner/driver/tests.rs` (modified, +1095/-4)
+```diff
+@@ -3256,7 +3256,7 @@ mod source_recovery {
+             started.await?;
+             observing.abort();
+             assert!(observing.await.unwrap_err().is_cancelled());
+-            owner.retain_original_scope(session.clone(), rig.lease.take().unwrap(), super::super::super::driver_cleanup::OriginalScope::Driver { driver: Some(driver.clone()), effects: rig.work_effects.take().unwrap(), state: driver.state.clone(), pending: None }).await;
++            owner.retain_original_scope(session.clone(), rig.lease.take().unwrap(), super::super::super::driver_cleanup::OriginalScope::Driver { driver: Some(driver.clone()), cells: None, effects: rig.work_effects.take().unwrap(), state: driver.state.clone(), pending: None }).await;
+             assert_eq!(owner.close().await, Err("agent_cleanup_unconfirmed".into()));
+             assert!(owner.runs.state().await.retained_cleanup.contains_key(&session));
+             let mut physical = owner.physical_changes();
+@@ -3314,7 +3314,7 @@ mod source_recovery {
+             });
+             owner.retain_original_scope(session.clone(), rig.lease.take().unwrap(),
+                 super::super::super::driver_cleanup::OriginalScope::Driver {
+-                    driver: Some(driver.clone()), effects: rig.work_effects.take().unwrap(),
++                    driver: Some(driver.clone()), cells: None, effects: rig.work_effects.take().unwrap(),
+                     state: driver.state.clone(), pending: None,
+                 }).await;
+             let close_request = owner.runs.state().await.retained_cleanup[&session][0].close_request();
+@@ -3421,6 +3421,7 @@ mod source_recovery {
+                     rig.lease.take().unwrap(),
+                     super::super::super::driver_cleanup::OriginalScope::Driver {
+                         driver: Some(driver.clone()),
++                        cells: None,
+                         effects: rig.work_effects.take().unwrap(),
+                         state: driver.state.clone(),
+                         pending: None,
+@@ -4258,7 +4259,7 @@ mod model_recovery {
+         facts: Vec<Value>,
+     }
+ 
+-    async fn root(base: &Path, create: bool) -> TestResult<Arc<RootStore>> {
++    pub(super) async fn root(base: &Path, create: bool) -> TestResult<Arc<RootStore>> {
+         let base = base.to_path_buf();
+         let owner = tokio::task::spawn_blocking(move || {
+             let namespaces = RootNamespaces {
+@@ -4283,7 +4284,7 @@ mod model_recovery {
+     pub(super) async fn bootstrap(base: &Path, base_url: String, todo: bool) -> TestResult<Boot> {
+         bootstrap_with(base, base_url, |config| config["todo"] = json!(todo)).await
+     }
+-    async fn bootstrap_with(
++    pub(super) async fn bootstrap_with(
+         base: &Path,
+         base_url: String,
+         configure: impl FnOnce(&mut Value),
+@@ -8986,6 +8987,1096 @@ async fn same_path_reclone_keeps_conversations_usable_and_grouped_without_marker
+     assert!(cleanup.is_empty(), "{cleanup:?}");
  }
  
-+async fn desktop_markdown_toc_follows_active_turn_and_jumps_to_headings() {
-+    let mut fixture = Fixture::open().await;
-+    let desktop = Desktop::open_at(
-+        &fixture,
-+        &fixture.address,
-+        size(
-+            nsh_terminal::DevicePixels(1560),
-+            nsh_terminal::DevicePixels(600),
-+        ),
-+        nsh_core::platform::Appearance::Dark,
-+    )
-+    .await;
-+    desktop.new_draft().await;
-+
-+    let long_block = |tag: &str, count: usize| {
-+        (1..=count)
-+            .map(|i| {
-+                format!(
-+                    "{tag} paragraph {i}: detailed explanation spanning multiple lines so the reply overflows the visible reading window cleanly."
-+                )
-+            })
-+            .collect::<Vec<_>>()
-+            .join("\n\n")
++mod replaced_antigravity_cell_recovery {
++    use super::*;
++    use crate::owner::driver::PreparedTool;
++    use crate::owner::driver::tests::model_recovery::call;
++    use maka_agent_facts::{
++        cells::{CellEvent, CellId, CellInterruption, CellOwner, CellStatus, CellVmBinding},
++        executor::{Selection, Settings},
++        external_effects::{ExternalEffectDescriptor, ExternalEffectEvent, ExternalEffectKey},
++        tool_call::ToolOrigin,
++        tools::{ToolExecutor, ToolFuture},
 +    };
 +
-+    // Turn 1: stream across headings in multiple chunks, including a fenced code block
-+    // inside a list item and a long sparse middle section + wide single-line JSON block.
-+    desktop.type_text("Turn one long markdown").await;
-+    desktop.submit().await;
-+    let mut reply1 = desktop.request(&mut fixture).await;
-+    reply1
-+        .delta(&format!(
-+            "# Turn One Overview\n\n<details><summary>Overview Marker</summary>Overview details.</details>\n\n{}\n\n1. ```python\n   # code comment ignored\n   print(1)\n   ```\n\n",
-+            long_block("overview", 8),
-+        ))
-+        .await;
-+    let wide_json = format!(r#"{{"entries":[{}]}}"#, r#""payload","#.repeat(600));
-+    reply1
-+        .delta(&format!(
-+            "## Architecture\n\n{}\n\n```json\n{wide_json}\n```\n\n",
-+            long_block("arch", 28),
-+        ))
-+        .await;
-+    reply1
-+        .delta(&format!(
-+            "### Deep Dive\n\n<details><summary>Deep Dive Marker</summary>Deep dive details.</details>\n\n{}\n\n<details><summary>Turn One End</summary>End of turn one.</details>",
-+            long_block("deep", 10),
-+        ))
-+        .await;
-+    desktop
-+        .wait("turn 1 reply did not finish", reply1.finish())
-+        .await;
-+    desktop
-+        .until("turn 1 did not settle", || {
-+            desktop.controls("Stop response").is_empty().then_some(())
-+        })
-+        .await;
++    struct Gate {
++        entered: StdMutex<Option<oneshot::Sender<()>>>,
++        release: StdMutex<Option<oneshot::Receiver<()>>>,
++    }
++    impl ToolExecutor for Gate {
++        fn names(&self) -> Vec<String> {
++            vec!["gate".into()]
++        }
++        fn invoke(&self, _: String, _: Value, _: CancellationToken) -> ToolFuture {
++            let entered = self.entered.lock().unwrap().take().unwrap();
++            let release = self.release.lock().unwrap().take().unwrap();
++            Box::pin(async move {
++                entered
++                    .send(())
++                    .map_err(|_| ToolError::Failed("gate observer lost".into()))?;
++                release
++                    .await
++                    .map_err(|error| ToolError::Failed(error.to_string()))?;
++                Ok(json!("gate released"))
++            })
++        }
++    }
 +
-+    // Wait for all three streamed headings before reading settled TOC bounds.
-+    let deep_toc = desktop.control("Jump to section: Deep Dive").await;
-+    let arch_toc = desktop.control("Jump to section: Architecture").await;
-+    let overview_toc = desktop.control("Jump to section: Turn One Overview").await;
-+    assert!(
-+        desktop
-+            .controls("Jump to section: code comment ignored")
-+            .is_empty(),
-+        "list-nested fenced code comment must not appear in TOC"
-+    );
-+    // TOC sits in the left margin beside the reading column.
-+    assert!(
-+        overview_toc.origin.x < px(520.)
-+            && arch_toc.origin.x < px(520.)
-+            && deep_toc.origin.x < px(520.),
-+        "docked TOC should render in the left margin: overview={overview_toc:?}"
-+    );
-+    desktop.artifact("toc-turn1-wide");
++    struct Seed {
++        owner: Arc<Owner>,
++        session: String,
++        run: RunId,
++        claim: maka_agent_state::DriverClaim,
++        spec: RunSpec,
++        task: ExternalTaskId,
++        key: ExternalEffectKey,
++        cell: CellId,
++    }
 +
-+    // Clicking the first heading scrolls the top section into the viewport.
-+    desktop.press("Jump to section: Turn One Overview").await;
-+    let overview_marker = desktop.control("▸ Overview Marker").await;
-+    assert!(
-+        overview_marker.origin.y < px(320.),
-+        "Overview Marker should land near the top of the viewport: {overview_marker:?}"
-+    );
-+    desktop.artifact("toc-turn1-overview");
-+
-+    // Clicking a distant virtualized heading across 28 paragraphs + wide JSON lands on Deep Dive.
-+    desktop.press("Jump to section: Deep Dive").await;
-+    let deep_marker = desktop.control("▸ Deep Dive Marker").await;
-+    assert!(
-+        deep_marker.origin.y < px(320.),
-+        "Deep Dive Marker should land near the top of the viewport: {deep_marker:?}"
-+    );
-+    desktop.artifact("toc-turn1-deep-dive");
-+
-+    // Turn 2: short Markdown reply with a heading that fits inside the viewport -> TOC hides.
-+    desktop.press("Return to latest").await;
-+    desktop.control("▸ Turn One End").await;
-+    desktop.type_text("Turn two short markdown").await;
-+    desktop.submit().await;
-+    let mut reply2 = desktop.request(&mut fixture).await;
-+    // Fits completely within the 406pt reading viewport while taking >50% of it so Turn 2
-+    // becomes the viewed turn instead of Turn 1's tail above it.
-+    reply2
-+        .delta(
-+            "# Short Note\n\n- First concise point.\n- Second concise point.\n- Third concise point.\n\nThis short answer fills most of the screen without overflowing.",
-+        )
-+        .await;
-+    desktop
-+        .wait("turn 2 reply did not finish", reply2.finish())
-+        .await;
-+    desktop
-+        .until("turn 2 did not settle", || {
-+            desktop.controls("Stop response").is_empty().then_some(())
-+        })
-+ 
++    async fn setup_replaced_run_with_files(
++        rig: &mut Rig,
++        with_workspace_tools: bool,
++    ) -> Result<Seed, Box<dyn Error + Send + Sync>> {
++        let session = if with_workspace_tools {
++            let base = rig.directory.path().to_path_buf();
++            let boot =
++                model_recovery::bootstrap_with(&base, "http://127.0.0.1:1/v1".into(), |c
 ```
 
-**File**: `products/maka/workbench/app/BotReply.tsx` (modified, +19/-1)
+**File**: `plugins/agent/native/src/owner/driver_assembly.rs` (modified, +61/-3)
+```diff
+@@ -370,6 +370,7 @@ impl Owner {
+             let (lease, effects) = scope.accept(cancellation.clone());
+             scope_cleanup = maka_plugin_core::operation::OperationCleanup::Unconfirmed;
+             let mut original_driver = None;
++            let mut preflight_cells: Option<Arc<driver_cells::RunCells>> = None;
+             let mut cleanup_confirmed = false;
+             let mut preflight_stage = Some(AuthorityStage::WorkspaceScope);
+             let mut publication_store = self.durable.clone();
+@@ -429,6 +430,7 @@ impl Owner {
+                         driver::NativeBackend::Model { model, cells: cells.clone() }
+                     }
+                     (None, Some(accepted)) => {
++                        preflight_cells = cells.clone();
+                         if let Some(exit) = self.interrupt_lost_bridge(&state, &claim, &view, cells.as_deref()).await? {
+                             return Ok(exit);
+                         }
+@@ -438,7 +440,36 @@ impl Owner {
+                                 if accepted.selection.executor == "external"
+                                     && accepted.selection.settings.runtime.as_deref() == Some("antigravity") => {
+                                 preflight_stage = None;
++                                if let Some(cells) = cells.as_deref() {
++                                    use maka_agent_engine::ports::CellPorts;
++                                    let current = state.frontier(view.run).await?;
++                                    for cell in current.cells.values() {
++                                        if cell.owner.run() != Some(current.run) {
++                                            continue;
++                                        }
++                                        if cell.has_unsettled_effects() {
++                                            match cells.observe_original_cell(&current, cell).await {
++                                                Ok(_) | Err(RunError::Blocked(_)) => {}
++                                                Err(RunError::Tool(
++                                                    error @ (maka_agent_facts::tools::ToolError::OutcomeUnknown(_)
++                                                    | maka_agent_facts::tools::ToolError::OperationUnknown { .. }),
++                                                )) => {
++                                                    tracing::warn!(
++                                                        run = %current.run,
++                                                        cell = %cell.id,
++                                                        %error,
++                                                        "Original Cell child outcome is unavailable while retiring replaced executor"
++                                                    );
++                                                }
++                                                Err(error) => return Err(error),
++                                            }
++                                        }
++                                    }
++                                }
+                                 if let Some(exit) = Engine::new(state.clone()).retire_replaced_native_executor(&claim, UnixMillis(now() as i64)).await? {
++                                    if matches!(&exit, DriverExit::Terminal { .. }) {
++                                        self.wake_notify.notify_one();
++                                    }
+                                     return Ok(exit);
+                                 }
+                                 preflight_stage = Some(AuthorityStage::BackendScope);
+@@ -479,6 +510,7 @@ impl Owner {
+                     workers,
+                 ));
+                 original_driver = Some(driver.clone());
++                preflight_cells = None;
+                 if let Some(effects) = original_external_effects { driver.attach_external_effects(effects)?; }
+                 self.runs.state().await.controls.insert(
+                     view.spec.session_id.clone(),
+@@ -617,9 +649,34 @@ impl Owner {
+                 }
+                 (result, _) => result,
+             };
+-            // Constructors before NativeDriver only assemble ports; none dispatch Run-owned work.
++            // Constructors before NativeDriver only assemble ports; preflight Cell
++            // observation must still prove its own VM/reader cleanup before releasing the Scope.
+             // A pending canonical batch still owns its original payload independently of that proof.
+-            if original_driver.is_none() && !matches!(&result, Err(RunError::PublicationUncertain { .. })) { cleanup_confirmed = true; }
++            if original_driver.is_none() && !matches!(&result, Err(RunError::PublicationUncertain { .. })) {
++                cleanup_confirmed = match &preflight_cells {
++                    Some(cells) => {
++                        cells.coordinator.cancel();
++                        cells.join_original
+```
+
+**File**: `plugins/agent/native/src/owner/driver_cells.rs` (modified, +19/-0)
+```diff
+@@ -82,6 +82,7 @@ pub(super) struct RunCells {
+     effects: Arc<Mutex<BTreeMap<(CellId, Uuid), EffectCustody>>>,
+     readers: Arc<Mutex<Vec<Arc<NativeRequest>>>>,
+     workers: TaskTracker,
++    cleanup_signals_armed: Arc<std::sync::OnceLock<()>>,
+     cleanup: Evidence,
+ }
+ struct OriginalPublication {
+@@ -179,6 +180,7 @@ impl RunCells {
+             effects: Arc::default(),
+             readers: Arc::default(),
+             workers,
++            cleanup_signals_armed: Arc::default(),
+             cleanup,
+         }))
+     }
+@@ -195,6 +197,23 @@ impl RunCells {
+     pub(super) fn has_original_workers(&self) -> bool {
+         !self.workers.is_empty()
+     }
++    pub(super) fn close_original_workers(&self) {
++        self.workers.close();
++    }
++    pub(super) async fn join_original_workers(&self) {
++        self.workers.close();
++        self.workers.wait().await;
++    }
++    pub(super) fn original_cleanup_signals(&self) -> Vec<BoxFuture<'static, ()>> {
++        if self.cleanup_signals_armed.set(()).is_err() {
++            return Vec::new();
++        }
++        let workers = self.workers.clone();
++        workers.close();
++        vec![Box::pin(async move {
++            workers.wait().await;
++        })]
++    }
+     pub(super) async fn original_cleanup_confirmed(&self) -> Result<bool, RunError> {
+         // Shutdown joins the original coordinator tasks; its historical error is not positive or negative cleanup truth.
+         let _shutdown = self.coordinator.shutdown().await;
+```
+
+**File**: `plugins/agent/native/src/owner/driver_cleanup.rs` (modified, +34/-6)
+```diff
+@@ -28,6 +28,7 @@ use maka_event_log::root_store::{RetainedWorkSettlement, SessionWorkLease, WorkE
+ pub(super) enum OriginalScope {
+     Driver {
+         driver: Option<Arc<driver::NativeDriver>>,
++        cells: Option<Arc<driver_cells::RunCells>>,
+         effects: WorkEffects,
+         state: maka_agent_state::Store,
+         pending: Option<Box<maka_agent_engine::PendingPublication>>,
+@@ -74,6 +75,14 @@ impl OriginalScope {
+                 driver: Some(driver),
+                 ..
+             } => driver.join_original_workers().await,
++            Self::Driver {
++                driver: None,
++                cells: Some(cells),
++                ..
++            } => {
++                cells.join_original_workers().await;
++                Ok(())
++            }
+             Self::Preparation(Some(model)) => model.original_worker_join().await,
+             _ => Ok(()),
+         }
+@@ -100,23 +109,36 @@ impl OriginalScope {
+                 driver: Some(driver),
+                 ..
+             } => driver.original_cleanup_signals().await,
++            Self::Driver {
++                driver: None,
++                cells: Some(cells),
++                ..
++            } => cells.original_cleanup_signals(),
+             _ => Vec::new(),
+         }
+     }
+     async fn confirmed(&self) -> Result<bool, RunError> {
+         match self {
+             Self::Driver {
+                 driver,
++                cells,
+                 effects,
+                 state,
+                 pending,
+             } => {
+                 if let Some(pending) = pending {
+                     pending.reconcile(state).await?;
+                 }
+-                let closed = match driver {
+-                    Some(driver) => driver.original_cleanup_confirmed().await?,
+-                    None => pending.is_some(),
++                let closed = match (driver, cells) {
++                    (Some(driver), _) => driver.original_cleanup_confirmed().await?,
++                    (None, Some(cells)) => {
++                        cells.coordinator.cancel();
++                        cells.close_original_workers();
++                        cells.coordinator.is_idle()
++                            && !cells.has_original_workers()
++                            && cells.original_cleanup_confirmed().await?
++                    }
++                    (None, None) => pending.is_some(),
+                 };
+                 Ok(closed && !effects.has_pending())
+             }
+@@ -240,9 +262,15 @@ impl RetainedScope {
+                 };
+                 model_changes = original.model_changes();
+                 match original.as_ref() {
+-                    OriginalScope::Driver { driver, .. } => {
+-                        if let Some(driver) = driver
+-                            && let Some(runtime) = driver.run_cells()
++                    OriginalScope::Driver {
++                        driver,
++                        cells: preflight_cells,
++                        ..
++                    } => {
++                        if let Some(runtime) = driver
++                            .as_ref()
++                            .and_then(|driver| driver.run_cells())
++                            .or(preflight_cells.as_ref())
+                         {
+                             let (js, python, coordinator) = runtime.physical_changes();
+                             for receiver in [js, python, coordinator] {
+```
+
+---
+
+### Incident Patch 2: `0ddb645a` (2026-11-26)
+**Commit Message**: fix(workbench): assign explicit ownership to composer and settings notices (#7310)
+
+* fix(workbench): assign explicit ownership to composer and settings notices
+
+* fix(workbench): address review findings on conflict reload, room/intake attachments, and compact blocks
+
+* fix(workbench): invalidate basis on configureBatch conflict and isolate external-agent read retry
+
+* test(workbench): keep cached external agent switch enabled during SWR refresh
+
+**File**: `packages/plugin-sdk/src/composer-view.ts` (modified, +9/-1)
+```diff
+@@ -245,6 +245,14 @@ export interface ComposerContinuation {
+   };
+ }
+ 
++export type ComposerSendBlockKind = 'transcript' | 'workspace' | 'attachments' | 'draft';
++
++/** Why sending is currently blocked, tagged with the surface that owns displaying it. */
++export interface ComposerSendBlock {
++  readonly kind: ComposerSendBlockKind;
++  readonly message: string;
++}
++
+ /** A stable projection of the resident session, without its lifecycle or subscriptions. */
+ export interface ComposerSession<Element = unknown> {
+   quotes(): QuoteRef[];
+@@ -263,7 +271,7 @@ export interface ComposerSession<Element = unknown> {
+   previewImage(image: ComposerImagePreview): void;
+   editable(): boolean;
+   loading(): boolean;
+-  blockedReason(): string;
++  sendBlock(): ComposerSendBlock | null;
+   backend(): ComposerBackend;
+   modelDetails(): ComposerModelDetails;
+   refreshModel(): Promise<void>;
+```
+
+**File**: `packages/plugin-sdk/src/workbench-views.ts` (modified, +2/-0)
+```diff
+@@ -317,6 +317,8 @@ export interface SettingsPageNavigation {
+   /** Returns a nested sub-page to its own root after `leave()` clears any unsaved draft. */
+   returnToRoot?(): void;
+   busy?(): boolean;
++  /** The page renders the shared operation error itself instead of the Settings header. */
++  ownsError?(): boolean;
+   /** The page's one command, drawn beside its title. */
+   action?(): SettingsPageAction | null;
+ }
+```
+
+**File**: `plugins/agent/composer/ui/Composer.tsx` (modified, +9/-2)
+```diff
+@@ -193,13 +193,20 @@ export function Composer(props: ComposerViewInput<JSX.Element>) {
+     const current = pending();
+     if (current?.id === owner) completion.submitPending(current, text, expected);
+   };
+-  const blocked = () => props.session()?.blockedReason() ?? '';
++  const sendBlock = () => props.session()?.sendBlock() ?? null;
++  const blocked = () => sendBlock() !== null;
+   const confirming = () =>
+     !!props.session()?.loading() ||
+     !!props.session()?.recovering() ||
+     !!props.session()?.continuing() ||
+     !!pending()?.sending();
+-  const warning = () => (confirming() ? '' : blocked());
++  // Only draft blocks belong to the composer's own status row; workspace, transcript,
++  // and attachment-tray blocks are rendered by their owning surfaces.
++  const warning = () => {
++    if (confirming()) return '';
++    const block = sendBlock();
++    return block?.kind === 'draft' ? block.message : '';
++  };
+   const cannotSend = () =>
+     props.blocked?.() ||
+     (props.session() === null &&
+```
+
+**File**: `plugins/agent/conversations/ui/CompactComposer.tsx` (modified, +30/-32)
 ```diff
 @@ -17,7 +17,7 @@
   * under the License.
   */
  
--import { Clipboard, computed, platform, signal, Text, View } from 'nsh';
-+import { cleanup, Clipboard, computed, platform, signal, Text, View } from 'nsh';
- import { Button, ContextMenu, MenuItem, TextView } from 'nsh/base';
- import { MarkdownImageView } from './MarkdownImage';
- import { MermaidView } from './MermaidView';
-@@ -29,11 +29,13 @@ import type { replyMetrics } from './replyDetails';
- import { Icon } from './Icon';
- import { ShimmerText, ThinkingMark } from './Loading';
- import { splitSpecMarkdown } from './spec/session.ts';
-+import type { BindTextViewToc } from './turnToc';
- import { C, bodyTextStyle, captionTextStyle } from './ui';
- 
- /** Messages the Bot sent with `SendUser`, shown as its reply in the Chat view. */
- export function BotReply(props: {
-   messages: () => BotTranscriptMessage[];
-+  bindToc?: BindTextViewToc;
-   sessionId?: string;
-   metrics?(at: number): ReturnType<typeof replyMetrics>;
-   openLink(target: string, restoreFocus: () => boolean): Promise<void>;
-@@ -72,6 +74,15 @@ export function BotReply(props: {
-                     const selected = signal('');
-                     const menuText = signal('');
-                     let menuOpen = false;
-+                    const initialSeg = seg();
-+                    const toc =
-+                      initialSeg.kind === 'markdown'
-+                        ? props.bindToc?.(
-+                            `${message().sequence}:${initialSeg.key}`,
-+                            message().sequence * 1e9 + initialSeg.start,
-+                          )
-+                        : undefined;
-+                    if (toc) cleanup(() => toc.dispose());
-                     return (
-                       <If
-                         when={seg().kind === 'spec'}
-@@ -83,6 +94,13 @@ export function BotReply(props: {
-                             }}
-                             trigger={
-                               <TextView
-+                                ref={toc ? (node) => toc.onRef(node) : undefined}
-+                                onHeadingsChange={
-+                                  toc ? (event) => toc.onHeadingsChange(event) : undefined
-+                                }
-+                                onVisibleBlocksChange={
-+                                  toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
-+                                }
-                                 markdown={(() => {
-                                   const s = seg();
-                                   return s.kind === 'markdown' ? s.text : '';
+-import { signal, Text, View, type InputRef, type JSX } from 'nsh';
++import { Text, View, type InputRef, type JSX } from 'nsh';
+ import type { ClientDraftAttachment } from '../../../../packages/plugin-sdk/src/generated/runtime.js';
+ import type { ComposerSession } from '../../../../packages/plugin-sdk/src/workbench-views.js';
+ import { hasComposerContent } from '../../../../packages/plugin-sdk/src/composer-view.js';
+@@ -35,17 +35,16 @@ export function CompactComposer(props: {
+   chooseModel(): void;
+   attach(node: InputRef): void;
+ }) {
+-  const refused = signal('');
+   const running = () => (props.session()?.run() ?? null) !== null;
+   const unavailable = () => props.session()?.modelDetails().kind === 'unavailable';
+   const failure = () => {
+     const session = props.session();
+     if (!session) return '';
+-    return (
+-      session.error() ||
+-      session.sends().find((send) => send.state === 'failed')?.detail ||
+-      refused()
+-    );
++    return session.error() || session.sends().find((send) => send.state === 'failed')?.detail || '';
++  };
++  const blockWarning = () => {
++    const block = props.session()?.sendBlock() ?? null;
++    return block && (block.kind === 'attachments' || block.kind === 'draft') ? block.message : '';
+   };
+   const send = () => {
+     const session = props.session();
+@@ -57,9 +56,8 @@ export function CompactComposer(props: {
+       props.expand();
+       return;
+     }
+-    const reason = session.blockedReason();
+-    refused.set(reason);
+-    if (!reason) session.submit({ text });
++    if (session.sendBlock()) return;
++    session.submit({ text });
+   };
+   return (
+     <View>
+@@ -69,10 +67,7 @@ export function CompactComposer(props: {
+         placeholder={props.session()?.empty() === false ? tr('Ask a follow-up') : tr('Ask Maka')}
+         value={props.session()?.draft() ?? ''}
+         readonly={!(props.session()?.editable() ?? false)}
+-        change={(value) => {
+-          refused.set('');
+-          props.session()?.changeDraft(value);
+-        }}
++        change={(value) => props.session()?.changeDraft(value)}
+         submit={send}
+         extra={
+           <>
+@@ -123,28 +118,31 @@ export function CompactComposer(props: {
+           </>
+         }
+       />
+-      <If when={unavailable() || failure() !== ''}>
++      <If when={unavailable() || failure() !== '' || blockWarning() !== ''}>
+         <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+           <If
+             when={unavailable()}
+             else={
+-              <InlineCallout
+-                tone="danger"
+-                message={failure()}
+-                onDismiss={() => {
+-                  const session = props.session();
+-                  if (session?.error()) {
+-                    session.dismissError();
+-                    return;
+-                  }
+-                  const failedSend = session?.sends().find((item) => item.state === 'failed');
+-                  if (session && failedSend) {
+-                    void session.dismissSend(failedSend.id);
+-                    return;
+-                  }
+-                  refused.set('');
+-                }}
+-              />
++              <If
++                when={failure() !== ''}
++                else={<InlineCallout tone="warning" message={blockWarning()} />}
++              >
++                <InlineCallout
++                  tone="danger"
++                  message={failure()}
++                  onDismiss={() => {
++                    const session = props.session();
++                    if (session?.error()) {
++                      session.dismissError();
++                      return;
++                    }
++                    const failedSend = session?.sends().find((item) => item.state === 'failed');
++                    if (session && failedSend) {
++                      void session.dismissSend(failedSend.id);
++                    }
++                  }}
++                />
++              </If>
+             }
+           >
+             <InlineCallout
 ```
 
-**File**: `products/maka/workbench/app/MarkdownBody.tsx` (modified, +13/-0)
+**File**: `plugins/agent/conversations/ui/Conversation.tsx` (modified, +51/-35)
 ```diff
-@@ -31,11 +31,13 @@ import { SourceText } from './SourceText';
- import { tr } from './locale';
- import { notePassage, type SideMark } from './sideQuestions';
- import { splitSpecMarkdown } from './spec/session.ts';
-+import type { BindTextViewToc } from './turnToc';
- import { C, bodyTextStyle, isDark, secondaryTextStyle } from './ui';
+@@ -176,6 +176,7 @@ import type {
+   ComposerPrediction,
+   ComposerQueue,
+   ComposerSendAction as SendAction,
++  ComposerSendBlock,
+   ComposerSendStatus,
+ } from '../../../../packages/plugin-sdk/src/composer-view.js';
+ import { hasComposerContent } from '../../../../packages/plugin-sdk/src/composer-view.js';
+@@ -3466,7 +3467,7 @@ export function Conversation(props: ConversationProps) {
+       draft().trim() ||
+       attachments.files().length ||
+       quotes().length ||
+-      sendBlockedReason() ||
++      sendBlock() !== null ||
+       observed === null ||
+       observed.source.sessionId !== source.sessionId ||
+       observed.source.runId !== source.runId ||
+@@ -3592,38 +3593,52 @@ export function Conversation(props: ConversationProps) {
+     };
+   };
  
- export function MarkdownBody(props: {
-   row: () => Row;
-   citations?(): readonly InlineCitation[] | undefined;
-+  bindToc?: BindTextViewToc;
-   sourceId: string;
-   sessionId: string;
-   compact?: boolean;
-@@ -182,6 +184,12 @@ export function MarkdownBody(props: {
-                 if (segmentMatches.delete(segKey)) reportMatches();
-               });
-               const atSegment = () => segmentMarkers().get(seg().key);
-+              const initialSeg = seg();
-+              const toc =
-+                initialSeg.kind === 'markdown'
-+                  ? props.bindToc?.(initialSeg.key, initialSeg.start)
-+                  : undefined;
-+              if (toc) cleanup(() => toc.dispose());
-               const extensions = () => {
-                 const base = props.interactiveBlocks === false ? [] : markdownExtensions;
-                 const inline = atSegment();
-@@ -194,6 +202,11 @@ export function MarkdownBody(props: {
-                   when={seg().kind === 'spec'}
+-  const sendBlockedReasonFor = (includeAutoSend: boolean) => {
+-    if (transcriptStatus() === 'closing')
+-      return tr('Closing disconnected updates… Your draft is kept.');
+-    if (transcriptStatus() === 'failed')
+-      return ready()
+-        ? tr('Updates disconnected. Reconnecting automatically; your draft is kept.')
+-        : tr('History unavailable. Retrying automatically; your draft is kept.');
+-    if (ready() && transcriptStatus() !== 'live')
+-      return tr('Reconnecting updates… Your draft is kept.');
++  const sendBlockFor = (includeAutoSend: boolean): ComposerSendBlock | null => {
++    if (
++      transcriptStatus() === 'closing' ||
++      transcriptStatus() === 'failed' ||
++      (ready() && transcriptStatus() !== 'live')
++    )
++      return { kind: 'transcript', message: tr('Reconnecting updates… Your draft is kept.') };
+     if (!ready() || (runId() !== null && runBackend() === null))
+-      return tr('Loading session history… Your draft is kept.');
++      return { kind: 'draft', message: tr('Loading session history… Your draft is kept.') };
+     if (archived() && formerBot())
+-      return tr(
+-        'This is a Bot that was replaced. It is read-only; restore it in Sessions to use it as a conversation.',
+-      );
++      return {
++        kind: 'draft',
++        message: tr(
++          'This is a Bot that was replaced. It is read-only; restore it in Sessions to use it as a conversation.',
++        ),
++      };
+     if (archived())
+-      return tr(
+-        'This conversation is archived. Restore it in Sessions to send; your draft is kept.',
+-      );
+-    if (workspaceUnavailable()) return tr('The workspace for this task is unavailable.');
+-    if (!draftReady() || restoringSends().size > 0) return tr('Loading the saved draft…');
+-    if (savingFailed()) return tr('The draft could not be saved. Sending is unavailable.');
+-    if (attachments.blocked()) return attachments.blocked();
+-    if (confirmingContinuation()) return tr('Confirming continuation…');
++      return {
++        kind: 'draft',
++        message: tr(
++          'This conversation is archived. Restore it in Sessions to send; your draft is kept.',
++        ),
++      };
++    if (workspaceUnavailable())
++      return { kind: 'workspace', message: tr('The workspace for this task is unavailable.') };
++    if (!draftReady() || restoringSends().size > 0)
++      return { kind: 'draft', message: tr('Loading the saved draft…') };
++    if (savingFailed())
++      return {
++        kind: 'draft',
++        message: tr('The draft could not be saved. Sending is unavailable.'),
++      };
++    const attachmentBlock = attachments.blocked();
++    if (attachmentBlock) return attachmentBlock;
++    if (confirmingContinuation()) return { kind: 'draft', message: tr('Confirming continuation…') };
+     if (sending() || (includeAutoSend && autoSending()))
+-      return tr('Saving message… New typing is kept.');
++      return { kind: 'draft', message: tr('Saving message… New typing is kept.') };
+     if (freezeState().kind === 'failed')
+-      return tr('Retry or remove the unsaved message before sending another.');
+-    if (!receiptsKnown()) return tr('Checking send status…');
+-    return '';
++      return {
++        kind: 'draft',
++        message: tr('Retry or remove the unsaved message before sending another.'),
++      };
++    if (!receiptsKnown()) return { kind: 'draft', message: tr('Checking send status…') };
++    return null;
+   };
+-  const sendBlockedReason = () => sendBlockedReasonFor(true);
++  const sendBlock = () => sendBlockFor(true);
+ 
+   const refreshSends = async () => {
+     const operations = await pendingSends(client);
+@@ -3669,7 +3684,7 @@ export function Conversation(props: ConversationProps) {
+         });
+     } catch (reason) {
+       if (alive && errorMessage(reason) === 'agent_workspace_unavailable') {
+-        sendError(id, new UiError('The workspace for this task is unavailable.'));
++        sendError(id, new UiError('Not sent. Choose a workspace, then retry.'));
+         void refreshWorkspace().catch(report);
+       } else {
+         sendError(id, reason);
+@@ -3741,7 +3756,7 @@ export function Conversation(props: ConversationProps) {
+     if (!hasComposerConten
+```
+
+**File**: `plugins/agent/conversations/ui/SessionSurface.tsx` (modified, +3/-3)
+```diff
+@@ -3180,7 +3180,7 @@ export function createConversationUi(
+                 <SideReactions
+                   followUp={(item) => {
+                     const session = composerSession();
+-                    if (session && !session.blockedReason()) session.submit({ text: item.message });
++                    if (session && !session.sendBlock()) session.submit({ text: item.message });
+                   }}
+                   attached={sideAttached}
+                   attach={() => {
+@@ -3484,7 +3484,7 @@ export function createConversationUi(
+           owner.connected() &&
+           owner.editable() &&
+           owner.run() !== null &&
+-          !owner.blockedReason() &&
++          !owner.sendBlock() &&
+           hasComposerContent(owner.draft().trim(), owner.attachments.files(), owner.quotes()) &&
+           !matchComposerCommand(
+             commandCandidates().map((entry) => entry.metadata),
+@@ -3646,7 +3646,7 @@ function projectComposerSession(
+     previewImage: owner.previewImage,
+     editable: owner.editable,
+     loading: owner.loading,
+-    blockedReason: owner.blockedReason,
++    sendBlock: owner.sendBlock,
+     backend: owner.backend,
+     modelDetails: owner.modelDetails,
+     refreshModel: owner.refreshModel,
+```
+
+**File**: `plugins/agent/conversations/ui/sendReceipt.ts` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ export function sendReceiptFailure(
+     case 'turn_stopped':
+       return { detail: message('Stopped before delivery. Your message is kept.'), retryable: true };
+     case 'workspace_unavailable':
+-      return { detail: message('The workspace for this task is unavailable.'), retryable: true };
++      return { detail: message('Not sent. Choose a workspace, then retry.'), retryable: true };
+     case 'model_unavailable':
+       return {
+         detail: message('The selected model is unavailable. Try again or choose another model.'),
+```
+
+**File**: `plugins/settings/settings/ui.tsx` (modified, +2/-1)
+```diff
+@@ -393,7 +393,7 @@ export const activate: UiModule<JSX.Element>['activate'] = (context) => {
+                   when={form.editor() !== null}
                    else={
-                     <TextView
-+                      ref={toc ? (node) => toc.onRef(node) : undefined}
-+                      onHeadingsChange={toc ? (event) => toc.onHeadingsChange(event) : undefined}
-+                      onVisibleBlocksChange={
-+                        toc ? (event) => toc.onVisibleBlocksChange(event) : undefined
-+                      }
-                       markdown={(() => {
-                         const s = seg();
-                         return s.kind === 'markdown' ? s.text : '';
+                     <If when={!!operations.error()} else={<SettingsSkeleton rows={3} />}>
+-                      <SettingsProblem message={operations.error()} retry={() => void open()} />
++                      <SettingsProblem retry={() => void open()} />
+                     </If>
+                   }
+                 >
+@@ -456,6 +456,7 @@ export const activate: UiModule<JSX.Element>['activate'] = (context) => {
+               },
+               backLabel: () => tr('Back from connection settings'),
+               busy: operations.navigationBusy,
++              ownsError: () => connections.page() === 'providers',
+             },
+             () => <ConnectionSettings owner={connections} externalAgents={externalAgents} />,
+           ),
 ```
 
-**File**: `products/maka/workbench/app/MarkdownToc.tsx` (added, +461/-0)
+---
+
+### Incident Patch 3: `3d38b934` (2026-11-27)
+**Commit Message**: fix(workbench,ios): confine switch press targets to the switch control (#7330)
+
+* fix(workbench,ios): confine switch press targets to the switch control
+
+Previously SettingsSwitch passed onPress to SettingsRow, turning the
+entire row (including labels, descriptions, and multi-line detail blocks
+such as UsageLimits in External agents) into one large Button. Clicking
+anywhere in an external agent card or hovering across it treated the
+whole area as a toggle button, and static SettingsRow entries also set
+pointerEvents: 'none' on their content wrapper, blocking interactive
+elements inside detail.
+
+- Add SettingsSwitchControl on nsh/base Switch (with proper switch role,
+  light/dark styling, hitSlop, hover/focus, and terminal support) and
+  have SettingsSwitch render a static SettingsRow with only the trailing
+  switch interactive.
+- Only apply pointerEvents: 'none' to SettingsRow content when the row
+  itself is clickable (has onPress).
+- Reuse SettingsSwitchControl and full-width RowLine in ConnectionForm
+  and QuickTools split rows (and simplify non-configurable QuickTools
+  rows to SettingsSwitch).
+- Apply the same fix to generative UI Switch (spec/components.tsx) and
+  iOS Setting
+
+**File**: `products/maka/ios-shell/app/screens/settings/SettingsForm.tsx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,461 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+
-+import {
-+  Canvas,
-+  cleanup,
-+  computed,
-+  effect,
-+  List,
-+  platform,
-+  signal,
-+  Text,
-+  untracked,
-+  View,
-+  windowSize,
-+  type ListRef,
-+} from 'nsh';
-+import { Button, Popover, Tooltip } from 'nsh/base';
-+import { tr } from './locale';
-+import type { TocHeadingItem, TocLayoutMode } from './markdownTocModel';
-+import { C, captionTextStyle, floatingStyle, tooltipStyle, tooltipTextStyle } from './ui';
-+
-+const ROW_HEIGHT = platform.idiom === 'terminal' ? 16 : 26;
-+const FADE_HEIGHT = 24;
-+const RAIL_WIDTH = 20;
-+const MAX_RAIL_MARKS = 24;
-+const RAIL_HOVER_CLOSE_MS = 160;
-+const MARK_WIDTHS = [10, 7, 5] as const;
-+
-+function TocFade(props: {
-+  readonly bottom?: boolean;
-+  readonly height: number;
-+  readonly width: number;
-+  readonly surface: () => string;
+@@ -183,7 +183,7 @@ export function SettingSwitch(props: {
+       title={props.title}
+       disabled={props.disabled}
+       divider={props.divider}
+-      onPress={() => props.change(!props.checked)}
++      accessible={false}
+       trailing={
+         <Switch
+           accessibilityLabel={props.title}
+```
+
+**File**: `products/maka/ios-shell/app/screens/settings/SettingsRootScreen.tsx` (modified, +1/-0)
+```diff
+@@ -262,6 +262,7 @@ export function SettingsRootScreen(props: {
+                 <IconBadge name="haptics" background={token('teal')} size={28} iconSize={16} />
+               }
+               title={tr('Haptic Feedback')}
++              accessible={false}
+               trailing={
+                 <Switch
+                   accessibilityLabel={tr('Haptic Feedback')}
+```
+
+**File**: `products/maka/ios-shell/app/ui/InsetGroup.tsx` (modified, +8/-1)
+```diff
+@@ -123,6 +123,7 @@ export function GroupRow(props: {
+   disabled?: boolean;
+   divider?: boolean;
+   dividerInset?: number;
++  accessible?: boolean;
+   accessibilityLabel?: string;
+   testID?: string;
+   onPress?: () => void;
+@@ -209,7 +210,13 @@ export function GroupRow(props: {
+       <If
+         when={props.onPress && !props.disabled}
+         else={
+-          <View testID={props.testID} accessibilityLabel={props.accessibilityLabel ?? props.title}>
++          <View
++            testID={props.testID}
++            accessible={props.accessible}
++            accessibilityLabel={
++              props.accessible === false ? undefined : (props.accessibilityLabel ?? props.title)
++            }
++          >
+             {rowContent}
+           </View>
+         }
+```
+
+**File**: `products/maka/workbench/app/ConnectionForm.tsx` (modified, +19/-24)
+```diff
+@@ -18,21 +18,23 @@
+  */
+ 
+ import { cleanup, computed, effect, inputAction, signal, Text, View } from 'nsh';
+-import { Switch } from 'nsh/base';
+ import type { CredentialStatus } from '../../../../packages/plugin-sdk/src/generated/runtime';
+ import type { ModelSettingsOwner } from './settings';
+ import { ConnectionLogin } from './ConnectionLogin';
+ import { useHost } from './host';
+ import { tr } from './locale';
+ import {
++  RowLine,
+   SettingsBody,
+   SettingsButton,
+   SettingsInput,
+   SettingsRow,
+   SettingsSearch,
+   SettingsSection,
+   SettingsSwitch,
++  SettingsSwitchControl,
+   SettingsTextArea,
++  settingsInset,
+ } from './SettingsPage';
+ import { C, captionTextStyle } from './ui';
+ 
+@@ -167,6 +169,7 @@ export function ConnectionForm(props: { settings: ModelSettingsOwner }) {
+           <Each of={owner.filteredModels()} key={(id) => id}>
+             {(id) => (
+               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
++                <RowLine />
+                 <View style={{ flex: 1, minWidth: 0 }}>
+                   <SettingsRow
+                     label={name(id())}
+@@ -180,38 +183,30 @@ export function ConnectionForm(props: { settings: ModelSettingsOwner }) {
+                       </If>
+                     }
+                     opens
++                    line={false}
+                     disabled={disabled() || owner.dirty()}
+                     onPress={inputAction(owner.editModel, { ...owner.action(), id: id() })}
+                   />
+                 </View>
+-                <Switch
+-                  accessibilityLabel={tr('{label}: {state}', {
+-                    label: name(id()),
+-                    state: owner.enabledModels().has(id()) ? tr('On') : tr('Off'),
+-                  })}
+-                  checked={owner.enabledModels().has(id())}
+-                  disabled={disabled() || owner.dirty()}
+-                  onChange={inputAction(owner.setModelEnabled, {
+-                    ...owner.action(),
+-                    id: id(),
+-                    enabled: !owner.enabledModels().has(id()),
+-                  })}
++                <View
+                   style={{
+-                    width: 52,
++                    paddingHorizontal: settingsInset,
+                     alignSelf: 'stretch',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                   }}
+-                  trackClass="w-[32px] h-[16px] p-[3px] rounded-full flex-row items-center checked:justify-end"
+-                  trackStyle={{
+-                    backgroundColor: owner.enabledModels().has(id()) ? C.accent : C.line,
+-                  }}
+-                  thumbClass="size-[10px] rounded-full"
+-                  thumbStyle={{
+-                    backgroundColor: owner.enabledModels().has(id()) ? C.onAccent : C.secondary,
+-                  }}
+-                  disabledStyle={{ opacity: 0.5 }}
+-                />
++                >
++                  <SettingsSwitchControl
++                    accessibilityLabel={name(id())}
++                    checked={owner.enabledModels().has(id())}
++                    disabled={disabled() || owner.dirty()}
++                    onChange={inputAction(owner.setModelEnabled, {
++                      ...owner.action(),
++                      id: id(),
++                      enabled: !owner.enabledModels().has(id()),
++                    })}
++                  />
++                </View>
+               </View>
+             )}
+           </Each>
+```
+
+**File**: `products/maka/workbench/app/ExternalAgentSettings.tsx` (modified, +0/-3)
+```diff
+@@ -135,9 +135,6 @@ export function ExternalAgentSection(props: { owner: ExternalAgentSettingsOwner;
+                     </If>
+                   </>
+                 }
+-                accessibilityLabel={tr(runtime().enabled ? 'Disable {name}' : 'Enable {name}', {
+-                  name: runtime().name,
+-                })}
+                 checked={runtime().enabled}
+                 disabled={owner.disabled()}
+                 onPress={
+```
+
+**File**: `products/maka/workbench/app/PluginSettings.tsx` (modified, +0/-3)
+```diff
+@@ -202,9 +202,6 @@ function PluginDetail(props: { owner: PluginSettingsOwner; request: PluginAction
+       >
+         <SettingsSwitch
+           label={tr('Enabled')}
+-          accessibilityLabel={
+-            plugin().disabled ? tr('Enable Host plugin') : tr('Disable Host plugin')
+-          }
+           status={
+             plugin().parentDisabled
+               ? tr('Enable the parent plugin before enabling this child.')
+```
+
+**File**: `products/maka/workbench/app/QuickTools.tsx` (modified, +36/-27)
+```diff
+@@ -31,9 +31,7 @@ import {
+   type SettingsPageInput,
+   type SettingsPageNavigation,
+ } from '../../../../packages/plugin-sdk/src/workbench-views.js';
+-import { Button } from 'nsh/base';
+ import { PluginIcon } from './PluginIcon';
+-import { ChoiceIndicator } from './ChoiceIndicator';
+ import { sameValue } from '../../../../plugins/shared/value';
+ import { localizedPresentation, tr } from './locale';
+ import { contributionTitle } from './plugins/context';
+@@ -46,12 +44,15 @@ import {
+   type ToolEntry,
+ } from './QuickCommands';
+ import {
++  RowLine,
+   SettingsBody,
+   SettingsProblem,
+   SettingsRow,
+   SettingsSection,
+   SettingsSwitch,
++  SettingsSwitchControl,
+   settingsGutter,
++  settingsInset,
+ } from './SettingsPage';
+ import { errorText, renderText } from './text';
+ 
+@@ -425,39 +426,47 @@ export function QuickToolsSettings(props: {
+           >
+             <Each of={quick.tools()} key={(item: UiContributionRef) => item.key}>
+               {(item) => (
+-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+-                  <View style={{ flex: 1 }}>
+-                    <If
+-                      when={quick.configurable(item())}
+-                      else={<SettingsRow label={quick.title(item())} leading={mark(item())} />}
+-                    >
++                <If
++                  when={quick.configurable(item())}
++                  else={
++                    <SettingsSwitch
++                      label={quick.title(item())}
++                      leading={mark(item())}
++                      checked={quick.toolEnabled(item())}
++                      disabled={!quick.ready()}
++                      onPress={() => quick.toggleTool(item())}
++                    />
++                  }
++                >
++                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
++                    <RowLine />
++                    <View style={{ flex: 1, minWidth: 0 }}>
+                       <SettingsRow
+                         label={quick.title(item())}
+                         leading={mark(item())}
+                         description={summary(item()) || undefined}
+                         opens
++                        line={false}
+                         onPress={() => selected.set(item())}
+                       />
+-                    </If>
++                    </View>
++                    <View
++                      style={{
++                        paddingHorizontal: settingsInset,
++                        alignSelf: 'stretch',
++                        alignItems: 'center',
++                        justifyContent: 'center',
++                      }}
++                    >
++                      <SettingsSwitchControl
++                        accessibilityLabel={quick.title(item())}
++                        checked={quick.toolEnabled(item())}
++                        disabled={!quick.ready()}
++                        onChange={() => quick.toggleTool(item())}
++                      />
++                    </View>
+                   </View>
+-                  <Button
+-                    accessibilityLabel={tr('{label}: {state}', {
+-                      label: quick.title(item()),
+-                      state: quick.toolEnabled(item()) ? tr('On') : tr('Off'),
+-                    })}
+-                    selected={quick.toolEnabled(item())}
+-                    disabled={!quick.ready()}
+-                    onPress={() => quick.toggleTool(item())}
+-                    style={{
+-                      width: 52,
+-                      height: 42,
+-                      alignItems: 'center',
+-                      justifyContent: 'center',
+-                    }}
+-                  >
+-                    <ChoiceIndicator kind="switch" checked={quick.toolEnabled(item())} />
+-                  </Button>
+-                </View>
++                </If>
+               )}
+             </Each>
+             <If when={quick.tools().length === 0}>
+```
+
+**File**: `products/maka/workbench/app/SettingsPage.tsx` (modified, +67/-19)
+```diff
+@@ -19,8 +19,7 @@
+ 
+ import { Canvas, platform, Scroll, signal, Text, View, windowSize, type JSX } from 'nsh';
+ import type { InputRef, ScrollRef } from 'nsh';
+-import { Button, Input, Select } from 'nsh/base';
+-import { ChoiceIndicator } from './ChoiceIndicator';
++import { Button, Input, Select, Switch } from 'nsh/base';
+ import { Icon } from './Icon';
+ import { tr } from './locale';
+ import {
+@@ -224,17 +223,20 @@ export type SettingsRowProps = {
+   tone?: 'muted' | 'danger';
+   /** A page below: draws the chevron. */
+   opens?: boolean;
++  /** Draws the hairline above the row (default true). Pass false when an outer split row owns the line. */
++  line?: boolean;
+   onPress?: () => void;
+   accessibilityLabel?: string;
+   disabled?: boolean;
+   selected?: boolean;
+ };
+ 
+ export function SettingsRow(props: SettingsRowProps) {
++  const passThrough = () => (props.onPress ? ({ pointerEvents: 'none' } as const) : undefined);
+   const content = () => (
+     <>
+       {props.leading}
+-      <View style={[{ flex: 1, minWidth: 0, gap: textGap }, { pointerEvents: 'none' }]}>
++      <View style={[{ flex: 1, minWidth: 0, gap: textGap }, passThrough()]}>
+         <Text
+           style={[
+             {
+@@ -252,7 +254,7 @@ export function SettingsRow(props: SettingsRowProps) {
+         {props.detail}
+       </View>
+       <If when={props.status}>
+-        <Text style={[{ ...captionTextStyle, color: C.warning }, { pointerEvents: 'none' }]}>
++        <Text style={[{ ...captionTextStyle, color: C.warning }, passThrough()]}>
+           {props.status}
+         </Text>
+       </If>
+@@ -274,18 +276,21 @@ export function SettingsRow(props: SettingsRowProps) {
+       focusStyle={quietFocusStyle()}
+       disabledStyle={controlDisabledStyle}
+     >
+-      <RowLine />
++      <If when={props.line !== false}>
++        <RowLine />
++      </If>
+       {content()}
+     </Button>
+   ) : (
+     <View style={rowStyle}>
+-      <RowLine />
++      <If when={props.line !== false}>
++        <RowLine />
++      </If>
+       {content()}
+     </View>
+   );
+ }
+ 
+-/** An immediate on/off setting: the whole row toggles it. */
+ export function SettingsMonogram(props: { name: string; muted: boolean }) {
+   return (
+     <If when={!terminal}>
+@@ -317,6 +322,54 @@ export function SettingsMonogram(props: { name: string; muted: boolean }) {
+   );
+ }
+ 
++/** A standalone on/off switch control; only the switch itself is interactive. */
++export function SettingsSwitchControl(props: {
++  accessibilityLabel: string;
++  checked: boolean;
++  disabled?: boolean;
++  onChange(): void;
 +}) {
 +  return (
-+    <Canvas
-+      accessibilityElementsHidden
-+      style={[
-+        {
-+          position: 'absolute',
-+          left: 0,
-+          right: 0,
-+          top: props.bottom ? undefined : 0,
-+          bottom: props.bottom ? 0 : undefined,
-+          height: props.height,
-+        },
-+        { pointerEvents: 'none' },
-+      ]}
-+      draw={(cx) => {
-+        const bg = props.surface();
-+        const fade = cx.createLinearGradient(0, 0, 0, props.height);
-+        fade.addColorStop(0, props.bottom ? `${bg}00` : bg);
-+        fade.addColorStop(1, props.bottom ? bg : `${bg}00`);
-+        cx.fillStyle = fade;
-+        cx.fillRect(0, 0, props.width, props.height);
++    <Switch
++      accessibilityLabel={props.accessibilityLabel}
++      checked={props.checked}
++      disabled={props.disabled}
++      onChange={props.onChange}
++      hitSlop={terminal ? undefined : 6}
++      style={{
++        flexShrink: 0,
++        borderRadius: terminal ? 0 : 9999,
++        alignItems: 'center',
++        justifyContent: 'center',
++        cursor: props.disabled || terminal ? undefined : 'pointer',
 +      }}
++      trackClass="w-[32px] h-[16px] p-[3px] rounded-full flex-row items-center checked:justify-end"
++      trackStyle={{
++        backgroundColor: props.checked && !props.disabled ? C.accent : C.line,
++      }}
++      thumbClass="size-[10px] rounded-full"
++      thumbStyle={{
++        backgroundColor:
++          props.checked && !props.disabled ? C.onAccent : isDark() ? C.secondary : C.background,
++      }}
++      hoverStyle={terminal || props.disabled ? undefined : { opacity: 0.85 }}
++      activeStyle={terminal || props.disabled ? undefined : { opacity: 0.72 }}
++      focusStyle={
++        terminal
++          ? { backgroundColor: C.raised }
++          : {
++              outlineStyle: 'solid' as const,
++              outlineWidth: 2,
++              outlineColor: C.accent,
++              outlineOffset: 2,
++            }
++      }
++      disabledStyle={controlDisabledStyle}
 +    />
 +  );
 +}
 +
-+function TocHeadingList(props: {
-+  readonly turnKey: () => string | null;
-+  readonly items: () => readonly TocHeadingItem[];
-+  readonly active: () => string | null;
-+  readonly baseLevel: () => number;
-+  readonly width: () => number;
-+  readonly availableHeight: () => number;
-+  readonly floating: boolean;
-+  readonly select: (item: TocHeadingItem) => void;
-+}) {
-+  const scrollOffset = signal(0);
-+  const listRef = signal<ListRef | undefined>(undefined);
-+  let hovered = false;
-+
-+  const contentHeight = computed(() => props.items().length * ROW_HEIGHT);
-+  const frameHeight = computed(() => {
-+    const maxBudget = Math.min(
-+      480,
-+      windowSize().height * 0.65,
-+      Math.max(0, props.availableHeight() - (props.floating ? 36 : 24)),
-+    );
-+    if (platform.idiom === 'terminal') {
-+      return Math.min(contentHeight(), Math.floor(maxBudget / ROW_HEIGHT) * ROW_HEIGHT);
-+    }
-+    return Math.min(contentHeight(), maxBudget);
-+  });
-+
-+  const edgeFade = computed(() => {
-+    const content = contentHeight();
-+    const frame = frameHeight();
-+    if (content <= frame + 1) return { top: 0, bottom: 0 };
-+    const offset = Math.max(0, Math.min(scrollOffset(), content - frame));
-+    return {
-+      top: Math.min(FADE_HEIGHT, offset),
-+      bottom: Math.min(FADE_HEIGHT, Math.max(0, content - frame - offset)),
-+    };
-+  });
-+
-+  const activeIndex = computed(() => {
-+    const id = props.active();
-+    return id === null ? -1 : props.items().findIndex((item) => item.id === id);
-+  });
-+
-+  let syncedTurn: string | null = null;
-+  effect(() => {
-+    const turn = props.turnKey();
-+    const list = listRef();
-+    const index = activeIndex();
-+    const frame = frameHeight();
-+    if (!list || index < 0 || frame < ROW_HEIGHT) return;
-+    const turnChanged = turn !== syncedTurn;
-+    syncedTurn = turn;
-+    if (hovered && !turnChanged) return;
-+    const start = index * ROW_HEIGHT;
-+    const current = untracked(scrollOffset);
-+    if (turnChanged || start < current || start + ROW_HEIGHT > current + frame) {
-+      list.scrollToIndex({
-+        index,
-+        viewPosition: start <= current ? 0 : 1,
-+        animated: false,
-+      });
-+    }
-+  });
-+
-+  const surface = () => (props.floating ? C.floating : C.panel);
-+
-+  return (
-+    <View
-+      onMouseEnter={() => {
-+        hovered = true;
-+      }}
-+      onMouseLeave={() => {
-+        hovered = false;
-+      }}
-+      style={{ width: props.width(), height: frameHeight(), minHeight: 0 }}
-+    >
-+      <List
-+        ref={(node) => {
-+          listRef.set(node);
-+        }}
-+        testID="markdown-toc-list"
-+        accessibilit
-```
-
-**File**: `products/maka/workbench/app/MessageRow.tsx` (modified, +4/-0)
-```diff
-@@ -38,6 +38,7 @@ import {
- import type { MessageOrigin } from '../../../../packages/plugin-sdk/src/index.js';
- import type { InlineCitation } from './answerCitations';
- import { MarkdownBody } from './MarkdownBody';
-+import type { BindTextViewToc } from './turnToc';
- import { SourceText } from './SourceText';
- import { compactCopyInset, CompactReplyFooter, LocalMessageCopy } from './CompactReplyFooter';
- import { replyDetails, replyMetrics } from './replyDetails';
-@@ -172,6 +173,7 @@ export function MessageRow({
-   compactChat,
-   beside,
-   citations,
-+  bindToc,
-   hasSources,
-   openSources,
-   highlighted,
-@@ -204,6 +206,7 @@ export function MessageRow({
-   beside?: boolean;
-   localQuickReply?: boolean;
-   citations?(): readonly InlineCitation[] | undefined;
-+  bindToc?: BindTextViewToc;
-   hasSources?(): boolean;
-   openSources?(): void;
-   highlighted?: () => boolean;
-@@ -625,6 +628,7 @@ export function MessageRow({
-                           >
-                             <MarkdownBody
-                               citations={citations}
-+                              bindToc={bindToc}
-                               sessionId={sessionId}
-                               row={row}
-                               sourceId={sourceId()}
-```
-
-**File**: `products/maka/workbench/app/markdownTocModel.ts` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+
-+export type TocHeadingItem = {
-+  readonly id: string;
-+  readonly level: number;
-+  readonly title: string;
-+};
-+
-+export type TocLayoutMode =
-+  | { readonly kind: 'docked'; readonly width: number; readonly left: number }
-+  | { readonly kind: 'compact'; readonly railLeft: number; readonly popoverWidth: number }
-+  | { readonly kind: 'hidden' };
-+
-+export type TurnViewportSpan = {
-+  readonly turnKey: string;
-+  readonly top: number;
-+  readonly bottom: number;
-+};
-+
-+export type PartVisibleBlocks = {
-+  readonly partKey: string;
-+  readonly firstBlock: number | null;
-+  readonly lastBlock: number | null;
-+};
-+
-+export type PartHeadingRef = {
-+  readonly id: string;
-+  readonly partKey: string;
-+  readonly blockIndex: number;
-+};
-+
-+const READING_COLUMN_MAX_WIDTH = 800;
-+const DOCKED_MIN_MARGIN = 196;
-+const DOCKED_MAX_WIDTH = 220;
-+const DOCKED_EDGE_INSET = 12;
-+const DOCKED_COLUMN_GAP = 12;
-+const COMPACT_MIN_MARGIN = 32;
-+const COMPACT_RAIL_WIDTH = 20;
-+const COMPACT_POPOVER_WIDTH = 220;
-+
-+export function tocLayoutMode(input: {
-+  readonly listWidth: number;
-+  readonly railInset: number;
-+  readonly terminal: boolean;
-+}): TocLayoutMode {
-+  const { listWidth, railInset, terminal } = input;
-+  if (listWidth <= 0) return { kind: 'hidden' };
-+  const contentWidth = Math.max(0, listWidth - railInset * 2);
-+  const readingColumnLeft = railInset + Math.max(0, (contentWidth - READING_COLUMN_MAX_WIDTH) / 2);
-+  if (readingColumnLeft >= DOCKED_MIN_MARGIN) {
-+    const width = Math.min(
-+      DOCKED_MAX_WIDTH,
-+      Math.floor(readingColumnLeft - DOCKED_EDGE_INSET - DOCKED_COLUMN_GAP),
-+    );
-+    return { kind: 'docked', width, left: DOCKED_EDGE_INSET };
-+  }
-+  if (!terminal && readingColumnLeft >= COMPACT_MIN_MARGIN) {
-+    const railLeft = Math.max(
-+      4,
-+      Math.min(DOCKED_EDGE_INSET, Math.floor((readingColumnLeft - COMPACT_RAIL_WIDTH) / 2)),
-+    );
-+    return { kind: 'compact', railLeft, popoverWidth: COMPACT_POPOVER_WIDTH };
-+  }
-+  return { kind: 'hidden' };
-+}
-+
-+export function pickViewedTurn(
-+  turns: readonly TurnViewportSpan[],
-+  viewportTop: number,
-+  viewportBottom: number,
-+  preferredTurnKey: string | null = null,
-+): string | null {
-+  if (turns.length === 0 || viewportBottom <= viewportTop) return null;
-+  let bestKey: string | null = null;
-+  let bestOverlap = 0;
-+  for (const turn of turns) {
-+    const overlap = Math.max(
-+      0,
-+      Math.min(turn.bottom, viewportBottom) - Math.max(turn.top, viewportTop),
-+    );
-+    if (overlap <= 0) continue;
-+    if (
-+      overlap > bestOverlap + 1 ||
-+      (Math.abs(overlap - bestOverlap) <= 1 && turn.turnKey === preferredTurnKey)
-+    ) {
-+      bestOverlap = overlap;
-+      bestKey = turn.turnKey;
-+    }
-+  }
-+  return bestKey;
-+}
-+
-+export function pickActiveHeading(
-+  items: readonly PartHeadingRef[],
-+  partsInOrder: readonly PartVisibleBlocks[],
-+  atBottom: boolean,
-+  fallbackId: string | null = null,
-+): string | null {
-+  if (items.length === 0) return null;
-+  const partOrder = new Map<string, number>();
-+  let firstVisibleOrder = -1;
-+  let firstVisibleBlock = -1;
-+  let lastVisibleOrder = -1;
-+  let lastVisibleBlock = -1;
-+
-+  for (let i = 0; i < partsInOrder.length; i += 1) {
-+    const part = partsInOrder[i]!;
-+    partOrder.set(part.partKey, i);
-+    if (part.firstBlock !== null && firstVisibleOrder < 0) {
-+      firstVisibleOrder = i;
-+      firstVisibleBlock = part.firstBlock;
-+    }
-+    if (part.lastBlock !== null) {
-+      lastVisibleOrder = i;
-+      lastVisibleBlock = part.lastBlock;
-+    }
-+  }
-+
-+  if (atBottom && lastVisibleOrder >= 0) {
-+    const lastItem = items[items.length - 1]!;
-+    const itemOrder = partOrder.get(lastItem.partKey) ?? -1;
-+    if (
-+      itemOrder >= 0 &&
-+      (itemOrder < lastVisibleOrder ||
-+        (itemOrder === lastVisibleOrder && lastItem.blockIndex <= lastVisibleBlock))
-+    ) {
-+      return lastItem.id;
-+    }
-+  }
-+
-+  if (firstVisibleOrder < 0) {
-+    if (atBottom) return items[items.length - 1]!.id;
-+    if (fallbackId !== null && items.some((item) => item.id === fallbackId)) return fallbackId;
-+    return items[0]!.id;
-+  }
-+
-+
-```
-
-**File**: `products/maka/workbench/app/processGroups.ts` (modified, +6/-0)
-```diff
-@@ -503,6 +503,12 @@ export function projectProcessGroups(input: {
-       } else {
-         flush(true);
-         entries.push({ kind: 'message', key: position.rowId, rowId: position.rowId });
-+        if (row.role === 'assistant' && row.field === 'body' && !row.sourceCitation) {
-+          const presentation = turn(rowTurn);
-+          if (!presentation.answerOutputIds.includes(position.rowId)) {
-+            presentation.answerOutputIds.push(position.rowId);
-+          }
-+        }
-       }
-       continue;
-     }
-```
-
----
-
-### Incident Patch 2: `37a6782d` (2026-11-25)
-**Commit Message**: feat(executor): support isolated external executors across macOS, Linux, and Windows (#7253)
-
-* feat(process): support isolated native tasks on Linux
-
-Generated-by: Maka
-
-* feat(process): support isolated native tasks on Windows
-
-Anchor private snapshots, launch material, and output evidence to Windows directory handles and retain full file IDs. Carry the trusted sandbox backend through the detached helper and settle the provider tree and terminal output before publishing closure.
-
-Use MXC 1.1.0 to keep namespace denials alongside per-task read and write grants. Exercise managed pipes and live ConPTY through the real CLI.
-
-Generated-by: Maka
-
-* feat(executor): deliver receipt-verified programs to isolated native tasks
-
-Publish the verified server and helper together and retain setup inputs through provider shutdown. Exercise ACP setup and receipt delivery across macOS, Linux and Windows, including native MXC and original process cleanup.
-
-Generated-by: Maka
-
-* fix(executor): settle isolation cleanup before confirming native jobs
-
-Generated-by: Maka
-
-* fix(process): harden isolated tasks across Windows accounts, AppData, and runtime cleanup
-
-Address round-2 independent review findin
-
-**File**: `.cargo/config.toml` (modified, +5/-0)
-```diff
-@@ -39,3 +39,8 @@ rustc-wrapper = ""
- # without relying on a racy runtime sqlite3_config() call.
- [env]
- LIBSQLITE3_FLAGS = "SQLITE_DEFAULT_MEMSTATUS=0"
-+
-+# MXC's release build otherwise enables Required ETW diagnostics independently
-+# of the per-request telemetry preference. Use the SDK's unrouted build.
-+MXC_TELEMETRY_COMPONENT_PATH = { value = "", force = true }
-+MXC_TELEMETRY_TEST_KEYWORDS = { value = "", force = true }
-```
-
-**File**: `Cargo.lock` (modified, +21/-6)
-```diff
-@@ -8656,6 +8656,7 @@ dependencies = [
- name = "maka-acp-native"
- version = "0.3.0"
- dependencies = [
-+ "dunce",
-  "futures-util",
-  "hex",
-  "maka-agent-api",
-@@ -8668,6 +8669,7 @@ dependencies = [
-  "maka-host-runtime",
-  "maka-interactions-api",
-  "maka-plugin-core",
-+ "maka-process",
-  "maka-workspace-api",
-  "serde",
-  "serde_json",
-@@ -8859,6 +8861,7 @@ dependencies = [
-  "tracing-subscriber",
-  "unicode-normalization",
-  "uuid",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -8994,6 +8997,7 @@ dependencies = [
-  "base64 0.23.1",
-  "clap",
-  "crossterm",
-+ "dunce",
-  "flate2",
-  "futures-util",
-  "hex",
-@@ -9018,6 +9022,7 @@ dependencies = [
-  "maka-computer-use",
-  "maka-config",
-  "maka-event-log",
-+ "maka-external-agent",
-  "maka-fs-tools",
-  "maka-host-js",
-  "maka-host-runtime",
-@@ -9327,12 +9332,15 @@ dependencies = [
-  "base64 0.23.1",
-  "cap-fs-ext",
-  "cap-std",
-+ "dunce",
-  "futures-util",
-  "hex",
-+ "libc",
-  "maka-agent-facts",
-  "maka-agent-ports",
-  "maka-capabilities",
-  "maka-plugin-core",
-+ "maka-process",
-  "schemars 1.2.3",
-  "serde",
-  "serde_json",
-@@ -9751,9 +9759,11 @@ name = "maka-process"
- version = "0.3.0"
- dependencies = [
-  "alacritty_terminal",
-+ "dirs",
-  "dunce",
-  "libc",
-  "maka-agent-facts",
-+ "maka-event-log",
-  "maka-network",
-  "maka-plugin-core",
-  "maka-sandbox",
-@@ -9762,6 +9772,7 @@ dependencies = [
-  "schemars 1.2.3",
-  "serde",
-  "serde_json",
-+ "sha2 0.11.1",
-  "tempfile",
-  "thiserror 2.0.21",
-  "tokio",
-@@ -9938,8 +9949,6 @@ version = "0.3.0"
- dependencies = [
-  "cap-fs-ext",
-  "cap-std",
-- "dunce",
-- "flatbuffers",
-  "globset",
-  "hex",
-  "libc",
-@@ -10799,8 +10808,9 @@ dependencies = [
- 
- [[package]]
- name = "mxc-sdk"
--version = "1.0.1"
--source = "git+https://github.com/microsoft/mxc?rev=05a430bc17a3e1b3fa2131524fc52e4319e07298#05a430bc17a3e1b3fa2131524fc52e4319e07298"
-+version = "1.1.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a6f702443261f9e5d12f607f16f591e99ea3ff6fd886281e041b700cbbb2b5de"
- dependencies = [
-  "anyhow",
-  "base64 0.22.1",
-@@ -10810,6 +10820,7 @@ dependencies = [
-  "flatbuffers",
-  "getrandom 0.2.17",
-  "libc",
-+ "native-tls",
-  "nix 0.29.0",
-  "same-file",
-  "semver",
-@@ -10822,6 +10833,7 @@ dependencies = [
-  "tokio",
-  "tracelogging",
-  "unicode-general-category",
-+ "ureq",
-  "url",
-  "uuid",
-  "widestring",
-@@ -11321,9 +11333,9 @@ dependencies = [
- 
- [[package]]
- name = "notify"
--version = "8.2.1"
-+version = "8.2.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "82f812702fbc75d35416d3f884e04925be7e9498f4eceea2e24ba34559284674"
-+checksum = "c41a04a5f59df9322cc657286dd2d79f90816119b22c5f847607c850110205ab"
- dependencies = [
-  "bitflags 2.13.2",
-  "inotify",
-@@ -19258,14 +19270,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3ac5cecf619ca81f66a96482db09687c9f7465af65f4300a8c30cca05bd5a59d"
- dependencies = [
-  "base64 0.23.1",
-+ "der 0.8.2",
-  "flate2",
-  "log",
-+ "native-tls",
-  "percent-encoding",
-  "rustls",
-  "rustls-pki-types",
-  "rustls-platform-verifier",
-  "ureq-proto",
-  "utf8-zero",
-+ "webpki-root-certs",
-  "webpki-roots 1.0.11",
- ]
- 
-```
-
-**File**: `Cargo.toml` (modified, +1/-2)
-```diff
-@@ -100,8 +100,7 @@ publish = false
- [workspace.dependencies]
- zstd = { version = "0.14.3", default-features = false }
- asyncband = "*"
--mxc-sdk = { git = "https://github.com/microsoft/mxc", rev = "05a430bc17a3e1b3fa2131524fc52e4319e07298" }
--flatbuffers = "25.12.19"
-+mxc-sdk = "1.1.0"
- maka-python-runtime = { path = "platform/python-runtime" }
- maka-mcp = { path = "plugins/agent/mcp" }
- hex = "0.4.3"
-```
-
-**File**: `platform/event-log/src/root/windows.rs` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@ pub use filesystem::{
-     FileIdentity, create_private_directory, create_private_file, file_identity, open_nofollow,
-     private_directory,
- };
--pub use security::{PrivateSecurity, validate_private};
-+pub use security::{PrivateSecurity, validate_private, validate_protected_private};
- 
- use std::{ffi::c_void, io, os::windows::ffi::OsStrExt};
- use windows_sys::Win32::Foundation::LocalFree;
-```
-
-**File**: `platform/event-log/src/root/windows/security.rs` (modified, +22/-4)
-```diff
-@@ -158,12 +158,30 @@ impl SecurityInfo {
-     }
- }
- 
--/// Validate the held object, not a separately resolved pathname. Unknown ACE
--/// forms fail closed; inherited account/SYSTEM entries are valid for child files.
--pub fn validate_private(file: &File) -> io::Result<()> {
-+/// Private task evidence requires a protected DACL on the held object itself.
-+pub fn validate_protected_private(file: &File) -> io::Result<()> {
-+    use windows_sys::Win32::Security::{GetSecurityDescriptorControl, SE_DACL_PROTECTED};
-     let info = SecurityInfo::read(file)?;
-+    let mut control = 0;
-+    let mut revision = 0;
-+    // SAFETY: GetSecurityInfo owns the descriptor for the duration of this query.
-+    checked(unsafe {
-+        GetSecurityDescriptorControl(info._allocation.0, &mut control, &mut revision)
-+    })?;
-+    if control & SE_DACL_PROTECTED == 0 {
-+        return Err(denied());
-+    }
-+    validate_account_acl(&info)
-+}
-+
-+/// Root children may inherit account/SYSTEM entries from their private parent.
-+pub fn validate_private(file: &File) -> io::Result<()> {
-+    validate_account_acl(&SecurityInfo::read(file)?)
-+}
-+
-+fn validate_account_acl(info: &SecurityInfo) -> io::Result<()> {
-     let account = AccountSid::current()?;
--    validate_owner(&info, &account)?;
-+    validate_owner(info, &account)?;
-     // SAFETY: Windows returned a valid ACL and owns its structural validation.
-     for index in 0..unsafe { (*info.dacl).AceCount } {
-         let mut ace = ptr::null_mut();
-```
-
-**File**: `platform/host-runtime/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ tempfile.workspace = true
- windows-sys = { version = "0.61.2", features = ["Win32_Security"] }
- 
- [target.'cfg(windows)'.dependencies]
--windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading"] }
-+windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem", "Win32_System_Threading", "Win32_System_Pipes"] }
- 
- [[test]]
- name = "integration"
-```
-
-**File**: `platform/host-runtime/examples/windows_mxc.rs` (modified, +55/-31)
-```diff
-@@ -359,7 +359,7 @@ mod native {
-         run_case!(hardlink_conflict);
-         run_case!(protected_ancestor);
-         run_case!(guard_registry);
--        run_case!(unsupported_reopening);
-+        run_case!(reopened_descendants);
-         run_case!(arguments_and_environment);
-         run_case!(pipe_input);
-         run_case!(cancel_hung_admission);
-@@ -729,41 +729,47 @@ mod native {
-         Ok(())
-     }
- 
--    async fn unsupported_reopening(fixture: &Fixture) -> Result<()> {
--        let reopened = fixture.work.join("private/reopened");
--        std::fs::create_dir(&reopened)?;
-+    async fn reopened_descendants(fixture: &Fixture) -> Result<()> {
-+        let private = fixture.work.join("private");
-+        let workspace = private.join("workspace");
-+        let inputs = private.join("inputs");
-+        let hidden = private.join("existing");
-+        for path in [&workspace, &inputs, &hidden] {
-+            std::fs::create_dir_all(path)?;
-+        }
-+        std::fs::write(inputs.join("input"), b"input")?;
-+        std::fs::write(hidden.join("secret"), b"existing")?;
-         let filesystem = Policy {
-             default: Access::Read,
-             rules: vec![
--                Rule::subtree(&fixture.work, Access::Write),
--                Rule::subtree(fixture.work.join("private"), Access::Deny),
--                Rule::subtree(&reopened, Access::Write),
-+                Rule::subtree(&private, Access::Deny),
-+                Rule::subtree(&workspace, Access::Write),
-+                Rule::subtree(&inputs, Access::Read),
-             ],
--            deny_globs: vec![],
-+            deny_globs: Vec::new(),
-         };
--        assert!(matches!(
--            maka_sandbox::windows::mxc::PreparedPolicy::new(&filesystem, &Network::Denied, &fixture.work),
--            Err(maka_sandbox::Error::Unsupported(reason)) if reason == "native MXC cannot reopen a descendant of a denied path"
--        ));
--        let command =
--            fixture
--                .command("must-not-run", Network::Denied)?
--                .sandbox(&Sandbox::Managed {
--                    filesystem,
--                    network: Network::Denied,
--                })?;
--        let failure = match pipe::spawn(command).await {
--            Err(failure) => failure,
--            Ok(_) => return Err("unsupported denial reopening executed a command".into()),
--        };
--        assert!(
--            failure
--                .to_string()
--                .contains("native MXC cannot reopen a descendant of a denied path"),
--            "{failure}"
--        );
--        assert!(!fixture.work.join("unexpected-execution").exists());
--        println!("PASS unrepresentable Deny→Write policy rejects before execution");
-+        let mut command = Command::new(&fixture.executable, &workspace)
-+            .with_backend(fixture.backend.clone())
-+            .sandbox(&Sandbox::Managed {
-+                filesystem,
-+                network: Network::Denied,
-+            })?;
-+        command.args(["__fixture", "reopened"]);
-+        let mut spawned = pipe::spawn(command).await?;
-+        let mut output = tokio::io::BufReader::new(spawned.stdout);
-+        let mut line = String::new();
-+        output.read_line(&mut line).await?;
-+        assert_eq!(line.trim(), "ready");
-+        std::fs::create_dir(private.join("future"))?;
-+        std::fs::write(private.join("future/secret"), b"future")?;
-+        spawned.stdin.write_all(b"go").await?;
-+        drop(spawned.stdin);
-+        let mut errors = Vec::new();
-+        let (status, _) = tokio::try_join!(
-+            spawned.child.wait(),
-+            spawned.stderr.read_to_end(&mut errors)
-+        )?;
-+        assert!(status.success(), "{}", String::from_utf8_lossy(&errors));
-         Ok(())
-     }
- 
-@@ -1187,6 +1193,24 @@ mod native {
- 
-     fn worker(args: Vec<String>) -> Result<()> {
-         match args.first().map(String::as_str) {
-+            Some("reopened") => {
-+                std::fs::write("probe", b"write")?;
-+                assert_eq!(std::fs::read("probe")?, b"write");
-+                assert_eq!(std::fs::read("../inputs/input")?, b"input");
-+                assert_eq!(
-+                    std::fs::write("../inputs/input", b"x")
-+                        .unwrap_err()
-+                        .raw_os_error(),
-+                    Some(5)
-+                );
-+                println!("ready");
-+                std::io::stdout().flush()?;
-+                let mut go = [0; 2];
-+                std::io::stdin().read_exact(&mut go)?;
-+                for name in ["../existing/secret", "../future/secret"] {
-+                    assert_eq!(std::fs::read(name).unwrap_err().raw_os_error(), Some(5));
-+                }
-+            }
-             Some("filesystem") => {
-                 std::fs::write("文件 with spaces.txt", "写入 😀")?;
-                 denied_write(Path::new(&args[1]));
-```
-
-**File**: `platform/host-runtime/src/ipc/windows/stream.rs` (modified, +13/-0)
-```diff
-@@ -38,6 +38,19 @@ enum Pipe {
-     Client(NamedPipeClient),
- }
- impl LocalStream {
-+    pub fn client_pid(&self) -> io::Result<u32> {
-+        use std::os::windows::io::AsRawHandle;
-+        use windows_sys::Win32::System::Pipes::GetNamedPipeClientProcessId;
-+        let Some(Pipe::Server(pipe)) = &self.pipe else {
-+            return Err(io::Error::other("Expected a connected pipe server"));
-+        };
-+        let mut pid = 0;
-+        // SAFETY: the connected server owns the handle throughout the query.
-+        if unsafe { GetNamedPipeClientProcessId(pipe.as_raw_handle(), &mut pid) } == 0 {
-+            return Err(io::Error::last_os_error());
-+        }
-+        Ok(pid)
-+    }
-     pub(super) fn server(pipe: NamedPipeServer) -> Self {
-         Self {
-             pipe: Some(Pipe::Server(pipe)),
-```
-
----
-
-### Incident Patch 3: `aaaa6a66` (2026-11-25)
-**Commit Message**: fix(agent): cold-rebuild stale snapshot derived indexes on demand (#7260)
-
-* fix(agent): cold-rebuild stale snapshot derived indexes on demand
-
-After #7245 bumped snapshot navigation VERSION from 3 to 4, persisted snapshots from prior releases still carried version 3 in agent_history_snapshot_nav_heads. Read paths that required a ready snapshot derived index failed immediately instead of triggering Snapshot::ensure_navigation, breaking post-merge Upgrade Compatibility across all historical capsules.
-
-Make snapshot derived-index readiness self-healing and type-enforced across all read paths:
-- Return typed IndexedRead / IndexedReadError from navigation::require_ready, metrics_metadata::require_ready, and Snapshot::catalog_summary_in_snapshot so no query can bypass cold rebuild, with zero extra queries or allocations on the already-ready hot path.
-- Wire shared run_with_snapshot_rebuild retry across every peer path: SessionHistory::{metrics, current_model_context, calibration_sample}, HistoryDataSource::{model_request_traces_for_reader, compaction_duration_ms}, Snapshot::{navigation_find, navigation_landmark_count, navigation_landmarks, terminated}, SessionCatalog::{page, record, pla
-
-**File**: `plugins/agent/native/src/owner/catalog.rs` (modified, +6/-1)
-```diff
-@@ -35,12 +35,17 @@ impl Owner {
-         .map_err(|error| error.to_string())
-     }
- 
--    pub(crate) async fn session_summary(&self, id: &str) -> Result<Session, String> {
-+    pub(crate) async fn session_summary(
-+        &self,
-+        id: &str,
-+        stop: &tokio_util::sync::CancellationToken,
-+    ) -> Result<Session, String> {
-         if !self.owns(id) {
-             return Err("agent_session_unavailable".into());
-         }
-         let record = self
-             .canonical_catalog()?
-+            .with_cancellation(stop.clone())
-             .record(id)
-             .await
-             .map_err(|error| error.to_string())?
-```
-
-**File**: `plugins/agent/native/src/owner/driver/tests/tool_history.rs` (modified, +343/-1)
-```diff
-@@ -2133,7 +2133,7 @@ async fn assert_restricted_retry_history(
-     reader.finish().await?;
- 
-     let traces = HistoryDataSource::Snapshot(earlier)
--        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true)
-+        .model_request_traces_for_reader(driver.access.execution().run_id, 0, 24, true, None)
-         .await?;
-     assert!(!traces.run_terminated);
-     assert_eq!(traces.requests.len(), 2);
-@@ -4554,3 +4554,345 @@ async fn wait_terminal(client: &HostClient, session: &str, run_id: Value) -> Tes
-         tokio::time::sleep(Duration::from_millis(10)).await;
-     }
- }
-+
-+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+async fn stale_snapshot_indexes_rebuild_without_skipping_pages_or_aborting_sibling_writes()
-+-> TestResult<()> {
-+    use maka_agent_state::{
-+        recall::{RecallStore, SearchQuery},
-+        session_catalog::{Filter, Position as CatalogPosition, SideQuestions},
-+        session_history::{
-+            navigation::SourceFind,
-+            source_tree::{HistoryDataSource, SourceTree},
-+        },
-+    };
-+    use maka_event_log::{
-+        StoreError,
-+        connection::Query,
-+        sessions::{CatalogFilter, CatalogScope},
-+        writeback::{Notification, Prepared, Statement},
-+    };
-+
-+    struct SqlWrite<F>(F);
-+    impl<F: FnOnce(&rusqlite::Connection) -> Result<bool, StoreError> + Send + 'static> Statement
-+        for SqlWrite<F>
-+    {
-+        type Value = ();
-+        type Output = ();
-+        fn execute(self, c: &rusqlite::Connection) -> Result<Prepared<()>, StoreError> {
-+            let changed = (self.0)(c)?;
-+            Ok(Prepared {
-+                value: (),
-+                changed,
-+                notification: Notification::NONE,
-+            })
-+        }
-+        fn committed(_: ()) {}
-+        fn isolated_rejection(_: &StoreError) -> bool {
-+            false
-+        }
-+    }
-+    struct SqlQuery<F>(F);
-+    impl<
-+        T: Send + 'static,
-+        F: FnOnce(&rusqlite::Connection) -> Result<T, StoreError> + Send + 'static,
-+    > Query for SqlQuery<F>
-+    {
-+        type Output = T;
-+        fn execute(self, c: &rusqlite::Connection) -> Result<T, StoreError> {
-+            (self.0)(c)
-+        }
-+    }
-+
-+    let mut rig = Rig::new()?;
-+    let base = rig.directory.path().to_path_buf();
-+    let server = MockAiBuilder::new()
-+        .scripted(vec![
-+            TurnPlan::new()
-+                .push_text("Alpha milestone answer.")
-+                .with_usage(Usage::new(120, 40)),
-+            TurnPlan::new()
-+                .push_text("Beta followup answer.")
-+                .with_usage(Usage::new(180, 50)),
-+            TurnPlan::new()
-+                .push_text("Compacted summary.")
-+                .with_usage(Usage::new(90, 30)),
-+        ])
-+        .start()
-+        .await?;
-+    let boot = model_recovery::bootstrap(&base, server.base_url(), false).await?;
-+    model_recovery::attach(&mut rig, &boot).await?;
-+
-+    let result = AssertUnwindSafe(tokio::time::timeout(
-+        Duration::from_secs(60),
-+        Box::pin(async {
-+            let client = rig.client.as_ref().ok_or("client missing")?;
-+            let owner = rig.captured.lock().unwrap().clone().ok_or("owner missing")?;
-+            let writer = owner.store.data_writer()?;
-+            let run_owner = owner.run_owner();
-+
-+            let conns = model_recovery::call(client, "settings", "connections", json!({"kind": "start"})).await?;
-+            let conn_id = model_recovery::call(client, "settings", "create", json!({
-+                "expectedCatalogRevision": conns["revision"],
-+                "connection": {
-+                    "slug": "snapshot-rebuild", "name": "Snapshot Rebuild",
-+                    "provider": {"packageId":"maka.providers","entryId":"maka.providers","scope":"profile","name":"ollama"},
-+                    "configuration": {"baseUrl": boot.base_url},
-+                    "enabled": true, "enabledModelIds": ["llama3.2"],
-+                    "modelOverrides": {"llama3.2": {"apiProtocol": "openai-chat-completions"}}
-+                }
-+            })).await?["connection"]["connectionId"].clone();
-+            let backend = json!({"kind": "model", "connectionId": conn_id, "modelId": "llama3.2"});
-+
-+            let create_session = |title: &str| {
-+                let (title, path) = (title.to_owned(), base.join("workspace"));
-+                async move {
-+                    let r = model_recovery::call(client, "agent", "create", json!({
-+                        "title": title, "automaticTitle": false, "labels": [],
-+                        "workspace": {"kind": "directory", "path": path}
-+                    })).await?;
-+                    Ok::<String, Box<dyn Error + Send + Sync>>(r["session"]["id"].as_str().ok_or("session id")?.to_owned())
-+                }
-+            };
-+            let fork_session = |source: &str, title: &str| {
-+                let (owner, source, title) = (owner.clone(), source.to_
-```
-
-**File**: `plugins/agent/native/src/owner/driver_model/codex_switch.rs` (modified, +5/-1)
-```diff
-@@ -165,7 +165,11 @@ impl DriverModel {
-             model_context_window: target.context.as_ref().and_then(|c| c.model_context_window),
-             provenance,
-         };
--        let Some(previous) = self.history.current_model_context(cut).await? else {
-+        let Some(previous) = self
-+            .history
-+            .current_model_context(cut, Some(&self.cancellation))
-+            .await?
-+        else {
-             return Ok(None);
-         };
-         let reader = match previous.source {
-```
-
-**File**: `plugins/agent/native/src/owner/driver_model/compacted.rs` (modified, +3/-1)
-```diff
-@@ -436,7 +436,9 @@ impl DriverModel {
-         let history = self
-             .state
-             .session_history(view.spec.owner.clone(), view.spec.session_id.clone());
--        let sample = history.calibration_sample(&source.current).await?;
-+        let sample = history
-+            .calibration_sample(&source.current, Some(&self.cancellation))
-+            .await?;
-         let route = preparation::route_identity(&model.provider)?;
-         Ok(sample.and_then(|sample| {
-             maka_agent_engine::preparation::Calibration::for_route(
-```
-
-**File**: `plugins/agent/native/src/owner/fork.rs` (modified, +3/-1)
-```diff
-@@ -350,7 +350,9 @@ impl Owner {
-             .map_err(fork_failure)?;
-         let at = now();
-         let recorded_at = UnixMillis(at.try_into().map_err(|_| "agent_clock_invalid")?);
--        let catalog = self.canonical_catalog()?;
-+        let catalog = self
-+            .canonical_catalog()?
-+            .with_cancellation(scope.cancellation.clone());
-         let control = catalog.control_statement(
-             claim.session_id.clone(),
-             ControlCommand {
-```
-
-**File**: `plugins/agent/native/src/owner/imports.rs` (modified, +4/-1)
-```diff
-@@ -252,7 +252,10 @@ impl Owner {
-                     .imported_sessions(self.run_owner(), self.prefix.clone(), after, 16)
-                     .await
-                     .map_err(Failure::from)?;
--                let catalog = self.canonical_catalog().map_err(|_| Failure::Unavailable)?;
-+                let catalog = self
-+                    .canonical_catalog()
-+                    .map_err(|_| Failure::Unavailable)?
-+                    .with_cancellation(scope.cancellation.clone());
-                 let mut sessions = Vec::with_capacity(page.ids.len());
-                 for id in page.ids {
-                     if let Some(session) = catalog
-```
-
-**File**: `plugins/agent/native/src/owner/recall.rs` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@ impl Recall {
-             }
-             RecallStore::new(data, self.owner.clone(), self.prefix.clone())
-                 .map_err(failed)?
--                .validate_execution(execution.clone())
-+                .validate_execution(execution.clone(), &call.cancellation)
-                 .await
-                 .map_err(failed)?;
-         }
-```
-
-**File**: `plugins/agent/native/src/owner/session_tools.rs` (modified, +1/-0)
-```diff
-@@ -398,6 +398,7 @@ impl Owner {
-                     scope: list_scope.clone(),
-                     title_query: String::new(),
-                 },
-+                &scope.cancellation,
-             )
-             .await
-             .map_err(humanize_agent_error)?;
++/** An immediate on/off setting: the label and detail stay static while the switch toggles it. */
+ export function SettingsSwitch(props: {
+   label: string;
+   description?: string;
+@@ -328,7 +381,7 @@ export function SettingsSwitch(props: {
+   onPress(): void;
+   trailing?: JSX.Element;
+   status?: string;
+-  /** Names the action instead of the state, such as "Enable Codex". */
++  /** Overrides the switch's accessible name when the row label alone is not specific enough. */
+   accessibilityLabel?: string;
+ }) {
+   return (
+@@ -339,20 +392,15 @@ export function SettingsSwitch(props: {
+       leading={props.leading}
+       tone={props.tone}
+       status={props.status}
+-      accessibilityLabel={
+-        props.accessibilityLabel ??
+-        tr('{label}: {state}', {
+-          label: props.label,
+-          state: props.checked ? tr('On') : tr('Off'),
+-        })
+-      }
+-      selected={props.checked}
+-      disabled={props.disabled}
+-      onPress={props.onPress}
+       trailing={
+         <>
+           {props.trailing}
+-          <ChoiceIndicator kin
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7295** (2026-11-26): perf(workbench): keep the settings pages list so a palette slider drags smoothly (@UncertaintyDeterminesYou4ndMe)
-- **PR #7294** (2026-11-26): fix(cli,agent): synchronize waiter signal test and locate fixture quote (@M4n5ter)
-- **PR #7293** (2026-11-26): fix(updater): honor Windows system proxy settings (@ARE404)
-- **PR #7292** (2026-11-26): feat(agent,workbench): smooth WorkspaceWrite MCP UX, project consent decline, and prefix-cache preservation (@M4n5ter)
-- **PR #7282** (2026-11-26): fix(nsh,workbench): keep upward scrolling from jumping to the bottom during async reflow (@M4n5ter)
-- **PR #7281** (2026-11-26): feat(workbench,i18n): format numeric UI values by default (@Colafornia)
+- **PR #7346** (2026-11-27): feat(workbench): keep the theme preview in view while the controls scroll (@UncertaintyDeterminesYou4ndMe)
+- **PR #7343** (2026-11-27): fix(ios): render nsh/base Switch fallback off mobile for SettingSwitch (@M4n5ter)
+- **PR #7336** (2026-11-27): fix(ios): auto-reconnect paired Hosts on foreground and network changes (@me2seeks)
+- **PR #7334** (2026-11-27): chore(ios): polish 12-locale localization and dynamic labels (@me2seeks)
+- **PR #7333** (2026-11-27): fix(ios): use native UIKit navigation title on ChatScreen (@me2seeks)
+- **PR #7332** (2026-11-27): feat(workbench): give a theme its shape: corners, lines, shadow and letter spacing (@UncertaintyDeterminesYou4ndMe)
 
 ---
 
@@ -4363,67 +4154,48 @@ Make snapshot derived-index readiness self-healing and type-enforced across all 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workbench): show left-side Markdown TOC for overflowing turn replies
+## X. agent): observe original CodeMode cells before retiring replaced Antigravity run
 
 **RULE**:
-When implementing operations in `plugins/agent/conversations/ui/Conversation.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/agent/engine/src/driver/preflight.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/maka. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9bd44203`: workbench): show left-side Markdown TOC for overflowing turn replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85f66c80`: agent): observe original CodeMode cells before retiring replaced Antigravity runs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/conversations/ui/Conversation.tsx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/agent/engine/src/driver/preflight.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  hasTextPrefix,
-import { MarkdownToc } from '../../../../products/maka/workbench/app/MarkdownToc';
-import { createTurnToc } from '../../../../products/maka/workbench/app/turnToc';
-    if (entry?.kind === 'bot') return entry.turnId;
-  const turnToc = createTurnToc({
-    enabled: () => !props.compact && ready() && reading() === 'chat',
-    listRef: () => list,
-    listWidth: historyWidth,
-    viewportHeight: () => readingSize().height,
-    railInset,
-    atBottom: () => !historyBelow(),
-    isTerminal: () => platform.idiom === 'terminal',
-    rowTurnKey: entryTurn,
-    turnOutputRowKeys: (turnKey) => {
-      if (botView() === 'bot') {
-        return bot.forTurn(turnKey).length > 0 ? [`bot/${turnKey}`] : [];
-      }
-      const turn = projectedTurn(turnKey);
-      if (!turn) return [];
-      const ids = turn.finalOutputIds.length > 0 ? turn.finalOutputIds : turn.answerOutputIds;
-      return ids.filter((id) => !currentRow(id)?.sourceCitation);
-    },
-    rowOutputSources: (rowKey) => {
-      if (rowKey.startsWith('bot/')) {
-        const turnKey = rowKey.slice(4);
-        return bot.forTurn(turnKey).map((message) => ({
-          keyPrefix: `${message.sequence}:`,
-          text: mess
+            if self.resolve_recovered_cells(claim, &view, at).await? {
+                continue;
+            }
+            if view.has_unsettled_recovery() {
+                        if task.cleanup != OperationCleanup::Confirmed
+                            || task.effects.values().any(|effect| effect.unsettled())
+                        {
+                            return Ok(None);
+                        }
+            let pending_cells = match terminal {
+                Terminal::Completed => view.cells.values().any(|cell| cell.pending()),
+                Terminal::Cancelled | Terminal::Failed => {
+                    view.cells.values().any(|cell| cell.has_unsettled_effects())
+                }
+            };
+            if pending_cells {
+                return Ok(None);
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    <View
-      style={readingColumn}
-      onLayout={
-        transcriptSize
-          ? ({ bounds }) => transcriptSize.measure(key(), bounds.size.height)
-          : undefined
-      }
-    >
-      <Each of={[key()]} key={(id: string) => id}>
-        {(ownedKey) => {
+            if view.has_unsettled_recovery() || view.cells.values().any(|cell| cell.pending()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9bd44203` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85f66c80` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

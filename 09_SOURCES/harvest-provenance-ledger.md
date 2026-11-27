@@ -13708,3 +13708,5 @@ Every entry in this ledger must capture:
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `e13e8b4d` | Multi-dimensional audit evidence | 2026-11-27T04:45:28.748Z |
 | `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-27T04:53:53.173Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `e183bb1f` | Multi-dimensional audit evidence | 2026-11-27T04:54:08.161Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T05:02:36.491Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `218225f5` | Multi-dimensional audit evidence | 2026-11-27T05:02:38.960Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T04:54:13.993Z",
+  "last_updated": "2026-11-27T05:02:50.305Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26364,
+  "total_items": 26369,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219682,9 +219682,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c032e63ff38eed6aed3380c739f5c92b7346ee8715d115a5a64033dedf5594c5",
+      "content_hash": "db36b2ff0cb91a19b8ba3266f4b7f5937e37358d93ffac20e03e944452881aa2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T03:25:03.547Z"
+      "persisted_at": "2026-11-27T05:02:50.102Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219694,9 +219694,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ee946e678b3e4043f529f53c3a7335392390e7d6d68196f1b001f4306d3af73",
+      "content_hash": "a7af3aacdd351545192a30e755b31b49d8e5ffb350784bbdde100fde7ebe55d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:25:03.771Z"
+      "persisted_at": "2026-11-27T05:02:50.305Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -239494,7 +239494,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "de37a6d26f75ad2f79c02b334bb38604abb3f579783dfba877ddbd577ae48c71",
+      "content_hash": "f4ac34c35c2068b0606bd229c5ed479743539f965749478983e6f90b883a4d52",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [],
@@ -239503,7 +239503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:42:50.180Z",
+      "verified_at": "2026-11-27T05:02:36.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239520,9 +239520,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
       "repository": "Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "0fe034579bc7e9bf01d3c9b8bba483c0e7d7ed77028245af89e993119b662574",
+      "content_hash": "c1abb5a14a614e2376bbd75a4e545f8b77cacd7758a3a75430b281531e2e848c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:42:50.630Z"
+      "persisted_at": "2026-11-27T05:02:36.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants",
@@ -239532,9 +239532,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8747455397361a8efc0ea956baed48ce17ba84a2b43ff85befd22e9d3548764",
+      "content_hash": "9082c6c4344d40139af662ae0c3f9c404d299132f73f2fb1f780918df9a588d1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:43:07.801Z"
+      "persisted_at": "2026-11-27T05:02:49.322Z"
     },
     "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext": {
       "item_id": "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext",
@@ -323905,8 +323905,8 @@
       "slug": "apache-maka",
       "platform": "github",
       "source_url": "https://github.com/apache/maka",
-      "source_version": "00c6027a",
-      "content_hash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
+      "source_version": "218225f5",
+      "content_hash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
       "dossier_path": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "promoted_rules": [
@@ -323929,6 +323929,11 @@
           "number": 10594,
           "title": "show left-side Markdown TOC for overflowing turn replies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10830,
+          "title": "observe original CodeMode cells before retiring replaced Antigravity run",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -323936,7 +323941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:13:23.908Z",
+      "verified_at": "2026-11-27T05:02:38.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -323990,10 +323995,10 @@
       "relative_path": "08_VERIFICATION/apache-maka-verification-protocol-empirical-defect-shield-for-apache-maka.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/maka",
       "repository": "apache/maka",
-      "source_version": "00c6027a",
-      "content_hash": "6da73bf274778614ca3d5132355349cde5cf4a99ccf3da0d44cf09260823aca5",
+      "source_version": "218225f5",
+      "content_hash": "a53b129223f6914e5c02fe6e1c2312072850285c95c4445593a535fd6b6710e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:13:24.793Z"
+      "persisted_at": "2026-11-27T05:02:39.637Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -324015,9 +324020,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-maka-learnings",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b143875a185034f4ddb6ed8e0123709d83e185bf01d6c53c7dc3dc81adbca0f",
+      "content_hash": "df5fdf7a8ad9dcc92d9ffd0b0bedd815dae1cc2b6554394270f98006bbeaccc4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:13:40.626Z"
+      "persisted_at": "2026-11-27T05:02:48.872Z"
     },
     "rule-9904": {
       "learning_id": "rule-9904",
@@ -349919,13 +349924,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-B9MF-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MBZB-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "db0f6e7aaf634199dc51099a293a3ce3b6387d234cdfa7f5cd1a075a6512707e",
+      "content_hash": "411468e81d32faa36faa3fd10c5a0f4aa5ea409f733d246eb407c16aa03cbab3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T04:54:13.624Z"
+      "persisted_at": "2026-11-27T05:02:49.896Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361693,6 +361698,68 @@
       "content_hash": "ad4dee559761f8e716229b71a109936892f75d4ea7e7cfe8ecd89f5b3f5ca17b",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T04:54:12.647Z"
+    },
+    "rule-10830": {
+      "learning_id": "rule-10830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10830,
+      "title": "observe original CodeMode cells before retiring replaced Antigravity run",
+      "source_url": "https://github.com/apache/maka",
+      "source_version": "218225f5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:02:38.696Z"
+    },
+    "candidate_directive-observe-original-codemode-cells-before-retiring-replaced-antigravity-run": {
+      "item_id": "candidate_directive-observe-original-codemode-cells-before-retiring-replaced-antigravity-run",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M3QT-observe-original-codemode-cells-before-retiring-replaced-antigravity-run.md",
+      "title": "observe original CodeMode cells before retiring replaced Antigravity run",
+      "repository": "apache/maka",
+      "source_version": "218225f5",
+      "content_hash": "294d34ace46f1edf43b13e8476e68125ab5a037b4c7d610e5238bd5203a12081",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:02:39.225Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-maka-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-apache-maka-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-maka-architecture-intelligence-apache-maka-core-invariants.md",
+      "title": "Architecture Intelligence: apache/maka Core Invariants",
+      "repository": "apache/maka",
+      "source_version": "218225f5",
+      "content_hash": "fe481c24563d38836b43137d14d41329293501c22a14ff40d5e9cca101076639",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:02:39.428Z"
+    },
+    "candidate_directive-agent-observe-original-codemode-cells-before-retiring-replaced-antigravity-run": {
+      "item_id": "candidate_directive-agent-observe-original-codemode-cells-before-retiring-replaced-antigravity-run",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MAUW-agent-observe-original-codemode-cells-before-retiring-replaced-antigravity-run.md",
+      "title": "agent): observe original CodeMode cells before retiring replaced Antigravity run",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aec9dee78eb0fad5662b650752381b7ea4708b9d18a913ded808130db4c53ed1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:02:48.445Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-maka-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-apache-maka-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-maka-learnings-architecture-intelligence-apache-maka-learnings-core-invar.md",
+      "title": "Architecture Intelligence: apache-maka-learnings Core Invariants",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2887227836b01c493bf941252ce2d501e72aa24f5a404655dc1eb7ad37325dd0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T05:02:48.652Z"
     }
   },
   "ai-builder-brain": {
