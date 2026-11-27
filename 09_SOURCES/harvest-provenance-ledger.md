@@ -13812,3 +13812,6 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `e7c77205` | Multi-dimensional audit evidence | 2026-11-27T12:03:39.854Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `5f2ffdd2` | Multi-dimensional audit evidence | 2026-11-27T12:03:44.232Z |
 | `learn-github-chroma-core-chroma` | `https://github.com/chroma-core/chroma` | `0d511ea7` | Multi-dimensional audit evidence | 2026-11-27T12:03:45.856Z |
+| `learn-huggingface-strata-engine-inkling-2-mini-strata` | `https://huggingface.co/strata-engine/Inkling-2-Mini-Strata` | `hf-strata-` | Multi-dimensional audit evidence | 2026-11-27T12:12:20.796Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `5d72ca42` | Multi-dimensional audit evidence | 2026-11-27T12:12:28.431Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `dd1fa72b` | Multi-dimensional audit evidence | 2026-11-27T12:12:32.173Z |

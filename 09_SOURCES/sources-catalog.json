@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "110572fb",
+    "sourceVersion": "dd1fa72b",
     "license": "Apache-2.0",
-    "contentHash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
-    "lastHarvestedAt": "2026-11-26T01:08:08.049Z",
+    "contentHash": "79fe0f6c0cbc63ffc25efe2de3502e834f103a1d4fa8f950ddb5f69dc23e4d63",
+    "lastHarvestedAt": "2026-11-27T12:12:32.173Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "ad8564ac",
+    "sourceVersion": "5d72ca42",
     "license": "GPL-3.0",
-    "contentHash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
-    "lastHarvestedAt": "2026-11-25T03:13:34.659Z",
+    "contentHash": "7a36cdf28dbf739febb91579d02d68aae99081d928999eb7a0e5959f1a7bbd0e",
+    "lastHarvestedAt": "2026-11-27T12:12:28.431Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {
@@ -13305,8 +13305,8 @@
     "sourceUrl": "https://huggingface.co/strata-engine/Inkling-2-Mini-Strata",
     "sourceVersion": "hf-strata-engine-inkling-2-mini-strata",
     "license": "Open-Source",
-    "contentHash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
-    "lastHarvestedAt": "2026-11-24T02:20:58.310Z",
+    "contentHash": "31faa4bf37878ef95ba3726759a130a2a9666b3d858f01de24ed4227cd7dfee1",
+    "lastHarvestedAt": "2026-11-27T12:12:20.796Z",
     "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata"
   },
   "xinatian-mroffice": {

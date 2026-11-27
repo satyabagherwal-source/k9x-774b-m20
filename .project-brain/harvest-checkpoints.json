@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:03:45.869Z",
+  "last_updated": "2026-11-27T12:12:32.187Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
-      "verified_at": "2026-11-26T01:08:08.066Z",
+      "content_hash": "79fe0f6c0cbc63ffc25efe2de3502e834f103a1d4fa8f950ddb5f69dc23e4d63",
+      "verified_at": "2026-11-27T12:12:32.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:08:08.066Z"
+      "last_updated": "2026-11-27T12:12:32.186Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
-      "verified_at": "2026-11-25T03:13:34.674Z",
+      "content_hash": "7a36cdf28dbf739febb91579d02d68aae99081d928999eb7a0e5959f1a7bbd0e",
+      "verified_at": "2026-11-27T12:12:28.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:13:34.674Z"
+      "last_updated": "2026-11-27T12:12:28.444Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",
@@ -20076,14 +20076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-strata-engine-inkling-2-mini-strata",
-      "content_hash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
-      "verified_at": "2026-11-24T02:20:58.323Z",
+      "content_hash": "31faa4bf37878ef95ba3726759a130a2a9666b3d858f01de24ed4227cd7dfee1",
+      "verified_at": "2026-11-27T12:12:20.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T02:20:58.323Z"
+      "last_updated": "2026-11-27T12:12:20.809Z"
     },
     "XinaTian/MROffice": {
       "repository": "XinaTian/MROffice",

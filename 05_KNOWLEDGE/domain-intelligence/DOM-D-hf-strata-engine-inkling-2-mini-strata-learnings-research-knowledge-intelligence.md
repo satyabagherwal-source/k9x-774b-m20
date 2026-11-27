@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T02:21:42.842Z",
+  "timestamp": "2026-11-27T12:12:35.778Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-strata-engine-inkling-2-mini-strata-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-strata-engine-inkling-2-mini-strata-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T02:21:42.842Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T12:12:35.778Z`  
 > **Learning ID**: `LEARN-EVO-hf-strata-engine-inkling-2-mini-strata-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-strata-en`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:20:57.825Z  
+> **Timestamp**: 2026-11-27T12:12:20.249Z  
 > **Learning ID**: `learn-huggingface-strata-engine-inkling-2-mini-strata`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/strata-engine/Inkling-2-Mini-Strata](https://huggingface.co/strata-engine/Inkling-2-Mini-Strata))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:20:57.693Z  
+> **Harvest Timestamp**: 2026-11-27T12:12:20.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1064 downloads | 94 likes
+- **Stars / Engagement**: 2965 downloads | 257 likes
 
 ---
 

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-4EZL",
-    "timestamp": "2026-11-26T05:29:13.185Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-4KAP",
-    "timestamp": "2026-11-26T05:29:20.065Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "186c077641e1a5b48e32f26c4f518576bfd36dcf8f55dfdb4391c77fa7b42577",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-GDK9",
-    "timestamp": "2026-11-26T05:38:31.209Z",
-    "repository": "higurashi-ai/Haru-4B",
-    "learningId": "learn-huggingface-higurashi-ai-haru-4b",
-    "contentHash": "10fda5aadc2cc741ef84ccaf34d94fee0285f068ca977c3996ccd4975d80d55d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-GEZ7",
     "timestamp": "2026-11-26T05:38:33.043Z",
     "repository": "zvec-ai/zvec-grep",
@@ -7490,6 +7445,51 @@
     "repository": "chroma-core/chroma",
     "learningId": "learn-github-chroma-core-chroma",
     "contentHash": "0a55dcd888f6bab98b469ed333766364cc5b5ebd137022bb817eb8fe2c3d96fe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YOXK",
+    "timestamp": "2026-11-27T12:12:20.792Z",
+    "repository": "strata-engine/Inkling-2-Mini-Strata",
+    "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
+    "contentHash": "31faa4bf37878ef95ba3726759a130a2a9666b3d858f01de24ed4227cd7dfee1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YUTD",
+    "timestamp": "2026-11-27T12:12:28.417Z",
+    "repository": "mrkai77/Loop",
+    "learningId": "learn-github-mrkai77-loop",
+    "contentHash": "7a36cdf28dbf739febb91579d02d68aae99081d928999eb7a0e5959f1a7bbd0e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YXPB",
+    "timestamp": "2026-11-27T12:12:32.159Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "79fe0f6c0cbc63ffc25efe2de3502e834f103a1d4fa8f950ddb5f69dc23e4d63",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

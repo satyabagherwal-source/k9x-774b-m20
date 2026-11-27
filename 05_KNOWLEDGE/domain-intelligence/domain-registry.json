@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:03:52.590Z",
+  "last_updated": "2026-11-27T12:12:37.994Z",
   "total_records": 2834,
   "domains": {
     "A": {
@@ -18241,8 +18241,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "2be967b95ce98bd63862175938ae8798ad1cdd1a1c578ac793358d515cdae16c",
-      "created_at": "2026-11-26T01:08:08.488Z"
+      "content_hash": "5f679b2f09f9d49fa22f37f289903fb43b2b464e3c0757cfcc9ce5143934b99d",
+      "created_at": "2026-11-27T12:12:32.610Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -18310,8 +18310,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "7fcdb9fb781146f3482bc797c60d97ed8b24d22cf87430bc42743f87a717f749",
-      "created_at": "2026-11-26T01:08:17.931Z"
+      "content_hash": "15bb9a9b48f9463c5ebc528d7087d8220bc38e00c6abf4ca01da0f029d80ecbe",
+      "created_at": "2026-11-27T12:12:37.994Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -34114,8 +34114,8 @@
       "title": "Design Intelligence: mrkai77/Loop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-design-intelligence-mrkai77-loop-core-invariants.md",
       "repository": "mrkai77/Loop",
-      "content_hash": "f0de1f91ff27d0e560c3197372e4e73aae7d50bed5a3e2909a60d334e9d58393",
-      "created_at": "2026-11-25T03:13:35.078Z"
+      "content_hash": "5f2ace10b22b4d0ff49cebf1dbf181c924e9aacc99baa618e82461bfd1bef230",
+      "created_at": "2026-11-27T12:12:28.910Z"
     },
     "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants",
@@ -34123,8 +34123,8 @@
       "title": "Design Intelligence: mrkai77-loop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-learnings-design-intelligence-mrkai77-loop-learnings-core-invariant.md",
       "repository": "mrkai77-loop-learnings",
-      "content_hash": "5b6b20b03eecf5328b53dd64e1f6c24f4a851bf3722d904d890522ff38c945a4",
-      "created_at": "2026-11-25T03:13:40.583Z"
+      "content_hash": "0f9f49e7d49196b6e0d9777590661f54556949ffedc738bd08fcfe179264c62f",
+      "created_at": "2026-11-27T12:12:36.664Z"
     },
     "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
@@ -41970,8 +41970,8 @@
       "title": "Research & Knowledge Intelligence: strata-engine/Inkling-2-Mini-Strata Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-strata-engine-inkling-2-mini-strata-research-knowledge-intelligence-strata-en.md",
       "repository": "strata-engine/Inkling-2-Mini-Strata",
-      "content_hash": "db4b185071eb6a20a24e4471fc519e0cda3f96edd6757f2a7b5bc6f17050e906",
-      "created_at": "2026-11-24T02:20:58.530Z"
+      "content_hash": "9e14c95d2cb78e3862ee3ef659b089dc22fcd3382a6518f502900ca47c2118eb",
+      "created_at": "2026-11-27T12:12:21.030Z"
     },
     "DOM-D-7EDCAC07": {
       "record_id": "DOM-D-7EDCAC07",
@@ -42021,8 +42021,8 @@
       "title": "Research & Knowledge Intelligence: hf-strata-engine-inkling-2-mini-strata-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-strata-engine-inkling-2-mini-strata-learnings-research-knowledge-intelligence.md",
       "repository": "hf-strata-engine-inkling-2-mini-strata-learnings",
-      "content_hash": "e6f398a020bb8d7ffd06f73509cbb05dc33e3af5ec006e1471bf5dd947ee6ff5",
-      "created_at": "2026-11-24T02:21:42.955Z"
+      "content_hash": "ee00bb9e14e4a349cadac6a1dd7c11de9490db95e2ac940e1bd365e6ccc965c9",
+      "created_at": "2026-11-27T12:12:35.906Z"
     },
     "DOM-K-AA8CD5C4": {
       "record_id": "DOM-K-AA8CD5C4",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:03:45.866Z",
-  "total_cycles_completed": 13078,
-  "total_learnings_persisted": 13078,
-  "total_rules_promoted": 11806,
+  "last_updated": "2026-11-27T12:12:32.183Z",
+  "total_cycles_completed": 13081,
+  "total_learnings_persisted": 13081,
+  "total_rules_promoted": 11808,
   "history": [
-    {
-      "timestamp": "2026-11-26T21:52:54.742Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:02:05.774Z",
-      "repository": "Qwen/Qwen3-4B-Instruct-2507",
-      "learningId": "learn-huggingface-qwen-qwen3-4b-instruct-2507",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T22:02:13.407Z",
-      "repository": "margelo/react-native-vision-camera",
-      "learningId": "learn-github-margelo-react-native-vision-camera",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:10:39.618Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T12:03:45.866Z",
       "repository": "chroma-core/chroma",
       "learningId": "learn-github-chroma-core-chroma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:12:20.807Z",
+      "repository": "strata-engine/Inkling-2-Mini-Strata",
+      "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:12:28.441Z",
+      "repository": "mrkai77/Loop",
+      "learningId": "learn-github-mrkai77-loop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:12:32.183Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

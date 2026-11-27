@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:03:53.001Z",
+  "last_updated": "2026-11-27T12:12:38.371Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T11:54:30.473Z",
@@ -553,7 +553,7 @@
       "staged_for_review": 1
     },
     "mrkai77-loop-learnings.md": {
-      "processed_at": "2026-11-25T03:13:40.069Z",
+      "processed_at": "2026-11-27T12:12:36.121Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -998,7 +998,7 @@
       "staged_for_review": 1
     },
     "pulumi-pulumi-learnings.md": {
-      "processed_at": "2026-11-26T01:08:16.809Z",
+      "processed_at": "2026-11-27T12:12:37.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3793,8 +3793,8 @@
       "staged_for_review": 1
     },
     "hf-strata-engine-inkling-2-mini-strata-learnings.md": {
-      "processed_at": "2026-11-24T02:21:42.667Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-27T12:12:35.658Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "crawlseo-crawlseo-learnings.md": {
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4941,
+  "total_dossiers_evaluated": 4944,
   "total_canonical_promoted": 579,
-  "total_staged_for_review": 3700
+  "total_staged_for_review": 3702
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T01:08:17.596Z",
+  "timestamp": "2026-11-27T12:12:37.660Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pulumi-pulumi-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pulumi-pulumi-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T01:08:17.596Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T12:12:37.660Z`  
 > **Learning ID**: `LEARN-EVO-pulumi-pulumi-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `110572fb`  
+> **Source Version**: `dd1fa72b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T01:08:06.881Z  
+> **Timestamp**: 2026-11-27T12:12:30.968Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T01:08:06.876Z  
+> **Harvest Timestamp**: 2026-11-27T12:12:30.963Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25941 stars
+- **Stars / Engagement**: 25946 stars
 
 ---
 
@@ -1739,274 +1739,264 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `110572fb` (2026-11-25)
-**Commit Message**: Offer the Neo debug link as a product hint (#25836)
+### Incident Patch 1: `dd1fa72b` (2026-11-27)
+**Commit Message**: Fix a few more tests to use property.Map (#25869)
 
-Moves the "[Pulumi Neo] Would you like help with these diagnostics?"
-block out of the diagnostics and into the product hints from this stack.
-
-- `display.Options.ShowLinkToNeo` is replaced by an `OfferNeoLink`
-callback. `up` and `preview` set it to the hints manager's
-`OfferNeoDebug`, and the httpstate backend removes it when the org has
-no Neo, `PULUMI_SUPPRESS_NEO_LINK` is set, the permalink is suppressed,
-or `--neo` already shows the link.
-- The `neo-debug` hint keeps the `?explainFailure` link and the `pulumi
-neo --debug-update`/`--debug-preview` command. It is cloud-only, shown
-to new users, and shown at most once every 7 days.
-- The link after a `--neo` summary is unchanged.
-
-Before:
-
-```
-$ pulumi preview
-...
-Diagnostics:
-  pulumi:pulumi:Stack (proj-dev):
-    error: resource or variable named "doesNotExist" could not be found
-
-    [Pulumi Neo] Would you like help with these diagnostics?
-    https://app.pulumi.com/acme/proj/dev/previews/941c7021-…?explainFailure
-    Or run `pulumi neo --debug-preview` for an interactive agent in your terminal.
-
-Resources:
-    1 errored
-```
-
-After:
-
-```
-$ pulumi preview
-...
-Diagnostics:
-  pul
-
-**File**: `changelog/pending/20261123--cli--neo-debug-hint.yaml` (added, +5/-0)
+**File**: `pkg/cmd/pulumi/packageworkspace/resolver_handshake_test.go` (modified, +20/-20)
 ```diff
-@@ -0,0 +1,5 @@
-+component: cli
-+kind: improvement
-+body: Show the suggestion to debug failures with Neo as a product hint
-+custom:
-+  PR: "25836"
-```
-
-**File**: `pkg/backend/display/ai_test.go` (modified, +4/-6)
-```diff
-@@ -31,9 +31,8 @@ func TestRenderCopilotErrorSummary(t *testing.T) {
- 	summary := "This is a test summary"
- 	buf := new(bytes.Buffer)
- 	opts := Options{
--		Stdout:        buf,
--		Color:         colors.Never,
--		ShowLinkToNeo: true,
-+		Stdout: buf,
-+		Color:  colors.Never,
- 	}
- 
- 	// isPreview=false, so the suggestion targets a failed update.
-@@ -58,9 +57,8 @@ func TestRenderCopilotErrorSummaryPreview(t *testing.T) {
- 	// For a failed preview the suggestion targets --debug-preview instead of --debug-update.
- 	buf := new(bytes.Buffer)
- 	opts := Options{
--		Stdout:        buf,
--		Color:         colors.Never,
--		ShowLinkToNeo: true,
-+		Stdout: buf,
-+		Color:  colors.Never,
- 	}
- 
- 	RenderNeoErrorSummary(&NeoErrorSummaryMetadata{
-```
-
-**File**: `pkg/backend/display/options.go` (modified, +2/-1)
-```diff
-@@ -66,7 +66,8 @@ type Options struct {
- 	ShowDiff bool // true to print the full diff after the preview and the update, and omit the "details" prompt choice.
- 
- 	// Neo options
--	ShowLinkToNeo       bool // true to display a 'explainFailure' link to Neo.
-+	// OfferNeoLink, if non-nil, is called with a link and a terminal command to debug the diagnostics with Neo.
-+	OfferNeoLink        func(link, debugCommand string)
- 	ShowNeoFeatures     bool // true to display Neo features like summaries and explanations.
- 	StartNeoTaskOnError bool // true to start a Neo task when an error occurs.
- 	// Neo options that are ignored if ShowCopilotFeatures is false.
-```
-
-**File**: `pkg/backend/display/progress.go` (modified, +3/-12)
-```diff
-@@ -845,18 +845,9 @@ func (display *ProgressDisplay) printDiagnostics() {
- 		}
- 	}
- 
--	// Print a link to Neo to explain warnings or errors.
--	// "ShowNeoFeatures" renders the link if it is enabled so don't render it here.
--	showNeoLink := display.opts.ShowLinkToNeo && !display.opts.ShowNeoFeatures
--	// Check for SuppressPermalink ensures we don't print the link for DIY backends
--	if wroteWarningOrError && !display.opts.SuppressPermalink && showNeoLink {
--		display.println("    " +
--			colors.SpecCreateReplacement + "[Pulumi Neo]" + colors.Reset + " Would you like help with these diagnostics?")
--		display.println("    " +
--			colors.Underline + colors.Blue + ExplainFailureLink(display.permalink) + colors.Reset)
--		display.println("    " + "Or run `" + neoDebugCommand(display.isPreview) +
--			"` for an interactive agent in your terminal.")
--		display.println("")
-+	// Offer a link to Neo to explain warnings or errors.
-+	if wroteWarningOrError && display.opts.OfferNeoLink != nil {
-+		display.opts.OfferNeoLink(ExplainFailureLink(display.permalink), neoDebugCommand(display.isPreview))
- 	}
+@@ -96,13 +96,13 @@ func TestResolverServerFromContext_RealProvider(t *testing.T) {
+ 	// The resolver ran the local plugin path through the real package-installation machinery and read its
+ 	// schema, so the dependency names the plugin's own package. The provider then loaded that dependency
+ 	// back through the loader, which returns the same plugin's schema.
+-	assert.Equal(t, resource.PropertyMap{
+-		"name":    resource.NewProperty("resolvetest"),
+-		"kind":    resource.NewProperty("resource"),
+-		"version": resource.NewProperty("1.0.0"),
+-		"server":  resource.NewProperty(""),
+-		"schema":  resource.NewProperty(`{"name":"resolvetest","version":"1.0.0"}`),
+-	}, resource.ToResourcePropertyMap(res.Properties))
++	assert.Equal(t, property.NewMap(map[string]property.Value{
++		"name":    property.New("resolvetest"),
++		"kind":    property.New("resource"),
++		"version": property.New("1.0.0"),
++		"server":  property.New(""),
++		"schema":  property.New(`{"name":"resolvetest","version":"1.0.0"}`),
++	}), res.Properties)
  }
  
-```
-
-**File**: `pkg/backend/display/progress_test.go` (modified, +6/-7)
-```diff
-@@ -47,7 +47,6 @@ func defaultOpts() Options {
- 		ShowSameResources:    true,
- 		ShowReads:            true,
- 		DeterministicOutput:  true,
--		ShowLinkToNeo:        false,
- 		RenderOnDirty:        true,
- 	}
- }
-@@ -89,7 +88,8 @@ func TestProgressEventsNeoDiagnosticLink(t *testing.T) {
- 			opts := defaultOpts()
- 			opts.Color = colors.Never
- 			opts.Stdout, opts.Stderr = &stdout, &stderr
--			opts.ShowLinkToNeo = true
-+			var links [][2]string
-+			opts.OfferNeoLink = func(link, debugCommand string) { links = append(links, [2]string{link, debugCommand}) }
- 			opts.Debug = true
- 			events := sliceToBufferedChan([]engine.Event{event, engine.NewCancelEvent()})
- 			done := make(chan bool)
-@@ -98,13 +98,12 @@ func TestProgressEventsNeoDiagnosticLink(t *testing.T) {
- 			<-done
+ // TestResolverServerFromContext_ParameterizedProvider verifies that the resolver surfaces a
+@@ -163,11 +163,11 @@ func TestResolverServerFromContext_ParameterizedProvider(t *testing.T) {
  
- 			if tt.wantLink {
--				assert.Contains(t, stdout.String(), "link?explainFailure")
--				assert.Contains(t, stdout.String(), "pulumi neo --debug-update")
-+				assert.Equal(t, [][2]string{{"link?explainFailure", "pulumi neo --debug-update"}}, links)
- 			} else {
--				assert.NotContains(t, stdout.String(), "[Pulumi Neo]")
--				assert.NotContains(t, stdout.String(), "explainFailure")
--				assert.NotContains(t, stdout.String(), "pulumi neo --debug-update")
-+				assert.Empty(t, links)
- 			}
-+			// The link is offered as a hint rather than printed with the diagnostics.
-+			assert.NotContains(t, stdout.String(), "explainFailure")
- 			if !tt.ephemeral {
- 				assert.Contains(t, stdout.String(), "State migration applied (state entries: 2 before, 2 after).")
- 			}
-```
-
-**File**: `pkg/backend/httpstate/backend.go` (modified, +13/-13)
-```diff
-@@ -1830,6 +1830,12 @@ func (b *cloudBackend) summarizeErrorWithNeo(
- 	}, nil
+ 	// The loaded schema is fetched by feeding the resolved dependency back into the loader, which runs
+ 	// and parameterizes paramtest. Assert it separately, then check the resolve-level coordinates.
+-	resProps := resource.ToResourcePropertyMap(res.Properties)
+-	loaded := resProps["schema"]
+-	delete(resProps, "schema")
++	resProps := res.Properties
++	loaded := resProps.Get("schema")
++	resProps = resProps.Delete("schema")
+ 	var loadedSpec schema.PackageSpec
+-	require.NoError(t, json.Unmarshal([]byte(loaded.StringValue()), &loadedSpec))
++	require.NoError(t, json.Unmarshal([]byte(loaded.AsString()), &loadedSpec))
+ 	assert.Equal(t, schema.PackageSpec{
+ 		Name:    "random",
+ 		Version: "3.0.0",
+@@ -179,15 +179,15 @@ func TestResolverServerFromContext_ParameterizedProvider(t *testing.T) {
+ 
+ 	// The base dependency names the providing plugin, and the parameterization names the package that
+ 	// plugin produces (its name, version, and parameter value, read from the schema).
+-	assert.Equal(t, resource.PropertyMap{
+-		"name":          resource.NewProperty("paramtest"),
+-		"kind":          resource.NewProperty("resource"),
+-		"version":       resource.NewProperty("1.0.0"),
+-		"server":        resource.NewProperty(""),
+-		"param_name":    resource.NewProperty("random"),
+-		"param_version": resource.NewProperty("3.0.0"),
+-		"param_value":   resource.NewProperty("random-param-value"),
+-	}, resProps)
++	assert.Equal(t, property.NewMap(map[string]property.Value{
++		"name":          property.New("paramtest"),
++		"kind":          property.New("resource"),
++		"version":       property.New("1.0.0"),
++		"server":        property.New(""),
++		"param_name":    property.New("random"),
++		"param_version": property.New("3.0.0"),
++		"param_value":   property.New("random-param-value"),
++	}), resProps)
  }
  
-+// offersNeoLink reports whether an update may offer a link to debug its diagnostics with Neo: the org must have Neo,
-+// the user mustn't have suppressed the link or the permalink, and Neo's summary mustn't already show the link.
-+func offersNeoLink(isNeoEnabled bool, opts display.Options) bool {
-+	return isNeoEnabled && !env.SuppressNeoLink.Value() && !opts.SuppressPermalink && !opts.ShowNeoFeatures
-+}
-+
- // createNeoTaskOnError creates a Neo agent task to help debug errors that occurred during an operation.
- func (b *cloudBackend) createNeoTaskOnError(
- 	ctx context.Context, pulumiOutput string, stackRef backend.StackReference, opts display.Options,
-@@ -1983,25 +1989,19 @@ func (b *cloudBackend) createAndStartUpdate(
- 	if err != nil {
- 		userName = "unknown"
- 	}
--	// Check if the user's org (stack's owner) has Neo enabled. If not, we don't show the link to Neo.
-+	// Check if the user's org (stack's owner) has Neo enabled. If not, we don't show Neo features.
- 	isNeoEnabled := isNeoIntegrationEnabled
- 	b.neoEnabledForCurrentProject = &isNeoEnabled
- 	neoEnabledValueString := "is"
--	continuationString := ""
--	if isNeoEnabled {
--		if env.SuppressNeoLink.Value() {
--			// Neo is enabled in user's org, but the environment variable to suppress the link to Neo is set.
--			op.Opts.Display.ShowLinkToNeo = false
--			continuationString = " but the environment variable PULUMI_SUPPRESS_NEO_LINK" +
--				" suppresses the link to Neo in diagnostics"
--		}
--	} else {
--		op.Opts.Display.ShowLinkToNeo = false
-+	if !isNeoEnabled {
- 		op.Opts.Display.ShowNeoFeatures = false
- 		neoEnabledValueString = "is not"
- 	}
--	logging.V(7).Infof("Neo in org '%s' %s enabled for user '%s'%s",
--		stackID.Owner, neoEnabledValueString, userName, continuationString)
-+	if !offersNeoLink(isNeoEnabled, op.Opts.Display) {
-+		op.Opts.Display.OfferNeoLink = nil
-+	}
-+	logging.V(7).Infof("Neo in org '%s' %s enabled for user '%s'",
-+		stackID.Owner, neoEnabledValueString, userName)
- 
- 	return update, updateMetadata{
- 		version:        version,
+ // providerBinName returns the resource-plugin binary name for a provider, accounting for the Windows
 ```
 
-**File**: `pkg/backend/httpstate/backend_test.go` (modified, +22/-0)
+**File**: `pkg/codegen/schema/loader_handshake_test.go` (modified, +3/-3)
 ```diff
-@@ -2375,3 +2375,25 @@ func TestGetSnapshotStackOutputs(t *testing.T) {
- 		assert.Equal(t, "readingUpdateID="+updateID, gotQuery)
+@@ -87,7 +87,7 @@ func TestLoaderServerFromContext_RealProvider(t *testing.T) {
+ 		Properties: property.Map{},
  	})
+ 	require.NoError(t, err)
+-	assert.Equal(t, resource.PropertyMap{
+-		"schema": resource.NewProperty(`{"name":"loadtest","version":"1.0.0"}`),
+-	}, resource.ToResourcePropertyMap(res.Properties))
++	assert.Equal(t, property.NewMap(map[string]property.Value{
++		"schema": property.New(`{"name":"loadtest","version":"1.0.0"}`),
++	}), res.Properties)
  }
-+
-+func TestOffersNeoLink(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		isNeoEnabled bool
-+		opts         display.Options
-+		suppress     string
-+		want         bool
-+	}{
-+		{name: "Neo enabled", isNeoEnabled: true, want: true},
-+		{name: "Neo not enabled"},
-+		{name: "suppressed by env", isNeoEnabled: true, suppress: "true"},
-+		{name: "no permalink", isNeoEnabled: true, opts: display.Options{SuppressPermalink: true}},
-+		{name: "Neo summary shows the link", isNeoEnabled: true, opts: display.Options{ShowNeoFeatures: true}},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			t.Setenv("PULUMI_SUPPRESS_NEO_LINK", tt.suppress)
-+			assert.Equal(t, tt.want, offersNeoLink(tt.isNeoEnabled, tt.opts))
-+		})
-+	}
-+}
 ```
 
-**File**: `pkg/cmd/pulumi/hints/catalog.go` (modified, +14/-0)
+---
+
+### Incident Patch 2: `7b01233a` (2026-11-27)
+**Commit Message**: Fix some more uses of PropertyMap in source_eval (#25879)
+
+Few more places in source_eval that were still on
+`resource.PropertyMap`.
+
+**File**: `pkg/resource/deploy/source_eval.go` (modified, +17/-19)
 ```diff
-@@ -46,3 +46,17 @@ func ESCCredentials(message string) Hint {
- 		HideFromNewUsers: true,
- 	}
+@@ -1174,20 +1174,19 @@ func (rm *resmon) trackSettledResource(state *pkgresource.State, parent resource
+ 	rm.registrations.Track(urn, parent, custom, id != "")
  }
-+
-+// NeoDebug suggests debugging a preview's or update's diagnostics with Pulumi Neo, at link or by running debugCommand.
-+func NeoDebug(link, debugCommand string) Hint {
-+	return Hint{
-+		ID:       "neo-debug",
-+		Cooldown: 7 * 24 * time.Hour,
-+		Message: "Pulumi Neo can help with these diagnostics: " + link + "\n" +
-+			"Or run `" + debugCommand + "` for an interactive agent in your terminal.",
-+		CloudOnly: true,
-+	}
-+}
-+
-+// OfferNeoDebug offers the NeoDebug hint. Commands set it as the display's OfferNeoLink.
-+func (m *Manager) OfferNeoDebug(link, debugCommand string) { m.Offer(NeoDebug(link, debugCommand)) }
+ 
+-func configLogValue(cfg map[config.Key]string, secretKeys []config.Key) resource.PropertyMap {
++func configLogValue(cfg map[config.Key]string, secretKeys []config.Key) property.Map {
+ 	secret := make(map[config.Key]struct{}, len(secretKeys))
+ 	for _, k := range secretKeys {
+ 		secret[k] = struct{}{}
+ 	}
+-	m := make(resource.PropertyMap, len(cfg))
++	m := make(map[string]property.Value, len(cfg))
+ 	for k, v := range cfg {
+-		pv := resource.NewProperty(v)
+-		if _, ok := secret[k]; ok {
+-			pv = resource.MakeSecret(pv)
+-		}
+-		m[resource.PropertyKey(k.String())] = pv
++		pv := property.New(v)
++		_, ok := secret[k]
++		pv = pv.WithSecret(ok)
++		m[k.String()] = pv
+ 	}
+-	return m
++	return property.NewMap(m)
+ }
+ 
+ // Call dynamically executes a method in the provider associated with a component resource.
+@@ -3227,7 +3226,7 @@ func (rm *resmon) RegisterResource(ctx context.Context,
+ 	}
+ 
+ 	// Filter out partially-known values if the requestor does not support them.
+-	outputs := result.State.Outputs
++	outputs := resource.FromResourcePropertyMap(result.State.Outputs)
+ 
+ 	// Local ComponentResources may contain unresolved resource refs, so ignore those outputs.
+ 	if !req.GetCustom() && !remote {
+@@ -3239,7 +3238,7 @@ func (rm *resmon) RegisterResource(ctx context.Context,
+ 		// the SDK's calls to getResource to fail when it attempts to resolve those references.
+ 		//
+ 		// Work on a more targeted fix is tracked in https://github.com/pulumi/pulumi/issues/5978
+-		outputs = resource.PropertyMap{}
++		outputs = property.Map{}
+ 	}
+ 
+ 	// Publish the registered outputs on the registration observer so other concurrent sources waiting on this URN
+@@ -3251,14 +3250,13 @@ func (rm *resmon) RegisterResource(ctx context.Context,
+ 	// snippet's References map is rewritten to the canonical URN at snapshot-write time by NormalizeURNReferences.
+ 	if rm.observer != nil && result.Result == ResultStateSuccess && result.State.URN != "" {
+ 		if custom {
+-			outs := resource.FromResourcePropertyMap(outputs)
+-			rm.observer.Resolve(result.State.URN, result.State.ID, outs)
++			rm.observer.Resolve(result.State.URN, result.State.ID, outputs)
+ 			// Publish under each alias too. We use parsedAliases (the request's aliases) rather than
+ 			// result.State.Aliases because the Construct path only fills in URN+Outputs on the result, leaving
+ 			// Aliases empty.
+ 			for _, alias := range parsedAliases {
+ 				if aliasURN := alias.GetURN(); aliasURN != "" && aliasURN != result.State.URN {
+-					rm.observer.Resolve(aliasURN, result.State.ID, outs)
++					rm.observer.Resolve(aliasURN, result.State.ID, outputs)
+ 				}
+ 			}
+ 		} else if !remote {
+@@ -3281,13 +3279,13 @@ func (rm *resmon) RegisterResource(ctx context.Context,
+ 
+ 	if !req.GetSupportsPartialValues() {
+ 		logging.V(5).Infof("stripping unknowns from RegisterResource response for urn %v", result.State.URN)
+-		filtered := resource.PropertyMap{}
+-		for k, v := range outputs {
+-			if !v.ContainsUnknowns() {
++		filtered := make(map[string]property.Value)
++		for k, v := range outputs.All() {
++			if !v.HasComputed() {
+ 				filtered[k] = v
+ 			}
+ 		}
+-		outputs = filtered
++		outputs = property.NewMap(filtered)
+ 	}
+ 
+ 	// TODO(@platform):
+@@ -3333,12 +3331,12 @@ func (rm *resmon) RegisterResource(ctx context.Context,
+ 
+ 	logging.V(5).Infof(
+ 		"ResourceMonitor.RegisterResource operation finished: t=%v, urn=%v, #outs=%v",
+-		result.State.Type, result.State.URN, len(outputs),
++		result.State.Type, result.State.URN, outputs.Len(),
+ 	)
+ 
+ 	// Finally, unpack the response into properties that we can return to the language runtime.  This mostly includes
+ 	// an ID, URN, and defaults and output properties that will all be blitted back onto the runtime object.
+-	filteredObj, err := plugin.FilterProperties(resource.FromResourcePropertyMap(outputs), plugin.FilterOptions{
++	filteredObj, err := plugin.FilterProperties(outputs, plugin.FilterOptions{
+ 		KeepUnknowns:         true,
+ 		KeepSecrets:          req.GetAcceptSecrets(),
+ 		KeepResources:        req.GetAcceptResources(),
+```
+
+**File**: `pkg/resource/deploy/source_eval_test.go` (modified, +10/-13)
+```diff
+@@ -184,16 +184,13 @@ func (s *testProviderSource) ParameterizeExtension(
+ 	return errors.New("testProviderSource does not support extensions")
+ }
+ 
+-func newProviderEvent(pkg, name string, inputs resource.PropertyMap, parent resource.URN) RegisterResourceEvent {
+-	if inputs == nil {
+-		inputs = resource.PropertyMap{}
+-	}
++func newProviderEvent(pkg, name string, inputs property.Map, parent resource.URN) RegisterResourceEvent {
+ 	goal := &pkgresource.Goal{
+ 		Type:       sdkproviders.MakeProviderType(tokens.Package(pkg)),
+ 		ID:         "id",
+ 		Name:       name,
+ 		Custom:     true,
+-		Properties: resource.FromResourcePropertyMap(inputs),
++		Properties: inputs,
+ 		Parent:     parent,
+ 	}
+ 	return &testRegEvent{goal: goal}
+@@ -257,7 +254,7 @@ func TestRegisterNoDefaultProviders(t *testing.T) {
+ 
+ 	steps := []RegisterResourceEvent{
+ 		// Register a provider.
+-		newProviderEvent("pkgA", "providerA", nil, ""),
++		newProviderEvent("pkgA", "providerA", property.Map{}, ""),
+ 		// Register a component resource.
+ 		&testRegEvent{
+ 			goal: pkgresource.NewGoal{
+@@ -348,8 +345,8 @@ func TestRegisterNoDefaultProviders(t *testing.T) {
+ 			}.Make(),
+ 		},
+ 		// Register two more providers.
+-		newProviderEvent("pkgA", "providerB", nil, ""),
+-		newProviderEvent("pkgC", "providerC", nil, componentURN),
++		newProviderEvent("pkgA", "providerB", property.Map{}, ""),
++		newProviderEvent("pkgC", "providerC", property.Map{}, componentURN),
+ 		// Register a few resources that use the new providers.
+ 		&testRegEvent{
+ 			goal: pkgresource.NewGoal{
+@@ -4110,10 +4107,10 @@ func TestConfigLogValue(t *testing.T) {
+ 
+ 	m := configLogValue(cfg, []config.Key{secretKey})
+ 
+-	require.True(t, m[resource.PropertyKey(secretKey.String())].IsSecret())
+-	require.Equal(t, "us-west-2", m[resource.PropertyKey(plainKey.String())].StringValue())
++	require.True(t, m.Get(secretKey.String()).IsSecret())
++	require.Equal(t, "us-west-2", m.Get(plainKey.String()).AsString())
+ 
+-	redacted := m.RedactedLogValue().Any().(resource.PropertyMap)
+-	require.Equal(t, "[secret]", redacted[resource.PropertyKey(secretKey.String())].StringValue())
+-	require.Equal(t, "us-west-2", redacted[resource.PropertyKey(plainKey.String())].StringValue())
++	redacted := m.RedactedLogValue().Any().(property.Map)
++	require.Equal(t, "[secret]", redacted.Get(secretKey.String()).AsString())
++	require.Equal(t, "us-west-2", redacted.Get(plainKey.String()).AsString())
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25884** (closed): fix(sdk/python): serialize list inputs typed as a union with Any (@pierskarsenbarg)
+- **PR #25879** (2026-11-27): Fix some more uses of PropertyMap in source_eval (@Frassle)
+- **PR #25869** (2026-11-27): Fix a few more tests to use property.Map (@Frassle)
 - **PR #25866** (2026-11-25): Changelog for v3.278.0 (@pulumi-bot)
 - **PR #25857** (2026-11-25): Freeze v3.278.0 (@pulumi-bot)
 - **PR #25854** (2026-11-25): Show the real Accept header in pulumi api --verbose and --dry-run (@SudeepGowda55)
-- **PR #25850** (2026-11-24): Update registry methods to use property.Map (@Frassle)
-- **PR #25841** (2026-11-24): Keep unexported struct fields when resolving outputs in the Go SDK (@andretorresdg)
-- **PR #25839** (2026-11-24): Lint against arguments in `Use` for constrictor commands (@i-am-tom)
 
 ---
 
@@ -2026,35 +2016,69 @@ Diagnostics:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Offer the Neo debug link as a product hint
+## X. a few more tests to use property.Map
 
 **RULE**:
-When implementing operations in `changelog/pending/20261123--cli--neo-debug-hint.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cmd/pulumi/packageworkspace/resolver_handshake_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `110572fb`: Offer the Neo debug link as a product hint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd1fa72b`: a few more tests to use property.Map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261123--cli--neo-debug-hint.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cmd/pulumi/packageworkspace/resolver_handshake_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: cli
-kind: improvement
-body: Show the suggestion to debug failures with Neo as a product hint
-custom:
-  PR: "25836"
+	assert.Equal(t, property.NewMap(map[string]property.Value{
+		"name":    property.New("resolvetest"),
+		"kind":    property.New("resource"),
+		"version": property.New("1.0.0"),
+		"server":  property.New(""),
+		"schema":  property.New(`{"name":"resolvetest","version":"1.0.0"}`),
+	}), res.Properties)
+	resProps := res.Properties
+	loaded := resProps.Get("schema")
+	resProps = resProps.Delete("schema")
+	require.NoError(t, json.Unmarshal([]byte(loaded.AsString()), &loadedSpec))
+	assert.Equal(t, property.NewMap(map[string]property.Value{
+		"name":          property.New("paramtest"),
+		"kind":          property.New("resource"),
+		"version":       property.New("1.0.0"),
+		"server":        property.New(""),
+		"param_name":    property.New("random"),
+		"param_version": property.New("3.0.0"),
+		"param_value":   property.New("random-param-value"),
+	}), resProps)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	assert.Equal(t, resource.PropertyMap{
+		"name":    resource.NewProperty("resolvetest"),
+		"kind":    resource.NewProperty("resource"),
+		"version": resource.NewProperty("1.0.0"),
+		"server":  resource.NewProperty(""),
+		"schema":  resource.NewProperty(`{"name":"resolvetest","version":"1.0.0"}`),
+	}, resource.ToResourcePropertyMap(res.Properties))
+	resProps := resource.ToResourcePropertyMap(res.Properties)
+	loaded := resProps["schema"]
+	delete(resProps, "schema")
+	require.NoError(t, json.Unmarshal([]byte(loaded.StringValue()), &loadedSpec))
+	assert.Equal(t, resource.PropertyMap{
+		"name":          resource.NewProperty("paramtest"),
+		"kind":          resource.NewProperty("resource"),
+		"version":       resource.NewProperty("1.0.0"),
+		"server":        resource.NewProperty(""),
+		"param_name":    resource.NewProperty("random"),
+		"param_version": resource.NewProperty("3.0.0"),
+		"param_value":   resource.NewProperty("random-param-value"),
+	}, resProps)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `110572fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd1fa72b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

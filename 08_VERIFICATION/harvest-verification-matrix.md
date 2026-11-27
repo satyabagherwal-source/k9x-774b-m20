@@ -13779,3 +13779,6 @@
 | `CYCLE-20261127-NIYN` | `2026-11-27T12:03:39.839Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10892` | Yes (`d4e93ad8...`) |
 | `CYCLE-20261127-NMCA` | `2026-11-27T12:03:44.218Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10893` | Yes (`338e41e0...`) |
 | `CYCLE-20261127-NNLF` | `2026-11-27T12:03:45.843Z` | `chroma-core/chroma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10894` | Yes (`0a55dcd8...`) |
+| `CYCLE-20261127-YOXK` | `2026-11-27T12:12:20.792Z` | `strata-engine/Inkling-2-Mini-Strata` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md` | Yes (`31faa4bf...`) |
+| `CYCLE-20261127-YUTD` | `2026-11-27T12:12:28.417Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10895` | Yes (`7a36cdf2...`) |
+| `CYCLE-20261127-YXPB` | `2026-11-27T12:12:32.159Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10896` | Yes (`79fe0f6c...`) |
