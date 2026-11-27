@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T18:59:55.654Z",
+  "last_updated": "2026-11-27T19:07:52.136Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd25726f109c3e692e97c6c8fd541922ba662d575eddf8c5681f8430b1096679",
+      "content_hash": "6c4f5a13aeb1a90a78ebf536dc907dd923ebdd18d2240dd81957c4a84fce0386",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:59:53.999Z"
+      "persisted_at": "2026-11-27T19:07:49.833Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "33ab2a66de36c5f9cbf76e49568f44178e661e7ff790299b56b7318b64da2b51",
+      "content_hash": "309888ed7bc330eb7737b21bc653e60291813b6b1345192ae9204d73201cb48c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:59:54.237Z"
+      "persisted_at": "2026-11-27T19:07:50.036Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -230396,9 +230396,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1adbbf9282ebdcde49d5b1a1a02d5144533e08597d68e3d90733df2c507ee046",
+      "content_hash": "88b1c58d507460d4d3d41300368cf6dac5f222c3ec47a96bc18afdd4320ad8aa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T18:59:55.363Z"
+      "persisted_at": "2026-11-27T19:07:51.959Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230408,9 +230408,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8e4c9154f8b6d2310c880b8bbf41b4e75529119e46f5e2e51948e20b316ab70",
+      "content_hash": "9d2cc22893b83ae607e3eb361d97ac58b0661d5e0438cb5f5c1f8cbd1e511653",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:59:55.654Z"
+      "persisted_at": "2026-11-27T19:07:52.136Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -239931,9 +239931,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "5feeea5fb8ccc82371d26f7b5981ffa5f951480a58e641025b4ba38c21ba9427",
+      "content_hash": "8009edea6e681f0d8c3279ebff423392cdc9619e9af18a14a4ba85e92fe1f031",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T18:17:32.300Z"
+      "persisted_at": "2026-11-27T19:07:51.183Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -301246,9 +301246,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f96bf2f56dc8e7a33fd5319510c988db4158992717fff8a9b41b43eade3b3d5",
+      "content_hash": "db5df4c9b1aa2e43c2278b5b7f205f3e9c52c2fa8b6bf40e1f105c091e3f2641",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:59:53.726Z"
+      "persisted_at": "2026-11-27T19:07:49.642Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -350510,13 +350510,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ITZK-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-T1ST-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "3285b4bbe660eb7b6f87c2c0239012502406c5ffdc7883bc2416402435dbd4fb",
+      "content_hash": "64d4717ff4c167b6ba58ca7206dd13fbf5172ed3010ffdb6e0735035a1e9b955",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T18:59:55.089Z"
+      "persisted_at": "2026-11-27T19:07:51.773Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363002,13 +363002,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ISPV-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SZZN-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac1b259316498b7b16706df429955d8b3c892933b7ff12aa365a610402ae24e2",
+      "content_hash": "dc82ce4dfdf78eb7960df579209a6720a65d13862a5b25b6dccfccd7f32cb43a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:59:53.443Z"
+      "persisted_at": "2026-11-27T19:07:49.428Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
