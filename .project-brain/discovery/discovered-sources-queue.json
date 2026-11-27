@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T15:45:44.661Z",
+  "updated_at": "2026-11-27T15:54:32.991Z",
   "stats": {
-    "total_discovered": 10468,
-    "approved_pending_harvest": 9936,
+    "total_discovered": 10469,
+    "approved_pending_harvest": 9937,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9942,
+      "COMMUNITY_AND_EXPERT": 9943,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226599,6 +226599,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
         "fileName": "ontos-ai-knowhere-learnings.md"
+      }
+    },
+    "SRC-F035C77B62D1": {
+      "id": "SRC-F035C77B62D1",
+      "url": "https://github.com/RustCrypto/hashes/pull/958",
+      "title": "https://github.com/RustCrypto/hashes/pull/958",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:54:32.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
       }
     }
   }

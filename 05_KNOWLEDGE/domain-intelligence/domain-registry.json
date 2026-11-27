@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T15:45:46.562Z",
+  "last_updated": "2026-11-27T15:54:35.513Z",
   "total_records": 2839,
   "domains": {
     "A": {
@@ -32403,8 +32403,8 @@
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "repository": "RustCrypto/hashes",
-      "content_hash": "f610dc7a554cbad596dc9365f7b4195982cc0ff341b71115ae62d5c382eaedc1",
-      "created_at": "2026-11-25T23:24:12.590Z"
+      "content_hash": "62c036367d99fb1904c380c681fb615ad950beadaa44844e99e51bfb3d1d937f",
+      "created_at": "2026-11-27T15:54:27.650Z"
     },
     "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
@@ -32412,8 +32412,8 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-learnings-architecture-intelligence-rustcrypto-hashes-learning.md",
       "repository": "rustcrypto-hashes-learnings",
-      "content_hash": "bb00c4a784680bc7bfd2aefe6d190cc2ede47d14721ff46510fe0e29c00c7eb6",
-      "created_at": "2026-11-25T23:24:19.516Z"
+      "content_hash": "b3c6f626e4b704b59f58f3c917610c5bfbe865f779b578c2b51d381769d20411",
+      "created_at": "2026-11-27T15:54:33.478Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
@@ -39622,8 +39622,8 @@
       "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
       "repository": "giancarloerra/SocratiCode",
-      "content_hash": "2f3677fd9c1a5c0ac45416f43c65cdf1496119be65f0ab4345a92aef9a50f7db",
-      "created_at": "2026-11-23T05:24:23.355Z"
+      "content_hash": "5c7c1ef9b3ac2e12112e9846f2571240935b46b45fe5c9b173b5dbe2fde3cde4",
+      "created_at": "2026-11-27T15:54:29.537Z"
     },
     "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-learnings-core-inv",
@@ -39631,8 +39631,8 @@
       "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-learnings-technical-construction-intelligence-giancarl.md",
       "repository": "giancarloerra-socraticode-learnings",
-      "content_hash": "3da8b14605fd840fd61d6fd3c27b2861a621d7fdd1919440cbca763f99255ec9",
-      "created_at": "2026-11-23T05:27:31.777Z"
+      "content_hash": "ecae3dca0df889da778a0a608445580437865d7ad65041e457a343e2c6f3320e",
+      "created_at": "2026-11-27T15:54:34.393Z"
     },
     "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lingodotdev-lingo-dev-core-invariants",
@@ -46786,8 +46786,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "e04de3d735a3eb9fd3243591debbda5e58f877966b110d49282c19aed244caa0",
-      "created_at": "2026-11-27T15:27:48.519Z"
+      "content_hash": "978cef332c67ab938f296efc182d296c7f9f0b7af2694539245af76f3b320cd1",
+      "created_at": "2026-11-27T15:54:35.513Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

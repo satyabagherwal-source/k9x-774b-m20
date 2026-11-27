@@ -13810,3 +13810,5 @@
 | `CYCLE-20261127-9LFA` | `2026-11-27T15:36:46.774Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10919` | Yes (`5950376e...`) |
 | `CYCLE-20261127-KPWU` | `2026-11-27T15:45:25.806Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10920` | Yes (`ce9d6499...`) |
 | `CYCLE-20261127-L0DE` | `2026-11-27T15:45:39.362Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10921` | Yes (`f55b7801...`) |
+| `CYCLE-20261127-WBMM` | `2026-11-27T15:54:27.166Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10922` | Yes (`a5ef16a2...`) |
+| `CYCLE-20261127-WD40` | `2026-11-27T15:54:29.088Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10923` | Yes (`9121c377...`) |

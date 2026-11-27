@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:45:39.385Z",
-  "total_cycles_completed": 13108,
-  "total_learnings_persisted": 13108,
-  "total_rules_promoted": 11834,
+  "last_updated": "2026-11-27T15:54:29.112Z",
+  "total_cycles_completed": 13110,
+  "total_learnings_persisted": 13110,
+  "total_rules_promoted": 11836,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:41:03.195Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T23:49:26.577Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:49:34.047Z",
       "repository": "margelo/react-native-mmkv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T15:45:39.385Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:54:27.190Z",
+      "repository": "RustCrypto/hashes",
+      "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:54:29.112Z",
+      "repository": "giancarloerra/SocratiCode",
+      "learningId": "learn-github-giancarloerra-socraticode",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

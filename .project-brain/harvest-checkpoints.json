@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T15:45:39.389Z",
+  "last_updated": "2026-11-27T15:54:29.116Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3756,14 +3756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-giancarloerra-socraticode",
-      "content_hash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
-      "verified_at": "2026-11-23T05:24:22.984Z",
+      "content_hash": "9121c377013b07a6e1eacf3790bf2f862b783e928edfbdeb3681354baefb290a",
+      "verified_at": "2026-11-27T15:54:29.115Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:24:22.984Z"
+      "last_updated": "2026-11-27T15:54:29.115Z"
     },
     "jaredpalmer/formik": {
       "repository": "jaredpalmer/formik",
@@ -4701,14 +4701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
-      "verified_at": "2026-11-25T23:24:12.029Z",
+      "content_hash": "a5ef16a27e580ed87933f44891b213429426407944eba35ebde502902bb54e30",
+      "verified_at": "2026-11-27T15:54:27.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:24:12.029Z"
+      "last_updated": "2026-11-27T15:54:27.193Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",

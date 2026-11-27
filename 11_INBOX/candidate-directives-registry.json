@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:45:45.532Z",
+  "last_updated": "2026-11-27T15:54:35.307Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-Y1WS",
+      "id": "CD-WHWO",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Y1WS-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WHWO-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -71174,6 +71174,55 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9D67EF-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-WGBX",
+      "directive_title": "compilation error for explicitly selected `aarch64-sha2` backend",
+      "source_repo": "rustcrypto-hashes-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WGBX-compilation-error-for-explicitly-selected-aarch64-sha2-backend.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-WH1I",
+      "directive_title": "Empirical Invariant Guard in symbol-graph-store.ts",
+      "source_repo": "giancarloerra-socraticode-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WH1I-empirical-invariant-guard-in-symbol-graph-store-ts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-2871DD",
+      "directive_title": "compilation error for explicitly selected `aarch64-sha2` backend",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustcrypto-hashes",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2871DD-compilation-error-for-explicitly-selecte.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-5A4C63",
+      "directive_title": "Empirical Invariant Guard in symbol-graph-store.ts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "giancarloerra-socraticode",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5A4C63-empirical-invariant-guard-in-symbol-grap.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-ABBDB6",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ABBDB6-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
     }
   ]

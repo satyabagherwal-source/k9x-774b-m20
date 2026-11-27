@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source**: github ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
-> **Source Version**: `d7bc0dc4`  
+> **Source Version**: `0afa01aa`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T05:24:21.960Z  
+> **Timestamp**: 2026-11-27T15:54:27.852Z  
 > **Learning ID**: `learn-github-giancarloerra-socraticode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/giancarloerra/SocratiCode](https://github.com/giancarloerra/SocratiCode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T05:24:03.075Z  
+> **Harvest Timestamp**: 2026-11-27T15:54:27.846Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Enterprise-grade (40m+ LOC) codebase intelligence, zero-setup, local & private Plugin/Skill/Extension or MCP: hybrid semantic search, polyglot dependency graphs, symbol-level impact analysis & call-flow, interactive HTML viewer, cross-project & branch-aware search, DB/API/infra knowledge. 61% less tokens, 84% fewer calls, 37x faster. Cloud in beta.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3381 stars
+- **Stars / Engagement**: 3389 stars
 
 ---
 
@@ -969,755 +969,235 @@ main().catch((err) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42283824` (2026-11-22)
-**Commit Message**: docs(graph): describe failed-build cleanup of the staged generation as best effort
+### Incident Patch 1: `0afa01aa` (2026-11-27)
+**Commit Message**: Merge pull request #220 from giancarloerra/fix/symbol-graph-socket-retry
 
-A failed shard write leaves the previous generation active and the build
-attempts to delete the staged generation; persistSymbolGraph ignores a
-failed deletion, so staged points can remain in storage.
+fix(symbol-graph): retry Qdrant requests on EPIPE and ECONNRESET
 
-**File**: `DEVELOPER.md` (modified, +1/-1)
+**File**: `src/services/symbol-graph-store.ts` (modified, +3/-2)
 ```diff
-@@ -949,7 +949,7 @@ A single file-payload point that cannot fit under `QDRANT_MAX_REQUEST_BYTES` eve
+@@ -36,11 +36,12 @@ import type {
+ import { logger } from "./logger.js";
+ import { getClient, isAlreadyExistsError } from "./qdrant.js";
  
- **Oversized shards split into parts (#99).** Name and reverse shards grow with the whole repo rather than with any one file — a name shard holds every symbol whose name starts with one character, and Java-style codebases concentrate the `g`/`s` buckets badly via `getX`/`setX` — so on a large enough codebase a single bucket outgrows the server ceiling. `saveNameShard`/`saveReverseShard` therefore split an oversized bucket across multiple points, entry by entry: part 0 stays on the shard's original id and declares `parts: N` in its payload, continuation parts live at ids derived from the shard key. A shard that fits (the overwhelmingly common case) is still written as one point with **no** `parts` field, byte-identical to what every pre-split graph contains, so existing graphs read unchanged and nothing migrates. When a shard shrinks, stale continuation parts are deleted on write. Every part of one split write also carries a shared random `write` identity: continuation ids are deterministic, so an interrupted rewrite can leave the previous write's continuations at exactly the ids a new part 0 declares, and the identity is what makes that detectable. The readers reassemble parts and return `null` (with a warning) when a declared part is missing **or carries a different write identity than part 0** — either means the shard is not one coherent write — rather than serving a partial or interleaved shard. Only one shape remains unsplittable: a single symbol name whose own reference list exceeds a part budget, which needs a six-figure occurrence count of one name and fails loudly by name. **Downgrade caveat:** a SocratiCode version predating the split reads only part 0 of a split shard, so downgrading after a large repo has written multi-part shards silently under-reports symbols until a rebuild on the old version.
- 
--**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set to `saveShardsForFreshGeneration`, which serializes every shard first (an unsplittable entry fails the call before anything is written, and the pass yields to the event loop after each shard so it does not hold other requests for its whole length), coalesces the resulting points into requests of at most 50 points and `SYMBOL_SHARD_BULK_REQUEST_BYTES` (128 KiB) of serialized points, and sends them one after another with no previous-part lookups. For a graph of ~283 small shards that is about 6 write requests instead of 283 reads plus 283 writes; for larger shards it is more, because the byte bound keeps requests small. The bound is much lower than the 24 MiB `QDRANT_UPSERT_BUDGET_BYTES` the file payloads use on purpose: packing shards up to that budget sent the same bytes as a few multi-MB requests and, on a Qdrant serving searches at the same time, gave a clearly worse search p95 during publication (about 11 ms against about 3.5 ms at 128 KiB and about 2.9 ms with one request per shard, measured on an 18 MB synthetic graph). The bound counts the serialized points, not the HTTP body, which adds the `{"points":[` and `]}` wrapper and a comma between points (a few dozen bytes at most), so a request can run slightly over 128 KiB. The packer works on points, not shards or parts: it takes them in order, a point larger than the bound is sent alone, and every other point shares a request with the neighbors that fit beside it. Splitting happens between whole entries, so a part can be small (for example, a small first part ahead of an entry that nearly fills the part budget), and a small part can share a request with points of the shard before or after it. The metadata pointer is still written only after every request succeeded; the first failure aborts the build and the staged generation is deleted. The lookup-free path is only valid for a generation nobody has written, so the function throws unless the generation is a real id, is not the legacy marker or the active generation, is registered as a staging generation, and has not already been through the path. `saveNameShard` / `saveReverseShard` are unchanged and remain the way to rewrite a shard that may already exist: their previous-part lookup is what deletes continuation parts a larger earlier write left behind. (Nothing in production rewrites a shard in place today, because an incremental update that touches any file requests a full rebuild, so this is the contract for such a caller rather than a hot path.) Payload shapes, point IDs and multipart write identities come from one shared builder, so both paths store the same data.
-+**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set
+-/** True when the error's cause chain holds undici's closed-socket error. */
++/** True when the error's cause chain holds a closed-socket error from undici or Node. */
+ function isClosedSocketError(err: unknown): boolean {
+   let current: unknown = err;
+   for (let depth = 0; depth < 5 && current; depth++) {
+-    if ((current as { code?: unknown }).code === "UND_ERR_SOCKET") return true;
++    const code = (current as { code?: unknown }).code;
++    if (code === "UND_ERR_SOCKET" || code === "EPIPE" || code === "ECONNRESET") return true;
+     current = (current as { cause?: unknown }).cause;
+   }
+   return false;
 ```
 
----
-
-### Incident Patch 2: `c5e38f6c` (2026-11-22)
-**Commit Message**: fix(graph): yield while serializing a fresh generation; document request packing
-
-Review feedback on the bulk shard path.
-
-saveShardsForFreshGeneration serializes every nonempty shard before the
-first request, and unlike the per-shard savers (which awaited I/O between
-shards) that pass never returned to the event loop, so on a large graph it
-held every other request for its whole length. It now yields with
-setImmediate after each shard. The first request still waits until every
-shard has been serialized, so an unplaceable entry still fails the call with
-nothing written. A new test queues a callback before the call, has the last
-(invalid) shard report whether it had run by then, and expects zero upserts.
-It fails with the yields removed.
-
-The request bound and its docs overstated what it guarantees. The 128 KiB
-budget counts the summed serialized points, not the HTTP body, which adds the
-JSON wrapper and commas. And the packer works on points, not shards: a point
-over the budget goes alone, so every part of a split shard does except
-possibly the last, which can share a request with the next shard's points.
-DEVELOPER.md, the constant and the function comments now say so, and a new
-te
-
-**File**: `DEVELOPER.md` (modified, +1/-1)
+**File**: `tests/unit/symbol-graph-stale-socket.test.ts` (modified, +37/-4)
 ```diff
-@@ -949,7 +949,7 @@ A single file-payload point that cannot fit under `QDRANT_MAX_REQUEST_BYTES` eve
- 
- **Oversized shards split into parts (#99).** Name and reverse shards grow with the whole repo rather than with any one file — a name shard holds every symbol whose name starts with one character, and Java-style codebases concentrate the `g`/`s` buckets badly via `getX`/`setX` — so on a large enough codebase a single bucket outgrows the server ceiling. `saveNameShard`/`saveReverseShard` therefore split an oversized bucket across multiple points, entry by entry: part 0 stays on the shard's original id and declares `parts: N` in its payload, continuation parts live at ids derived from the shard key. A shard that fits (the overwhelmingly common case) is still written as one point with **no** `parts` field, byte-identical to what every pre-split graph contains, so existing graphs read unchanged and nothing migrates. When a shard shrinks, stale continuation parts are deleted on write. Every part of one split write also carries a shared random `write` identity: continuation ids are deterministic, so an interrupted rewrite can leave the previous write's continuations at exactly the ids a new part 0 declares, and the identity is what makes that detectable. The readers reassemble parts and return `null` (with a warning) when a declared part is missing **or carries a different write identity than part 0** — either means the shard is not one coherent write — rather than serving a partial or interleaved shard. Only one shape remains unsplittable: a single symbol name whose own reference list exceeds a part budget, which needs a six-figure occurrence count of one name and fails loudly by name. **Downgrade caveat:** a SocratiCode version predating the split reads only part 0 of a split shard, so downgrading after a large repo has written multi-part shards silently under-reports symbols until a rebuild on the old version.
- 
--**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set to `saveShardsForFreshGeneration`, which serializes every shard first (an unsplittable entry fails the call before anything is written), coalesces the resulting points into requests of at most 50 points and `SYMBOL_SHARD_BULK_REQUEST_BYTES` (128 KiB), and sends them one after another with no previous-part lookups. For a graph of ~283 small shards that is about 6 write requests instead of 283 reads plus 283 writes; for larger shards it is more, because the byte bound keeps requests small. The bound is much lower than the 24 MiB `QDRANT_UPSERT_BUDGET_BYTES` the file payloads use on purpose: packing shards up to that budget sent the same bytes as a few multi-MB requests and, on a Qdrant serving searches at the same time, gave a clearly worse search p95 during publication (about 11 ms against about 3.5 ms at 128 KiB and about 2.9 ms with one request per shard, measured on an 18 MB synthetic graph). A shard larger than the bound is sent alone, and a split shard's parts are one request each. The metadata pointer is still written only after every request succeeded; the first failure aborts the build and the staged generation is deleted. The lookup-free path is only valid for a generation nobody has written, so the function throws unless the generation is a real id, is not the legacy marker or the active generation, is registered as a staging generation, and has not already been through the path. `saveNameShard` / `saveReverseShard` are unchanged and remain the way to rewrite a shard that may already exist: their previous-part lookup is what deletes continuation parts a larger earlier write left behind. (Nothing in production rewrites a shard in place today, because an incremental update that touches any file requests a full rebuild, so this is the contract for such a caller rather than a hot path.) Payload shapes, point IDs and multipart write identities come from one shared builder, so both paths store the same data.
-+**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set to `saveShardsForFreshGeneration`, which serializes every shard first (an unsplittable entry fails the call before anything is written, and the pass yields to the event loop after each shard so it does not hold other requests for its whole length), coalesces the resulting points into requests of at most 50 points and `SYMBOL_SHARD_BULK_REQUEST_BYTES` (128 KiB) of serialized points, and sends them one after another with no previous-part lookups. For a graph of ~283 small shards that is about 6 write requests instead of 283 reads plus 283 writes; for larger shards it is more, because the byte bound keeps requests small. The bound is much lower than the 24 MiB `QDRANT
-```
-
-**File**: `src/constants.ts` (modified, +7/-3)
-```diff
-@@ -163,9 +163,13 @@ export const QDRANT_UPSERT_BUDGET_BYTES = 25_165_824;
-  * during publication than many small requests (measured on a 18 MB synthetic
-  * graph: p95 about 11 ms with ~3 MB requests against about 3.5 ms at this
-  * budget and about 2.8 ms with one request per shard). 128 KiB keeps the bulk
-- * path's large cut in request count while keeping requests small. A shard
-- * larger than this still goes out alone, and a split shard's parts are each
-- * one request, so this bounds coalescing, not the size of a single point.
-+ * path's large cut in request count while keeping requests small.
-+ *
-+ * It bounds the summed serialized size of the points in one request, not the
-+ * HTTP body: the JSON wrapper and commas add a few dozen bytes on top. It bounds
-+ * coalescing, not the size of a single point: a point larger than this goes out
-+ * alone, so every part of a split shard does except possibly the last, which
-+ * may be small enough to share a request with the next shard's points.
-  */
- export const SYMBOL_SHARD_BULK_REQUEST_BYTES = 131_072;
- 
-```
-
-**File**: `src/services/symbol-graph-store.ts` (modified, +28/-7)
-```diff
-@@ -15,6 +15,7 @@
-  */
- 
- import { createHash, randomUUID } from "node:crypto";
-+import { setImmediate as yieldToEventLoop } from "node:timers/promises";
- import type { QdrantClient } from "@qdrant/js-client-rest";
- import {
-   symgraphFileCollectionName,
-@@ -229,6 +230,16 @@ interface UpsertLimits {
-  * is rejected with HTTP 400. Packing by bytes keeps every request under the
-  * ceiling regardless of how large individual files are; the count cap is kept
-  * so ordinary repos still batch exactly as before.
-+ *
-+ * What the byte budget counts: the summed serialized size of the points in the
-+ * request ({@link pointBytes}), not the HTTP body. The body is
-+ * `{"points":[` + the points + `]}` with a comma between points, so it runs a
-+ * few dozen bytes over the budget at the 50-point cap. Points are packed in
-+ * order and the packer knows nothing about shards: a point larger than the
-+ * budget goes alone (the batch before it is flushed, and the next point starts
-+ * a new one), while any point under the budget may share a request with its
-+ * neighbors, including the small last part of a split shard and the first
-+ * point of whatever shard follows it.
-  */
- async function upsertWithinBudget(
-   collName: string,
-@@ -943,12 +954,17 @@ function assertFreshGeneration(projectId: string, generation: string): void {
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: AGPL-3.0-only
+ // Copyright (C) 2026 Giancarlo Erra - Altaire Limited
+ import { Worker } from "node:worker_threads";
+-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
++import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+ import type { SymbolGraphFilePayload } from "../../src/types.js";
  
  /**
-  * Write every name and reverse shard of a generation that has never been
-- * written, coalescing them into requests of at most
-- * {@link UPSERT_MAX_POINTS} points and {@link SYMBOL_SHARD_BULK_REQUEST_BYTES}
-- * bytes. The byte bound is deliberately much smaller than the per-file payload
-- * budget: see its documentation for the search-latency measurement behind it.
-- * `limits` overrides both for tests and benchmarks; a byte budget above
-- * {@link QDRANT_UPSERT_BUDGET_BYTES} is clamped to it.
-+ * written, coalescing their points into requests of at most
-+ * {@link UPSERT_MAX_POINTS} points whose serialized points total at most
-+ * {@link SYMBOL_SHARD_BULK_REQUEST_BYTES} bytes (the HTTP body adds the JSON
-+ * wrapper and commas on top; see {@link upsertWithinBudget}). A point larger
-+ * than that goes in a request of its own, so each part of a split shard is
-+ * alone except possibly the last, which can be small enough to share a request
-+ * with the next shard's points. The byte bound is deliberately much smaller than
-+ * the per-file payload budget: see its documentation for the search-latency
-+ * measurement behind it. `limits` overrides both bounds for tests and
-+ * benchmarks; a byte budget above {@link QDRANT_UPSERT_BUDGET_BYTES} is
-+ * clamped to it.
-  *
-  * The per-shard savers fetch each shard's previous primary point to learn how
-  * many continuation parts to delete after the write. A generation that was
-@@ -962,7 +978,10 @@ function assertFreshGeneration(projectId: string, generation: string): void {
-  *
-  * Everything is serialized before the first request, so a shard that cannot be
-  * stored (see {@link SymbolGraphPointTooLargeError}) fails the whole call with
-- * nothing written. Requests then go out one after another; the first failure
-+ * nothing written. That pass is CPU work on every shard (the per-shard savers
-+ * yielded for I/O between shards, this one would not), so it yields to the event
-+ * loop after each shard; the first request still waits until every shard has
-+ * been serialized. Requests then go out one after another; the first failure
-  * throws, and the caller must not publish the generation. Empty shards are
-  * skipped, as the per-shard callers always did.
-  */
-@@ -1001,6 +1020,7 @@ export async function saveShardsForFreshGeneration(
-       ),
-       nameShardLabel(shardKey),
-     );
-+    await yieldToEventLoop();
-   }
-   for (const [bucket, record] of shards.reverseShards) {
-     if (Object.keys(record).length === 0) continue;
-@@ -1016,6 +1036,7 @@ export async function saveShardsForFreshGeneration(
-       ),
-       reverseShardLabel(bucket),
-     );
-+    await yieldToEventLoop();
-   }
+@@ -19,7 +19,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+   let server: Worker;
+   let nextId = 0;
+   let store: typeof import("../../src/services/symbol-graph-store.js");
+-  let describeQdrantError: typeof import("../../src/services/qdrant.js").describeQdrantError;
++  let qdrant: typeof import("../../src/services/qdrant.js");
  
-   await upsertWithinBudget(collName, points, (i) => labels[i], {
-```
-
-**File**: `tests/unit/symbol-graph-fresh-generation.test.ts` (modified, +74/-1)
-```diff
-@@ -26,6 +26,8 @@ interface UpsertRequest {
-   collName: string;
-   points: number;
-   bytes: number;
-+  /** The payload of every point in the request, in order. */
-+  payloads: Array<Record<string, unknown>>;
- }
- 
- const store = new Map<string, Map<string, StoredPoint>>(); // collection -> id -> point
-@@ -58,6 +60,7 @@ vi.mock("../../src/services/qdrant.js", () => ({
-           collName: name,
-           points: body.points.length,
-           bytes: Buffer.byteLength(JSON.stringify(body), "utf-8"),
-+          payloads: body.points.map((p) => p.payload),
-         });
-         const coll = store.get(name) ?? new Map<string, StoredPoint>();
-         for (const p of body.points) coll.set(String(p.id), p);
-@@ -242,7 +245,9 @@ describe("fresh-generation bulk shard write", () => {
-     await saveShardsForFreshGeneration(PROJ, gen, { nameShards, reverseShards: new Map() });
- 
-     expect(retrieves).toHaveLength(0);
--    // Body = points + `{"points":[` + `]}` + commas, so allow a small envelope.
-+    // The bound counts the serialized points; the body adds `{"points":[` and
-+    // `]}` and a comma between points (at most 13 + 49 bytes at 50 points), so
-+    // allow a small envelope on top.
-     expect(upserts.every((u) => u.bytes <= SYMBOL_SHARD_BULK_REQUEST_BYTES + 100)).toBe(true);
-     expect(upserts.length).toBeGreaterThan(2); // more than the 50-point cap alone would give
-     expect(upserts.length).toBeLessThan(keys.length); // still coalesced, not one per shard
-@@ -271,6 +276,35 @@ describe("fresh-generation bulk shard write", () => {
-     }
+   function ask<T>(msg: Record<string, unknown>): Promise<T> {
+     const id = ++nextId;
+@@ -53,7 +53,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     const { port } = await new Promise<{ port: number }>((resolve) => server.once("message", resolve));
+     process.env.QDRANT_URL = `http://127.0.0.1:${port}`;
+     store = await import("../../src/services/symbol-graph-store.js");
+-    ({ describeQdrantError } = await import("../../src/services/qdrant.js"));
++    qdrant = await import("../../src/services/qdrant.js");
    });
  
-+  it("lets a small final part of a split shard share a request with the next shard", async () => {
-+    // The packer works on points, not shards. `big` nearly fills a part (the
-+    // part budget is QDRANT_UPSERT_BUDGET_BYTES less 1 KiB of envelope) and
-+    // `tail` cannot join it, so the shard splits into a ~25 MB part 0 and a
-+    // ~100 KB final part. Part 0 is over the bound and goes alone; the final
-+    // part is under it, so it rides with the next shard's point.
-+    const gen = stage("gen-final-part");
-+    const split: Record<string, SymbolRef[]> = {
-+      ...nameRecordOfSize("big", 25_100_000),
-+      ...nameRecordOfSize("tail", 100_000),
-+    };
-+    const next: Record<string, SymbolRef[]> = { alpha: [{ file: "src/a.ts", id: "src/a.ts::alpha" }] };
-+    await saveShardsForFreshGeneration(PROJ, gen, {
-+      nameShards: new Map([
-+        ["g", split],
-+        ["a", next],
-+      ]),
-+      reverseShards: new Map(),
-+    });
-+
-+    const sent = upserts.map((u) => u.payloads.map((p) => `${p.shard}:${p.part ?? 0}`));
-+    expect(sent).toEqual([["g:0"], ["g:1", "a:0"]]);
-+    expect(upserts[1].bytes).toBeLessThanOrEqual(SYMBOL_SHARD_BULK_REQUEST_BYTES + 100);
-+    expect(retrieves).toHaveLength(0);
-+    // Sharing a request changes nothing about identity: both read back whole.
-+    expect(await loadNameShard(PROJ, "g", gen)).toEqual(split);
-+    expect(await loadNameShard(PROJ, "a", gen)).toEqual(next);
+   afterAll(async () => {
+@@ -67,6 +67,10 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     store.resetSymbolGraphCollectionCache();
+   });
+ 
++  afterEach(() => {
++    vi.restoreAllMocks();
 +  });
 +
-   it("clamps an override above the per-file payload budget to that budget", async () => {
-     const gen = stage("gen-clamp");
-     const nameShards = new Map<string, Record<string, SymbolRef[]>>();
-@@ -358,6 +392,45 @@ describe("fresh-generation bulk shard write", () => {
-     expect(pointsInIndex()).toHaveLength(0);
+   const payload = (version: string): SymbolGraphFilePayload => ({
+     file: "src/a.ts",
+     language: "typescript",
+@@ -75,6 +79,35 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     outgoingCalls: [],
    });
  
-+  it("yields to the event loop between shards while serializing, and still writes nothing when a later shard is invalid", async () => {
-+    // Serializing every shard before the first request is CPU work the
-+    // per-shard savers never did in one go (they awaited I/O between shards), so
-+    // other callbacks must get to run during it. A callback queued before the
-+    // call stands in for another request; the invalid last shard reports, via a
-+    // trap on its keys, whether that callback had run by the time the pass
-+    // reached it. Without a yield the whole pass is synchronous and it had not.
-+    const gen = stage("gen-yield");
-+    let ticked = false;
-+    let tickedBeforeLastShard: boolean | undefined;
-+    const invalidLast = new Proxy<Record<string, SymbolRef[]>>(
-+      { huge: refsFor("huge", 160_000, 100) },
-+      {
-+        ownKeys(target) {
-+          tickedBeforeLastShard ??= ticked;
-+          return Reflect.ownKeys(target);
-+        },
-+      },
-+    );
-+    const shards: FreshGenerationShards = {
-+      nameShards: new Map([
-+        ["a", { alpha: [{ file: "src/a.ts", id: "src/a.ts::alpha" }] }],
-+        ["b", { beta: [{ file: "src/b.ts", id: "src/b.ts::beta" }] }],
-+        ["h", invalidLast],
-+      ]),
-+      reverseShards: new Map(),
-+    };
++  function transportError(code: string): TypeError {
++    return new TypeError("fetch failed", { cause: Object.assign(new Error(code), { code }) });
++  }
 +
-+    setImmediate(() => {
-+      ticked = true;
-+    });
-+    await expect(saveShardsForFreshGeneration(PROJ, gen, shards)).rejects.toThrow(SymbolGraphPointTooLargeError);
++  it.each(["EPIPE", "ECONNRESET"])("replays the same upsert once after %s and persists the payload", async (code) => {
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert").mockRejectedValueOnce(transportError(code));
++    const expected = payload("v1");
++    await store.saveFilePayloads("p", [expected], "g1");
++    expect(upsert).toHaveBeenCalledTimes(2);
++    expect(upsert.mock.calls[1]).toEqual(upsert.mock.calls[0]);
++    expect(await store.loadFilePayload("p", expected.file, "g1")).toEqual(expected);
++  });
 +
-+    expect(tickedBeforeLastShard).toBe(true);
-+    // The valid shards ahead of it were not written either.
-+    expect(upserts).toHaveLength(0);
-+    expect(pointsI
++  it.each(["EPIPE", "ECONNRESET"])("propagates the second %s failure unchanged", async (code) => {
++    const second = transportError(code);
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert")
++      .mockRejectedValueOnce(transportError(code))
++      .mockRejectedValueOnce(second);
++    await expect(store.saveFilePayloads("p", [payload("v1")], "g1")).rejects.toBe(second);
++    expect(upsert).toHaveBeenCalledTimes(2);
++  });
++
++  it("propagates a refused connection on the first attempt", async () => {
++    const refused = transportError("ECONNREFUSED");
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert").mockRejectedValueOnce(refused);
++    await expect(store.saveFilePayloads("p", [payload("v1")], "g1")).rejects.toBe(refused);
++    expect(upsert).toHaveBeenCalledTimes(1);
++  });
++
+   it("retries an upsert sent after the slow step, and stores the payload", async () => {
+     await store.saveFilePayloads("p", [payload("v1")], "g1");
+     slowSynchronousStep();
+@@ -104,7 +137,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+       (e: unknown) => e,
+     );
+     expect(err, "second consecutive close must reject").not.toBeNull();
+-    expect(describeQdrantError(err)).toBe("fetch failed: other side closed [UND_ERR_SOCKET]");
++    expect(qdrant.describeQdrantError(err)).toBe("fetch failed: other side closed [UND_ERR_SOCKET]");
+   });
+ 
+   it("does not retry a request the server answered with an error", async () => {
 ```
 
 ---
 
-### Incident Patch 3: `d7bc0dc4` (2026-11-22)
-**Commit Message**: Merge pull request #217 from mgd43b/fix/symbol-graph-bulk-fresh-shards
+### Incident Patch 2: `fbed85fe` (2026-11-26)
+**Commit Message**: fix(symbol-graph): retry EPIPE and ECONNRESET once
 
-perf(graph): publish a fresh symbol-graph generation's shards in bulk
-
-**File**: `DEVELOPER.md` (modified, +9/-13)
+**File**: `src/services/symbol-graph-store.ts` (modified, +3/-2)
 ```diff
-@@ -949,6 +949,8 @@ A single file-payload point that cannot fit under `QDRANT_MAX_REQUEST_BYTES` eve
+@@ -36,11 +36,12 @@ import type {
+ import { logger } from "./logger.js";
+ import { getClient, isAlreadyExistsError } from "./qdrant.js";
  
- **Oversized shards split into parts (#99).** Name and reverse shards grow with the whole repo rather than with any one file — a name shard holds every symbol whose name starts with one character, and Java-style codebases concentrate the `g`/`s` buckets badly via `getX`/`setX` — so on a large enough codebase a single bucket outgrows the server ceiling. `saveNameShard`/`saveReverseShard` therefore split an oversized bucket across multiple points, entry by entry: part 0 stays on the shard's original id and declares `parts: N` in its payload, continuation parts live at ids derived from the shard key. A shard that fits (the overwhelmingly common case) is still written as one point with **no** `parts` field, byte-identical to what every pre-split graph contains, so existing graphs read unchanged and nothing migrates. When a shard shrinks, stale continuation parts are deleted on write. Every part of one split write also carries a shared random `write` identity: continuation ids are deterministic, so an interrupted rewrite can leave the previous write's continuations at exactly the ids a new part 0 declares, and the identity is what makes that detectable. The readers reassemble parts and return `null` (with a warning) when a declared part is missing **or carries a different write identity than part 0** — either means the shard is not one coherent write — rather than serving a partial or interleaved shard. Only one shape remains unsplittable: a single symbol name whose own reference list exceeds a part budget, which needs a six-figure occurrence count of one name and fails loudly by name. **Downgrade caveat:** a SocratiCode version predating the split reads only part 0 of a split shard, so downgrading after a large repo has written multi-part shards silently under-reports symbols until a rebuild on the old version.
- 
-+**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set to `saveShardsForFreshGeneration`, which serializes every shard first (an unsplittable entry fails the call before anything is written, and the pass yields to the event loop after each shard so it does not hold other requests for its whole length), coalesces the resulting points into requests of at most 50 points and `SYMBOL_SHARD_BULK_REQUEST_BYTES` (128 KiB) of serialized points, and sends them one after another with no previous-part lookups. For a graph of ~283 small shards that is about 6 write requests instead of 283 reads plus 283 writes; for larger shards it is more, because the byte bound keeps requests small. The bound is much lower than the 24 MiB `QDRANT_UPSERT_BUDGET_BYTES` the file payloads use on purpose: packing shards up to that budget sent the same bytes as a few multi-MB requests and, on a Qdrant serving searches at the same time, gave a clearly worse search p95 during publication (about 11 ms against about 3.5 ms at 128 KiB and about 2.9 ms with one request per shard, measured on an 18 MB synthetic graph). The bound counts the serialized points, not the HTTP body, which adds the `{"points":[` and `]}` wrapper and a comma between points (a few dozen bytes at most), so a request can run slightly over 128 KiB. The packer works on points, not shards or parts: it takes them in order, a point larger than the bound is sent alone, and every other point shares a request with the neighbors that fit beside it. Splitting happens between whole entries, so a part can be small (for example, a small first part ahead of an entry that nearly fills the part budget), and a small part can share a request with points of the shard before or after it. The metadata pointer is still written only after every request succeeded; the first failure aborts the build. If a shard write fails, the previous generation stays active. The build attempts to delete the staged generation. If cleanup also fails, staged points can remain in storage. The lookup-free path is only valid for a generation nobody has written, so the function throws unless the generation is a real id, is not the legacy marker or the active generation, is registered as a staging generation, and has not already been through the path. `saveNameShard` / `saveReverseShard` are unchanged and remain the way to rewrite a shard that may already exist: their previous-part lookup is what deletes continuation parts a larger earlier write left behind. (Nothing in production rewrites a shard in place today, because an incremental update that touches any file requests a full rebuild, so this is the contract for such a caller rather than a hot path.) Payload shapes, point IDs and multipart write identities come from one shared builder, so both paths store the same data.
-+
- When symbol-graph persistence fails, `doRebuildGraph` (the rebuild driver arou
-```
-
-**File**: `src/constants.ts` (modified, +20/-0)
-```diff
-@@ -154,6 +154,26 @@ export const QDRANT_MAX_REQUEST_BYTES = 33_554_432;
-  */
- export const QDRANT_UPSERT_BUDGET_BYTES = 25_165_824;
- 
-+/**
-+ * Byte budget for one request when a fresh generation's symbol-graph shards are
-+ * published in bulk. Far below {@link QDRANT_UPSERT_BUDGET_BYTES} on purpose:
-+ * that budget exists to stay under the server's request ceiling, but packing
-+ * shards up to it sends the same bytes as a few multi-MB requests, and on a
-+ * Qdrant that is also serving searches those showed a clearly worse search p95
-+ * during publication than many small requests (measured on a 18 MB synthetic
-+ * graph: p95 about 11 ms with ~3 MB requests against about 3.5 ms at this
-+ * budget and about 2.8 ms with one request per shard). 128 KiB keeps the bulk
-+ * path's large cut in request count while keeping requests small.
-+ *
-+ * It bounds the summed serialized size of the points in one request, not the
-+ * HTTP body: the JSON wrapper and commas add a few dozen bytes on top. It bounds
-+ * coalescing, not the size of a single point: points are packed in order,
-+ * whichever shard or part they belong to, and a point larger than this goes out
-+ * alone while every other point shares a request with the neighbors that fit
-+ * beside it.
-+ */
-+export const SYMBOL_SHARD_BULK_REQUEST_BYTES = 131_072;
-+
- /**
-  * Maximum average line length (in characters) before a file is treated as
-  * minified/bundled and switched to character-based chunking. Minified files
-```
-
-**File**: `src/services/code-graph.ts` (modified, +4/-10)
-```diff
-@@ -65,8 +65,7 @@ import {
-   registerStagingGeneration,
-   reverseShardKeyForCallee,
-   saveFilePayloads,
--  saveNameShard,
--  saveReverseShard,
-+  saveShardsForFreshGeneration,
-   saveSymbolGraphMeta,
-   unregisterStagingGeneration,
- } from "./symbol-graph-store.js";
-@@ -618,14 +617,9 @@ async function persistSymbolGraph(
-     try {
-       // Persist all payloads and shards into the staged generation first
-       await saveFilePayloads(projectId, payloads, newGeneration);
--      for (const [shardKey, shard] of nameShards.entries()) {
--        if (Object.keys(shard).length === 0) continue;
--        await saveNameShard(projectId, shardKey, shard, newGeneration);
--      }
--      for (const [bucket, shard] of reverseShards.entries()) {
--        if (Object.keys(shard).length === 0) continue;
--        await saveReverseShard(projectId, bucket, shard, newGeneration);
--      }
-+      // The generation was minted above, so its shard ids cannot exist yet: one
-+      // bulk write replaces a previous-part lookup plus an upsert per shard.
-+      await saveShardsForFreshGeneration(projectId, newGeneration, { nameShards, reverseShards });
- 
-       // Activate that generation with one metadata-pointer write only after every staged write succeeds
-       const meta: SymbolGraphMeta = {
-```
-
-**File**: `src/services/symbol-graph-store.ts` (modified, +247/-36)
-```diff
-@@ -15,6 +15,7 @@
-  */
- 
- import { createHash, randomUUID } from "node:crypto";
-+import { setImmediate as yieldToEventLoop } from "node:timers/promises";
- import type { QdrantClient } from "@qdrant/js-client-rest";
- import {
-   symgraphFileCollectionName,
-@@ -25,6 +26,7 @@ import {
-   QDRANT_MAX_REQUEST_BYTES,
-   QDRANT_UPSERT_BUDGET_BYTES,
-   SYMBOL_REVERSE_SHARDS,
-+  SYMBOL_SHARD_BULK_REQUEST_BYTES,
- } from "../constants.js";
- import type {
-   SymbolGraphFilePayload,
-@@ -212,6 +214,12 @@ function assertPointFits(point: SymgraphPoint, what: string): void {
+-/** True when the error's cause chain holds undici's closed-socket error. */
++/** True when the error's cause chain holds a closed-socket error from undici or Node. */
+ function isClosedSocketError(err: unknown): boolean {
+   let current: unknown = err;
+   for (let depth = 0; depth < 5 && current; depth++) {
+-    if ((current as { code?: unknown }).code === "UND_ERR_SOCKET") return true;
++    const code = (current as { code?: unknown }).code;
++    if (code === "UND_ERR_SOCKET" || code === "EPIPE" || code === "ECONNRESET") return true;
+     current = (current as { cause?: unknown }).cause;
    }
- }
+   return false;
+```
+
+**File**: `tests/unit/symbol-graph-stale-socket.test.ts` (modified, +37/-4)
+```diff
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: AGPL-3.0-only
+ // Copyright (C) 2026 Giancarlo Erra - Altaire Limited
+ import { Worker } from "node:worker_threads";
+-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
++import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+ import type { SymbolGraphFilePayload } from "../../src/types.js";
  
-+/** How full one upsert request may get before the next point starts a new one. */
-+interface UpsertLimits {
-+  budgetBytes: number;
-+  maxPoints: number;
-+}
-+
  /**
-  * Upsert points in requests bounded by BOTH a point count and a byte budget.
-  *
-@@ -222,11 +230,28 @@ function assertPointFits(point: SymgraphPoint, what: string): void {
-  * is rejected with HTTP 400. Packing by bytes keeps every request under the
-  * ceiling regardless of how large individual files are; the count cap is kept
-  * so ordinary repos still batch exactly as before.
-+ *
-+ * What the byte budget counts: the summed serialized size of the points in the
-+ * request ({@link pointBytes}), not the HTTP body. The body is
-+ * `{"points":[` + the points + `]}` with a comma between points, so it runs a
-+ * few dozen bytes over the budget at the 50-point cap. Points are packed in
-+ * order and the packer knows nothing about shards or parts: a point larger
-+ * than the budget goes alone (the batch before it is flushed, and the next
-+ * point starts a new one), and any other point shares a request with whichever
-+ * neighbors in that order fit beside it. A split shard's parts are not special:
-+ * a small part next to a part that fills the budget can share a request with
-+ * the points on its other side, whether those belong to another shard or not.
-+ *
-+ * `knownBytes`, when given, holds each point's serialized size (parallel to
-+ * `points`), so a caller that can yield between points sizes them where it
-+ * yields; otherwise each size is computed here, between awaited requests.
-  */
- async function upsertWithinBudget(
-   collName: string,
-   points: SymgraphPoint[],
-   describe: (index: number) => string,
-+  limits: UpsertLimits = { budgetBytes: QDRANT_UPSERT_BUDGET_BYTES, maxPoints: UPSERT_MAX_POINTS },
-+  knownBytes?: readonly number[],
- ): Promise<void> {
-   const qdrant = storeClient();
-   let batch: SymgraphPoint[] = [];
-@@ -241,7 +266,7 @@ async function upsertWithinBudget(
+@@ -19,7 +19,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+   let server: Worker;
+   let nextId = 0;
+   let store: typeof import("../../src/services/symbol-graph-store.js");
+-  let describeQdrantError: typeof import("../../src/services/qdrant.js").describeQdrantError;
++  let qdrant: typeof import("../../src/services/qdrant.js");
  
-   for (let i = 0; i < points.length; i++) {
-     const point = points[i];
--    const bytes = pointBytes(point);
-+    const bytes = knownBytes?.[i] ?? pointBytes(point);
-     if (bytes > QDRANT_MAX_REQUEST_BYTES) {
-       // Deliberately abandon the queued batch rather than flushing it first.
-       // This throw aborts persistSymbolGraph, so the run's metadata is never
-@@ -253,7 +278,7 @@ async function upsertWithinBudget(
-     // Start a new request when this point would push the body over budget, or
-     // when the count cap is reached. A point larger than the budget but under
-     // the ceiling ends up in a request of its own, which is what we want.
--    if (batch.length > 0 && (batchBytes + bytes > QDRANT_UPSERT_BUDGET_BYTES || batch.length >= UPSERT_MAX_POINTS)) {
-+    if (batch.length > 0 && (batchBytes + bytes > limits.budgetBytes || batch.length >= limits.maxPoints)) {
-       await flush();
-     }
-     batch.push(point);
-@@ -319,23 +344,32 @@ function splitRecordByBudget<V>(
-   return groups;
- }
+   function ask<T>(msg: Record<string, unknown>): Promise<T> {
+     const id = ++nextId;
+@@ -53,7 +53,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     const { port } = await new Promise<{ port: number }>((resolve) => server.once("message", resolve));
+     process.env.QDRANT_URL = `http://127.0.0.1:${port}`;
+     store = await import("../../src/services/symbol-graph-store.js");
+-    ({ describeQdrantError } = await import("../../src/services/qdrant.js"));
++    qdrant = await import("../../src/services/qdrant.js");
+   });
  
-+/** How one kind of shard turns a (sub)record into a point payload. */
-+type ShardPayloadFor<V> = (
-+  entries: Record<string, V>,
-+  part: number,
-+  parts: number,
-+) => Record<string, unknown>;
+   afterAll(async () => {
+@@ -67,6 +67,10 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     store.resetSymbolGraphCollectionCache();
+   });
+ 
++  afterEach(() => {
++    vi.restoreAllMocks();
++  });
 +
- /**
-- * Write a shard as one point when it fits, or as parts when it does not, and
-- * remove continuation parts a previous, larger write left behind. The
-- * `payloadFor` callback supplies each part's payload so name and reverse
-- * shards keep their existing payload shapes exactly.
-+ * Serialize one shard into the point or points that hold it. Makes no client
-+ * calls, so the sequential rewrite path ({@link saveShardPoints}) and the bulk
-+ * fresh-generation path ({@link saveShardsForFreshGeneration}) share a single
-+ * definition of ids, payload shapes and write identity. `payloadFor` supplies
-+ * each part's payload so name and reverse shards keep their existing shapes
-+ * exactly.
-+ *
-+ * Throws {@link SymbolGraphPointTooLargeError} for an entry that cannot be
-+ * placed in any part.
-  */
--async function saveShardPoints<V>(
--  collName: string,
-+function buildShardPoints<V>(
-   primaryKey: string,
-   primaryId: string,
-   record: Record<string, V>,
-   what: string,
--  payloadFor: (entries: Record<string, V>, part: number, parts: number) => Record<string, unknown>,
-+  payloadFor: ShardPayloadFor<V>,
-   generation?: string,
--): Promise<void> {
--  const qdrant = storeClient();
--
-+): SymgraphPoint[
-```
-
-**File**: `tests/unit/graph-symbol-error-record.test.ts` (modified, +1/-2)
-```diff
-@@ -34,8 +34,7 @@ vi.mock("../../src/services/symbol-graph-store.js", async (importOriginal) => {
-     ...actual,
-     ensureSymbolGraphCollections: vi.fn(async () => undefined),
-     saveSymbolGraphMeta: vi.fn(async () => undefined),
--    saveNameShard: vi.fn(async () => undefined),
--    saveReverseShard: vi.fn(async () => undefined),
-+    saveShardsForFreshGeneration: vi.fn(async () => undefined),
-     deleteSymbolGraphData: vi.fn(async () => undefined),
-     saveFilePayloads: vi.fn(async () => {
-       if (!symbolPersistFails.value) return undefined;
-```
-
-**File**: `tests/unit/symbol-graph-fresh-generation-publish.test.ts` (added, +276/-0)
-```diff
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: AGPL-3.0-only
-+// Copyright (C) 2026 Giancarlo Erra - Altaire Limited
-+
-+/**
-+ * The build-level half of the fresh-generation shard write: a real
-+ * `rebuildGraph` against an in-memory Qdrant. It checks what only the whole
-+ * pipeline can show — that a generation is published only after every batch of
-+ * its shards landed, that a failed later batch leaves the previous generation
-+ * serving and the staged one deleted, and that the symbol, impact and flow
-+ * tools answer identically whether a generation's shards were written in bulk
-+ * or one by one.
-+ */
-+
-+import fs from "node:fs";
-+import os from "node:os";
-+import path from "node:path";
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+
-+interface StoredPoint {
-+  id: string;
-+  vector: number[];
-+  payload: Record<string, unknown>;
-+}
-+const store = new Map<string, Map<string, StoredPoint>>();
-+const indexRetrieves: string[][] = [];
-+let indexUpsertAttempts = 0;
-+/** When > 0, the Nth upsert to a symbol-graph index collection (1 = next) throws. */
-+let failIndexUpsertAt = 0;
-+
-+const clientInstance = {
-+  getCollections: async () => ({ collections: Array.from(store.keys()).map((name) => ({ name })) }),
-+  createCollection: async (name: string) => {
-+    if (!store.has(name)) store.set(name, new Map());
-+  },
-+  createPayloadIndex: async () => ({}),
-+  deleteCollection: async (name: string) => {
-+    store.delete(name);
-+  },
-+  query: async () => ({ points: [] }),
-+  getCollection: async (name: string) => {
-+    const coll = store.get(name);
-+    if (!coll) throw Object.assign(new Error(`Collection ${name} does not exist`), { status: 404 });
-+    return { points_count: coll.size, status: "green", config: { params: { vectors: { size: 3 } } } };
-+  },
-+  upsert: async (name: string, body: { points: StoredPoint[] }) => {
-+    if (name.endsWith("_symgraph_index")) {
-+      indexUpsertAttempts++;
-+      if (failIndexUpsertAt > 0 && indexUpsertAttempts === failIndexUpsertAt) {
-+        throw Object.assign(new Error("Bad Request"), { status: 400 });
-+      }
-+    }
-+    const coll = store.get(name) ?? new Map<string, StoredPoint>();
-+    for (const p of body.points) coll.set(String(p.id), p);
-+    store.set(name, coll);
-+  },
-+  retrieve: async (name: string, opts: { ids: Array<string | number> }) => {
-+    if (name.endsWith("_symgraph_index")) indexRetrieves.push(opts.ids.map(String));
-+    const coll = store.get(name) ?? new Map<string, StoredPoint>();
-+    return opts.ids.map((id) => coll.get(String(id))).filter((p): p is StoredPoint => p !== undefined);
-+  },
-+  delete: async (
-+    name: string,
-+    opts: {
-+      points?: Array<string | number>;
-+      filter?: { must?: Array<{ key?: string; match?: { value?: string }; is_empty?: { key: string } }> };
-+    },
-+  ) => {
-+    const coll = store.get(name);
-+    if (!coll) return;
-+    for (const id of opts.points ?? []) coll.delete(String(id));
-+    for (const cond of opts.filter?.must ?? []) {
-+      for (const [id, pt] of Array.from(coll.entries())) {
-+        if (cond.key === "generation" && pt.payload?.generation === cond.match?.value) coll.delete(id);
-+        if (cond.is_empty?.key === "generation" && pt.payload?.generation == null) coll.delete(id);
-+      }
-+    }
-+  },
-+  scroll: async (name: string) => ({
-+    points: Array.from((store.get(name) ?? new Map<string, StoredPoint>()).values()),
-+    next_page_offset: null,
-+  }),
-+};
-+
-+// The real qdrant.ts constructs its own client, which a module-level mock of
-+// qdrant.ts cannot reach; mocking the constructor routes the real persistence
-+// layer to the in-memory store.
-+vi.mock("@qdrant/js-client-rest", () => ({
-+  QdrantClient: function QdrantClient() {
-+    return clientInstance;
-+  },
-+}));
-+
-+vi.mock("../../src/services/qdrant.js", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("../../src/services/qdrant.js")>();
-+  return {
-+    ...actual,
-+    getClient: () => clientInstance,
-+    describeQdrantError: (err: unknown) => (err instanceof Error ? err.message : String(err)),
-+  };
-+});
-+
-+import { projectIdFromPath, symgraphFileCollectionName, symgraphIndexCollectionName } from "../../src/config.js";
-+import { SYMBOL_REVERSE_SHARDS } from "../../src/constants.js";
-+import {
-+  ensureDynamicLanguages,
-+  getLastGraphBuildCompleted,
-+  invalidateGraphCache,
-+  rebuildGraph,
-+} from "../../src/services/code-graph.js";
-+import {
-+  getSymbolGraphCache,
-+  resetSymbolGraphCacheRegistry,
-+  SymbolGraphCache,
-+  setSymbolGraphCache,
-+} from "../../src/services/symbol-graph-cache.js";
-+import {
-+  allNameShardKeys,
-+  listStoredGenerations,
-+  loadFilePayload,
-+  loadNameShard,
-+  loadReverseShard,
-+  loadSymbolGraphMeta,
-+  resetSymbolGraphCollectionCache,
-+  saveFilePayloads,
-+  saveNameShard,
-+  saveReverseShard,
-+  saveSymbolGraphMeta,
-+} from "../../src/services/symbol-graph-store.js";
-+import { handleGraphTool } from "../../src/tools/gr
-```
-
-**File**: `tests/unit/symbol-graph-fresh-generation.test.ts` (added, +606/-0)
-```diff
-@@ -0,0 +1,606 @@
-+// SPDX-License-Identifier: AGPL-3.0-only
-+// Copyright (C) 2026 Giancarlo Erra - Altaire Limited
-+
-+/**
-+ * Publishing a symbol graph used to write its ~283 name and reverse shards one
-+ * shard at a time, and each write first retrieved the shard's previous primary
-+ * point to learn how many continuation parts to clean up — even for a staged
-+ * generation whose point ids cannot exist yet. `saveShardsForFreshGeneration`
-+ * writes a generation the caller just minted in a few coalesced requests with
-+ * no previous-part reads.
-+ *
-+ * The fake below is a real in-memory point store that counts every request, so
-+ * each test is a write-then-read round trip as well as a request-count check.
-+ */
-+
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import { QDRANT_UPSERT_BUDGET_BYTES, SYMBOL_SHARD_BULK_REQUEST_BYTES } from "../../src/constants.js";
-+import type { SymbolRef } from "../../src/types.js";
-+
-+interface StoredPoint {
-+  id: string;
-+  vector: number[];
-+  payload: Record<string, unknown>;
-+}
-+interface UpsertRequest {
-+  collName: string;
-+  points: number;
-+  bytes: number;
-+  /** The payload of every point in the request, in order. */
-+  payloads: Array<Record<string, unknown>>;
-+}
-+
-+const store = new Map<string, Map<string, StoredPoint>>(); // collection -> id -> point
-+const upserts: UpsertRequest[] = [];
-+const retrieves: Array<{ collName: string; ids: string[] }> = [];
-+const deletes: Array<{ collName: string; points: string[] }> = [];
-+let inFlightUpserts = 0;
-+let maxInFlightUpserts = 0;
-+/** When > 0, the Nth upsert request from now (1 = the next one) throws. */
-+let failUpsertAt = 0;
-+let upsertAttempts = 0;
-+
-+vi.mock("../../src/services/qdrant.js", () => ({
-+  getClient: () => ({
-+    getCollections: async () => ({ collections: Array.from(store.keys()).map((name) => ({ name })) }),
-+    createCollection: async (name: string) => {
-+      if (!store.has(name)) store.set(name, new Map());
-+    },
-+    upsert: async (name: string, body: { points: StoredPoint[] }) => {
-+      upsertAttempts++;
-+      inFlightUpserts++;
-+      maxInFlightUpserts = Math.max(maxInFlightUpserts, inFlightUpserts);
-+      try {
-+        // Yield, so a caller that issued requests concurrently would overlap.
-+        await new Promise((resolve) => setImmediate(resolve));
-+        if (failUpsertAt > 0 && upsertAttempts === failUpsertAt) {
-+          throw Object.assign(new Error("Bad Request"), { status: 400 });
-+        }
-+        upserts.push({
-+          collName: name,
-+          points: body.points.length,
-+          bytes: Buffer.byteLength(JSON.stringify(body), "utf-8"),
-+          payloads: body.points.map((p) => p.payload),
-+        });
-+        const coll = store.get(name) ?? new Map<string, StoredPoint>();
-+        for (const p of body.points) coll.set(String(p.id), p);
-+        store.set(name, coll);
-+      } finally {
-+        inFlightUpserts--;
-+      }
-+    },
-+    retrieve: async (name: string, opts: { ids: Array<string | number> }) => {
-+      retrieves.push({ collName: name, ids: opts.ids.map(String) });
-+      const coll = store.get(name) ?? new Map<string, StoredPoint>();
-+      return opts.ids.map((id) => coll.get(String(id))).filter((p): p is StoredPoint => p !== undefined);
-+    },
-+    delete: async (name: string, opts: { points: Array<string | number> }) => {
-+      deletes.push({ collName: name, points: opts.points.map(String) });
-+      const coll = store.get(name);
-+      if (coll) for (const id of opts.points) coll.delete(String(id));
-+    },
-+  }),
-+  describeQdrantError: (err: unknown) => (err instanceof Error ? err.message : String(err)),
-+}));
-+
-+vi.mock("../../src/services/logger.js", () => ({
-+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
-+}));
-+
-+import { SYMBOL_REVERSE_SHARDS } from "../../src/constants.js";
-+import {
-+  allNameShardKeys,
-+  type FreshGenerationShards,
-+  LEGACY_SYMBOL_GRAPH_GENERATION,
-+  loadNameShard,
-+  loadReverseShard,
-+  registerStagingGeneration,
-+  resetGenerationLifecycleState,
-+  resetSymbolGraphCollectionCache,
-+  reverseShardHex,
-+  StorageReadError,
-+  SymbolGraphPointTooLargeError,
-+  saveNameShard,
-+  saveReverseShard,
-+  saveShardsForFreshGeneration,
-+  setActiveSymbolGraphGeneration,
-+} from "../../src/services/symbol-graph-store.js";
-+
-+const PROJ = "freshgen";
-+const INDEX_COLL = `${PROJ}_symgraph_index`;
-+/** The 27 name keys plus the 256 reverse buckets. */
-+const ALL_SHARDS = 27 + SYMBOL_REVERSE_SHARDS;
-+
-+function refsFor(name: string, count: number, pathLen = 60): SymbolRef[] {
-+  const refs: SymbolRef[] = [];
-+  for (let i = 0; i < count; i++) {
-+    const file = `src/${"x".repeat(pathLen)}/${name}${i}.java`;
-+    refs.push({ file, id: `${file}::${name}` });
+   const payload = (version: string): SymbolGraphFilePayload => ({
+     file: "src/a.ts",
+     language: "typescript",
+@@ -75,6 +79,35 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+     outgoingCalls: [],
+   });
+ 
++  function transportError(code: string): TypeError {
++    return new TypeError("fetch failed", { cause: Object.assign(new Error(code), { code }) });
 +  }
-+  return refs;
-+}
 +
-+/** A record whose serialized size comfortably exceeds one part budget (~36 MB). */
-+function oversizedNameRecord(): Record<string, SymbolRef[]> {
-+  const record: Record<string, SymbolRef[]> = 
++  it.each(["EPIPE", "ECONNRESET"])("replays the same upsert once after %s and persists the payload", async (code) => {
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert").mockRejectedValueOnce(transportError(code));
++    const expected = payload("v1");
++    await store.saveFilePayloads("p", [expected], "g1");
++    expect(upsert).toHaveBeenCalledTimes(2);
++    expect(upsert.mock.calls[1]).toEqual(upsert.mock.calls[0]);
++    expect(await store.loadFilePayload("p", expected.file, "g1")).toEqual(expected);
++  });
++
++  it.each(["EPIPE", "ECONNRESET"])("propagates the second %s failure unchanged", async (code) => {
++    const second = transportError(code);
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert")
++      .mockRejectedValueOnce(transportError(code))
++      .mockRejectedValueOnce(second);
++    await expect(store.saveFilePayloads("p", [payload("v1")], "g1")).rejects.toBe(second);
++    expect(upsert).toHaveBeenCalledTimes(2);
++  });
++
++  it("propagates a refused connection on the first attempt", async () => {
++    const refused = transportError("ECONNREFUSED");
++    const upsert = vi.spyOn(qdrant.getClient(), "upsert").mockRejectedValueOnce(refused);
++    await expect(store.saveFilePayloads("p", [payload("v1")], "g1")).rejects.toBe(refused);
++    expect(upsert).toHaveBeenCalledTimes(1);
++  });
++
+   it("retries an upsert sent after the slow step, and stores the payload", async () => {
+     await store.saveFilePayloads("p", [payload("v1")], "g1");
+     slowSynchronousStep();
+@@ -104,7 +137,7 @@ describe("symbol-graph store: requests on a connection closed during a slow step
+       (e: unknown) => e,
+     );
+     expect(err, "second consecutive close must reject").not.toBeNull();
+-    expect(describeQdrantError(err)).toBe("fetch failed: other side closed [UND_ERR_SOCKET]");
++    expect(qdrant.describeQdrantError(err)).toBe("fetch failed: other side closed [UND_ERR_SOCKET]");
+   });
+ 
+   it("does not retry a request the server answered with an error", async () => {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #220** (2026-11-27): fix(symbol-graph): retry Qdrant requests on EPIPE and ECONNRESET (@giancarloerra)
 - **PR #218** (2026-11-21): fix: restore CI for cargo 1.100 and for the Node 18.17 consumer install (@mgd43b)
 - **PR #217** (2026-11-22): perf(graph): publish a fresh symbol-graph generation's shards in bulk (@mgd43b)
 - **PR #215** (2026-11-04): Fix Ollama credential handling and MCP test teardown (@giancarloerra)
 - **PR #214** (2026-11-04): chore: update packages and fix Ollama proxy authentication (@giancarloerra)
 - **PR #212** (2026-11-02): fix: resolve TS/JS monorepo imports per importer and workspace exports (@giancarloerra)
-- **PR #210** (2026-10-23): fix(search): name the filter when a filtered codebase_search finds nothing (@gnyan-zadara)
 
 ---
 
@@ -1737,28 +1217,31 @@ perf(graph): publish a fresh symbol-graph generation's shards in bulk
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(graph): describe failed-build cleanup of the staged generation as best effo
+## X. Empirical Invariant Guard in symbol-graph-store.ts
 
 **RULE**:
-When implementing operations in `DEVELOPER.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/services/symbol-graph-store.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in giancarloerra/SocratiCode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42283824`: docs(graph): describe failed-build cleanup of the staged generation as best effort. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0afa01aa`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `DEVELOPER.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/symbol-graph-store.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set
+/** True when the error's cause chain holds a closed-socket error from undici or Node. */
+    const code = (current as { code?: unknown }).code;
+    if (code === "UND_ERR_SOCKET" || code === "EPIPE" || code === "ECONNRESET") return true;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-**A fresh generation's shards are published in bulk.** `persistSymbolGraph` mints a new generation id for every build, so none of its name or reverse shard point IDs can already exist. It therefore hands the whole set to `saveShardsForFreshGeneration`, which serializes every shard first (an unsplittable entry fails the call before anything is written, and the pass yields to the event loop after each shard so it does not hold other requests for its whole length), coalesces the resulting points into requests of at most 50 points and `SYMBOL_SHARD_BULK_REQUEST_BYTES` (128 KiB) of serialized points, and sends them one after another with no previous-part lookups. For a graph of ~283 small shards that is about 6 write requests instead of 283 reads plus 283 writes; for larger shards it is more, because the byte bound keeps requests small. The bound is much lower than the 24 MiB `QDRANT_UPSERT_BUDGET_BYTES` the file payloads use on purpose: packing shards up to that budget sent the same bytes as a few multi-MB requests and, on a Qdrant serving searches at the same time, gave a clearly worse search p95 during publication (about 11 ms against about 3.5 ms at 128 KiB and about 2.9 ms with one
+/** True when the error's cause chain holds undici's closed-socket error. */
+    if ((current as { code?: unknown }).code === "UND_ERR_SOCKET") return true;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42283824` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0afa01aa` are properly handled with clean fallback behavior.

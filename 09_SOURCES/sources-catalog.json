@@ -2413,10 +2413,10 @@
     "repository": "giancarloerra/SocratiCode",
     "platform": "github",
     "sourceUrl": "https://github.com/giancarloerra/SocratiCode",
-    "sourceVersion": "d7bc0dc4",
+    "sourceVersion": "0afa01aa",
     "license": "AGPL-3.0",
-    "contentHash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
-    "lastHarvestedAt": "2026-11-23T05:24:22.977Z",
+    "contentHash": "9121c377013b07a6e1eacf3790bf2f862b783e928edfbdeb3681354baefb290a",
+    "lastHarvestedAt": "2026-11-27T15:54:29.102Z",
     "learningId": "learn-github-giancarloerra-socraticode"
   },
   "jaredpalmer-formik": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "3ae6b7f0",
+    "sourceVersion": "f89d6750",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
-    "lastHarvestedAt": "2026-11-25T23:24:12.009Z",
+    "contentHash": "a5ef16a27e580ed87933f44891b213429426407944eba35ebde502902bb54e30",
+    "lastHarvestedAt": "2026-11-27T15:54:27.181Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {

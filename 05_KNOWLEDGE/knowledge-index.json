@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:45:46.562Z",
+  "last_updated": "2026-11-27T15:54:35.714Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26629,
+  "total_items": 26633,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3abdcb6f6c3c6d4c5b0d32a3d5531e47077056f3248b8896e0f130f287ed6fc",
+      "content_hash": "477df1033e24e9afdeaae1ec9d9c6c35cb562287e8a5efd8d96d918f765e9f90",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:27:48.756Z"
+      "persisted_at": "2026-11-27T15:54:35.714Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -295939,8 +295939,8 @@
       "slug": "rustcrypto-hashes",
       "platform": "github",
       "source_url": "https://github.com/RustCrypto/hashes",
-      "source_version": "3ae6b7f0",
-      "content_hash": "d3e07efb793400315e659393b253208df55902c45e19677e8d8c1badfb5422fe",
+      "source_version": "f89d6750",
+      "content_hash": "a5ef16a27e580ed87933f44891b213429426407944eba35ebde502902bb54e30",
       "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
       "promoted_rules": [
@@ -295958,6 +295958,11 @@
           "number": 10559,
           "title": "Release sha2 v0.11.2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10922,
+          "title": "compilation error for explicitly selected `aarch64-sha2` backend",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -295965,7 +295970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:24:11.685Z",
+      "verified_at": "2026-11-27T15:54:26.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296007,10 +296012,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
       "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
       "repository": "RustCrypto/hashes",
-      "source_version": "3ae6b7f0",
-      "content_hash": "f610dc7a554cbad596dc9365f7b4195982cc0ff341b71115ae62d5c382eaedc1",
+      "source_version": "f89d6750",
+      "content_hash": "62c036367d99fb1904c380c681fb615ad950beadaa44844e99e51bfb3d1d937f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:24:12.590Z"
+      "persisted_at": "2026-11-27T15:54:27.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes",
@@ -296019,10 +296024,10 @@
       "relative_path": "08_VERIFICATION/rustcrypto-hashes-verification-protocol-empirical-defect-shield-for-rustcrypto-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for RustCrypto/hashes",
       "repository": "RustCrypto/hashes",
-      "source_version": "3ae6b7f0",
-      "content_hash": "2bfa20b92b6d144898d535e956de50ec5531cfff3f1996826b39724a15ae4301",
+      "source_version": "f89d6750",
+      "content_hash": "69216e4263a31149368123a4c34403771f57c42cb1b08b6983f7642d16bfe643",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:24:12.846Z"
+      "persisted_at": "2026-11-27T15:54:27.859Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings",
@@ -296056,9 +296061,9 @@
       "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb00c4a784680bc7bfd2aefe6d190cc2ede47d14721ff46510fe0e29c00c7eb6",
+      "content_hash": "b3c6f626e4b704b59f58f3c917610c5bfbe865f779b578c2b51d381769d20411",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:24:19.516Z"
+      "persisted_at": "2026-11-27T15:54:33.478Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings",
@@ -296068,9 +296073,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rustcrypto-hashes-learnings",
       "repository": "rustcrypto-hashes-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8e3601f5ef3f32debd8f17bf08a811fd1fd2c84cf9a85183e46f4188cdb5302",
+      "content_hash": "0df1e59ad3b4f080c5df953a015e6ab264e8f22032ecf0a267caf03254fe030f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:24:19.785Z"
+      "persisted_at": "2026-11-27T15:54:33.689Z"
     },
     "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct": {
       "learning_id": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
@@ -323583,8 +323588,8 @@
       "slug": "giancarloerra-socraticode",
       "platform": "github",
       "source_url": "https://github.com/giancarloerra/SocratiCode",
-      "source_version": "d7bc0dc4",
-      "content_hash": "5db88b5eb84293efd041842a017d17900d87828cca3860560745acb8f27a6cad",
+      "source_version": "0afa01aa",
+      "content_hash": "9121c377013b07a6e1eacf3790bf2f862b783e928edfbdeb3681354baefb290a",
       "dossier_path": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/giancarloerra-socraticode-learnings.md",
       "promoted_rules": [
@@ -323597,6 +323602,11 @@
           "number": 10024,
           "title": "docs(graph): describe failed-build cleanup of the staged generation as best effo",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10923,
+          "title": "Empirical Invariant Guard in symbol-graph-store.ts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -323604,7 +323614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:24:22.772Z",
+      "verified_at": "2026-11-27T15:54:28.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -323646,10 +323656,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-giancarloerra-socraticode-technical-construction-intelligence-giancarloerra-socr.md",
       "title": "Technical Construction Intelligence: giancarloerra/SocratiCode Core Invariants",
       "repository": "giancarloerra/SocratiCode",
-      "source_version": "d7bc0dc4",
-      "content_hash": "2f3677fd9c1a5c0ac45416f43c65cdf1496119be65f0ab4345a92aef9a50f7db",
+      "source_version": "0afa01aa",
+      "content_hash": "5c7c1ef9b3ac2e12112e9846f2571240935b46b45fe5c9b173b5dbe2fde3cde4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:24:23.355Z"
+      "persisted_at": "2026-11-27T15:54:29.537Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode",
@@ -323658,10 +323668,10 @@
       "relative_path": "08_VERIFICATION/giancarloerra-socraticode-verification-protocol-empirical-defect-shield-for-gian.md",
       "title": "Verification Protocol: Empirical Defect Shield for giancarloerra/SocratiCode",
       "repository": "giancarloerra/SocratiCode",
-      "source_version": "d7bc0dc4",
-      "content_hash": "1ca038d45f290217bf1c57ad4d5bfc646bfc6b8edff498f5fafb20bc15865b02",
+      "source_version": "0afa01aa",
+      "content_hash": "ed4b5e4b173d3e7d5dfc30647aa2308050a89940101424f940707a99af0083bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:24:23.517Z"
+      "persisted_at": "2026-11-27T15:54:29.732Z"
     },
     "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a": {
       "item_id": "candidate_directive-cute-rs-upgrade-cutlass-compiler-to-4-8-1-and-enable-vera-rubin-sm_107a",
@@ -323695,9 +323705,9 @@
       "title": "Technical Construction Intelligence: giancarloerra-socraticode-learnings Core Invariants",
       "repository": "giancarloerra-socraticode-learnings",
       "source_version": "HEAD",
-      "content_hash": "3da8b14605fd840fd61d6fd3c27b2861a621d7fdd1919440cbca763f99255ec9",
+      "content_hash": "ecae3dca0df889da778a0a608445580437865d7ad65041e457a343e2c6f3320e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:27:31.777Z"
+      "persisted_at": "2026-11-27T15:54:34.393Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-giancarloerra-socraticode-lear",
@@ -323707,9 +323717,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for giancarloerra-socraticode-learnings",
       "repository": "giancarloerra-socraticode-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c1f618dfa872cf385e0d0a2ab8610b39d95486b2ba97f6355f478f6bf6679fc",
+      "content_hash": "3b08718d1ab5536ffdfeaaca658e21c57623ec9a9f70de6ade9440fd8192b84a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:27:31.944Z"
+      "persisted_at": "2026-11-27T15:54:34.599Z"
     },
     "learn-github-lingodotdev-lingo-dev": {
       "learning_id": "learn-github-lingodotdev-lingo-dev",
@@ -358361,13 +358371,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y1WS-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WHWO-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "392edd5e49afbba078a7c4187be3b803d0803a6f88130bdf5daf9fd503881b3d",
+      "content_hash": "8f0fc415c8b5699cc1a4c82e446f070dfef5a60d3a90e8253b8e1cfd384a32b4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:27:48.281Z"
+      "persisted_at": "2026-11-27T15:54:35.307Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358377,9 +358387,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e04de3d735a3eb9fd3243591debbda5e58f877966b110d49282c19aed244caa0",
+      "content_hash": "978cef332c67ab938f296efc182d296c7f9f0b7af2694539245af76f3b320cd1",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:27:48.519Z"
+      "persisted_at": "2026-11-27T15:54:35.513Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -365597,6 +365607,58 @@
       "content_hash": "726a70078a5b6dcb8f223b3509e3145d33999d7ac08632b3ac596e81820eef17",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T15:45:43.977Z"
+    },
+    "rule-10922": {
+      "learning_id": "rule-10922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10922,
+      "title": "compilation error for explicitly selected `aarch64-sha2` backend",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "f89d6750",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:54:26.900Z"
+    },
+    "candidate_directive-compilation-error-for-explicitly-selected-aarch64-sha2-backend": {
+      "item_id": "candidate_directive-compilation-error-for-explicitly-selected-aarch64-sha2-backend",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WGBX-compilation-error-for-explicitly-selected-aarch64-sha2-backend.md",
+      "title": "compilation error for explicitly selected `aarch64-sha2` backend",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "280605e8521dbd54f10274ff446dd64fb6eb6108590255520fa4e084b8fcede2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:54:33.262Z"
+    },
+    "rule-10923": {
+      "learning_id": "rule-10923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10923,
+      "title": "Empirical Invariant Guard in symbol-graph-store.ts",
+      "source_url": "https://github.com/giancarloerra/SocratiCode",
+      "source_version": "0afa01aa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:54:28.832Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-symbol-graph-store-ts": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-symbol-graph-store-ts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WH1I-empirical-invariant-guard-in-symbol-graph-store-ts.md",
+      "title": "Empirical Invariant Guard in symbol-graph-store.ts",
+      "repository": "giancarloerra-socraticode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "350a4486aaa8440f707778a5051eb0bfb7a20315ee44fbd49e36447b68f61556",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T15:54:34.183Z"
     }
   },
   "ai-builder-brain": {

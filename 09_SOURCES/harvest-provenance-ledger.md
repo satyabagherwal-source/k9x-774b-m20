@@ -13843,3 +13843,5 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `f5942749` | Multi-dimensional audit evidence | 2026-11-27T15:36:46.789Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `8566ba53` | Multi-dimensional audit evidence | 2026-11-27T15:45:25.821Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `7036495c` | Multi-dimensional audit evidence | 2026-11-27T15:45:39.375Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `f89d6750` | Multi-dimensional audit evidence | 2026-11-27T15:54:27.181Z |
+| `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `0afa01aa` | Multi-dimensional audit evidence | 2026-11-27T15:54:29.102Z |
