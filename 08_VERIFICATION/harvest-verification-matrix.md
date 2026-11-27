@@ -13716,3 +13716,5 @@
 | `CYCLE-20261127-W88O` | `2026-11-27T07:30:29.688Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`b905944f...`) |
 | `CYCLE-20261127-WG90` | `2026-11-27T07:30:40.068Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10850` | Yes (`f5b11a34...`) |
 | `CYCLE-20261127-WK5G` | `2026-11-27T07:30:45.124Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10851` | Yes (`2161f24c...`) |
+| `CYCLE-20261127-7IEH` | `2026-11-27T07:39:16.073Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`52990d42...`) |
+| `CYCLE-20261127-7OXK` | `2026-11-27T07:39:24.536Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10852` | Yes (`775e5e15...`) |

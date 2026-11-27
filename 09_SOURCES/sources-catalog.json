@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "8934624ed886fd0d7fcb4ee67472e11fce92850c6c78428d64c77999db412b97",
-    "lastHarvestedAt": "2026-11-23T22:14:46.178Z",
+    "contentHash": "52990d42c37bd28e1c63fbc3e49da9db41ddd7418db53d6900d6fe3256fb8f56",
+    "lastHarvestedAt": "2026-11-27T07:39:16.078Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "9e35a9ba",
+    "sourceVersion": "6ec85c29",
     "license": "Apache-2.0",
-    "contentHash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
-    "lastHarvestedAt": "2026-11-24T20:29:57.043Z",
+    "contentHash": "775e5e151d1556aed28aad0c02d12d35fa494e18ac7d5317c4b0a9172e7a3c09",
+    "lastHarvestedAt": "2026-11-27T07:39:24.550Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {

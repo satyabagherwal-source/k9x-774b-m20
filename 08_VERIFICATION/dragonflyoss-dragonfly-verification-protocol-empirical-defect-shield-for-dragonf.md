@@ -4,22 +4,22 @@
 {
   "source_repository": "dragonflyoss/dragonfly",
   "source_url": "https://github.com/dragonflyoss/dragonfly",
-  "source_version": "9e35a9ba",
+  "source_version": "6ec85c29",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T20:29:57.275Z",
+  "timestamp": "2026-11-27T07:39:24.803Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dragonflyoss-dragonfly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly) (Revision: `9e35a9ba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T20:29:57.275Z`  
+> **Provenance**: Harvested from [dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly) (Revision: `6ec85c29`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T07:39:24.803Z`  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dragonflyoss/dragonfly` (Commit: `9e35a9ba`)
+- **Target Repository**: `dragonflyoss/dragonfly` (Commit: `6ec85c29`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T20:29:56.079Z  
+> **Harvest Timestamp**: 2026-11-27T07:39:23.266Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Delivers efficient, stable, and secure data distribution and acceleration powered by P2P technology, with an optional content‑addressable filesystem that accelerates OCI container launch.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3367 stars
+- **Stars / Engagement**: 3369 stars
 
 ---
 
@@ -1165,94 +1165,333 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e35a9ba` (2026-11-24)
-**Commit Message**: chore(ci): bump grpc_health_probe to v0.4.63 (#5136)
+### Incident Patch 1: `6ec85c29` (2026-11-27)
+**Commit Message**: feat(scheduler): add StatImageManifest and AnnounceImageManifest (#5148)
 
-Signed-off-by: Wendell Beckwith <[REDACTED_EMAIL]>
-Co-authored-by: Wendell Beckwith <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* feat(scheduler): add StatImageManifest and AnnounceImageManifest
 
-**File**: `build/images/manager/Dockerfile` (modified, +1/-1)
+The peer announces the image manifest that a tag is resolved to from
+the registry, and the scheduler returns it to the other peers until the
+ttl expires, so the tag can be resolved when the registry is unavailable.
+The scheduler keeps the digest, the media type and the content length of
+the image manifest, it does not access the registry.
+
+- Add scheduler/cache, the go-redis/cache with the local TinyLFU cache as
+  the manager. It only uses the local cache if redis is not enabled.
+- The record carries its own expiration time, because the local cache
+  does not expire a record by the ttl of the request. The local cache
+  keeps 100000 records for at most 7 days.
+- Add the metrics of the two RPCs.
+- Bump d7y.io/api to v2.3.14.
+
+Related to dragonflyoss/dragonfly#5116.
+
+Signed-off-by: Chlins Zhang <[REDACTED_EMAIL]>
+
+* refactor(scheduler): tidy image manifest handlers and tests
+
+Add an info log when a peer stats an image manifest and reuse a shared
+host-scoped logger and cache key in both StatImageManifest and
+AnnounceImageManifest, without changin
+
+**File**: `deploy/docker-compose/template/scheduler.template.yaml` (modified, +13/-0)
 ```diff
-@@ -31,7 +31,7 @@ RUN make build-manager-server && make install-manager
+@@ -72,6 +72,19 @@ scheduler:
+     # then HostTTl will be reset.
+     hostTTL: 1h
  
- FROM ${BASE_IMAGE} AS health
- 
--ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
-+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
- 
- RUN if [ "$(uname -m)" = "ppc64le" ]; then \
-     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-ppc64le; \
++# Cache configuration.
++cache:
++  # Redis cache configuration.
++  redis:
++    # Cache TTL.
++    ttl: 720h
++  # Local cache configuration.
++  local:
++    # Size of LFU cache.
++    size: 100000
++    # Cache TTL.
++    ttl: 168h
++
+ # Dynamic data configuration.
+ dynConfig:
+   # Dynamic config refresh interval.
 ```
 
-**File**: `build/images/scheduler/Dockerfile` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ RUN make build-scheduler && make install-scheduler
+@@ -3,7 +3,7 @@ module d7y.io/dragonfly/v2
+ go 1.25.0
  
- FROM ${BASE_IMAGE} AS health
- 
--ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
-+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
- 
- RUN if [ "$(uname -m)" = "ppc64le" ]; then \
-     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-ppc64le; \
+ require (
+-	d7y.io/api/v2 v2.3.12
++	d7y.io/api/v2 v2.3.17
+ 	d7y.io/hashring v0.3.0
+ 	github.com/Showmax/go-fqdn v1.0.0
+ 	github.com/VividCortex/mysqlerr v1.0.0
 ```
 
----
-
-### Incident Patch 2: `9796cba1` (2026-11-24)
-**Commit Message**: chore(deps): bump github/codeql-action/upload-sarif from 4.39.3 to 4.39.4 (#5146)
-
-chore(deps): bump github/codeql-action/upload-sarif
-
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.3 to 4.39.4.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
-
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker.yml` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -114,7 +114,7 @@ jobs:
-           output: 'trivy-results.sarif'
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
-         with:
-           sarif_file: 'trivy-results.sarif'
- 
+@@ -53,8 +53,8 @@ cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0Zeo
+ cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
+ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
+ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
+-d7y.io/api/v2 v2.3.12 h1:NNhsmc/kRXs0zu1JS450fZ78jy30obx7LiwhCJKNKXk=
+-d7y.io/api/v2 v2.3.12/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
++d7y.io/api/v2 v2.3.17 h1:b7r+i/rXOvZ5tvkaHeM+7GWVEZBookFLN1ofTHebnTY=
++d7y.io/api/v2 v2.3.17/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
+ d7y.io/hashring v0.3.0 h1:qGIkSNa/g6hSFYV2mBE+mZU16NzzMiCKobti072ACL0=
+ d7y.io/hashring v0.3.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
+ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 ```
 
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+**File**: `pkg/redis/redis.go` (modified, +8/-0)
 ```diff
-@@ -64,6 +64,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: 'Upload to code-scanning'
--        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea
-         with:
-           sarif_file: results.sarif
+@@ -73,6 +73,9 @@ const (
+ 
+ 	// ApplicationsNamespace prefix of applications namespace cache key.
+ 	ApplicationsNamespace = "applications"
++
++	// ManifestTagsNamespace prefix of manifest tags namespace cache key.
++	ManifestTagsNamespace = "manifest-tags"
+ )
+ 
+ // NewRedis returns a new redis client.
+@@ -258,3 +261,8 @@ func MakePersistentCacheHostsInScheduler(schedulerClusterID uint) string {
+ func MakePersistentCachePeersOfPersistentCacheHostInScheduler(schedulerClusterID uint, hostID string) string {
+ 	return MakeKeyInScheduler(SchedulerClustersNamespace, fmt.Sprintf("%d:%s:%s:%s", schedulerClusterID, PersistentCacheHostsNamespace, hostID, PersistentCachePeersForPersistentCacheTaskNamespace))
+ }
++
++// MakeManifestTagKeyInScheduler make manifest tag key in scheduler.
++func MakeManifestTagKeyInScheduler(schedulerClusterID uint, reference string) string {
++	return MakeKeyInScheduler(SchedulerClustersNamespace, fmt.Sprintf("%d:%s:%s", schedulerClusterID, ManifestTagsNamespace, reference))
++}
+```
+
+**File**: `scheduler/cache/cache.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++/*
++ *     Copyright 2026 The Dragonfly Authors
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package cache
++
++import (
++	"time"
++
++	"github.com/go-redis/cache/v9"
++	"github.com/redis/go-redis/v9"
++
++	"d7y.io/dragonfly/v2/scheduler/config"
++)
++
++// Cache is cache client.
++type Cache struct {
++	*cache.Cache
++	TTL time.Duration
++}
++
++// New cache instance, it only uses the local cache if rdb is nil.
++func New(cfg *config.Config, rdb redis.UniversalClient) *Cache {
++	// If the attribute TTL of cache.Item(cache's instance) is 0, redis expiration time is 1 hour.
++	// cfg.Cache.Local.TTL sets the expiration time of TinyLFU.
++	return &Cache{
++		Cache: cache.New(&cache.Options{
++			Redis:      rdb,
++			LocalCache: cache.NewTinyLFU(cfg.Cache.Local.Size, cfg.Cache.Local.TTL),
++		}),
++		TTL: cfg.Cache.Redis.TTL,
++	}
++}
+```
+
+**File**: `scheduler/config/config.go` (modified, +45/-0)
+```diff
+@@ -41,6 +41,9 @@ type Config struct {
+ 	// Database configuration.
+ 	Database DatabaseConfig `yaml:"database" mapstructure:"database"`
+ 
++	// Cache configuration.
++	Cache CacheConfig `yaml:"cache" mapstructure:"cache"`
++
+ 	// Dynconfig configuration.
+ 	DynConfig DynConfig `yaml:"dynConfig" mapstructure:"dynConfig"`
+ 
+@@ -146,6 +149,27 @@ type DatabaseConfig struct {
+ 	Redis RedisConfig `yaml:"redis" mapstructure:"redis"`
+ }
+ 
++type CacheConfig struct {
++	// Redis cache configuration.
++	Redis RedisCacheConfig `yaml:"redis" mapstructure:"redis"`
++
++	// Local cache configuration.
++	Local LocalCacheConfig `yaml:"local" mapstructure:"local"`
++}
++
++type RedisCacheConfig struct {
++	// Cache TTL.
++	TTL time.Duration `yaml:"ttl" mapstructure:"ttl"`
++}
++
++type LocalCacheConfig struct {
++	// Size of LFU cache.
++	Size int `yaml:"size" mapstructure:"size"`
++
++	// Cache TTL.
++	TTL time.Duration `yaml:"ttl" mapstructure:"ttl"`
++}
++
+ type DownloadTinyConfig struct {
+ 	// Scheme is download tiny task scheme.
+ 	Scheme string `yaml:"scheme" mapstructure:"scheme"`
+@@ -376,6 +400,15 @@ func New() *Config {
+ 				PoolTimeout: DefaultRedisPoolTimeout,
+ 			},
+ 		},
++		Cache: CacheConfig{
++			Redis: RedisCacheConfig{
++				TTL: DefaultRedisCacheTTL,
++			},
++			Local: LocalCacheConfig{
++				Size: DefaultLFUCacheSize,
++				TTL:  DefaultLFUCacheTTL,
++			},
++		},
+ 		DynConfig: DynConfig{
+ 			RefreshInterval: DefaultDynConfigRefreshInterval,
+ 		},
+@@ -511,6 +544,18 @@ func (cfg *Config) Validate() error {
+ 		}
+ 	}
+ 
++	if cfg.Cache.Redis.TTL <= 0 {
++		return errors.New("redis requires parameter ttl")
++	}
++
++	if cfg.Cache.Local.Size <= 0 {
++		return errors.New("local requires parameter size")
++	}
++
++	if cfg.Cache.Local.TTL <= 0 {
++		return errors.New("local requires parameter ttl")
++	}
++
+ 	if cfg.DynConfig.RefreshInterval <= 0 {
+ 		return errors.New("dynconfig requires parameter refreshInterval")
+ 	}
+```
+
+**File**: `scheduler/config/config_test.go` (modified, +48/-0)
+```diff
+@@ -111,6 +111,15 @@ func TestConfig_Load(t *testing.T) {
+ 				PoolTimeout: 1 * time.Second,
+ 			},
+ 		},
++		Cache: CacheConfig{
++			Redis: RedisCacheConfig{
++				TTL: 1 * time.Second,
++			},
++			Local: LocalCacheConfig{
++				Size: 10000,
++				TTL:  1 * time.Second,
++			},
++		},
+ 		DynConfig: DynConfig{
+ 			RefreshInterval: 10 * time.Second,
+ 		},
+@@ -346,6 +355,45 @@ func TestConfig_Validate(t *testing.T) {
+ 				assert.Error(err)
+ 			},
+ 		},
++		{
++			name:   "redis requires parameter ttl",
++			config: New(),
++			mock: func(cfg *Config) {
++				cfg.Manager = mockManagerConfig
++				cfg.Database.Redis = mockRedisConfig
++				cfg.Cache.Redis.TTL = 0
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.EqualError(err, "redis requires parameter ttl")
++			},
++		},
++		{
++			name:   "local requires parameter size",
++			config: New(),
++			mock: func(cfg *Config) {
++				cfg.Manager = mockManagerConfig
++				cfg.Database.Redis = mockRedisConfig
++				cfg.Cache.Local.Size = 0
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.EqualError(err, "local requires parameter size")
++			},
++		},
++		{
++			name:   "local requires parameter ttl",
++			config: New(),
++			mock: func(cfg *Config) {
++				cfg.Manager = mockManagerConfig
++				cfg.Database.Redis = mockRedisConfig
++				cfg.Cache.Local.TTL = 0
++			},
++			expect: func(t *testing.T, err error) {
++				assert := assert.New(t)
++				assert.EqualError(err, "local requires parameter ttl")
++			},
++		},
+ 		{
+ 			name:   "redis tls allows insecureSkipVerify only",
+ 			config: New(),
+```
+
+**File**: `scheduler/config/constants.go` (modified, +12/-0)
+```diff
+@@ -63,6 +63,18 @@ const (
+ 	DefaultRedisPoolTimeout = 10 * time.Second
+ )
+ 
++const (
++	// DefaultRedisCacheTTL is default ttl for redis cache.
++	DefaultRedisCacheTTL = 720 * time.Hour
++
++	// DefaultLFUCacheTTL is default ttl for lfu cache.
++	DefaultLFUCacheTTL = 168 * time.Hour
++
++	// DefaultLFUCacheSize is default size for lfu cache. A record of the manifest tag
++	// takes about 500 bytes, so the lfu cache takes about 47MiB when it is full.
++	DefaultLFUCacheSize = 100 * 1000
++)
++
+ const (
+ 	// DefaultSchedulerAlgorithm is default algorithm for scheduler.
+ 	DefaultSchedulerAlgorithm = "default"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5148** (2026-11-27): feat(scheduler): add StatImageManifest and AnnounceImageManifest (@chlins)
 - **PR #5146** (2026-11-24): chore(deps): bump github/codeql-action/upload-sarif from 4.39.3 to 4.39.4 (@dependabot[bot])
 - **PR #5145** (closed): chore(deps): bump golang.org/x/sync from 0.22.0 to 0.25.0 (@dependabot[bot])
 - **PR #5144** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.4 (@dependabot[bot])
 - **PR #5143** (2026-11-24): chore(deps): bump github.com/bits-and-blooms/bitset from 1.29.0 to 1.30.0 (@dependabot[bot])
 - **PR #5142** (2026-11-24): chore(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0 (@dependabot[bot])
-- **PR #5141** (closed): chore(deps): bump github/codeql-action/autobuild from 4.36.2 to 4.39.4 (@dependabot[bot])
 
 ---
 
@@ -1272,31 +1511,43 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): bump grpc_health_probe to v0.4.63
+## X. scheduler): add StatImageManifest and AnnounceImageManifest
 
 **RULE**:
-When implementing operations in `build/images/manager/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/docker-compose/template/scheduler.template.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e35a9ba`: ci): bump grpc_health_probe to v0.4.63. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6ec85c29`: scheduler): add StatImageManifest and AnnounceImageManifest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/images/manager/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/docker-compose/template/scheduler.template.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.63
+# Cache configuration.
+cache:
+  # Redis cache configuration.
+  redis:
+    # Cache TTL.
+    ttl: 720h
+  # Local cache configuration.
+  local:
+    # Size of LFU cache.
+    size: 100000
+    # Cache TTL.
+    ttl: 168h
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.48
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e35a9ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6ec85c29` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

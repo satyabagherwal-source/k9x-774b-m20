@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-G2ZW",
-    "timestamp": "2026-11-26T01:26:20.972Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-G9ON",
-    "timestamp": "2026-11-26T01:26:29.639Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-SY2V",
     "timestamp": "2026-11-26T01:36:21.127Z",
     "repository": "PrunaAI/P-Image-OSS",
@@ -7490,6 +7460,36 @@
     "repository": "RediSearch/RediSearch",
     "learningId": "learn-github-redisearch-redisearch",
     "contentHash": "2161f24ce13694ee875ecdccbcb097d62a7020fe7e72271c9d41891631f83bb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7IEH",
+    "timestamp": "2026-11-27T07:39:16.073Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "52990d42c37bd28e1c63fbc3e49da9db41ddd7418db53d6900d6fe3256fb8f56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7OXK",
+    "timestamp": "2026-11-27T07:39:24.536Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "775e5e151d1556aed28aad0c02d12d35fa494e18ac7d5317c4b0a9172e7a3c09",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

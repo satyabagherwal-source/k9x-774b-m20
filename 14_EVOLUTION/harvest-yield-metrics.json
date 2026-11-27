@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:30:45.146Z",
-  "total_cycles_completed": 13020,
-  "total_learnings_persisted": 13020,
-  "total_rules_promoted": 11761,
+  "last_updated": "2026-11-27T07:39:24.561Z",
+  "total_cycles_completed": 13022,
+  "total_learnings_persisted": 13022,
+  "total_rules_promoted": 11762,
   "history": [
-    {
-      "timestamp": "2026-11-26T18:24:19.289Z",
-      "repository": "feathersjs/feathers",
-      "learningId": "learn-github-feathersjs-feathers",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T18:24:21.427Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T18:24:24.173Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T07:30:45.146Z",
       "repository": "RediSearch/RediSearch",
       "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:39:16.089Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:39:24.561Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

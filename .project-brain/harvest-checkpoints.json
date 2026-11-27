@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:30:45.149Z",
+  "last_updated": "2026-11-27T07:39:24.564Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "8934624ed886fd0d7fcb4ee67472e11fce92850c6c78428d64c77999db412b97",
-      "verified_at": "2026-11-23T22:14:46.188Z",
+      "content_hash": "52990d42c37bd28e1c63fbc3e49da9db41ddd7418db53d6900d6fe3256fb8f56",
+      "verified_at": "2026-11-27T07:39:16.092Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:14:46.188Z"
+      "last_updated": "2026-11-27T07:39:16.092Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
-      "verified_at": "2026-11-24T20:29:57.060Z",
+      "content_hash": "775e5e151d1556aed28aad0c02d12d35fa494e18ac7d5317c4b0a9172e7a3c09",
+      "verified_at": "2026-11-27T07:39:24.563Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T20:29:57.060Z"
+      "last_updated": "2026-11-27T07:39:24.563Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",

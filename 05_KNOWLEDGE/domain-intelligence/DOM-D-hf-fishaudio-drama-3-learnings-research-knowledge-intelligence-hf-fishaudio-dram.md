@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:15:04.750Z",
+  "timestamp": "2026-11-27T07:39:28.267Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-fishaudio-drama-3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-fishaudio-drama-3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:15:04.750Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:39:28.267Z`  
 > **Learning ID**: `LEARN-EVO-hf-fishaudio-drama-3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-fishaudio`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T22:14:45.608Z  
+> **Timestamp**: 2026-11-27T07:39:15.470Z  
 > **Learning ID**: `learn-huggingface-fishaudio-drama-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fishaudio/drama-3](https://huggingface.co/fishaudio/drama-3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:14:44.300Z  
+> **Harvest Timestamp**: 2026-11-27T07:39:15.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 42664 downloads | 1331 likes
+- **Stars / Engagement**: 44003 downloads | 1341 likes
 
 ---
 

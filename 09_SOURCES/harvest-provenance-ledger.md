@@ -13749,3 +13749,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T07:30:29.693Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `ffbae6ba` | Multi-dimensional audit evidence | 2026-11-27T07:30:40.080Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `078550d7` | Multi-dimensional audit evidence | 2026-11-27T07:30:45.136Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-27T07:39:16.078Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `6ec85c29` | Multi-dimensional audit evidence | 2026-11-27T07:39:24.550Z |

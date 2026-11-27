@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T07:30:48.452Z",
-    "lastVerified": "2026-11-27T07:30:48.452Z",
+    "lastChecked": "2026-11-27T07:39:27.990Z",
+    "lastVerified": "2026-11-27T07:39:27.990Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:03:48.125Z",
-    "lastVerified": "2026-11-27T07:03:48.125Z",
+    "lastChecked": "2026-11-27T07:39:27.982Z",
+    "lastVerified": "2026-11-27T07:39:27.982Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2342,8 +2342,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T03:24:54.890Z",
-    "lastVerified": "2026-11-27T03:24:54.890Z",
+    "lastChecked": "2026-11-27T07:39:22.843Z",
+    "lastVerified": "2026-11-27T07:39:22.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3699,22 +3699,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonfly",
+    "name": "dragonflyoss/dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T14:53:26.175Z",
-    "lastVerified": "2026-11-26T14:53:26.175Z",
+    "lastChecked": "2026-11-27T07:39:23.266Z",
+    "lastVerified": "2026-11-27T07:39:23.266Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
-    "contentHash": "a7d67cd7b0e0d3008bcb170ae516df7640c2b45a17c57ea04981ff6d14e1b93a",
+    "contentHash": "775e5e151d1556aed28aad0c02d12d35fa494e18ac7d5317c4b0a9172e7a3c09",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9e35a9ba"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "featureform-featureform": {
     "name": "featureform",
@@ -7365,12 +7364,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflydb-dragonfly": {
-    "name": "dragonflydb/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T13:44:49.394Z",
-    "lastVerified": "2026-11-26T13:44:49.394Z",
+    "lastChecked": "2026-11-27T07:39:25.612Z",
+    "lastVerified": "2026-11-27T07:39:25.612Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
@@ -7379,7 +7378,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "cb5fcfa0"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -7571,9 +7571,9 @@
   "vercel-swr": {
     "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "lastChecked": "2026-11-24T23:41:40.533Z",
+    "lastChecked": "2026-11-27T07:39:17.948Z",
     "revisionIdentifier": "8148ef01",
-    "lastVerified": "2026-11-24T23:41:40.533Z"
+    "lastVerified": "2026-11-27T07:39:17.948Z"
   },
   "fabio-rovai-open-ontologies": {
     "name": "open-ontologies",
@@ -8397,9 +8397,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-26T06:52:18.285Z",
+    "lastChecked": "2026-11-27T07:39:12.823Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-26T06:52:18.285Z"
+    "lastVerified": "2026-11-27T07:39:12.823Z"
   },
   "hf-facebook-sam3": {
     "name": "facebook/sam3",
@@ -8766,12 +8766,12 @@
     "officialUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T22:14:44.300Z",
-    "lastVerified": "2026-11-23T22:14:44.300Z",
+    "lastChecked": "2026-11-27T07:39:15.370Z",
+    "lastVerified": "2026-11-27T07:39:15.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "8934624ed886fd0d7fcb4ee67472e11fce92850c6c78428d64c77999db412b97",
+    "contentHash": "52990d42c37bd28e1c63fbc3e49da9db41ddd7418db53d6900d6fe3256fb8f56",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
