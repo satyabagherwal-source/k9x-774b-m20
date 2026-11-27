@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:24:31.121Z",
-  "total_cycles_completed": 12919,
-  "total_learnings_persisted": 12919,
+  "last_updated": "2026-11-27T00:32:58.240Z",
+  "total_cycles_completed": 12920,
+  "total_learnings_persisted": 12920,
   "total_rules_promoted": 11709,
   "history": [
-    {
-      "timestamp": "2026-11-26T13:36:08.694Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T13:44:34.904Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1403,6 +1396,13 @@
       "repository": "salvo-rs/salvo",
       "learningId": "learn-github-salvo-rs-salvo",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:32:58.240Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

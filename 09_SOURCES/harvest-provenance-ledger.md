@@ -13644,3 +13644,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-27T00:15:55.651Z |
 | `learn-huggingface-akhaliq-minimax-h3-image-character-swap` | `https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap` | `hf-akhaliq` | Multi-dimensional audit evidence | 2026-11-27T00:24:29.481Z |
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `45e831e5` | Multi-dimensional audit evidence | 2026-11-27T00:24:31.102Z |
+| `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T00:32:58.229Z |

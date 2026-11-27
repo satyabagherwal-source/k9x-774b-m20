@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:24:44.072Z",
+  "last_updated": "2026-11-27T00:33:12.504Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T00:16:07.753Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-26T19:55:13.083Z",
+      "processed_at": "2026-11-27T00:33:11.613Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-27T00:24:43.119Z",
+      "processed_at": "2026-11-27T00:33:10.619Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2563,7 +2563,7 @@
       "staged_for_review": 0
     },
     "hf-google-gemma-4-26b-a4b-it-learnings.md": {
-      "processed_at": "2026-11-23T15:37:35.391Z",
+      "processed_at": "2026-11-27T00:33:10.144Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4734,
+  "total_dossiers_evaluated": 4737,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3551
+  "total_staged_for_review": 3553
 }
