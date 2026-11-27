@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T18:44:02.728Z",
+  "updated_at": "2026-11-27T18:59:51.503Z",
   "stats": {
-    "total_discovered": 10524,
-    "approved_pending_harvest": 9991,
+    "total_discovered": 10530,
+    "approved_pending_harvest": 9997,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9995,
-      "OFFICIAL_DOCUMENTATION": 291,
+      "COMMUNITY_AND_EXPERT": 10000,
+      "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 57,
@@ -227824,6 +227824,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
         "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-4638D3054065": {
+      "id": "SRC-4638D3054065",
+      "url": "https://github.com/ClementTsang/bottom/pull/1843",
+      "title": "https://github.com/ClementTsang/bottom/pull/1843",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:50.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-F5550246CF3D": {
+      "id": "SRC-F5550246CF3D",
+      "url": "https://github.com/ClementTsang/bottom/pull/2340",
+      "title": "https://github.com/ClementTsang/bottom/pull/2340",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:51.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-E1DAEEE8A06A": {
+      "id": "SRC-E1DAEEE8A06A",
+      "url": "https://serverfault.com/a/1025189",
+      "title": "https://serverfault.com/a/1025189",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:51.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-93781A5BE791": {
+      "id": "SRC-93781A5BE791",
+      "url": "https://docs.kernel.org/admin-guide/blockdev/zram.html",
+      "title": "https://docs.kernel.org/admin-guide/blockdev/zram.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:51.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-BF0EDA4CC7AD": {
+      "id": "SRC-BF0EDA4CC7AD",
+      "url": "https://access.r/",
+      "title": "https://access.r/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:51.396Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-DF98CF405AEF": {
+      "id": "SRC-DF98CF405AEF",
+      "url": "https://github.com/giampaolo/psutil/blob/master/psutil/arch/windows/mem.c",
+      "title": "https://github.com/giampaolo/psutil/blob/master/psutil/arch/windows/mem.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:59:51.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
       }
     }
   }

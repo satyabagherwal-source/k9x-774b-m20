@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-D5VX",
-    "timestamp": "2026-11-26T09:47:57.837Z",
-    "repository": "TypeWhisper/typewhisper-mac",
-    "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "4d93c3df5990a65eb3484c66425b2730e78a89fde3fa30fdc0ce79d3cf159524",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-D7ME",
     "timestamp": "2026-11-26T09:48:00.086Z",
     "repository": "goharbor/harbor",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-IJQ1",
+    "timestamp": "2026-11-27T18:59:41.785Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "ecba6bbc27e75d4c38a7b4028687bd7bf3ae1b37a81769151e16f28c47819d0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

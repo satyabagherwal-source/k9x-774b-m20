@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "414e53f1",
+    "sourceVersion": "177a3b42",
     "license": "MIT",
-    "contentHash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
-    "lastHarvestedAt": "2026-11-26T18:41:37.996Z",
+    "contentHash": "ecba6bbc27e75d4c38a7b4028687bd7bf3ae1b37a81769151e16f28c47819d0d",
+    "lastHarvestedAt": "2026-11-27T18:59:41.798Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {

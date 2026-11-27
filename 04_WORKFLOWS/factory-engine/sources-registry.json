@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T18:17:27.776Z",
-    "lastVerified": "2026-11-27T18:17:27.776Z",
+    "lastChecked": "2026-11-27T18:59:50.271Z",
+    "lastVerified": "2026-11-27T18:59:50.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T18:44:01.646Z",
-    "lastVerified": "2026-11-27T18:44:01.646Z",
+    "lastChecked": "2026-11-27T18:59:50.284Z",
+    "lastVerified": "2026-11-27T18:59:50.284Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-11-27T00:50:12.318Z",
+    "lastChecked": "2026-11-27T18:59:43.233Z",
     "revisionIdentifier": "53625dfe",
-    "lastVerified": "2026-11-27T00:50:12.318Z"
+    "lastVerified": "2026-11-27T18:59:43.233Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -749,8 +749,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T14:25:42.770Z",
-    "lastVerified": "2026-11-27T14:25:42.770Z",
+    "lastChecked": "2026-11-27T18:59:45.498Z",
+    "lastVerified": "2026-11-27T18:59:45.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3272,14 +3272,14 @@
     "officialUrl": "https://github.com/ClementTsang/bottom",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T18:41:36.639Z",
-    "lastVerified": "2026-11-26T18:41:36.639Z",
+    "lastChecked": "2026-11-27T18:59:39.964Z",
+    "lastVerified": "2026-11-27T18:59:39.964Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
+    "contentHash": "ecba6bbc27e75d4c38a7b4028687bd7bf3ae1b37a81769151e16f28c47819d0d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4135,9 +4135,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-26T23:49:35.693Z",
+    "lastChecked": "2026-11-27T18:59:47.913Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-26T23:49:35.693Z"
+    "lastVerified": "2026-11-27T18:59:47.913Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -9876,9 +9876,9 @@
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
-    "lastChecked": "2026-11-25T09:54:16.990Z",
+    "lastChecked": "2026-11-27T18:59:40.262Z",
     "revisionIdentifier": "b6cfb6d0",
-    "lastVerified": "2026-11-25T09:54:16.990Z"
+    "lastVerified": "2026-11-27T18:59:40.262Z"
   },
   "magnetoid-seo-crawler": {
     "name": "SEO-Crawler",
@@ -10356,8 +10356,8 @@
     "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T10:26:38.402Z",
-    "lastVerified": "2026-11-24T10:26:38.402Z",
+    "lastChecked": "2026-11-27T18:59:37.807Z",
+    "lastVerified": "2026-11-27T18:59:37.807Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crawlcove-robots-txt-tester",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:43:58.334Z",
-  "total_cycles_completed": 13143,
-  "total_learnings_persisted": 13143,
-  "total_rules_promoted": 11864,
+  "last_updated": "2026-11-27T18:59:41.805Z",
+  "total_cycles_completed": 13144,
+  "total_learnings_persisted": 13144,
+  "total_rules_promoted": 11865,
   "history": [
-    {
-      "timestamp": "2026-11-27T02:18:11.480Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T02:18:18.289Z",
       "repository": "react/metro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T18:43:58.334Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T18:59:41.805Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

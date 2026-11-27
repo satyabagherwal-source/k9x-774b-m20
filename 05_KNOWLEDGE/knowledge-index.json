@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T18:44:32.250Z",
+  "last_updated": "2026-11-27T18:59:55.654Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26715,
+  "total_items": 26719,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfcee3b23a8389b1988e705ce3c183db5bef35aaa1252e5ffc78aa99c30d02f8",
+      "content_hash": "cd25726f109c3e692e97c6c8fd541922ba662d575eddf8c5681f8430b1096679",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:17:30.577Z"
+      "persisted_at": "2026-11-27T18:59:53.999Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0da69b5d9626a327278a61a44865a4e23f2b5a19dd320ce430feefd68a148c5a",
+      "content_hash": "33ab2a66de36c5f9cbf76e49568f44178e661e7ff790299b56b7318b64da2b51",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:17:30.776Z"
+      "persisted_at": "2026-11-27T18:59:54.237Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -230396,9 +230396,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "30f8fe6e30cff74d58abfc1bd4b2188606b28d58e4eca8d5f364f5305e6159fe",
+      "content_hash": "1adbbf9282ebdcde49d5b1a1a02d5144533e08597d68e3d90733df2c507ee046",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:59:48.181Z"
+      "persisted_at": "2026-11-27T18:59:55.363Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230408,9 +230408,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bb37156391fbf25cd3d9c806e869879d3a387e394b7967d1240c1729b5e0b63",
+      "content_hash": "a8e4c9154f8b6d2310c880b8bbf41b4e75529119e46f5e2e51948e20b316ab70",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:59:48.390Z"
+      "persisted_at": "2026-11-27T18:59:55.654Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -248158,8 +248158,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "414e53f1",
-      "content_hash": "73e18843b3e54913695c7f55684405550ba3ba4e6c84a177c6e7eb7cb6b7093f",
+      "source_version": "177a3b42",
+      "content_hash": "ecba6bbc27e75d4c38a7b4028687bd7bf3ae1b37a81769151e16f28c47819d0d",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -248202,6 +248202,11 @@
           "number": 10754,
           "title": "fix incorrect GPU ignoring logic for mem graph",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10952,
+          "title": "run nightly format to fix imports and wrap comments",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248209,7 +248214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:41:37.659Z",
+      "verified_at": "2026-11-27T18:59:41.456Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248263,10 +248268,10 @@
       "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
       "repository": "ClementTsang/bottom",
-      "source_version": "414e53f1",
-      "content_hash": "8ca24de283b28bbb6e5ac073f762e7a851da8fb0a6297c8e33b2b8ce6d77ad7a",
+      "source_version": "177a3b42",
+      "content_hash": "c4007221c2a12ab268e2ac00df13fb2d77b43b89c4540ba8e56aa0efe2d54d38",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:41:38.735Z"
+      "persisted_at": "2026-11-27T18:59:42.713Z"
     },
     "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
       "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
@@ -248300,9 +248305,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d0ef707e3389cbaa75cc92022544c2e1a18c93456b08998806dfbbda01930b9",
+      "content_hash": "4da4ab4170afbf65c1cb89361461fbf18d2e8d26956fc78d38fdb5278f157c0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:41:57.137Z"
+      "persisted_at": "2026-11-27T18:59:52.446Z"
     },
     "learn-huggingface-burner22-numbat": {
       "learning_id": "learn-huggingface-burner22-numbat",
@@ -301241,9 +301246,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5955c0b7cc94d8914c57594e269ddcc69be654e6d62b472e7d520f58b3fadacf",
+      "content_hash": "0f96bf2f56dc8e7a33fd5319510c988db4158992717fff8a9b41b43eade3b3d5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:17:30.331Z"
+      "persisted_at": "2026-11-27T18:59:53.726Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -350505,13 +350510,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BOT1-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ITZK-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "72b65595f4700a9c23eec2692f9b3d10ed8d79bd7298f1c15055631be8cec675",
+      "content_hash": "3285b4bbe660eb7b6f87c2c0239012502406c5ffdc7883bc2416402435dbd4fb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T18:26:22.166Z"
+      "persisted_at": "2026-11-27T18:59:55.089Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -362997,13 +363002,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0A79-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ISPV-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d86bc2cfdb7de1a4580296f75c04f00eca18e8dbb168a1aea1e3995f0390958d",
+      "content_hash": "ac1b259316498b7b16706df429955d8b3c892933b7ff12aa365a610402ae24e2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:17:30.021Z"
+      "persisted_at": "2026-11-27T18:59:53.443Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -366854,6 +366859,56 @@
       "content_hash": "115f9bf9aa6f2f8c865001220ffe5edcf50ec3439278d7a1a23af5b04fd569fd",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T18:44:02.987Z"
+    },
+    "rule-10952": {
+      "learning_id": "rule-10952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10952,
+      "title": "run nightly format to fix imports and wrap comments",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "177a3b42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:59:41.456Z"
+    },
+    "candidate_directive-run-nightly-format-to-fix-imports-and-wrap-comments": {
+      "item_id": "candidate_directive-run-nightly-format-to-fix-imports-and-wrap-comments",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IRIG-run-nightly-format-to-fix-imports-and-wrap-comments.md",
+      "title": "run nightly format to fix imports and wrap comments",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df4a1ab503e78f999c56b207a4bc335840d9f685181995e231e2753eaf70d3c7",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T18:59:51.887Z"
+    },
+    "domain_intelligence-design-intelligence-clementtsang-bottom-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-clementtsang-bottom-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-clementtsang-bottom-design-intelligence-clementtsang-bottom-core-invariants.md",
+      "title": "Design Intelligence: ClementTsang/bottom Core Invariants",
+      "repository": "ClementTsang/bottom",
+      "source_version": "177a3b42",
+      "content_hash": "c65979b217200a922b67815df44d43de1e96315248e5aa65182300c3ac2fe51b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T18:59:42.427Z"
+    },
+    "domain_intelligence-design-intelligence-clementtsang-bottom-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-clementtsang-bottom-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-clementtsang-bottom-learnings-design-intelligence-clementtsang-bottom-learnings-.md",
+      "title": "Design Intelligence: clementtsang-bottom-learnings Core Invariants",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1210f8233b97d23df5ef496568908eeeb2a533182030ab4ffa0d6ff2e1d84719",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T18:59:52.161Z"
     }
   },
   "ai-builder-brain": {

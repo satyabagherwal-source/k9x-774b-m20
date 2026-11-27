@@ -4,22 +4,22 @@
 {
   "source_repository": "ClementTsang/bottom",
   "source_url": "https://github.com/ClementTsang/bottom",
-  "source_version": "414e53f1",
+  "source_version": "177a3b42",
   "license": "MIT",
-  "timestamp": "2026-11-26T18:41:38.277Z",
+  "timestamp": "2026-11-27T18:59:42.138Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clementtsang-bottom",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClementTsang/bottom](https://github.com/ClementTsang/bottom) (Revision: `414e53f1`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T18:41:38.277Z`  
+> **Provenance**: Harvested from [ClementTsang/bottom](https://github.com/ClementTsang/bottom) (Revision: `177a3b42`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T18:59:42.138Z`  
 > **Learning ID**: `learn-github-clementtsang-bottom`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ClementTsang/bottom` (Commit: `414e53f1`)
+- **Target Repository**: `ClementTsang/bottom` (Commit: `177a3b42`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:41:36.639Z  
+> **Harvest Timestamp**: 2026-11-27T18:59:39.964Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14294 stars
+- **Stars / Engagement**: 14321 stars
 
 ---
 
@@ -1637,31 +1637,331 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `414e53f1` (2026-11-26)
-**Commit Message**: bug: fix incorrect GPU ignoring logic for mem graph (#2341)
+### Incident Patch 1: `177a3b42` (2026-11-27)
+**Commit Message**: refactor: run nightly format to fix imports and wrap comments (#2343)
 
-Accidentally made this mistake.
+Run nightly format with version 1.102.0-nightly.
 
-**File**: `src/canvas/widgets/mem_graph.rs` (modified, +1/-1)
+**File**: `src/canvas/widgets/mem_basic.rs` (modified, +2/-3)
 ```diff
-@@ -147,7 +147,7 @@ impl Painter {
-                     let duplicate_names = duplicate_gpu_names(time_series.gpu_mem.keys());
+@@ -1,5 +1,7 @@
+ use std::borrow::Cow;
  
-                     for (gpu_index, (key, gpu_data)) in time_series.gpu_mem.iter().enumerate() {
--                        if !gpu_data.no_elements() {
-+                        if gpu_data.no_elements() {
-                             continue;
-                         }
++#[cfg(target_os = "linux")]
++use ratatui::style::Modifier;
+ use ratatui::{
+     Frame,
+     layout::{Constraint, Direction, Layout, Rect},
+@@ -11,9 +13,6 @@ use crate::{
+     collection::memory::MemData,
+     get_binary_unit_and_denominator,
+ };
+-#[cfg(target_os = "linux")]
+-use ratatui::style::Modifier;
+-
+ #[cfg(target_os = "linux")]
+ use crate::{collection::memory::zram::ZramHarvest, utils::data_units::get_binary_bytes};
  
 ```
 
+**File**: `src/canvas/widgets/mem_graph.rs` (modified, +4/-2)
+```diff
+@@ -41,7 +41,8 @@ fn memory_legend_label(name: &str, data: Option<&MemData>) -> String {
+ }
+ 
+ /// Convert zram info into a combined memory label showing both compressed and
+-/// uncompressed usage. Also returns a fallback label for use if the box is too small.
++/// uncompressed usage. Also returns a fallback label for use if the box is too
++/// small.
+ #[cfg(target_os = "linux")]
+ fn zram_legend_label(name: &str, zram: Option<&ZramHarvest>) -> (String, Option<String>) {
+     match zram.and_then(|zram| Some((zram, zram.as_mem_data()?))) {
+@@ -147,7 +148,8 @@ impl Painter {
+                     // TODO: Maybe include compression ratio too?
+                     graph_data(
+                         &mut points,
+-                        // TODO: Maybe make this "ZRAM" once we figure out lining up things better
++                        // TODO: Maybe make this "ZRAM" once we figure out
++                        // lining up things better
+                         || zram_legend_label("ZRM", data.zram_harvest.as_ref()),
+                         time,
+                         &time_series.zram_mem,
+```
+
+**File**: `src/collection/memory/zram.rs` (modified, +4/-3)
+```diff
+@@ -74,7 +74,8 @@ fn parse_mm_stat(contents: &str) -> Option<MmStat> {
+     })
+ }
+ 
+-/// Reads a given path representing a zram device, returning a partial [`ZramHarvest`].
++/// Reads a given path representing a zram device, returning a partial
++/// [`ZramHarvest`].
+ fn read_device(dev: &Path) -> Option<ZramHarvest> {
+     let disk_size: u64 = fs::read_to_string(dev.join("disksize"))
+         .ok()?
+@@ -97,8 +98,8 @@ fn read_device(dev: &Path) -> Option<ZramHarvest> {
+     })
+ }
+ 
+-/// Returns aggregated zram usage. Returns `None` if there are no initialized zram
+-/// devices.
++/// Returns aggregated zram usage. Returns `None` if there are no initialized
++/// zram devices.
+ pub(crate) fn get_zram_usage() -> Option<ZramHarvest> {
+     let mut result = ZramHarvest::default();
+     let mut found = false;
+```
+
+**File**: `src/lib.rs` (modified, +5/-2)
+```diff
+@@ -83,7 +83,9 @@ fn try_drawing(
+     }
+ }
+ 
+-/// Clean up the terminal before returning it to the user. Note that this will not error if any cleanup step fails, for simplicity's sake, though it will warn if some more important steps fail.
++/// Clean up the terminal before returning it to the user. Note that this will
++/// not error if any cleanup step fails, for simplicity's sake, though it will
++/// warn if some more important steps fail.
+ fn cleanup_terminal(
+     terminal: &mut Terminal<CrosstermBackend<Stdout>>, terminal_features: TerminalFeatures,
+ ) {
+@@ -130,7 +132,8 @@ fn check_if_terminal() {
+     }
+ }
+ 
+-/// This manually resets stdout back to normal state; you probably only want to call this in the case of a panic.
++/// This manually resets stdout back to normal state; you probably only want to
++/// call this in the case of a panic.
+ pub fn reset_stdout() {
+     let mut stdout_val = stdout();
+     let _ = disable_raw_mode();
+```
+
+---
+
+### Incident Patch 2: `b71e157d` (2026-11-27)
+**Commit Message**: feature: add option to show zram usage on Linux (#2340)
+
+Adds zram usage support for Linux to the memory widget.
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -33,6 +33,7 @@ That said, these are more guidelines rather than hard rules, though the project
+ - [#2328](https://github.com/ClementTsang/bottom/pull/2328): Add natural sorting options for the process, disk, and temperature widgets.
+ - [#2329](https://github.com/ClementTsang/bottom/pull/2329): Add a GPU usage graph widget.
+ - [#1843](https://github.com/ClementTsang/bottom/pull/1843): Automatically switch between light and dark themes based on terminal background colour.
++- [#2340](https://github.com/ClementTsang/bottom/pull/2340): Add basic ZRAM usage display on Linux.
+ 
+ ### Changes
+ 
+```
+
+**File**: `docs/content/configuration/config-file/memory-graph.md` (modified, +26/-3)
+```diff
+@@ -12,18 +12,41 @@ You can change where the legend for the graph is placed within the widget itself
+ legend_position = "top-left"
+ ```
+ 
+-## Collect/show cache memory
++## Collect and show cache memory
+ 
+ On Linux, you can change whether the memory used by [cache/slabs](https://serverfault.com/a/1025189) is collected and
+ shown. By default, it is `false`.
+ 
+-<!--TODO: Note this affects basic too... should I separate out a "general memory" setting and specific graph ones?-->
+-
+ ```toml
+ [memory_graph]
+ cache_memory = true
+ ```
+ 
++## Collect and show zram usage
++
++On Linux, you can enable `zram` to show [zram](https://docs.kernel.org/admin-guide/blockdev/zram.html) usage.
++Usage is over all zram devices and is shown as the uncompressed size of the stored data versus the total uncompressed
++capacity. Also note that if zram is used as swap, this usage is currently also included in the swap
++usage.
++
++It is disabled (`false`) by default. For example, to enable it:
++
++```toml
++[memory_graph]
++zram = true
++```
++
++## Disable GPU usage
++
++GPU memory usage is collected by default. To disable it, do:
++
++```toml
++[flags]
++disable_gpu = true
++```
++
++Note that for now, this disables all other GPU features, though this is likely to change in the future to be more granular.
++
+ ## Short GPU names
+ 
+ If GPU support is enabled, you can use `short_gpu_names` to display simplified GPU names in the memory graph widget
+```
+
+**File**: `docs/content/configuration/config-file/styling.md` (modified, +6/-5)
+```diff
+@@ -147,11 +147,11 @@ selected_text = "#fff"
+ 
+ These can be set under `[styles]`:
+ 
+-| Config field    | Details                                                                                      | Examples                      |
+-| --------------- | -------------------------------------------------------------------------------------------- | ----------------------------- |
+-| `theme`         | A built-in theme name, or `"auto"`, `"dark"`, `"light"` for dark/light detection             | `theme = "auto"`              |
+-| `theme_dark`    | Theme to use for dark backgrounds or when `theme = "dark"`; use `"custom"` for custom palette | `theme_dark = "nord"`         |
+-| `theme_light`   | Theme to use for light backgrounds or when `theme = "light"`; use `"custom"` for custom palette | `theme_light = "default-light"` |
++| Config field  | Details                                                                                         | Examples                        |
++| ------------- | ----------------------------------------------------------------------------------------------- | ------------------------------- |
++| `theme`       | A built-in theme name, or `"auto"`, `"dark"`, `"light"` for dark/light detection                | `theme = "auto"`                |
++| `theme_dark`  | Theme to use for dark backgrounds or when `theme = "dark"`; use `"custom"` for custom palette   | `theme_dark = "nord"`           |
++| `theme_light` | Theme to use for light backgrounds or when `theme = "light"`; use `"custom"` for custom palette | `theme_light = "default-light"` |
+ 
+ #### CPU
+ 
+@@ -180,6 +180,7 @@ These can be set under `[styles.memory]`:
+ | `ram_colour`   | The colour of the RAM label and graph line                                     | `ram_colour = "Red"`                     |
+ | `cache_colour` | The colour of the cache label and graph line. Does not do anything on Windows. | `cache_colour = "#ffffff"`               |
+ | `swap_colour`  | The colour of the swap label and graph line                                    | `swap_colour = "255, 0, 255"`            |
++| `zram_colour`  | The colour of the zram label and graph line. Only works on Linux.              | `zram_colour = "Green"`                  |
+ | `arc_colour`   | The colour of the ARC label and graph line                                     | `arc_colour = "Blue"`                    |
+ | `gpu_colours`  | Colour of each GPU's memory label and graph line. Read in order.               | `gpu_colours = ["Red", "Blue", "Green"]` |
+ 
+```
+
+**File**: `docs/content/usage/basic-mode.md` (modified, +4/-2)
+```diff
+@@ -26,11 +26,13 @@ basic = true
+ ## Notes
+ 
+ In this mode, widgets that use tables (temperatures, processes, disks, and batteries) are only shown one at a time.
+-One can switch between these widgets either by clicking the arrow buttons or by using the general widget selection shortcuts (for example, ++ctrl+left++ or ++H++)
+-to switch which widget is shown.
++One can switch between these widgets either by clicking the arrow buttons or by using the general widget selection
++shortcuts (for example, ++ctrl+left++ or ++H++) to switch which widget is shown.
+ 
+ Also note that in this mode, widget expansion and custom layouts are disabled.
+ 
++<!--TODO: Maybe add more details on the basic mode widgets... or maybe even add separate widget sections for them, maybe if we make them more generalized! -->
++
+ ## Key bindings
+ 
+ Basic mode follows the same key bindings as normal, barring widget expansion being disabled, and that the ++"%"++ key while selecting the memory widget toggles between total usage and percentage.
+```
+
+**File**: `docs/content/usage/widgets/memory-graph.md` (modified, +8/-4)
+```diff
+@@ -13,7 +13,11 @@ If the total RAM or swap available is 0, then it is automatically hidden from th
+ 
+ One can also adjust the displayed time range through either the keyboard or mouse, with a range of 30s to 600s.
+ 
+-This widget can also be configured to display Nvidia and AMD GPU memory usage (`--disable_gpu` on Linux/Windows to disable) or cache memory usage (`--enable_cache_memory`).
++This widget can also be configured to things like:
++
++- Display Nvidia and AMD GPU memory usage (enabled by default, `--disable_gpu` or `disable_gpu = true` to disable)
++- Show cache memory on non-Windows systems (`--enable_cache_memory` or set `cache_memory = true` to enable)
++- Show zram usage on Linux (`zram = true` to enable)
+ 
+ ## Key bindings
+ 
+@@ -46,6 +50,6 @@ You can find more info on `/proc/meminfo` and its fields [here](https://access.r
+ ### Windows
+ 
+ In Windows, we calculate swap by querying `Get-Counter "\Paging File(*)\% Usage"`. This
+-is also what some libraries like [psutil](https://github.com/giampaolo/psutil/blob/master/psutil/arch/windows/mem.c) use. However, note there are also a few other valid methods of
+-representing "swap" in Windows (e.g. using `GetPerformanceInfo`), which all slightly don't
+-match.
++is also what some libraries like [psutil](https://github.com/giampaolo/psutil/blob/master/psutil/arch/windows/mem.c) use.
++However, note there are also a few other valid methods of representing "swap" in Windows (e.g. using `GetPerformanceInfo`),
++which all slightly don't match.
+```
+
+**File**: `sample_configs/default_config.toml` (modified, +4/-0)
+```diff
+@@ -396,6 +396,9 @@
+ # Shows cache and buffer memory. Linux only.
+ #cache_memory = false
+ 
++# Shows zram usage. Linux only.
++#zram = false
++
+ # Subtract ARC memory that can be freed from memory usage. Only available if the ZFS feature is enabled when built.
+ #free_arc = false
+ 
+@@ -496,6 +499,7 @@
+ #ram_colour = "light magenta"
+ #cache_colour = "light red"
+ #swap_colour = "light yellow"
++#zram_colour = "yellow"
+ #arc_colour = "light cyan"
+ #gpu_colours = ["light blue", "light red", "cyan", "green", "blue", "red"]
+ 
+```
+
+**File**: `sample_configs/demo_config.toml` (modified, +4/-0)
+```diff
+@@ -19,6 +19,10 @@ theme = "gruvbox"
+ [cpu]
+ left_legend = false
+ 
++[memory]
++zram = true
++short_gpu_names = true
++
+ [processes]
+ columns = ["PID", "Name", "CPU%", "Mem%", "Rps", "Wps", "TRead", "TWrite", "State", "Time", "Virt"]
+ 
+```
+
+**File**: `schema/nightly/bottom.json` (modified, +18/-0)
+```diff
+@@ -894,6 +894,13 @@
+             "boolean",
+             "null"
+           ]
++        },
++        "zram": {
++          "description": "Whether to collect and display zram usage. Only available on Linux.",
++          "type": [
++            "boolean",
++            "null"
++          ]
+         }
+       }
+     },
+@@ -954,6 +961,17 @@
+               "type": "null"
+             }
+           ]
++        },
++        "zram_colour": {
++          "description": "The colour of the zram label and graph line. Only does anything on\nLinux.",
++          "anyOf": [
++            {
++              "$ref": "#/$defs/ColourStr"
++            },
++            {
++              "type": "null"
++            }
++          ]
+         }
+       }
+     },
+```
+
 #### Recent Merged Pull Requests:
+- **PR #2343** (2026-11-27): refactor: run nightly format to fix imports and wrap comments (@ClementTsang)
+- **PR #2342** (2026-11-27): feature: support kitty keyboard protocol (@ClementTsang)
 - **PR #2341** (2026-11-26): bug: fix incorrect GPU ignoring logic for mem graph (@ClementTsang)
+- **PR #2340** (2026-11-27): feature: add option to show zram usage on Linux (@ClementTsang)
 - **PR #2339** (2026-11-25): deps: bump unicode-width to 0.2.3 and unicode-ellipsis to 0.7.0 (@ClementTsang)
 - **PR #2338** (2026-11-24): deps: bump sysinfo to 0.40.4 (@ClementTsang)
-- **PR #2337** (2026-11-23): deps: bump humantime to 2.4.0 (@ClementTsang)
-- **PR #2336** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
-- **PR #2335** (2026-11-22): ci: update freebsd VM version to avoid node warning (@ClementTsang)
 
 ---
 
@@ -1681,31 +1981,34 @@ Accidentally made this mistake.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix incorrect GPU ignoring logic for mem graph
+## X. run nightly format to fix imports and wrap comments
 
 **RULE**:
-When implementing operations in `src/canvas/widgets/mem_graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/canvas/widgets/mem_basic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `414e53f1`: fix incorrect GPU ignoring logic for mem graph. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `177a3b42`: run nightly format to fix imports and wrap comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/canvas/widgets/mem_graph.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/canvas/widgets/mem_basic.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        if gpu_data.no_elements() {
+#[cfg(target_os = "linux")]
+use ratatui::style::Modifier;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                        if !gpu_data.no_elements() {
+#[cfg(target_os = "linux")]
+use ratatui::style::Modifier;
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `414e53f1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `177a3b42` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
