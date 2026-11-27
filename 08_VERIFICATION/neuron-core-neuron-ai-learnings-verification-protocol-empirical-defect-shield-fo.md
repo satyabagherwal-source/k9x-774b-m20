@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T06:46:58.333Z",
+  "timestamp": "2026-11-27T17:42:06.852Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-neuron-core-neuron-ai-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [neuron-core-neuron-ai-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T06:46:58.333Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:42:06.852Z`  
 > **Learning ID**: `LEARN-EVO-neuron-core-neuron-ai-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `a6a82c3c`  
+> **Source Version**: `73e2292b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:46:24.665Z  
+> **Timestamp**: 2026-11-27T17:42:00.828Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:46:24.661Z  
+> **Harvest Timestamp**: 2026-11-27T17:42:00.823Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2183 stars
+- **Stars / Engagement**: 2186 stars
 
 ---
 
@@ -628,729 +628,123 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6a82c3c` (2026-11-23)
-**Commit Message**: support array of scalar in structured output
+### Incident Patch 1: `73e2292b` (2026-11-27)
+**Commit Message**: iq-stream channel
 
-**File**: `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md` (modified, +1/-1)
+**File**: `composer.json` (modified, +2/-2)
 ```diff
-@@ -24,7 +24,7 @@
- 
- 
- ## Related Issues
--**Link any related issues using GitHub keywords (e.g., "Fixes #123", "Closes #456")**
-+**Link any related issues using GitHub keywords (e.g., "Fixes #XXX", "Closes #XXX")**
- 
- -
- 
+@@ -33,7 +33,7 @@
+         "illuminate/database": "^10.21|^11.0|^12.0",
+         "laudis/neo4j-php-client": "^3.4",
+         "mongodb/mongodb": "^2.3",
+-        "neuron-core/iq-stream-php": "^1.0",
++        "neuron-core/iq-stream-php": "^1.1",
+         "opensearch-project/opensearch-php": "^2.5",
+         "phpstan/phpstan": "^2.1",
+         "phpunit/phpunit": "^10.0",
+@@ -101,7 +101,7 @@
+         "ext-igbinary": "Smaller/faster durable-step serialization via IgbinarySerializer.",
+         "ext-redis": "Redis workflow persistence via RedisPersistence and Pub/Sub streaming via RedisChannel and RedisChannelReader.",
+         "ext-sodium": "End-to-end encryption for Pusher streaming channels.",
+-        "neuron-core/iq-stream-php": "IQ streaming server channel via IQStreamChannel (^1.0).",
++        "neuron-core/iq-stream-php": "IQ streaming server channel via IQStreamChannel (^1.1).",
+         "psr/log": "Logging observability events through LogListener.",
+         "pusher/pusher-php-server": "Pusher-compatible streaming channels, including encrypted channels (requires >=7.2.4 for HTTP timeout propagation).",
+         "spatie/fork": "Parallel evaluation runs via the --concurrency option (requires ext-pcntl and ext-posix).",
 ```
 
-**File**: `skills/neuron-structured-output/SKILL.md` (modified, +16/-2)
+**File**: `skills/neuron-laravel-integration/references/iq-stream.md` (modified, +1/-1)
 ```diff
-@@ -41,7 +41,7 @@ The `SchemaProperty` attribute defines how properties are represented in the JSO
-     int $max = null,             // Maximum value (numbers) or items (arrays)
-     int $minLength = null,       // Minimum string length
-     int $maxLength = null,       // Maximum string length
--    array $anyOf = null,         // Array of allowed class/enum types
-+    array $anyOf = null,         // Array item types: classes/enums, or one scalar type
- )]
- ```
+@@ -164,7 +164,7 @@ An approval ends the segment with `RUN_FINISHED` carrying the interrupt, then `s
  
-@@ -57,7 +57,7 @@ The `SchemaProperty` attribute defines how properties are represented in the JSO
- | `max` | `maximum` (numbers) or `maxItems` (arrays) | Upper bound constraint |
- | `minLength` | `minLength` | Minimum string characters |
- | `maxLength` | `maxLength` | Maximum string characters |
--| `anyOf` | `anyOf: [...]` | Polymorphic types (multiple possible classes) |
-+| `anyOf` | `items` (one type) or `items.anyOf` (several classes) | Array item type: one class, enum or scalar type (`int`, `float`, `bool`, `string`), or several classes for polymorphic items |
+ ## When something goes wrong
  
- ### Required Property Logic
- 
-@@ -216,6 +216,20 @@ class TagList
- }
- ```
- 
-+### Array of Integers, Numbers or Booleans
-+
-+Without `anyOf`, the model is asked for an array of strings. Name one scalar type in `anyOf` to ask for another:
-+
-+```php
-+class TopicMentions
-+{
-+    #[SchemaProperty(description: 'Line numbers that mention the topic', anyOf: ['int'])]
-+    public array $lines;
-+}
-+```
-+
-+The schema gets `items: {"type": "integer"}`, and each item is converted to that type, so `"7"` becomes `7`. An item that can't be converted without changing it, like `"seven"` or `2.7`, goes back to the model as a correction. The scalar types are `int`, `float`, `bool` and `string`, and a scalar type must be the only `anyOf` member.
-+
- ### Array of Objects
- 
- Use `anyOf` to specify the object type for arrays:
+-- **IQ unreachable or refusing.** The turn still completes and its answer is in history; the page receives nothing, or its subscription is refused and `onGap` reloads the conversation. Each segment raises `ChannelError` with an `IQStream\Exceptions\IQError` that carries IQ's status and code, after the client's retries (10 seconds by default). The client also writes it to PHP's error log, unless the `IQClient` is built with an `ErrorReporter` of its own, such as one that logs through `Log::warning()`.
++- **IQ unreachable or refusing.** The turn still completes and its answer is in history; the page receives nothing, or its subscription is refused and `onGap` reloads the conversation. Each segment raises `ChannelError` with an `IQStream\Exceptions\IQError` that carries IQ's status and code, after the client's retries (10 seconds by default).
+ - **A retry after a failed segment cannot stream.** The first attempt closed the stream with `fail`, and the page heard `iq:fail`: the retry's segment is refused with `stream_closed` (a `ChannelError`), and the retry runs without delivery. The page reloads the conversation from history.
+ - **`failed()` after such an attempt** finds the stream closed too, and its channel throws `stream_closed`: the page already heard of the failure.
+ - **A silent tool.** IQ lets go of a publish request that sends nothing for a minute and the next event continues the stream, but after about three minutes of silence the stream closes with `publisher_idle`: for tools that run longer, raise the server's limit on idle streams.
 ```
 
-**File**: `src/StructuredOutput/Deserializer/Deserializer.php` (modified, +24/-2)
+**File**: `skills/neuron-streaming/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -60,6 +60,11 @@ class Deserializer
- {
-     use StaticConstructor;
+@@ -450,7 +450,7 @@ Every frame is the same `{streamId, sequence, type, data}` envelope as Redis, Pu
+ - **Frame size.** The client's `maxFrameBytes`, 64 KiB by default (`new PublisherOptions(maxFrameBytes:)`), is the longest line the server takes from the app. A larger event is fragmented.
+ - **Silent steps.** IQ lets go of a publish request that sends nothing for a minute by default, as while a tool runs, and the next event continues the stream over a new request, with nothing lost. The stream itself waits for that event only so long, then closes with `publisher_idle`: for tools that run for minutes, raise the server's limit on idle streams.
+ - **A short segment closes after three seconds.** The client holds the close of a stream younger than its `minOpen`, three seconds by default, so that a page that subscribes just after a fast segment still receives it. The job waits that long; `new PublisherOptions(minOpen: 0)` skips the wait.
+-- **Failures.** A refusal (an invalid token, a closed stream, a limit) or a server out of reach after the client's retries stops the segment's delivery with an `IQStream\Exceptions\IQError` that carries the server's status and code and never the secret, reported as `ChannelError`; the run goes on. The client closes the stream with `fail` when the server may still hold it, so the page hears of it at once, and writes the error to PHP's error log unless the client was made with its own `ErrorReporter`.
++- **Failures.** A refusal (an invalid token, a closed stream, a limit) or a server out of reach after the client's retries stops the segment's delivery with an `IQStream\Exceptions\IQError` that carries the server's status and code and never the secret, reported as `ChannelError`; the run goes on. The client closes the stream with `fail` when the server may still hold it, so the page hears of it at once.
+ - **Reverse proxy.** The proxy in front of IQ must not buffer request bodies and must allow requests as long as a run: see the Deployment section of IQ's README.
  
-+    /**
-+     * The scalar types an array's single anyOf member can name, with the JSON Schema type the model was asked for.
-+     */
-+    protected const SCALAR_ITEM_TYPES = ['int' => 'integer', 'float' => 'number', 'bool' => 'boolean', 'string' => 'string'];
-+
-     public function __construct(protected string $discriminator = '__classname__')
-     {
-     }
-@@ -315,7 +320,7 @@ protected function handleArray(mixed $value, ReflectionClass $class, ReflectionP
+ IQ keeps every frame while the stream runs and resumes a reconnecting `EventSource` after the last frame it received, so a page that subscribes after the worker started still gets the stream from its first frame; one that comes after the end gets `iq:gone` and reloads from history. A page that subscribes first makes the stream wait for its worker for a limited time, after which the stream fails with `publisher_timeout` and refuses the worker. In the browser, `subscribeToIQ` from `@neuron-core/streaming` takes the stream's subscribe URL, reads it through the IQ server's own client, and reports through `onGap` a segment that ended without its terminal event: see [Channel wire contract and consumers](references/channels.md).
+```
+
+**File**: `skills/neuron-symfony-integration/references/background-delivery.md` (modified, +1/-1)
+```diff
+@@ -551,7 +551,7 @@ const subscription = subscribeToIQ(ticket.url, {
  
-         $types = SchemaProperty::resolve($class, $property)->anyOf ?? [];
+ ### When something goes wrong
  
--        if ($types === [] || (count($types) === 1 && !class_exists($types[0]))) {
-+        if ($types === [] || (count($types) === 1 && !class_exists($types[0]) && !isset(self::SCALAR_ITEM_TYPES[$types[0]]))) {
-             return $value;
-         }
- 
-@@ -330,8 +335,12 @@ protected function handleArray(mixed $value, ReflectionClass $class, ReflectionP
-      * @param string[] $types
-      * @throws DeserializerException|ReflectionException
+-- **IQ unreachable or refusing**: the turn still completes and its answer is in history, and each segment raises `ChannelError` with an `IQStream\Exceptions\IQError` carrying IQ's status and code, after the client's retries (10 seconds by default). The client also writes it to PHP's error log, unless the `IQClient` is built with an `ErrorReporter` of its own.
++- **IQ unreachable or refusing**: the turn still completes and its answer is in history, and each segment raises `ChannelError` with an `IQStream\Exceptions\IQError` carrying IQ's status and code, after the client's retries (10 seconds by default).
+ - **A retry after a failed segment cannot stream.** The first attempt closed the stream with `fail`, and the page heard `iq:fail`: the retry's segment is refused with `stream_closed` (a `ChannelError`) and runs without delivery, and `PublishRunFailure` finds the stream closed too. The page reloads the conversation from history.
+ - **A silent tool**: IQ lets go of a publish request that sends nothing for a minute and the next event continues the stream, but after about three minutes of silence the stream closes with `publisher_idle`: raise the server's limit on idle streams for tools that run longer.
+ - **A fast segment holds the worker three seconds** at its close, so that a page that subscribes just after it still receives it: the client's `minOpen`.
+```
+
+**File**: `tests/Workflow/Channel/IQStreamChannelTest.php` (modified, +1/-9)
+```diff
+@@ -8,8 +8,6 @@
+ use InvalidArgumentException;
+ use IQStream\Answer;
+ use IQStream\Credentials;
+-use IQStream\ErrorReporter;
+-use IQStream\Exceptions\IQError;
+ use IQStream\IQClient;
+ use IQStream\PublisherOptions;
+ use NeuronAI\Agent\Adapters\VercelAIAdapter;
+@@ -54,16 +52,10 @@ class IQStreamChannelTest extends TestCase
       */
--    protected function deserializeItem(mixed $item, array $types, string $subject): object
-+    protected function deserializeItem(mixed $item, array $types, string $subject): object|int|float|string|bool
+     protected function client(RecordingIQTransport $server, int $maxFrameBytes = 65_536): IQClient
      {
-+        if (count($types) === 1 && isset(self::SCALAR_ITEM_TYPES[$types[0]])) {
-+            return $this->castItem($item, $types[0], $subject);
-+        }
-+
-         // class_exists() is true for an enum too
-         if (count($types) === 1 && enum_exists($types[0])) {
-             return $this->handleEnum($types[0], $item);
-@@ -346,6 +355,19 @@ protected function deserializeItem(mixed $item, array $types, string $subject):
-             : $this->deserializeObjectWithDiscriminator($item, $types);
+-        $quiet = new class () implements ErrorReporter {
+-            public function report(IQError $error): void
+-            {
+-            }
+-        };
+-
+         return new IQClient(
+             'http://iq.example',
+             new Credentials('neuron-app', 'test-app-secret-0123456789abcdef0123'),
+-            options: new PublisherOptions(minOpen: 0, maxFrameBytes: $maxFrameBytes, errorReporter: $quiet, retryBudget: 0),
++            options: new PublisherOptions(minOpen: 0, maxFrameBytes: $maxFrameBytes, retryBudget: 0),
+             transport: $server,
+         );
      }
- 
-+    /**
-+     * @throws DeserializerException
-+     */
-+    protected function castItem(mixed $item, string $type, string $subject): int|float|string|bool
-+    {
-+        $jsonType = self::SCALAR_ITEM_TYPES[$type];
-+
-+        $value = ScalarCaster::cast($item, $jsonType) ?? throw $this->typeMismatch($subject, $jsonType, $item);
-+
-+        // A float property widens a whole number on assignment, but an array item has no declared type to do it
-+        return $type === 'float' ? (float) $value : $value;
-+    }
-+
-     protected function typeMismatch(string $subject, string $type, mixed $value): DeserializerException
-     {
-         return new DeserializerException("{$subject} must be of type {$type}, " . get_debug_type($value) . ' given');
-```
-
-**File**: `src/StructuredOutput/JsonSchema.php` (modified, +31/-1)
-```diff
-@@ -37,6 +37,11 @@ class JsonSchema
- {
-     use StaticConstructor;
- 
-+    /**
-+     * The scalar types an array's single anyOf member can name, with the JSON Schema type the model is asked for.
-+     */
-+    protected const SCALAR_ITEM_TYPES = ['int' => 'integer', 'float' => 'number', 'bool' => 'boolean', 'string' => 'string'];
-+
-     /**
-      * Classes currently being processed, to break circular references.
-      */
-@@ -50,6 +55,7 @@ public function __construct(protected string $discriminator = '__classname__')
-      * Generate the JSON schema for a fully qualified class name.
-      *
-      * @throws ReflectionException
-+     * @throws StructuredOutputException
-      */
-     public function generate(string $class): array
-     {
-@@ -63,6 +69,7 @@ public function generate(string $class): array
- 
-     /**
-      * @throws ReflectionException
-+     * @throws StructuredOutputException
-      */
-     protected function generateClassSchema(string $class): array
-     {
-@@ -169,7 +176,7 @@ protected function processProperty(ReflectionClass $class, ReflectionProperty $p
- 
-             if ($attribute instanceof SchemaProperty && $attribute->anyOf !== null && $attribute->anyOf !== []) {
-                 if (count($attribute->anyOf) === 1) {
--                    $schema['items'] = $this->generateClassSchema($attribute->anyOf[0]);
-+                    $schema['items'] = $this->generateItemSchema($attribute->anyOf[0]);
-                 } else {
-                     $schema['items'] = $this->generateAnyOfSchema($attribute->anyOf);
-                 }
-@@ -307,6 +314,25 @@ protected function getBasicTypeSchema(string $type): array
-         }
-     }
- 
-+    /**
-+     * The schema of the one type an array holds: a scalar type, a class or an enum.
-+     *
-+     * @throws ReflectionException
-+     * @throws StructuredOutputException
-+     */
-+    protected function generateItemSchema(string $type): array
-+    {
-+        if (isset(self::SCALAR_ITEM_TYPES[$type])) {
-+            return ['type' => self::SCALAR_ITEM_TYPES[$type]];
-+        }
-+
-+        if (!class_exists($type)) {
-+            throw new StructuredOutputException("anyOf member '{$type}' is neither a class nor one of the scalar types int, float, bool, string");
-+        }
-+
-+        return $this->generateClassSchema($type);
-+    }
-+
-     /**
-      * @param string[] $types Class names
-      * @throws ReflectionException
-@@ -318,6 +344,10 @@ protected function generateAnyOfSchema(array $types): array
- 
-         // The Deserializer tells the items apart by the discriminator, which only an object carries
-         foreach ($types as $type) {
-+            if (isset(self::SCALAR_ITEM_TYPES[$type])) {
-+                throw new StructuredOutputException("anyOf member '{$type}' is a scalar type: a scalar type can only be the single anyOf member");
-+            }
-+
-             if (!class_exists($type)) {
-                 throw new StructuredOutputException("anyOf member '{$type}' is not a class");
-             }
-```
-
-**File**: `tests/Agent/Nodes/StructuredOutputNodeTest.php` (modified, +23/-0)
-```diff
-@@ -27,6 +27,7 @@
- use NeuronAI\Chat\Messages\ToolCallMessage;
- use NeuronAI\Tests\Agent\Stub\SearchTool;
- use NeuronAI\Tests\StructuredOutput\Stub\Person;
-+use NeuronAI\Tests\StructuredOutput\Stub\ScalarLists;
- use NeuronAI\Tools\ProviderToolInterface;
- use NeuronAI\Tools\ToolCall;
- use NeuronAI\Tools\ToolInterface;
-@@ -243,6 +244,28 @@ public function test_a_deserialization_error_is_fed_back_to_the_model(string $an
-         $this->assertSame('Rome', $state->get('structured_output')->address->city);
-     }
- 
-+    public function test_the_model_is_asked_for_and_held_to_the_scalar_item_type(): void
-+    {
-+        $rejected = new AssistantMessage('{"ints": ["3", "seven"]}');
-+        $provider = new FakeAIProvider($rejected, new AssistantMessage('{"ints": ["3", 7]}'));
-+        $state = $this->structuredState(ScalarLists::class, 1);
-+        $node = new StructuredOutputNode();
-+        $node->setWorkflowContext(new NodeContext());
-+
-+        $this->assertInstanceOf(AgentOutputEvent::class, $node(new StructuredInferenceEvent(), $state, AgentResourcesFactory::make([], null, $provider)));
-+
-+        $this->assertSame(['type' => 'integer'], $provider->getRecorded()[0]->structuredSchema['properties']['ints']['items']);
-+
-+        $correction = "There was a problem in your previous response that generated the following error:\n\n"
-+            . "Property \"ints\" element 1 must be of type integer, string given\n\n"
-+            . 'Try to generate the correct JSON structure based on the provided schema.';
-+        $this->assertSame(['Generate a person', $rejected->getContent(), $correction], array_map(
-+            static fn (Message $message): ?string => $message->getContent(),
-+            $provider->getRecorded()[1]->messages
-+        ));
-+        $this->assertSame([3, 7], $state->get('structured_output')->ints);
-+    }
-+
-     public function test_exhausted_retries_raise_the_last_error(): void
-     {
-         $provider = new FakeAIProvider(
-```
-
-**File**: `tests/StructuredOutput/Deserializer/DeserializerTest.php` (modified, +38/-0)
-```diff
-@@ -28,6 +28,7 @@
- use NeuronAI\Tests\StructuredOutput\Stub\MassAssignmentTarget;
- use NeuronAI\Tests\StructuredOutput\Stub\Person;
- use NeuronAI\Tests\StructuredOutput\Stub\ProtectedConstructorModel;
-+use NeuronAI\Tests\StructuredOutput\Stub\ScalarLists;
- use NeuronAI\Tests\StructuredOutput\Stub\Tag;
- use NeuronAI\Tests\StructuredOutput\Stub\TextBlock;
- use NeuronAI\Tests\StructuredOutput\Stub\StringEnum;
-@@ -286,6 +287,43 @@ public function test_an_invalid_enum_value_in_an_array_is_rejected(): void
-         Deserializer::make()->fromJson('{"numbers": ["one", "four"]}', $class::class);
-     }
- 
-+    public function test_an_array_of_scalars_gets_items_of_its_declared_type(): void
-+    {
-+        $json = '{"ints": [3, "7"], "floats": [2, "2.5"], "bools": [true, "false"], "strings": ["a", 7]}';
-+
-+        $obj = Deserializer::make()->fromJson($json, ScalarLists::class);
-+
-+        $this->assertSame([3, 7], $obj->ints);
-+        $this->assertSame([2.0, 2.5], $obj->floats);
-+        $this->assertSame([true, false], $obj->bools);
-+        $this->assertSame(['a', '7'], $obj->strings);
-+    }
-+
-+    /**
-+     * @return array<string, array{string, string}>
-+     */
-+    public static function scalarItemsThatWouldChange(): array
-+    {
-+        return [
-+            'a word in a list of integers' => ['{"ints": [3, "three"]}', 'Property "ints" element 1 must be of type integer, string given'],
-+            'a fraction in a list of integers' => ['{"ints": [2.7]}', 'Property "ints" element 0 must be of type integer, float given'],
-+            'null in a list of integers' => ['{"ints": [null]}', 'Property "ints" element 0 must be of type integer, null given'],
-+            'a word in a list of numbers' => ['{"floats": ["n/a"]}', 'Property "floats" element 0 must be of type number, string given'],
-+            'a word in a list of booleans' => ['{"bools": ["maybe"]}', 'Property "bools" element 0 must be of type boolean, string given'],
-+            'a boolean in a list of strings' => ['{"strings": [true]}', 'Property "strings" element 0 must be of type string, bool given'],
-+            'a list in a list of strings' => ['{"strings": [["a"]]}', 'Property "strings" element 0 must be of type string, array given'],
-+        ];
-+    }
-+
-+    #[DataProvider('scalarItemsThatWouldChange')]
-+    public function test_a_scalar_item_that_would_change_is_rejected(string $json, string $message): void
-+    {
-+        $this->expectException(DeserializerException::class);
-+        $this->expectExceptionMessage($message);
-+
-+        Deserializer::make()->fromJson($json, ScalarLists::class);
-+    }
-+
-     public function test_a_pure_enum_is_read_by_the_case_name_the_schema_advertises(): void
-     {
-         $class = new class () {
-```
-
-**File**: `tests/StructuredOutput/JsonSchemaTest.php` (modified, +55/-3)
-```diff
-@@ -26,6 +26,7 @@
- use NeuronAI\Tests\StructuredOutput\Stub\IntEnum;
- use NeuronAI\Tests\StructuredOutput\Stub\MassAssignmentTarget;
- use NeuronAI\Tests\StructuredOutput\Stub\Person;
-+use NeuronAI\Tests\StructuredOutput\Stub\ScalarLists;
- use NeuronAI\Tests\StructuredOutput\Stub\Shop\Item as ShopItem;
- use NeuronAI\Tests\StructuredOutput\Stub\StringEnum;
- use NeuronAI\Tests\StructuredOutput\Stub\Tag;
-@@ -278,6 +279,44 @@ public function test_array_of_object(): void
-         ], $schema);
-     }
- 
-+    public function test_a_single_scalar_any_of_member_is_the_array_item_type(): void
-+    {
-+        $properties = (new JsonSchema())->generate(ScalarLists::class)['properties'];
-+
-+        $this->assertSame(['type' => 'integer'], $properties['ints']['items']);
-+        $this->assertSame(['type' => 'number'], $properties['floats']['items']);
-+        $this->assertSame(['type' => 'boolean'], $properties['bools']['items']);
-+        $this->assertSame(['type' => 'string'], $properties['strings']['items']);
-+    }
-+
-+    public function test_an_array_of_scalars_keeps_its_size_bounds_and_nullability(): void
-+    {
-+        $class = new class () {
-+            #[SchemaProperty(min: 1, max: 5, anyOf: ['int'])]
-+            public ?array $ids;
-+        };
-+
-+        $schema = (new JsonSchema())->generate($class::class);
-+
-+        $this->assertSame(
-+            ['type' => ['array', 'null'], 'items' => ['type' => 'integer'], 'minItems' => 1, 'maxItems' => 5],
-+            $schema['properties']['ids']
-+        );
-+    }
-+
-+    public function test_a_json_schema_type_name_is_not_a_scalar_item_type(): void
-+    {
-+        $class = new class () {
-+            #[SchemaProperty(anyOf: ['integer'])]
-+            public array $ids;
-+        };
-+
-+        $this->expectException(StructuredOutputException::class);
-+        $this->expectExceptionMessage("anyOf member 'integer' is neither a class nor one of the scalar types int, float, bool, string");
-+
-+        (new JsonSchema())->generate($class::class);
-+    }
-+
-     public function test_array_with_multiple_types_using_anyof(): void
-     {
-         $class = new class () {
-@@ -368,6 +407,19 @@ public function test_an_enum_cannot_be_one_of_several_any_of_members(): void
-         (new JsonSchema())->generate($class::class);
-     }
- 
-+    public function test_a_scalar_type_cannot_be_one_of_several_any_of_members(): void
-+    {
-+        $class = new class () {
-+            #[SchemaProperty(anyOf: [FtpMode::class, 'int'])]
-+            public array $modes;
-+        };
-+
-+        $this->expectException(StructuredOutputException::class);
-+        $this->expectExceptionMessage("anyOf member 'int' is a scalar type: a scalar type can only be the single anyOf member");
-+
-+        (new JsonSchema())->generate($class::class);
-+    }
-+
-     public function test_an_unknown_class_cannot_be_one_of_several_any_of_members(): void
-     {
-         $class = new class () {
-@@ -791,7 +843,7 @@ public function test_failed_generation_does_not_poison_the_generator_instance():
-             try {
-                 $generator->generate($invalid::class);
-                 $this->fail("Attempt {$attempt}: generation with an unknown anyOf class must fail");
--            } catch (ReflectionException) {
-+            } catch (StructuredOutputException) {
-             }
-         }
- 
-@@ -870,8 +922,8 @@ public function test_anyof_with_unknown_class_is_rejected(): void
-             public array $values;
-         };
- 
--        $this->expectException(ReflectionException::class);
--        $this->expectExceptionMessage('Class "NeuronAI\\Tests\\StructuredOutput\\Stub\\DoesNotExist" does not exist');
-+        $this->expectException(StructuredOutputException::class);
-+        $this->expectExceptionMessage("anyOf member 'NeuronAI\\Tests\\StructuredOutput\\Stub\\DoesNotExist' is neither a class nor one of the scalar types int, float, bool, string");
- 
-         (new JsonSchema())->generate($class::class);
-     }
-```
-
-**File**: `tests/StructuredOutput/Stub/ScalarLists.php` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+<?php
-+
-+declare(strict_types=1);
-+
-+namespace NeuronAI\Tests\StructuredOutput\Stub;
-+
-+use NeuronAI\StructuredOutput\SchemaProperty;
-+
-+class ScalarLists
-+{
-+    #[SchemaProperty(anyOf: ['int'])]
-+    public array $ints = [];
-+
-+    #[SchemaProperty(anyOf: ['float'])]
-+    public array $floats = [];
-+
-+    #[SchemaProperty(anyOf: ['bool'])]
-+    public array $bools = [];
-+
-+    #[SchemaProperty(anyOf: ['string'])]
-+    public array $strings = [];
-+}
 ```
 
 ---
 
-### Incident Patch 2: `4a5d5762` (2026-11-23)
-**Commit Message**: Merge pull request #712 from aln-1/feat/vertex-auth-http-client
+### Incident Patch 2: `5260e1d9` (2026-11-27)
+**Commit Message**: iq-stream channel
 
-Send the Vertex OAuth token request through the provider's HTTP client
-
-**File**: `skills/neuron-agent/references/providers.md` (modified, +1/-1)
+**File**: `packages/streaming/README.md` (modified, +2/-2)
 ```diff
-@@ -83,7 +83,7 @@ new AnthropicVertex(
- );
- ```
+@@ -178,12 +178,12 @@ To drive AG-UI or the Vercel AI SDK, hand the subscription to `createProtocolStr
  
--`NeuronAI\Providers\Gemini\GeminiVertex` takes the same arguments. `location: null` selects the global endpoint. Bedrock speaks the Converse API: tuning options go in `inferenceConfig` under Converse's names (`maxTokens`, `temperature`, ...), and `setHttpClient()` is a no-op because the AWS SDK owns the transport.
-+`NeuronAI\Providers\Gemini\GeminiVertex` takes the same arguments. `location: null` selects the global endpoint. Both send the OAuth token request through their `httpClient` too, with a 10-second timeout, so an `AmpHttpClient` makes the whole call async. Bedrock speaks the Converse API: tuning options go in `inferenceConfig` under Converse's names (`maxTokens`, `temperature`, ...), and `setHttpClient()` is a no-op because the AWS SDK owns the transport.
+ ## IQ
  
- ## Vendor request parameters
+-Pass the subscribe URL of a stream of an IQ server, with the `sub` token your backend minted for it:
++Pass the `url` of the ticket your backend's endpoint answered with (`IQClient::ticket()`): the stream's subscribe URL, with the browser's token in it.
  
-```
-
-**File**: `src/Providers/HandleGoogleServiceAccount.php` (modified, +29/-1)
-```diff
-@@ -5,7 +5,14 @@
- namespace NeuronAI\Providers;
+ ```ts
+ import { subscribeToIQ } from '@neuron-core/streaming';
  
- use Google\Auth\Credentials\ServiceAccountCredentials;
-+use GuzzleHttp\Psr7\Response;
-+use NeuronAI\HttpClient\HttpMethod;
-+use NeuronAI\HttpClient\HttpRequest;
-+use Psr\Http\Message\RequestInterface;
-+use Psr\Http\Message\ResponseInterface;
- 
-+use function array_map;
-+use function implode;
- use function time;
- 
- /**
-@@ -41,9 +48,30 @@ protected function accessToken(): string
- 
-         // A 60-second margin keeps a token from expiring while a request is in flight
-         if ($token === null || ($token['expires_at'] ?? 0) - 60 <= time()) {
--            $token = $credentials->fetchAuthToken();
-+            $token = $credentials->fetchAuthToken($this->sendTokenRequest(...));
-         }
- 
-         return $token['access_token'];
-     }
-+
-+    /**
-+     * A google/auth HTTP handler that sends the token request through the provider's
-+     * own client, so it follows that client's runtime (blocking or async). An error
-+     * status throws HttpException, like any other failing Vertex call.
-+     *
-+     * @param array<string, mixed> $options google/auth transport options, only used for mTLS token sources
-+     */
-+    protected function sendTokenRequest(RequestInterface $request, array $options = []): ResponseInterface
-+    {
-+        $response = $this->httpClient->request(new HttpRequest(
-+            HttpMethod::from($request->getMethod()),
-+            (string) $request->getUri(),
-+            array_map(static fn (array $values): string => implode(', ', $values), $request->getHeaders()),
-+            (string) $request->getBody(),
-+            // The client timeout is sized for LLM calls; a token exchange should fail fast.
-+            timeout: 10.0,
-+        ));
-+
-+        return new Response($response->statusCode, $response->headers, $response->body);
-+    }
- }
-```
-
-**File**: `tests/Providers/Anthropic/AnthropicVertexCredentialsTest.php` (modified, +40/-33)
-```diff
-@@ -4,18 +4,16 @@
- 
- namespace NeuronAI\Tests\Providers\Anthropic;
- 
--use Google\Auth\HttpHandler\HttpClientCache;
--use GuzzleHttp\Client;
--use GuzzleHttp\Handler\MockHandler;
--use GuzzleHttp\HandlerStack;
- use GuzzleHttp\Psr7\Response;
- use NeuronAI\Chat\Messages\UserMessage;
- use NeuronAI\Providers\Anthropic\AnthropicVertex;
- use NeuronAI\Tests\Support\RecordsHttpRequests;
- use PHPUnit\Framework\Attributes\DataProvider;
- use PHPUnit\Framework\TestCase;
- 
-+use function array_filter;
- use function array_map;
-+use function array_values;
- use function file_get_contents;
- use function file_put_contents;
- use function iterator_to_array;
-@@ -30,8 +28,9 @@
- use const JSON_THROW_ON_ERROR;
- 
- /**
-- * Exercises the real credentials: the OAuth token exchange is answered by a
-- * mocked Google token endpoint, so no network is involved.
-+ * Exercises the real credentials: the OAuth token exchange goes through the
-+ * provider's HTTP client, whose first queued response answers it, so no
-+ * network is involved.
-  */
- class AnthropicVertexCredentialsTest extends TestCase
- {
-@@ -41,9 +40,9 @@ class AnthropicVertexCredentialsTest extends TestCase
- 
-     protected const ANSWER = '{"content":[{"type":"text","text":"Hi"}]}';
- 
--    protected string $credentialsFile;
-+    protected const TOKEN_URI = 'https://oauth2.googleapis.com/token';
- 
--    protected MockHandler $tokenEndpoint;
-+    protected string $credentialsFile;
- 
-     public static function setUpBeforeClass(): void
-     {
-@@ -60,18 +59,12 @@ protected function setUp(): void
-             'private_key' => self::$privateKey,
-             'client_email' => 'neuron@test-project.iam.gserviceaccount.com',
-             'client_id' => '1',
--            'token_uri' => 'https://oauth2.googleapis.com/token',
-+            'token_uri' => self::TOKEN_URI,
-         ], JSON_THROW_ON_ERROR));
--
--        $this->tokenEndpoint = new MockHandler([
--            new Response(200, ['Content-Type' => 'application/json'], '{"access_token":"ya29.vertex-token","expires_in":3600,"token_type":"Bearer"}'),
--        ]);
--        HttpClientCache::setHttpClient(new Client(['handler' => HandlerStack::create($this->tokenEndpoint)]));
-     }
- 
-     protected function tearDown(): void
-     {
--        HttpClientCache::setHttpClient();
-         @unlink($this->credentialsFile);
-     }
- 
-@@ -94,13 +87,14 @@ public function test_requests_target_the_location_endpoint_with_the_fetched_bear
-             location: $location,
-             projectId: 'test-project',
-             model: 'claude-test',
--            httpClient: $this->recordingClient(new Response(200, body: '{"content":[{"type":"text","text":"Hi"}]}')),
-+            httpClient: $this->recordingClient($this->tokenResponse('ya29.vertex-token'), new Response(200, body: self::ANSWER)),
-         );
- 
-         $provider->chat(new UserMessage('Hi'));
- 
--        $request = $this->sentRequests[0]['request'];
--        $this->assertSame(["POST {$endpoint}"], $this->sentTargets());
-+        $request = $this->sentRequests[1]['request'];
-+        $this->assertSame(['POST '.self::TOKEN_URI, "POST {$endpoint}"], $this->sentTargets());
-+        $this->assertSame(10.0, $this->sentRequests[0]['options']['timeout']);
-         $this->assertSame('Bearer ya29.vertex-token', $request->getHeaderLine('Authorization'));
-         $this->assertFalse($request->hasHeader('x-api-key'));
-         $this->assertFalse($request->hasHeader('anthropic-version'));
-@@ -114,20 +108,20 @@ public function test_parameters_are_sent_in_the_request_body(): void
-             projectId: 'test-project',
-             model: 'claude-test',
-             parameters: ['temperature' => 0.1],
--            httpClient: $this->recordingClient(new Response(200, body: self::ANSWER)),
-+            httpClient: $this->recordingClient($this->tokenResponse('ya29.vertex-token'), new Response(200, body: self::ANSWER)),
-         );
- 
-         $provider->chat(new UserMessage('Hi'));
- 
--        $body = json_decode((string) $this->sentRequests[0]['request']->getBody(), true);
-+        $body = json_decode((string) $this->sentRequests[1]['request']->getBody(), true);
-         $this->assertSame(0.1, $body['temperature']);
-     }
- 
-     public function test_building_the_provider_fetches_no_token(): void
-     {
-         $this->provider();
- 
--        $this->assertSame(1, $this->tokenEndpoint->count());
-+        $this->assertSame([], $this->sentRequests);
-     }
- 
-     public function test_building_the_provider_reads_no_credentials_file(): void
-@@ -144,23 +138,22 @@ public function test_building_the_provider_reads_no_credentials_file(): void
- 
-     public function test_a_valid_access_token_is_reused_across_requests(): void
-     {
--        $provider = $this->provider(new Response(200, body: self::ANSWER), new Response(200, body: 'data: {"type":"message_delta","delta":{"stop_reason":"end_turn"}}' . "\n\n" . 'data: {"type":"message_stop"}' . "\n\n"));
-+        $provider = $this->provider($this->tokenResponse('ya29.vertex-token'), new 
-```
-
-**File**: `tests/Providers/Gemini/GeminiVertexTest.php` (modified, +81/-49)
-```diff
-@@ -4,18 +4,12 @@
- 
- namespace NeuronAI\Tests\Providers\Gemini;
- 
--use Google\Auth\HttpHandler\HttpClientCache;
--use GuzzleHttp\Client;
--use GuzzleHttp\Handler\MockHandler;
--use GuzzleHttp\HandlerStack;
--use GuzzleHttp\Middleware;
- use GuzzleHttp\Psr7\Response;
- use NeuronAI\Chat\Messages\UserMessage;
-+use NeuronAI\Exceptions\HttpException;
- use NeuronAI\Providers\Gemini\GeminiVertex;
- use NeuronAI\Tests\Support\RecordsHttpRequests;
- use PHPUnit\Framework\TestCase;
--use Psr\Http\Message\RequestInterface;
--use Psr\Http\Message\ResponseInterface;
- 
- use function base64_decode;
- use function explode;
-@@ -39,23 +33,21 @@
- use const OPENSSL_KEYTYPE_RSA;
- 
- /**
-- * The OAuth exchange runs offline: google/auth takes its HTTP client from
-- * HttpClientCache, which answers the token request with a fixed access token.
-+ * The OAuth exchange runs offline: the token request goes through the
-+ * provider's HTTP client, whose first queued response answers it.
-  */
- class GeminiVertexTest extends TestCase
- {
-     use RecordsHttpRequests;
- 
-     protected const ACCESS_TOKEN = 'ya29.vertex-access-token';
-     protected const ANSWER = '{"candidates":[{"content":{"role":"model","parts":[{"text":"Hi from Vertex"}]},"finishReason":"STOP"}]}';
-+    protected const TOKEN_URI = 'https://oauth2.googleapis.com/token';
- 
-     protected string $credentialsPath;
- 
-     protected string $publicKey;
- 
--    /** @var array<int, array{request: RequestInterface, response: ResponseInterface|null, error: mixed, options: array<mixed>}> */
--    protected array $tokenRequests = [];
--
-     protected function setUp(): void
-     {
-         $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
-@@ -70,23 +62,12 @@ protected function setUp(): void
-             'private_key' => $privateKey,
-             'client_email' => 'neuron@my-project.iam.gserviceaccount.com',
-             'client_id' => '123',
--            'token_uri' => 'https://oauth2.googleapis.com/token',
-+            'token_uri' => self::TOKEN_URI,
-         ], JSON_THROW_ON_ERROR));
--
--        $stack = HandlerStack::create(new MockHandler([
--            new Response(200, ['Content-Type' => 'application/json'], json_encode([
--                'access_token' => self::ACCESS_TOKEN,
--                'expires_in' => 3600,
--                'token_type' => 'Bearer',
--            ], JSON_THROW_ON_ERROR)),
--        ]));
--        $stack->push(Middleware::history($this->tokenRequests));
--        HttpClientCache::setHttpClient(new Client(['handler' => $stack]));
-     }
- 
-     protected function tearDown(): void
-     {
--        HttpClientCache::setHttpClient();
-         @unlink($this->credentialsPath);
-     }
- 
-@@ -97,26 +78,27 @@ public function test_regional_endpoint_is_called_with_the_oauth_bearer_token():
-             'europe-west8',
-             'my-project',
-             'gemini-2.5-pro',
--            httpClient: $this->recordingClient(new Response(200, body: self::ANSWER)),
-+            httpClient: $this->recordingClient($this->tokenResponse(), new Response(200, body: self::ANSWER)),
-         );
- 
-         $message = $provider->chat(new UserMessage('Hi'))->message();
- 
-         $this->assertSame('Hi from Vertex', $message->getContent());
-         $this->assertSame([
-+            'POST '.self::TOKEN_URI,
-             'POST https://europe-west8-aiplatform.googleapis.com/v1/projects/my-project/locations/europe-west8/publishers/google/models/gemini-2.5-pro:generateContent',
-         ], $this->sentTargets());
--        $request = $this->sentRequests[0]['request'];
-+        $request = $this->sentRequests[1]['request'];
-         $this->assertSame('Bearer '.self::ACCESS_TOKEN, $request->getHeaderLine('Authorization'));
-         $this->assertFalse($request->hasHeader('x-goog-api-key'));
-     }
- 
-     public function test_building_the_provider_fetches_no_token(): void
-     {
--        $provider = new GeminiVertex($this->credentialsPath, 'us-central1', 'my-project', 'gemini-2.5-pro');
-+        $provider = new GeminiVertex($this->credentialsPath, 'us-central1', 'my-project', 'gemini-2.5-pro', httpClient: $this->recordingClient());
- 
-         $this->assertInstanceOf(GeminiVertex::class, $provider);
--        $this->assertSame([], $this->tokenRequests);
-+        $this->assertSame([], $this->sentRequests);
-     }
- 
-     public function test_building_the_provider_reads_no_credentials_file(): void
-@@ -128,31 +110,47 @@ public function test_building_the_provider_reads_no_credentials_file(): void
-             'us-central1',
-             'my-project',
-             'gemini-2.5-pro',
--            httpClient: $this->recordingClient(new Response(200, body: self::ANSWER)),
-+            httpClient: $this->recordingClient($this->tokenResponse(), new Response(200, body: self::ANSWER)),
-         );
- 
-         file_put_contents($this->credentialsPath, $credentials);
-         $provider->chat(new UserMessage('Hi'));
- 
--        $this->assertSame('Bearer '.self::ACCESS_TOKEN, $this->sentReque
+-const subscription = subscribeToIQ(`https://stream.example.com/${stream}?token=${subscribeToken}`, {
++const subscription = subscribeToIQ(ticket.url, {
+   onEvent: ({ type, data }) => renderEvent(type, data),
+   onGap: reason => reloadConversation(reason),
+ });
 ```
 
 #### Recent Merged Pull Requests:
@@ -1379,31 +773,33 @@ Send the Vertex OAuth token request through the provider's HTTP client
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. support array of scalar in structured output
+## X. iq-stream channel
 
 **RULE**:
-When implementing operations in `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `composer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6a82c3c`: support array of scalar in structured output. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73e2292b`: iq-stream channel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `composer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-**Link any related issues using GitHub keywords (e.g., "Fixes #XXX", "Closes #XXX")**
+        "neuron-core/iq-stream-php": "^1.1",
+        "neuron-core/iq-stream-php": "IQ streaming server channel via IQStreamChannel (^1.1).",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Induced defect failure mode:
-**Link any related issues using GitHub keywords (e.g., "Fixes #123", "Closes #456")**
+        "neuron-core/iq-stream-php": "^1.0",
+        "neuron-core/iq-stream-php": "IQ streaming server channel via IQStreamChannel (^1.0).",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6a82c3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73e2292b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

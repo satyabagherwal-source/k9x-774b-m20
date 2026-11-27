@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T17:33:01.347Z",
+  "updated_at": "2026-11-27T17:42:06.691Z",
   "stats": {
-    "total_discovered": 10502,
+    "total_discovered": 10503,
     "approved_pending_harvest": 9970,
     "harvested_count": 0,
-    "rejected_count": 532,
+    "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9976,
+      "COMMUNITY_AND_EXPERT": 9977,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227347,6 +227347,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
         "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-06CC885B70F1": {
+      "id": "SRC-06CC885B70F1",
+      "url": "http://iq.example/",
+      "title": "http://iq.example/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T17:42:06.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
       }
     }
   }

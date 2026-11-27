@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:33:01.728Z",
+  "last_updated": "2026-11-27T17:42:07.604Z",
   "directives": [
     {
       "id": "CD-001",
@@ -71642,6 +71642,55 @@
       "source_repo": "opentofu-opentofu",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F5F969-the-host-key-used-for-the-bastion-connec.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-QR6D",
+      "directive_title": "zgx dictation: a processor without AVX2 is told so, not crashed",
+      "source_repo": "zeronsh-zeron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QR6D-zgx-dictation-a-processor-without-avx2-is-told-so-not-crashed.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-QS1Y",
+      "directive_title": "iq-stream channel",
+      "source_repo": "neuron-core-neuron-ai-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QS1Y-iq-stream-channel.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C89D1C",
+      "directive_title": "zgx dictation: a processor without AVX2 is told so, not crashed",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zeronsh-zeron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C89D1C-zgx-dictation-a-processor-without-avx2-i.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-829A6D",
+      "directive_title": "iq-stream channel",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "neuron-core-neuron-ai",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-829A6D-iq-stream-channel.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-884E9C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-884E9C-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-27"
     }
   ]

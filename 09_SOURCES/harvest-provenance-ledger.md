@@ -13865,3 +13865,5 @@ Every entry in this ledger must capture:
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `f256317e` | Multi-dimensional audit evidence | 2026-11-27T17:32:14.749Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `b71d43c2` | Multi-dimensional audit evidence | 2026-11-27T17:32:16.903Z |
 | `learn-dom-d-33234269` | `project://hf-ai-sage-gigachat4-708b-a41b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md` | 2026-11-27T17:32:58.210Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `9d1c0fc3` | Multi-dimensional audit evidence | 2026-11-27T17:41:49.345Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `73e2292b` | Multi-dimensional audit evidence | 2026-11-27T17:42:02.056Z |

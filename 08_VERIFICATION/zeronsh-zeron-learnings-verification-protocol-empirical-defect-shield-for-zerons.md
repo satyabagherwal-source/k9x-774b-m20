@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T17:30:57.116Z",
+  "timestamp": "2026-11-27T17:42:05.710Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zeronsh-zeron-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zeronsh-zeron-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T17:30:57.116Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:42:05.710Z`  
 > **Learning ID**: `LEARN-EVO-zeronsh-zeron-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `ae294f53`  
+> **Source Version**: `9d1c0fc3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T17:30:46.853Z  
+> **Timestamp**: 2026-11-27T17:41:48.150Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T17:30:46.849Z  
+> **Harvest Timestamp**: 2026-11-27T17:41:47.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3765 stars
+- **Stars / Engagement**: 3771 stars
 
 ---
 
@@ -1558,636 +1558,363 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae294f53` (2026-11-26)
-**Commit Message**: Delegate in the background: subagent chats on any provider or device, and a parent that waits (#1597)
+### Incident Patch 1: `a04a322e` (2026-11-14)
+**Commit Message**: zgx dictation: a processor without AVX2 is told so, not crashed
 
-* Delegated work: durable tasks, engine-watched children, one wake with the results
+zeron_voice::cpu_supported checks AVX2, FMA, F16C and BMI2 at run time (the
+models are built for them); without, no model loads, start and download
+refuse with why, and Settings → Voice says so in place of a Download.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-* Background delegation in the app: a Waiting shelf, child chats in the tray with Stop, approvals on the parent, wakes as chips, the setting
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-* Delegation: one subagent list and waiting labels in the client, wakes on mobile, docs
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-* Delegation: approval card polish, waiting rows' detail, screenshots
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-* Delegation: Zeron v2's composer and the preview's refusals follow
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt` (modified, +19/-3)
+**File**: `apps/zgx/src/dictation.rs` (modified, +7/-1)
 ```diff
-@@ -629,11 +629,27 @@ class AppModel(private val app: Application) {
-     /** Every chat's terminals (shells on their hosts). */
-     val terminals = TerminalStore(app) { _client.value }
- 
--    /** A session's side chats, newest first. */
-+    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
-     fun sideChats(chatId: String): List<SessionRow> =
--        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
-+        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
- 
--    /** The subagents a session's agent spawned (its open transcript). */
-+    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
-+    fun interruptChat(chatId: String) {
-+        val client = _client.value ?: return
-+        try {
-+            val handle = client.session(chatId) ?: client.openSession(chatId)
-+            try {
-+                handle.interrupt()
-+            } finally {
-+                handle.close()
-+            }
-+        } catch (e: Exception) {
-+            Log.w("Zeron", "interrupt failed", e)
-+            toast("Couldn't stop it")
+@@ -176,10 +176,13 @@ impl Service {
+                     "slow":m.cpu_slow && cfg!(not(target_os = "macos"))})
+             })
+             .collect();
+-        Ok(json!({ "models": list }))
++        Ok(json!({ "models": list, "supported": zeron_voice::cpu_supported() }))
+     }
+     fn start(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
++        if !zeron_voice::cpu_supported() {
++            return Err(zeron_voice::CPU_UNSUPPORTED.into());
 +        }
-+    }
-+
-+    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
-     fun sessionSubagents(chatId: String): List<uniffi.zeron_core.SubagentRow> {
-         val client = _client.value ?: return emptyList()
-         if ("--sub--" in chatId) return emptyList()
-```
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/design/ZeronIcons.kt` (modified, +3/-0)
-```diff
-@@ -54,6 +54,9 @@ object ZIcons {
-     val Moon = R.drawable.zi_moon
-     val Magic = R.drawable.zi_magic_stick_3
-     val Info = R.drawable.zi_info_circle
-+    /** The desktop's status glyphs: an approval asked (a shield with a question), a question asked. */
-+    val StatusApproval = R.drawable.zi_status_approval
-+    val StatusInput = R.drawable.zi_status_input
-     val Logout = R.drawable.zi_logout_2
-     val Offline = R.drawable.zi_wifi_off
-     val Chat = R.drawable.zi_chat_round_line
-```
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/Companions.kt` (modified, +342/-22)
-```diff
-@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
- import androidx.compose.foundation.shape.RoundedCornerShape
- import androidx.compose.material3.ExperimentalMaterial3Api
- import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-+import androidx.compose.material3.IconButton
- import androidx.compose.material3.ListItemDefaults
- import androidx.compose.material3.LoadingIndicator
- import androidx.compose.material3.MaterialTheme
-@@ -42,6 +43,9 @@ import androidx.compose.material3.Text
- import androidx.compose.material3.rememberModalBottomSheetState
- import androidx.compose.material3.rememberSwipeToDismissBoxState
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
-+import androidx.compose.runtime.collectAsState
-+import androidx.compose.runtime.key
- import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.Stable
- import androidx.compose.runtime.getValue
-@@ -67,10 +71,13 @@ import sh.zeron.android.core.TerminalTab
- import sh.zeron.android.design.ZIcon
- import sh.zeron.android.design.ZIcons
- import uniffi.zeron_core.CoreException
-+import uniffi.zeron_core.InputRequest
-+import uniffi.zeron_core.SessionHandle
- import uniffi.zeron_core.SessionRow
- import uniffi.zeron_core.SubagentRow
- import uniffi.zeron_core.SubagentState
- import uniffi.zeron_core.TerminalPhase
-+import uniffi.zeron_core.UserInputAnswer
- 
- /** The companions sheet's sections (each chip opens its own). */
- enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Side chats"), Terminals("Terminals") }
-@@ -79,10 +86,43 @@ enum class CompanionSection(val title: String) { Agents("Agents"), SideChats("Si
- @Stable
- class Companions(val agents: List<SubagentRow>, val sideChats: List<SessionRow>, val terminals: List<TerminalTab>) {
-     val runningAgents: Int get() = agents.count { it.state == SubagentState.RUNNING }
-+    /** Chats it delegated to that ask the person something (answered on their rows). */
-+    val askingAgents: Int get() = agents.count { it.asks }
-     val liveTerminals: Int get() = terminals.count { it.isLive }
-     val isEmpty: Boolean get() = agents.isEmpty() && sideChats.isEmpty() && terminals.isEmpty()
- }
- 
-+/** A chat its parent's agent delegated to (a chat of its own, not a spawn in the parent's runtime). */
-+val SubagentRow.isDelegated: Boolean get() = chatId != null
-+
-+/** A session's side chats among its children: the chats it delegated to are its subagents instead. */
-+internal fun sideChatsOf(children: List<SessionRow>): List<SessionRow> = children.filter { !it.archived && !it.delegated }
-+
-+/**
-+ * The Agents section's order: its own spawns (live first, then newest), then
-+ * the chats it delegated to (any that ask first, then live ones, oldest first
-+ * as the core lists them).
-+ */
-+internal fun orderedAgents(agents: List<SubagentRow>): List<SubagentRow> {
-+    val (delegated, native) = agents.partition { it.isDelegated }
-+    val live = compareByDescending<IndexedValue<SubagentRow>> { it.value.state == SubagentState.RUNNING }
-+    return native.withIndex().sortedWith(live.thenByDescending { it.index }).map { it.value } +
-+        delegated.withIndex().sortedWith(compareByDescending<IndexedValue<SubagentRow>> { it.value.asks }.then(live).thenBy { it.index }).map { it.value }
-+}
-+
-+/** A delegated row's word on it: its agent and, when it isn't the parent's, its device ("Codex · Build box"). */
-+internal fun delegatedDetail(a: SubagentRow): String = listOfNotNull(a.kind, a.deviceName).joinToString(" · ")
-+
-+/** What an approval would run: its fenced or backticked part, if it has one (the desktop's ask card shows it as code). */
-+internal fun askCommand(question: String): String? {
-+    Regex("```[^\\n]*\\n([\\s\\S]*?)```").find(question)?.let { return it.groupValues[1].trim().ifEmpty { null } }
-+    return Regex("`([^`]+)`").find(question)?.groupValues?.get(1)?.trim()?.ifEmpty { null }
-+}
-+
-+/** A question answered in place: one question, a single pick, a handful of options. */
-+internal fun answersInPlace(input: InputRequest): Boolean =
-+    !input.isApproval && input.questions.size == 1 && input.questions[0].let { !it.multiSelect && it.options.size in 1..5 }
-+
- /**
-  * A session's companions, re-read as it changes. Streaming changes the
-  * session every frame; this settles a few times a second (a subagent count
-@@ -125,12 +165,22 @@ fun CompanionStrip(c: Companions, onTap: (CompanionSection) -> Unit, modifier: M
-     Row(modifier.animateContentSize(MaterialTheme.motionScheme.defaultSpatialSpec()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-         AnimatedVisibility(c.agents.isNotEmpty(), enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally()) {
-             val running = c.runningAgents
--            CompanionChip(
--                icon = if (running > 0) null else ZIcons.Bot,
--                text = if (running > 0) "$running working" else "${c.agents.size}",
--            
-```
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionScreen.kt` (modified, +14/-6)
-```diff
-@@ -161,6 +161,8 @@ fun SessionScreen(
-         composer = handle.composer()
-         model.sessionEvents.collect { if (it == chatId) composer = handle.composer() }
+         self.idle()?;
+         // (The page says what to do about it: no words for the composer.)
+         if !zeron_voice::installed(&dir) {
+@@ -199,6 +202,9 @@ impl Service {
      }
-+    // A delegated chat's start line says how that chat stands: it reads the workspace again as it changes.
-+    LaunchedEffect(chatId) { model.workspace.collect { runCatching { transcript.engine.workspaceChanged() } } }
-     LaunchedEffect(chatId) {
-         val text = sendOnOpen ?: return@LaunchedEffect
-         runCatching { handle.send(uniffi.zeron_core.SendRequest(text, emptyList(), null, uniffi.zeron_core.BusyPolicy.QUEUE)) }
-@@ -255,16 +257,17 @@ fun SessionScreen(
-             which.startsWith("subagent:") -> {
-                 val tool = which.removePrefix("subagent:")
-                 model.sessionSubagents(chatId).firstOrNull { it.id == tool || it.docId?.endsWith(tool) == true }?.let { a ->
--                    a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
-+                    // A delegated one is a chat of its own.
-+                    a.chatId?.let(onOpenSideChat) ?: a.docId?.let { onOpenSubagent(chatId, it, a.title, a.state == uniffi.zeron_core.SubagentState.RUNNING) }
-                 }
-             }
-         }
-     }
- 
-     val project = row?.project?.name ?: "No project"
-     val parentTitle = remember(workspace, parentId) { parentId?.let { model.row(it)?.title } }
--    // A side chat heads itself as one, under its parent's title.
--    val headerTitle = if (parentId != null) "Side chat" else composer.title
-+    // A side chat (or a chat its parent delegated to) heads itself as one, under its parent's title.
-+    val headerTitle = if (parentId != null) childHeading(row) else composer.title
-     val subtitle = parentTitle ?: composer.host.name?.let { "$project @ $it" } ?: project
-     var overflow by remember { mutableStateOf(false) }
-     val clipboard = LocalClipboardManager.current
-@@ -297,10 +300,12 @@ fun SessionScreen(
-                     sh.zeron.android.voice.VoiceHeaderButton(model.voice, onOpenStage = onOpenVoice, onOpenSettings = onVoiceSettings)
-                     androidx.compose.foundation.layout.Spacer(Modifier.size(8.dp))
-                 }
--                // Agents, side chats and terminals; a badge while agents work.
-+                // Agents, side chats and terminals; a badge while agents work, toned while one needs you.
-                 androidx.compose.material3.BadgedBox(
-                     badge = {
--                        if (companions.runningAgents > 0) {
-+                        if (companions.askingAgents > 0) {
-+                            androidx.compose.material3.Badge(containerColor = warningColor(), contentColor = MaterialTheme.colorScheme.surface) { Text("${companions.askingAgents}") }
-+                        } else if (companions.runningAgents > 0) {
-                             androidx.compose.material3.Badge(containerColor = MaterialTheme.colorScheme.primary) { Text("${companions.runningAgents}") }
-                         }
-                     },
-@@ -409,7 +414,7 @@ fun SessionScreen(
-         CompanionsSheet(
-             model,
-             chatId,
--            title = if (parentId != null) "Side chat" else composer.title,
-+            title = if (parentId != null) childHeading(row) else composer.title,
-             initialSection = companionsSheet,
-             onDismiss = {
-                 showCompanions = false
-@@ -463,6 +468,9 @@ fun SessionScreen(
-     }
- }
- 
-+/** A child chat's heading: a subagent when its parent's agent delegated to it, else a side chat. */
-+internal fun childHeading(row: uniffi.zeron_core.SessionRow?): String = if (row?.delegated == true) "Subagent" else "Side chat"
-+
- /** How far above the chips and composer the transcript starts to fade. */
- private val FADE = 44.dp
- 
-```
-
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionsScreen.kt` (modified, +22/-1)
-```diff
-@@ -588,16 +588,37 @@ fun HarnessTile(row: SessionRow) {
-     ) { HarnessMark(row.harness, 24.dp, tint = MaterialTheme.colorScheme.onSurface) }
- }
- 
--/** Project monogram + name, then the branch — the desktop sidebar subline. */
-+/**
-+ * What a waiting chat waits on, in a line (the desktop hover card's): the
-+ * first of it ("Codex · Build box · Audit the parser") and how many more.
-+ */
-+internal fun waitingLine(row: SessionRow): String? = waitingParts(row)?.let { (first, more) -> first + more }
-+
-+/** [waitingLine] in two: what it waits on first (cut short when it must) and how many more (never cut). */
-+internal fun waitingParts(row: SessionRow): Pair<String, String>? {
-+    val first = row.waitingOn.firstOrNull() ?: return null
-+    val more = row.waitingOn.size - 1
-+    return "Waiting on $first" to if (more > 0) " (+$more more)" else ""
-+}
-+
-+/** Project monogram + name, then the branch — the desktop sidebar subline; a waiting chat's says what it waits on. */
- @Composable
- private fun Subline(row: SessionRow) {
-     val muted = MaterialTheme.colorScheme.onSurfaceVariant
-+    val waiting = waitingParts(row)
-     Row(verticalAlignment = Alignment.CenterVertically) {
-         val project = row.project
-         if (project != null) {
-             ProjectTile(project.name, project.colorIndex.toInt(), 16.dp)
-             Spacer(Modifier.width(6.dp))
-         }
-+        // (The project's tile still says whose it is.)
-+        if (waiting != null) {
-+            val (first, more) = waiting
-+            Text(first, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
-+            if (more.isNotEmpty()) Text(more, style = MaterialTheme.typography.bodyMedium, color = muted, maxLines = 1, softWrap = false)
-+            return@Row
+     fn download(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
++        if !zeron_voice::cpu_supported() {
++            return Err(zeron_voice::CPU_UNSUPPORTED.into());
 +        }
-         Text(
-             project?.name ?: row.deviceName ?: "No project",
-             style = MaterialTheme.typography.bodyMedium,
+         let total = zeron_voice::model_for(&dir).map_or(0, |m| m.size());
+         self.idle()?;
+         if DOWNLOADING.swap(true, Ordering::AcqRel) {
 ```
 
-**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/TabletShell.kt` (modified, +2/-7)
+**File**: `apps/zgx/ui/locales/en.json` (modified, +1/-0)
 ```diff
-@@ -188,16 +188,11 @@ fun InspectorPageContent(model: AppModel, shell: TabletShellState, chatId: Strin
-     when (page) {
-         is InspectorPage.Companions -> Column(Modifier.fillMaxSize()) {
-             val c = rememberCompanions(model, chatId)
--            val title = model.row(chatId)?.let { if (it.parentChatId != null) "Side chat" else it.title } ?: "Session"
-+            val title = model.row(chatId)?.let { if (it.parentChatId != null) childHeading(it) else it.title } ?: "Session"
-             Row(Modifier.fillMaxWidth().statusBarsPadding().padding(start = 20.dp, end = 12.dp, top = 8.dp, bottom = 4.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                 Column(Modifier.weight(1f)) {
-                     Text(title, style = MaterialTheme.typography.titleLargeEmphasized, maxLines = 1, overflow = TextOverflow.Ellipsis)
--                    val running = c.runningAgents
--                    Text(
--                        if (running > 0) "$running agent${if (running == 1) "" else "s"} working" else "Agents, side chats & terminals",
--                        style = MaterialTheme.typography.bodyMedium,
--                        color = if (running > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
--                    )
-+                    CompanionsSubtitle(c)
-                 }
-                 TonalCircleButton(sh.zeron.android.design.ZIcons.Close, "Close", onClick = shell::hideInspector, size = 44.dp, container = MaterialTheme.colorScheme.surfaceContainerHighest)
-             }
+@@ -2414,6 +2414,7 @@
+       "model": {
+         "title": "Speech models",
+         "about": "{size} · {n, plural, one {# language} other {# languages}}",
++        "unsupported": "This computer's processor can't run speech models (they need AVX2).",
+         "about_slow": "{size} · {n, plural, one {# language} other {# languages}} · Slower on this computer",
+         "mb": "{n} MB",
+         "gb": "{n} GB",
 ```
 
-**File**: `apps/android/app/src/test/java/sh/zeron/android/ui/CompanionsTest.kt` (added, +97/-0)
+**File**: `apps/zgx/ui/locales/zh-Hans.json` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,97 @@
-+package sh.zeron.android.ui
-+
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+import uniffi.zeron_core.ChatIndicator
-+import uniffi.zeron_core.InputRequest
-+import uniffi.zeron_core.SessionRow
-+import uniffi.zeron_core.SubagentRow
-+import uniffi.zeron_core.SubagentState
-+import uniffi.zeron_core.UserInputQuestion
-+
-+class CompanionsTest {
-+    private fun child(id: String, delegated: Boolean = false, archived: Boolean = false, waitingOn: List<String> = emptyList()) = SessionRow(
-+        id = id, revision = 0u, title = id, hasTitle = true, preview = null, project = null,
-+        deviceId = "mac", deviceName = null, deviceOnline = true, isCloud = false,
-+        harness = null, harnessLabel = null, model = null, modelLabel = null, reasoning = null,
-+        branch = null, cwd = null, indicator = ChatIndicator.IDLE, hostIndicator = ChatIndicator.IDLE,
-+        workingSinceMs = null, lastActivityMs = 0, timeLabel = "", createdAtMs = 0,
-+        unseen = false, archived = archived, pinned = false, sectionId = null, pullRequest = null,
-+        sendState = null, parentChatId = "parent", delegated = delegated, waitingOn = waitingOn,
-+        waitingSinceMs = null, childAsks = false, roomGen = 2u, sleepUntilMs = null, wokeAtMs = null, waitsOnProcess = false,
-+    )
-+
-+    private fun agent(id: String, chat: String? = null, state: SubagentState = SubagentState.RUNNING, asks: Boolean = false) = SubagentRow(
-+        id = id, chatId = chat, deviceName = null, harness = null, asks = asks, docId = null,
-+        title = id, model = null, kind = null, state = state, tail = null, startedAtMs = 0,
-+    )
-+
-+    @Test
-+    fun delegated_children_are_subagents_not_side_chats() {
-+        val sides = sideChatsOf(listOf(child("side"), child("audit", delegated = true), child("old", archived = true)))
-+        assertEquals(listOf("side"), sides.map { it.id })
-+    }
-+
-+    @Test
-+    fun delegated_chats_follow_the_agents_own_spawns() {
-+        val order = orderedAgents(
-+            listOf(
-+                agent("spawn-done", state = SubagentState.DONE),
-+                agent("bench", chat = "c-bench", state = SubagentState.DONE),
-+                agent("spawn-live"),
-+                agent("notes", chat = "c-notes"),
-+                agent("audit", chat = "c-audit", asks = true),
-+            ),
-+        )
-+        // Spawns live first; then delegated chats, the one that asks first, live before done.
-+        assertEquals(listOf("spawn-live", "spawn-done", "audit", "notes", "bench"), order.map { it.id })
-+    }
-+
-+    @Test
-+    fun a_delegated_rows_detail_is_its_agent_and_other_device() {
-+        assertEquals("Codex · Build box", delegatedDetail(agent("a", chat = "c").copy(kind = "Codex", deviceName = "Build box")))
-+        assertEquals("Claude Code", delegatedDetail(agent("a", chat = "c").copy(kind = "Claude Code")))
-+    }
-+
-+    @Test
-+    fun an_approval_shows_what_it_would_run() {
-+        assertEquals("cargo fuzz run parse -- -max_total_time=60", askCommand("Run `cargo fuzz run parse -- -max_total_time=60`?"))
-+        assertEquals("rm -rf build\nls", askCommand("Allow this?\n```sh\nrm -rf build\nls\n```"))
-+        assertNull(askCommand("Edit src/parse.rs?"))
-+        assertNull(askCommand("Run ``?"))
-+    }
-+
-+    private fun question(options: List<String>, multi: Boolean = false) =
-+        UserInputQuestion(id = "q", header = "", question = "Which branch?", options = options, multiSelect = multi, prefill = null, multiline = false)
-+
-+    @Test
-+    fun only_a_short_single_pick_answers_in_place() {
-+        fun input(vararg q: UserInputQuestion, approval: Boolean = false) = InputRequest("e", "r", q.toList(), approval)
-+        assertTrue(answersInPlace(input(question(listOf("main", "release/1.9", "next")))))
-+        assertFalse(answersInPlace(input(question(listOf("a", "b", "c", "d", "e", "f")))))
-+        assertFalse(answersInPlace(input(question(listOf("a", "b"), multi = true))))
-+        assertFalse(answersInPlace(input(question(emptyList()))))
-+        assertFalse(answersInPlace(input(question(listOf("a")), question(listOf("b")))))
-+        assertFalse(answersInPlace(input(question(listOf("Yes", "No")), approval = true)))
-+    }
-+
-+    @Test
-+    fun a_waiting_chat_says_what_it_waits_on() {
-+        assertNull(waitingLine(child("idle")))
-+        assertEquals("Waiting on Codex · Build box · Audit the parser", waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser"))))
-+        assertEquals(
-+            "Waiting on Codex · Build box · Audit the parser (+1 more)",
-+            waitingLine(child("w", waitingOn = listOf("Codex · Build box · Audit the parser", "Claude Code · Draft the release notes"))),
-+        )
-+    }
-+
-+    @Test
-+    fun a_child_heads_itself_by_how_it_was_made() {
-+        assertEquals("Subagent", childHeading(child("audit", 
+@@ -2414,6 +2414,7 @@
+       "model": {
+         "title": "语音模型",
+         "about": "{size} · {n} 种语言",
++        "unsupported": "这台电脑的处理器无法运行语音模型（需要 AVX2）。",
+         "about_slow": "{size} · {n} 种语言 · 在这台电脑上较慢",
+         "mb": "{n} MB",
+         "gb": "{n} GB",
 ```
 
-**File**: `apps/android/icons/status-approval.svg` (added, +1/-0)
+**File**: `apps/zgx/ui/screens/settings/voice.luau` (modified, +12/-2)
 ```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+@@ -28,6 +28,8 @@ search.index(M.ID, ui.t("settings.voice.title"), ui.t("settings.voice.terms"), {
+ -- The models on offer, as the host lists them: { id, name, size,
+ -- languages, installed }, the default first.
+ local models = ui.state("settings_voice_models", {} :: { any })
++-- This computer's processor runs them (x86-64 without AVX2 doesn't).
++local supported = ui.state("settings_voice_supported", true)
+ -- The chosen one (its first when the saved one isn't offered).
+ local function chosen(): any?
+ 	local list, want = models:get(), prefs.dictation_model:get()
+@@ -49,7 +51,10 @@ local on = ui.state("settings_voice_on", false)
+ 
+ local function refresh()
+ 	host.call("dictation.call", { op = "status" }):after(function(s: any)
+-		models:set(s.models or {})
++		ui.batch(function()
++			models:set(s.models or {})
++			supported:set(s.supported ~= false)
++		end)
+ 	end, function() end)
+ 	host.call("dictation.call", { op = "inputs" }):after(function(list: any)
+ 		inputs:set(list)
+@@ -167,6 +172,9 @@ end
+ -- A model's line: its size, how many languages it speaks, and whether it's
+ -- slow here (on the CPU).
+ local function about(m: any): string
++	if not supported:get() then
++		return ui.t("settings.voice.model.unsupported"):get()
++	end
+ 	return ui.t(if m.slow then "settings.voice.model.about_slow" else "settings.voice.model.about", { size = weight(m.size), n = #(m.languages or {}) }):get()
+ end
+ -- Download or Remove `m` (a function: the model as it is now).
+@@ -180,7 +188,7 @@ local function model_action(m: () -> any?): Node
+ 			ui.t("settings.voice.model.remove"), tone = "secondary", size = "sm",
+ 			on_click = function() remove(m().id) end,
+ 		}),
+-		ui.show(function(): boolean return m() ~= nil and not here() end, ds.Button {
++		ui.show(function(): boolean return m() ~= nil and not here() and supported:get() end, ds.Button {
+ 			ui.t("settings.voice.model.download"), tone = "secondary", size = "sm", disabled = downloading,
+ 			on_click = function() download(m().id) end,
+ 		}),
+@@ -271,6 +279,8 @@ function M.view(): Node
+ 						local s = dictation.state:get()
+ 						if s.phase == "downloading" then
+ 							return ui.t("settings.voice.dictation.downloading", { done = weight(s.bytes or 0), total = weight(s.total or 0) }):get()
++						elseif not supported:get() then
++							return ui.t("settings.voice.model.unsupported"):get()
+ 						elseif not installed:get() then
+ 							return ui.t("settings.voice.dictation.needs_download", { total = weight(size:get()) }):get()
+ 						end
+```
+
+**File**: `apps/zgx/ui/settings_stub.luau` (modified, +8/-2)
+```diff
+@@ -23,6 +23,7 @@ local auth = require("@account/auth")
+ local M = {}
+ 
+ local calls = ui.state("settings_stub_calls", {} :: { string })
++local voice = ui.state("settings_stub_voice", { cohere = "absent", supported = true } :: any)
+ local refuse = ui.state("settings_stub_refuse", false)
+ local role = ui.state("settings_stub_role", "admin")
+ local about_next = ui.state("settings_stub_about_next", "ok")
+@@ -144,12 +145,17 @@ local answers: { [string]: (arg: any) -> any } = {
+ 	["account.me"] = function()
+ 		return settled(table.clone(me))
+ 	end,
++	-- Settings → Voice: Ultra downloaded; Cohere as `settings_stub_voice`
++	-- says ("absent", "partial": some files, "installed"), and whether this
++	-- processor runs them (`supported`).
+ 	["dictation.call"] = function(arg: any)
++		local v = voice:peek()
+ 		return settled(if arg.op == "status"
+ 			then {
++				supported = v.supported,
+ 				models = {
+-					{ id = "parakeet-ultra-q8", name = "Parakeet Ultra", size = 740363168, memory = 1150000000, installed = true, languages = table.create(25, "") },
+-					{ id = "cohere-transcribe-q5", name = "Cohere Transcribe", size = 1796963840, memory = 2800000000, installed = false, slow = true, languages = table.create(14, "") },
++					{ id = "parakeet-ultra-q8", name = "Parakeet Ultra", size = 740363168, memory = 1150000000, installed = true, present = true, languages = table.create(25, "") },
++					{ id = "cohere-transcribe-q5", name = "Cohere Transcribe", size = 1796963840, memory = 2800000000, installed = v.cohere == "installed", present = v.cohere ~= "absent", slow = true, languages = table.create(14, "") },
+ 				},
+ 			}
+ 			elseif arg.op == "inputs" then {}
+```
+
+**File**: `apps/zgx/ui/tests/voice_models.test.luau` (modified, +9/-1)
+```diff
+@@ -6,10 +6,11 @@
+ 
+ local PAGE = "#settings-page"
+ 
+-local function voice(): any
++local function voice(stub: any?): any
+ 	local app = mount("shell_fixture.luau")
+ 	app:resize(1200, 900)
+ 	app:frames(30)
++	if stub then app:set_state("settings_stub_voice", stub) end
+ 	app:set_state("settings_dictation", true)
+ 	app:command("shell.settings")
+ 	app:frames(20)
+@@ -45,3 +46,10 @@ test("removing the model in use turns dictation off, nothing in use", function()
+ 	expect(app:count(`{PAGE} >> role:button "Download"`)).to_be(2)
+ 	expect(app:error()).to_be(nil)
+ end)
++
++test("a processor that can't run them says so and offers no download", function()
++	local app = voice({ cohere = "absent", supported = false })
++	expect(shows(app, "can't run speech models")).to_be(true)
++	expect(app:has(`{PAGE} >> role:button "Download"`)).to_be(false)
++	expect(app:error()).to_be(nil)
++end)
+```
+
+**File**: `crates/voice/src/lib.rs` (modified, +21/-0)
+```diff
+@@ -77,6 +77,24 @@ pub fn download(dir: &Path, cancel: &AtomicBool, progress: impl FnMut(u64)) -> R
+         .download(dir, cancel, progress)
+ }
+ 
++/// Whether this computer's processor runs the models: on x86-64 they're
++/// built for AVX2, FMA, F16C and BMI2 (most since 2013, not every Celeron or
++/// Pentium: Gemini Lake and Jasper Lake have none of them), and would crash
++/// the app without them.
++pub fn cpu_supported() -> bool {
++    #[cfg(target_arch = "x86_64")]
++    {
++        std::arch::is_x86_feature_detected!("avx2")
++            && std::arch::is_x86_feature_detected!("fma")
++            && std::arch::is_x86_feature_detected!("f16c")
++            && std::arch::is_x86_feature_detected!("bmi2")
++    }
++    #[cfg(not(target_arch = "x86_64"))]
++    true
++}
++pub const CPU_UNSUPPORTED: &str =
++    "This computer's processor can't run speech models (they need AVX2).";
++
+ /// Models Zeron no longer offers, by folder.
+ const RETIRED: &[&str] = &["parakeet-tdt-0.6b-v3-int8"];
+ /// Frees what retired models take in `models` (Parakeet v3: 670 MB). Whoever
+@@ -155,6 +173,9 @@ pub struct Recognizer {
+ }
+ impl Recognizer {
+     pub fn load(dir: &Path) -> Result<Self> {
++        if !cpu_supported() {
++            bail!(CPU_UNSUPPORTED)
++        }
+         let m = model_for(dir).context("No such speech model")?;
+         // Hashed once, at download: a load reads only what it needs.
+         if !m.installed(dir) {
 ```
 
 ---
 
-### Incident Patch 2: `34e345ad` (2026-11-25)
-**Commit Message**: Merge pull request #1617 from zeronsh/zeron/landing-pixel-walker
+### Incident Patch 2: `f2b36135` (2026-11-14)
+**Commit Message**: zeron-voice: a folder is its model's or none, and every build is portable
 
-Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge
+The old app keeps Ultra in Ultra's folder (models/<id>), as zgx does: no
+more downloading it into v3's, which zgx clears at launch. An unknown
+folder or model id is an error, never the default's (Remove could have
+deleted Ultra). TRANSCRIBE_CMAKE_ARGS moves to the repository's own cargo
+config, so a build from the root is as portable as apps/zgx's.
 
-**File**: `apps/landing/src/components/app/PixelWalker.astro` (added, +114/-0)
+**File**: `.cargo/config.toml` (added, +9/-0)
 ```diff
-@@ -0,0 +1,114 @@
-+---
-+// The Pixel Walker plugin's fellow in a red cap, strolling along the top bar
-+// of the recreated window as he does in the app: the same 14 × 16 artwork
-+// (sprite.luau), drawn at its "Normal" size (two points a pixel), at its
-+// default 40 points a second, pausing 0.7 s at each end before he turns.
-+// He sets off from the session's tab (which ends at x 430), heading right,
-+// and walks the bar to 48 points short of its right edge, as in the app.
-+//
-+// Every move is a transform or an opacity, so it all runs on the compositor
-+// and nothing is repainted: the walk is a translate, the turn a scale, the
-+// stride a four-frame sheet stepped along, and a pause swaps in the
-+// standing frame. With Reduce Motion he stands still, as the plugin does.
-+
-+const PALETTE: Record<string, string> = {
-+  h: "#e4605b", // red 500: cap
-+  k: "#362001", // amber 950: hair
-+  s: "#ffd3be", // orange 200: skin
-+  t: "#f9837b", // red 400: shirt
-+  p: "#18aa99", // teal 500: overalls
-+  b: "#905d02", // amber 700: boots
-+  y: "#f0e4b6", // yellow 200: buttons
-+};
-+const HEAD = [
-+  "....hhhhh.....",
-+  "...hhhhhhhh...",
-+  "...kksssks....",
-+  "..ksssssks....",
-+  "..kssssssss...",
-+  "...ksssss.....",
-+  "....ssss......",
-+  "...tttttt.....",
-+];
-+const POSES = [
-+  ["..ttpttptt....", "..ttpyyptt....", "..ssppppss....", "...pppppp.....", "...pp..pp.....", "..pp....pp....", "..bb....bb....", ".bbb....bbb..."],
-+  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "....pppp......", "....pppp......", "....bbbb......", "....bbbbb....."],
-+  ["..ttpttptt....", "..ttpyyptt....", "...sppppsss...", "...pppppp.....", "...pp..pp.....", "....pp..pp....", "....bb..bb....", "...bbb..bbb..."],
-+  ["...tpttpt.....", "...tpyypt.....", "...spppps.....", "....pppp......", "...pppp.......", "...pppp.......", "...bbbb.......", "...bbbbb......"],
-+];
-+const W = 14;
-+
-+// One rect per run of a colour, as the plugin paints them. The second and
-+// fourth strides bob up a pixel, so each frame sits in a box one row taller.
-+function rects(pose: string[], dx: number, dy: number) {
-+  let out = "";
-+  [...HEAD, ...pose].forEach((row, y) => {
-+    for (let x = 0; x < row.length; ) {
-+      let end = x + 1;
-+      while (end < row.length && row[end] === row[x]) end++;
-+      if (row[x] !== ".") out += `<rect x="${dx + x}" y="${dy + y}" width="${end - x}" height="1" fill="${PALETTE[row[x]]}"/>`;
-+      x = end;
-+    }
-+  });
-+  return out;
-+}
-+const sheet = POSES.map((pose, i) => rects(pose, i * W, i % 2 === 1 ? 0 : 1)).join("");
-+const standing = rects(POSES[1], 0, 1);
-+---
-+
-+<div class="walker" aria-hidden="true">
-+  <div class="face">
-+    <div class="stride"><svg class="sheet" viewBox="0 0 56 17" shape-rendering="crispEdges" set:html={sheet} /></div>
-+    <svg class="stand" viewBox="0 0 14 17" shape-rendering="crispEdges" set:html={standing} />
-+  </div>
-+</div>
-+
-+<style>
-+  /* In the stage's points: his walk starts just past the tab, at x 434; his
-+     feet sit a point above the bar's foot (y 41), and the box is a row
-+     taller for the bob. */
-+  .walker { left: 434px; top: 7px; width: 28px; height: 34px; pointer-events: none; }
-+  .face, .stride, .stand { position: absolute; inset: 0; }
-+  .stride { overflow: hidden; opacity: 0; }
-+  /* The sheet is four frames wide, wider than its box: the page's own svg rule would shrink it. */
-+  .sheet { display: block; width: 112px; max-width: none; height: 34px; }
-+  .stand { display: block; width: 28px; height: 34px; }
-+
-+  /* One round trip: 810 points each way (434 to 1272, less his width) at 40
-+     a second is 20.25 s, and a 0.7 s pause at each end makes 41.9 s.
-+     20.25 / 41.9 = 48.329 %, 40.95 / 41.9 = 97.733 %. He starts at the tab. */
-+  @media (prefers-reduced-motion: no-preference) {
-+    .walker, .face, .stride, .stand { animation-duration: 41.9s; animation-iteration-count: infinite; }
-+    .walker { animation-name: walk; animation-timing-function: linear; }
-+    .face { animation-name: face; animation-timing-function: step-end; }
-+    .stride { animation-name: striding; animation-timing-function: step-end; }
-+    .stand { animation-name: standing; animation-timing-function: step-end; }
-+    /* Four strides of 0.12 s each. */
-+    .sheet { animation: strides 0.48s steps(4) infinite; }
-+  }
-+  @keyframes walk {
-+    0% { translate: 0 0; }
-+    48.329% { translate: 810px 0; }
-+    50% { translate: 810px 0; }
-+    97.733% { translate: 0 0; }
-+    100% { translate: 0 0; }
-+  }
-+  /* He turns when a pause ends, as the plugin does. */
-+  @keyframes face {
-+    0% { scale: 1 1; }
-+    50% { scale: -1 1; }
-+  }
-+  @keyframes striding {
-+    0% { opacity: 1; }
-+    48.329% { opacity: 0; }
-+    50% { opacity: 1; }
-+    97.733% { opacity: 0; }
-+  }
-+  @keyframes standing {
-+    0% { opacity: 0; }
-+    48.329% { opacity: 1; }
-+    50% { opacity: 0; }
-+    97.733% { opacity: 1; }
-+  }
-+  @keyframes strides { to { translate: -112px 0; } }
-+</style>
+@@ -0,0 +1,9 @@
++# Read by every build in this repository, apps/zgx's included (Cargo reads the
++# parents' config too).
++[env]
++# transcribe.cpp (dictation, crates/voice) built for x86-64 CPUs with AVX2 and
++# FMA, never for the machine that builds it (ggml's default, `-march=native`).
++# 2.8× faster than its plain-SSE floor; CPUs without them are told so before
++# a model loads (`zeron_voice::cpu_supported`). Apple silicon and arm64 Linux
++# ignore these.
++TRANSCRIBE_CMAKE_ARGS = "-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_BMI2=ON"
 ```
 
-**File**: `apps/landing/src/components/app/SessionWindow.astro` (modified, +8/-2)
+**File**: `apps/zgx/.cargo/config.toml` (modified, +0/-4)
 ```diff
-@@ -12,6 +12,7 @@ import fragment from "./session.fragment.html?raw";
- import "./session.icons.css";
- import "./session.vars.css";
- import "./zw.css";
-+import PixelWalker from "./PixelWalker.astro";
- 
- interface Props {
-   theme?: "dark" | "light";
-@@ -20,13 +21,18 @@ interface Props {
-   /** Not for readers: a second copy on a page, or a piece used as a picture. */
-   decorative?: boolean;
-   class?: string;
-+  /** The Pixel Walker plugin's fellow, strolling along the top bar. */
-+  walker?: boolean;
+@@ -13,7 +13,3 @@ LUAU_CXXFLAGS = "-DNDEBUG"
+ # sizes all its own, so one block of 50 KiB left in such a page holds up to a
+ # megabyte. Each now has a page of its own, freed with it.
+ CFLAGS_aarch64_apple_darwin = "-DMI_ARENA_SLICE_SHIFT=14 -DMI_ENABLE_LARGE_PAGES=0"
+-# transcribe.cpp (dictation) for any x86-64 since 2013 (AVX2, FMA), not for the
+-# machine that builds it: 2.8× faster than its plain-SSE floor. Apple silicon
+-# and arm64 Linux ignore these.
+-TRANSCRIBE_CMAKE_ARGS = "-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_BMI2=ON"
+```
+
+**File**: `apps/zgx/src/dictation.rs` (modified, +12/-5)
+```diff
+@@ -144,12 +144,19 @@ impl Service {
+             self.state["phase"] = json!("finalizing");
+         }
+     }
+-    /// The folder of the model `args` names (`model`, an id), else the default's.
++    /// The folder of the model `args` names (`model`, an id; none or empty:
++    /// the default). One it doesn't offer is an error, never another's folder.
+     fn dir(&self, args: &Json) -> Result<PathBuf, String> {
+-        let models = zeron_voice::models();
+-        let id = args["model"].as_str().filter(|id| models.iter().any(|m| m.id == *id));
+         let models_dir = self.models.as_ref().ok_or("Zeron's data folder isn't known")?;
+-        Ok(models_dir.join(id.unwrap_or(&models[0].id)))
++        let id = match args["model"].as_str().filter(|id| !id.is_empty()) {
++            Some(id) => zeron_voice::models()
++                .into_iter()
++                .find(|m| m.id == id)
++                .ok_or("No such speech model")?
++                .id,
++            None => zeron_voice::manifest().id,
++        };
++        Ok(models_dir.join(id))
+     }
+     fn idle(&self) -> Result<(), String> {
+         if self.needs_poll() || zeron_voice::busy() || DOWNLOADING.load(Ordering::Acquire) {
+@@ -192,7 +199,7 @@ impl Service {
+     }
+     fn download(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
+-        let total = zeron_voice::model_for(&dir).size();
++        let total = zeron_voice::model_for(&dir).map_or(0, |m| m.size());
+         self.idle()?;
+         if DOWNLOADING.swap(true, Ordering::AcqRel) {
+             return Err("Another window is downloading the model".into());
+```
+
+**File**: `crates/voice/src/lib.rs` (modified, +13/-18)
+```diff
+@@ -60,24 +60,21 @@ pub fn manifest() -> Manifest {
+     models().swap_remove(0)
  }
--const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className } = Astro.props;
-+const { theme = "dark", crop = [0, 0, 1320, 840], decorative = false, class: className, walker = false } = Astro.props;
- const [x, y, w, h] = crop;
- const label =
-   "Zeron with a session open. The sidebar groups eight sessions under four projects, run by Claude Code, Codex and Grok; two are still working. In the open one, Claude Code explains and fixes a rate limiter bug, and the Changes panel beside it shows the diff of window.ts.";
- ---
+ /// The model a folder holds: the one its name is the id of (each lives in
+-/// `<data>/models/<id>`), else the default.
+-pub fn model_for(dir: &Path) -> Manifest {
+-    let id = dir.file_name().and_then(|n| n.to_str());
+-    let mut all = models();
+-    let at = all
+-        .iter()
+-        .position(|m| Some(m.id.as_str()) == id)
+-        .unwrap_or(0);
+-    all.swap_remove(at)
++/// `<data>/models/<id>`). None for any other folder.
++pub fn model_for(dir: &Path) -> Option<Manifest> {
++    let id = dir.file_name().and_then(|n| n.to_str())?;
++    models().into_iter().find(|m| m.id == id)
+ }
+ pub fn download_size() -> u64 {
+     manifest().size()
+ }
+ pub fn installed(dir: &Path) -> bool {
+-    model_for(dir).installed(dir)
++    model_for(dir).is_some_and(|m| m.installed(dir))
+ }
+ pub fn download(dir: &Path, cancel: &AtomicBool, progress: impl FnMut(u64)) -> Result<()> {
+-    model_for(dir).download(dir, cancel, progress)
++    model_for(dir)
++        .context("No such speech model")?
++        .download(dir, cancel, progress)
+ }
  
- <div class:list={["zw-fit", className]} style={`--zx:${x};--zy:${y};--zw:${w};--zh:${h}`}>
--  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined} set:html={fragment} />
-+  <div class:list={["zw", "zw-session", theme === "light" ? "t1" : "t0"]} role={decorative ? undefined : "img"} aria-label={decorative ? undefined : label} aria-hidden={decorative ? "true" : undefined}>
-+    <Fragment set:html={fragment} />
-+    {walker && <PixelWalker />}
-+  </div>
- </div>
-```
-
-**File**: `apps/landing/src/components/home/Hero.astro` (modified, +5/-24)
-```diff
-@@ -1,5 +1,4 @@
- ---
--import { RELEASE_NOTES_URL } from "../../data/releases.ts";
- import { SITE } from "../../data/site.ts";
- import SessionWindow from "../app/SessionWindow.astro";
- import GitHubStars from "../site/GitHubStars.astro";
-@@ -9,45 +8,27 @@ import Icon from "../ui/Icon.astro";
- 
- <section class="hero">
-   <div class="wrap">
--    <a class="news rise" href={RELEASE_NOTES_URL}>What’s new in Zeron<span data-release-version hidden></span><Icon name="alt-arrow-right" size={12} /></a>
--    <h1 class="rise" style="--i:1">The agent workspace that can become anything</h1>
--    <p class="lead rise" style="--i:2">
-+    <h1 class="rise">The agent workspace that can become anything</h1>
-+    <p class="lead rise" style="--i:1">
-       Zeron runs Claude Code, Codex, Cursor and your other coding agents on
-       your own machines, in one native, open source app.
-     </p>
--    <div class="actions rise" style="--i:3">
-+    <div class="actions rise" style="--i:2">
-       <Button id="hero-download" href="#downloads" size="lg" data-download="long"><span data-download-label>Download</span></Button>
-       <a class="star" href={SITE.github}>Star on GitHub <GitHubStars /><Icon name="alt-arrow-right" size={12} /></a>
-     </div>
-   </div>
-   <!-- The app, laid back on the page and running off it. The window is the
-        HTML recreation, so it stays sharp at this size and angle. -->
--  <div class="visual rise" style="--i:5">
--    <div class="plane"><SessionWindow /></div>
-+  <div class="visual rise" style="--i:4">
-+    <div class="plane"><SessionWindow walker /></div>
-   </div>
- </section>
- 
- <style>
-   .hero { position: relative; padding-top: clamp(64px, 8vw, 112px); overflow: hidden; }
--  .news {
--    display: inline-flex;
--    align-items: center;
--    gap: 6px;
--    height: 30px;
--    padding: 0 10px 0 12px;
--    font-size: 13px;
--    font-weight: 500;
--    color: var(--text-2);
--    background: var(--surface);
--    border-radius: 15px;
--    box-shadow: inset 0 0 0 1px var(--border);
--    transition: color 0.12s, background-color 0.12s;
--  }
--  .news:hover { color: var(--text); background: var(--surface-raised); }
--  .news [data-release-version]::before { content: " "; white-space: pre; }
-   h1 {
-     max-width: 15em;
--    margin-top: 28px;
-     font-size: clamp(38px, 5.4vw, 68px);
-     font-weight: 560;
-     line-height: 1.03;
+ /// Models Zeron no longer offers, by folder.
+@@ -158,7 +155,7 @@ pub struct Recognizer {
+ }
+ impl Recognizer {
+     pub fn load(dir: &Path) -> Result<Self> {
+-        let m = model_for(dir);
++        let m = model_for(dir).context("No such speech model")?;
+         // Hashed once, at download: a load reads only what it needs.
+         if !m.installed(dir) {
+             bail!("Model is damaged. Remove it in Settings and download again.")
+@@ -894,13 +891,11 @@ mod tests {
+         assert_eq!(manifest().name, "Parakeet Ultra");
+         assert_eq!(download_size(), 740363168);
+         let dir = Path::new("models/cohere-transcribe-q5");
+-        assert_eq!(model_for(dir).name, "Cohere Transcribe");
+-        assert_eq!(
+-            model_for(Path::new("models/elsewhere")).name,
+-            "Parakeet Ultra"
+-        );
++        assert_eq!(model_for(dir).unwrap().name, "Cohere Transcribe");
++        // Any other folder is no model's, not the default's.
++        assert!(model_for(Path::new("models/parakeet-tdt-0.6b-v3-int8")).is_none());
+         // A model that can't tell the language hears the person's own.
+-        let cohere = model_for(dir).languages;
++        let cohere = model_for(dir).unwrap().languages;
+         let locales = ["fr-FR", "en_GB.UTF-8", "fr-CA", "uk-UA"].map(String::from);
+         assert_eq!(spoken(locales, &cohere), ["fr", "en"]);
+         assert_eq!(spoken(["uk-UA".to_string()], &cohere), ["en"]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1630** (closed): omp harness: merge main, and work with omp 19 (catalog keyed by login) (@andreiverdes)
+- **PR #1627** (closed): Add provider-native cloud execution (@Yorizel)
+- **PR #1618** (2026-11-27): iOS: one … on iPhone Duo's vertical bar (@zeronsh[bot])
 - **PR #1617** (2026-11-25): Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge (@SinaKhalili)
 - **PR #1616** (2026-11-25): Zeron v2: closed sidebar leaves no 5pt sliver on the new chat page (@zeronsh[bot])
 - **PR #1615** (2026-11-25): Landing: the working ring turns on the compositor, and the glass drops its blur (@SinaKhalili)
-- **PR #1612** (2026-11-25): Landing: only the hero rises in, nothing blurs, and the machine picker fades off its card (@SinaKhalili)
-- **PR #1611** (2026-11-25): Pin zgx with the terminal and accessibility fixes (@wingleeio)
-- **PR #1608** (2026-11-25): Sidebar: a tall place folds around a session kept in view (@danperks)
 
 ---
 
@@ -2207,51 +1934,37 @@ Landing: the Pixel Walker walks the hero window's top bar, and the hero drops it
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Delegate in the background: subagent chats on any provider or device, and a pare
+## X. zgx dictation: a processor without AVX2 is told so, not crashed
 
 **RULE**:
-When implementing operations in `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/src/dictation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae294f53`: Delegate in the background: subagent chats on any provider or device, and a parent that waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a04a322e`: zgx dictation: a processor without AVX2 is told so, not crashed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/android/app/src/main/java/sh/zeron/android/core/AppModel.kt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/src/dictation.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /** A session's side chats, newest first (the chats its agent delegated to are its subagents instead). */
-        sh.zeron.android.ui.sideChatsOf(_client.value?.childSessions(chatId).orEmpty())
-    /** Stop a chat's turn (a delegated subagent's Stop) through its own session, let go after. */
-    fun interruptChat(chatId: String) {
-        val client = _client.value ?: return
-        try {
-            val handle = client.session(chatId) ?: client.openSession(chatId)
-            try {
-                handle.interrupt()
-            } finally {
-                handle.close()
-            }
-        } catch (e: Exception) {
-            Log.w("Zeron", "interrupt failed", e)
-            toast("Couldn't stop it")
+        Ok(json!({ "models": list, "supported": zeron_voice::cpu_supported() }))
+        if !zeron_voice::cpu_supported() {
+            return Err(zeron_voice::CPU_UNSUPPORTED.into());
         }
-    }
-
-    /** The subagents a session's agent spawned (its open transcript), then the chats it delegated to. */
+        if !zeron_voice::cpu_supported() {
+            return Err(zeron_voice::CPU_UNSUPPORTED.into());
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /** A session's side chats, newest first. */
-        _client.value?.childSessions(chatId).orEmpty().filter { !it.archived }
-    /** The subagents a session's agent spawned (its open transcript). */
+        Ok(json!({ "models": list }))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae294f53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a04a322e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

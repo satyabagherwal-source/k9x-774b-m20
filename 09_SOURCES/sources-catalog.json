@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "a6a82c3c",
+    "sourceVersion": "73e2292b",
     "license": "MIT",
-    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
-    "lastHarvestedAt": "2026-11-24T06:46:25.662Z",
+    "contentHash": "48c81c130ec44132b6a166b5f2d3f3051f071a80d578c338324d32984ac96dea",
+    "lastHarvestedAt": "2026-11-27T17:42:02.056Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "ae294f53",
+    "sourceVersion": "9d1c0fc3",
     "license": "MIT",
-    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
-    "lastHarvestedAt": "2026-11-26T17:30:47.798Z",
+    "contentHash": "818fa7fedad4054a88e335d2529422ba092975653d752bb7aea87840a960a79e",
+    "lastHarvestedAt": "2026-11-27T17:41:49.345Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

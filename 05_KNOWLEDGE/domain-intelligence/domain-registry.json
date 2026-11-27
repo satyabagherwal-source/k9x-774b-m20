@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T17:33:02.039Z",
+  "last_updated": "2026-11-27T17:42:08.668Z",
   "total_records": 2846,
   "domains": {
     "A": {
@@ -13464,8 +13464,8 @@
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "repository": "neuron-core/neuron-ai",
-      "content_hash": "6ac045d8040c43899a57a2bf4f28280905bd5a1e8ac527e7a67ef7ac617dd88c",
-      "created_at": "2026-11-24T06:46:26.033Z"
+      "content_hash": "7d7a9b4620491bc7b046f49772c0f7a589f89bb9016b0f6223d5e0f0b8c65602",
+      "created_at": "2026-11-27T17:42:02.486Z"
     },
     "DOM-D-78E4F99B": {
       "record_id": "DOM-D-78E4F99B",
@@ -13533,8 +13533,8 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-learnings-technical-construction-intelligence-neuron-core-.md",
       "repository": "neuron-core-neuron-ai-learnings",
-      "content_hash": "9bd3eac34d76c644fb0d1d54dcd5a53be92a2941eff946de767263f82798d533",
-      "created_at": "2026-11-24T06:46:58.709Z"
+      "content_hash": "5bd0df90da812b8c12b50838dc421de85bbe1e6301c9189812fc49204a1249a0",
+      "created_at": "2026-11-27T17:42:07.192Z"
     },
     "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants",
@@ -18496,8 +18496,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "73d72e9f55742074db34998869ecdda820f592b69b5ed9d331a036a146ceb666",
-      "created_at": "2026-11-27T15:45:46.562Z"
+      "content_hash": "718d0127e376944a9a01fa11488f6f3569d3bd4ac8ddb5466918acdf2a795249",
+      "created_at": "2026-11-27T17:42:08.668Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -20354,8 +20354,8 @@
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "6787914009924e63856a3d13eaea42a68d5b87483e078928f5b6d90336b6a4ae",
-      "created_at": "2026-11-25T09:54:17.698Z"
+      "content_hash": "36ea5426763429cb223e0f56fa16975258fa0c6e960247f9249c7d46b3b0de96",
+      "created_at": "2026-11-27T17:41:49.766Z"
     },
     "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
@@ -20372,8 +20372,8 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "ca1a34817a3a6fa4354dfe8d82c815c7d6ea47ccddd8a88273ccd29ea5aeef86",
-      "created_at": "2026-11-25T09:54:33.608Z"
+      "content_hash": "a925587cf0282c649430a38c6d8fc6fd571fd05a57f8dfc0734081513e99e477",
+      "created_at": "2026-11-27T17:42:06.064Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",

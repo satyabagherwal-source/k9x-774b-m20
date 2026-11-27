@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T17:33:02.333Z",
+  "last_updated": "2026-11-27T17:42:08.668Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26676,
+  "total_items": 26680,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223575,8 +223575,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "a6a82c3c",
-      "content_hash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
+      "source_version": "73e2292b",
+      "content_hash": "48c81c130ec44132b6a166b5f2d3f3051f071a80d578c338324d32984ac96dea",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -223604,6 +223604,11 @@
           "number": 10223,
           "title": "support array of scalar in structured output",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10938,
+          "title": "iq-stream channel",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223611,7 +223616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:46:25.433Z",
+      "verified_at": "2026-11-27T17:42:01.803Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223653,10 +223658,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "a6a82c3c",
-      "content_hash": "6ac045d8040c43899a57a2bf4f28280905bd5a1e8ac527e7a67ef7ac617dd88c",
+      "source_version": "73e2292b",
+      "content_hash": "7d7a9b4620491bc7b046f49772c0f7a589f89bb9016b0f6223d5e0f0b8c65602",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:46:26.033Z"
+      "persisted_at": "2026-11-27T17:42:02.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai",
@@ -223665,10 +223670,10 @@
       "relative_path": "08_VERIFICATION/neuron-core-neuron-ai-verification-protocol-empirical-defect-shield-for-neuron-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "a6a82c3c",
-      "content_hash": "9a929897a56554d561a9f137c2313d2bc5d54b46331e00bffab204ef91a9fa40",
+      "source_version": "73e2292b",
+      "content_hash": "a8d01a2f9dea3342c79553a55047e7575496b6cc3e691b9c78ceb0ddcd2b2698",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:46:26.202Z"
+      "persisted_at": "2026-11-27T17:42:02.679Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
@@ -223726,9 +223731,9 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bd3eac34d76c644fb0d1d54dcd5a53be92a2941eff946de767263f82798d533",
+      "content_hash": "5bd0df90da812b8c12b50838dc421de85bbe1e6301c9189812fc49204a1249a0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:46:58.709Z"
+      "persisted_at": "2026-11-27T17:42:07.192Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning",
@@ -223738,9 +223743,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core-neuron-ai-learnings",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e90157f7279bbea04cd85027b1442d9ff784389459b967b6dcda1e29ee783c9",
+      "content_hash": "94dbeea73052d89596b560656890b815253a550ad1cc7928e3ee044ff4f30f5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:47:00.100Z"
+      "persisted_at": "2026-11-27T17:42:07.396Z"
     },
     "learn-github-i18next-react-i18next": {
       "learning_id": "learn-github-i18next-react-i18next",
@@ -239891,9 +239896,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "73d72e9f55742074db34998869ecdda820f592b69b5ed9d331a036a146ceb666",
+      "content_hash": "718d0127e376944a9a01fa11488f6f3569d3bd4ac8ddb5466918acdf2a795249",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:45:46.562Z"
+      "persisted_at": "2026-11-27T17:42:08.668Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -246556,8 +246561,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "ae294f53",
-      "content_hash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
+      "source_version": "9d1c0fc3",
+      "content_hash": "818fa7fedad4054a88e335d2529422ba092975653d752bb7aea87840a960a79e",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -246605,6 +246610,11 @@
           "number": 10737,
           "title": "Delegate in the background: subagent chats on any provider or device, and a pare",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10937,
+          "title": "zgx dictation: a processor without AVX2 is told so, not crashed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246612,7 +246622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T17:30:47.596Z",
+      "verified_at": "2026-11-27T17:41:49.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246654,10 +246664,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "fbb4083a",
-      "content_hash": "6787914009924e63856a3d13eaea42a68d5b87483e078928f5b6d90336b6a4ae",
+      "source_version": "9d1c0fc3",
+      "content_hash": "36ea5426763429cb223e0f56fa16975258fa0c6e960247f9249c7d46b3b0de96",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:54:17.698Z"
+      "persisted_at": "2026-11-27T17:41:49.766Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron",
@@ -246666,10 +246676,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "ae294f53",
-      "content_hash": "942f9fa8a84fc2062fb20c6a64b6c43d8eb99a1e190f2c8d24557828a557e406",
+      "source_version": "9d1c0fc3",
+      "content_hash": "e79026c2707d4213da6ead8e6f2c166545a6fc2a72f115bbd7d8757edb1ac4af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:30:48.402Z"
+      "persisted_at": "2026-11-27T17:41:49.950Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -246805,9 +246815,9 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca1a34817a3a6fa4354dfe8d82c815c7d6ea47ccddd8a88273ccd29ea5aeef86",
+      "content_hash": "a925587cf0282c649430a38c6d8fc6fd571fd05a57f8dfc0734081513e99e477",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:54:33.608Z"
+      "persisted_at": "2026-11-27T17:42:06.064Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zeronsh-zeron-learnings",
@@ -246817,9 +246827,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbe3c3c69e3760ae203a7d975d61eb2d48d0f97f602a6e2df60da198c308fd89",
+      "content_hash": "8a924c64f234783753fb7f9b605d10002c094f4f9cc3301c1ade3497ac6e8df9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:30:57.631Z"
+      "persisted_at": "2026-11-27T17:42:06.273Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -366281,6 +366291,58 @@
       "content_hash": "840329a7c81f015c69a72e32a575c75b7877b36b2898901bec19497addf7f575",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T17:32:58.670Z"
+    },
+    "rule-10937": {
+      "learning_id": "rule-10937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10937,
+      "title": "zgx dictation: a processor without AVX2 is told so, not crashed",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "9d1c0fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:41:49.088Z"
+    },
+    "candidate_directive-zgx-dictation-a-processor-without-avx2-is-told-so-not-crashed": {
+      "item_id": "candidate_directive-zgx-dictation-a-processor-without-avx2-is-told-so-not-crashed",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QR6D-zgx-dictation-a-processor-without-avx2-is-told-so-not-crashed.md",
+      "title": "zgx dictation: a processor without AVX2 is told so, not crashed",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "027618409634c0d3b4d603e7e10cccbcfdadbc49980ad18129488cf7adc01be0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T17:42:05.849Z"
+    },
+    "rule-10938": {
+      "learning_id": "rule-10938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10938,
+      "title": "iq-stream channel",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "73e2292b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:42:01.803Z"
+    },
+    "candidate_directive-iq-stream-channel": {
+      "item_id": "candidate_directive-iq-stream-channel",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QS1Y-iq-stream-channel.md",
+      "title": "iq-stream channel",
+      "repository": "neuron-core-neuron-ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14159abc06c57956074c7c2d3e4e32fa3dd9d90eae9aa6c7f95fa35bd2aeecec",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T17:42:06.982Z"
     }
   },
   "ai-builder-brain": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "zeronsh/zeron",
   "source_url": "https://github.com/zeronsh/zeron",
-  "source_version": "fbb4083a",
+  "source_version": "9d1c0fc3",
   "license": "MIT",
-  "timestamp": "2026-11-25T09:54:17.512Z",
+  "timestamp": "2026-11-27T17:41:49.572Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zeronsh-zeron",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `fbb4083a`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T09:54:17.512Z`  
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `9d1c0fc3`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T17:41:49.572Z`  
 > **Learning ID**: `learn-github-zeronsh-zeron`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), E (Creative Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zeronsh/zeron:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:54:16.063Z  
+> **Harvest Timestamp**: 2026-11-27T17:41:47.972Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3752 stars
+- **Stars / Engagement**: 3771 stars
 
 ---
 
@@ -1547,327 +1547,363 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb4083a` (2026-11-25)
-**Commit Message**: MCP settings: a section with nothing in it takes no room (#1600)
+### Incident Patch 1: `a04a322e` (2026-11-14)
+**Commit Message**: zgx dictation: a processor without AVX2 is told so, not crashed
 
-Settings → MCP kept the room of "Waiting for you" and "Your servers" while
-they had nothing to show: their search anchors stood in the page round a
-section that was hidden, each taking a step of its rhythm. With no server
-added, the list to add from stood 96 points under the page's words, not 32.
-The anchors are inside what shows the sections now.
+zeron_voice::cpu_supported checks AVX2, FMA, F16C and BMI2 at run time (the
+models are built for them); without, no model loads, start and download
+refuse with why, and Settings → Voice says so in place of a Download.
 
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/zgx/ui/mcp_page_fixture.luau` (added, +48/-0)
+**File**: `apps/zgx/src/dictation.rs` (modified, +7/-1)
 ```diff
-@@ -0,0 +1,48 @@
-+-- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
-+-- tests/settings_mcp.test.luau measures. It starts with no server added;
-+-- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
-+
-+local mcp = require("@account/mcp")
-+
-+local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
-+local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
-+
-+local function show(servers: { any }, requests: { any })
-+	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
-+end
-+
-+local pending: any = { after = function() end }
-+for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
-+	(mcp :: any)[name] = function()
-+		return pending
-+	end
-+end
-+
-+ui.command {
-+	id = "mcp_page.add",
-+	title = "mcp_page.add",
-+	run = function()
-+		show({
-+			{ id = "linear", name = "Linear", preset = "linear", transport = "http", url = LINEAR.url, args = {}, envKeys = {}, authKind = "oauth", headerKeys = {}, enabled = true, storage = "vault", status = "connected", scopes = {}, agentName = "linear", updatedAt = 1 },
-+		}, {})
-+	end,
-+}
-+ui.command {
-+	id = "mcp_page.ask",
-+	title = "mcp_page.ask",
-+	run = function()
-+		show({}, {
-+			{ id = "r1", title = "Add Notion", status = "pending", createdAt = 1, action = "add", preset = "notion" },
-+		})
-+	end,
-+}
-+ui.command {
-+	id = "mcp_page.none",
-+	title = "mcp_page.none",
-+	run = function()
-+		show({}, {})
-+	end,
-+}
-+show({}, {})
-+
-+return require("@app/shell_fixture")
+@@ -176,10 +176,13 @@ impl Service {
+                     "slow":m.cpu_slow && cfg!(not(target_os = "macos"))})
+             })
+             .collect();
+-        Ok(json!({ "models": list }))
++        Ok(json!({ "models": list, "supported": zeron_voice::cpu_supported() }))
+     }
+     fn start(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
++        if !zeron_voice::cpu_supported() {
++            return Err(zeron_voice::CPU_UNSUPPORTED.into());
++        }
+         self.idle()?;
+         // (The page says what to do about it: no words for the composer.)
+         if !zeron_voice::installed(&dir) {
+@@ -199,6 +202,9 @@ impl Service {
+     }
+     fn download(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
++        if !zeron_voice::cpu_supported() {
++            return Err(zeron_voice::CPU_UNSUPPORTED.into());
++        }
+         let total = zeron_voice::model_for(&dir).map_or(0, |m| m.size());
+         self.idle()?;
+         if DOWNLOADING.swap(true, Ordering::AcqRel) {
 ```
 
-**File**: `apps/zgx/ui/screens/settings/mcp.luau` (modified, +40/-32)
+**File**: `apps/zgx/ui/locales/en.json` (modified, +1/-0)
 ```diff
-@@ -2074,44 +2074,52 @@ function M.view(): Node
- 		end
- 	end)
- 
-+	-- (A section with nothing in it takes no room, its search anchor's neither:
-+	-- the anchor is inside what shows it, never round it.)
- 	local requests = ui.computed(pending_requests)
--	local waiting = search.anchor(
--		"requests",
--		ui.show(function(): boolean
-+	local waiting = ui.show(
-+		function(): boolean
- 			return #requests:get() > 0
--		end, ds.Settings.Section {
--			title = ui.t("settings.mcp.requests.title"),
--			description = ui.t("settings.mcp.requests.description"),
--			ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
--				return RequestRow { now = row }
--			end, {
--				key = function(r: mcp.Request): string
--					return r.id
--				end,
--			}),
--		})
-+		end,
-+		search.anchor(
-+			"requests",
-+			ds.Settings.Section {
-+				title = ui.t("settings.mcp.requests.title"),
-+				description = ui.t("settings.mcp.requests.description"),
-+				ds.Settings.Each(requests, function(_r: mcp.Request, _i: number, row: State<mcp.Request>): Node
-+					return RequestRow { now = row }
-+				end, {
-+					key = function(r: mcp.Request): string
-+						return r.id
-+					end,
-+				}),
-+			}
-+		)
- 	)
- 
--	local yours = search.anchor(
--		"servers",
--		ui.show(function(): boolean
-+	local yours = ui.show(
-+		function(): boolean
- 			return #servers:get() > 0
--		end, ds.Settings.Section {
--			title = ui.t("settings.mcp.servers.title"),
--			-- A card a service, as Providers has an agent's.
--			ui.column {
--				w_full = true,
--				gap = "$space.3",
--				ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
--					return ServiceCard { now = row }
--				end, {
--					key = function(svc: Service): string
--						return svc.key
--					end,
-+		end,
-+		search.anchor(
-+			"servers",
-+			ds.Settings.Section {
-+				title = ui.t("settings.mcp.servers.title"),
-+				-- A card a service, as Providers has an agent's.
-+				ui.column {
- 					w_full = true,
--				}),
--			},
--		})
-+					gap = "$space.3",
-+					ui.each(ui.computed(services), function(_svc: Service, _i: number, row: State<Service>): Node
-+						return ServiceCard { now = row }
-+					end, {
-+						key = function(svc: Service): string
-+							return svc.key
-+						end,
-+						w_full = true,
-+					}),
-+				},
-+			}
-+		)
- 	)
- 
- 	local add = search.anchor(
+@@ -2414,6 +2414,7 @@
+       "model": {
+         "title": "Speech models",
+         "about": "{size} · {n, plural, one {# language} other {# languages}}",
++        "unsupported": "This computer's processor can't run speech models (they need AVX2).",
+         "about_slow": "{size} · {n, plural, one {# language} other {# languages}} · Slower on this computer",
+         "mb": "{n} MB",
+         "gb": "{n} GB",
 ```
 
-**File**: `apps/zgx/ui/tests/settings_mcp.test.luau` (added, +65/-0)
+**File**: `apps/zgx/ui/locales/zh-Hans.json` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,65 @@
-+-- Settings → MCP: a section with nothing in it (no server added, nothing asked
-+-- for) takes no room, so the page's sections stand one step of its rhythm
-+-- apart whichever of them show. On ui/mcp_page_fixture.luau.
-+
-+local PAGE = "#settings-page"
-+local NAV = "#settings-nav"
-+-- From the page's words to its first section, and what a line of text may
-+-- round to.
-+local STEP, SLACK = 32, 2
-+
-+-- A text's top and foot on the page.
-+local function span(app: any, words: string): (number, number)
-+	for line in app:tree(PAGE):gmatch("[^\n]+") do
-+		if line:find(words, 1, true) then
-+			local y, h = line:match(" %-?[%d.]+,(%-?[%d.]+) [%d.]+x([%d.]+)")
-+			if y then
-+				return tonumber(y) :: number, (tonumber(y) :: number) + (tonumber(h) :: number)
-+			end
-+		end
+@@ -2414,6 +2414,7 @@
+       "model": {
+         "title": "语音模型",
+         "about": "{size} · {n} 种语言",
++        "unsupported": "这台电脑的处理器无法运行语音模型（需要 AVX2）。",
+         "about_slow": "{size} · {n} 种语言 · 在这台电脑上较慢",
+         "mb": "{n} MB",
+         "gb": "{n} GB",
+```
+
+**File**: `apps/zgx/ui/screens/settings/voice.luau` (modified, +12/-2)
+```diff
+@@ -28,6 +28,8 @@ search.index(M.ID, ui.t("settings.voice.title"), ui.t("settings.voice.terms"), {
+ -- The models on offer, as the host lists them: { id, name, size,
+ -- languages, installed }, the default first.
+ local models = ui.state("settings_voice_models", {} :: { any })
++-- This computer's processor runs them (x86-64 without AVX2 doesn't).
++local supported = ui.state("settings_voice_supported", true)
+ -- The chosen one (its first when the saved one isn't offered).
+ local function chosen(): any?
+ 	local list, want = models:get(), prefs.dictation_model:get()
+@@ -49,7 +51,10 @@ local on = ui.state("settings_voice_on", false)
+ 
+ local function refresh()
+ 	host.call("dictation.call", { op = "status" }):after(function(s: any)
+-		models:set(s.models or {})
++		ui.batch(function()
++			models:set(s.models or {})
++			supported:set(s.supported ~= false)
++		end)
+ 	end, function() end)
+ 	host.call("dictation.call", { op = "inputs" }):after(function(list: any)
+ 		inputs:set(list)
+@@ -167,6 +172,9 @@ end
+ -- A model's line: its size, how many languages it speaks, and whether it's
+ -- slow here (on the CPU).
+ local function about(m: any): string
++	if not supported:get() then
++		return ui.t("settings.voice.model.unsupported"):get()
 +	end
-+	error(`no "{words}" on the page:\n{app:tree(PAGE)}`)
-+end
+ 	return ui.t(if m.slow then "settings.voice.model.about_slow" else "settings.voice.model.about", { size = weight(m.size), n = #(m.languages or {}) }):get()
+ end
+ -- Download or Remove `m` (a function: the model as it is now).
+@@ -180,7 +188,7 @@ local function model_action(m: () -> any?): Node
+ 			ui.t("settings.voice.model.remove"), tone = "secondary", size = "sm",
+ 			on_click = function() remove(m().id) end,
+ 		}),
+-		ui.show(function(): boolean return m() ~= nil and not here() end, ds.Button {
++		ui.show(function(): boolean return m() ~= nil and not here() and supported:get() end, ds.Button {
+ 			ui.t("settings.voice.model.download"), tone = "secondary", size = "sm", disabled = downloading,
+ 			on_click = function() download(m().id) end,
+ 		}),
+@@ -271,6 +279,8 @@ function M.view(): Node
+ 						local s = dictation.state:get()
+ 						if s.phase == "downloading" then
+ 							return ui.t("settings.voice.dictation.downloading", { done = weight(s.bytes or 0), total = weight(s.total or 0) }):get()
++						elseif not supported:get() then
++							return ui.t("settings.voice.model.unsupported"):get()
+ 						elseif not installed:get() then
+ 							return ui.t("settings.voice.dictation.needs_download", { total = weight(size:get()) }):get()
+ 						end
+```
+
+**File**: `apps/zgx/ui/settings_stub.luau` (modified, +8/-2)
+```diff
+@@ -23,6 +23,7 @@ local auth = require("@account/auth")
+ local M = {}
+ 
+ local calls = ui.state("settings_stub_calls", {} :: { string })
++local voice = ui.state("settings_stub_voice", { cohere = "absent", supported = true } :: any)
+ local refuse = ui.state("settings_stub_refuse", false)
+ local role = ui.state("settings_stub_role", "admin")
+ local about_next = ui.state("settings_stub_about_next", "ok")
+@@ -144,12 +145,17 @@ local answers: { [string]: (arg: any) -> any } = {
+ 	["account.me"] = function()
+ 		return settled(table.clone(me))
+ 	end,
++	-- Settings → Voice: Ultra downloaded; Cohere as `settings_stub_voice`
++	-- says ("absent", "partial": some files, "installed"), and whether this
++	-- processor runs them (`supported`).
+ 	["dictation.call"] = function(arg: any)
++		local v = voice:peek()
+ 		return settled(if arg.op == "status"
+ 			then {
++				supported = v.supported,
+ 				models = {
+-					{ id = "parakeet-ultra-q8", name = "Parakeet Ultra", size = 740363168, memory = 1150000000, installed = true, languages = table.create(25, "") },
+-					{ id = "cohere-transcribe-q5", name = "Cohere Transcribe", size = 1796963840, memory = 2800000000, installed = false, slow = true, languages = table.create(14, "") },
++					{ id = "parakeet-ultra-q8", name = "Parakeet Ultra", size = 740363168, memory = 1150000000, installed = true, present = true, languages = table.create(25, "") },
++					{ id = "cohere-transcribe-q5", name = "Cohere Transcribe", size = 1796963840, memory = 2800000000, installed = v.cohere == "installed", present = v.cohere ~= "absent", slow = true, languages = table.create(14, "") },
+ 				},
+ 			}
+ 			elseif arg.op == "inputs" then {}
+```
+
+**File**: `apps/zgx/ui/tests/voice_models.test.luau` (modified, +9/-1)
+```diff
+@@ -6,10 +6,11 @@
+ 
+ local PAGE = "#settings-page"
+ 
+-local function voice(): any
++local function voice(stub: any?): any
+ 	local app = mount("shell_fixture.luau")
+ 	app:resize(1200, 900)
+ 	app:frames(30)
++	if stub then app:set_state("settings_stub_voice", stub) end
+ 	app:set_state("settings_dictation", true)
+ 	app:command("shell.settings")
+ 	app:frames(20)
+@@ -45,3 +46,10 @@ test("removing the model in use turns dictation off, nothing in use", function()
+ 	expect(app:count(`{PAGE} >> role:button "Download"`)).to_be(2)
+ 	expect(app:error()).to_be(nil)
+ end)
 +
-+-- From the foot of the page's description to the top of a section's title.
-+local function below(app: any, title: string): number
-+	local _, foot = span(app, "Tools your agents can use")
-+	local top = span(app, title)
-+	return top - foot
-+end
-+
-+local function open(): any
-+	local app = mount("mcp_page_fixture.luau")
-+	app:resize(1200, 900)
-+	app:frames(30)
-+	app:command("settings_stub.sign_in")
-+	app:command("shell.settings")
-+	app:frames(20)
-+	app:click(`{NAV} >> role:tab "MCP"`)
-+	app:frames(30)
-+	return app
-+end
-+
-+test("MCP: with no server and nothing asked for, the list to add from is right under the page's words", function()
-+	local app = open()
-+	expect(app:has(`{PAGE} >> "Your servers"`)).to_be(false)
-+	local gap = below(app, "Add a server")
-+	expect(`{math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`true ({gap})`)
-+	expect(app:error()).to_be_nil()
++test("a processor that can't run them says so and offers no download", function()
++	local app = voice({ cohere = "absent", supported = false })
++	expect(shows(app, "can't run speech models")).to_be(true)
++	expect(app:has(`{PAGE} >> role:button "Download"`)).to_be(false)
++	expect(app:error()).to_be(nil)
 +end)
+```
+
+**File**: `crates/voice/src/lib.rs` (modified, +21/-0)
+```diff
+@@ -77,6 +77,24 @@ pub fn download(dir: &Path, cancel: &AtomicBool, progress: impl FnMut(u64)) -> R
+         .download(dir, cancel, progress)
+ }
+ 
++/// Whether this computer's processor runs the models: on x86-64 they're
++/// built for AVX2, FMA, F16C and BMI2 (most since 2013, not every Celeron or
++/// Pentium: Gemini Lake and Jasper Lake have none of them), and would crash
++/// the app without them.
++pub fn cpu_supported() -> bool {
++    #[cfg(target_arch = "x86_64")]
++    {
++        std::arch::is_x86_feature_detected!("avx2")
++            && std::arch::is_x86_feature_detected!("fma")
++            && std::arch::is_x86_feature_detected!("f16c")
++            && std::arch::is_x86_feature_detected!("bmi2")
++    }
++    #[cfg(not(target_arch = "x86_64"))]
++    true
++}
++pub const CPU_UNSUPPORTED: &str =
++    "This computer's processor can't run speech models (they need AVX2).";
 +
-+test("MCP: a server added, or a change asked for, shows there, and its room goes with it", function()
-+	local app = open()
-+	for _, case in { { "mcp_page.add", "Your servers" }, { "mcp_page.ask", "Waiting for you" } } do
-+		app:command(case[1])
-+		app:frames(30)
-+		local gap = below(app, case[2])
-+		expect(`{case[2]}: {math.abs(gap - STEP) <= SLACK} ({gap})`).to_be(`{case[2]}: true ({gap})`)
-+		app:command("mcp_page.none")
-+		app:frames(30)
-+		expect(app:has(`{PAGE} >> "{case[2]}"`)).to_be(false)
-+		local back = below(app, "Add a server")
-+		expect(`{math.abs(back - STEP) <= SLACK} ({back})`).to_be(`true ({back})`)
-+	end
-+	expect(app:error()).to_be_nil()
-+end)
+ /// Models Zeron no longer offers, by folder.
+ const RETIRED: &[&str] = &["parakeet-tdt-0.6b-v3-int8"];
+ /// Frees what retired models take in `models` (Parakeet v3: 670 MB). Whoever
+@@ -155,6 +173,9 @@ pub struct Recognizer {
+ }
+ impl Recognizer {
+     pub fn load(dir: &Path) -> Result<Self> {
++        if !cpu_supported() {
++            bail!(CPU_UNSUPPORTED)
++        }
+         let m = model_for(dir).context("No such speech model")?;
+         // Hashed once, at download: a load reads only what it needs.
+         if !m.installed(dir) {
 ```
 
 ---
 
-### Incident Patch 2: `53a4637a` (2026-11-25)
-**Commit Message**: Model menu: an option's row is as wide as the menu (#1598)
+### Incident Patch 2: `f2b36135` (2026-11-14)
+**Commit Message**: zeron-voice: a folder is its model's or none, and every build is portable
 
-The rows for a model's options (Context Window, Fusion's Lead) were as wide
-as their own words since #1577 put their list straight in a ui.show, and
-their choices opened over the menu instead of beside it. A full-width column
-in the show keeps them the menu's width.
+The old app keeps Ultra in Ultra's folder (models/<id>), as zgx does: no
+more downloading it into v3's, which zgx clears at launch. An unknown
+folder or model id is an error, never the default's (Remove could have
+deleted Ultra). TRANSCRIBE_CMAKE_ARGS moves to the repository's own cargo
+config, so a build from the root is as portable as apps/zgx's.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
-
-**File**: `apps/zgx/ui/ds/model_picker.luau` (modified, +13/-8)
+**File**: `.cargo/config.toml` (added, +9/-0)
 ```diff
-@@ -784,15 +784,20 @@ return ui.component(function(props: Props): Node
- 			function(): boolean
- 				return #owned:get() > 0
- 			end,
--			ui.each(owned, function(it: Owned): Node
--				return option_row(it.option)
--			end, {
--				key = function(it: Owned): string
--					return `{it.model.value}/{it.option.id}`
--				end,
-+			-- (The column is what keeps the rows the menu's width: a list
-+			-- straight in a show is as wide as its own rows.)
-+			ui.column {
- 				w_full = true,
--				gap = "$zeron.list.gap",
--			})
-+				ui.each(owned, function(it: Owned): Node
-+					return option_row(it.option)
-+				end, {
-+					key = function(it: Owned): string
-+						return `{it.model.value}/{it.option.id}`
-+					end,
-+					w_full = true,
-+					gap = "$zeron.list.gap",
-+				}),
-+			}
- 		),
- 		ui.show(
- 			function(): boolean
+@@ -0,0 +1,9 @@
++# Read by every build in this repository, apps/zgx's included (Cargo reads the
++# parents' config too).
++[env]
++# transcribe.cpp (dictation, crates/voice) built for x86-64 CPUs with AVX2 and
++# FMA, never for the machine that builds it (ggml's default, `-march=native`).
++# 2.8× faster than its plain-SSE floor; CPUs without them are told so before
++# a model loads (`zeron_voice::cpu_supported`). Apple silicon and arm64 Linux
++# ignore these.
++TRANSCRIBE_CMAKE_ARGS = "-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_BMI2=ON"
 ```
 
-**File**: `apps/zgx/ui/tests/model_picker_in_place.test.luau` (modified, +33/-0)
+**File**: `apps/zgx/.cargo/config.toml` (modified, +0/-4)
 ```diff
-@@ -113,6 +113,39 @@ test("a model's options sit under it, above its reasoning, and are picked beside
- 	expect(app:error()).to_be(nil)
- end)
+@@ -13,7 +13,3 @@ LUAU_CXXFLAGS = "-DNDEBUG"
+ # sizes all its own, so one block of 50 KiB left in such a page holds up to a
+ # megabyte. Each now has a page of its own, freed with it.
+ CFLAGS_aarch64_apple_darwin = "-DMI_ARENA_SLICE_SHIFT=14 -DMI_ENABLE_LARGE_PAGES=0"
+-# transcribe.cpp (dictation) for any x86-64 since 2013 (AVX2, FMA), not for the
+-# machine that builds it: 2.8× faster than its plain-SSE floor. Apple silicon
+-# and arm64 Linux ignore these.
+-TRANSCRIBE_CMAKE_ARGS = "-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_BMI2=ON"
+```
+
+**File**: `apps/zgx/src/dictation.rs` (modified, +12/-5)
+```diff
+@@ -144,12 +144,19 @@ impl Service {
+             self.state["phase"] = json!("finalizing");
+         }
+     }
+-    /// The folder of the model `args` names (`model`, an id), else the default's.
++    /// The folder of the model `args` names (`model`, an id; none or empty:
++    /// the default). One it doesn't offer is an error, never another's folder.
+     fn dir(&self, args: &Json) -> Result<PathBuf, String> {
+-        let models = zeron_voice::models();
+-        let id = args["model"].as_str().filter(|id| models.iter().any(|m| m.id == *id));
+         let models_dir = self.models.as_ref().ok_or("Zeron's data folder isn't known")?;
+-        Ok(models_dir.join(id.unwrap_or(&models[0].id)))
++        let id = match args["model"].as_str().filter(|id| !id.is_empty()) {
++            Some(id) => zeron_voice::models()
++                .into_iter()
++                .find(|m| m.id == id)
++                .ok_or("No such speech model")?
++                .id,
++            None => zeron_voice::manifest().id,
++        };
++        Ok(models_dir.join(id))
+     }
+     fn idle(&self) -> Result<(), String> {
+         if self.needs_poll() || zeron_voice::busy() || DOWNLOADING.load(Ordering::Acquire) {
+@@ -192,7 +199,7 @@ impl Service {
+     }
+     fn download(&mut self, args: &Json) -> Result<Json, String> {
+         let dir = self.dir(args)?;
+-        let total = zeron_voice::model_for(&dir).size();
++        let total = zeron_voice::model_for(&dir).map_or(0, |m| m.size());
+         self.idle()?;
+         if DOWNLOADING.swap(true, Ordering::AcqRel) {
+             return Err("Another window is downloading the model".into());
+```
+
+**File**: `crates/voice/src/lib.rs` (modified, +13/-18)
+```diff
+@@ -60,24 +60,21 @@ pub fn manifest() -> Manifest {
+     models().swap_remove(0)
+ }
+ /// The model a folder holds: the one its name is the id of (each lives in
+-/// `<data>/models/<id>`), else the default.
+-pub fn model_for(dir: &Path) -> Manifest {
+-    let id = dir.file_name().and_then(|n| n.to_str());
+-    let mut all = models();
+-    let at = all
+-        .iter()
+-        .position(|m| Some(m.id.as_str()) == id)
+-        .unwrap_or(0);
+-    all.swap_remove(at)
++/// `<data>/models/<id>`). None for any other folder.
++pub fn model_for(dir: &Path) -> Option<Manifest> {
++    let id = dir.file_name().and_then(|n| n.to_str())?;
++    models().into_iter().find(|m| m.id == id)
+ }
+ pub fn download_size() -> u64 {
+     manifest().size()
+ }
+ pub fn installed(dir: &Path) -> bool {
+-    model_for(dir).installed(dir)
++    model_for(dir).is_some_and(|m| m.installed(dir))
+ }
+ pub fn download(dir: &Path, cancel: &AtomicBool, progress: impl FnMut(u64)) -> Result<()> {
+-    model_for(dir).download(dir, cancel, progress)
++    model_for(dir)
++        .context("No such speech model")?
++        .download(dir, cancel, progress)
+ }
  
-+-- A model's options are rows of the menu: as wide as the models' rows over
-+-- them, so a press anywhere along one opens it, and its choices open beside
-+-- the menu. (Each was as wide as its own words, its choices over the menu.)
-+test("a model's options are as wide as the menu's rows", function()
-+	local app = mount("picker_fixture.luau")
-+	app:resize(700, 700)
-+	app:set_state("test_picker_model", "fusion")
-+	settle(app)
-+	app:click('role:button "Model"')
-+	settle(app)
-+	-- Where a row is: its left edge and its width.
-+	local function across(row: string): string
-+		for line in app:tree():gmatch("[^\n]+") do
-+			if line:find(row, 1, true) and not line:find(" hidden", 1, true) then
-+				local x, w = line:match(" (%d+),%d+ (%d+)x%d+")
-+				return `{x} {w}`
-+			end
-+		end
-+		return "none"
-+	end
-+	local model = across('option "Fusion"')
-+	expect(model).never.to_be("none")
-+	expect(across('button "Lead"')).to_be(model)
-+	expect(across('button "Sidekick"')).to_be(model)
-+	-- Its choices open past the menu's edge, not over it.
-+	app:click('role:button "Lead"')
-+	settle(app)
-+	local row_x, row_w = model:match("(%d+) (%d+)")
-+	local choices = tonumber(across('listbox "Lead"'):match("^%d+")) or 0
-+	expect(choices > (tonumber(row_x) :: number) + (tonumber(row_w) :: number)).to_be(true)
-+	expect(app:error()).to_be(nil)
-+end)
-+
- -- Devin Fusion has no card beside its row: picked, its options are the
- -- tray's rows under it, as any model's are.
- test("Fusion is picked like any model, its options then under it", function()
+ /// Models Zeron no longer offers, by folder.
+@@ -158,7 +155,7 @@ pub struct Recognizer {
+ }
+ impl Recognizer {
+     pub fn load(dir: &Path) -> Result<Self> {
+-        let m = model_for(dir);
++        let m = model_for(dir).context("No such speech model")?;
+         // Hashed once, at download: a load reads only what it needs.
+         if !m.installed(dir) {
+             bail!("Model is damaged. Remove it in Settings and download again.")
+@@ -894,13 +891,11 @@ mod tests {
+         assert_eq!(manifest().name, "Parakeet Ultra");
+         assert_eq!(download_size(), 740363168);
+         let dir = Path::new("models/cohere-transcribe-q5");
+-        assert_eq!(model_for(dir).name, "Cohere Transcribe");
+-        assert_eq!(
+-            model_for(Path::new("models/elsewhere")).name,
+-            "Parakeet Ultra"
+-        );
++        assert_eq!(model_for(dir).unwrap().name, "Cohere Transcribe");
++        // Any other folder is no model's, not the default's.
++        assert!(model_for(Path::new("models/parakeet-tdt-0.6b-v3-int8")).is_none());
+         // A model that can't tell the language hears the person's own.
+-        let cohere = model_for(dir).languages;
++        let cohere = model_for(dir).unwrap().languages;
+         let locales = ["fr-FR", "en_GB.UTF-8", "fr-CA", "uk-UA"].map(String::from);
+         assert_eq!(spoken(locales, &cohere), ["fr", "en"]);
+         assert_eq!(spoken(["uk-UA".to_string()], &cohere), ["en"]);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1600** (2026-11-25): MCP settings: a section with nothing in it takes no room (@wingleeio)
-- **PR #1598** (2026-11-25): Model menu: an option's row is as wide as the menu (@wingleeio)
-- **PR #1594** (2026-11-24): Zeron 0.3.20 (@wingleeio)
-- **PR #1593** (2026-11-24): A message waiting as the engine starts is answered with Zeron's tools (@wingleeio)
-- **PR #1592** (2026-11-24): Zeron 0.3.19 (@wingleeio)
-- **PR #1591** (2026-11-24): Sidebar: an archived session's row is its own, and follows it back (@wingleeio)
+- **PR #1630** (closed): omp harness: merge main, and work with omp 19 (catalog keyed by login) (@andreiverdes)
+- **PR #1627** (closed): Add provider-native cloud execution (@Yorizel)
+- **PR #1618** (2026-11-27): iOS: one … on iPhone Duo's vertical bar (@zeronsh[bot])
+- **PR #1617** (2026-11-25): Landing: the Pixel Walker walks the hero window's top bar, and the hero drops its "What's new" badge (@SinaKhalili)
+- **PR #1616** (2026-11-25): Zeron v2: closed sidebar leaves no 5pt sliver on the new chat page (@zeronsh[bot])
+- **PR #1615** (2026-11-25): Landing: the working ring turns on the compositor, and the glass drops its blur (@SinaKhalili)
 
 ---
 
@@ -1887,56 +1923,37 @@ Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MCP settings: a section with nothing in it takes no room
+## X. zgx dictation: a processor without AVX2 is told so, not crashed
 
 **RULE**:
-When implementing operations in `apps/zgx/ui/mcp_page_fixture.luau`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/src/dictation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb4083a`: MCP settings: a section with nothing in it takes no room. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a04a322e`: zgx dictation: a processor without AVX2 is told so, not crashed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/mcp_page_fixture.luau`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/src/dictation.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
--- The shell (ui/shell_fixture.luau) with Settings → MCP's snapshot: what
--- tests/settings_mcp.test.luau measures. It starts with no server added;
--- `mcp_page.add` adds one, `mcp_page.ask` has an agent ask for one.
-
-local mcp = require("@account/mcp")
-
-local LINEAR = { id = "linear", name = "Linear", description = "Issues and projects.", category = "", url = "https://mcp.linear.app/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "linear" }
-local NOTION = { id = "notion", name = "Notion", description = "Pages and databases.", category = "", url = "https://mcp.notion.com/mcp", transport = "http", authKind = "oauth", docsUrl = "", icon = "notion" }
-
-local function show(servers: { any }, requests: { any })
-	mcp.now:set({ loaded = true, storage = "vault", vaultAvailable = true, presets = { LINEAR, NOTION }, servers = servers, requests = requests } :: any)
-end
-
-local pending: any = { after = function() end }
-for _, name in { "refresh", "upsert", "set_enabled", "delete", "start_auth", "cancel_auth", "disconnect_auth" } do
-	(mcp :: any)[name] = function()
-		return pending
-	end
-end
-
-ui.command {
-	id = "mcp_page.add",
-	title = "mcp_page.add",
-	run = function()
-		show({
-	
+        Ok(json!({ "models": list, "supported": zeron_voice::cpu_supported() }))
+        if !zeron_voice::cpu_supported() {
+            return Err(zeron_voice::CPU_UNSUPPORTED.into());
+        }
+        if !zeron_voice::cpu_supported() {
+            return Err(zeron_voice::CPU_UNSUPPORTED.into());
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        Ok(json!({ "models": list }))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb4083a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a04a322e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

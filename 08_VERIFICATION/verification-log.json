@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-THHV",
-    "timestamp": "2026-11-26T08:36:40.531Z",
-    "repository": "sqlpage/SQLPage",
-    "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TKDI",
-    "timestamp": "2026-11-26T08:36:44.262Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-K2TM",
     "timestamp": "2026-11-26T08:57:21.226Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7460,36 @@
     "repository": "opentofu/opentofu",
     "learningId": "learn-github-opentofu-opentofu",
     "contentHash": "35265a76ed857642bddc401ae0a5f7421e19ecf2f883552fafacfd0a2ffd4a33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-QEFS",
+    "timestamp": "2026-11-27T17:41:49.336Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "818fa7fedad4054a88e335d2529422ba092975653d752bb7aea87840a960a79e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-QO8U",
+    "timestamp": "2026-11-27T17:42:02.046Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "48c81c130ec44132b6a166b5f2d3f3051f071a80d578c338324d32984ac96dea",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

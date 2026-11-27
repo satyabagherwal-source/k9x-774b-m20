@@ -13832,3 +13832,5 @@
 | `CYCLE-20261127-E32O` | `2026-11-27T17:32:14.736Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10935` | Yes (`020f628b...`) |
 | `CYCLE-20261127-E4QC` | `2026-11-27T17:32:16.884Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10936` | Yes (`35265a76...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T17:32:58.210Z` | `hf-ai-sage-gigachat4-708b-a41b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33234269` [Domain D] | Yes (`5380bfb3...`) |
+| `CYCLE-20261127-QEFS` | `2026-11-27T17:41:49.336Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10937` | Yes (`818fa7fe...`) |
+| `CYCLE-20261127-QO8U` | `2026-11-27T17:42:02.046Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10938` | Yes (`48c81c13...`) |

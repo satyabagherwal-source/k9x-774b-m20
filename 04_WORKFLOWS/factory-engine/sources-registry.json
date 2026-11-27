@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T17:01:49.944Z",
-    "lastVerified": "2026-11-27T17:01:49.944Z",
+    "lastChecked": "2026-11-27T17:41:58.560Z",
+    "lastVerified": "2026-11-27T17:41:58.560Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T17:32:20.647Z",
-    "lastVerified": "2026-11-27T17:32:20.647Z",
+    "lastChecked": "2026-11-27T17:42:05.383Z",
+    "lastVerified": "2026-11-27T17:42:05.383Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2448,8 +2448,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T12:59:19.698Z",
-    "lastVerified": "2026-11-27T12:59:19.698Z",
+    "lastChecked": "2026-11-27T17:41:53.673Z",
+    "lastVerified": "2026-11-27T17:41:53.673Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2759,14 +2759,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:30:46.849Z",
-    "lastVerified": "2026-11-26T17:30:46.849Z",
+    "lastChecked": "2026-11-27T17:41:47.972Z",
+    "lastVerified": "2026-11-27T17:41:47.972Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "0ca6140159b9d8570b0657d99387f8815c0a3719108161c4a214f940db25ba46",
+    "contentHash": "818fa7fedad4054a88e335d2529422ba092975653d752bb7aea87840a960a79e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3570,22 +3570,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-ai",
+    "name": "neuron-core/neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-26T22:30:21.382Z",
-    "lastVerified": "2026-11-26T22:30:21.382Z",
+    "lastChecked": "2026-11-27T17:42:00.823Z",
+    "lastVerified": "2026-11-27T17:42:00.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
+    "contentHash": "48c81c130ec44132b6a166b5f2d3f3051f071a80d578c338324d32984ac96dea",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a6a82c3c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -7296,12 +7295,12 @@
     "revisionIdentifier": "23a33ef5"
   },
   "temporalio-temporal": {
-    "name": "temporalio/temporal",
+    "name": "temporal",
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T23:41:01.833Z",
-    "lastVerified": "2026-11-26T23:41:01.833Z",
+    "lastChecked": "2026-11-27T17:41:51.339Z",
+    "lastVerified": "2026-11-27T17:41:51.339Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
@@ -7310,7 +7309,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c2ec24c0"
   },
   "redisearch-redisearch": {
     "name": "RediSearch/RediSearch",
@@ -9734,9 +9734,9 @@
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
     "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
-    "lastChecked": "2026-11-25T07:56:59.108Z",
+    "lastChecked": "2026-11-27T17:41:48.648Z",
     "revisionIdentifier": "888384d7",
-    "lastVerified": "2026-11-25T07:56:59.108Z"
+    "lastVerified": "2026-11-27T17:41:48.648Z"
   },
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
@@ -10202,9 +10202,9 @@
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
     "officialUrl": "https://github.com/adobe/structured-data-validator",
-    "lastChecked": "2026-11-24T08:34:17.724Z",
+    "lastChecked": "2026-11-27T17:41:46.052Z",
     "revisionIdentifier": "6918b526",
-    "lastVerified": "2026-11-24T08:34:17.724Z"
+    "lastVerified": "2026-11-27T17:41:46.052Z"
   },
   "thebaselab-codeapp": {
     "name": "codeapp",

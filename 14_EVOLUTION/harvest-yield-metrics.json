@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:32:16.919Z",
-  "total_cycles_completed": 13127,
-  "total_learnings_persisted": 13127,
-  "total_rules_promoted": 11849,
+  "last_updated": "2026-11-27T17:42:02.061Z",
+  "total_cycles_completed": 13129,
+  "total_learnings_persisted": 13129,
+  "total_rules_promoted": 11851,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:59:04.983Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T01:06:44.356Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T01:06:47.168Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T17:32:16.919Z",
       "repository": "opentofu/opentofu",
       "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:41:49.350Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:42:02.061Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
