@@ -13703,3 +13703,4 @@
 | `CYCLE-20261127-PIZL` | `2026-11-27T06:29:17.793Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10843` | Yes (`8e2e61f5...`) |
 | `CYCLE-20261127-0BKT` | `2026-11-27T06:37:41.405Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`e2a4d90b...`) |
 | `CYCLE-20261127-0C73` | `2026-11-27T06:37:42.207Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10844` | Yes (`b25c481c...`) |
+| `CYCLE-20261127-BF3F` | `2026-11-27T06:46:19.179Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`39b9b6ab...`) |

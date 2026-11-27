@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:37:55.424Z",
+  "last_updated": "2026-11-27T06:46:32.024Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61418,11 +61418,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-L0MQ",
+      "id": "CD-BP08",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-L0MQ-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-BP08-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69153,6 +69153,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D752FA-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-0852CA",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0852CA-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-7CF14E",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7CF14E-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

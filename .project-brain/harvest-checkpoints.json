@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T06:37:42.236Z",
+  "last_updated": "2026-11-27T06:46:19.200Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18966,14 +18966,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b",
-      "content_hash": "fb75e21dd9b5ab7a2533e34695a40e116a4ad398ade56c7bf29b340b19cede85",
-      "verified_at": "2026-11-23T21:31:18.546Z",
+      "content_hash": "39b9b6ab3eca5ef6fef49bab96b7d2747f43924369714190e9baca2b8cc1ed4d",
+      "verified_at": "2026-11-27T06:46:19.199Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:31:18.546Z"
+      "last_updated": "2026-11-27T06:46:19.199Z"
     },
     "ConceptCountry/qwen-concept-27b": {
       "repository": "ConceptCountry/qwen-concept-27b",

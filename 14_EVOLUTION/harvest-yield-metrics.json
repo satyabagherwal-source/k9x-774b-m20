@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:37:42.233Z",
-  "total_cycles_completed": 13007,
-  "total_learnings_persisted": 13007,
+  "last_updated": "2026-11-27T06:46:19.196Z",
+  "total_cycles_completed": 13008,
+  "total_learnings_persisted": 13008,
   "total_rules_promoted": 11754,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:48:09.036Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:48:21.894Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1396,13 @@
       "repository": "zvec-ai/zvec-grep",
       "learningId": "learn-github-zvec-ai-zvec-grep",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:46:19.196Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

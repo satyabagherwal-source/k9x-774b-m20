@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-0ZBP",
-    "timestamp": "2026-11-26T00:46:36.757Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-13E4",
     "timestamp": "2026-11-26T00:46:42.028Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7477,21 @@
     "contentHash": "b25c481cbc85698a93a3784bba291d2e0de15b304fa7dfa83b87e266bc18951f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-BF3F",
+    "timestamp": "2026-11-27T06:46:19.179Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "39b9b6ab3eca5ef6fef49bab96b7d2747f43924369714190e9baca2b8cc1ed4d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

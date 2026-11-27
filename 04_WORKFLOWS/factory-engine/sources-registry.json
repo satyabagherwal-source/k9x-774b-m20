@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T06:37:53.074Z",
-    "lastVerified": "2026-11-27T06:37:53.074Z",
+    "lastChecked": "2026-11-27T06:46:30.011Z",
+    "lastVerified": "2026-11-27T06:46:30.011Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T06:06:12.499Z",
-    "lastVerified": "2026-11-27T06:06:12.499Z",
+    "lastChecked": "2026-11-27T06:46:30.001Z",
+    "lastVerified": "2026-11-27T06:46:30.001Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1778,8 +1778,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:27:03.197Z",
-    "lastVerified": "2026-11-27T02:27:03.197Z",
+    "lastChecked": "2026-11-27T06:46:25.131Z",
+    "lastVerified": "2026-11-27T06:46:25.131Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -3299,9 +3299,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-26T13:55:15.387Z",
+    "lastChecked": "2026-11-27T06:46:22.559Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-26T13:55:15.387Z"
+    "lastVerified": "2026-11-27T06:46:22.559Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -6965,9 +6965,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-26T12:50:54.766Z",
+    "lastChecked": "2026-11-27T06:46:27.707Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-26T12:50:54.766Z"
+    "lastVerified": "2026-11-27T06:46:27.707Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -7138,9 +7138,9 @@
   "futurice-pepperoni-app-kit": {
     "name": "pepperoni-app-kit",
     "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
-    "lastChecked": "2026-11-24T22:42:22.816Z",
+    "lastChecked": "2026-11-27T06:46:20.240Z",
     "revisionIdentifier": "f58c1410",
-    "lastVerified": "2026-11-24T22:42:22.816Z"
+    "lastVerified": "2026-11-27T06:46:20.240Z"
   },
   "linkerd-linkerd2": {
     "name": "linkerd/linkerd2",
@@ -8147,9 +8147,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-26T05:48:31.390Z",
+    "lastChecked": "2026-11-27T06:46:15.037Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-26T05:48:31.390Z"
+    "lastVerified": "2026-11-27T06:46:15.037Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "LoyalAI/Underdog-Saluki-27B-1.0",
@@ -8558,12 +8558,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T21:31:17.851Z",
-    "lastVerified": "2026-11-23T21:31:17.851Z",
+    "lastChecked": "2026-11-27T06:46:18.432Z",
+    "lastVerified": "2026-11-27T06:46:18.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "fb75e21dd9b5ab7a2533e34695a40e116a4ad398ade56c7bf29b340b19cede85",
+    "contentHash": "39b9b6ab3eca5ef6fef49bab96b7d2747f43924369714190e9baca2b8cc1ed4d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
