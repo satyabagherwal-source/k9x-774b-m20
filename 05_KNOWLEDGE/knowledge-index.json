@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T12:59:27.878Z",
+  "last_updated": "2026-11-27T13:14:09.335Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26588,
+  "total_items": 26590,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5cce246e96df1bbc180d273d21423568fa01fa6a88f790be96bf579d5980c09",
+      "content_hash": "660140fddc1091aa257524b6f939f068fe510fa8d27ffb1622aa2d918074a21d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:32:47.355Z"
+      "persisted_at": "2026-11-27T13:14:09.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "367b1fe53ef83c70d2453874d27b21851c070587d234cfa808b4a5567b4bb0e2",
+      "content_hash": "412c4fe98f4b6a23bf1a6587375890ce2371a33d0e6e8cbd77c76b7a8aabe124",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:59:27.641Z"
+      "persisted_at": "2026-11-27T13:14:07.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "917f3a0e160ae83ad46192655c128b49a997e855c328534b660334cd1b0b10ff",
+      "content_hash": "18a7089ce986766093d66591cc231d0ccfa46f8557476092e4f33dab69ebb6dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:59:27.878Z"
+      "persisted_at": "2026-11-27T13:14:07.805Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -248336,8 +248336,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "325c998a",
-      "content_hash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
+      "source_version": "26c04faf",
+      "content_hash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -248365,6 +248365,11 @@
           "number": 10540,
           "title": "build(deps): bump google.golang.org/protobuf from 1.36.11 to 1.36.12",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10907,
+          "title": "Empirical Invariant Guard in enrollmentkeys.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248372,7 +248377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T14:23:57.801Z",
+      "verified_at": "2026-11-27T13:14:01.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248426,10 +248431,10 @@
       "relative_path": "08_VERIFICATION/gravitl-netmaker-verification-protocol-empirical-defect-shield-for-gravitl-netma.md",
       "title": "Verification Protocol: Empirical Defect Shield for gravitl/netmaker",
       "repository": "gravitl/netmaker",
-      "source_version": "325c998a",
-      "content_hash": "01d544d99e14330175f8ac5ab6bfb80183fe161c3301f82c88694372f7e20633",
+      "source_version": "26c04faf",
+      "content_hash": "1530e1f24bd41195672d323bc1d5fb38897e30410014084a884d2c4ba8c23fca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:23:58.749Z"
+      "persisted_at": "2026-11-27T13:14:02.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-air-learnings-core",
@@ -248499,9 +248504,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gravitl-netmaker-learnings",
       "repository": "gravitl-netmaker-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ba01f5f69d63c5967f4cd0d8f8bb321d6c7e30cd7a9a5cfda489af910614fcc",
+      "content_hash": "432ca38b496169c28c91810101cb6cd3c5fd6beea366b6e4b67ef30acada7b43",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T23:20:48.913Z"
+      "persisted_at": "2026-11-27T13:14:06.519Z"
     },
     "learn-github-tuist-tuist": {
       "learning_id": "learn-github-tuist-tuist",
@@ -264362,10 +264367,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-technical-construction-intelligence-gravitl-netmaker-core-invar.md",
       "title": "Technical Construction Intelligence: gravitl/netmaker Core Invariants",
       "repository": "gravitl/netmaker",
-      "source_version": "325c998a",
-      "content_hash": "ecdb8de0ce817fbb5fdcfab0f610ddd2df8c61e4e61ec88048b9eba109fa4c77",
+      "source_version": "26c04faf",
+      "content_hash": "1f5561522ceee25feb1e28309b4ed194362b03036af979913d5f3aa969a5ea92",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T14:23:58.528Z"
+      "persisted_at": "2026-11-27T13:14:02.183Z"
     },
     "candidate_directive-build-bump-softprops-action-gh-release-gh-547": {
       "item_id": "candidate_directive-build-bump-softprops-action-gh-release-gh-547",
@@ -264411,9 +264416,9 @@
       "title": "Technical Construction Intelligence: gravitl-netmaker-learnings Core Invariants",
       "repository": "gravitl-netmaker-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d29724b9c2afb754036e85e21a51d7ffbb00530327234d48d8cfa162d4b0668",
+      "content_hash": "74b89e4dec427243e78b4d0bdb6a024ca4e42eb0cb1e4934e7a49ebbf4270389",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T23:20:48.695Z"
+      "persisted_at": "2026-11-27T13:14:06.222Z"
     },
     "rule-8770": {
       "learning_id": "rule-8770",
@@ -358281,13 +358286,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OYXP-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-660J-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9460a5f28e837d0fe9423d685bde6de9659ce22a649678df3b7c9b0dd0b8147",
+      "content_hash": "0db71dcf2be259f2e979c03ef7911717535a90f38f4c07619e2381550df31490",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T12:32:46.819Z"
+      "persisted_at": "2026-11-27T13:14:08.761Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358297,9 +358302,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff9dcd668aa87b32cce10a3bec8fa0bf3ea0e64838c4a650fd9133dd1bbb256a",
+      "content_hash": "4630edae7657f2f2ab661ae1ae86b13c3d4def851b22a102857c950872b55c2c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T12:32:47.089Z"
+      "persisted_at": "2026-11-27T13:14:09.040Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361188,13 +361193,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-N9YQ-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-64UG-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "131c13555531d903f9d672015c8f9aa04ce063ac0ea5d2450ba9604bd14d98bf",
+      "content_hash": "c73e9613a932683d861cacb7b496cb4788326d88c9e47315aa9027c4c64c47f2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:59:27.416Z"
+      "persisted_at": "2026-11-27T13:14:07.247Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -364993,6 +364998,32 @@
       "content_hash": "526e85fda71a8ef0180b39dc371cc1a101c1693d06f5f00a48147786dd0ff159",
       "domain_letter": "F",
       "persisted_at": "2026-11-27T12:59:26.279Z"
+    },
+    "rule-10907": {
+      "learning_id": "rule-10907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10907,
+      "title": "Empirical Invariant Guard in enrollmentkeys.go",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "26c04faf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T13:14:01.205Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-enrollmentkeys-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-enrollmentkeys-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-63U1-empirical-invariant-guard-in-enrollmentkeys-go.md",
+      "title": "Empirical Invariant Guard in enrollmentkeys.go",
+      "repository": "gravitl-netmaker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a0637b645c77bfcfa4aee7de0d0ff618ee2b79a1d6b4173211cf2fd7d0280efe",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T13:14:05.930Z"
     }
   },
   "ai-builder-brain": {

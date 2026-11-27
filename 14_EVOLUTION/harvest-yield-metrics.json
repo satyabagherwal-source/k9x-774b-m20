@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:59:19.337Z",
-  "total_cycles_completed": 13091,
-  "total_learnings_persisted": 13091,
-  "total_rules_promoted": 11818,
+  "last_updated": "2026-11-27T13:14:01.575Z",
+  "total_cycles_completed": 13092,
+  "total_learnings_persisted": 13092,
+  "total_rules_promoted": 11819,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:39:03.226Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:50:49.565Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T12:59:19.337Z",
       "repository": "thaw-app/Thaw",
       "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:14:01.575Z",
+      "repository": "gravitl/netmaker",
+      "learningId": "learn-github-gravitl-netmaker",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

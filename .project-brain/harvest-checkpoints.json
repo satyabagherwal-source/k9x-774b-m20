@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:59:19.341Z",
+  "last_updated": "2026-11-27T13:14:01.580Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
-      "verified_at": "2026-11-25T14:23:58.062Z",
+      "content_hash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
+      "verified_at": "2026-11-27T13:14:01.579Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T14:23:58.062Z"
+      "last_updated": "2026-11-27T13:14:01.579Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",

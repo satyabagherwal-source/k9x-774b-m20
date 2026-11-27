@@ -18,22 +18,21 @@
     "revisionIdentifier": "54f54578"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T07:58:23.799Z",
-    "lastVerified": "2026-11-27T07:58:23.799Z",
+    "lastChecked": "2026-11-27T13:13:59.843Z",
+    "lastVerified": "2026-11-27T13:13:59.843Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
+    "contentHash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "325c998a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -93,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T12:59:24.548Z",
-    "lastVerified": "2026-11-27T12:59:24.548Z",
+    "lastChecked": "2026-11-27T13:14:05.271Z",
+    "lastVerified": "2026-11-27T13:14:05.271Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -217,8 +216,8 @@
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T12:50:42.104Z",
-    "lastVerified": "2026-11-26T12:50:42.104Z",
+    "lastChecked": "2026-11-27T13:13:45.386Z",
+    "lastVerified": "2026-11-27T13:13:45.386Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -289,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T12:21:18.911Z",
+    "lastChecked": "2026-11-27T13:14:00.390Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T12:21:18.911Z"
+    "lastVerified": "2026-11-27T13:14:00.390Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1623,9 +1622,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-11-26T18:24:20.915Z",
+    "lastChecked": "2026-11-27T13:13:57.875Z",
     "revisionIdentifier": "c453c64e",
-    "lastVerified": "2026-11-26T18:24:20.915Z"
+    "lastVerified": "2026-11-27T13:13:57.875Z"
   },
   "software-mansion-argent": {
     "name": "software-mansion/argent",
@@ -5552,8 +5551,8 @@
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T19:25:22.407Z",
-    "lastVerified": "2026-11-26T19:25:22.407Z",
+    "lastChecked": "2026-11-27T13:13:52.901Z",
+    "lastVerified": "2026-11-27T13:13:52.901Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -8897,9 +8896,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-11-25T04:07:33.866Z",
+    "lastChecked": "2026-11-27T13:13:50.340Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-11-25T04:07:33.866Z"
+    "lastVerified": "2026-11-27T13:13:50.340Z"
   },
   "tokio-rs-tokio": {
     "name": "tokio-rs/tokio",
@@ -9738,9 +9737,9 @@
   "anonymousaak-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/anonymousAAK/seo-skills",
-    "lastChecked": "2026-11-24T03:14:12.608Z",
+    "lastChecked": "2026-11-27T13:13:47.885Z",
     "revisionIdentifier": "8673ec753e",
-    "lastVerified": "2026-11-24T03:14:12.608Z"
+    "lastVerified": "2026-11-27T13:13:47.885Z"
   },
   "mohamedrejeb-calf": {
     "name": "Calf",

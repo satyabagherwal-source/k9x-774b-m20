@@ -13825,3 +13825,4 @@ Every entry in this ledger must capture:
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `e9e79bc6` | Multi-dimensional audit evidence | 2026-11-27T12:41:44.629Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `16b02ac8` | Multi-dimensional audit evidence | 2026-11-27T12:59:14.531Z |
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `c74830ff` | Multi-dimensional audit evidence | 2026-11-27T12:59:19.321Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `26c04faf` | Multi-dimensional audit evidence | 2026-11-27T13:14:01.561Z |

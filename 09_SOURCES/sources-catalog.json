@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "325c998a",
+    "sourceVersion": "26c04faf",
     "license": "NOASSERTION",
-    "contentHash": "6c1984f769b4224abe95575fc1791abdf99bd184742e7c3b44d59e2f9db9ba83",
-    "lastHarvestedAt": "2026-11-25T14:23:58.043Z",
+    "contentHash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
+    "lastHarvestedAt": "2026-11-27T13:14:01.561Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {

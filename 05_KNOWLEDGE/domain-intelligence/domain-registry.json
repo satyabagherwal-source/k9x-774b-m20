@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:59:27.641Z",
+  "last_updated": "2026-11-27T13:14:09.040Z",
   "total_records": 2836,
   "domains": {
     "A": {
@@ -9569,8 +9569,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "367b1fe53ef83c70d2453874d27b21851c070587d234cfa808b4a5567b4bb0e2",
-      "created_at": "2026-11-27T12:59:27.641Z"
+      "content_hash": "412c4fe98f4b6a23bf1a6587375890ce2371a33d0e6e8cbd77c76b7a8aabe124",
+      "created_at": "2026-11-27T13:14:07.529Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25130,8 +25130,8 @@
       "title": "Technical Construction Intelligence: gravitl/netmaker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-technical-construction-intelligence-gravitl-netmaker-core-invar.md",
       "repository": "gravitl/netmaker",
-      "content_hash": "ecdb8de0ce817fbb5fdcfab0f610ddd2df8c61e4e61ec88048b9eba109fa4c77",
-      "created_at": "2026-11-25T14:23:58.528Z"
+      "content_hash": "1f5561522ceee25feb1e28309b4ed194362b03036af979913d5f3aa969a5ea92",
+      "created_at": "2026-11-27T13:14:02.183Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lxml-lxml-learnings-core-invariants",
@@ -25148,8 +25148,8 @@
       "title": "Technical Construction Intelligence: gravitl-netmaker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gravitl-netmaker-learnings-technical-construction-intelligence-gravitl-netmaker-.md",
       "repository": "gravitl-netmaker-learnings",
-      "content_hash": "0d29724b9c2afb754036e85e21a51d7ffbb00530327234d48d8cfa162d4b0668",
-      "created_at": "2026-11-17T23:20:48.695Z"
+      "content_hash": "74b89e4dec427243e78b4d0bdb6a024ca4e42eb0cb1e4934e7a49ebbf4270389",
+      "created_at": "2026-11-27T13:14:06.222Z"
     },
     "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-seaql-sea-orm-core-invariants",
@@ -46783,8 +46783,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ff9dcd668aa87b32cce10a3bec8fa0bf3ea0e64838c4a650fd9133dd1bbb256a",
-      "created_at": "2026-11-27T12:32:47.089Z"
+      "content_hash": "4630edae7657f2f2ab661ae1ae86b13c3d4def851b22a102857c950872b55c2c",
+      "created_at": "2026-11-27T13:14:09.040Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

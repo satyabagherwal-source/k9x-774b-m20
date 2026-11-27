@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T23:20:48.376Z",
+  "timestamp": "2026-11-27T13:14:05.771Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gravitl-netmaker-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gravitl-netmaker-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T23:20:48.376Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T13:14:05.771Z`  
 > **Learning ID**: `LEARN-EVO-gravitl-netmaker-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gravitl-netmaker-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `098d26a7`  
+> **Source Version**: `26c04faf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T23:17:36.341Z  
+> **Timestamp**: 2026-11-27T13:13:59.986Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,17 +45,17 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T23:17:36.334Z  
+> **Harvest Timestamp**: 2026-11-27T13:13:59.843Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `gravitl/netmaker`
-- **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
+- **Description**: Netmaker is a WireGuard-powered Zero Trust networking platform for building fast, secure, and scalable virtual networks across clouds, devices, and infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11877 stars
+- **Stars / Engagement**: 11887 stars
 
 ---
 
@@ -1045,191 +1045,57 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `098d26a7` (2026-11-17)
-**Commit Message**: V1.8.0: release notes (#4236)
+### Incident Patch 1: `26c04faf` (2026-11-27)
+**Commit Message**: Merge pull request #4272 from gravitl/master
 
-* bump version tag to v1.8.0
+Master
 
-* v1.8.0: update release notes
-
-**File**: `.github/ISSUE_TEMPLATE/bug-report.yml` (modified, +1/-0)
+**File**: `controllers/enrollmentkeys.go` (modified, +3/-1)
 ```diff
-@@ -31,6 +31,7 @@ body:
-       label: Version
-       description: What version are you running?
-       options:
-+        - v1.8.0
-         - v1.7.0
-         - v1.6.0
-         - v1.5.1
+@@ -609,9 +609,11 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
+ 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, host.TenantID)
+ 	server := logic.GetServerInfo(ctx)
+ 	server.TrafficKey = trafficKey
++	responseHost := *host
++	responseHost.HostPass = "" // do not return stored bcrypt hash to the client
+ 	response := models.RegisterResponse{
+ 		ServerConf:    server,
+-		RequestedHost: *host,
++		RequestedHost: responseHost,
+ 	}
+ 
+ 	logger.Log(0, host.Name, host.ID.String(), "registered with Netmaker")
 ```
 
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- 
- <p align="center">
-   <a href="https://github.com/gravitl/netmaker/releases">
--    <img src="https://img.shields.io/badge/Version-1.7.0-informational?style=flat-square" />
-+    <img src="https://img.shields.io/badge/Version-1.8.0-informational?style=flat-square" />
-   </a>
-   <a href="https://hub.docker.com/r/gravitl/netmaker/tags">
-     <img src="https://img.shields.io/docker/pulls/gravitl/netmaker?label=downloads" />
-```
+---
 
-**File**: `compose/docker-compose.netclient.yml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ version: "3.4"
- services:
-   netclient:
-     container_name: netclient
--    image: 'gravitl/netclient:v1.7.0'
-+    image: 'gravitl/netclient:v1.8.0'
-     hostname: netmaker-1
-     network_mode: host
-     restart: on-failure
-```
+### Incident Patch 2: `73aee076` (2026-11-27)
+**Commit Message**: v1.8.0: clears HostPass on a response copy before encoding (same pattern as RegisterDevice), so the bcrypt hash is no longer returned on POST /api/v1/host/register/{token} (#4271)
 
-**File**: `k8s/client/netclient-daemonset.yaml` (modified, +1/-1)
+**File**: `controllers/enrollmentkeys.go` (modified, +3/-1)
 ```diff
-@@ -16,7 +16,7 @@ spec:
-       hostNetwork: true
-       containers:
-       - name: netclient
--        image: gravitl/netclient:v1.7.0
-+        image: gravitl/netclient:v1.8.0
-         env:
-         - name: TOKEN
-           value: "TOKEN_VALUE"
-```
-
-**File**: `k8s/client/netclient.yaml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ spec:
-       #           - "<node label value>"
-       containers:
-       - name: netclient
--        image: gravitl/netclient:v1.7.0
-+        image: gravitl/netclient:v1.8.0
-         env:
-         - name: TOKEN
-           value: "TOKEN_VALUE"
-```
-
-**File**: `k8s/server/netmaker-ui.yaml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ spec:
-     spec:
-       containers:
-       - name: netmaker-ui
--        image: gravitl/netmaker-ui:v1.7.0
-+        image: gravitl/netmaker-ui:v1.8.0
-         ports:
-         - containerPort: 443
-         env:
-```
-
-**File**: `main.go` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@ import (
- var version = "v1.8.0"
+@@ -609,9 +609,11 @@ func handleHostRegister(w http.ResponseWriter, r *http.Request) {
+ 	ctx := scope.WithContext(db.WithContext(context.Background()), scope.TenantScope, host.TenantID)
+ 	server := logic.GetServerInfo(ctx)
+ 	server.TrafficKey = trafficKey
++	responseHost := *host
++	responseHost.HostPass = "" // do not return stored bcrypt hash to the client
+ 	response := models.RegisterResponse{
+ 		ServerConf:    server,
+-		RequestedHost: *host,
++		RequestedHost: responseHost,
+ 	}
  
- //	@title			NetMaker
--//	@version		1.7.0
-+//	@version		1.8.0
- //	@description	NetMaker API Docs
- //	@tag.name	    APIUsage
- //	@tag.description.markdown
-```
-
-**File**: `release.md` (modified, +81/-33)
-```diff
-@@ -1,53 +1,82 @@
--# Netmaker v1.7.0 Release Notes 🚀
-+# Netmaker v1.8.0 Release Notes 🚀
- 
- ## 🚀 What’s New
- 
--### 🏢 Multi-Tenancy for MSPs (Organizations & Tenants)
-+### 💻 All-New Desktop Apps
- 
--Run multiple customer environments from a single Netmaker server.
-+Completely redesigned **Netmaker Desktop Apps** for a faster, stable connection experience.
- 
--- **Organizations & tenants** — Group customers under an organization; each tenant is an isolated Netmaker environment (networks, devices, users).
--- **MSP license sync** — EE/MSP installs create and update orgs/tenants from the MSP license (including teardown when a tenant is removed from the license). CE and normal Pro accounts continues to use a single local default tenant.
--- **Scoped access** — API and `nmctl` select the target org/tenant via `X-Organization-ID` / `X-Tenant-ID` (`--org_id` / `--tenant_id`), with `nmctl organization list` and `nmctl tenant list` for discovery.
-+- Now available to **CE users** as well (previously limited to Pro/EE).
-+- **Peer-to-peer by default** — desktop devices join the mesh with direct peering (not gateway-only), for lower latency and better connectivity.
-+- Fresh UI and connection flow for connecting to networks and exit nodes.
-+- Improved status visibility for tunnel state and exit modes.
-+- **Auto Exit** — when enabled on a network (`auto_select_exit_node`), desktop/user devices are automatically assigned an allowed internet exit (nearest available) when they connect; users can still switch exits when permitted.
- 
--### 🔌 TCP Proxy / WSS Uplink
-+### 🔐 Managed Access with Netmaker SSH
- 
--Gateways can publish a **TCP/WSS uplink** so clients can reach the mesh in restrictive environments when UDP is blocked.
-+Secure, managed SSH access to hosts through Netmaker — without opening inbound SSH on the public internet.
- 
--- Enable TCP proxy on the gateway/host (`tcp_proxy_enabled` and related listen/TLS settings).
--- Clients can opt into a TCP uplink to the gateway when the proxy is enabled.
--- Supports self-signed and externally terminated TLS modes for WSS endpoints.
-+- Enable **Manage SSH** on hosts so netclient runs an embedded SSH/SCP/SFTP server.
-+- Access mesh hosts over Netmaker with centralized control of who can connect.
-+- Useful for admin access, file transfer, and operational workflows on enrolled devices.
- 
--### 🛡️ EDR Integration (Pro)
-+### 🗺️ Network Map Updates
- 
--Connect endpoint detection and response platforms for **posture checks** from **Integrations**.
-+Updated network map experience for clearer topology and device context.
- 
--- Supported providers: **Microsoft Defender**, **CrowdStrike**, **SentinelOne**, and **Wazuh**.
--- Sync managed endpoints and evaluate EDR compliance (agent health / risk level) as part of device posture.
--- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/edr/{provider}`).
-+- Improved layout and visualization of users, devices, servers, and config clients.
-+- Easier navigation of network relationships and host locations.
-+- Better at-a-glance view of how your mesh is connected.
- 
--### 📱 MDM Integration (Pro)
-+### 🪟 Windows Egress Support
- 
--Connect mobile device management platforms for **device compliance posture** from **Integrations**.
-+Windows hosts can now act as **egress gateways**.
- 
--- Supported providers: **Microsoft Intune**, **Jamf**, **JumpCloud**, and **Iru**.
--- Match devices by Entra device ID, serial number, hardware UUID, or hostname.
--- Enforce MDM enrollment/compliance checks alongside existing posture policies.
--- Configure, test, and manage integrations via the REST API (`/api/v1/integrations/mdm/{provider}`).
-+- Advertise egress ranges from Windows netclients.
-+- Route traffic from the mesh to attached LAN/site networks via Windows.
-+- Uses Windows NetNat where required for egress NAT.
-+
-+### 🔀 Bypass Egress Routes
-+
-+New option on **internet egress** so traffic to other (site) egress destinations does not hairpin through the internet exit.
-+
-+- **Why:** Without bypass, clients using an internet exit often send site-egress traffic up to the exit node and back out again (hairpin), adding latency and load. Bypass keeps allowed site egress as **direct peers**, so traffic to those sites flows peer-to-peer instead of bending through the exit.
-+- **`bypass_egress_routes`** (internet egress only) — enable to avoid that hairpin for other egress sites; disable to force site-egress traffic via the internet exit.
-+- Configurable on create/update; defaults to **on** for new internet egress.
-+- Ignored for non-internet (site) egress types.
- 
- 
- ---
- 
- ## 🗄️ Database Schema Migration
- 
--This release completes the SQL schema path and introduces **multi-tenancy (org/tenant) bootstrap** as part of the v1.7.0 migration.
-+This release runs **`migration-v1.8.0`**, which continues the SQL schema path after multi-tenancy (org/tenant) from v1.7.0. It migrates remaining key-value resources into versioned tables, backfills IP pools/al
+ 	logger.Log(0, host.Name, host.ID.String(), "registered with Netmaker")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4236** (2026-11-17): V1.8.0: release notes (@abhishek9686)
-- **PR #4235** (2026-11-17): NM-356: Fix device join/pull when host.Nodes drifts from live nodes (@abhishek9686)
-- **PR #4232** (2026-11-16): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4231** (2026-11-14): NM-356: Enable CE user ACL policies with All Users and per-user sources (@abhishek9686)
-- **PR #4230** (2026-11-12): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
-- **PR #4225** (2026-11-12): NM-356: keep static WireGuard configs on JIT, IdP, and access cleanup  (@abhishek9686)
+- **PR #4272** (2026-11-27): Master (@abhishek9686)
+- **PR #4271** (2026-11-27): v1.8.0: clears HostPass on a response copy before encoding (same patt… (@abhishek9686)
+- **PR #4270** (2026-11-27): build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
+- **PR #4268** (2026-11-25): v1.7.0: keep static WireGuard configs on JIT, IdP, and access cleanup (@abhishek9686)
+- **PR #4266** (2026-11-25): Master (@abhishek9686)
+- **PR #4265** (2026-11-24): Release v1.8.0 (@abhishek9686)
 
 ---
 
@@ -1249,31 +1115,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. V1.8.0: release notes
+## X. Empirical Invariant Guard in enrollmentkeys.go
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/enrollmentkeys.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `098d26a7`: V1.8.0: release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26c04faf`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/enrollmentkeys.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        - v1.8.0
+	responseHost := *host
+	responseHost.HostPass = "" // do not return stored bcrypt hash to the client
+		RequestedHost: responseHost,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		RequestedHost: *host,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `098d26a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26c04faf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

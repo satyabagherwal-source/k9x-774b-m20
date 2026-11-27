@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-VGGU",
-    "timestamp": "2026-11-26T06:18:14.430Z",
-    "repository": "IFM/PAN2",
-    "learningId": "learn-huggingface-ifm-pan2",
-    "contentHash": "70fbc8823b2f82934c9dffa9e1e7f91b593b760e2892e1b53b69e7691e6445f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-VOU0",
     "timestamp": "2026-11-26T06:18:25.272Z",
     "repository": "prometheus/prometheus",
@@ -7490,6 +7475,21 @@
     "repository": "thaw-app/Thaw",
     "learningId": "learn-github-thaw-app-thaw",
     "contentHash": "11c569e1e6e7f01a5ad2f8013ef6a2860efe0c17a7688c93786c6f03a18a32e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-60G6",
+    "timestamp": "2026-11-27T13:14:01.542Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "a87b55802189c0b7f64494bdcb334d7bfa68417afb89e7aa6b1b7d80e2364ae4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
