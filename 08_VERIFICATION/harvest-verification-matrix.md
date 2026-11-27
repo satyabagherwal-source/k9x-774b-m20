@@ -13641,3 +13641,6 @@
 | `CYCLE-20261127-1UVI` | `2026-11-27T02:26:56.526Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`0cfd6450...`) |
 | `CYCLE-20261127-JLFI` | `2026-11-27T02:40:44.094Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`af6b8df8...`) |
 | `CYCLE-20261127-JXQ1` | `2026-11-27T02:41:00.025Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10812` | Yes (`4f629537...`) |
+| `CYCLE-20261127-V0A7` | `2026-11-27T02:49:36.559Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`096c07fb...`) |
+| `CYCLE-20261127-V1V7` | `2026-11-27T02:49:38.611Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10813` | Yes (`94093094...`) |
+| `CYCLE-20261127-V8A3` | `2026-11-27T02:49:46.923Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10814` | Yes (`4afd110e...`) |

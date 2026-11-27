@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:41:00.054Z",
-  "total_cycles_completed": 12948,
-  "total_learnings_persisted": 12948,
-  "total_rules_promoted": 11722,
+  "last_updated": "2026-11-27T02:49:46.949Z",
+  "total_cycles_completed": 12951,
+  "total_learnings_persisted": 12951,
+  "total_rules_promoted": 11724,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:53:28.657Z",
-      "repository": "MetrolistGroup/Metrolist",
-      "learningId": "learn-github-metrolistgroup-metrolist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T15:02:09.938Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T15:02:13.535Z",
-      "repository": "ajeetdsouza/zoxide",
-      "learningId": "learn-github-ajeetdsouza-zoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T15:02:19.525Z",
       "repository": "yazinsai/OpenOats",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T02:41:00.054Z",
       "repository": "gluesql/gluesql",
       "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:49:36.577Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:49:38.639Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:49:46.949Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

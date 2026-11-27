@@ -4,22 +4,22 @@
 {
   "source_repository": "Dicklesworthstone/destructive_command_guard",
   "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-  "source_version": "2e7cf695",
+  "source_version": "30d9cb34",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T02:18:35.279Z",
+  "timestamp": "2026-11-27T02:49:38.922Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `2e7cf695`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T02:18:35.279Z`  
+> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `30d9cb34`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T02:49:38.922Z`  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Dicklesworthstone/destructive_command_guard` (Commit: `2e7cf695`)
+- **Target Repository**: `Dicklesworthstone/destructive_command_guard` (Commit: `30d9cb34`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T02:18:33.824Z  
+> **Harvest Timestamp**: 2026-11-27T02:49:37.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6382 stars
+- **Stars / Engagement**: 6380 stars
 
 ---
 
@@ -544,8 +544,8 @@ pub enum MatchError {
         language: ScriptLanguage,
         detail: String,
     },
-    /// The code parsed, but a semantic analysis could not resolve it within
-    /// its structural limits. Retrying with a longer timeout cannot help.
+    /// A structural limit or unresolved value prevented a complete analysis.
+    /// Retrying with a longer timeout cannot help.
     AnalysisIncomplete {
         language: ScriptLanguage,
         /// Stable operation name used in incomplete-analysis diagnostics.
@@ -628,7 +628,8 @@ pub struct CompiledPattern {
     /// `call_expression`, so the pattern matches nothing, anywhere, ever.
     /// `Pattern::try_new` still returns `Ok` for it and
     /// [`Pattern::has_error`](ast_grep_core::Pattern::has_error) still returns
-    /// `false`, so neither the compile step nor a compile-only 
+    /// `false`, so neither the compile step nor a compile-only test can see the
+    /
 ```
 
 ### Core Architecture Module: `src/history/queue_budget.rs`
@@ -1453,7 +1454,9 @@ mod embedded;
 mod shell;
 mod word_splitting;
 
-pub(crate) use embedded::{scan_extracted, source_scan_required};
+pub(crate) use embedded::{
+    MAX_BYTES as MAX_PROTECTED_SOURCE_BYTES, SourceScanError, scan_extracted, source_scan_required,
+};
 // Rule NAMES are deliberately not re-exported: every hit carries the
 // rule it denies under, so the evaluator reads `hit.rule` instead of choosing
 // one. That is what keeps `.git/` writes allowlistable separately from
@@ -1659,10 +1662,7 @@ mod source_ownership_tests {
             );
             let hits =
                 classify_embedded_credential_file_writes(&command, ShellDialect::Posix, |_, _| {
-                    false
-                });
-            assert!(
-        
+          
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -1694,13 +1694,21 @@ type Syntax<'a> = Node<'a, StrDoc<SupportLang>>;
 
 // Bound direct library calls as well as the hook. An exhausted source walk
 // must report incomplete analysis, not a successful empty match set.
-const MAX_BYTES: usize = 256 * 1024;
+pub(crate) const MAX_BYTES: usize = 256 * 1024;
 const MAX_DEPTH: usize = 128;
 const MAX_NODES: usize = 40_000;
 // A small source can repeatedly double a bound string. Bound folded values
 // separately from input bytes so path construction cannot amplify it without
 // limit. This is an analysis bound, not a query of the host filesystem.
 const MAX_STATIC_PATH_BYTES: usize = 4096;
+
+/// A grammar error can use parse-error fallback. A valid program whose
+/// writes we could not inspect must remain unverified.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SourceScanError {
+    Syntax(&'static str),
+    Incomplete(&'static str),
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Language {
@@ -1780,7 +1788,7 @@ fn source_has_sink_name(code: &str) -> bool {
 pub(crate) fn scan_extracted(
     code: &str,
     language: ScriptLanguage,
-) -> Result<Vec<CredentialFileWrite>, &'static str> {
+) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if !source_scan_required(code, language) {
         return Ok(Vec::new());
     }
@@ -1929,14 +1937,7 @@ pub(super) fn scan_command(
     let mut hits = Vec::new();
     if !matches!(dialect, ShellDialect::Posix | ShellDialect::Unknown)
         || segment.len() > MAX_BYTES
-        || !source_has_sink_name(segment)
-    {
-        return hits;
-    }
-    let mut inspect_source = |code: &str, language: Language, span: Range<usize>| {
-        let script_language = match language {
-            Language::Python => ScriptLanguage::Python,
-            Language:
+   
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded/go.rs`
@@ -1959,7 +1960,7 @@ pub(super) fn scan_command(
 
 use super::{
     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
-    ResolvedPath, SupportLang, Syntax, record_write,
+    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
 };
 use std::collections::HashMap;
 
@@ -2027,9 +2028,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
     .any(|word| code.contains(word))
 }
 
-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if code.len() > MAX_BYTES {
-        return Err("protected-write Go source exceeds the byte limit");
+        return Err(SourceScanError::Incomplete(
+            "protected-write Go source exceeds the byte limit",
+        ));
     }
     let ast = AstGrep::new(code, SupportLang::Go);
     let mut hits = Vec::new();
@@ -2044,14 +2047,18 @@ fn visit(
     depth: usize,
     remaining: &mut usize,
     hits: &mut Vec<CredentialFileWrite>,
-) -> Result<(), &'static str> {
+) -> Result<(), SourceScanError> {
     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
-        return Err("protected-write Go source exceeds the traversal limit");
+        return Err(SourceScanError::Incomplete(
+            "protected-write Go source exceeds the traversal limit",
+        ));
     }
     *remaining -= 1;
     let kind = node.kind();
     if kind == "ERROR" {
-        return Err("protected-write Go source contains a syntax error");
+        return Err(SourceScanError::Syntax(
+            "protected-write Go source contains a syntax error",
+        ));
     }
 
     if kind == "import_spec" {
@@ -2137,7 +2144,7 @@ fn assign(
     depth: usize,
     remaining: &mut usize,
     hits: &mut Vec<CredentialFileWrite>,
-) -> Result<(), &'static str> {
+) -> Result<(), SourceScanError> {
     let names: Vec<String> = node
         .field("left")
         .or_else(|| node.field("name"))
@@ -2227,10 +2234,7 @@ fn inspect_call(node: &Syntax<'_>, state: &State, hits: &mut Vec<CredentialFileW
     let Some((package, name)) = sink(node, state) else {
         return;
     };
-    let target = |index: usize| arg(node, index).and_then(|a| path(&a, state));
-    let mut record = |path, access| {
-        record_write(hits, node.range(), &format!("Go {name}"), path, access);
-    }
+    let target = |index:
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded/perl.rs`
@@ -2243,9 +2247,10 @@ fn inspect_call(node: &Syntax<'_>, state: &State, hits: &mut Vec<CredentialFileW
 
 use super::{
     Access, Bindings, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
-    OpenFlags, ResolvedPath, Value, combine_open_flags, concatenate_text, record_write,
-    resolved_path,
+    OpenFlags, ResolvedPath, SourceScanError, Value, combine_open_flags, concatenate_text,
+    record_write, resolved_path,
 };
+use SourceScanError::{Incomplete, Syntax};
 use regex::Regex;
 use std::cell::Cell;
 use std::collections::{HashMap, HashSet};
@@ -2288,18 +2293,20 @@ struct State {
 /// Bound total token visits as well as source size and nesting. Otherwise
 /// overlapping argument scans could keep a quadratic worker alive after the
 /// caller's wall-clock deadline has expired.
-fn charge(work: &Cell<usize>) -> Result<(), &'static str> {
+fn charge(work: &Cell<usize>) -> Result<(), SourceScanError> {
     let left = work
         .get()
         .checked_sub(1)
-        .ok_or("protected-write Perl exceeds the work limit")?;
+        .ok_or(Incomplete("protected-write Perl exceeds the work limit"))?;
     work.set(left);
     Ok(())
 }
 
-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
+pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
     if code.len() > MAX_BYTES {
-        return Err("protected-write Perl source exceeds the byte limit");
+        return Err(Incomplete(
+            "protected-write Perl source exceeds the byte limit",
+        ));
     }
     let tokens = lex(code)?;
     let mut state = State {
@@ -2331,7 +2338,9 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
             }
         }
         if state.values.len() + state.handles.len() > 1024 || pending.len() > MAX_DEPTH {
-            return Err("protected-write Perl source exceeds the binding limit");
+            return Err(Incomplete(
+                "protected-write Perl source exceeds the binding limit",
+            ));
         }
         let token = &tokens[index];
         if matches!(token.text, "use" | "require")
@@ -2483,11 +2492,7 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
                 state.values.remove(name);
                 state.handles.remove(name);
                 if let Some(finding) = &finding {
-                    state.handles.insert(name.to_string(), finding.clone());
-                }
-            }
-        }
-        for (path, access) in finding.into_i
+       
 ```
 
 
@@ -2517,850 +2522,890 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `beedc5c7` (2026-11-25)
-**Commit Message**: chore(deps): refresh Cargo.lock within the current version requirements [skip ci]
+### Incident Patch 1: `d93805fb` (2026-11-26)
+**Commit Message**: fix(analyzer): preserve incomplete protected-write scans [skip ci]
 
-`cargo update` on the existing manifest; no Cargo.toml change.
+Separate malformed embedded source from exhausted byte, traversal, and work bounds in the protected-write scanners. Propagate deterministic failures with the protected_write_analysis stage across the hook and CLI.
 
-Runtime crates:
-- clap 4.6.9 -> 4.6.10, clap_builder 4.6.7 -> 4.6.10
-- hashbrown 0.17.1 -> 0.17.2 (through indexmap: serde_json, toml)
-- rich_rust 0.2.3 -> 0.2.4, which moves to fancy-regex 0.20 and drops the
-  duplicate fancy-regex 0.18.0 from the tree (pulls in lru 0.19.2)
-- globset 0.4.21 -> 0.4.22, ignore 0.4.34 -> 0.4.35 (vendored
-  ast-grep-language-dcg)
-- h2 0.4.20 -> 0.4.21, hyper 1.12.0 -> 1.13.0 (reqwest, self-update only)
-- crc32fast 1.5.5 -> 1.5.6, zlib-rs 0.6.8 -> 0.6.9 (flate2: history export
-  and self-update)
-Build and dev only: anyhow 1.0.104 -> 1.0.105 and the gix-* patch releases
-under vergen-gix (which add faster-hex 2.0, parking_lot 0.13, lock_api 0.5,
-parking_lot_core 0.10, redox_syscall 0.9.5 and winreg 0.56); litrs 1.0.1 ->
-1.1.0; zerocopy 0.8.64 -> 0.8.65 (criterion).
+Keep proven findings from either analyzer when the other reaches a structural limit. Retain the incomplete stage in the request scope if a later policy step waives that finding.
 
-Held (breaking; each needs its own change):
-- ast-grep-core 0.45.3 -> 0.51.3: needs tree-sitter 0.27 and a matching
-  update of the vendored ast-grep-language-dcg crate, and it is the parser
-  on the hook's hot path.
-- rust-mcp-sdk 1.0.1 -> 2.0.0: 
+Cover direct scanner classifications, known findings from either side, and the live hook's shallow and over-limit decisions.
 
-**File**: `Cargo.lock` (modified, +161/-102)
+**File**: `src/ast_source_analysis.rs` (modified, +70/-14)
 ```diff
-@@ -99,9 +99,9 @@ dependencies = [
- 
- [[package]]
- name = "anyhow"
--version = "1.0.104"
-+version = "1.0.105"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-+checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
- 
- [[package]]
- name = "approx"
-@@ -454,19 +454,19 @@ dependencies = [
- 
- [[package]]
- name = "clap"
--version = "4.6.9"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-+checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
- ]
- 
- [[package]]
- name = "clap_builder"
--version = "4.6.7"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-+checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
- dependencies = [
-  "anstream",
-  "anstyle",
-@@ -653,9 +653,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.5"
-+version = "1.5.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
-+checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- dependencies = [
-  "cfg-if",
- ]
-@@ -762,7 +762,7 @@ dependencies = [
-  "derive_more",
-  "document-features",
-  "mio",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "rustix",
-  "signal-hook 0.3.18",
-  "signal-hook-mio",
-@@ -856,9 +856,9 @@ dependencies = [
-  "cfg-if",
-  "crossbeam-utils",
-  "hashbrown 0.14.5",
-- "lock_api",
-+ "lock_api 0.4.14",
-  "once_cell",
-- "parking_lot_core",
-+ "parking_lot_core 0.9.12",
- ]
- 
- [[package]]
-@@ -947,7 +947,7 @@ dependencies = [
-  "criterion",
-  "ctrlc",
-  "dirs",
-- "fancy-regex 0.20.2",
-+ "fancy-regex",
-  "flate2",
-  "fs2",
-  "glob",
-@@ -1140,17 +1140,6 @@ version = "0.1.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
- 
--[[package]]
--name = "fancy-regex"
--version = "0.18.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
--dependencies = [
-- "bit-set 0.8.0",
-- "regex-automata",
-- "regex-syntax",
--]
--
- [[package]]
- name = "fancy-regex"
- version = "0.20.2"
-@@ -1174,6 +1163,16 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "faster-hex"
-+version = "2.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
-+dependencies = [
-+ "defmt 0.3.101",
-+ "serde",
-+]
-+
- [[package]]
- name = "fastrand"
- version = "2.5.0"
-@@ -1442,7 +1441,7 @@ dependencies = [
-  "gix-worktree-stream",
-  "gix-zlib",
-  "nonempty",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "signal-hook 0.4.6",
-  "smallvec",
- ]
-@@ -1477,27 +1476,27 @@ dependencies = [
- 
- [[package]]
- name = "gix-bitmap"
--version = "0.6.1"
-+version = "0.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
-+checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
- dependencies = [
-  "gix-error",
- ]
- 
- [[package]]
- name = "gix-chunk"
--version = "0.10.1"
-+version = "0.10.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
-+checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
- dependencies = [
-  "gix-error",
- ]
- 
- [[package]]
- name = "gix-command"
--version = "0.12.1"
-+version = "0.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
-+checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
- dependencies = [
-  "bstr",
-  "gix-error",
-@@ -1542,9 +1541,9 @@ dependencies = [
- 
- [[package]]
- name = "gix-config-value"
--version = "0.21.1"
-+version = "0.21.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
-+checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
- dependencies = [
-  "bitflags 2.13.2",
-  "bstr",
-@@ -1647,9 +1646,9 @@ dependencies = [
- 
- [[package]]
- name = "gix-error"
--version = "0.5.2"
-+version = "0.5.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514cc0e3fb8a8898c5cb7ccd22bb"
-+checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e92349cab4392972baae69cd"
- dependencies = [
-  "bstr",
- ]
-@@ -1710,7 +1709,7 @@ version = "0.28.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b4802
-```
-
----
-
-### Incident Patch 2: `3573fcd3` (2026-11-24)
-**Commit Message**: fix(cli): report the heredoc fallback settings under their config keys (#555) [skip ci]
-
-`dcg config --format json` listed `[heredoc] fallback_on_parse_error` and
-`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`.
-That reads as "allow when analysis fails", which neither setting does: `true`
-selects bounded fallback scanning (one retry under the structural budget for
-a timeout), and `false` blocks on the incomplete analysis. A user reading the
-JSON could not find the key they configure, and the name suggested the
-opposite of the behaviour. The JSON now uses the config key names.
-
-A test in config_toggles_e2e reads both settings back from the JSON at their
-defaults and with both set to false, and checks that no `fail_open*` key is
-left in the heredoc section.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -30,6 +30,13 @@ never see the body of a `$(...)`. Known false positive: the unquoted
- the rules (BSD `pkill` reading `-P 1` as patterns; a `kill_tree` walk from
- launchd). The pack is off by default.
- 
-+**`dcg config --format json` reports the heredoc fallback settings under their
-+config keys (#555).** The `heredoc` object listed `fallback_on_parse_error` and
-+`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`,
-+which read as "allow when analysis fails". The settings choose bounded fallback
-+scanning, and the JSON now uses the names you write in `[heredoc]`. Scripts that
-+parse this output need the new key names.
-+
- ---
- 
- ## [v0.17.1](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.1) -- 2026-11-23 [Release]
-```
-
-**File**: `src/cli.rs` (modified, +6/-2)
-```diff
-@@ -7183,8 +7183,12 @@ fn show_config_json(config: &Config, sources: &[ConfigSourceOutcome]) {
-             "max_body_bytes": heredoc.limits.max_body_bytes,
-             "max_body_lines": heredoc.limits.max_body_lines,
-             "max_heredocs": heredoc.limits.max_heredocs,
--            "fail_open_on_parse_error": heredoc.fallback_on_parse_error,
--            "fail_open_on_timeout": heredoc.fallback_on_timeout,
-+            // Named after the `[heredoc]` config keys they report. The settings
-+            // select bounded fallback scanning when parsing fails or times out;
-+            // the old `fail_open_on_*` names read as "allow when analysis
-+            // fails", which is not what they do (#555).
-+            "fallback_on_parse_error": heredoc.fallback_on_parse_error,
-+            "fallback_on_timeout": heredoc.fallback_on_timeout,
-             "languages": languages,
-         },
-         "overrides": {
-```
-
-**File**: `tests/config_toggles_e2e.rs` (modified, +54/-0)
-```diff
-@@ -547,6 +547,60 @@ fn test_partial_config_only_explanations() {
-     eprintln!("=== Partial config test PASSED ===");
- }
- 
-+/// `dcg config --format json` names the heredoc fallback settings by their
-+/// configuration keys (#555). They used to appear as `fail_open_on_*`, which
-+/// reads as "allow when analysis fails"; the settings select bounded fallback
-+/// scanning, and a user reading the JSON should find the key they configure.
-+#[test]
-+fn config_json_names_heredoc_fallback_settings_by_their_config_keys() {
-+    let env = TestEnv::new();
-+    let read = |config: &str| -> serde_json::Value {
-+        fs::write(&env.config_path, config).expect("write config");
-+        let output = Command::new(dcg_binary())
-+            .env_clear()
-+            .env("HOME", &env.home_dir)
-+            .env("USERPROFILE", &env.home_dir)
-+            .env("XDG_CONFIG_HOME", &env.xdg_config_dir)
-+            .env("DCG_CONFIG", &env.config_path)
-+            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+            .current_dir(env.temp_dir.path())
-+            .args(["config", "--format", "json"])
-+            .output()
-+            .expect("run dcg config");
-+        assert!(
-+            output.status.success(),
-+            "dcg config failed: {}",
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        serde_json::from_slice(&output.stdout).expect("config JSON")
-+    };
-+
-+    for (config, expected) in [
-+        ("[heredoc]\nenabled = true\n", true),
-+        (
-+            "[heredoc]\nfallback_on_parse_error = false\nfallback_on_timeout = false\n",
-+            false,
-+        ),
-+    ] {
-+        let json = read(config);
-+        let heredoc = json["heredoc"].as_object().expect("heredoc section");
-+        assert_eq!(
-+            heredoc.get("fallback_on_parse_error"),
-+            Some(&serde_json::Value::Bool(expected)),
-+            "{config}: {heredoc:?}"
-+        );
-+        assert_eq!(
-+            heredoc.get("fallback_on_timeout"),
-+            Some(&serde_json::Value::Bool(expected)),
-+            "{config}: {heredoc:?}"
-+        );
-+        assert!(
-+            !heredoc.keys().any(|key| key.starts_with("fail_open")),
-+            "{config}: {heredoc:?}"
-+        );
-+    }
-+}
-+
- // =============================================================================
- // Verbose Failure Logging Test
- // =============================================================================
-```
-
----
-
-### Incident Patch 3: `21e57462` (2026-11-26)
-**Commit Message**: fix(analyzer): preserve Python helper identity across file reads [skip ci]
-
-Model the built-in read-only open of a known path and a no-argument read on its file handle. Keep shadowed openers, custom conversions, and opaque calls conservative.
-
-Classify structural Python analysis limits separately from worker and clock failures. Retain the first incomplete step on the evaluation result so the hook and CLI can explain unverified input, while independent rule findings and actual deadlines still take precedence.
-
-Fixes #673
-
-**File**: `fuzz/fuzz_targets/ast_matcher_fuzz.rs` (modified, +2/-0)
-```diff
-@@ -96,7 +96,9 @@ fn assert_expected_fail_open_error(error: MatchError) {
-     match error {
-         MatchError::UnsupportedLanguage(_)
-         | MatchError::ParseError { .. }
-+        | MatchError::AnalysisIncomplete { .. }
-         | MatchError::Timeout { .. }
-+        | MatchError::Unavailable { .. }
-         | MatchError::PatternError { .. } => {}
-     }
- }
-```
-
-**File**: `src/ast_matcher/python_paths.rs` (modified, +98/-17)
-```diff
-@@ -131,6 +131,7 @@ enum Symbol {
-     TemporaryDirectory,
-     Str,
-     Print,
-+    Open,
-     Getattr,
-     Builtins,
- }
-@@ -389,6 +390,8 @@ enum Value {
-     Delete(Delete),
-     Join(Path),
-     PathRead,
-+    ReadOnlyFile,
-+    FileRead,
-     LocalFunction(Arc<LocalFunction>),
- }
- 
-@@ -882,8 +885,9 @@ impl<'a> Scan<'a> {
-     fn check<D: Doc>(&mut self, node: &Node<'_, D>, depth: usize) -> Result<(), MatchError> {
-         check_ast_timeout(self.started, self.timeout, self.budget_ms, self.cancel)?;
-         if depth >= MAX_DEPTH || self.remaining == 0 {
--            return Err(MatchError::Unavailable {
-+            return Err(MatchError::AnalysisIncomplete {
-                 language: ScriptLanguage::Python,
-+                stage: "python_path_bindings",
-                 detail: "Python path-binding analysis exhausted its traversal limit".to_string(),
-             });
-         }
-@@ -1018,6 +1022,7 @@ impl<'a> Scan<'a> {
-         for (name, symbol) in [
-             ("str", Symbol::Str),
-             ("print", Symbol::Print),
-+            ("open", Symbol::Open),
-             ("getattr", Symbol::Getattr),
-         ] {
-             if !writes.contains(name) && !imported_names.contains(name) {
-@@ -1033,7 +1038,7 @@ impl<'a> Scan<'a> {
-         };
-         env.values
-             .insert("getattr".to_string(), Value::Symbol(Symbol::Getattr).lost());
--        for name in ["str", "print", "getattr"] {
-+        for name in ["str", "print", "open", "getattr"] {
-             if let Some(value) = self.immutable.get(name) {
-                 env.values.insert(name.to_string(), value.clone());
-             }
-@@ -3288,8 +3293,9 @@ impl<'a> Scan<'a> {
-                     if possible.direct & MAY_LOCAL != 0 {
-                         return Err(local_call_error("exhausted local return-depth summary"));
-                     }
--                    return Err(MatchError::Unavailable {
-+                    return Err(MatchError::AnalysisIncomplete {
-                         language: ScriptLanguage::Python,
-+                        stage: "python_container_selector",
-                         detail:
-                             "Python container selector analysis exhausted its return-depth limit"
-                                 .to_string(),
-@@ -3387,6 +3393,15 @@ impl<'a> Scan<'a> {
-                     Value::Directory(path)
-                 }
-             }
-+            // Only the builtin with a proved path and plain read mode yields
-+            // this receiver. A custom opener, codec, or path conversion can
-+            // execute Python and must still invalidate the caller's bindings.
-+            Value::Symbol(Symbol::Open)
-+                if env.trusted && plain && read_only_open(&args.positional) =>
-+            {
-+                Value::ReadOnlyFile
-+            }
-+            Value::FileRead if env.trusted && plain && args.positional.is_empty() => Value::Unknown,
-             Value::PathRead | Value::Symbol(Symbol::Print) => Value::Unknown,
-             Value::LocalFunction(function) => {
-                 self.local_call(node, &function, &args, env, depth + 1)?
-@@ -3577,8 +3592,9 @@ fn bounded_container(container: Container) -> Value {
- }
- 
- fn local_call_error(detail: &str) -> MatchError {
--    MatchError::Unavailable {
-+    MatchError::AnalysisIncomplete {
-         language: ScriptLanguage::Python,
-+        stage: "python_local_call_analysis",
-         detail: format!("Python local-call analysis incomplete: {detail}"),
-     }
- }
-@@ -3832,6 +3848,7 @@ fn attribute(object: Value, member: &str) -> Value {
-             Value::Symbol(Symbol::TemporaryDirectory)
-         }
-         (Value::Directory(path), "name") => Value::Text(path.clone()),
-+        (Value::ReadOnlyFile, "read") => Value::FileRead,
-         (Value::Path(path), "joinpath") => Value::Join(path.clone()),
-         (
-             Value::Path(_),
-@@ -3860,6 +3877,19 @@ fn fold_paths(values: &[Value]) -> Option<Path> {
-     Some(path)
- }
- 
-+fn read_only_open(positional: &[Value]) -> bool {
-+    match positional {
-+        [Value::Text(_) | Value::Path(_)] => true,
-+        [
-+            Value::Text(_) | Value::Path(_),
-+            Value::Text(Path::Literal(mode)),
-+        ] => {
-+            matches!(mode.as_ref(), "r" | "rt" | "tr" | "rb" | "br")
+@@ -1879,13 +1879,26 @@ fn compose_policy_matches(
+     matches: Result<Vec<PatternMatch>, MatchError>,
+     protected: Result<Vec<PatternMatch>, MatchError>,
+ ) -> Result<Vec<PatternMatch>, MatchError> {
+-    let mut matches = matches?;
+-    match protected {
+-        Ok(protected) => matches.extend(protected),
+-        // A new classifier's limit must not suppress a deletion/exec
+-        // denial the existing engine has already established.
+-        Err(_) if matches.iter().any(|hit| hit.severity.blocks_by_default()) => {}
+-        Err(error) => return Err(error),
++    let (mut matches, error) = match (matches, protected) {
++        (Ok(mut matches), Ok(protected)) => {
++            matches.extend(protected);
++            (matches, None)
 +        }
-+        _ => false,
-+    }
-+}
-+
- fn factory_arguments(args: &Args) -> bool {
-     if args.uncertain || args.positional.len() > 3 {
-         return false;
-@@ -3955,6 +3985,45 @@ mod tests {
-         );
++        (Ok(matches), Err(error))
++        | (Err(error @ MatchError::AnalysisIncomplete { .. }), Ok(matches)) => {
++            (matches, Some(error))
++        }
++        (Err(error), _) => return Err(error),
++    };
++    if let Some(error) = error {
++        if !matches.iter().any(|hit| hit.severity.blocks_by_default()) {
++            return Err(error);
++        }
++        // Keep the other classifier's proven denial. If policy waives it,
++        // the unfinished scan still cannot establish a clean verdict.
++        if let MatchError::AnalysisIncomplete { stage, .. } = &error {
++            crate::packs::regex_engine::record_incomplete_analysis(stage, &error);
++        }
+     }
+     matches.sort_by_key(|hit| hit.start);
+     Ok(matches)
+@@ -1947,9 +1960,10 @@ fn protected_matches(
+     if !credential_files::source_scan_required(code, language) {
+         return Ok(Vec::new());
+     }
+-    if code.len() > 256 * 1024 {
+-        return Err(MatchError::ParseError {
++    if code.len() > credential_files::MAX_PROTECTED_SOURCE_BYTES {
++        return Err(MatchError::AnalysisIncomplete {
+             language,
++            stage: "protected_write_analysis",
+             detail: "protected-write source exceeds the byte limit".into(),
+         });
+     }
+@@ -1976,9 +1990,18 @@ fn protected_matches(
+             detail: format!("could not start protected-write analysis: {error}"),
+         })?;
+     let hits = match receiver.recv_timeout(budget) {
+-        Ok(result) => result.map_err(|detail| MatchError::ParseError {
+-            language,
+-            detail: detail.to_string(),
++        Ok(result) => result.map_err(|error| match error {
++            credential_files::SourceScanError::Syntax(detail) => MatchError::ParseError {
++                language,
++                detail: detail.to_owned(),
++            },
++            credential_files::SourceScanError::Incomplete(detail) => {
++                MatchError::AnalysisIncomplete {
++                    language,
++                    stage: "protected_write_analysis",
++                    detail: detail.to_owned(),
++                }
++            }
+         })?,
+         Err(mpsc::RecvTimeoutError::Timeout) => {
+             return Err(MatchError::Timeout {
+@@ -3479,13 +3502,46 @@ mod tests {
+ 
+     #[test]
+     fn protected_write_limits_report_incomplete_analysis() {
+-        let oversized = format!("# open\n{}", " ".repeat(256 * 1024));
++        let oversized = format!(
++            "# open\n{}",
++            " ".repeat(credential_files::MAX_PROTECTED_SOURCE_BYTES)
++        );
+         assert!(matches!(
+             DEFAULT_MATCHER.find_matches(&oversized, ScriptLanguage::Python),
+-            Err(MatchError::ParseError { .. })
++            Err(MatchError::AnalysisIncomplete {
++                stage: "protected_write_analysis",
++                ..
++            })
+         ));
      }
  
 +    #[test]
-+    fn repeated_local_calls_keep_identity_across_builtin_file_reads() {
-+        for read in ["open(p).read()", "open(p, 'rb').read()"] {
-+            let source = format!(
-+                "def edit(p, pairs):\n    s = {read}\nedit('x', [('a', 'b')])\nedit('y', [('a', 'remove')])"
-+            );
-+            assert_blocked(&source, false);
++    fn a_known_finding_and_an_incomplete_scan_both_survive_composition() {
++        let language = ScriptLanguage::Python;
++        let hits = protected_matches("open('.git/config', 'w')", language, Duration::from_secs(5))
++            .expect("a literal destination is decidable");
++        assert!(hits.iter().any(|hit| hit.severity.blocks_by_default()));
++        for (protected_failed, stage) in [
++            (true, "protected_write_analysis"),
++            (false, "python_deletion_bindings"),
++        ] {
++            let scope = crate::packs::regex_engine::RegexEvaluationScope::enter();
++            let incomplete = Err(MatchError::AnalysisIncomplete {
++                language,
++                stage,
++                detail: "traversal limit".into(),
++            });
++            let known = Ok(hits.clone());
++            let combined = if protected_failed {
++                compose_policy_matches(known, incomplete)
++            } else {
++                compose_policy_matches(incomplete, known)
++            };
++            assert_eq!(combined.expect("independent finding"), hits);
++            assert_eq!(scope.incomplete_stage(), Some(stage));
 +        }
-+        // The second call must still analyze the helper with its new callback.
-+        assert_blocked(
-+           
++    }
++
+     mod interpreter_literal_budget_regressions_560 {
+         use super::*;
+ 
 ```
 
-**File**: `src/ast_matcher/tempfile_provenance.rs` (modified, +3/-1)
+**File**: `src/packs/core/credential_files.rs` (modified, +3/-1)
 ```diff
-@@ -915,7 +915,9 @@ mod tests {
-                 case.id
-             );
-             match result {
--                Err(super::super::MatchError::Unavailable { language, detail }) => {
-+                Err(super::super::MatchError::AnalysisIncomplete {
-+                    language, detail, ..
-+                }) => {
-                     assert_eq!(language, ScriptLanguage::Python, "{}", case.id);
-                     assert_eq!(&detail, expected, "{}", case.id);
-                 }
+@@ -8,7 +8,9 @@ mod embedded;
+ mod shell;
+ mod word_splitting;
+ 
+-pub(crate) use embedded::{scan_extracted, source_scan_required};
++pub(crate) use embedded::{
++    MAX_BYTES as MAX_PROTECTED_SOURCE_BYTES, SourceScanError, scan_extracted, source_scan_required,
++};
+ // Rule NAMES are deliberately not re-exported: every hit carries the
+ // rule it denies under, so the evaluator reads `hit.rule` instead of choosing
+ // one. That is what keeps `.git/` writes allowlistable separately from
 ```
 
-**File**: `src/ast_pattern_engine.rs` (modified, +21/-0)
+**File**: `src/packs/core/credential_files/embedded.rs` (modified, +21/-7)
 ```diff
-@@ -172,6 +172,14 @@ pub enum MatchError {
+@@ -25,14 +25,22 @@ type Syntax<'a> = Node<'a, StrDoc<SupportLang>>;
+ 
+ // Bound direct library calls as well as the hook. An exhausted source walk
+ // must report incomplete analysis, not a successful empty match set.
+-const MAX_BYTES: usize = 256 * 1024;
++pub(crate) const MAX_BYTES: usize = 256 * 1024;
+ const MAX_DEPTH: usize = 128;
+ const MAX_NODES: usize = 40_000;
+ // A small source can repeatedly double a bound string. Bound folded values
+ // separately from input bytes so path construction cannot amplify it without
+ // limit. This is an analysis bound, not a query of the host filesystem.
+ const MAX_STATIC_PATH_BYTES: usize = 4096;
+ 
++/// A grammar error can use parse-error fallback. A valid program whose
++/// writes we could not inspect must remain unverified.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum SourceScanError {
++    Syntax(&'static str),
++    Incomplete(&'static str),
++}
++
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ enum Language {
+     Python,
+@@ -111,7 +119,7 @@ fn source_has_sink_name(code: &str) -> bool {
+ pub(crate) fn scan_extracted(
+     code: &str,
+     language: ScriptLanguage,
+-) -> Result<Vec<CredentialFileWrite>, &'static str> {
++) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
+     if !source_scan_required(code, language) {
+         return Ok(Vec::new());
+     }
+@@ -649,9 +657,11 @@ fn scan_source(
+     code: &str,
+     language: Language,
+     grammar: SupportLang,
+-) -> Result<Vec<CredentialFileWrite>, &'static str> {
++) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
+     if code.len() > MAX_BYTES {
+-        return Err("protected-write source exceeds the byte limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write source exceeds the byte limit",
++        ));
+     }
+     let ast = AstGrep::new(code, grammar);
+     let mut bindings = Bindings::new();
+@@ -698,14 +708,18 @@ fn visit(
+     depth: usize,
+     remaining_nodes: &mut usize,
+     hits: &mut Vec<CredentialFileWrite>,
+-) -> Result<(), &'static str> {
++) -> Result<(), SourceScanError> {
+     if depth > MAX_DEPTH || *remaining_nodes == 0 {
+-        return Err("protected-write source exceeds the AST traversal limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write source exceeds the AST traversal limit",
++        ));
+     }
+     *remaining_nodes -= 1;
+     let kind = node.kind();
+     if kind == "ERROR" {
+-        return Err("protected-write source contains a syntax error");
++        return Err(SourceScanError::Syntax(
++            "protected-write source contains a syntax error",
++        ));
+     }
+     if matches!(
+         kind.as_ref(),
+```
+
+**File**: `src/packs/core/credential_files/embedded/go.rs` (modified, +13/-7)
+```diff
+@@ -16,7 +16,7 @@
+ 
+ use super::{
+     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
+-    ResolvedPath, SupportLang, Syntax, record_write,
++    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
+ };
+ use std::collections::HashMap;
+ 
+@@ -84,9 +84,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
+     .any(|word| code.contains(word))
+ }
+ 
+-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
++pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
+     if code.len() > MAX_BYTES {
+-        return Err("protected-write Go source exceeds the byte limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write Go source exceeds the byte limit",
++        ));
+     }
+     let ast = AstGrep::new(code, SupportLang::Go);
+     let mut hits = Vec::new();
+@@ -101,14 +103,18 @@ fn visit(
+     depth: usize,
+     remaining: &mut usize,
+     hits: &mut Vec<CredentialFileWrite>,
+-) -> Result<(), &'static str> {
++) -> Result<(), SourceScanError> {
+     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
+-        return Err("protected-write Go source exceeds the traversal limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write Go source exceeds the traversal limit",
++        ));
+     }
+     *remaining -= 1;
+     let kind = node.kind();
+     if kind == "ERROR" {
+-        return Err("protected-write Go source contains a syntax error");
++        return Err(SourceScanError::Syntax(
++            "protected-write Go source contains a syntax error",
++        ));
+     }
+ 
+     if kind == "import_spec" {
+@@ -194,7 +200,7 @@ fn assign(
+     depth: usize,
+     remaining: &mut usize,
+     hits: &mut Vec<CredentialFileWrite>,
+-) -> Result<(), &'static str> {
++) -> Result<(), SourceScanError> {
+     let names: Vec<String> = node
+         .field("left")
+         .or_else(|| node.field("name"))
+```
+
+**File**: `src/packs/core/credential_files/embedded/go/tests.rs` (modified, +19/-1)
+```diff
+@@ -12,7 +12,7 @@ fn rule(body: &str) -> Option<String> {
+     let source = format!(
+         "package main\n\nimport (\n\t\"os\"\n\t\"path/filepath\"\n)\n\nfunc main() {{\n{body}\n}}\n"
+     );
+-    let hits = scan(&source).unwrap_or_else(|error| panic!("{body} should scan: {error}"));
++    let hits = scan(&source).unwrap_or_else(|error| panic!("{body} should scan: {error:?}"));
+     hits.first().map(|hit| hit.rule.to_string())
+ }
+ 
+@@ -27,6 +27,24 @@ fn allows(body: &str) {
+     assert_eq!(rule(body), None, "expected no hit for:\n{body}");
+ }
+ 
++#[test]
++fn distinguishes_go_scan_limits_from_syntax_errors() {
++    allows("println(1)");
++    let nested = format!(
++        "package main\nfunc main() {{ println({}1{}) }}",
++        "(".repeat(MAX_DEPTH),
++        ")".repeat(MAX_DEPTH)
++    );
++    let oversized = format!("package main\n//{}", "x".repeat(MAX_BYTES));
++    for source in [nested, oversized] {
++        assert!(matches!(scan(&source), Err(SourceScanError::Incomplete(_))));
++    }
++    assert!(matches!(
++        scan("package main\n???"),
++        Err(SourceScanError::Syntax(_))
++    ));
++}
++
+ /// The four operations from the report's cross-language table, which were
+ /// ALLOW in Go while shell, Python, Ruby and Node all denied them.
+ #[test]
+```
+
+**File**: `src/packs/core/credential_files/embedded/perl.rs` (modified, +68/-37)
+```diff
+@@ -6,9 +6,10 @@
+ 
+ use super::{
+     Access, Bindings, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
+-    OpenFlags, ResolvedPath, Value, combine_open_flags, concatenate_text, record_write,
+-    resolved_path,
++    OpenFlags, ResolvedPath, SourceScanError, Value, combine_open_flags, concatenate_text,
++    record_write, resolved_path,
+ };
++use SourceScanError::{Incomplete, Syntax};
+ use regex::Regex;
+ use std::cell::Cell;
+ use std::collections::{HashMap, HashSet};
+@@ -51,18 +52,20 @@ struct State {
+ /// Bound total token visits as well as source size and nesting. Otherwise
+ /// overlapping argument scans could keep a quadratic worker alive after the
+ /// caller's wall-clock deadline has expired.
+-fn charge(work: &Cell<usize>) -> Result<(), &'static str> {
++fn charge(work: &Cell<usize>) -> Result<(), SourceScanError> {
+     let left = work
+         .get()
+         .checked_sub(1)
+-        .ok_or("protected-write Perl exceeds the work limit")?;
++        .ok_or(Incomplete("protected-write Perl exceeds the work limit"))?;
+     work.set(left);
+     Ok(())
+ }
+ 
+-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
++pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
+     if code.len() > MAX_BYTES {
+-        return Err("protected-write Perl source exceeds the byte limit");
++        return Err(Incomplete(
++            "protected-write Perl source exceeds the byte limit",
++        ));
+     }
+     let tokens = lex(code)?;
+     let mut state = State {
+@@ -94,7 +97,9 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
+             }
+         }
+         if state.values.len() + state.handles.len() > 1024 || pending.len() > MAX_DEPTH {
+-            return Err("protected-write Perl source exceeds the binding limit");
++            return Err(Incomplete(
++                "protected-write Perl source exceeds the binding limit",
++            ));
+         }
+         let token = &tokens[index];
+         if matches!(token.text, "use" | "require")
+@@ -284,13 +289,15 @@ fn handle_name<'a>(tokens: &[Token<'a>]) -> Option<&'a str> {
+     matches!(token.kind, Kind::Variable | Kind::Word).then_some(token.text)
+ }
+ 
+-fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
++fn lex(code: &str) -> Result<Vec<Token<'_>>, SourceScanError> {
+     let mut tokens: Vec<Token<'_>> = Vec::new();
+     let mut heredocs = Vec::new();
+     let mut offset = 0;
+     while offset < code.len() {
+         if tokens.len() >= MAX_NODES {
+-            return Err("protected-write Perl source exceeds the token limit");
++            return Err(Incomplete(
++                "protected-write Perl source exceeds the token limit",
++            ));
+         }
+         let rest = &code[offset..];
+         let line_start = offset == 0 || code.as_bytes()[offset - 1] == b'\n';
+@@ -317,7 +324,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
+             && crate::heredoc::is_literal_perl_print_heredoc(code, offset..end)
+         {
+             if heredocs.len() == MAX_DEPTH {
+-                return Err("protected-write Perl exceeds the heredoc limit");
++                return Err(Incomplete("protected-write Perl exceeds the heredoc limit"));
+             }
+             heredocs.push((label, indented));
+             tokens.push(Token {
+@@ -330,7 +337,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
+         }
+         let found = TOKEN
+             .find(rest)
+-            .ok_or("protected-write Perl tokenization failed")?;
++            .ok_or(Syntax("protected-write Perl tokenization failed"))?;
+         let raw = found.as_str();
+         let start = offset;
+         offset += raw.len();
+@@ -360,7 +367,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
+         let mut text = raw;
+         if matches!(kind, Kind::Quoted(_)) {
+             if raw.len() < 2 {
+-                return Err("protected-write Perl has an unterminated quote");
++                return Err(Syntax("protected-write Perl has an unterminated quote"));
+             }
+             text = &raw[1..raw.len() - 1];
+         } else if matches!(
+@@ -403,7 +410,7 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
+             kind = Kind::Opaque;
+         }
+         if matches!(raw, "'" | "\"") {
+-            return Err("protected-write Perl has an unterminated quote");
++            return Err(Syntax("protected-write Perl has an unterminated quote"));
+         }
+         tokens.push(Token {
+             text,
+@@ -412,15 +419,18 @@ fn lex(code: &str) -> Result<Vec<Token<'_>>, &'static str> {
+         });
+     }
+     if !heredocs.is_empty() {
+-        return Err("protected-write Perl has an unterminated heredoc");
++        return Err(Syntax("protected-write Perl has an unterminated heredoc"));
+     }
+     Ok(tokens)
+ }
+ 
+ /// Locate a Perl heredoc header. The caller skips its body ONLY for a proven
+ /// literal print state
+```
+
+**File**: `src/packs/core/credential_files/embedded/php.rs` (modified, +23/-6)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ use super::{
+     Access, AstGrep, CredentialFileWrite, MAX_BYTES, MAX_DEPTH, MAX_NODES, MAX_STATIC_PATH_BYTES,
+-    ResolvedPath, SupportLang, Syntax, record_write,
++    ResolvedPath, SourceScanError, SupportLang, Syntax, record_write,
+ };
+ use std::collections::HashMap;
+ 
+@@ -62,9 +62,11 @@ pub(super) fn has_sink_name(code: &str) -> bool {
+     })
+ }
+ 
+-pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str> {
++pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, SourceScanError> {
+     if code.len() > MAX_BYTES {
+-        return Err("protected-write PHP source exceeds the byte limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write PHP source exceeds the byte limit",
++        ));
+     }
+     // -r has no opening tag; stdin programs normally do. Keep findings in
+     // original-source coordinates rather than exposing the synthetic prefix.
+@@ -97,14 +99,18 @@ fn visit(
+     depth: usize,
+     remaining: &mut usize,
+     hits: &mut Vec<CredentialFileWrite>,
+-) -> Result<(), &'static str> {
++) -> Result<(), SourceScanError> {
+     if depth > MAX_DEPTH || *remaining == 0 || state.values.len() > 1024 {
+-        return Err("protected-write PHP source exceeds the traversal limit");
++        return Err(SourceScanError::Incomplete(
++            "protected-write PHP source exceeds the traversal limit",
++        ));
+     }
+     *remaining -= 1;
+     let kind = node.kind();
+     if kind == "ERROR" {
+-        return Err("protected-write PHP source contains a syntax error");
++        return Err(SourceScanError::Syntax(
++            "protected-write PHP source contains a syntax error",
++        ));
+     }
+     if kind == "namespace_definition" {
+         if let Some(body) = node.field("body") {
+@@ -538,6 +544,17 @@ mod tests {
+         assert!(scan(code).expect(code).is_empty(), "{code}");
+     }
+ 
++    #[test]
++    fn distinguishes_php_scan_limits_from_syntax_errors() {
++        allowed("echo 1;");
++        let nested = format!("echo {}1{};", "(".repeat(MAX_DEPTH), ")".repeat(MAX_DEPTH));
++        let oversized = format!("//{}", "x".repeat(MAX_BYTES));
++        for source in [nested, oversized] {
++            assert!(matches!(scan(&source), Err(SourceScanError::Incomplete(_))));
++        }
++        assert!(matches!(scan("echo ];"), Err(SourceScanError::Syntax(_))));
++    }
++
+     #[test]
+     fn php_global_sinks_modes_and_case() {
+         for mode in ["w", "w+", "a", "a+", "r+", "x", "c", "c+b", "wbe"] {
+```
+
+**File**: `tests/profile_hook.rs` (modified, +20/-14)
+```diff
+@@ -344,14 +344,23 @@ fn python_local_call_results_reach_the_hook_without_spurious_deadlines_673() {
+ }
+ 
+ #[test]
+-fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
+-    // Both programs only add integers. The deeper expression exceeds the
+-    // deletion-binding walk's structural limit even with time left to run.
+-    for (terms, complete) in [(4, true), (160, false)] {
++fn python_traversal_limits_keep_a_valid_body_unverified() {
++    // The deeper sum exceeds the selected walk's structural limit even
++    // with time left on the clock. The shallow sum can be checked in full.
++    let deletion_docs = "import shutil\n# See the rmtree documentation.";
++    let file_read = "text = open('notes.txt').read()";
++    for (preamble, terms, incomplete) in [
++        (deletion_docs, 4, None),
++        (
++            deletion_docs,
++            160,
++            Some("incomplete: python_deletion_bindings"),
++        ),
++        (file_read, 4, None),
++        (file_read, 160, Some("incomplete: protected_write_analysis")),
++    ] {
+         let sum = vec!["1"; terms].join("+");
+-        let command = format!(
+-            "python3 - <<'PY'\nimport shutil\n# See the rmtree documentation.\nvalue = {sum}\nPY"
+-        );
++        let command = format!("python3 - <<'PY'\n{preamble}\nvalue = {sum}\nPY");
+         let output = run_hook_with_env(
+             &payload(&command),
+             None,
+@@ -363,19 +372,16 @@ fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
+             ],
+         );
+         assert!(output.status.success(), "{output:?}");
+-        if complete {
+-            assert!(output.stdout.is_empty(), "{output:?}");
+-        } else {
++        if let Some(incomplete) = incomplete {
+             let wire: serde_json::Value =
+                 serde_json::from_slice(&output.stdout).expect("incomplete hook verdict");
+             let result = &wire["hookSpecificOutput"];
+             assert_eq!(result["permissionDecision"], "ask", "{wire}");
+             let reason = result["permissionDecisionReason"].as_str().unwrap();
+-            assert!(
+-                reason.contains("incomplete: python_deletion_bindings"),
+-                "{reason}"
+-            );
++            assert!(reason.contains(incomplete), "{reason}");
+             assert!(!reason.contains("hook_timeout_ms"), "{reason}");
++        } else {
++            assert!(output.stdout.is_empty(), "{output:?}");
+         }
+     }
+ }
+```
+
+---
+
+### Incident Patch 2: `48b1d5a9` (2026-11-26)
+**Commit Message**: fix(analyzer): keep exhausted AST work unverified [skip ci]
+
+Report the direct parser byte ceiling and the Python deletion-binding traversal limit as structural failures. The evaluator can now retain the failed stage and avoid a retry even when the hook deadline has time left.
+
+Exercise both sides of the traversal limit through the real PreToolUse hook.
+
+**File**: `src/ast_pattern_engine.rs` (modified, +25/-14)
+```diff
+@@ -172,8 +172,8 @@ pub enum MatchError {
          language: ScriptLanguage,
          detail: String,
      },
-+    /// The code parsed, but a semantic analysis could not resolve it within
-+    /// its structural limits. Retrying with a longer timeout cannot help.
-+    AnalysisIncomplete {
-+        language: ScriptLanguage,
-+        /// Stable operation name used in incomplete-analysis diagnostics.
-+        stage: &'static str,
-+        detail: String,
-+    },
-     /// Pattern matching exceeded timeout.
-     Timeout { elapsed_ms: u64, budget_ms: u64 },
-     /// Pattern compilation failed (should not happen with static patterns).
-@@ -206,6 +214,11 @@ impl std::fmt::Display for MatchError {
-             Self::ParseError { language, detail } => {
-                 write!(f, "AST parse error for {language:?}: {detail}")
-             }
-+            Self::AnalysisIncomplete {
-+                language, detail, ..
-+            } => {
-+                write!(f, "AST analysis incomplete for {language:?}: {detail}")
-+            }
-             Self::Timeout {
-                 elapsed_ms,
-                 budget_ms,
-@@ -7498,6 +7511,14 @@ mod tests {
-             .is_transient()
-         );
-         assert!(!MatchError::UnsupportedLanguage(ScriptLanguage::Unknown).is_transient());
-+        assert!(
-+            !MatchError::AnalysisIncomplete {
-+                language: ScriptLanguage::Python,
-+                stage: "python_local_call_analysis",
-+                detail: "unresolved local callable".into()
-+            }
-+            .is_transient()
-+        );
-         assert!(
-             !MatchError::PatternError {
-                 pattern: "p".into(),
-```
-
-**File**: `src/cli.rs` (modified, +25/-2)
-```diff
-@@ -1087,11 +1087,22 @@ const CLASSIFY_OUTPUT_SCHEMA_VERSION: u32 = 1;
- /// pattern has been proven, but execution is still blocked conservatively.
- const INDETERMINATE_REASON: &str = "Safety evaluation did not complete within the analysis budget";
+-    /// The code parsed, but a semantic analysis could not resolve it within
+-    /// its structural limits. Retrying with a longer timeout cannot help.
++    /// A structural limit or unresolved value prevented a complete analysis.
++    /// Retrying with a longer timeout cannot help.
+     AnalysisIncomplete {
+         language: ScriptLanguage,
+         /// Stable operation name used in incomplete-analysis diagnostics.
+@@ -453,9 +453,16 @@ impl AstMatcher {
+             return Ok(Vec::new());
+         }
  
-+fn indeterminate_stage(result: &EvaluationResult) -> Option<&'static str> {
-+    result
-+        .incomplete_stage
-+        .filter(|_| !result.skipped_due_to_budget)
-+}
-+
- /// Describe the failure attached to this evaluation, never a stale thread-local
- /// observation. A regex work limit is independent of the hook's wall clock;
- /// retain the deadline wording when the evaluator actually exhausted it, with
- /// the known regex failure as additional context.
- fn indeterminate_reason(result: &EvaluationResult) -> std::borrow::Cow<'static, str> {
-+    if let Some(stage) = indeterminate_stage(result) {
-+        return std::borrow::Cow::Owned(format!(
-+            "Safety evaluation could not finish (incomplete: {stage}). The command was not verified."
-+        ));
-+    }
-     if !result.skipped_due_to_budget
-         && let Some(failure) = &result.regex_failure
-     {
-@@ -5625,7 +5636,14 @@ fn test_command(
-                     "Execution is blocked because DCG could not complete safety analysis."
-                         .to_string(),
-                 ),
--                source: Some("analysis_budget".to_string()),
-+                source: Some(
-+                    if indeterminate_stage(&result).is_some() {
-+                        "analysis_incomplete"
-+                    } else {
-+                        "analysis_budget"
-+                    }
-+                    .to_string(),
-+                ),
-                 matched_span: None,
-                 severity: None,
-                 allowlist: None,
-@@ -6207,7 +6225,12 @@ fn classify_command(config: &Config, command: &str, format: ClassifyFormat, no_c
-             "unknown".to_string(),
-             1.0,
-             vec![ClassifyReason {
--                rule_id: "dcg:analysis-budget".to_string(),
-+                rule_id: if indeterminate_stage(&result).is_some() {
-+                    "dcg:analysis-incomplete"
-+                } else {
-+                    "dcg:analysis-budget"
-+                }
-+                .to_string(),
-                 severity: "unknown".to_string(),
-                 explanation: indeterminate_reason(&result).into_owned(),
-             }],
-```
-
-**File**: `src/evaluator.rs` (modified, +71/-13)
-```diff
-@@ -989,6 +989,9 @@ pub struct EvaluationResult {
-     /// executed child. Contains bounded rule identifiers and engine limits,
-     /// never command text, pattern source, or execution context.
-     pub regex_failure: Option<crate::perf::RegexFailure>,
-+    /// The analysis step that stopped first, when the failure was outside the
-+    /// regex engine. Belongs to this request, including its executed children.
-+    pub incomplete_stage: Option<&'static str>,
-     /// Whether the evaluator proved that no enabled-pack keyword was present
-     /// and returned through the bounded quick-reject fast path.
-     pub quick_rejected: bool,
-@@ -1030,6 +1033,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1061,6 +1065,7 @@ impl EvaluationResult {
-             quick_rejected: true,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1085,6 +1090,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1115,6 +1121,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1145,6 +1152,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1186,6 +1194,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1247,6 +1256,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1315,6 +1325,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1346,6 +1357,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1376,6 +1388,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1413,6 +1426,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1450,6 +1464,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1490,6 +1505,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurrence: None,
-             graduated_response: None,
-@@ -1518,6 +1534,7 @@ impl EvaluationResult {
-             quick_rejected: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             branch_context: None,
-             session_occurren
-```
-
-**File**: `src/main.rs` (modified, +28/-9)
-```diff
-@@ -294,17 +294,25 @@ impl IndeterminateDetail {
+-        if timeout.is_zero() || code.len() > MAX_AST_INPUT_BYTES {
++        if timeout.is_zero() {
+             return Err(timeout_error(start_time, budget_ms));
+         }
++        if code.len() > MAX_AST_INPUT_BYTES {
++            return Err(MatchError::AnalysisIncomplete {
++                language,
++                stage: "ast_input_size",
++                detail: format!("source exceeds the {MAX_AST_INPUT_BYTES}-byte AST input limit"),
++            });
++        }
  
- /// Use the selected evaluation's provenance, not a prior diagnostic or policy
- /// probe on this thread. Keep deadline evidence independently of regex failure.
--fn take_evaluation_exhaustion(failure: Option<perf::RegexFailure>) -> perf::BudgetExhaustion {
-+fn take_evaluation_exhaustion(
-+    failure: Option<perf::RegexFailure>,
-+    stage: Option<&'static str>,
-+) -> perf::BudgetExhaustion {
-     let mut exhaustion = perf::take_budget_exhaustion();
-     if let Some(failure) = failure {
-         let phase = match failure.operation {
-             perf::RegexOperation::Compile => ProfilePhase::RegexCompile,
-             _ => ProfilePhase::RegexMatch,
-         };
-         exhaustion.incomplete = Some((failure.operation.as_str(), Some(phase)));
--    } else if exhaustion.regex_failure.is_some() {
--        // An unrelated regex note cannot identify this result's failed step.
--        exhaustion.incomplete = None;
-+    } else {
-+        exhaustion.incomplete = stage.map(|stage| {
-+            let phase = exhaustion
-+                .incomplete
-+                .filter(|(observed, _)| *observed == stage)
-+                .and_then(|(_, phase)| phase);
-+            (stage, phase)
-+        });
-     }
-     exhaustion.regex_failure = failure;
-     exhaustion
-@@ -2812,7 +2820,7 @@ fn attempt_rebase_recovery(
-     // This independent evaluation must not inherit a confidence probe's notes.
-     let _ = perf::take_budget_exhaustion();
-     if ctx.deadline.is_exceeded() {
--        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None)));
-+        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None, None)));
-     }
-     let relaxed = rebase_recovery::relaxed_allowlist(ctx.allowlists);
-     let residual = evaluate_command_with_pack_order_deadline_at_path_in_dialect(
-@@ -2857,6 +2865,7 @@ fn attempt_rebase_recovery(
-     if residual.decision == EvaluationDecision::Indeterminate || residual.skipped_due_to_budget {
-         return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(
-             residual.regex_failure,
-+            residual.incomplete_stage,
-         )));
-     }
-     if residual.decision == EvaluationDecision::Deny {
-@@ -2991,7 +3000,10 @@ fn resolve_hook_command(
-         return ResolvedCommandOutcome::DeadlineExhausted {
-             command: command.to_string(),
-             stage: "evaluation",
--            exhaustion: Box::new(take_evaluation_exhaustion(result.regex_failure)),
-+            exhaustion: Box::new(take_evaluation_exhaustion(
-+                result.regex_failure,
-+                result.incomplete_stage,
-+            )),
-         };
-     }
- 
-@@ -4979,7 +4991,7 @@ mod tests {
-         };
-         perf::note_regex_failure(prior);
-         perf::note_deadline_exhausted();
--        let deadline = take_evaluation_exhaustion(None);
-+        let deadline = take_evaluation_exhaustion(None, None);
-         assert!(deadline.deadline.is_some());
-         assert!(deadline.regex_failure.is_none());
-         assert!(deadline.incomplete.is_none());
-@@ -4991,7 +5003,7 @@ mod tests {
-             operation: perf::RegexOperation::FindFrom,
-             cause: perf::RegexFailureCause::BacktrackLimit { steps: 100_000 },
-         };
--        let exhaustion = take_evaluation_exhaustion(Some(selected));
-+        let exhaustion = take_evaluation_exhaustion(Some(selected), None);
-         assert_eq!(exhaustion.regex_failure, Some(selected));
-         assert_eq!(
-             exhaustion.incomplete,
-@@ -5000,12 +5012,19 @@ mod tests {
-         assert!(exhaustion.deadline.is_none());
- 
-         perf::note_incomplete_analysis("interpreter_literal_recovery");
--        let generic = take_evaluation_exhaustion(None);
-+        let generic = take_evaluation_exhaustion(None, Some("interpreter_literal_recovery"));
-         assert_eq!(
-             generic.incomplete.unwrap().0,
-             "interpreter_literal_recovery"
-         );
-         assert!(generic.regex_failure.is_none());
-+
-+        perf::note_incomplete_analysis("interpreter_literal_recovery");
-+        let local_call = take_evaluation_exhaustion(None, Some("python_local_call_analysis"));
-+        assert_eq!(
-+            local_call.incomplete,
-+            Some(("python_local_call_analysis", None))
-+        );
+         run_ast_match_with_timeout(
+             code.to_string(),
+@@ -2000,8 +2007,9 @@ impl PythonDeleteScan<'_> {
+     fn check(&mut self, depth: usize) -> Result<(), MatchError> {
+         check_ast_timeout(self.start_time, self.timeout, self.budget_ms, self.cancel)?;
+         if depth > MAX_PYTHON_DELETE_DEPTH || self.remaining_nodes == 0 {
+-            return Err(MatchError::ParseError {
++            return Err(MatchError::AnalysisIncomplete {
+                 language: ScriptLanguage::Python,
++                stage: "python_deletion_bindings",
+                 detail: "Python deletion binding analysis exceeds its traversal limit".to_string(),
+             });
+         }
+@@ -8437,21 +8445,24 @@ mod tests {
      }
  
      #[test]
+-    fn oversized_input_fails_open_without_ast_parse() {
++    fn oversized_input_reports_the_byte_limit_without_ast_parse() {
+         let ast_matcher = AstMatcher::new().with_timeout(Duration::from_secs(10));
+         let code = "x = 1\n".repeat((MAX_AST_INPUT_BYTES / 6) + 2);
+         assert!(code.len() > MAX_AST_INPUT_BYTES);
+ 
+         let start = Instant::now();
+-        let result = ast_matcher.find_matches(&code, ScriptLanguage::Python);
+-
+-        assert!(
+-            matches!(result, Err(MatchError::Timeout { .. })),
+-            "oversized direct matcher input should fail open on the budget guard"
+-        );
+-        // As above, the matches!(Err(Timeout)) check is the real guard; this
+-        // generous timing bound only documents the early return and avoids
+-        // load-induced flakes.
++        let error = ast_matcher
++            .find_matches(&code, ScriptLanguage::Python)
++            .expect_err("oversized source cannot be fully analyzed");
++        assert!(!error.is_transient());
++        assert!(matches!(
++            error,
++            MatchError::AnalysisIncomplete {
++                language: ScriptLanguage::Python,
++                stage: "ast_input_size",
++                ..
++            }
++        ));
+         assert!(
+             start.elapsed() < Duration::from_secs(2),
+             "oversized input should not enter ast-grep parsing"
 ```
 
-**File**: `src/output/test.rs` (modified, +1/-0)
+**File**: `tests/profile_hook.rs` (modified, +37/-0)
 ```diff
-@@ -1055,6 +1055,7 @@ mod tests {
-             skipped_due_to_budget: false,
-             regex_evaluation_incomplete: false,
-             regex_failure: None,
-+            incomplete_stage: None,
-             quick_rejected: false,
-             branch_context: None,
-             session_occurrence: None,
+@@ -342,3 +342,40 @@ fn python_local_call_results_reach_the_hook_without_spurious_deadlines_673() {
+         }
+     }
+ }
++
++#[test]
++fn python_deletion_binding_traversal_limit_keeps_a_valid_body_unverified() {
++    // Both programs only add integers. The deeper expression exceeds the
++    // deletion-binding walk's structural limit even with time left to run.
++    for (terms, complete) in [(4, true), (160, false)] {
++        let sum = vec!["1"; terms].join("+");
++        let command = format!(
++            "python3 - <<'PY'\nimport shutil\n# See the rmtree documentation.\nvalue = {sum}\nPY"
++        );
++        let output = run_hook_with_env(
++            &payload(&command),
++            None,
++            false,
++            false,
++            &[
++                ("DCG_AST_TIMEOUT_MS", "5000"),
++                ("DCG_HEREDOC_TIMEOUT_MS", "5000"),
++            ],
++        );
++        assert!(output.status.success(), "{output:?}");
++        if complete {
++            assert!(output.stdout.is_empty(), "{output:?}");
++        } else {
++            let wire: serde_json::Value =
++                serde_json::from_slice(&output.stdout).expect("incomplete hook verdict");
++            let result = &wire["hookSpecificOutput"];
++            assert_eq!(result["permissionDecision"], "ask", "{wire}");
++            let reason = result["permissionDecisionReason"].as_str().unwrap();
++            assert!(
++                reason.contains("incomplete: python_deletion_bindings"),
++                "{reason}"
++            );
++            assert!(!reason.contains("hook_timeout_ms"), "{reason}");
++        }
++    }
++}
+```
+
+---
+
+### Incident Patch 3: `8538d214` (2026-11-26)
+**Commit Message**: fix(python): distinguish documentation writes and string appends from shell code [skip ci]
+
+In isolated Python input, recognize a complete program that imports pathlib and writes literal prose to ordinary documentation filenames. Keep the destination and original source available to the protected-write and execution checks. Recognize += on proven text in programs whose output remains data.
+
+Cover the reported hook decisions, later consumers, protected paths, and unproven values.
+
+Fixes #664
+
+**File**: `src/ast_source_analysis.rs` (modified, +166/-2)
+```diff
+@@ -83,19 +83,86 @@ pub(crate) fn inert_documentation_literal_ranges_with_data_inspection(
+     let root = ast.root();
+     let mut proof = DocumentationProof::new(language, 128, 16_384);
+     proof.allow_data_inspection = allow_data_inspection;
+-    if proof.expression(&root, 0).is_some() {
++    if proof.proves_program(&root) {
+         if proof.may_write_files {
+             proof.literals
+         } else {
+             proof.data_literals
+         }
++    } else if allow_data_inspection
++        && language == ScriptLanguage::Python
++        && let Some(ranges) = pathlib_document_write_payloads(&root)
++    {
++        ranges
+     } else if has_substitution_text {
+         inert_named_exec_literal_ranges(&root, code, language)
+     } else {
+         Vec::new()
+     }
+ }
+ 
++/// An isolated Python program whose only operations are importing the standard
++/// Path constructor and writing literal text to ordinary documentation files.
++/// Return just the payloads. The destination and original source remain visible
++/// to protected-write checks. A second consumer, rebinding or opaque call in
++/// the program withdraws the proof for every write.
++fn pathlib_document_write_payloads<D: ast_grep_core::Doc>(
++    root: &ast_grep_core::Node<'_, D>,
++) -> Option<Vec<std::ops::Range<usize>>> {
++    let mut statements = root
++        .children()
++        .filter(|child| child.is_named() && child.kind().as_ref() != "comment");
++    let import = statements.next()?;
++    let constructor = match (import.kind().as_ref(), import.text().as_ref()) {
++        ("import_statement", "import pathlib") => "pathlib.Path",
++        ("import_from_statement", "from pathlib import Path") => "Path",
++        _ => return None,
++    };
++    let mut ranges = Vec::new();
++    for statement in statements {
++        let call = literal_statement(statement)?;
++        let method = call.field("function")?;
++        let receiver = method.field("object")?;
++        if call.kind().as_ref() != "call"
++            || method.kind().as_ref() != "attribute"
++            || method.field("attribute")?.text() != "write_text"
++            || receiver.kind().as_ref() != "call"
++            || receiver.field("function")?.text() != constructor
++        {
++            return None;
++        }
++        let destination = single_python_string_argument(&receiver)?;
++        let filename = static_interpreter_literal(&destination, ScriptLanguage::Python, 0)?;
++        // A general file can be an executable, startup file, or configuration.
++        // A documentation suffix on a path in a hooks/config directory does not
++        // establish this data role. Accept ordinary relative basenames only.
++        let (stem, extension) = filename.rsplit_once('.')?;
++        if !matches!(extension, "md" | "markdown" | "rst")
++            || !stem.starts_with(|c: char| c.is_ascii_alphanumeric())
++            || !stem
++                .bytes()
++                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'_' | b'.' | b' '))
++        {
++            return None;
++        }
++        let payload = single_python_string_argument(&call)?;
++        static_interpreter_literal(&payload, ScriptLanguage::Python, 0)?;
++        ranges.push(payload.range());
++    }
++    (!ranges.is_empty()).then_some(ranges)
++}
++
++fn single_python_string_argument<'a, D: ast_grep_core::Doc>(
++    call: &ast_grep_core::Node<'a, D>,
++) -> Option<ast_grep_core::Node<'a, D>> {
++    let arguments = call.field("arguments")?;
++    let mut args = arguments
++        .children()
++        .filter(|child| child.is_named() && child.kind().as_ref() != "comment");
++    let only = args.next()?;
++    (only.kind().as_ref() == "string" && args.next().is_none()).then_some(only)
++}
++
+ /// The parse the documentation proof starts from: Python or JavaScript of at
+ /// most 256 KiB, with no parser recovery in its first 4,096 nodes and no more
+ /// nodes than that. Traversal and recursion are bounded independently of the
+@@ -147,6 +214,9 @@ struct DocumentationProof {
+     /// later executes it. The established proof treats every open this way;
+     /// the inspection extension can prove a Python file is read-only.
+     may_write_files: bool,
++    /// A text append is an inspection operation only when the complete
++    /// program keeps the result away from an unproved file destination.
++    uses_text_append: bool,
+     remaining_steps: usize,
+ }
+ 
+@@ -160,6 +230,7 @@ impl DocumentationProof {
+             literals: Vec::new(),
+             data_literals: Vec::new(),
+             may_write_files: false,
++            uses_text_append: false,
+             remaining_steps,
+         }
+     }
+@@ -171,6 +242,10 @@ impl DocumentationProof {
+         self.data_literals.push(range);
+     }
+ 
++    fn proves_program<D: ast_grep_core::Doc>(&mut self, root: &ast_grep_core::Node<'_, D>) -> bool {
++        self.expression(root, 0).is_some() && !(self.uses_text_append && self.may_write_files)
++    }
++
+     fn expression<D: ast_grep_core::Doc>
+```
+
+**File**: `src/evaluator.rs` (modified, +15/-0)
+```diff
+@@ -48294,6 +48294,21 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn python_text_append_reaches_print_or_a_shell_consumer_664() {
++        let body = "s = ''\ns += \"`git checkout -- <path>` is blocked\"\nprint(s)";
++        for dialect in [ShellDialect::Posix, ShellDialect::Unknown] {
++            for (output, decision) in [
++                ("", EvaluationDecision::Allow),
++                (" | sh", EvaluationDecision::Deny),
++            ] {
++                let command = format!("python3 - <<'PY'{output}\n{body}\nPY");
++                let result = evaluate_with_pack_ids_in_dialect(&command, &["core.git"], dialect);
++                assert_eq!(result.decision, decision, "{command}: {result:?}");
++            }
++        }
++    }
++
+     #[test]
+     fn careful_windows_preset_enforces_cmd_parity_across_policy_channels() {
+         let preset = ["careful_company_running_windows"];
+```
+
+**File**: `tests/regression_heredoc_masking.rs` (modified, +26/-0)
+```diff
+@@ -1300,6 +1300,32 @@ EOF";
+         }
+     }
+ 
++    #[test]
++    fn issue_664_pathlib_document_payload_requires_an_isolated_write() {
++        for (path, prose) in [
++            ("NOTES.md", "git checkout -- <path> is blocked"),
++            ("NOTES.md", "`git checkout -- <path>` is blocked"),
++            ("RUNBOOK.rst", "`git reset --hard` is blocked"),
++            ("NOTES.md", "`rm -rf ~/projects` is blocked"),
++        ] {
++            let command = format!(
++                "python3 - <<'PY'\nimport pathlib\npathlib.Path('{path}').write_text('{prose}')\nPY"
++            );
++            let (decision, rule) = hook_decision(&command);
++            assert_eq!(decision, "allow", "{command}: {rule}");
++        }
++        let write = "python3 - <<'PY'\nfrom pathlib import Path\nPath('NOTES.md').write_text('git reset --hard')\nPY";
++        let (decision, rule) = hook_decision(&format!("{write}\nsh NOTES.md"));
++        assert_eq!(decision, "deny");
++        assert!(rule.contains("reset-hard"), "{rule}");
++
++        let (decision, rule) = hook_decision(
++            "python3 - <<'PY'\nimport pathlib\npathlib.Path('.git/config').write_text('text')\nPY",
++        );
++        assert_eq!(decision, "deny");
++        assert!(rule.contains("git-internals-write"), "{rule}");
++    }
++
+     #[test]
+     fn issue_544_document_edits_keep_the_same_command_text_inert() {
+         for (program, body) in [
 ```
 
 #### Recent Merged Pull Requests:
@@ -3389,96 +3434,70 @@ Fixes #673
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): refresh Cargo.lock within the current version requirements [skip ci]
+## X. analyzer): preserve incomplete protected-write scans [skip ci]
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ast_source_analysis.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `beedc5c7`: deps): refresh Cargo.lock within the current version requirements [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d93805fb`: analyzer): preserve incomplete protected-write scans [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ast_source_analysis.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.0.105"
-checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
-version = "4.6.10"
-checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
-version = "4.6.10"
-checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
-version = "1.5.6"
-checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- "parking_lot 0.12.5",
- "lock_api 0.4.14",
- "parking_lot_core 0.9.12",
- "fancy-regex",
-[[package]]
-name = "faster-hex"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
-dependencies = [
- "defmt 0.3.101",
- "serde",
-]
-
- "parking_lot 0.12.5",
-version = "0.6.2"
-checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
-version = "0.10.2"
-checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
-version = "0.12.2"
-checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
-version = "0.21.2"
-checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
-version = "0.5.3"
-checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e923
+    let (mut matches, error) = match (matches, protected) {
+        (Ok(mut matches), Ok(protected)) => {
+            matches.extend(protected);
+            (matches, None)
+        }
+        (Ok(matches), Err(error))
+        | (Err(error @ MatchError::AnalysisIncomplete { .. }), Ok(matches)) => {
+            (matches, Some(error))
+        }
+        (Err(error), _) => return Err(error),
+    };
+    if let Some(error) = error {
+        if !matches.iter().any(|hit| hit.severity.blocks_by_default()) {
+            return Err(error);
+        }
+        // Keep the other classifier's proven denial. If policy waives it,
+        // the unfinished scan still cannot establish a clean verdict.
+        if let MatchError::AnalysisIncomplete { stage, .. } = &error {
+            crate::packs::regex_engine::record_incomplete_analysis(stage, &error);
+        }
+    if code.len() > credential_files::MAX_PROTECTED_SOURCE_BYTES {
+        return Err(MatchError::AnalysisIncomplete {
+            stage: "protected_write_analysis",
+        Ok(result) => result.map_err(|error| match error {
+            credential_files::SourceScanError::Syntax(detail) => MatchError::ParseError {
+                language,
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.0.104"
-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-version = "4.6.9"
-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-version = "4.6.7"
-checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-version = "1.5.5"
-checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
- "parking_lot",
- "lock_api",
- "parking_lot_core",
- "fancy-regex 0.20.2",
-[[package]]
-name = "fancy-regex"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
-dependencies = [
- "bit-set 0.8.0",
- "regex-automata",
- "regex-syntax",
-]
-
- "parking_lot",
-version = "0.6.1"
-checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
-version = "0.10.1"
-checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
-version = "0.12.1"
-checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
-version = "0.21.1"
-checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
-version = "0.5.2"
-checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514
+    let mut matches = matches?;
+    match protected {
+        Ok(protected) => matches.extend(protected),
+        // A new classifier's limit must not suppress a deletion/exec
+        // denial the existing engine has already established.
+        Err(_) if matches.iter().any(|hit| hit.severity.blocks_by_default()) => {}
+        Err(error) => return Err(error),
+    if code.len() > 256 * 1024 {
+        return Err(MatchError::ParseError {
+        Ok(result) => result.map_err(|detail| MatchError::ParseError {
+            language,
+            detail: detail.to_string(),
+        let oversized = format!("# open\n{}", " ".repeat(256 * 1024));
+            Err(MatchError::ParseError { .. })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `beedc5c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d93805fb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

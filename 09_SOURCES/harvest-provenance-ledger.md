@@ -13674,3 +13674,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-27T02:26:56.530Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-27T02:40:44.098Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `bace1272` | Multi-dimensional audit evidence | 2026-11-27T02:41:00.041Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-27T02:49:36.563Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `30d9cb34` | Multi-dimensional audit evidence | 2026-11-27T02:49:38.627Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `fa2f007e` | Multi-dimensional audit evidence | 2026-11-27T02:49:46.937Z |

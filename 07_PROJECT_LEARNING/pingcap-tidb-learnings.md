@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `adfdb353`  
+> **Source Version**: `fa2f007e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T09:22:08.147Z  
+> **Timestamp**: 2026-11-27T02:49:45.585Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:22:08.141Z  
+> **Harvest Timestamp**: 2026-11-27T02:49:45.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40778 stars
+- **Stars / Engagement**: 40779 stars
 
 ---
 
@@ -1927,7 +1927,7 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
 - **Issue #73829** (2026-11-26): **executor: redact temporal input values in INSERT diagnostics**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #73163  Problem Summary:  Temporal conversion errors on INSERT use a custom errno 1292 message that omits the value’s redaction metadata. INSERT IGNORE exposes the same message as a warning.  ### What changed and how does it work?  Mark the input value (argument 1) as redactable in the INSERT-specific message. This keeps the type, column and row number visible. Cover OFF, ON and MARKER with the formatter used by both error and warning paths.  This fixes part B. The independent JSON path position fix (part A) is in #73171. The earlier #73212 addressing part B was closed without merging.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Verification: `go test -tags=intest,deadlock ./pkg/util/dbterror/exeerrors ./pkg/util/dbterror ./pkg/errno -count=1`. T
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73163  Problem Summary:  Temporal conversion errors on INSERT use a custom errno 1292 message that omits the value’s redaction metadata. INSERT IGNORE exposes the same message as a warning.  ### What changed and how does it work?  Mark the input value (argument 1) as redactable in the INSERT-specific message. This keeps the type, column and row number visible. Cover OFF, ON and MARKER with the formatter used by both error and warning paths.  This fixes part B. The independent JSON path position fix (part A) is in #73171. The earlier #73212 addressing part B was closed without merging.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Verification: `go test -tags=intest,deadlock ./pkg/util/dbterror/exeerro
 
 - **Issue #73827** (2026-11-26): **planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5**
   *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #73782  This follows up on #73789 and adapts the filter expansion from #73823 to the 8.5 FTS MPP scan path. A filter on a virtual column can prevent MPP even when TiFlash can compute the same value from stored columns.  ### What changed and how does it work?  - Use the same scan and column-pruning path for virtual filters that can be expanded into either a value-preserving expression or an explicit generated-column cast. - Allow same-type virtual integer aliases and `ABS` over a stored integer to expand using the existing MPP protocol. Keep the marked `TEXT` assignment cast from #73789 behind MPP v3. Its TiFlash support is in pingcap/tiflash#11380. - Leave projection and index substitution behavior unchanged. The boundary test checks that `txt_lower = 'x'` returns the row and `LOWER(txt) = 'x'` returns no rows, even with the generated-column index present.  ### Check List  - [x] Focused Go planner regressions for MPP v2 and v3 filters, root fallback, and the generated-column index boundary. - [x] Bazel planner build with nogo. - [x] Local TiDB and one TiFlash node using the #11380 implementation. Verified integer filter results on v2 and matching root results and warning 1406 for the original virtual TEXT query on v2, v3, and v3 shuffle. The v3 plans used an MPP Hash Semi Join.  ### Release note  ```release-note Allow eligible filter-only virtual integer columns defined as a stored integer or its absolute value to be eva
@@ -1947,279 +1947,647 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `452929bd` (2026-11-25)
-**Commit Message**: planner: fix ANALYZE panic when a skipped column is needed by a generated column or an index (#72160)
+### Incident Patch 1: `f964de31` (2026-11-26)
+**Commit Message**: dxf: support cancelling paused tasks and drain paused subtasks before reverting (#73519)
 
-close pingcap/tidb#72122
+close pingcap/tidb#73518
 
-**File**: `pkg/executor/test/analyzetest/analyze_test.go` (modified, +26/-5)
+**File**: `pkg/dxf/framework/mock/scheduler_mock.go` (modified, +14/-0)
 ```diff
-@@ -2103,6 +2103,10 @@ func TestIssue61609(t *testing.T) {
- // | JSON column (not used by the generated columns)  | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
- // | Index on virtual column                          | ✅ Yes          | Index entries are stored in TiKV                   |
- // | Index on stored column                           | ✅ Yes          | Index entries are stored in TiKV                   |
-+// | JSON column only used by skipped columns         | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
-+// | Generated column depending on a skipped column   | ❌ No           | Its value needs a skipped column, at any depth     |
-+// | Vector column used by an expression index        | ✅ Yes          | Needed to build the expression index statistics    |
-+// | Expression index on the vector column            | ✅ Yes          | Index entries are stored in TiKV                   |
- func TestGeneratedColumns(t *testing.T) {
- 	store, dom := testkit.CreateMockStoreAndDomain(t)
- 	tk := testkit.NewTestKit(t, store)
-@@ -2115,15 +2119,23 @@ func TestGeneratedColumns(t *testing.T) {
- 		virtual_col VARCHAR(50) AS (JSON_UNQUOTE(JSON_EXTRACT(data, '$.name'))) VIRTUAL,
- 		stored_col VARCHAR(50) AS (JSON_UNQUOTE(JSON_EXTRACT(data, '$.status'))) STORED,
- 		json_but_not_used_by_generated_column JSON,
-+		skipped_data JSON,
-+		virtual_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) VIRTUAL,
-+		stored_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) STORED,
-+		virtual_on_virtual INT AS (virtual_on_skipped + 1) VIRTUAL,
-+		virtual_on_stored INT AS (stored_on_skipped + 1) VIRTUAL,
-+		stored_on_generated INT AS (virtual_on_virtual + virtual_on_stored) STORED,
-+		vector_col VECTOR(3),
- 		INDEX idx_virtual (virtual_col),
--		INDEX idx_stored (stored_col)
-+		INDEX idx_stored (stored_col),
-+		INDEX idx_vector_is_null ((vector_col IS NULL))
- 	)`)
- 
- 	// Insert test data with simple JSON
--	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column) VALUES
--		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}'),
--		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}'),
--		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}')`)
-+	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column, skipped_data, vector_col) VALUES
-+		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}', '{"x": 1}', '[1,2,3]'),
-+		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}', '{"x": 2}', NULL),
-+		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}', '{"x": 3}', '[4,5,6]')`)
- 
- 	// Analyze the table
- 	tk.MustExec("ANALYZE TABLE test_gen_cols")
-@@ -2152,6 +2164,15 @@ func TestGeneratedColumns(t *testing.T) {
- 	// For indexes on generated columns, we collect statistics because index entries are stored in TiKV regardless of whether the column is virtual or stored
- 	require.True(t, tblStats.GetIdx(tbl.Meta().Indices[0].ID).IsAnalyzed())
- 	require.True(t, tblStats.GetIdx(tbl.Meta().Indices[1].ID).IsAnalyzed())
-+
-+	// A skipped column also skips the generated columns over it, at any depth. See https://github.com/pingcap/tidb/issues/72122.
-+	for _, name := range []string{"skipped_data", "virtual_on_skipped", "stored_on_skipped", "virtual_on_virtual", "virtual_on_stored", "stored_on_generated"} {
-+		require.False(t, tblStats.GetCol(tbl.Meta().FindPublicColumnByName(name).ID).IsAnalyzed(), name)
-+	}
-+
-+	// A vector column that an expression index needs is analyzed, like the base JSON column.
-+	require.True(t, tblStats.GetCol(tbl.Meta().FindPublicColumnByName("vector_col").ID).IsAnalyzed())
-+	require.True(t, tblStats.GetIdx(tbl.Meta().FindIndexByName("idx_vector_is_null").ID).IsAnalyzed())
+@@ -736,6 +736,20 @@ func (mr *MockTaskManagerMockRecorder) ResumeSubtasks(arg0, arg1 any) *gomock.Ca
+ 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResumeSubtasks", reflect.TypeOf((*MockTaskManager)(nil).ResumeSubtasks), arg0, arg1)
  }
  
- // TestSkipStatsForGeneratedColumnsOnSkippedColumns verifies that when we skip JSON columns, the generated columns that depend on them are also skipped.
-```
-
-**File**: `pkg/planner/core/planbuilder.go` (modified, +6/-6)
-```diff
-@@ -2618,12 +2618,9 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
- 	}
- 	// If one column's type is in the skipTypes list and it doesn't exist in mustAnalyzedCols, we will skip it.
- 	for _, colInfo := range origin {
--		// Vector type is skip by hardcoded. Just because that collecting it is meanless for current TiDB.
--		if colInfo.FieldType.GetType() == mysql.TypeTiDBVectorFloat32 {
--			skipCol = append(skipCol, colInfo)
--			continue
--		}
- 		_, skip := skipTypes[types.TypeToStr(colInfo.FieldType.GetType(), colInfo.FieldType.GetCharset())]
-+		// Vector columns are skipped whatever skipTypes says, since their statistics are useless for current TiDB.
-+		skip = skip || colInfo.FieldType.GetType() == mysql.TypeTiDBVectorFloat32
- 		// Currently, if the column exists in some index(except MV Index), we need to bring the column's sample values
- 		// into TiDB to build the index statistics.
- 		_, keep := mustAnalyze[colInfo.ID]
-@@ -2638,7 +2635,9 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
- 		skipColNameMap[colInfo.Name.L] = struct{}{}
- 	}
- 
--	// Filter out generated columns that depend on skipped columns
-+	// Filter out generated columns that depend on skipped columns.
-+	// A generated column can only depend on generated columns defined before it, so adding each
-+	// skipped one to skipColNameMap also skips the generated columns that depend on it.
- 	filteredResult := make([]*model.ColumnInfo, 0, len(result))
- 	for _, colInfo := range result {
- 		shouldSkip := false
-@@ -2652,6 +2651,7 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
- 			for depName := range colInfo.Dependences {
- 				if _, exists := skipColNameMap[depName]; exists && !decodableFromStorage {
- 					skipCol = append(skipCol, colInfo)
-+					skipColNameMap[colInfo.Name.L] = struct{}{}
- 					shouldSkip = true
- 					break
- 				}
-```
-
----
-
-### Incident Patch 2: `4180d6d2` (2026-11-26)
-**Commit Message**: dumpling: fix integration CI timeout and duplicate cache saves (#73790)
-
-close pingcap/tidb#73786
-
-**File**: `.github/workflows/integration-test-dumpling.yml` (modified, +9/-1)
-```diff
-@@ -12,6 +12,7 @@ on:
-       - master
-       - release-*
-     paths:
-+      - '.github/workflows/integration-test-dumpling.yml'
-       - "dumpling/**"
-       - "br/pkg/storage/**"
-       - "br/pkg/utils/**"
-@@ -26,6 +27,7 @@ on:
-       - master
-       - release-*
-     paths:
-+      - '.github/workflows/integration-test-dumpling.yml'
-       - 'dumpling/**'
-       - 'br/pkg/storage/**'
-       - 'br/pkg/utils/**'
-@@ -53,7 +55,9 @@ jobs:
-           - 8.0.45
-           - 8.4.8
-     runs-on: ubuntu-latest
--    timeout-minutes: 15
-+    # Cold-cache runs build TiDB, Lightning and failpoint-enabled Dumpling.
-+    # Reserve time for those builds and cache upload outside the integration step.
-+    timeout-minutes: 30
-     services:
-       mysql:
-         image: mysql:${{ matrix.mysql_version }}
-@@ -72,6 +76,8 @@ jobs:
-         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
-         with:
-           go-version-file: 'go.mod'
-+          # The explicit cache step below owns the Go caches and their upload.
-+          cache: false
-       - name: "try to use build cache"
-         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-         with:
-@@ -90,6 +96,8 @@ jobs:
-       - name: "build lightning"
-         run: make build_lightning
-       - name: "integration test"
-+        # This target builds Dumpling before running the test scripts.
-+        timeout-minutes: 15
-         run: make dumpling_integration_test VERBOSE="true"
-       - name: "dump tidb log on failure"
-         if: ${{ failure() }}
-```
-
----
-
-### Incident Patch 3: `2698c937` (2026-11-25)
-**Commit Message**: planner: fix upper estimates for TopN and compound index ranges (#73727)
-
-ref pingcap/tidb#71999
-
-**File**: `pkg/planner/cardinality/row_count_column.go` (modified, +4/-2)
-```diff
-@@ -251,8 +251,9 @@ func betweenRowCountOnColumn(sctx planctx.PlanContext, c *statistics.Column, l,
- 		return histBetweenCnt
- 	}
- 	topNCnt := float64(c.TopN.BetweenCount(sctx, lowEncoded, highEncoded))
--	// Only add TopN count to the main estimate, keep min/max estimates from histogram
-+	// The histogram excludes TopN values, which also contribute to the upper bound.
- 	histBetweenCnt.Est += topNCnt
-+	histBetweenCnt.MaxEst += topNCnt
- 	return histBetweenCnt
- }
- 
-@@ -343,5 +344,6 @@ func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistic
- 		maxCount += corrSelectivity * tableRowCount
- 	}
- 	totalCount = mathutil.Clamp(totalCount, 1, tableRowCount)
--	return totalCount, maxCount, nil
-+	// Disjoint ranges can share a histogram bucket's skew allowance.
-+	return totalCount, min(maxCount, tableRowCount), nil
- }
-```
-
-**File**: `pkg/planner/cardinality/selectivity_test.go` (modified, +66/-0)
-```diff
-@@ -1014,6 +1014,72 @@ func TestNewIndexWithLowNDVColumnStats(t *testing.T) {
- 	require.Greater(t, estRows, 10.0)
- }
- 
-+func TestMissingStatsIndexRangeMaxIncludesTopN(t *testing.T) {
-+	ctx := mock.NewContext()
-+	ctx.GetSessionVars().RiskRangeSkewRatio = 0
-+	field := types.NewFieldType(mysql.TypeLonglong)
-+	coll := statistics.NewHistColl(1, 1000, 0, 2, 0)
-+	coll.CanNotTriggerLoad = true
-+	topNEntry := func(value int64, count uint64) statistics.TopNMeta {
-+		encoded, err := codec.EncodeKey(ctx.GetSessionVars().StmtCtx.TimeZone(), nil, types.NewIntDatum(value))
-+		require.NoError(t, err)
-+		return statistics.TopNMeta{Encoded: encoded, Count: count}
-+	}
-+	setColumnStats := func(id, ndv, lower, upper, bucketCount, repeat int64, topN ...statistics.TopNMeta) {
-+		hist := statistics.NewHistogram(id, ndv, 0, 0, field, 1, 0)
-+		lo, hi := types.NewIntDatum(lower), types.NewIntDatum(upper)
-+		hist.AppendBucket(&lo, &hi, bucketCount, repeat)
-+		coll.SetCol(id, &statistics.Column{
-+			Histogram:         *hist,
-+			Info:              &model.ColumnInfo{ID: id},
-+			TopN:              &statistics.TopN{TopN: topN},
-+			StatsLoadedStatus: statistics.NewStatsFullLoadStatus(),
-+			StatsVer:          statistics.Version2,
-+		})
-+	}
-+	setColumnStats(1, 2, 2, 2, 100, 100, topNEntry(1, 900))
-+	setColumnStats(2, 101, 0, 100, 700, 10, topNEntry(15, 300))
-+
-+	// Estimate a = 1 AND 10 <= b AND b < 20 on an unanalyzed index (a, b).
-+	// The range excludes the last histogram value but includes the TopN value 15.
-+	one, ten, twenty := types.NewIntDatum(1), types.NewIntDatum(10), types.NewIntDatum(20)
-+	binary := collate.GetBinaryCollator()
-+	columnRange := &ranger.Range{
-+		LowVal: []types.Datum{ten}, HighVal: []types.Datum{twenty},
-+		HighExclude: true, Collators: []collate.Collator{binary},
-+	}
-+	indexRange := &ranger.Range{
-+		LowVal: []types.Datum{one, ten}, HighVal: []types.Datum{one, twenty},
-+		HighExclude: true, Collators: []collate.Collator{binary, binary},
-+	}
-+
-+	columnEstimate, err := cardinality.GetRowCountByColumnRanges(ctx, coll, 2, []*ranger.Range{columnRange}, false)
-+	require.NoError(t, err)
-+	require.InDelta(t, 369, columnEstimate.Est, 1e-9)
-+	require.InDelta(t, 69, columnEstimate.MinEst, 1e-9)
-+	indexCols := []*expression.Column{{ID: 1, UniqueID: 1, RetType: field}, {ID: 2, UniqueID: 2, RetType: field}}
-+	indexEstimate, err := cardinality.GetRowCountByIndexRanges(ctx, coll, 3, []*ranger.Range{indexRange}, indexCols)
-+	require.NoError(t, err)
-+	require.InDelta(t, 369*math.Sqrt(0.9), indexEstimate.Est, 1e-9)
-+
-+	// b's worst case is 690 histogram rows plus 300 TopN rows, capped by
-+	// the 900 rows matching a when estimating the compound index range.
-+	require.Equal(t, 900.0, indexEstimate.MaxEst)
-+	require.Equal(t, 990.0, columnEstimate.MaxEst)
-+
-+	// Two disjoint ranges in the same histogram bucket can each use the bucket's
-+	// skew bound. Their combined maximum still cannot exceed the table row count.
-+	setColumnStats(2, 103, 0, 100, 400, 10, topNEntry(15, 300), topNEntry(35, 300))
-+	otherRange := &ranger.Range{
-+		LowVal: []types.Datum{one, types.NewIntDatum(30)}, HighVal: []types.Datum{one, types.NewIntDatum(40)},
-+		HighExclude: true, Collators: []collate.Collator{binary, binary},
-+	}
-+	indexEstimate, err = cardinality.GetRowCountByIndexRanges(ctx, coll, 3, []*ranger.Range{indexRange, otherRange}, indexCols)
-+	require.NoError(t, err)
-+	require.InDelta(t, 2*339*math.Sqrt(0.9), indexEstimate.Est, 1e-9)
-+	require.Equal(t, 1000.0, indexEstimate.MaxEst)
++// CancelPausedSubtasks mocks base method.
++func (m *MockTaskManager) CancelPausedSubtasks(arg0 context.Context, arg1 int64) error {
++	m.ctrl.T.Helper()
++	ret := m.ctrl.Call(m, "CancelPausedSubtasks", arg0, arg1)
++	ret0, _ := ret[0].(error)
++	return ret0
 +}
 +
- func TestMissingStatsIndexWithVirtualColumn(t *testing.T) {
- 	// An index without statistics on a virtual column (which has no column statistics) and a column with
- 	// statistics must still account for the virtual column, and report its statistics as missing.
++// CancelPausedSubtasks indicates an expected call of CancelPausedSubtasks.
++func (mr *MockTaskManagerMockRecorder) CancelPausedSubtasks(arg0, arg1 any) *gomock.Call {
++	mr.mock.ctrl.T.Helper()
++	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CancelPausedSubtasks", reflect.TypeOf((*MockTaskManager)(nil).CancelPausedSubtasks), arg0, arg1)
++}
++
+ // ResumedTask mocks base method.
+ func (m *MockTaskManager) ResumedTask(arg0 context.Context, arg1 int64) error {
+ 	m.ctrl.T.Helper()
+```
+
+**File**: `pkg/dxf/framework/scheduler/interface.go` (modified, +1/-0)
+```diff
+@@ -108,6 +108,7 @@ type TaskManager interface {
+ 	// GetSubtaskStateCntAndErrorsByStep returns the subtask count by state and failed/canceled errors of some step.
+ 	GetSubtaskStateCntAndErrorsByStep(ctx context.Context, taskID int64, step proto.Step) (map[proto.SubtaskState]int64, []error, error)
+ 	ResumeSubtasks(ctx context.Context, taskID int64) error
++	CancelPausedSubtasks(ctx context.Context, taskID int64) error
+ 	GetSubtaskErrors(ctx context.Context, taskID int64) ([]error, error)
+ 	UpdateSubtasksExecIDs(ctx context.Context, subtasks []*proto.SubtaskBase) error
+ 
+```
+
+**File**: `pkg/dxf/framework/scheduler/scheduler.go` (modified, +6/-1)
+```diff
+@@ -376,12 +376,17 @@ func (s *BaseScheduler) onReverting() error {
+ 	task := s.getTaskClone()
+ 	s.logger.Debug("on reverting state", zap.Stringer("state", task.State),
+ 		zap.String("step", proto.Step2Str(task.Type, task.Step)))
++	// Batched step publication can leave paused subtasks beyond task.Step.
++	// Drain the whole task before deciding whether reversion is complete.
++	if err := s.taskMgr.CancelPausedSubtasks(s.ctx, task.ID); err != nil {
++		return errors.Trace(err)
++	}
+ 	cntByStates, err := s.taskMgr.GetSubtaskCntGroupByStates(s.ctx, task.ID, task.Step)
+ 	if err != nil {
+ 		s.logger.Warn("check task failed", zap.Error(err))
+ 		return err
+ 	}
+-	runnableSubtaskCnt := cntByStates[proto.SubtaskStatePending] + cntByStates[proto.SubtaskStateRunning]
++	runnableSubtaskCnt := cntByStates[proto.SubtaskStatePending] + cntByStates[proto.SubtaskStateRunning] + cntByStates[proto.SubtaskStatePaused]
+ 	if runnableSubtaskCnt == 0 {
+ 		if err = s.OnDone(s.ctx, s, task); err != nil {
+ 			return errors.Trace(err)
+```
+
+**File**: `pkg/dxf/framework/scheduler/scheduler_nokit_test.go` (modified, +41/-7)
+```diff
+@@ -646,6 +646,7 @@ func TestSchedulerNotAllocateSlots(t *testing.T) {
+ 		return &cloneTask.TaskBase, nil
+ 	})
+ 
++	taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), cloneTask.ID).Return(nil)
+ 	taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), cloneTask.ID, cloneTask.Step).Return(map[proto.SubtaskState]int64{
+ 		proto.SubtaskStatePending: 0,
+ 		proto.SubtaskStateRunning: 0}, nil)
+@@ -787,6 +788,18 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
+ 	t.Run("test onResuming", func(t *testing.T) {
+ 		scheduler.task.Store(&schTask)
+ 
++		// finish resuming once paused subtasks are 0 even if running subtasks remain
++		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(map[proto.SubtaskState]int64{
++			proto.SubtaskStateRunning: 1,
++		}, nil)
++		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(nil)
++		require.NoError(t, scheduler.onResuming())
++		tmpTask := task
++		tmpTask.State = proto.TaskStateRunning
++		require.Equal(t, *scheduler.getTaskClone(), tmpTask)
++		require.True(t, ctrl.Satisfied())
++
++		scheduler.task.Store(&schTask)
+ 		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
+ 		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(fmt.Errorf("resume err"))
+ 		require.ErrorContains(t, scheduler.onResuming(), "resume err")
+@@ -797,7 +810,7 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
+ 		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
+ 		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(nil)
+ 		require.NoError(t, scheduler.onResuming())
+-		tmpTask := task
++		tmpTask = task
+ 		tmpTask.State = proto.TaskStateRunning
+ 		require.Equal(t, *scheduler.getTaskClone(), tmpTask)
+ 		require.True(t, ctrl.Satisfied())
+@@ -806,17 +819,38 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
+ 	t.Run("test onReverting", func(t *testing.T) {
+ 		scheduler.task.Store(&schTask)
+ 
+-		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
+-		schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+-		taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(fmt.Errorf("reverted err"))
++		// paused subtasks must be drained before checking current step or calling OnDone/RevertedTask
++		taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(fmt.Errorf("cancel paused err"))
++		require.ErrorContains(t, scheduler.onReverting(), "cancel paused err")
++		require.Equal(t, *scheduler.getTaskClone(), task)
++		require.True(t, ctrl.Satisfied())
++
++		gomock.InOrder(
++			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
++			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
++			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(fmt.Errorf("on done err")),
++		)
++		require.ErrorContains(t, scheduler.onReverting(), "on done err")
++		require.Equal(t, *scheduler.getTaskClone(), task)
++		require.True(t, ctrl.Satisfied())
++
++		gomock.InOrder(
++			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
++			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
++			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
++			taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(fmt.Errorf("reverted err")),
++		)
+ 		require.ErrorContains(t, scheduler.onReverting(), "reverted err")
+ 		require.Equal(t, *scheduler.getTaskClone(), task)
+ 		require.True(t, ctrl.Satisfied())
+ 
+ 		// revert task successfully
+-		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
+-		schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+-		taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(nil)
++		gomock.InOrder(
++			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
++			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
++			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
++			taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(nil),
++		)
+ 		require.NoError(t, scheduler.onReverting())
+ 		tmpTask := task
+ 		tmpTask.State = proto.TaskStateReverted
+```
+
+**File**: `pkg/dxf/framework/scheduler/scheduler_test.go` (modified, +63/-0)
+```diff
+@@ -540,3 +540,66 @@ func TestManagerScheduleLoop(t *testing.T) {
+ 		}, time.Second*10, time.Millisecond*100)
+ 	})
+ }
++
++func TestOnRevertingDrainsNextStepPausedSubtasks(t *testing.T) {
++	testfailpoint.Enable(t, "github.com/pingcap/tidb/pkg/domain/MockDisableDistTask", "return(true)")
++	store := testkit.CreateMockStore(t)
++	pool := pools.NewResourcePool(func() (pools.Resource, error) {
++		return testkit.NewTestKit(t, store).Session(), nil
++	}, 4, 4, time.Second)
++	defer pool.Close()
++
++	ctrl := gomock.NewController(t)
++	defer ctrl.Finish()
++	ctx := util.WithInternalSourceType(context.Background(), "scheduler")
++
++	var mgr *storage.TaskManager
++	onDoneVerified := make(chan struct{})
++	mockExt := mockscheduler.NewMockExtension(ctrl)
++	mockExt.EXPECT().OnTick(gomock.Any(), gomock.Any()).Return().AnyTimes()
++	mockExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
++		func(_ context.Context, _ storage.TaskHandle, gotTask *proto.Task) error {
++			subtasks, err := mgr.GetSubtasksWithHistory(ctx, gotTask.ID, proto.StepTwo)
++			require.NoError(t, err)
++			require.Len(t, subtasks, 1)
++			require.Equal(t, proto.SubtaskStateCanceled, subtasks[0].State)
++			close(onDoneVerified)
++			return nil
++		},
++	)
++
++	var schManager *scheduler.Manager
++	schManager, mgr = MockSchedulerManager(store, pool, mockExt, nil)
++	scope := handle.GetTargetScope()
++	require.NoError(t, mgr.InitMeta(ctx, ":4000", scope))
++
++	taskID, err := mgr.CreateTask(ctx, "next-step-paused-revert", proto.TaskTypeExample, store.GetKeyspace(), 1, scope, 0, proto.ExtraParams{}, []byte("{}"))
++	require.NoError(t, err)
++	task, err := mgr.GetTaskByID(ctx, taskID)
++	require.NoError(t, err)
++	require.NoError(t, mgr.SwitchTaskStep(ctx, task, proto.TaskStateRunning, proto.StepOne, nil))
++	pausedID := testutil.InsertSubtask(t, mgr, taskID, proto.StepTwo, ":4000", []byte(""), proto.SubtaskStatePaused, proto.TaskTypeExample, 1)
++	require.NoError(t, mgr.RevertTask(ctx, taskID, proto.TaskStateRunning, errors.New("revert err")))
++
++	schManager.Start()
++	defer schManager.Stop()
++
++	select {
++	case <-onDoneVerified:
++	case <-time.After(10 * time.Second):
++		require.FailNow(t, "timed out waiting for OnDone after draining next-step paused subtask")
++	}
++
++	require.Eventually(t, func() bool {
++		gotTask, err := mgr.GetTaskByIDWithHistory(ctx, taskID)
++		require.NoError(t, err)
++		return gotTask.State == proto.TaskStateReverted
++	}, 10*time.Second, 100*time.Millisecond)
++
++	subtasks, err := mgr.GetSubtasksWithHistory(ctx, taskID, proto.StepTwo)
++	require.NoError(t, err)
++	require.Len(t, subtasks, 1)
++	require.Equal(t, pausedID, subtasks[0].ID)
++	require.Equal(t, proto.SubtaskStateCanceled, subtasks[0].State)
++	require.True(t, ctrl.Satisfied())
++}
+```
+
+**File**: `pkg/dxf/framework/storage/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ go_test(
+     ],
+     embed = [":storage"],
+     flaky = True,
+-    shard_count = 35,
++    shard_count = 38,
+     deps = [
+         "//pkg/config",
+         "//pkg/dxf/framework/proto",
+```
+
+**File**: `pkg/dxf/framework/storage/subtask_state.go` (modified, +35/-4)
+```diff
+@@ -34,14 +34,24 @@ func (mgr *TaskManager) StartSubtask(ctx context.Context, subtaskID int64, execI
+ 			se.GetSQLExecutor(),
+ 			`update mysql.tidb_background_subtask
+ 			 set state = %?, start_time = unix_timestamp(), state_update_time = unix_timestamp()
+-			 where id = %? and exec_id = %?`,
++			 where id = %? and exec_id = %? and state = %?`,
+ 			proto.SubtaskStateRunning,
+ 			subtaskID,
+-			execID)
++			execID,
++			proto.SubtaskStatePending)
+ 		if err != nil {
+ 			return err
+ 		}
+ 		if vars.StmtCtx.AffectedRows() == 0 {
++			rows, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(),
++				`select state from mysql.tidb_background_subtask where id = %? and exec_id = %?`,
++				subtaskID, execID)
++			if err != nil {
++				return err
++			}
++			if len(rows) > 0 && rows[0].GetString(0) == string(proto.SubtaskStateRunning) {
++				return nil
++			}
+ 			return ErrSubtaskNotFound
+ 		}
+ 		return nil
+@@ -108,13 +118,34 @@ func (mgr *TaskManager) CancelSubtask(ctx context.Context, execID string, taskID
+ 	return err1
+ }
+ 
+-// PauseSubtasks update all running/pending subtasks to pasued state.
++// PauseSubtasks update all running/pending subtasks to paused state.
+ func (mgr *TaskManager) PauseSubtasks(ctx context.Context, execID string, taskID int64) error {
+ 	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
+ 		return err
+ 	}
+ 	_, err := mgr.ExecuteSQLWithNewSession(ctx,
+-		`update mysql.tidb_background_subtask set state = "paused" where task_key = %? and state in ("running", "pending") and exec_id = %?`, TaskIDToKey(taskID), execID)
++		`update mysql.tidb_background_subtask
++		 set state = %?, state_update_time = unix_timestamp()
++		 where task_key = %? and state in (%?, %?) and exec_id = %?`,
++		proto.SubtaskStatePaused, TaskIDToKey(taskID),
++		proto.SubtaskStateRunning, proto.SubtaskStatePending, execID,
++	)
++	return err
++}
++
++// CancelPausedSubtasks cancels all paused subtasks of taskID across all steps.
++func (mgr *TaskManager) CancelPausedSubtasks(ctx context.Context, taskID int64) error {
++	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
++		return err
++	}
++	_, err := mgr.ExecuteSQLWithNewSession(ctx,
++		`update mysql.tidb_background_subtask
++		 set state = %?,
++			 state_update_time = unix_timestamp(),
++			 end_time = CURRENT_TIMESTAMP()
++		 where task_key = %? and state = %?`,
++		proto.SubtaskStateCanceled, TaskIDToKey(taskID), proto.SubtaskStatePaused,
++	)
+ 	return err
+ }
+ 
+```
+
+**File**: `pkg/dxf/framework/storage/task_state.go` (modified, +33/-18)
+```diff
+@@ -42,28 +42,43 @@ func (mgr *TaskManager) CancelTask(ctx context.Context, taskID int64) error {
+ 	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
+ 		return err
+ 	}
+-	_, err := mgr.ExecuteSQLWithNewSession(ctx,
+-		`update mysql.tidb_global_task
+-		 set state = %?,
+-			 state_update_time = CURRENT_TIMESTAMP()
+-		 where id = %? and state in (%?, %?, %?)`,
+-		proto.TaskStateCancelling, taskID, proto.TaskStatePending, proto.TaskStateRunning,
+-		proto.TaskStateAwaitingResolution,
+-	)
+-	return err
++	return mgr.WithNewTxn(ctx, func(se sessionctx.Context) error {
++		return cancelTaskByField(ctx, se, true, taskID)
++	})
+ }
+ 
+ // CancelTaskByKeySession cancels task by key using input session.
+ func (*TaskManager) CancelTaskByKeySession(ctx context.Context, se sessionctx.Context, taskKey string) error {
+-	_, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(),
+-		`update mysql.tidb_global_task
+-		 set state = %?,
+-			 state_update_time = CURRENT_TIMESTAMP()
+-		 where task_key = %? and state in (%?, %?, %?)`,
+-		proto.TaskStateCancelling, taskKey, proto.TaskStatePending, proto.TaskStateRunning,
+-		proto.TaskStateAwaitingResolution,
+-	)
+-	return err
++	return cancelTaskByField(ctx, se, false, taskKey)
++}
++
++func cancelTaskByField(ctx context.Context, se sessionctx.Context, byID bool, keyOrID any) error {
++	selectSQL := `select state from mysql.tidb_global_task where task_key = %? for update`
++	updateSQL := `update mysql.tidb_global_task set state = %?, state_update_time = CURRENT_TIMESTAMP() where task_key = %? and state = %?`
++	if byID {
++		selectSQL = `select state from mysql.tidb_global_task where id = %? for update`
++		updateSQL = `update mysql.tidb_global_task set state = %?, state_update_time = CURRENT_TIMESTAMP() where id = %? and state = %?`
++	}
++	rs, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(), selectSQL, keyOrID)
++	if err != nil || len(rs) == 0 {
++		return err
++	}
++	state := proto.TaskState(rs[0].GetString(0))
++	switch state {
++	case proto.TaskStatePending, proto.TaskStateRunning, proto.TaskStateAwaitingResolution, proto.TaskStatePaused:
++		_, err = sqlexec.ExecSQL(ctx, se.GetSQLExecutor(), updateSQL, proto.TaskStateCancelling, keyOrID, state)
++		if err != nil {
++			return err
++		}
++		if se.GetSessionVars().StmtCtx.AffectedRows() == 0 {
++			return ErrTaskChanged
++		}
++		return nil
++	case proto.TaskStatePausing, proto.TaskStateResuming, proto.TaskStateModifying:
++		return errors.Annotatef(ErrTaskStateNotAllow, "cannot cancel task in %s state", state)
++	default:
++		return nil
++	}
+ }
+ 
+ // FailTask implements the scheduler.TaskManager interface.
+```
+
+---
+
+### Incident Patch 2: `12807382` (2026-11-26)
+**Commit Message**: pkg/statistics: fix auto analyze table size calc (#65778)
+
+close pingcap/tidb#63677
+
+**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/analysis_job_factory.go` (modified, +19/-6)
+```diff
+@@ -208,10 +208,18 @@ func (f *AnalysisJobFactory) CalculateChangePercentage(tblStats *statistics.Tabl
+ // CalculateTableSize calculates the size of the table.
+ func (*AnalysisJobFactory) CalculateTableSize(tblStats *statistics.Table) float64 {
+ 	tblCnt := float64(tblStats.RealtimeCount)
+-	colCnt := float64(tblStats.ColAndIdxExistenceMap.ColNum())
+-	intest.Assert(colCnt != 0, "Column count should not be 0")
+-
+-	return tblCnt * colCnt
++	intest.Assert(tblCnt >= 0, "Table count should not be negative")
++	intest.Assert(tblStats.ColAndIdxExistenceMap != nil, "ColAndIdxExistenceMap should not be nil")
++	if tblStats.ColAndIdxExistenceMap == nil {
++		return tblCnt
++	}
++	// The map is empty if the stats were loaded before the DDL event wrote the column records.
++	// Fall back to row count only, so that the size does not need table info.
++	colCnt := tblStats.ColAndIdxExistenceMap.ColNum()
++	if colCnt == 0 {
++		return tblCnt
++	}
++	return tblCnt * float64(colCnt)
+ }
+ 
+ // GetTableLastAnalyzeDuration gets the last analyze duration of the table.
+@@ -276,8 +284,13 @@ func (f *AnalysisJobFactory) CalculateIndicatorsForPartitions(
+ 	totalSize := 0.0
+ 	count := 0.0
+ 	partitionIDs = make(map[int64]struct{}, len(partitionStats))
+-	cols := float64(globalStats.ColAndIdxExistenceMap.ColNum())
+-	intest.Assert(cols != 0, "Column count should not be 0")
++	intest.Assert(globalStats.ColAndIdxExistenceMap != nil, "ColAndIdxExistenceMap should not be nil")
++	// The map is empty if the stats were loaded before the DDL event wrote the column records.
++	// Fall back to row count only, so that the size does not need table info.
++	cols := 1.0
++	if m := globalStats.ColAndIdxExistenceMap; m != nil && m.ColNum() != 0 {
++		cols = float64(m.ColNum())
++	}
+ 	totalLastAnalyzeDuration := time.Duration(0)
+ 
+ 	for pIDAndName, tblStats := range partitionStats {
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/refresher/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ go_test(
+         "worker_test.go",
+     ],
+     flaky = True,
+-    shard_count = 12,
++    shard_count = 13,
+     deps = [
+         ":refresher",
+         "//pkg/ddl/notifier",
+```
+
+**File**: `pkg/statistics/handle/autoanalyze/refresher/refresher_test.go` (modified, +28/-0)
+```diff
+@@ -614,3 +614,31 @@ func insertFailedJobForPartitionWithStartTime(
+ 		startTime,
+ 	)
+ }
++
++func TestAutoAnalyzeHandlesEmptyExistenceMapInCache(t *testing.T) {
++	store, dom := testkit.CreateMockStoreAndDomain(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("use test")
++	tk.MustExec("create table t(a int, b int)")
++	tk.MustExec("create table tp(a int, b int) partition by hash(a) partitions 2")
++	tk.MustExec("insert into t values (1,1),(2,2)")
++	tk.MustExec("insert into tp values (1,1),(2,2)")
++	h := dom.StatsHandle()
++	// Make sure the count and modify count are updated.
++	tk.MustExec("flush stats_delta *.*")
++
++	// Ensure the stats object is created in memory and the existence map is initialized but empty (no cols/idxs).
++	// This happens because we haven't handled DDL events yet, so no rows exist in mysql.histograms.
++	require.NoError(t, h.Cache().Update(context.Background(), dom.InfoSchema()))
++	for _, name := range []string{"t", "tp"} {
++		tbl, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr(name))
++		require.NoError(t, err)
++		st, ok := h.Cache().Get(tbl.Meta().ID)
++		require.True(t, ok)
++		require.True(t, st.ColAndIdxExistenceMap.IsEmpty())
++	}
++	old := statistics.AutoAnalyzeMinCnt
++	statistics.AutoAnalyzeMinCnt = 0
++	t.Cleanup(func() { statistics.AutoAnalyzeMinCnt = old })
++	require.True(t, h.AutoAnalyze().HandleAutoAnalyze())
++}
+```
+
+---
+
+### Incident Patch 3: `6ceba0c1` (2026-11-26)
+**Commit Message**: executor: correct JSON_OBJECTAGG replacement memory deltas (#73683)
+
+close pingcap/tidb#73681
+
+**File**: `pkg/executor/aggfuncs/func_json_objectagg.go` (modified, +13/-4)
+```diff
+@@ -39,6 +39,17 @@ type partialResult4JsonObjectAgg struct {
+ 	entries hack.MemAwareMap[string, any]
+ }
+ 
++func (p *partialResult4JsonObjectAgg) set(key string, value any) (memDelta int64) {
++	memDelta = getValMemDelta(value)
++	if oldValue, exists := p.entries.Get(key); exists {
++		// Replacing a value releases its previous payload, but retains the key.
++		memDelta -= getValMemDelta(oldValue)
++	} else {
++		memDelta += int64(len(key))
++	}
++	return memDelta + p.entries.Set(key, value)
++}
++
+ func (*jsonObjectAgg) AllocPartialResult() (pr PartialResult, memDelta int64) {
+ 	p := partialResult4JsonObjectAgg{}
+ 	p.entries.Init(make(map[string]any))
+@@ -94,9 +105,7 @@ func (e *jsonObjectAgg) UpdatePartialResult(sctx AggFuncUpdateContext, rowsInGro
+ 
+ 		switch x := realVal.(type) {
+ 		case nil, bool, int64, uint64, float64, string, types.BinaryJSON, types.Opaque, types.Time, types.Duration:
+-			if delta, insert := p.entries.SetExt(key, realVal); insert {
+-				memDelta += int64(len(key)) + getValMemDelta(realVal) + delta
+-			}
++			memDelta += p.set(key, realVal)
+ 		default:
+ 			return 0, types.ErrUnsupportedSecondArgumentType.GenWithStackByArgs(x)
+ 		}
+@@ -208,7 +217,7 @@ func (*jsonObjectAgg) MergePartialResult(_ AggFuncUpdateContext, src, dst Partia
+ 	// When the result of this function is normalized, values having duplicate keys are discarded,
+ 	// and only the last value encountered is used with that key in the returned object
+ 	for k, v := range p1.entries.M {
+-		memDelta += int64(len(k)) + getValMemDelta(v) + p2.entries.Set(k, v)
++		memDelta += p2.set(k, v)
+ 	}
+ 	return memDelta, nil
+ }
+```
+
+**File**: `pkg/executor/aggfuncs/func_json_objectagg_test.go` (modified, +100/-0)
+```diff
+@@ -15,6 +15,7 @@
+ package aggfuncs_test
+ 
+ import (
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/pingcap/errors"
+@@ -257,6 +258,105 @@ func TestMemJsonObjectagg(t *testing.T) {
+ 	}
+ }
+ 
++func TestMemJsonObjectaggReplacement(t *testing.T) {
++	large := strings.Repeat("x", 4096)
++	smallJSON := types.CreateBinaryJSON("a")
++	largeJSON := types.CreateBinaryJSON(large)
++	smallJSONSize, largeJSONSize := int64(len(smallJSON.Value)+1), int64(len(largeJSON.Value)+1)
++	tests := []struct {
++		name         string
++		valueType    *types.FieldType
++		values       []any
++		payloadSizes []int64
++	}{
++		{
++			name:         "string",
++			valueType:    types.NewFieldType(mysql.TypeVarString),
++			values:       []any{nil, "a", large, "b", "c", nil, nil, "d"},
++			payloadSizes: []int64{0, 1, 4096, 1, 1, 0, 0, 1},
++		},
++		{
++			name:         "json",
++			valueType:    types.NewFieldType(mysql.TypeJSON),
++			values:       []any{nil, smallJSON, largeJSON, smallJSON, smallJSON, nil, nil, smallJSON},
++			payloadSizes: []int64{0, smallJSONSize, largeJSONSize, smallJSONSize, smallJSONSize, 0, 0, smallJSONSize},
++		},
++		{
++			name:         "opaque",
++			valueType:    types.NewFieldTypeBuilder().SetType(mysql.TypeBlob).SetCharset(charset.CharsetBin).SetCollate(charset.CollationBin).BuildP(),
++			values:       []any{nil, []byte("a"), []byte(large), []byte("b"), []byte("c"), nil, nil, []byte("d")},
++			payloadSizes: []int64{0, 2, 4097, 2, 2, 0, 0, 2},
++		},
++		{
++			name:         "integer",
++			valueType:    types.NewFieldType(mysql.TypeLonglong),
++			values:       []any{nil, int64(1), int64(2), nil, nil, int64(3)},
++			payloadSizes: []int64{0, aggfuncs.DefInt64Size, aggfuncs.DefInt64Size, 0, 0, aggfuncs.DefInt64Size},
++		},
++	}
++	for _, test := range tests {
++		for _, mode := range []string{"update", "merge", "batch"} {
++			t.Run(test.name+"/"+mode, func(t *testing.T) {
++				ctx := mock.NewContext()
++				keyType := types.NewFieldType(mysql.TypeVarString)
++				args := []expression.Expression{
++					&expression.Column{Index: 0, RetType: keyType},
++					&expression.Column{Index: 1, RetType: test.valueType},
++				}
++				desc, err := aggregation.NewAggFuncDesc(ctx, ast.AggFuncJsonObjectAgg, args, false)
++				require.NoError(t, err)
++				fn := aggfuncs.Build(ctx, desc, 0)
++				pr, _ := fn.AllocPartialResult()
++				const key = "duplicate"
++				input := chunk.NewChunkWithCapacity([]*types.FieldType{keyType, test.valueType}, len(test.values))
++				rows := make([]chunk.Row, 0, len(test.values))
++				for i, value := range test.values {
++					input.AppendString(0, key)
++					datum := types.NewDatum(value)
++					input.AppendDatum(1, &datum)
++					rows = append(rows, input.GetRow(i))
++				}
++				// Repeating after reset also checks that old payloads are no longer charged.
++				for range 2 {
++					if mode == "batch" {
++						delta, err := fn.UpdatePartialResult(ctx, rows, pr)
++						require.NoError(t, err)
++						require.Equal(t, int64(len(key))+aggfuncs.DefInterfaceSize+test.payloadSizes[len(rows)-1], delta)
++					} else {
++						for i, row := range rows {
++							var delta int64
++							if mode == "merge" {
++								src, _ := fn.AllocPartialResult()
++								_, err = fn.UpdatePartialResult(ctx, []chunk.Row{row}, src)
++								require.NoError(t, err)
++								delta, err = fn.MergePartialResult(ctx, src, pr)
++							} else {
++								delta, err = fn.UpdatePartialResult(ctx, []chunk.Row{row}, pr)
++							}
++							require.NoError(t, err)
++							expected := test.payloadSizes[i]
++							if i == 0 {
++								expected += int64(len(key)) + aggfuncs.DefInterfaceSize
++							} else {
++								expected -= test.payloadSizes[i-1]
++							}
++							require.Equal(t, expected, delta, "value %d", i)
++						}
++					}
++					value := test.values[len(rows)-1]
++					if buf, ok := value.([]byte); ok {
++						value = types.Opaque{TypeCode: test.valueType.GetType(), Buf: buf}
++					}
++					output := chunk.NewChunkWithCapacity([]*types.FieldType{desc.RetTp}, 1)
++					require.NoError(t, fn.AppendFinalResult2Chunk(ctx, pr, output))
++					require.Equal(t, types.CreateBinaryJSON(map[string]any{key: value}), output.GetRow(0).GetJSON(0))
++					fn.ResetPartialResult(pr)
++				}
++			})
++		}
++	}
++}
++
+ func jsonMultiArgsMemDeltaGens(_ sessionctx.Context, srcChk *chunk.Chunk, dataTypes []*types.FieldType, byItems []*util.ByItems) (memDeltas []int64, err error) {
+ 	memDeltas = make([]int64, 0)
+ 	m := make(map[string]bool)
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #73829** (2026-11-26): executor: redact temporal input values in INSERT diagnostics (@YangKeao)
 - **PR #73827** (2026-11-26): planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
 - **PR #73826** (2026-11-26): server: route PATCH status requests to HTTP (@D3Hunter)
+- **PR #73819** (closed): util/geocodec: check bytes given for a geometry column (@mjonss)
+- **PR #73810** (2026-11-26): tests: disable periodic stats refresh in SQL integration tests | tidb-test=pr/2827 (@winoros)
 - **PR #73790** (2026-11-26): dumpling: fix integration CI timeout and duplicate cache saves (@expxiaoli)
-- **PR #73789** (2026-11-25): planner: push virtual TEXT filters down to TiFlash MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
-- **PR #73763** (2026-11-25): *: update client-go to latest release-nextgen-202609 (@lcwangchao)
 
 ---
 
@@ -2239,46 +2607,41 @@ ref pingcap/tidb#71999
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. planner: fix ANALYZE panic when a skipped column is needed by a generated column
+## X. dxf: support cancelling paused tasks and drain paused subtasks before reverting
 
 **RULE**:
-When implementing operations in `pkg/executor/test/analyzetest/analyze_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/dxf/framework/mock/scheduler_mock.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `452929bd`: planner: fix ANALYZE panic when a skipped column is needed by a generated column or an index. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f964de31`: dxf: support cancelling paused tasks and drain paused subtasks before reverting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/test/analyzetest/analyze_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dxf/framework/mock/scheduler_mock.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// | JSON column only used by skipped columns         | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
-// | Generated column depending on a skipped column   | ❌ No           | Its value needs a skipped column, at any depth     |
-// | Vector column used by an expression index        | ✅ Yes          | Needed to build the expression index statistics    |
-// | Expression index on the vector column            | ✅ Yes          | Index entries are stored in TiKV                   |
-		skipped_data JSON,
-		virtual_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) VIRTUAL,
-		stored_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) STORED,
-		virtual_on_virtual INT AS (virtual_on_skipped + 1) VIRTUAL,
-		virtual_on_stored INT AS (stored_on_skipped + 1) VIRTUAL,
-		stored_on_generated INT AS (virtual_on_virtual + virtual_on_stored) STORED,
-		vector_col VECTOR(3),
-		INDEX idx_stored (stored_col),
-		INDEX idx_vector_is_null ((vector_col IS NULL))
-	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column, skipped_data, vector_col) VALUES
-		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}', '{"x": 1}', '[1,2
+// CancelPausedSubtasks mocks base method.
+func (m *MockTaskManager) CancelPausedSubtasks(arg0 context.Context, arg1 int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CancelPausedSubtasks", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CancelPausedSubtasks indicates an expected call of CancelPausedSubtasks.
+func (mr *MockTaskManagerMockRecorder) CancelPausedSubtasks(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CancelPausedSubtasks", reflect.TypeOf((*MockTaskManager)(nil).CancelPausedSubtasks), arg0, arg1)
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		INDEX idx_stored (stored_col)
-	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column) VALUES
-		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}'),
-		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}'),
-		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}')`)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `452929bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f964de31` are properly handled with clean fallback behavior.

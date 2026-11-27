@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T02:41:06.139Z",
+  "last_updated": "2026-11-27T02:49:53.513Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26310,
+  "total_items": 26319,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221919,8 +221919,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "adfdb353",
-      "content_hash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
+      "source_version": "fa2f007e",
+      "content_hash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -221983,6 +221983,11 @@
           "number": 10638,
           "title": "fix ANALYZE panic when a skipped column is needed by a generated column",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10814,
+          "title": "support cancelling paused tasks and drain paused subtasks before reverting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221990,7 +221995,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T09:22:09.090Z",
+      "verified_at": "2026-11-27T02:49:46.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222044,10 +222049,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "adfdb353",
-      "content_hash": "32121c1ac1be8d41a3796ae9d53f8d24034ab247d9f4e65f22cd4ea24714cf47",
+      "source_version": "fa2f007e",
+      "content_hash": "05d39b6af9807e84b1d355a8f5284ff6707f5213e6147152239cde91ca24dc27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:22:09.992Z"
+      "persisted_at": "2026-11-27T02:49:47.727Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -222131,9 +222136,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "2bdae791ab14be4ad83bd1619af187eef8d89567826b58920d5ce54b2975d327",
+      "content_hash": "493159d2dd32529f8cb0e12cdcdbb9731ec5e732be74dbe6882142b72a621986",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:22:15.543Z"
+      "persisted_at": "2026-11-27T02:49:52.276Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -235440,7 +235445,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
+      "content_hash": "096c07fb5770577c604372e9e3d249b5c3f56786d917a3d535ce68e1d5635199",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [],
@@ -235449,7 +235454,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:37:45.915Z",
+      "verified_at": "2026-11-27T02:49:36.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235466,9 +235471,9 @@
       "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
       "repository": "jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "1dad38050eaa9bbcb200974d09d582fd5cc020dd9b00ce93ff9e4828870e54b5",
+      "content_hash": "0c09a5ae2e95698e2c37a2eca9914b14eeb410a4a02fdf0f17c3a6ab2a0847c6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:37:46.356Z"
+      "persisted_at": "2026-11-27T02:49:36.840Z"
     },
     "learn-github-astral-sh-ruff": {
       "learning_id": "learn-github-astral-sh-ruff",
@@ -235698,9 +235703,9 @@
       "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
       "repository": "hf-jialinyyzz-humanizer-learnings",
       "source_version": "HEAD",
-      "content_hash": "d93bc448144e212e3b7072456d6c8e95be7686e3bcdfac12a755c27593800f8f",
+      "content_hash": "a7a471539a035eaaf33057659873e85367b0c15d7b93158790581794ae4f092b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:38:03.839Z"
+      "persisted_at": "2026-11-27T02:49:50.955Z"
     },
     "candidate_directive-ios-convert-degradationpreference-between-its-name-and-the-enum": {
       "item_id": "candidate_directive-ios-convert-degradationpreference-between-its-name-and-the-enum",
@@ -254797,8 +254802,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "2e7cf695",
-      "content_hash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
+      "source_version": "30d9cb34",
+      "content_hash": "94093094df3603011e1a5a4188e504e62b6e1b9b304f5322b34e74c999cf875b",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -254826,6 +254831,11 @@
           "number": 10587,
           "title": "refresh Cargo.lock within the current version requirements [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10813,
+          "title": "preserve incomplete protected-write scans [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254833,7 +254843,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T02:18:34.775Z",
+      "verified_at": "2026-11-27T02:49:38.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254888,9 +254898,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in dicklesworthstone-destructive_command_guard-learnings",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "source_version": "HEAD",
-      "content_hash": "21f6b6997bd37a0fbe6fcf78c9ac15f5bc7fe545bd885583df3ace2b11400fc2",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-26T02:18:46.611Z"
+      "content_hash": "6e4dd2f6b4893736df9b2864d64c8f35b49b1ad6443f55e159d922a89a9de92b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T02:49:53.297Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dicklesworthstone-destructive_",
@@ -254900,9 +254910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dicklesworthstone-destructive_command_guard-learnings",
       "repository": "dicklesworthstone-destructive_command_guard-learnings",
       "source_version": "HEAD",
-      "content_hash": "78352c684040eca42136ed1c224a1ebf1a296ae63655730aa4472182769c4574",
+      "content_hash": "ec91017d8974dd9cbfa20ad90e86e52e95ff0e7ff05e28850a642a4d81cc249b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:18:46.765Z"
+      "persisted_at": "2026-11-27T02:49:53.513Z"
     },
     "rule-8661": {
       "learning_id": "rule-8661",
@@ -360926,6 +360936,118 @@
       "content_hash": "df9a1203eeb76896ba2d7a6855f367e2434be6a96884da837255e41571463df7",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T02:41:04.670Z"
+    },
+    "rule-10813": {
+      "learning_id": "rule-10813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10813,
+      "title": "preserve incomplete protected-write scans [skip ci]",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "30d9cb34",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T02:49:38.301Z"
+    },
+    "candidate_directive-preserve-incomplete-protected-write-scans-skip-ci": {
+      "item_id": "candidate_directive-preserve-incomplete-protected-write-scans-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V23P-preserve-incomplete-protected-write-scans-skip-ci.md",
+      "title": "preserve incomplete protected-write scans [skip ci]",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "source_version": "30d9cb34",
+      "content_hash": "7fac648b07eeb0da2cb16408c6d044ffad0b51ed9ecc976b0c383b2f9e4467a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T02:49:38.923Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dicklesworthstone-destructive_command_guard-learnings-technical-construction-int.md",
+      "title": "Technical Construction Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55fe40206125bd05b9b6b66f868b4232ac6b19d149a9cf754a3a4a3f11032f24",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T02:49:53.068Z"
+    },
+    "rule-10814": {
+      "learning_id": "rule-10814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10814,
+      "title": "support cancelling paused tasks and drain paused subtasks before reverting",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "fa2f007e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T02:49:46.593Z"
+    },
+    "candidate_directive-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting": {
+      "item_id": "candidate_directive-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V8IO-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting.md",
+      "title": "support cancelling paused tasks and drain paused subtasks before reverting",
+      "repository": "pingcap/tidb",
+      "source_version": "fa2f007e",
+      "content_hash": "21be468a9beaa94f1cc9410247feb7c977d568f9995fd4bb7f0a70b36a23ef8d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T02:49:47.238Z"
+    },
+    "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-architecture-intelligence-pingcap-tidb-core-invariants.md",
+      "title": "Architecture Intelligence: pingcap/tidb Core Invariants",
+      "repository": "pingcap/tidb",
+      "source_version": "fa2f007e",
+      "content_hash": "13d638292ef163863b4b38eb2c2760daaa88c83b796a2b621c323c4404f8cae7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T02:49:47.483Z"
+    },
+    "candidate_directive-dxf-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting": {
+      "item_id": "candidate_directive-dxf-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VC07-dxf-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting.md",
+      "title": "dxf: support cancelling paused tasks and drain paused subtasks before reverting",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b855114f71275d7e60184526442d525e91c7a7efcbb7610680f9569e2821542e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T02:49:51.757Z"
+    },
+    "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-learnings-architecture-intelligence-pingcap-tidb-learnings-core-inv.md",
+      "title": "Architecture Intelligence: pingcap-tidb-learnings Core Invariants",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f1262c4740be91a6fece1f155bbb44687a15af71c501737960344f60e95382b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T02:49:52.041Z"
+    },
+    "candidate_directive-analyzer-preserve-incomplete-protected-write-scans-skip-ci": {
+      "item_id": "candidate_directive-analyzer-preserve-incomplete-protected-write-scans-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VCUB-analyzer-preserve-incomplete-protected-write-scans-skip-ci.md",
+      "title": "analyzer): preserve incomplete protected-write scans [skip ci]",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23b6ad88911206984c247c668f0dd1725cad3299d6d7951583746cc4b2c33b02",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T02:49:52.840Z"
     }
   },
   "ai-builder-brain": {

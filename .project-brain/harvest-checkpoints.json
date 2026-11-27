@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T02:41:00.058Z",
+  "last_updated": "2026-11-27T02:49:46.953Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1760,14 +1760,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
-      "content_hash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
-      "verified_at": "2026-11-23T17:37:46.151Z",
+      "content_hash": "096c07fb5770577c604372e9e3d249b5c3f56786d917a3d535ce68e1d5635199",
+      "verified_at": "2026-11-27T02:49:36.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:37:46.151Z"
+      "last_updated": "2026-11-27T02:49:36.580Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
-      "verified_at": "2026-11-26T02:18:35.024Z",
+      "content_hash": "94093094df3603011e1a5a4188e504e62b6e1b9b304f5322b34e74c999cf875b",
+      "verified_at": "2026-11-27T02:49:38.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T02:18:35.024Z"
+      "last_updated": "2026-11-27T02:49:38.642Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
-      "verified_at": "2026-11-26T09:22:09.371Z",
+      "content_hash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
+      "verified_at": "2026-11-27T02:49:46.952Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:22:09.371Z"
+      "last_updated": "2026-11-27T02:49:46.952Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

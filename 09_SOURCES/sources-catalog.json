@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
-    "lastHarvestedAt": "2026-11-23T17:37:46.143Z",
+    "contentHash": "096c07fb5770577c604372e9e3d249b5c3f56786d917a3d535ce68e1d5635199",
+    "lastHarvestedAt": "2026-11-27T02:49:36.563Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "2e7cf695",
+    "sourceVersion": "30d9cb34",
     "license": "NOASSERTION",
-    "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
-    "lastHarvestedAt": "2026-11-26T02:18:35.002Z",
+    "contentHash": "94093094df3603011e1a5a4188e504e62b6e1b9b304f5322b34e74c999cf875b",
+    "lastHarvestedAt": "2026-11-27T02:49:38.627Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "adfdb353",
+    "sourceVersion": "fa2f007e",
     "license": "Apache-2.0",
-    "contentHash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
-    "lastHarvestedAt": "2026-11-26T09:22:09.350Z",
+    "contentHash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
+    "lastHarvestedAt": "2026-11-27T02:49:46.937Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

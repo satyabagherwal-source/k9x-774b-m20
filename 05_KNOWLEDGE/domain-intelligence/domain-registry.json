@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T02:41:05.916Z",
-  "total_records": 2795,
+  "last_updated": "2026-11-27T02:49:53.068Z",
+  "total_records": 2798,
   "domains": {
     "A": {
       "total": 23,
@@ -1243,7 +1243,7 @@
       ]
     },
     "G": {
-      "total": 478,
+      "total": 480,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1722,11 +1722,13 @@
         "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants",
         "domain_intelligence-architecture-intelligence-svenstaro-miniserve-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-core-invariants",
-        "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-aws-amplify-amplify-js-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants",
+        "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 680,
+      "total": 681,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2407,7 +2409,8 @@
         "domain_intelligence-technical-construction-intelligence-arxhr007-aliens_eye-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants",
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv",
-        "DOM-H-E3FDDFF0"
+        "DOM-H-E3FDDFF0",
+        "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-"
       ]
     },
     "I": {
@@ -17209,8 +17212,8 @@
       "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-research-knowledge-intelligence-jialinyyzz-humanizer-cor.md",
       "repository": "jialinyyzz/humanizer",
-      "content_hash": "1dad38050eaa9bbcb200974d09d582fd5cc020dd9b00ce93ff9e4828870e54b5",
-      "created_at": "2026-11-23T17:37:46.356Z"
+      "content_hash": "0c09a5ae2e95698e2c37a2eca9914b14eeb410a4a02fdf0f17c3a6ab2a0847c6",
+      "created_at": "2026-11-27T02:49:36.840Z"
     },
     "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
@@ -17287,8 +17290,8 @@
       "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-learnings-research-knowledge-intelligence-hf-jialinyyzz-.md",
       "repository": "hf-jialinyyzz-humanizer-learnings",
-      "content_hash": "d93bc448144e212e3b7072456d6c8e95be7686e3bcdfac12a755c27593800f8f",
-      "created_at": "2026-11-23T17:38:03.839Z"
+      "content_hash": "a7a471539a035eaaf33057659873e85367b0c15d7b93158790581794ae4f092b",
+      "created_at": "2026-11-27T02:49:50.955Z"
     },
     "DOM-H-305CEBA3": {
       "record_id": "DOM-H-305CEBA3",
@@ -47194,6 +47197,33 @@
       "repository": "hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings",
       "content_hash": "5244d92c98612ff2c77714d446ccabbee19fd39ebbd68c5b3dbf666aa39d0039",
       "created_at": "2026-11-27T01:55:37.416Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dicklesworthstone-destructive_command_guard-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dicklesworthstone-destructive_command_guard-learnings-technical-construction-int.md",
+      "repository": "dicklesworthstone-destructive_command_guard-learnings",
+      "content_hash": "55fe40206125bd05b9b6b66f868b4232ac6b19d149a9cf754a3a4a3f11032f24",
+      "created_at": "2026-11-27T02:49:53.068Z"
+    },
+    "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pingcap-tidb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pingcap/tidb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-architecture-intelligence-pingcap-tidb-core-invariants.md",
+      "repository": "pingcap/tidb",
+      "content_hash": "13d638292ef163863b4b38eb2c2760daaa88c83b796a2b621c323c4404f8cae7",
+      "created_at": "2026-11-27T02:49:47.483Z"
+    },
+    "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pingcap-tidb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-learnings-architecture-intelligence-pingcap-tidb-learnings-core-inv.md",
+      "repository": "pingcap-tidb-learnings",
+      "content_hash": "9f1262c4740be91a6fece1f155bbb44687a15af71c501737960344f60e95382b",
+      "created_at": "2026-11-27T02:49:52.041Z"
     }
   }
 }
