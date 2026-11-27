@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-JP04",
-    "timestamp": "2026-11-25T13:49:19.060Z",
-    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-    "contentHash": "5526bd6d7acd9ea7423aad306d46d89ee035545933b1fc3e759b326c68015bdb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-JR4E",
-    "timestamp": "2026-11-25T13:49:21.806Z",
-    "repository": "erkamyaman/rust-anything",
-    "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "f3ebc86b6e4b8b7a7bc6f8e3716dc9a1cb2554f5122f9c8c18dd817635471642",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-JUS1",
-    "timestamp": "2026-11-25T13:49:26.545Z",
-    "repository": "zoontek/react-native-permissions",
-    "learningId": "learn-github-zoontek-react-native-permissions",
-    "contentHash": "98707b02416f064b5ea2d0eec3424394f9ed3b242e7b1ccd73dc700baa54dd4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-K0ZB",
     "timestamp": "2026-11-25T13:49:34.583Z",
     "repository": "volcengine/OpenViking",
@@ -7490,6 +7445,51 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "314ffdfb420dad613902a7ae46f3ce3aae1576ad4acdd143d4c63488b448fd18",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6PRO",
+    "timestamp": "2026-11-27T01:06:44.340Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "9fba4f1fa3aea0488f23f84a76c2f5a63af62ec11479c3e5be2bf05cf2237be2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6RXL",
+    "timestamp": "2026-11-27T01:06:47.145Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6WTA",
+    "timestamp": "2026-11-27T01:06:53.470Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -13620,3 +13620,6 @@
 | `CYCLE-20261127-WJSQ` | `2026-11-27T00:58:50.042Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`63fa725e...`) |
 | `CYCLE-20261127-WOH8` | `2026-11-27T00:58:56.108Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10804` | Yes (`4f79accb...`) |
 | `CYCLE-20261127-WVB3` | `2026-11-27T00:59:04.959Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10805` | Yes (`314ffdfb...`) |
+| `CYCLE-20261127-6PRO` | `2026-11-27T01:06:44.340Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`9fba4f1f...`) |
+| `CYCLE-20261127-6RXL` | `2026-11-27T01:06:47.145Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10806` | Yes (`472a9a90...`) |
+| `CYCLE-20261127-6WTA` | `2026-11-27T01:06:53.470Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10807` | Yes (`dd17f64a...`) |

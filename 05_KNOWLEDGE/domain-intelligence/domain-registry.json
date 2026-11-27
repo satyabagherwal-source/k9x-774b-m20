@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T00:59:11.009Z",
+  "last_updated": "2026-11-27T01:06:58.873Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -11520,8 +11520,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "fe3965496aef43e4e5b7c75c5f78ae6808dbbd6c4136cff513a287d6eb91d004",
-      "created_at": "2026-11-26T00:59:25.164Z"
+      "content_hash": "cdaf911e733d9a7a03c2cea098e7e74fccc27be48eb22a34ebeec5daad668905",
+      "created_at": "2026-11-27T01:06:47.571Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -11556,8 +11556,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "0dfbc69ca8feb3a85fc9da39a59fa3c3551c4b26470d43aa486f6cbc91183d42",
-      "created_at": "2026-11-26T00:59:36.110Z"
+      "content_hash": "081f04196ba30a45b19a31f4d2e5b561f0bbda78ad65daa0bfe9e56e8b719803",
+      "created_at": "2026-11-27T01:06:57.525Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -16417,8 +16417,8 @@
       "title": "Research & Knowledge Intelligence: google/vit-base-patch16-224 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-research-knowledge-intelligence-google-vit-base-p.md",
       "repository": "google/vit-base-patch16-224",
-      "content_hash": "eede1e9cbae3e71cbbcf0115bff16120e99d32455ddadd8384732754dd2fe869",
-      "created_at": "2026-11-23T16:11:40.007Z"
+      "content_hash": "c2cbd4c31644a6ad364e7cdfcea351f8c87728559d642abd79a44cafe10e22a5",
+      "created_at": "2026-11-27T01:06:44.569Z"
     },
     "DOM-D-D7AD2A79": {
       "record_id": "DOM-D-D7AD2A79",
@@ -16468,8 +16468,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-vit-base-patch16-224-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-learnings-research-knowledge-intelligence-hf-goog.md",
       "repository": "hf-google-vit-base-patch16-224-learnings",
-      "content_hash": "a5594ee7abe83ce3f59452d3596d2f1db5438adfdad8c8b39cf5e003ff5db9f7",
-      "created_at": "2026-11-23T16:11:53.657Z"
+      "content_hash": "ddefe90ee0e7d2f998df30aff3e4ec74880695979dbf5db16cb1c2aee57df473",
+      "created_at": "2026-11-27T01:06:58.083Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants",
@@ -25041,8 +25041,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "1e7763527527d091f0274863d1895331f6d1f247d1549374ad83fca3f2614f65",
-      "created_at": "2026-11-25T07:04:38.310Z"
+      "content_hash": "ae5eefd5996d622e26f7f426f156c79a7cbf82edd504bfcec29cd544c1630945",
+      "created_at": "2026-11-27T01:06:53.874Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -25059,8 +25059,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "79d163a18b1dd7c14a5f408c314d2adda7a1e07b486641b03526d2fdfc48ac3f",
-      "created_at": "2026-11-25T07:04:50.378Z"
+      "content_hash": "eb8223931109e73013afdad21494c76b65b844640e968e3ed8d8ef390f70c687",
+      "created_at": "2026-11-27T01:06:58.873Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",

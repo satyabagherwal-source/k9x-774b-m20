@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:59:11.420Z",
+  "last_updated": "2026-11-27T01:06:59.209Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T00:41:48.418Z",
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-26T00:59:35.624Z",
+      "processed_at": "2026-11-27T01:06:57.070Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1363,7 +1363,7 @@
       "staged_for_review": 1
     },
     "nginx-kubernetes-ingress-learnings.md": {
-      "processed_at": "2026-11-26T07:19:16.674Z",
+      "processed_at": "2026-11-27T01:06:58.292Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2593,7 +2593,7 @@
       "staged_for_review": 1
     },
     "hf-google-vit-base-patch16-224-learnings.md": {
-      "processed_at": "2026-11-23T16:11:53.380Z",
+      "processed_at": "2026-11-27T01:06:57.874Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4746,
+  "total_dossiers_evaluated": 4749,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3559
+  "total_staged_for_review": 3561
 }

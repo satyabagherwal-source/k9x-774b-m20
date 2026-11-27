@@ -13653,3 +13653,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T00:58:50.046Z |
 | `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `9e8effbb` | Multi-dimensional audit evidence | 2026-11-27T00:58:56.124Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `0eb63838` | Multi-dimensional audit evidence | 2026-11-27T00:59:04.963Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T01:06:44.344Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `920720a2` | Multi-dimensional audit evidence | 2026-11-27T01:06:47.149Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `41016e77` | Multi-dimensional audit evidence | 2026-11-27T01:06:53.473Z |

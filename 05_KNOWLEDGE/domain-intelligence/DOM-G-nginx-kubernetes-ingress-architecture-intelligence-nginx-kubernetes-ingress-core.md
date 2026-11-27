@@ -4,24 +4,24 @@
 {
   "source_repository": "nginx/kubernetes-ingress",
   "source_url": "https://github.com/nginx/kubernetes-ingress",
-  "source_version": "a60c25c3",
+  "source_version": "41016e77",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T07:04:38.146Z",
+  "timestamp": "2026-11-27T01:06:53.696Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nginx-kubernetes-ingress",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `a60c25c3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:04:38.146Z`  
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `41016e77`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T01:06:53.696Z`  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nginx/kubernetes-ingress:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:04:36.794Z  
+> **Harvest Timestamp**: 2026-11-27T01:06:52.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5109 stars
+- **Stars / Engagement**: 5113 stars
 
 ---
 
@@ -385,6 +385,35 @@ func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (
 		return endpointSlices, nil
 	}
 	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
+}
+
+// secretLister reads the Secrets that an informer group caches.
+type secretLister interface {
+	GetByKey(key string) (item interface{}, exists bool, err error)
+	List() []interface{}
+}
+
+// storesToSecretLister reads Secrets across the stores of an informer group's
+// Secret informers, one for each namespace it watches Secrets in.
+type storesToSecretLister []cache.Store
+
+// GetByKey returns the Secret with the given key from the store that holds it.
+func (s storesToSecretLister) GetByKey(key string) (interface{}, bool, error) {
+	for _, store := range s {
+		if obj, exists, err := store.GetByKey(key); exists || err != nil {
+			return obj, exists, err
+		}
+	}
+	return nil, false, nil
+}
+
+// List lists the Secrets in every store.
+func (s storesToSecretLister) List() []interface{} {
+	var objs []interface{}
+	for _, store := range s {
+		objs = append(objs, store.List()...)
+	}
+	return objs
 }
 
 // findPort locates the container port for the given pod and portName.  If the
@@ -1418,13 +1447,11 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11527** (2026-11-26): **fix bugs with watch-namespaces-secret and nil pointer dereference**
+  *Symptoms*: ### Proposed changes  - Fixes `-watch-secret-namespace` to watch secrets in listed namespaces when `-watch-namespace` is not set, which means the controller watches all namespaces. - in `-watch-namespace-label` mode, a namespace that isn't listed in `-watch-secret-namespace` has no Secret lister. Removing the watch label from such a namespace crashed the controller with a nil pointer dereference   ### Linked issue  Closes #11488  ### How I tested  Tests that fail without this change, both in `internal/k8s/namespaced_informer_test.go`: - `TestNewLoadBalancerControllerWatchesSecretNamespaces` creates the controller for three flag combinations, starts its informers, and checks which namespaces' Secrets it loads. On `main` it fails with `getSecret("ns-a/tls-secret") error = secrets are not watched in namespace ns-a`. With the fix suggested in the issue, it fails with `HoldsSecret("ns-c/tls-secret") after preSyncSecrets = true, want false`. - `TestSyncNamespaceUnwatchesNamespaceWithoutSecrets` runs the label-removed branch of `syncNamespace` for a namespace that doesn't watch Secrets. Without the fix, it panics with `invalid memory address or nil pointer dereference`.  E2E: `tests/suite/test_watch_secret_namespace.py` gets two cases without `-watch-namespace`: `-watch-secret-namespace=backends` and `-watch-secret-namespace=invalid`.    ### AI assistance  - Yes, for codegen  ### Checklist  Before creating a PR, run through this checklist and mark each as complete.  - [ ] I have rea
+
 - **Issue #11518** (2026-11-23): **Fix NKP catalogue publishing**
   *Symptoms*: ### Proposed changes  - Skip teardown environment in nutanix upgrade test suite - wire publishing in release process  ### Linked issue NA  Closes #  NA  ### How I tested  - Actions run from this branch successfully creates catalogue PR: https://github.com/nutanix-cloud-native/nkp-partner-catalog/pull/97, see https://github.com/nginx/kubernetes-ingress/actions/runs/45210658648 for more details  ### AI assistance  <!-- Write "None", or the tool you used and what it did. See "Using AI tools" in CONTRIBUTING.md. -->  ### Checklist  Before creating a PR, run through this checklist and mark each as complete.  - [x] I have read the [CONTRIBUTING](https://github.com/nginx/kubernetes-ingress/blob/main/CONTRIBUTING.md) doc - [x] This PR contains one logical change; unrelated fixes are in separate issues or PRs - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] I have checked that all unit tests pass after adding my changes - [ ] I have updated necessary documentation - [x] I have rebased my branch onto main - [ ] I will ensure my PR is targeting the main branch and pulling from my branch from my own fork 
-
-- **Issue #11514** (2026-11-23): **sync: security hardening and minor bug fixes for release-5.8**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11514?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.14%. Comparing base ([`c1078e1`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c1078e1ea1444f1231a8708f7929d24028618d3e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`b938f27`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/b938f270b4500be2c3784f28621828bb5b4c7afa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)). :warning: Report is 1 commits behind head on release-5.8.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1441,211 +1468,439 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a60c25c3` (2026-11-24)
-**Commit Message**: Update branch for 5.8.1 (#11475) (#11526)
+### Incident Patch 1: `070abf91` (2026-11-26)
+**Commit Message**: fix bugs with watch-namespaces-secret and nil pointer dereference (#11527)
 
-**File**: `.github/ISSUE_TEMPLATE/BUG-REPORT.yml` (modified, +1/-0)
+* fix bugs with watch-namespces-secret and nil pointer
+
+* delete secret
+
+**File**: `internal/k8s/controller.go` (modified, +45/-20)
 ```diff
-@@ -22,6 +22,7 @@ body:
-       description: What version of our F5 NGINX Ingress Controller are you running?
-       options:
-         - edge
-+        - 5.8.1
-         - 5.8.0
-         - 5.7.1
-         - 5.7.0
+@@ -642,13 +642,13 @@ type namespacedInformer struct {
+ 	namespace                    string
+ 	sharedInformerFactory        informers.SharedInformerFactory
+ 	confSharedInformerFactory    k8s_nginx_informers.SharedInformerFactory
+-	secretInformerFactory        informers.SharedInformerFactory
++	secretInformerFactories      []informers.SharedInformerFactory
+ 	dynInformerFactory           dynamicinformer.DynamicSharedInformerFactory
+ 	ingressLister                storeToIngressLister
+ 	svcLister                    cache.Store
+ 	endpointSliceLister          storeToEndpointSliceLister
+ 	podLister                    indexerToPodLister
+-	secretLister                 cache.Store
++	secretLister                 secretLister
+ 	virtualServerLister          cache.Store
+ 	virtualServerRouteLister     cache.Store
+ 	appProtectPolicyLister       cache.Store
+@@ -699,16 +699,18 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
+ 		}
+ 	}
+ 
+-	// Check if secrets informer should be created for this namespace
+-	for _, v := range lbc.secretNamespaceList {
+-		if v == "" || v == ns {
+-			nsi.isSecretsEnabledNamespace = true
+-			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+-			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
+-				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
+-			}
+-			break
++	var secretStores storesToSecretLister
++	for _, secretNs := range lbc.secretNamespacesFor(ns) {
++		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
++		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
++		if err != nil {
++			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
+ 		}
++		secretStores = append(secretStores, store)
++	}
++	if len(secretStores) > 0 {
++		nsi.isSecretsEnabledNamespace = true
++		nsi.secretLister = secretStores
+ 	}
+ 
+ 	if err := lbc.addCustomResourceHandlers(nsi, ns); err != nil {
+@@ -723,6 +725,19 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
+ 	return nsi, nil
+ }
+ 
++// secretNamespacesFor returns the namespaces whose Secrets the informer group for
++// ns watches
++func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
++	switch {
++	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
++		return []string{ns}
++	case ns == "":
++		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
++	default:
++		return nil
++	}
++}
++
+ // addCustomResourceHandlers sets up informers and event handlers for custom resources (VirtualServer,
+ // VirtualServerRoute, TransportServer, Policy) when custom resources are enabled.
+ func (lbc *LoadBalancerController) addCustomResourceHandlers(nsi *namespacedInformer, ns string) error {
+@@ -789,16 +804,17 @@ func (lbc *LoadBalancerController) AddSyncQueue(item interface{}) {
+ 	lbc.syncQueue.Enqueue(item)
+ }
+ 
+-// addSecretHandler adds the handler for secrets to the controller
+-func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
+-	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
++// addSecretHandler adds the handler for the Secrets that factory watches and
++// returns the store that caches them.
++func (nsi *namespacedInformer) addSecretHandler(factory informers.SharedInformerFactory, handlers cache.ResourceEventHandlerFuncs) (cache.Store, error) {
++	informer := factory.Core().V1().Secrets().Informer()
+ 	if _, err := informer.AddEventHandler(handlers); err != nil {
+-		return fmt.Errorf("failed to add Secret event handler: %w", err)
++		return nil, fmt.Errorf("failed to add Secret event handler: %w", err)
+ 	}
+-	nsi.secretLister = informer.GetStore()
++	nsi.secretInformerFactories = append(nsi.secretInformerFactories, factory)
+ 
+ 	nsi.cacheSyncs = append(nsi.cacheSyncs, informer.HasSynced)
+-	return nil
++	return informer.GetStore(), nil
+ }
+ 
+ // addIngressHandler adds the handler for ingresses to the controller
+@@ -947,8 +963,8 @@ func (lbc *LoadBalancerController) runContext() context.Context {
+ func (nsi *namespacedInformer) start() {
+ 	go nsi.sharedInformerFactory.Start(nsi.stopCh)
+ 
+-	if nsi.isSecretsEnabledNamespace {
+-		go nsi.secretInformerFactory.Start(nsi.stopCh)
++	for _, factory := range nsi.secretInformerFactories {
++		go factory.Start(nsi.stopCh)
+ 	}
+ 
+ 	if nsi.areCustomResourcesEnabled {
+@@ -1632,6 +1648,16 @@ func (lbc *LoadBalancerController) cleanupUnwatchedNamespacedResources(nsi *name
+ 	if nsi.appProtectDosEnabled {
+ 		lbc.cleanupUnwatchedAppDosResources(nsi)
+ 	}
++	if nsi.isSecretsEnabledNamespace {
++		lbc.cleanupUnwatchedSecrets(nsi)
++	}
++	nl.Debugf(l, "Finished cleaning up configuration for un
 ```
 
-**File**: `README.md` (modified, +13/-13)
+**File**: `internal/k8s/namespaced_informer_test.go` (modified, +118/-0)
 ```diff
-@@ -63,20 +63,20 @@ NGINX with native Kubernetes integration.
- ### Install with Helm (recommended)
+@@ -2,14 +2,132 @@ package k8s
  
- ```bash
--helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.0
-+helm install <RELEASE_NAME> oci://ghcr.io/nginx/charts/nginx-ingress --version 2.9.1
- ```
+ import (
+ 	"context"
++	"slices"
+ 	"testing"
++	"time"
  
- ### Install with Manifests
++	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
+ 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
+ 	k8s_nginx_fake "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned/fake"
++	api_v1 "k8s.io/api/core/v1"
++	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	dynamicfake "k8s.io/client-go/dynamic/fake"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/tools/cache"
+ )
  
- ```shell
- # Install the Custom Resource Definitions (required for the default configuration)
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deploy/crds.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ns-and-sa.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/rbac/rbac.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/nginx-config.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/deployment/nginx-ingress.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/service/loadbalancer.yaml
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/deployments/common/ingress-class.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deploy/crds.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ns-and-sa.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/rbac/rbac.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/nginx-config.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/deployment/nginx-ingress.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/service/loadbalancer.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/deployments/common/ingress-class.yaml
- ```
- 
- **[Full Installation Guide →](https://docs.nginx.com/nginx-ingress-controller/install/)**
-@@ -87,14 +87,14 @@ Once installed, deploy a sample application:
- 
- ```bash
- # Deploy the Cafe example app
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe.yaml
- 
- # Create a self-signed TLS certificate for cafe.example.com and store it in the Secret referenced by the Ingress
- openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout cafe.key -out cafe.crt \
-   -subj "/CN=cafe.example.com" -addext "subjectAltName=DNS:cafe.example.com"
- kubectl create secret tls tls-secret --cert=cafe.crt --key=cafe.key
- 
--kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/examples/ingress-resources/complete-example/cafe-ingress.yaml
-+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/examples/ingress-resources/complete-example/cafe-ingress.yaml
- ```
- 
- See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/examples) to explore all capabilities.
-@@ -110,7 +110,7 @@ See more [examples](https://github.com/nginx/kubernetes-ingress/tree/main/exampl
- 
- ## Docker Images
- 
--The latest stable release is [5.8.0](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.0). For production
-+The latest stable release is [5.8.1](https://github.com/nginx/kubernetes-ingress/releases/tag/v5.8.1). For production
- use, we recommend that you choose the latest stable release.
- 
- | Registry | Link |
-@@ -127,12 +127,12 @@ You can also [build your own image](https://docs.nginx.com/nginx-ingress-control
- 
- | Version | Description | Image for NGINX | Image for NGINX Plus | Installation Manifests and Helm Chart | Documentation and Examples |
- | ------- | ----------- | --------------- | -------------------- | --------------------------------------- | -------------------------- |
--| Latest stable release | For production use | Use the 5.8.0 images from [DockerHub](https://hub.docker.com/r/nginx/nginx-ingress/), [GitHub Container](https://github.com/nginx/kubernetes-ingress/pkgs/container/kubernetes-ingress), [Amazon ECR Public Gallery](https://gallery.ecr.aws/nginx/nginx-ingress) or [Quay.io](https://quay.io/repository/nginx/nginx-ingress) or [build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build/). | Use the 5.8.0 images from the [F5 Container Registry](https://docs.nginx.com/nginx-ingress-controller/install/images/registry-download/) or [Build your own image](https://docs.nginx.com/nginx-ingress-controller/install/build). | [Manifests](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/deployments). [Helm chart](https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress). | [Documen
++// TestNewLoadBalancerControllerWatchesSecretNamespaces checks which Secrets the
++// controller sees for each way -watch-namespace and -watch-secret-namespace
++// combine.
++func TestNewLoadBalancerControllerWatchesSecretNamespaces(t *testing.T) {
++	t.Parallel()
++
++	allNamespaces := []string{"ns-a", "ns-b", "ns-c"}
++
++	tests := []struct {
++		name             string
++		namespaces       []string // -watch-namespace, where "" is every namespace
++		secretNamespaces []string // -watch-secret-namespace, which defaults to namespaces
++		wantWatched      []string
++	}{
++		{
++			name:             "all namespaces",
++			namespaces:       []string{""},
++			secretNamespaces: []string{""},
++			wantWatched:      allNamespaces,
++		},
++		{
++			name:             "all namespaces, secrets in listed namespaces",
++			namespaces:       []string{""},
++			secretNamespaces: []string{"ns-a", "ns-b"},
++			wantWatched:      []string{"ns-a", "ns-b"},
++		},
++		{
++			name:             "listed namespaces, secrets in listed namespaces",
++			namespaces:       []string{"ns-a", "ns-c"},
++			secretNamespaces: []string{"ns-a", "ns-b"},
++			wantWatched:      []string{"ns-a"},
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			var objs []runtime.Object
++			for _, ns := range allNamespaces {
++				objs = append(objs, &api_v1.Secret{ObjectMeta: meta_v1.ObjectMeta{Name: "tls-secret", Namespace: ns}})
++			}
++			lbc := NewLoadBalancerController(NewLoadBalancerControllerInput{
++				KubeClient:      fake.NewClientset(objs...),
++				LoggerContext:   context.Background(),
++				Namespace:       tc.namespaces,
++				SecretNamespace: tc.secretNamespaces,
++			})
++			startNamespacedInformers(t, lbc)
++			lbc.preSyncSecrets()
++
++			store := lbc.secretStore.(*secrets.LocalSecretStore)
++			for _, ns := range allNamespaces {
++				key := ns + "/tls-secret"
++				want := slices.Contains(tc.wantWatched, ns)
++				if got := store.HoldsSecret(key); got != want {
++					t.Errorf("HoldsSecret(%q) after preSyncSecrets = %t, want %t", key, got, want)
++				}
++				if _, err := lbc.getSecret(key); (err == nil) != want {
++					t.Errorf("getSecret(%q) error = %v, want found = %t", key, err, want)
++				}
++			}
++		})
++	}
++}
++
++// startNamespacedInformers starts every informer group of lbc, as Run does, and
++// waits for their caches to sync. The groups are stopped when the test ends.
++func startNamespacedInformers(t *testing.T, lbc *LoadBalancerController) {
++	t.Helper()
++
++	var cacheSyncs []cache.InformerSynced
++	lbc.namespacedInformers.ForEach(func(nsi *namespacedInformer) {
++		nsi.start()
++		t.Cleanup(nsi.stop)
++		cacheSyncs = append(cacheSyncs, nsi.cacheSyncs...)
++	})
++
++	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++	defer cancel()
++	if !cache.WaitForCacheSync(ctx.Done(), cacheSyncs...) {
++		t.Fatal("informer caches did not sync")
++	}
++}
++
++// TestSyncNamespaceUnwatchesNamespaceWithoutSecrets drives the label-removed
++// branch of syncNamespace for a namespace left out of -watch-secret-namespace,
++// so its informer group has no Secret lister. Cleaning it up used to dereference
++// that nil lister and crash the controller.
++func TestSyncNamespaceUnwatchesNamespaceWithoutSecrets(t *testing.T) {
++	t.Parallel()
++
++	lbc := newBatchTestLBC(t, newSecretReconciliationNginxManager())
++	lbc.client = fake.NewClientset(&api_v1.Namespace{
++		ObjectMeta: meta_v1.ObjectMeta{Name: "app-ns"},
++		Status:     api_v1.NamespaceStatus{Phase: api_v1.NamespaceActive},
++	})
++	lbc.secretNamespaceList = []string{"secrets-ns"}
++	// Empty: "app-ns" still exists but lost the watch label.
++	lbc.namespaceLabeledLister = cache.NewStore(cache.MetaNamespaceKeyFunc)
++	if _, err := lbc.newNamespacedInformer("app-ns"); err != nil {
++		t.Fatalf("newNamespacedInformer(\"app-ns\") returned error: %v", err)
++	}
++
++	lbc.syncNamespace(task{Key: "app-ns"})
++
++	if got := lbc.namespacedInformers.Get("app-ns"); got != nil {
++		t.Errorf("namespacedInformers.Get(\"app-ns\") after the watch label was removed = %v, want nil", got)
++	}
++}
++
+ func TestAddCustomResourceHandlers_Disabled(t *testing.T) {
+ 	t.Parallel()
+ 	lbc := &LoadBalancerController{areCustomResourcesEnabled: false}
 ```
 
-**File**: `charts/nginx-ingress/Chart.yaml` (modified, +2/-2)
+**File**: `internal/k8s/utils.go` (modified, +29/-0)
 ```diff
-@@ -5,10 +5,10 @@ appVersion: 5.9.0
- kubeVersion: ">= 1.25.0-0"
- type: application
- description: NGINX Ingress Controller
--icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.0/charts/nginx-ingress/chart-icon.png
-+icon: https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.8.1/charts/nginx-ingress/chart-icon.png
- home: https://github.com/nginx/kubernetes-ingress
- sources:
--  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.0/charts/nginx-ingress
-+  - https://github.com/nginx/kubernetes-ingress/tree/v5.8.1/charts/nginx-ingress
- keywords:
-   - ingress
-   - nginx
+@@ -105,6 +105,35 @@ func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (
+ 	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
+ }
+ 
++// secretLister reads the Secrets that an informer group caches.
++type secretLister interface {
++	GetByKey(key string) (item interface{}, exists bool, err error)
++	List() []interface{}
++}
++
++// storesToSecretLister reads Secrets across the stores of an informer group's
++// Secret informers, one for each namespace it watches Secrets in.
++type storesToSecretLister []cache.Store
++
++// GetByKey returns the Secret with the given key from the store that holds it.
++func (s storesToSecretLister) GetByKey(key string) (interface{}, bool, error) {
++	for _, store := range s {
++		if obj, exists, err := store.GetByKey(key); exists || err != nil {
++			return obj, exists, err
++		}
++	}
++	return nil, false, nil
++}
++
++// List lists the Secrets in every store.
++func (s storesToSecretLister) List() []interface{} {
++	var objs []interface{}
++	for _, store := range s {
++		objs = append(objs, store.List()...)
++	}
++	return objs
++}
++
+ // findPort locates the container port for the given pod and portName.  If the
+ // targetPort is a number, use that.  If the targetPort is a string, look that
+ // string up in all named ports in all containers in the target pod.  If no
 ```
 
-**File**: `charts/nginx-ingress/values-icp.yaml` (modified, +1/-1)
+**File**: `tests/suite/test_watch_secret_namespace.py` (modified, +71/-43)
 ```diff
-@@ -4,7 +4,7 @@ controller:
-   nginxplus: true
-   image:
-     repository: mycluster.icp:8500/kube-system/nginx-plus-ingress
--    tag: "5.8.0"
-+    tag: "5.8.1"
-   nodeSelector:
-     beta.kubernetes.io/arch: "amd64"
-     proxy: true
-```
-
-**File**: `charts/nginx-ingress/values-plus.yaml` (modified, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ controller:
-   nginxplus: true
-   image:
-     repository: nginx-plus-ingress
--    tag: "5.8.0"
-+    tag: "5.8.1"
-```
-
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +5/-5)
-```diff
-@@ -854,10 +854,10 @@
+@@ -3,7 +3,7 @@
+ import pytest
+ import requests
+ from settings import TEST_DATA
+-from suite.utils.resources_utils import create_secret_from_yaml, wait_before_test
++from suite.utils.resources_utils import create_secret_from_yaml, delete_secret, wait_before_test
+ from suite.utils.ssl_utils import create_sni_session
+ 
+ 
+@@ -22,7 +22,17 @@
+                 ],
              },
-             "tag": {
-               "type": "string",
--              "default": "5.8.0",
-+              "default": "5.8.1",
-               "title": "The tag of the Ingress Controller image",
-               "examples": [
--                "5.8.0"
-+                "5.8.1"
-               ]
-             },
-             "digest": {
-@@ -893,7 +893,7 @@
-           "examples": [
-             {
-               "repository": "nginx/nginx-ingress",
--              "tag": "5.8.0",
-+              "tag": "5.8.1",
-               "pullPolicy": "IfNotPresent"
-             }
-           ]
-@@ -2436,7 +2436,7 @@
-           "customPorts": [],
-           "image": {
-             "repository": "nginx/nginx-ingress",
--            "tag": "5.8.0",
-+            "tag": "5.8.1",
-             "digest": "",
-             "pullPolicy": "IfNotPresent"
-           },
-@@ -3083,7 +3083,7 @@
-         "customPorts": [],
-         "image": {
-           "repository": "nginx/nginx-ingress",
--          "tag": "5.8.0",
-+          "tag": "5.8.1",
-           "digest": "",
-           "pullPolicy": "IfNotPresent"
-         },
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +1/-1)
-```diff
-@@ -252,7 +252,7 @@ controller:
-     repository: nginx/nginx-ingress
+             {"example": "watch-secret-namespace"},
+-        )
++        ),
++        (
++            {
++                "type": "complete",
++                "extra_args": [
++                    f"-enable-custom-resources",
++                    f"-watch-secret-namespace=backends",
++                ],
++            },
++            {"example": "watch-secret-namespace"},
++        ),
+     ],
+     indirect=True,
+ )
+@@ -37,29 +47,33 @@ def test_responses(
+     ):
+         """Creates 3 tests 1). watching specific ns and secret ns, 2). watching only specific secret ns, 3). watching all ns"""
+         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
+-        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+-        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
+-        session = create_sni_session()
+-        exception = ""
+-        resp = mock.Mock()
+-        resp.status_code = "None"
+-        resp.text = "None"
+-        retry = 0
+-        while resp.status_code == "None" and retry < 10:
+-            wait_before_test()
+-            try:
+-                resp = session.get(
+-                    f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+-                    headers={"host": v_s_route_setup.vs_host},
+-                    allow_redirects=False,
+-                    verify=False,
+-                )
+-            except requests.exceptions.SSLError as e:
+-                exception = str(e)
+-                print(f"SSL certificate exception: {exception}")
+-            retry = retry + 1
++        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
++        try:
++            req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
++            session = create_sni_session()
++            exception = ""
++            resp = mock.Mock()
++            resp.status_code = "None"
++            resp.text = "None"
++            retry = 0
++            while resp.status_code == "None" and retry < 10:
++                wait_before_test()
++                try:
++                    resp = session.get(
++                        f"{req_url}{v_s_route_setup.route_m.paths[0]}",
++                        headers={"host": v_s_route_setup.vs_host},
++                        allow_redirects=False,
++                        verify=False,
++                    )
++                except requests.exceptions.SSLError as e:
++                    exception = str(e)
++                    print(f"SSL certificate exception: {exception}")
++                retry = retry + 1
  
-     ## The tag of the Ingress Controller image. If not specified the appVersion from Chart.yaml is used as a tag.
--    # tag: "5.8.0"
-+    # tag: "5.8.1"
-     ## The digest of the Ingress Controller image.
-     ## If digest is specified it has precedence over tag and will be used instead
-     # digest: "sha256:CHANGEME"
-```
-
-**File**: `deployments/daemon-set/nginx-ingress.yaml` (modified, +2/-2)
-```diff
-@@ -34,7 +34,7 @@ spec:
-       # - name: nginx-log
-       #   emptyDir: {}
-       containers:
--      - image: nginx/nginx-ingress:5.8.0
-+      - image: nginx/nginx-ingress:5.8.1
-         imagePullPolicy: IfNotPresent
-         name: nginx-ingress
-         ports:
-@@ -101,7 +101,7 @@ spec:
-         # - -enable-prometheus-metrics
-         # - -global-configuration=$(POD_NAMESPACE)/nginx-configuration
-       # initContainers:
--#      - image: nginx/nginx-ingress:5.8.0
-+#      - image: nginx/nginx-ingress:5.8.1
-       #   imagePullPolicy: IfNotPresent
-       #   name: init-nginx-ingress
-       #   command: ['cp', '-vdR', '/etc/nginx/.', '/mnt/etc']
+-        assert resp.status_code == 200
++            assert resp.status_code == 200
++        finally:
++            # pytest reuses v_s_route_setup and its namespaces for the next parametrization, as its param is the same.
++            delete_secret(kube_apis.v1, secret_name, "backends")
+ 
+ 
+ @pytest.mark.vsr
+@@ -77,7 +91,17 @@ def test_responses(
+                 ],
+             },
+             {"example": "watch-secret-namespace"},
+-        )
++        ),
++        (
++            {
++                "type": "complete",
++                "extra_args": [
++                    f"-enable-custom-resources",
++                    f"-watch-secret-namespace=invalid",
++                ],
++            },
++            {"example": "watch-secret-namespace"},
++        ),
+     ],
+     indirect=True,
+ )
+@@ -92,22 +116,26 @@ def test_responses(
+     ):
+         """Creates 2 tests 1). watching specific ns and invalid secret ns, 2). watching only invalid secret ns"""
+         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
+-        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+-        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
+-        session = create_sni_session()
+-        exception = ""
+-        wait_before_test()
++        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+         try:
+-            resp = session.get(
+-                f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+-                headers={"host": v_s_route_setup.vs_host},
+-                allow_redirects=False,
+-                verify=False,
+-            )
+-        except requests.exceptions.SSLError as e:
+-            exception = str(e)
+-            print(f"SSL certificate exception: {exception}")
+-            resp = mock.Mock()
+-            resp.status_code = "None"
+-            resp.text = "None"
+-        assert "[SSL: TLSV1_UNRECOGNIZED_NAME]" in exception and 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11526** (2026-11-24): Update branch for 5.8.1 (#11475) (@vepatel)
-- **PR #11518** (2026-11-23): Fix NKP catalogue publishing (@vepatel)
-- **PR #11516** (2026-11-24): Add types to issue template (@danielnginx)
-- **PR #11515** (closed): Update issue types on templates (@danielnginx)
-- **PR #11514** (2026-11-23): sync: security hardening and minor bug fixes for release-5.8 (@nic-create-pr[bot])
-- **PR #11513** (2026-11-23): Update WAF and nginx for main (@nic-create-pr[bot])
+- **PR #11547** (2026-11-26): [ci]: 7.2-lts: drive release image publishing from registries.json (@javorszky)
+- **PR #11545** (closed): add hardening script (@vepatel)
+- **PR #11543** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
+- **PR #11542** (2026-11-26): [ci]: 7.2: drive release image publishing from registries.json (@javorszky)
+- **PR #11541** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
+- **PR #11540** (2026-11-26): [ci]: 6.x and 7.1 for release-2026-lts: Change docs_only to non_code_only (@javorszky)
 
 ---
 
@@ -1665,31 +1920,75 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update branch for 5.8.1
+## X. bugs with watch-namespaces-secret and nil pointer dereference
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a60c25c3`: Update branch for 5.8.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `070abf91`: bugs with watch-namespaces-secret and nil pointer dereference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/BUG-REPORT.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        - 5.8.1
+	secretInformerFactories      []informers.SharedInformerFactory
+	secretLister                 secretLister
+	var secretStores storesToSecretLister
+	for _, secretNs := range lbc.secretNamespacesFor(ns) {
+		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
+		if err != nil {
+			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
+		secretStores = append(secretStores, store)
+	}
+	if len(secretStores) > 0 {
+		nsi.isSecretsEnabledNamespace = true
+		nsi.secretLister = secretStores
+// secretNamespacesFor returns the namespaces whose Secrets the informer group for
+// ns watches
+func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
+	switch {
+	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
+		return []string{ns}
+	case ns == "":
+		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
+	default:
+		return nil
+	}
+}
+
+// addSecretHandler adds the handler for the Secrets that
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	secretInformerFactory        informers.SharedInformerFactory
+	secretLister                 cache.Store
+	// Check if secrets informer should be created for this namespace
+	for _, v := range lbc.secretNamespaceList {
+		if v == "" || v == ns {
+			nsi.isSecretsEnabledNamespace = true
+			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
+				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
+			}
+			break
+// addSecretHandler adds the handler for secrets to the controller
+func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
+	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
+		return fmt.Errorf("failed to add Secret event handler: %w", err)
+	nsi.secretLister = informer.GetStore()
+	return nil
+	if nsi.isSecretsEnabledNamespace {
+		go nsi.secretInformerFactory.Start(nsi.stopCh)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a60c25c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `070abf91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

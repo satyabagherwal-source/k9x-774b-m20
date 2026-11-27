@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "2540dda827afcf223cc349f45dc1c97bc94c23c41afc0d5aafeedb582d6dfcb6",
-    "lastHarvestedAt": "2026-11-23T16:11:39.721Z",
+    "contentHash": "9fba4f1fa3aea0488f23f84a76c2f5a63af62ec11479c3e5be2bf05cf2237be2",
+    "lastHarvestedAt": "2026-11-27T01:06:44.344Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "f35d6ccc",
+    "sourceVersion": "920720a2",
     "license": "Apache-2.0",
-    "contentHash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
-    "lastHarvestedAt": "2026-11-26T00:59:24.701Z",
+    "contentHash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
+    "lastHarvestedAt": "2026-11-27T01:06:47.149Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "2f46a26c",
+    "sourceVersion": "41016e77",
     "license": "Apache-2.0",
-    "contentHash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
-    "lastHarvestedAt": "2026-11-26T07:19:09.284Z",
+    "contentHash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
+    "lastHarvestedAt": "2026-11-27T01:06:53.473Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

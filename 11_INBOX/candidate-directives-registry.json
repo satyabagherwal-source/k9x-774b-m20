@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:59:10.727Z",
+  "last_updated": "2026-11-27T01:06:58.703Z",
   "directives": [
     {
       "id": "CD-001",
@@ -67974,6 +67974,48 @@
       "source_repo": "trailbaseio-trailbase",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-512B25-query-tenant-name-for-user-accounts-page.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-6S4D",
+      "directive_title": "model raw slice pointers via SlicePtr and fail closed on untagge",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "920720a2",
+      "staged_file": "11_INBOX/candidate-directives/CD-6S4D-model-raw-slice-pointers-via-sliceptr-and-fail-closed-on-untagge.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-70UH",
+      "directive_title": "bugs with watch-namespaces-secret and nil pointer dereference",
+      "source_repo": "nginx-kubernetes-ingress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-70UH-bugs-with-watch-namespaces-secret-and-nil-pointer-dereference.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6ZSV",
+      "directive_title": "lean-exporter): model raw slice pointers via SlicePtr and fail closed on untagge",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6ZSV-lean-exporter-model-raw-slice-pointers-via-sliceptr-and-fail-closed-on-untagge.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-CF3524",
+      "directive_title": "bugs with watch-namespaces-secret and nil pointer dereference",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF3524-bugs-with-watch-namespaces-secret-and-ni.md",
       "staged_date": "2026-11-27"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T00:59:04.987Z",
+  "last_updated": "2026-11-27T01:06:53.494Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,14 +1625,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
-      "content_hash": "2540dda827afcf223cc349f45dc1c97bc94c23c41afc0d5aafeedb582d6dfcb6",
-      "verified_at": "2026-11-23T16:11:39.734Z",
+      "content_hash": "9fba4f1fa3aea0488f23f84a76c2f5a63af62ec11479c3e5be2bf05cf2237be2",
+      "verified_at": "2026-11-27T01:06:44.359Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:11:39.734Z"
+      "last_updated": "2026-11-27T01:06:44.359Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
-      "verified_at": "2026-11-26T00:59:24.717Z",
+      "content_hash": "472a9a9045fa5d60ee800bbccc3a94c99255a7023cbb6d2f1ce7d883126cac7d",
+      "verified_at": "2026-11-27T01:06:47.170Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:59:24.717Z"
+      "last_updated": "2026-11-27T01:06:47.170Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "7849623a4cf0a62a885491515288c6ce3438e897f706abd9b7f2db1da96779f8",
-      "verified_at": "2026-11-26T07:19:09.306Z",
+      "content_hash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
+      "verified_at": "2026-11-27T01:06:53.494Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:19:09.306Z"
+      "last_updated": "2026-11-27T01:06:53.494Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

@@ -4,22 +4,22 @@
 {
   "source_repository": "nginx/kubernetes-ingress",
   "source_url": "https://github.com/nginx/kubernetes-ingress",
-  "source_version": "2f46a26c",
+  "source_version": "41016e77",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T07:19:09.582Z",
+  "timestamp": "2026-11-27T01:06:53.696Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nginx-kubernetes-ingress",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `2f46a26c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T07:19:09.582Z`  
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `41016e77`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T01:06:53.696Z`  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nginx/kubernetes-ingress` (Commit: `2f46a26c`)
+- **Target Repository**: `nginx/kubernetes-ingress` (Commit: `41016e77`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T07:19:08.042Z  
+> **Harvest Timestamp**: 2026-11-27T01:06:52.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5110 stars
+- **Stars / Engagement**: 5113 stars
 
 ---
 
@@ -382,6 +382,35 @@ func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (
 		return endpointSlices, nil
 	}
 	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
+}
+
+// secretLister reads the Secrets that an informer group caches.
+type secretLister interface {
+	GetByKey(key string) (item interface{}, exists bool, err error)
+	List() []interface{}
+}
+
+// storesToSecretLister reads Secrets across the stores of an informer group's
+// Secret informers, one for each namespace it watches Secrets in.
+type storesToSecretLister []cache.Store
+
+// GetByKey returns the Secret with the given key from the store that holds it.
+func (s storesToSecretLister) GetByKey(key string) (interface{}, bool, error) {
+	for _, store := range s {
+		if obj, exists, err := store.GetByKey(key); exists || err != nil {
+			return obj, exists, err
+		}
+	}
+	return nil, false, nil
+}
+
+// List lists the Secrets in every store.
+func (s storesToSecretLister) List() []interface{} {
+	var objs []interface{}
+	for _, store := range s {
+		objs = append(objs, store.List()...)
+	}
+	return objs
 }
 
 // findPort locates the container port for the given pod and portName.  If the
@@ -1415,13 +1444,11 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11527** (2026-11-26): **fix bugs with watch-namespaces-secret and nil pointer dereference**
+  *Symptoms*: ### Proposed changes  - Fixes `-watch-secret-namespace` to watch secrets in listed namespaces when `-watch-namespace` is not set, which means the controller watches all namespaces. - in `-watch-namespace-label` mode, a namespace that isn't listed in `-watch-secret-namespace` has no Secret lister. Removing the watch label from such a namespace crashed the controller with a nil pointer dereference   ### Linked issue  Closes #11488  ### How I tested  Tests that fail without this change, both in `internal/k8s/namespaced_informer_test.go`: - `TestNewLoadBalancerControllerWatchesSecretNamespaces` creates the controller for three flag combinations, starts its informers, and checks which namespaces' Secrets it loads. On `main` it fails with `getSecret("ns-a/tls-secret") error = secrets are not watched in namespace ns-a`. With the fix suggested in the issue, it fails with `HoldsSecret("ns-c/tls-secret") after preSyncSecrets = true, want false`. - `TestSyncNamespaceUnwatchesNamespaceWithoutSecrets` runs the label-removed branch of `syncNamespace` for a namespace that doesn't watch Secrets. Without the fix, it panics with `invalid memory address or nil pointer dereference`.  E2E: `tests/suite/test_watch_secret_namespace.py` gets two cases without `-watch-namespace`: `-watch-secret-namespace=backends` and `-watch-secret-namespace=invalid`.    ### AI assistance  - Yes, for codegen  ### Checklist  Before creating a PR, run through this checklist and mark each as complete.  - [ ] I have rea
+
 - **Issue #11518** (2026-11-23): **Fix NKP catalogue publishing**
   *Symptoms*: ### Proposed changes  - Skip teardown environment in nutanix upgrade test suite - wire publishing in release process  ### Linked issue NA  Closes #  NA  ### How I tested  - Actions run from this branch successfully creates catalogue PR: https://github.com/nutanix-cloud-native/nkp-partner-catalog/pull/97, see https://github.com/nginx/kubernetes-ingress/actions/runs/45210658648 for more details  ### AI assistance  <!-- Write "None", or the tool you used and what it did. See "Using AI tools" in CONTRIBUTING.md. -->  ### Checklist  Before creating a PR, run through this checklist and mark each as complete.  - [x] I have read the [CONTRIBUTING](https://github.com/nginx/kubernetes-ingress/blob/main/CONTRIBUTING.md) doc - [x] This PR contains one logical change; unrelated fixes are in separate issues or PRs - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] I have checked that all unit tests pass after adding my changes - [ ] I have updated necessary documentation - [x] I have rebased my branch onto main - [ ] I will ensure my PR is targeting the main branch and pulling from my branch from my own fork 
-
-- **Issue #11514** (2026-11-23): **sync: security hardening and minor bug fixes for release-5.8**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11514?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.14%. Comparing base ([`c1078e1`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c1078e1ea1444f1231a8708f7929d24028618d3e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`b938f27`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/b938f270b4500be2c3784f28621828bb5b4c7afa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)). :warning: Report is 1 commits behind head on release-5.8.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1438,462 +1465,439 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f46a26c` (2026-11-25)
-**Commit Message**: Route release image builds through the proxy runner & F5 registry (#11473)
+### Incident Patch 1: `070abf91` (2026-11-26)
+**Commit Message**: fix bugs with watch-namespaces-secret and nil pointer dereference (#11527)
 
-* ci: route release image builds through the proxy runner and Artifactory mirror
+* fix bugs with watch-namespces-secret and nil pointer
 
-* ci: apply registry mirror to base images and fix Artifactory check
+* delete secret
 
-- build-base-images: pass DOCKER_REGISTRY/GHCR_REGISTRY, log in to the
-  F5 registry, pull BuildKit/QEMU images via DOCKER_REGISTRY
-- Artifactory reference check: run as root, pass only on grep exit 1
-- Dockerfile: derive UBI10_PACKAGES_IMAGE default from GHCR_REGISTRY
-- renovate: UBI digest manager matches Makefile and build/Dockerfile
-
-* add proxy runners to actionlint
-
-* Make release build runner variable based
-
-* ci: set default runner for release prep workflows
-
-* Address PR copilot feedback
-
----------
-
-Co-authored-by: Venktesh Patel <[REDACTED_EMAIL]>
-
-**File**: `.github/actionlint.yaml` (modified, +2/-0)
+**File**: `internal/k8s/controller.go` (modified, +45/-20)
 ```diff
-@@ -7,6 +7,8 @@ self-hosted-runner:
-     - ubuntu-26.04
-     - ubuntu-26.04-amd64
-     - aw-ubuntu-26.04-amd64
-+    - proxy-ubuntu-24.04-amd64
-+    - proxy-ubuntu-26.04-amd64
- # Configuration variables in array of strings defined in your repository or
- # organization. `null` means disabling configuration variables check.
- # Empty array means no configuration variable is allowed.
+@@ -642,13 +642,13 @@ type namespacedInformer struct {
+ 	namespace                    string
+ 	sharedInformerFactory        informers.SharedInformerFactory
+ 	confSharedInformerFactory    k8s_nginx_informers.SharedInformerFactory
+-	secretInformerFactory        informers.SharedInformerFactory
++	secretInformerFactories      []informers.SharedInformerFactory
+ 	dynInformerFactory           dynamicinformer.DynamicSharedInformerFactory
+ 	ingressLister                storeToIngressLister
+ 	svcLister                    cache.Store
+ 	endpointSliceLister          storeToEndpointSliceLister
+ 	podLister                    indexerToPodLister
+-	secretLister                 cache.Store
++	secretLister                 secretLister
+ 	virtualServerLister          cache.Store
+ 	virtualServerRouteLister     cache.Store
+ 	appProtectPolicyLister       cache.Store
+@@ -699,16 +699,18 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
+ 		}
+ 	}
+ 
+-	// Check if secrets informer should be created for this namespace
+-	for _, v := range lbc.secretNamespaceList {
+-		if v == "" || v == ns {
+-			nsi.isSecretsEnabledNamespace = true
+-			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+-			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
+-				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
+-			}
+-			break
++	var secretStores storesToSecretLister
++	for _, secretNs := range lbc.secretNamespacesFor(ns) {
++		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
++		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
++		if err != nil {
++			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
+ 		}
++		secretStores = append(secretStores, store)
++	}
++	if len(secretStores) > 0 {
++		nsi.isSecretsEnabledNamespace = true
++		nsi.secretLister = secretStores
+ 	}
+ 
+ 	if err := lbc.addCustomResourceHandlers(nsi, ns); err != nil {
+@@ -723,6 +725,19 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
+ 	return nsi, nil
+ }
+ 
++// secretNamespacesFor returns the namespaces whose Secrets the informer group for
++// ns watches
++func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
++	switch {
++	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
++		return []string{ns}
++	case ns == "":
++		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
++	default:
++		return nil
++	}
++}
++
+ // addCustomResourceHandlers sets up informers and event handlers for custom resources (VirtualServer,
+ // VirtualServerRoute, TransportServer, Policy) when custom resources are enabled.
+ func (lbc *LoadBalancerController) addCustomResourceHandlers(nsi *namespacedInformer, ns string) error {
+@@ -789,16 +804,17 @@ func (lbc *LoadBalancerController) AddSyncQueue(item interface{}) {
+ 	lbc.syncQueue.Enqueue(item)
+ }
+ 
+-// addSecretHandler adds the handler for secrets to the controller
+-func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
+-	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
++// addSecretHandler adds the handler for the Secrets that factory watches and
++// returns the store that caches them.
++func (nsi *namespacedInformer) addSecretHandler(factory informers.SharedInformerFactory, handlers cache.ResourceEventHandlerFuncs) (cache.Store, error) {
++	informer := factory.Core().V1().Secrets().Informer()
+ 	if _, err := informer.AddEventHandler(handlers); err != nil {
+-		return fmt.Errorf("failed to add Secret event handler: %w", err)
++		return nil, fmt.Errorf("failed to add Secret event handler: %w", err)
+ 	}
+-	nsi.secretLister = informer.GetStore()
++	nsi.secretInformerFactories = append(nsi.secretInformerFactories, factory)
+ 
+ 	nsi.cacheSyncs = append(nsi.cacheSyncs, informer.HasSynced)
+-	return nil
++	return informer.GetStore(), nil
+ }
+ 
+ // addIngressHandler adds the handler for ingresses to the controller
+@@ -947,8 +963,8 @@ func (lbc *LoadBalancerController) runContext() context.Context {
+ func (nsi *namespacedInformer) start() {
+ 	go nsi.sharedInformerFactory.Start(nsi.stopCh)
+ 
+-	if nsi.isSecretsEnabledNamespace {
+-		go nsi.secretInformerFactory.Start(nsi.stopCh)
++	for _, factory := range nsi.secretInformerFactories {
++		go factory.Start(nsi.stopCh)
+ 	}
+ 
+ 	if nsi.areCustomResourcesEnabled {
+@@ -1632,6 +1648,16 @@ func (lbc *LoadBalancerController) cleanupUnwatchedNamespacedResources(nsi *name
+ 	if nsi.appProtectDosEnabled {
+ 		lbc.cleanupUnwatchedAppDosResources(nsi)
+ 	}
++	if nsi.isSecretsEnabledNamespace {
++		lbc.cleanupUnwatchedSecrets(nsi)
++	}
++	nl.Debugf(l, "Finished cleaning up configuration for un
 ```
 
-**File**: `.github/actions/build-push-retry/action.yaml` (modified, +6/-0)
+**File**: `internal/k8s/namespaced_informer_test.go` (modified, +118/-0)
 ```diff
-@@ -29,6 +29,9 @@ inputs:
-   secret-files:
-     description: Secret files (newline-separated key=path pairs)
-     required: false
-+  secret-envs:
-+    description: Secrets read from environment variables (newline-separated id=ENV_VAR pairs)
-+    required: false
-   cache-from:
-     description: Cache sources
-     required: false
-@@ -88,6 +91,7 @@ runs:
-         target: ${{ inputs.target }}
-         build-args: ${{ inputs.build-args }}
-         secret-files: ${{ inputs.secret-files }}
-+        secret-envs: ${{ inputs.secret-envs }}
-         cache-from: ${{ inputs.cache-from }}
-         cache-to: ${{ inputs.cache-to }}
-         push: ${{ inputs.push }}
-@@ -121,6 +125,7 @@ runs:
-         target: ${{ inputs.target }}
-         build-args: ${{ inputs.build-args }}
-         secret-files: ${{ inputs.secret-files }}
-+        secret-envs: ${{ inputs.secret-envs }}
-         cache-from: ${{ inputs.cache-from }}
-         push: ${{ inputs.push }}
-         load: ${{ inputs.load }}
-@@ -153,6 +158,7 @@ runs:
-         target: ${{ inputs.target }}
-         build-args: ${{ inputs.build-args }}
-         secret-files: ${{ inputs.secret-files }}
-+        secret-envs: ${{ inputs.secret-envs }}
-         cache-from: ${{ inputs.cache-from }}
-         push: ${{ inputs.push }}
-         load: ${{ inputs.load }}
+@@ -2,14 +2,132 @@ package k8s
+ 
+ import (
+ 	"context"
++	"slices"
+ 	"testing"
++	"time"
+ 
++	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
+ 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
+ 	k8s_nginx_fake "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned/fake"
++	api_v1 "k8s.io/api/core/v1"
++	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	dynamicfake "k8s.io/client-go/dynamic/fake"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/tools/cache"
+ )
+ 
++// TestNewLoadBalancerControllerWatchesSecretNamespaces checks which Secrets the
++// controller sees for each way -watch-namespace and -watch-secret-namespace
++// combine.
++func TestNewLoadBalancerControllerWatchesSecretNamespaces(t *testing.T) {
++	t.Parallel()
++
++	allNamespaces := []string{"ns-a", "ns-b", "ns-c"}
++
++	tests := []struct {
++		name             string
++		namespaces       []string // -watch-namespace, where "" is every namespace
++		secretNamespaces []string // -watch-secret-namespace, which defaults to namespaces
++		wantWatched      []string
++	}{
++		{
++			name:             "all namespaces",
++			namespaces:       []string{""},
++			secretNamespaces: []string{""},
++			wantWatched:      allNamespaces,
++		},
++		{
++			name:             "all namespaces, secrets in listed namespaces",
++			namespaces:       []string{""},
++			secretNamespaces: []string{"ns-a", "ns-b"},
++			wantWatched:      []string{"ns-a", "ns-b"},
++		},
++		{
++			name:             "listed namespaces, secrets in listed namespaces",
++			namespaces:       []string{"ns-a", "ns-c"},
++			secretNamespaces: []string{"ns-a", "ns-b"},
++			wantWatched:      []string{"ns-a"},
++		},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++
++			var objs []runtime.Object
++			for _, ns := range allNamespaces {
++				objs = append(objs, &api_v1.Secret{ObjectMeta: meta_v1.ObjectMeta{Name: "tls-secret", Namespace: ns}})
++			}
++			lbc := NewLoadBalancerController(NewLoadBalancerControllerInput{
++				KubeClient:      fake.NewClientset(objs...),
++				LoggerContext:   context.Background(),
++				Namespace:       tc.namespaces,
++				SecretNamespace: tc.secretNamespaces,
++			})
++			startNamespacedInformers(t, lbc)
++			lbc.preSyncSecrets()
++
++			store := lbc.secretStore.(*secrets.LocalSecretStore)
++			for _, ns := range allNamespaces {
++				key := ns + "/tls-secret"
++				want := slices.Contains(tc.wantWatched, ns)
++				if got := store.HoldsSecret(key); got != want {
++					t.Errorf("HoldsSecret(%q) after preSyncSecrets = %t, want %t", key, got, want)
++				}
++				if _, err := lbc.getSecret(key); (err == nil) != want {
++					t.Errorf("getSecret(%q) error = %v, want found = %t", key, err, want)
++				}
++			}
++		})
++	}
++}
++
++// startNamespacedInformers starts every informer group of lbc, as Run does, and
++// waits for their caches to sync. The groups are stopped when the test ends.
++func startNamespacedInformers(t *testing.T, lbc *LoadBalancerController) {
++	t.Helper()
++
++	var cacheSyncs []cache.InformerSynced
++	lbc.namespacedInformers.ForEach(func(nsi *namespacedInformer) {
++		nsi.start()
++		t.Cleanup(nsi.stop)
++		cacheSyncs = append(cacheSyncs, nsi.cacheSyncs...)
++	})
++
++	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++	defer cancel()
++	if !cache.WaitForCacheSync(ctx.Done(), cacheSyncs...) {
++		t.Fatal("informer caches did not sync")
++	}
++}
++
++// TestSyncNamespaceUnwatchesNamespaceWithoutSecrets drives the label-removed
++// branch of syncNamespace for a namespace left out of -watch-secret-namespace,
++// so its informer group has no Secret lister. Cleaning it up used to dereference
++// that nil lister and crash the controller.
++func TestSyncNamespaceUnwatchesNamespaceWithoutSecrets(t *testing.T) {
++	t.Parallel()
++
++	lbc := newBatchTestLBC(t, newSecretReconciliationNginxManager())
++	lbc.client = fake.NewClientset(&api_v1.Namespace{
++		ObjectMeta: meta_v1.ObjectMeta{Name: "app-ns"},
++		Status:     api_v1.NamespaceStatus{Phase: api_v1.NamespaceActive},
++	})
++	lbc.secretNamespaceList = []string{"secrets-ns"}
++	// Empty: "app-ns" still exists but lost the watch label.
++	lbc.namespaceLabeledLister = cache.NewStore(cache.MetaNamespaceKeyFunc)
++	if _, err := lbc.newNamespacedInformer("app-ns"); err != nil {
++		t.Fatalf("newNamespacedInformer(\"app-ns\") returned error: %v", err)
++	}
++
++	lbc.syncNamespace(task{Key: "app-ns"})
++
++	if got := lbc.namespacedInformers.Get("app-ns"); got != nil {
++		t.Errorf("namespacedInformers.Get(\"app-ns\") after the watch label was removed = %v, want nil", got)
++	}
++}
++
+ func TestAddCustomResourceHandlers_Disabled(t *testing.T) {
+ 	t.Parallel()
+ 	lbc := &LoadBalancerController{areCustomResourcesEnabled: false}
 ```
 
-**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +1/-1)
+**File**: `internal/k8s/utils.go` (modified, +29/-0)
 ```diff
-@@ -137,7 +137,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
- | `lint-format.yml` | PR to `main`/`embargo/security-fixes*`, merge_group | Format & lint checks (gofumpt, goimports, golangci-lint, actionlint, markdownlint, yamllint, workflow gating validation) |
- | `regression.yml` | Daily cron (03:00 UTC), manual dispatch | Multi-K8s-version regression matrix tests |
- | `single-image-regression.yml` | Manual dispatch | Runs Python e2e tests on a single image variant and K8s version |
--| `build-base-images.yml` | Weekday cron (04:30 UTC), manual, workflow_call | Rebuilds all base images (alpine, debian, ubi) |
-+| `build-base-images.yml` | Weekday cron (04:30 UTC), manual (optional `push_images`) | Rebuilds all base images (alpine, debian, ubi) |
- | `build-ubi-dependency.yml` | Push to `main` touching `build/dependencies/Dockerfile.ubi10`, manual | Builds the UBI dependency image published to `ghcr.io/nginx/dependencies/nginx-ubi` |
- | `image-promotion.yml` | Push to `main`/`release-*`, workflow_call | Rebuilds images via `build-artifacts.yml` (`force: true`), tags `edge`/`stable`, runs security scans, publishes GHCR edge chart |
+@@ -105,6 +105,35 @@ func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (
+ 	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
+ }
  
++// secretLister reads the Secrets that an informer group caches.
++type secretLister interface {
++	GetByKey(key string) (item interface{}, exists bool, err error)
++	List() []interface{}
++}
++
++// storesToSecretLister reads Secrets across the stores of an informer group's
++// Secret informers, one for each namespace it watches Secrets in.
++type storesToSecretLister []cache.Store
++
++// GetByKey returns the Secret with the given key from the store that holds it.
++func (s storesToSecretLister) GetByKey(key string) (interface{}, bool, error) {
++	for _, store := range s {
++		if obj, exists, err := store.GetByKey(key); exists || err != nil {
++			return obj, exists, err
++		}
++	}
++	return nil, false, nil
++}
++
++// List lists the Secrets in every store.
++func (s storesToSecretLister) List() []interface{} {
++	var objs []interface{}
++	for _, store := range s {
++		objs = append(objs, store.List()...)
++	}
++	return objs
++}
++
+ // findPort locates the container port for the given pod and portName.  If the
+ // targetPort is a number, use that.  If the targetPort is a string, look that
+ // string up in all named ports in all containers in the target pod.  If no
 ```
 
-**File**: `.github/workflows/build-base-images.yml` (modified, +190/-4)
+**File**: `tests/suite/test_watch_secret_namespace.py` (modified, +71/-43)
 ```diff
-@@ -2,7 +2,12 @@ name: Build Base Images
+@@ -3,7 +3,7 @@
+ import pytest
+ import requests
+ from settings import TEST_DATA
+-from suite.utils.resources_utils import create_secret_from_yaml, wait_before_test
++from suite.utils.resources_utils import create_secret_from_yaml, delete_secret, wait_before_test
+ from suite.utils.ssl_utils import create_sni_session
  
- on:
-   workflow_dispatch:
--  workflow_call:
-+    inputs:
-+      push_images:
-+        description: 'Whether to push images'
-+        required: false
-+        default: true
-+        type: boolean
-   schedule:
-     - cron: "30 4 * * 1-5" # run Mon-Fri at 04:30 UTC
  
-@@ -59,13 +64,59 @@ jobs:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -22,7 +22,17 @@
+                 ],
+             },
+             {"example": "watch-secret-namespace"},
+-        )
++        ),
++        (
++            {
++                "type": "complete",
++                "extra_args": [
++                    f"-enable-custom-resources",
++                    f"-watch-secret-namespace=backends",
++                ],
++            },
++            {"example": "watch-secret-namespace"},
++        ),
+     ],
+     indirect=True,
+ )
+@@ -37,29 +47,33 @@ def test_responses(
+     ):
+         """Creates 3 tests 1). watching specific ns and secret ns, 2). watching only specific secret ns, 3). watching all ns"""
+         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
+-        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+-        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
+-        session = create_sni_session()
+-        exception = ""
+-        resp = mock.Mock()
+-        resp.status_code = "None"
+-        resp.text = "None"
+-        retry = 0
+-        while resp.status_code == "None" and retry < 10:
+-            wait_before_test()
+-            try:
+-                resp = session.get(
+-                    f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+-                    headers={"host": v_s_route_setup.vs_host},
+-                    allow_redirects=False,
+-                    verify=False,
+-                )
+-            except requests.exceptions.SSLError as e:
+-                exception = str(e)
+-                print(f"SSL certificate exception: {exception}")
+-            retry = retry + 1
++        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
++        try:
++            req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
++            session = create_sni_session()
++            exception = ""
++            resp = mock.Mock()
++            resp.status_code = "None"
++            resp.text = "None"
++            retry = 0
++            while resp.status_code == "None" and retry < 10:
++                wait_before_test()
++                try:
++                    resp = session.get(
++                        f"{req_url}{v_s_route_setup.route_m.paths[0]}",
++                        headers={"host": v_s_route_setup.vs_host},
++                        allow_redirects=False,
++                        verify=False,
++                    )
++                except requests.exceptions.SSLError as e:
++                    exception = str(e)
++                    print(f"SSL certificate exception: {exception}")
++                retry = retry + 1
  
-+      - name: Resolve Dockerfile syntax frontend
-+        run: |
-+          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
-+          test -n "$syntax"
-+          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
-+        env:
-+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+
-+      - name: Setup Docker Hub secrets
-+        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+        with:
-+          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
-+          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
-+          secret-names: "docker-username, docker-password"
-+          env-names: "DOCKER_USERNAME, DOCKER_PASSWORD"
-+
-+      - name: DockerHub Login
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        with:
-+          username: ${{ env.DOCKER_USERNAME }}
-+          password: ${{ env.DOCKER_PASSWORD }}
-+        if: ${{ contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
-+
-+      - name: Setup Artifactory secrets
-+        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+        with:
-+          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
-+          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
-+          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
-+          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
-+        if: ${{ vars.F5_REPO_HOST != '' }}
-+
-+      - name: F5 registry login
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        with:
-+          registry: ${{ vars.F5_REGISTRY_HOST }}
-+          username: ${{ env.ARTIFACTORY_USER }}
-+          password: ${{ env.ARTIFACTORY_TOKEN }}
-+        if: ${{ vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
-+
-       - name: Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-+        with:
-+          driver-opts: |
-+            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
+-        assert resp.status_code == 200
++            assert resp.status_code == 200
++        finally:
++            # pytest reuses v_s_route_setup and its namespaces for the next parametrization, as its param is the same.
++            delete_secret(kube_apis.v1, secret_name, "backends")
  
-       - name: Setup QEMU
-         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
-         with:
-           platforms: arm64
-+          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
  
-       - name: Login to GCR
-         uses: ./.github/actions/vault-gcr-login
-@@ -105,15 +156,35 @@ jobs:
-           tags: ${{ steps.meta.outputs.tags }}
-           platforms: ${{ matrix.platforms }}
-           pull: true
--          push: true
-+          push: ${{ github.event_name != 'workflow_dispatch' || inputs.push_images }}
-           build-args: |
-+            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
-+            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
-             BUILD_OS=${{ matrix.build_os }}
-             IC_VERSION=${{ needs.checks.outputs.ic_version }}
-+            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
-+            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
-+            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
-+            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
-+            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
-+            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
-+            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
-             OSS_PACKAGE_REPO=${{ vars.OSS_REPO }}
-+          secret-envs: |
-+            ${{ vars.F5_REPO_HOST != '' && 'f5-repo-user=ARTIFACTORY_USER' || '' }}
-+            ${{ vars.F5_REPO_HOST != '' && 'f5-repo-token=ARTIFACTORY_TOKEN' || '' }}
-           secret-files: |
-             ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.crt=nginx-repo.crt' || '' }}
-             ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.key=nginx-repo.key' || '' }}
- 
-+      - name: Check image for Artifactory references
-+        run: docker run --rm --platform linux/amd64 --user 0 --entrypoint sh "$IMAGE" -c 'grep -rl "$0" /etc; test $? -eq 1' "$F5_REPO_HOST"
-+        env:
-+          IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-+          F5_REPO_HOST: ${{ vars.F5_REPO_HOST }}
-+        if: ${{ vars.F5_REPO_HOST != '' && (github.event_name != 'workflow_dispatch' || inputs.push_images) }}
-+
-       - name: Clean up secrets
-         run: |
-```
-
-**File**: `.github/workflows/build-oss.yml` (modified, +97/-2)
-```diff
-@@ -87,6 +87,14 @@ jobs:
-           ref: ${{ inputs.branch }}
-           fetch-depth: 0
- 
-+      - name: Resolve Dockerfile syntax frontend
-+        run: |
-+          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
-+          test -n "$syntax"
-+          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
-+        env:
-+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+
-       - name: NGINX package secrets
-         uses: ./.github/actions/nginx-pkg-secrets
-         with:
-@@ -104,12 +112,30 @@ jobs:
-           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
-         if: ${{ inputs.authenticated }}
- 
-+      - name: Setup Artifactory secrets
-+        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+        with:
-+          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
-+          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
-+          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
-+          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
-+        if: ${{ inputs.authenticated && vars.F5_REPO_HOST != '' }}
-+
-       - name: DockerHub Login
-         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-         with:
-           username: ${{ env.DOCKER_USERNAME }}
-           password: ${{ env.DOCKER_PASSWORD }}
--        if: ${{ inputs.authenticated }}
-+        if: ${{ inputs.authenticated && contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
-+
-+      - name: F5 registry login
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        with:
-+          registry: ${{ vars.F5_REGISTRY_HOST }}
-+          username: ${{ env.ARTIFACTORY_USER }}
-+          password: ${{ env.ARTIFACTORY_TOKEN }}
-+        if: ${{ inputs.authenticated && vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
- 
-       - name: Docker meta
-         id: meta
-@@ -153,13 +179,30 @@ jobs:
-         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
-         with:
-           platforms: arm64
-+          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
-+        if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
-+
-+      - name: Export runner proxy settings
-+        run: |
-+          {
-+            echo "HTTP_PROXY=${HTTP_PROXY:-${http_proxy:-}}"
-+            echo "HTTPS_PROXY=${HTTPS_PROXY:-${https_proxy:-}}"
-+            echo "NO_PROXY=${NO_PROXY:-${no_proxy:-}}"
-+          } >> "$GITHUB_ENV"
-         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
- 
-       - name: Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-+        with:
-+          driver-opts: |
-+            env.http_proxy=${{ env.HTTP_PROXY }}
-+            env.https_proxy=${{ env.HTTPS_PROXY }}
-+            "env.no_proxy=${{ env.NO_PROXY }}"
-+            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
-         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
- 
-       - name: Build Base Container
-+        id: build-base
-         uses: ./.github/actions/build-push-retry
-         with:
-           file: build/Dockerfile
-@@ -172,14 +215,40 @@ jobs:
-           push: true
-           no-cache: true
-           build-args: |
-+            HTTP_PROXY=${{ env.HTTP_PROXY }}
-+            HTTPS_PROXY=${{ env.HTTPS_PROXY }}
-+            NO_PROXY=${{ env.NO_PROXY }}
-+            http_proxy=${{ env.HTTP_PROXY }}
-+            https_proxy=${{ env.HTTPS_PROXY }}
-+            no_proxy=${{ env.NO_PROXY }}
-+            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
-+            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
-+            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
-+            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
-+            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
-+            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
-+            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
-+            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
-+            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
-             OSS_PACKAGE_REPO=${{ inputs.pkg-src-oss }}
-             BUILD_OS=${{ inputs.build-os }}
-             IC_VERSION=${{ inputs.ic-version && inputs.ic-version || steps.meta.outputs.version }}
-+          secret-envs: |
-+            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-user=ARTIFACTORY_USER' || '' }}
-+            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-token=ARTIFACTORY_TOKEN' || '' }}
-           secret-files: |
-             ${{ inputs.pkg-src-oss != 'packages.nginx.org' && 'n
-```
-
-**File**: `.github/workflows/build-plus.yml` (modified, +97/-2)
-```diff
-@@ -99,6 +99,14 @@ jobs:
-           ref: ${{ inputs.branch }}
-           fetch-depth: 0
- 
-+      - name: Resolve Dockerfile syntax frontend
-+        run: |
-+          syntax=$(sed -n '1s/^# syntax=//p' build/Dockerfile)
-+          test -n "$syntax"
-+          echo "BUILDKIT_SYNTAX=${DOCKER_REGISTRY}/${syntax}" >> "$GITHUB_ENV"
-+        env:
-+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+
-       - name: NGINX package secrets
-         uses: ./.github/actions/nginx-pkg-secrets
-         with:
-@@ -116,12 +124,30 @@ jobs:
-           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
-         if: ${{ inputs.authenticated }}
- 
-+      - name: Setup Artifactory secrets
-+        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+        with:
-+          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
-+          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
-+          secret-names: "artifactory-service-user-nginx, artifactory-service-user-nginx-token"
-+          env-names: "ARTIFACTORY_USER, ARTIFACTORY_TOKEN"
-+        if: ${{ inputs.authenticated && vars.F5_REPO_HOST != '' }}
-+
-       - name: DockerHub Login
-         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-         with:
-           username: ${{ env.DOCKER_USERNAME }}
-           password: ${{ env.DOCKER_PASSWORD }}
--        if: ${{ inputs.authenticated }}
-+        if: ${{ inputs.authenticated && contains(vars.DOCKER_REGISTRY || 'docker.io', 'docker.io') }}
-+
-+      - name: F5 registry login
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        with:
-+          registry: ${{ vars.F5_REGISTRY_HOST }}
-+          username: ${{ env.ARTIFACTORY_USER }}
-+          password: ${{ env.ARTIFACTORY_TOKEN }}
-+        if: ${{ inputs.authenticated && vars.F5_REGISTRY_HOST != '' && vars.F5_REPO_HOST != '' }}
- 
-       - name: NAP modules
-         id: nap_modules
-@@ -168,13 +194,30 @@ jobs:
-         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
-         with:
-           platforms: arm64
-+          image: "${{ vars.DOCKER_REGISTRY || 'docker.io' }}/tonistiigi/binfmt:latest"
-+        if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
-+
-+      - name: Export runner proxy settings
-+        run: |
-+          {
-+            echo "HTTP_PROXY=${HTTP_PROXY:-${http_proxy:-}}"
-+            echo "HTTPS_PROXY=${HTTPS_PROXY:-${https_proxy:-}}"
-+            echo "NO_PROXY=${NO_PROXY:-${no_proxy:-}}"
-+          } >> "$GITHUB_ENV"
-         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
- 
-       - name: Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-+        with:
-+          driver-opts: |
-+            env.http_proxy=${{ env.HTTP_PROXY }}
-+            env.https_proxy=${{ env.HTTPS_PROXY }}
-+            "env.no_proxy=${{ env.NO_PROXY }}"
-+            image=${{ vars.DOCKER_REGISTRY || 'docker.io' }}/moby/buildkit:buildx-stable-1
-         if: ${{ steps.images_exist.outputs.base_exists != 'true' || steps.images_exist.outputs.target_exists != 'true' }}
- 
-       - name: Build Base Container
-+        id: build-base
-         uses: ./.github/actions/build-push-retry
-         with:
-           file: build/Dockerfile
-@@ -187,17 +230,43 @@ jobs:
-           push: true
-           no-cache: true
-           build-args: |
-+            HTTP_PROXY=${{ env.HTTP_PROXY }}
-+            HTTPS_PROXY=${{ env.HTTPS_PROXY }}
-+            NO_PROXY=${{ env.NO_PROXY }}
-+            http_proxy=${{ env.HTTP_PROXY }}
-+            https_proxy=${{ env.HTTPS_PROXY }}
-+            no_proxy=${{ env.NO_PROXY }}
-+            DOCKER_REGISTRY=${{ vars.DOCKER_REGISTRY || 'docker.io' }}
-+            BUILDKIT_SYNTAX=${{ env.BUILDKIT_SYNTAX }}
-+            GHCR_REGISTRY=${{ vars.GHCR_REGISTRY || 'ghcr.io' }}
-+            F5_REPO_HOST=${{ vars.F5_REPO_HOST }}
-+            F5_ALPINE_REPO=${{ vars.F5_ALPINE_REPO }}
-+            F5_DEBIAN_REPO=${{ vars.F5_DEBIAN_REPO }}
-+            F5_DEBIAN_SECURITY_REPO=${{ vars.F5_DEBIAN_SECURITY_REPO }}
-+            F5_UBI_REPO=${{ vars.F5_UBI_REPO }}
-+            F5_EPEL_REPO=${{ vars.F5_EPEL_REPO }}
-+            F5_FEDORA_REPO=${{ vars.F5_FEDORA_REPO }}
-             BUILD_OS=${{ inputs.build-os }}
-             PLUS_PACKAGE_REPO=${{ inputs.pkg-src-plus }}
-             WAF_PACKAGE_REPO=${{ inputs.pkg-src-waf }}
-             DOS_PACKAGE_REPO=${{ inputs.pkg-src-dos }}
-             IC_VERSION=${{ inputs.ic-version && inputs.ic-version || steps.meta.outputs.version }}
-             ${{ inputs.nap-modules != '' && format('NAP_MODULES={0}', steps.nap_modules.outputs.name) || '' }}
-+          secret-envs: |
-+            ${{ inputs.authenticated && vars.F5_REPO_HOST != '' && 'f5-repo-us
-```
-
-**File**: `.github/workflows/release-prep-lts.yml` (modified, +1/-1)
-```diff
-@@ -116,7 +116,7 @@ jobs:
-       tag: ${{ needs.variables.outputs.source_tag }}
-       go-md5: ${{ needs.variables.outputs.go_code_md5 }}
-       docker-md5: ${{ needs.variables.outputs.docker_md5 }}
--      runner: "aw-ubuntu-24.04-amd64"
-+      runner: ${{ vars.RELEASE_RUNNER || 'aw-ubuntu-24.04-amd64' }}
-       write-to-cache: true
-       read-from-cache: false
-     secrets: inherit
-```
-
-**File**: `.github/workflows/release-prep.yml` (modified, +1/-1)
-```diff
-@@ -123,7 +123,7 @@ jobs:
-       tag: ${{ needs.variables.outputs.source_tag }}
-       go-md5: ${{ needs.variables.outputs.go_code_md5 }}
-       docker-md5: ${{ needs.variables.outputs.docker_md5 }}
--      runner: "aw-ubuntu-24.04-amd64"
-+      runner: ${{ vars.RELEASE_RUNNER || 'aw-ubuntu-24.04-amd64' }}
-       write-to-cache: true
-       read-from-cache: false
-     secrets: inherit
+ @pytest.mark.vsr
+@@ -77,7 +91,17 @@ def test_responses(
+                 ],
+             },
+             {"example": "watch-secret-namespace"},
+-        )
++        ),
++        (
++            {
++                "type": "complete",
++                "extra_args": [
++                    f"-enable-custom-resources",
++                    f"-watch-secret-namespace=invalid",
++                ],
++            },
++            {"example": "watch-secret-namespace"},
++        ),
+     ],
+     indirect=True,
+ )
+@@ -92,22 +116,26 @@ def test_responses(
+     ):
+         """Creates 2 tests 1). watching specific ns and invalid secret ns, 2). watching only invalid secret ns"""
+         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
+-        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+-        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
+-        session = create_sni_session()
+-        exception = ""
+-        wait_before_test()
++        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
+         try:
+-            resp = session.get(
+-                f"{req_url}{v_s_route_setup.route_m.paths[0]}",
+-                headers={"host": v_s_route_setup.vs_host},
+-                allow_redirects=False,
+-                verify=False,
+-            )
+-        except requests.exceptions.SSLError as e:
+-            exception = str(e)
+-            print(f"SSL certificate exception: {exception}")
+-            resp = mock.Mock()
+-            resp.status_code = "None"
+-            resp.text = "None"
+-        assert "[SSL: TLSV1_UNRECOGNIZED_NAME]" in exception and 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11537** (2026-11-25): [ci]: 5.3-release-5.8: adopt composite actions in release, image-promotion and cve-publish workflows (@javorszky)
-- **PR #11536** (2026-11-25): [ci]: 5.3-lts: adopt composite actions in release, image-promotion and cve-publish workflows- #11535 (@javorszky)
-- **PR #11535** (2026-11-25): [ci]: 5.3: adopt composite actions in release, image-promotion and cve-publish workflows (@javorszky)
-- **PR #11533** (2026-11-25): Add nginx.org/policies and nginx.com/policies (@nic-create-pr[bot])
-- **PR #11531** (2026-11-25): [ci]: 5.1/5.2: enable ci.yml and cve-publish.yml in the internal repo (@javorszky)
-- **PR #11530** (2026-11-25): [ci]: 5.1/5.2 release-5.8: enable ci.yml and cve-publish.yml in the internal repo (@javorszky)
+- **PR #11547** (2026-11-26): [ci]: 7.2-lts: drive release image publishing from registries.json (@javorszky)
+- **PR #11545** (closed): add hardening script (@vepatel)
+- **PR #11543** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
+- **PR #11542** (2026-11-26): [ci]: 7.2: drive release image publishing from registries.json (@javorszky)
+- **PR #11541** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
+- **PR #11540** (2026-11-26): [ci]: 6.x and 7.1 for release-2026-lts: Change docs_only to non_code_only (@javorszky)
 
 ---
 
@@ -1913,32 +1917,75 @@ Co-authored-by: Venktesh Patel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Route release image builds through the proxy runner & F5 registry
+## X. bugs with watch-namespaces-secret and nil pointer dereference
 
 **RULE**:
-When implementing operations in `.github/actionlint.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f46a26c`: Route release image builds through the proxy runner & F5 registry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `070abf91`: bugs with watch-namespaces-secret and nil pointer dereference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actionlint.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    - proxy-ubuntu-24.04-amd64
-    - proxy-ubuntu-26.04-amd64
+	secretInformerFactories      []informers.SharedInformerFactory
+	secretLister                 secretLister
+	var secretStores storesToSecretLister
+	for _, secretNs := range lbc.secretNamespacesFor(ns) {
+		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
+		if err != nil {
+			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
+		secretStores = append(secretStores, store)
+	}
+	if len(secretStores) > 0 {
+		nsi.isSecretsEnabledNamespace = true
+		nsi.secretLister = secretStores
+// secretNamespacesFor returns the namespaces whose Secrets the informer group for
+// ns watches
+func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
+	switch {
+	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
+		return []string{ns}
+	case ns == "":
+		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
+	default:
+		return nil
+	}
+}
+
+// addSecretHandler adds the handler for the Secrets that
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	secretInformerFactory        informers.SharedInformerFactory
+	secretLister                 cache.Store
+	// Check if secrets informer should be created for this namespace
+	for _, v := range lbc.secretNamespaceList {
+		if v == "" || v == ns {
+			nsi.isSecretsEnabledNamespace = true
+			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
+			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
+				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
+			}
+			break
+// addSecretHandler adds the handler for secrets to the controller
+func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
+	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
+		return fmt.Errorf("failed to add Secret event handler: %w", err)
+	nsi.secretLister = informer.GetStore()
+	return nil
+	if nsi.isSecretsEnabledNamespace {
+		go nsi.secretInformerFactory.Start(nsi.stopCh)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f46a26c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `070abf91` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
