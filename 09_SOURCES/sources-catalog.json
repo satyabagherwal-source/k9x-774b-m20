@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "41016e77",
+    "sourceVersion": "28009b62",
     "license": "Apache-2.0",
-    "contentHash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
-    "lastHarvestedAt": "2026-11-27T01:06:53.473Z",
+    "contentHash": "de3f46102453dac28d7b191002623f44919b09444008ad8a3ba1aa2c21650cb6",
+    "lastHarvestedAt": "2026-11-27T19:18:17.207Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "3ee61a86",
+    "sourceVersion": "5b79cae5",
     "license": "Apache-2.0",
-    "contentHash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
-    "lastHarvestedAt": "2026-11-22T23:33:18.175Z",
+    "contentHash": "56bef338b475cc90fef6f068732ea5b845f1fdfbceec630bb74b06b3d89faff8",
+    "lastHarvestedAt": "2026-11-27T19:18:15.473Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {

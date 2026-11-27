@@ -13884,3 +13884,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7af329a5` | Multi-dimensional audit evidence | 2026-11-27T18:43:58.328Z |
 | `learn-dom-k-1440511c` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-27T18:44:30.049Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `177a3b42` | Multi-dimensional audit evidence | 2026-11-27T18:59:41.798Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `5b79cae5` | Multi-dimensional audit evidence | 2026-11-27T19:18:15.473Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `28009b62` | Multi-dimensional audit evidence | 2026-11-27T19:18:17.207Z |

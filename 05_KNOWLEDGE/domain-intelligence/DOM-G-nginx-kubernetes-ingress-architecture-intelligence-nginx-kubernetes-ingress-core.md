@@ -4,24 +4,24 @@
 {
   "source_repository": "nginx/kubernetes-ingress",
   "source_url": "https://github.com/nginx/kubernetes-ingress",
-  "source_version": "41016e77",
+  "source_version": "28009b62",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T01:06:53.696Z",
+  "timestamp": "2026-11-27T19:18:17.518Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nginx-kubernetes-ingress",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `41016e77`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T01:06:53.696Z`  
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `28009b62`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T19:18:17.518Z`  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nginx/kubernetes-ingress:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T01:06:52.458Z  
+> **Harvest Timestamp**: 2026-11-27T19:18:15.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1468,439 +1468,28 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `070abf91` (2026-11-26)
-**Commit Message**: fix bugs with watch-namespaces-secret and nil pointer dereference (#11527)
+### Incident Patch 1: `28009b62` (2026-11-27)
+**Commit Message**: Only create ClusterRoleBinding when rbac.clusterrole.create=true (#11336)
 
-* fix bugs with watch-namespces-secret and nil pointer
+Signed-off-by: Sascha Peilicke <[REDACTED_EMAIL]>
 
-* delete secret
-
-**File**: `internal/k8s/controller.go` (modified, +45/-20)
+**File**: `charts/nginx-ingress/templates/clusterrolebinding.yaml` (modified, +1/-1)
 ```diff
-@@ -642,13 +642,13 @@ type namespacedInformer struct {
- 	namespace                    string
- 	sharedInformerFactory        informers.SharedInformerFactory
- 	confSharedInformerFactory    k8s_nginx_informers.SharedInformerFactory
--	secretInformerFactory        informers.SharedInformerFactory
-+	secretInformerFactories      []informers.SharedInformerFactory
- 	dynInformerFactory           dynamicinformer.DynamicSharedInformerFactory
- 	ingressLister                storeToIngressLister
- 	svcLister                    cache.Store
- 	endpointSliceLister          storeToEndpointSliceLister
- 	podLister                    indexerToPodLister
--	secretLister                 cache.Store
-+	secretLister                 secretLister
- 	virtualServerLister          cache.Store
- 	virtualServerRouteLister     cache.Store
- 	appProtectPolicyLister       cache.Store
-@@ -699,16 +699,18 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
- 		}
- 	}
- 
--	// Check if secrets informer should be created for this namespace
--	for _, v := range lbc.secretNamespaceList {
--		if v == "" || v == ns {
--			nsi.isSecretsEnabledNamespace = true
--			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
--			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
--				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
--			}
--			break
-+	var secretStores storesToSecretLister
-+	for _, secretNs := range lbc.secretNamespacesFor(ns) {
-+		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
-+		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
-+		if err != nil {
-+			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
- 		}
-+		secretStores = append(secretStores, store)
-+	}
-+	if len(secretStores) > 0 {
-+		nsi.isSecretsEnabledNamespace = true
-+		nsi.secretLister = secretStores
- 	}
- 
- 	if err := lbc.addCustomResourceHandlers(nsi, ns); err != nil {
-@@ -723,6 +725,19 @@ func (lbc *LoadBalancerController) newNamespacedInformer(ns string) (*namespaced
- 	return nsi, nil
- }
- 
-+// secretNamespacesFor returns the namespaces whose Secrets the informer group for
-+// ns watches
-+func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
-+	switch {
-+	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
-+		return []string{ns}
-+	case ns == "":
-+		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
-+	default:
-+		return nil
-+	}
-+}
-+
- // addCustomResourceHandlers sets up informers and event handlers for custom resources (VirtualServer,
- // VirtualServerRoute, TransportServer, Policy) when custom resources are enabled.
- func (lbc *LoadBalancerController) addCustomResourceHandlers(nsi *namespacedInformer, ns string) error {
-@@ -789,16 +804,17 @@ func (lbc *LoadBalancerController) AddSyncQueue(item interface{}) {
- 	lbc.syncQueue.Enqueue(item)
- }
- 
--// addSecretHandler adds the handler for secrets to the controller
--func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
--	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
-+// addSecretHandler adds the handler for the Secrets that factory watches and
-+// returns the store that caches them.
-+func (nsi *namespacedInformer) addSecretHandler(factory informers.SharedInformerFactory, handlers cache.ResourceEventHandlerFuncs) (cache.Store, error) {
-+	informer := factory.Core().V1().Secrets().Informer()
- 	if _, err := informer.AddEventHandler(handlers); err != nil {
--		return fmt.Errorf("failed to add Secret event handler: %w", err)
-+		return nil, fmt.Errorf("failed to add Secret event handler: %w", err)
- 	}
--	nsi.secretLister = informer.GetStore()
-+	nsi.secretInformerFactories = append(nsi.secretInformerFactories, factory)
- 
- 	nsi.cacheSyncs = append(nsi.cacheSyncs, informer.HasSynced)
--	return nil
-+	return informer.GetStore(), nil
- }
- 
- // addIngressHandler adds the handler for ingresses to the controller
-@@ -947,8 +963,8 @@ func (lbc *LoadBalancerController) runContext() context.Context {
- func (nsi *namespacedInformer) start() {
- 	go nsi.sharedInformerFactory.Start(nsi.stopCh)
- 
--	if nsi.isSecretsEnabledNamespace {
--		go nsi.secretInformerFactory.Start(nsi.stopCh)
-+	for _, factory := range nsi.secretInformerFactories {
-+		go factory.Start(nsi.stopCh)
- 	}
- 
- 	if nsi.areCustomResourcesEnabled {
-@@ -1632,6 +1648,16 @@ func (lbc *LoadBalancerController) cleanupUnwatchedNamespacedResources(nsi *name
- 	if nsi.appProtectDosEnabled {
- 		lbc.cleanupUnwatchedAppDosResources(nsi)
- 	}
-+	if nsi.isSecretsEnabledNamespace {
-+		lbc.cleanupUnwatchedSecrets(nsi)
-+	}
-+	nl.Debugf(l, "Finished cleaning up configuration for un
-```
-
-**File**: `internal/k8s/namespaced_informer_test.go` (modified, +118/-0)
-```diff
-@@ -2,14 +2,132 @@ package k8s
- 
- import (
- 	"context"
-+	"slices"
- 	"testing"
-+	"time"
- 
-+	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
- 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
- 	k8s_nginx_fake "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned/fake"
-+	api_v1 "k8s.io/api/core/v1"
-+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	dynamicfake "k8s.io/client-go/dynamic/fake"
-+	"k8s.io/client-go/kubernetes/fake"
-+	"k8s.io/client-go/tools/cache"
- )
- 
-+// TestNewLoadBalancerControllerWatchesSecretNamespaces checks which Secrets the
-+// controller sees for each way -watch-namespace and -watch-secret-namespace
-+// combine.
-+func TestNewLoadBalancerControllerWatchesSecretNamespaces(t *testing.T) {
-+	t.Parallel()
-+
-+	allNamespaces := []string{"ns-a", "ns-b", "ns-c"}
-+
-+	tests := []struct {
-+		name             string
-+		namespaces       []string // -watch-namespace, where "" is every namespace
-+		secretNamespaces []string // -watch-secret-namespace, which defaults to namespaces
-+		wantWatched      []string
-+	}{
-+		{
-+			name:             "all namespaces",
-+			namespaces:       []string{""},
-+			secretNamespaces: []string{""},
-+			wantWatched:      allNamespaces,
-+		},
-+		{
-+			name:             "all namespaces, secrets in listed namespaces",
-+			namespaces:       []string{""},
-+			secretNamespaces: []string{"ns-a", "ns-b"},
-+			wantWatched:      []string{"ns-a", "ns-b"},
-+		},
-+		{
-+			name:             "listed namespaces, secrets in listed namespaces",
-+			namespaces:       []string{"ns-a", "ns-c"},
-+			secretNamespaces: []string{"ns-a", "ns-b"},
-+			wantWatched:      []string{"ns-a"},
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			var objs []runtime.Object
-+			for _, ns := range allNamespaces {
-+				objs = append(objs, &api_v1.Secret{ObjectMeta: meta_v1.ObjectMeta{Name: "tls-secret", Namespace: ns}})
-+			}
-+			lbc := NewLoadBalancerController(NewLoadBalancerControllerInput{
-+				KubeClient:      fake.NewClientset(objs...),
-+				LoggerContext:   context.Background(),
-+				Namespace:       tc.namespaces,
-+				SecretNamespace: tc.secretNamespaces,
-+			})
-+			startNamespacedInformers(t, lbc)
-+			lbc.preSyncSecrets()
-+
-+			store := lbc.secretStore.(*secrets.LocalSecretStore)
-+			for _, ns := range allNamespaces {
-+				key := ns + "/tls-secret"
-+				want := slices.Contains(tc.wantWatched, ns)
-+				if got := store.HoldsSecret(key); got != want {
-+					t.Errorf("HoldsSecret(%q) after preSyncSecrets = %t, want %t", key, got, want)
-+				}
-+				if _, err := lbc.getSecret(key); (err == nil) != want {
-+					t.Errorf("getSecret(%q) error = %v, want found = %t", key, err, want)
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+// startNamespacedInformers starts every informer group of lbc, as Run does, and
-+// waits for their caches to sync. The groups are stopped when the test ends.
-+func startNamespacedInformers(t *testing.T, lbc *LoadBalancerController) {
-+	t.Helper()
-+
-+	var cacheSyncs []cache.InformerSynced
-+	lbc.namespacedInformers.ForEach(func(nsi *namespacedInformer) {
-+		nsi.start()
-+		t.Cleanup(nsi.stop)
-+		cacheSyncs = append(cacheSyncs, nsi.cacheSyncs...)
-+	})
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+	defer cancel()
-+	if !cache.WaitForCacheSync(ctx.Done(), cacheSyncs...) {
-+		t.Fatal("informer caches did not sync")
-+	}
-+}
-+
-+// TestSyncNamespaceUnwatchesNamespaceWithoutSecrets drives the label-removed
-+// branch of syncNamespace for a namespace left out of -watch-secret-namespace,
-+// so its informer group has no Secret lister. Cleaning it up used to dereference
-+// that nil lister and crash the controller.
-+func TestSyncNamespaceUnwatchesNamespaceWithoutSecrets(t *testing.T) {
-+	t.Parallel()
-+
-+	lbc := newBatchTestLBC(t, newSecretReconciliationNginxManager())
-+	lbc.client = fake.NewClientset(&api_v1.Namespace{
-+		ObjectMeta: meta_v1.ObjectMeta{Name: "app-ns"},
-+		Status:     api_v1.NamespaceStatus{Phase: api_v1.NamespaceActive},
-+	})
-+	lbc.secretNamespaceList = []string{"secrets-ns"}
-+	// Empty: "app-ns" still exists but lost the watch label.
-+	lbc.namespaceLabeledLister = cache.NewStore(cache.MetaNamespaceKeyFunc)
-+	if _, err := lbc.newNamespacedInformer("app-ns"); err != nil {
-+		t.Fatalf("newNamespacedInformer(\"app-ns\") returned error: %v", err)
-+	}
-+
-+	lbc.syncNamespace(task{Key: "app-ns"})
-+
-+	if got := lbc.namespacedInformers.Get("app-ns"); got != nil {
-+		t.Errorf("namespacedInformers.Get(\"app-ns\") after the watch label was removed = %v, want nil", got)
-+	}
-+}
-+
- func TestAddCustomResourceHandlers_Disabled(t *testing.T) {
- 	t.Parallel()
- 	lbc := &LoadBalancerController{areCustomResourcesEnabled: false}
-```
-
-**File**: `internal/k8s/utils.go` (modified, +29/-0)
-```diff
-@@ -105,6 +105,35 @@ func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (
- 	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
- }
- 
-+// secretLister reads the Secrets that an informer group caches.
-+type secretLister interface {
-+	GetByKey(key string) (item interface{}, exists bool, err error)
-+	List() []interface{}
-+}
-+
-+// storesToSecretLister reads Secrets across the stores of an informer group's
-+// Secret informers, one for each namespace it watches Secrets in.
-+type storesToSecretLister []cache.Store
-+
-+// GetByKey returns the Secret with the given key from the store that holds it.
-+func (s storesToSecretLister) GetByKey(key string) (interface{}, bool, error) {
-+	for _, store := range s {
-+		if obj, exists, err := store.GetByKey(key); exists || err != nil {
-+			return obj, exists, err
-+		}
-+	}
-+	return nil, false, nil
-+}
-+
-+// List lists the Secrets in every store.
-+func (s storesToSecretLister) List() []interface{} {
-+	var objs []interface{}
-+	for _, store := range s {
-+		objs = append(objs, store.List()...)
-+	}
-+	return objs
-+}
-+
- // findPort locates the container port for the given pod and portName.  If the
- // targetPort is a number, use that.  If the targetPort is a string, look that
- // string up in all named ports in all containers in the target pod.  If no
-```
-
-**File**: `tests/suite/test_watch_secret_namespace.py` (modified, +71/-43)
-```diff
-@@ -3,7 +3,7 @@
- import pytest
- import requests
- from settings import TEST_DATA
--from suite.utils.resources_utils import create_secret_from_yaml, wait_before_test
-+from suite.utils.resources_utils import create_secret_from_yaml, delete_secret, wait_before_test
- from suite.utils.ssl_utils import create_sni_session
- 
- 
-@@ -22,7 +22,17 @@
-                 ],
-             },
-             {"example": "watch-secret-namespace"},
--        )
-+        ),
-+        (
-+            {
-+                "type": "complete",
-+                "extra_args": [
-+                    f"-enable-custom-resources",
-+                    f"-watch-secret-namespace=backends",
-+                ],
-+            },
-+            {"example": "watch-secret-namespace"},
-+        ),
-     ],
-     indirect=True,
- )
-@@ -37,29 +47,33 @@ def test_responses(
-     ):
-         """Creates 3 tests 1). watching specific ns and secret ns, 2). watching only specific secret ns, 3). watching all ns"""
-         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
--        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
--        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
--        session = create_sni_session()
--        exception = ""
--        resp = mock.Mock()
--        resp.status_code = "None"
--        resp.text = "None"
--        retry = 0
--        while resp.status_code == "None" and retry < 10:
--            wait_before_test()
--            try:
--                resp = session.get(
--                    f"{req_url}{v_s_route_setup.route_m.paths[0]}",
--                    headers={"host": v_s_route_setup.vs_host},
--                    allow_redirects=False,
--                    verify=False,
--                )
--            except requests.exceptions.SSLError as e:
--                exception = str(e)
--                print(f"SSL certificate exception: {exception}")
--            retry = retry + 1
-+        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
-+        try:
-+            req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
-+            session = create_sni_session()
-+            exception = ""
-+            resp = mock.Mock()
-+            resp.status_code = "None"
-+            resp.text = "None"
-+            retry = 0
-+            while resp.status_code == "None" and retry < 10:
-+                wait_before_test()
-+                try:
-+                    resp = session.get(
-+                        f"{req_url}{v_s_route_setup.route_m.paths[0]}",
-+                        headers={"host": v_s_route_setup.vs_host},
-+                        allow_redirects=False,
-+                        verify=False,
-+                    )
-+                except requests.exceptions.SSLError as e:
-+                    exception = str(e)
-+                    print(f"SSL certificate exception: {exception}")
-+                retry = retry + 1
- 
--        assert resp.status_code == 200
-+            assert resp.status_code == 200
-+        finally:
-+            # pytest reuses v_s_route_setup and its namespaces for the next parametrization, as its param is the same.
-+            delete_secret(kube_apis.v1, secret_name, "backends")
- 
- 
- @pytest.mark.vsr
-@@ -77,7 +91,17 @@ def test_responses(
-                 ],
-             },
-             {"example": "watch-secret-namespace"},
--        )
-+        ),
-+        (
-+            {
-+                "type": "complete",
-+                "extra_args": [
-+                    f"-enable-custom-resources",
-+                    f"-watch-secret-namespace=invalid",
-+                ],
-+            },
-+            {"example": "watch-secret-namespace"},
-+        ),
-     ],
-     indirect=True,
- )
-@@ -92,22 +116,26 @@ def test_responses(
-     ):
-         """Creates 2 tests 1). watching specific ns and invalid secret ns, 2). watching only invalid secret ns"""
-         src_vs_sec_yaml = f"{TEST_DATA}/watch-secret-namespace/tls-secret.yaml"
--        create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
--        req_url = f"https://{v_s_route_setup.public_endpoint.public_ip}:{v_s_route_setup.public_endpoint.port_ssl}"
--        session = create_sni_session()
--        exception = ""
--        wait_before_test()
-+        secret_name = create_secret_from_yaml(kube_apis.v1, "backends", src_vs_sec_yaml)
-         try:
--            resp = session.get(
--                f"{req_url}{v_s_route_setup.route_m.paths[0]}",
--                headers={"host": v_s_route_setup.vs_host},
--                allow_redirects=False,
--                verify=False,
--            )
--        except requests.exceptions.SSLError as e:
--            exception = str(e)
--            print(f"SSL certificate exception: {exception}")
--            resp = mock.Mock()
--            resp.status_code = "None"
--            resp.text = "None"
--        assert "[SSL: TLSV1_UNRECOGNIZED_NAME]" in exception and 
+@@ -1,4 +1,4 @@
+-{{- if .Values.rbac.create }}
++{{- if and .Values.rbac.create .Values.rbac.clusterrole.create }}
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11566** (closed): DO NOT MERGE Only create ClusterRoleBinding when rbac.clusterrole.create=true (@nic-create-pr[bot])
 - **PR #11547** (2026-11-26): [ci]: 7.2-lts: drive release image publishing from registries.json (@javorszky)
 - **PR #11545** (closed): add hardening script (@vepatel)
 - **PR #11543** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
 - **PR #11542** (2026-11-26): [ci]: 7.2: drive release image publishing from registries.json (@javorszky)
 - **PR #11541** (2026-11-26): Route release image builds through the proxy runner & F5 registry (@pdabelf5)
-- **PR #11540** (2026-11-26): [ci]: 6.x and 7.1 for release-2026-lts: Change docs_only to non_code_only (@javorszky)
 
 ---
 
@@ -1920,75 +1509,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bugs with watch-namespaces-secret and nil pointer dereference
+## X. Only create ClusterRoleBinding when rbac.clusterrole.create=true
 
 **RULE**:
-When implementing operations in `internal/k8s/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/nginx-ingress/templates/clusterrolebinding.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `070abf91`: bugs with watch-namespaces-secret and nil pointer dereference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28009b62`: Only create ClusterRoleBinding when rbac.clusterrole.create=true. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/k8s/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/nginx-ingress/templates/clusterrolebinding.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	secretInformerFactories      []informers.SharedInformerFactory
-	secretLister                 secretLister
-	var secretStores storesToSecretLister
-	for _, secretNs := range lbc.secretNamespacesFor(ns) {
-		factory := informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(secretNs), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
-		store, err := nsi.addSecretHandler(factory, createSecretHandlers(lbc))
-		if err != nil {
-			return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", secretNs, err)
-		secretStores = append(secretStores, store)
-	}
-	if len(secretStores) > 0 {
-		nsi.isSecretsEnabledNamespace = true
-		nsi.secretLister = secretStores
-// secretNamespacesFor returns the namespaces whose Secrets the informer group for
-// ns watches
-func (lbc *LoadBalancerController) secretNamespacesFor(ns string) []string {
-	switch {
-	case slices.Contains(lbc.secretNamespaceList, ""), slices.Contains(lbc.secretNamespaceList, ns):
-		return []string{ns}
-	case ns == "":
-		return slices.Compact(slices.Sorted(slices.Values(lbc.secretNamespaceList)))
-	default:
-		return nil
-	}
-}
-
-// addSecretHandler adds the handler for the Secrets that
+{{- if and .Values.rbac.create .Values.rbac.clusterrole.create }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	secretInformerFactory        informers.SharedInformerFactory
-	secretLister                 cache.Store
-	// Check if secrets informer should be created for this namespace
-	for _, v := range lbc.secretNamespaceList {
-		if v == "" || v == ns {
-			nsi.isSecretsEnabledNamespace = true
-			nsi.secretInformerFactory = informers.NewSharedInformerFactoryWithOptions(lbc.client, lbc.resync, informers.WithNamespace(ns), informers.WithTweakListOptions(secretsTweakListOptionsFunc))
-			if err := nsi.addSecretHandler(createSecretHandlers(lbc)); err != nil {
-				return nil, fmt.Errorf("failed to add secret handler for namespace %s: %w", ns, err)
-			}
-			break
-// addSecretHandler adds the handler for secrets to the controller
-func (nsi *namespacedInformer) addSecretHandler(handlers cache.ResourceEventHandlerFuncs) error {
-	informer := nsi.secretInformerFactory.Core().V1().Secrets().Informer()
-		return fmt.Errorf("failed to add Secret event handler: %w", err)
-	nsi.secretLister = informer.GetStore()
-	return nil
-	if nsi.isSecretsEnabledNamespace {
-		go nsi.secretInformerFactory.Start(nsi.stopCh)
+{{- if .Values.rbac.create }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `070abf91` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28009b62` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

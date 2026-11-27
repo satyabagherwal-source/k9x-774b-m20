@@ -13851,3 +13851,5 @@
 | `CYCLE-20261127-YBQK` | `2026-11-27T18:43:58.316Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10951` | Yes (`b102b732...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T18:44:30.049Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-1440511C` [Domain K] | Yes (`818da12b...`) |
 | `CYCLE-20261127-IJQ1` | `2026-11-27T18:59:41.785Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10952` | Yes (`ecba6bbc...`) |
+| `CYCLE-20261127-6F1H` | `2026-11-27T19:18:15.461Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10953` | Yes (`56bef338...`) |
+| `CYCLE-20261127-6GDN` | `2026-11-27T19:18:17.195Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10954` | Yes (`de3f4610...`) |

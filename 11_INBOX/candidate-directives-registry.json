@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:07:51.773Z",
+  "last_updated": "2026-11-27T19:18:24.077Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54517,14 +54517,14 @@
     },
     {
       "id": "CD-6LOT",
-      "directive_title": "update golang to 1.26.11",
-      "source_repo": "linkerd/linkerd2",
-      "source_commit": "8d6fcc5b",
-      "staged_file": "11_INBOX/candidate-directives/CD-6LOT-update-golang-to-1-26-11.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-24",
-      "domain_letter": "G"
+      "directive_title": "Bump version number",
+      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6LOT-bump-version-number.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
     },
     {
       "id": "CD-6UNN",
@@ -72097,6 +72097,55 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2CE93F-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-6JP9",
+      "directive_title": "Windows webhook lock initialization under contention",
+      "source_repo": "maziyarpanahi-openmed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6JP9-windows-webhook-lock-initialization-under-contention.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-6KQ2",
+      "directive_title": "Only create ClusterRoleBinding when rbac.clusterrole.create=true",
+      "source_repo": "nginx-kubernetes-ingress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KQ2-only-create-clusterrolebinding-when-rbac-clusterrole-create-true.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-EC8497",
+      "directive_title": "Windows webhook lock initialization under contention",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "maziyarpanahi-openmed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EC8497-windows-webhook-lock-initialization-unde.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-395123",
+      "directive_title": "Only create ClusterRoleBinding when rbac.clusterrole.create=true",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-395123-only-create-clusterrolebinding-when-rbac.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-296A43",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-296A43-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

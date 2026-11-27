@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T19:07:48.785Z",
-    "lastVerified": "2026-11-27T19:07:48.785Z",
+    "lastChecked": "2026-11-27T19:18:20.875Z",
+    "lastVerified": "2026-11-27T19:18:20.875Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T18:35:04.367Z",
+    "lastChecked": "2026-11-27T19:18:18.389Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T18:35:04.367Z"
+    "lastVerified": "2026-11-27T19:18:18.389Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -462,14 +462,14 @@
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T01:06:52.458Z",
-    "lastVerified": "2026-11-27T01:06:52.458Z",
+    "lastChecked": "2026-11-27T19:18:15.745Z",
+    "lastVerified": "2026-11-27T19:18:15.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
+    "contentHash": "de3f46102453dac28d7b191002623f44919b09444008ad8a3ba1aa2c21650cb6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -934,9 +934,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-27T15:00:06.547Z",
+    "lastChecked": "2026-11-27T19:18:13.144Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-27T15:00:06.547Z"
+    "lastVerified": "2026-11-27T19:18:13.144Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -3434,12 +3434,12 @@
     "lastVerified": "2026-11-27T17:19:27.401Z"
   },
   "o2sh-onefetch": {
-    "name": "o2sh/onefetch",
+    "name": "onefetch",
     "officialUrl": "https://github.com/o2sh/onefetch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T18:58:46.553Z",
-    "lastVerified": "2026-11-26T18:58:46.553Z",
+    "lastChecked": "2026-11-27T19:18:03.202Z",
+    "lastVerified": "2026-11-27T19:18:03.202Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-o2sh-onefetch",
@@ -3448,7 +3448,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "98660b72"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "name": "unsloth/Qwen3.8-27B-GGUF",
@@ -4249,8 +4250,8 @@
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T00:07:24.193Z",
-    "lastVerified": "2026-11-27T00:07:24.193Z",
+    "lastChecked": "2026-11-27T19:18:15.728Z",
+    "lastVerified": "2026-11-27T19:18:15.728Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -9903,22 +9904,21 @@
     "lastVerified": "2026-11-27T14:59:58.799Z"
   },
   "maziyarpanahi-openmed": {
-    "name": "openmed",
+    "name": "maziyarpanahi/openmed",
     "officialUrl": "https://github.com/maziyarpanahi/openmed",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-25T10:21:19.206Z",
-    "lastVerified": "2026-11-25T10:21:19.206Z",
+    "lastChecked": "2026-11-27T19:18:13.819Z",
+    "lastVerified": "2026-11-27T19:18:13.819Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-maziyarpanahi-openmed",
-    "contentHash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
+    "contentHash": "56bef338b475cc90fef6f068732ea5b845f1fdfbceec630bb74b06b3d89faff8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3ee61a86"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lokoe-mehdi-scouter": {
     "name": "scouter",
@@ -10405,9 +10405,9 @@
   "berkaycubuk-kitsune": {
     "name": "kitsune",
     "officialUrl": "https://github.com/berkaycubuk/kitsune",
-    "lastChecked": "2026-11-24T11:04:46.739Z",
+    "lastChecked": "2026-11-27T19:18:05.581Z",
     "revisionIdentifier": "616da5b1",
-    "lastVerified": "2026-11-24T11:04:46.739Z"
+    "lastVerified": "2026-11-27T19:18:05.581Z"
   },
   "shifthackz-stable-diffusion-kmp": {
     "name": "ShiftHackZ/SDAI-KMP",

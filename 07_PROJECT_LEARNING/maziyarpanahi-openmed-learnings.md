@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `3ee61a86`  
+> **Source Version**: `5b79cae5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:33:17.356Z  
+> **Timestamp**: 2026-11-27T19:18:14.029Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:33:17.351Z  
+> **Harvest Timestamp**: 2026-11-27T19:18:13.819Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5834 stars
+- **Stars / Engagement**: 5854 stars
 
 ---
 
@@ -1646,437 +1646,270 @@ if (electronProcess.parentPort) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ee61a86` (2026-11-20)
-**Commit Message**: Merge pull request #5699 from alirezarezvani/test/issue-4760-synthetic-gait-pose-fixture
+### Incident Patch 1: `5b79cae5` (2026-11-27)
+**Commit Message**: Fix Windows webhook lock initialization under contention (#5823)
 
-test: add synthetic pose sequences with gait-cycle truth
-
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `openmed/service/_state_files.py` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -93,8 +93,8 @@ def exclusive_lock(lock_path: Path) -> Iterator[None]:
+         if sys.platform == "win32":  # pragma: no cover - exercised on Windows only
+             import msvcrt
  
- ### Added
- 
-+- Add a standard-library synthetic side-view walker fixture for pose and gait
-+  tests: seeded joint sequences with heel-strike, toe-off, cadence, step-time and
-+  double-support truth, asymmetry, far-leg occlusion, joint jitter and a
-+  second walker, plus seven curated scenarios with literature-grounded
-+  parameters and pinned digests. The truth is checked against the generated
-+  contact geometry and an independent pelvis-relative event detector (#4760).
- - Added a body-signal model license provenance page listing code, weight and
-   training-data licenses, intended use and check dates for candidate pose,
-   audio, sleep and chest X-ray models, and marking models with unstated weight
+-            if os.fstat(descriptor).st_size == 0:
+-                os.write(descriptor, b"0")
++            # Windows can lock a range past EOF. Writing a marker here races
++            # with other descriptors that have already locked byte zero.
+             os.lseek(descriptor, 0, os.SEEK_SET)
+             msvcrt.locking(descriptor, msvcrt.LK_LOCK, 1)
+         else:
 ```
 
-**File**: `tests/fixtures/multimodal/pose_sequences.py` (added, +476/-0)
+**File**: `tests/unit/service/test_webhook_replay.py` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,476 @@
-+"""Synthetic side-view walkers with gait-cycle truth; never footage of a person.
-+
-+The generator draws a deterministic sagittal-plane stick figure from gait timing
-+that is fixed first, so heel-strike and toe-off truth is exact by construction,
-+and then builds the joint trajectories from that timing. The stance foot stays
-+planted, the swing foot leaves and lands at pelvis speed (so pelvis-relative
-+event detectors are unbiased), and the knee comes from two-link inverse
-+kinematics with fixed thigh and shank lengths. Only the standard library is
-+used, nothing is written to disk and nothing touches the network.
-+
-+Conventions:
-+
-+* Coordinates are ``(x, y)`` tuples in normalized image space of a fixed 16:9
-+  camera: ``x`` grows to the right, ``y`` grows downwards, and the default
-+  walks stay inside ``[0, 1]``. Occluded joints are ``None``.
-+* Walkers move left to right with their left side towards the camera, so right
-+  limbs are the far side. Left and right hips and shoulders coincide in a pure
-+  sagittal view.
-+* Heel strike is initial contact (the heel first reaches the ground plane) and
-+  toe off is final contact (the toe leaves it). Event frames are
-+  ``round(time * fps)``; unquantized times are kept for tolerance choices.
-+* Joint names follow the BlazePose landmark naming. They are a fixture-local
-+  vocabulary, not the canonical pose contract.
-+
-+Parameter provenance (scenario values are population means, not targets):
-+
-+* Body proportions as fractions of height: Winter, *Biomechanics and Motor
-+  Control of Human Movement*, 4th ed., 2009, segment-length figure.
-+* Typical adult free walking (113 steps/min, 1.41 m stride, 60 % stance):
-+  Perry and Burnfield, *Gait Analysis: Normal and Pathological Function*,
-+  2nd ed., 2010.
-+* Older adults walking at self-selected speed (109 steps/min, 1.24 m stride,
-+  64 % stance): Hollman, McDade and Petersen, Gait Posture 34(1):111-118, 2011.
-+* Pelvis-relative event definitions used by the tests: Zeni, Richards and
-+  Higginson, Gait Posture 27(4):710-714, 2008.
-+"""
-+
-+from __future__ import annotations
-+
-+import math
-+import random
-+from dataclasses import dataclass, replace
-+
-+JOINTS = (
-+    "nose",
-+    "left_shoulder",
-+    "right_shoulder",
-+    "left_hip",
-+    "right_hip",
-+    "left_knee",
-+    "right_knee",
-+    "left_ankle",
-+    "right_ankle",
-+    "left_heel",
-+    "right_heel",
-+    "left_foot_index",
-+    "right_foot_index",
-+)
-+FEET = ("left", "right")
-+FAR_LEG_JOINTS = ("right_knee", "right_ankle", "right_heel", "right_foot_index")
-+
-+# Fractions of body height (Winter 2009) and fixed foot geometry.
-+_HIP, _KNEE, _ANKLE, _SHOULDER, _NOSE, _FOOT = 0.530, 0.285, 0.039, 0.818, 0.91, 0.152
-+_ANKLE_FORWARD = 0.25  # ankle centre ahead of the heel, as a fraction of foot length
-+_STRIKE_PITCH = math.radians(15.0)  # toe up at initial contact
-+_OFF_PITCH = math.radians(-45.0)  # toe down at final contact
-+_FOOT_FLAT, _HEEL_OFF = 0.13, 0.52  # fractions of stance
-+_REACH = 0.995  # largest hip-ankle distance, as a fraction of thigh + shank
-+_MIN_HIP = 0.85  # lowest mean hip height, as a fraction of standing hip height
-+ASPECT = 16 / 9  # camera frame width over height
-+_MARGIN = 0.06
+@@ -12,6 +12,7 @@
+ import httpx
+ import pytest
+ 
++from openmed.service._state_files import exclusive_lock
+ from openmed.service.egress import EGRESS_RULES_ENV_VAR
+ from openmed.service.signing import (
+     NONCE_HEADER,
+@@ -248,6 +249,17 @@ def test_replay_stays_rejected_after_a_receiver_restart(tmp_path: Path) -> None:
+     assert retry.reason == "delivery_applied"
+ 
+ 
++@pytest.mark.parametrize("original", [b"", b"0"])
++def test_lock_acquisition_preserves_empty_and_existing_files(
++    tmp_path: Path, original: bytes
++) -> None:
++    path = tmp_path / "ledger.lock"
++    path.write_bytes(original)
++    with exclusive_lock(path):
++        assert path.stat().st_size == len(original)
++    assert path.read_bytes() == original
 +
 +
-+class PoseFixtureError(ValueError):
-+    """Raised for walker parameters the stick figure cannot realize."""
-+
-+
-+@dataclass(frozen=True)
-+class WalkerSpec:
-+    """Gait parameters of one synthetic walker.
-+
-+    ``asymmetry`` lengthens the left step (right strike to left strike) by
-+    ``1 + asymmetry`` and shortens the right step by ``1 - asymmetry``; stride
-+    time and cadence stay unchanged. ``depth`` scales the walker as if further
-+    from the camera, and ``occlusions`` lists ``(joint, start, stop)`` frame
-+    ranges, half-open, in which the joint is reported as ``None``.
-+    """
-+
-+    cadence_spm: float = 113.0
-+    stride_length_m: float = 1.41
-+    stance_fraction: float = 0.60
-+    asymmetry: float = 0.0
-+    height_m: float = 1.70
-+    swing_lift_m: float = 0.04
-+    start_phase: float = 0.0
-+    depth: float = 1.0
-+    occlusions: tuple[tuple[str, int, int], ...] = ()
-+
-+
-+@dataclass(frozen=True)
-+class GaitTruth:
-+    """Event truth and the temporal-spatial values implied by one walker.
-+
-+    ``double_support_fraction`` is the total of both double-support periods per
-+    stride; with step-time asymmetry the two periods differ in length.
-+    """
-+
-+    heel_strikes: tuple[tuple[str, int], ...]
-+    toe_offs: tuple[tuple[str, int], ...]
-+    heel_strike_times_s: tuple[tuple[str, float], ...]
-+    toe_off_times_s: tuple[tuple[str, float], ...]
-+    cadence_spm: float
-+    left_step_time_s: float
-+    right_step_time_s: float
-+    stride_time_s: float
-+    stance_fraction: float
-+    double_support_fraction: float
-+    stride_length_m: float
-+    gait_speed_m_s: float
-+
-+
-+@dataclass(frozen=True)
-+class WalkerTrack:
-+    """Per-frame joints (indexed like ``JOINTS``) and truth for one walker."""
-+
-+    spec: WalkerSpe
-```
-
-**File**: `tests/unit/multimodal/test_pose_sequence_fixture.py` (added, +443/-0)
-```diff
-@@ -0,0 +1,443 @@
-+"""Truth, geometry and determinism checks for the synthetic walker fixture (#4760).
-+
-+The truth is checked three ways: for internal consistency (alternation, cadence,
-+asymmetry, double support), against the generated geometry (contact frames),
-+and against an independent pelvis-relative event detector (Zeni et al. 2008),
-+so a fixture change that keeps the arithmetic but moves the visible events
-+fails loudly.
-+"""
-+
-+from __future__ import annotations
-+
-+import ast
-+import builtins
-+import dataclasses
-+import hashlib
-+import json
-+import math
-+import os
-+import random
-+import socket
-+import sys
-+from pathlib import Path
-+
-+import pytest
-+
-+from tests.fixtures.multimodal import pose_sequences
-+from tests.fixtures.multimodal.pose_sequences import (
-+    ASPECT,
-+    FAR_LEG_JOINTS,
-+    FEET,
-+    JOINTS,
-+    SCENARIOS,
-+    PoseFixtureError,
-+    WalkerSpec,
-+    far_leg_crossings,
-+    gait_truth,
-+    scenario,
-+    synthetic_pose_sequence,
-+)
-+
-+J = {name: index for index, name in enumerate(JOINTS)}
-+NOISELESS = sorted(set(SCENARIOS) - {"joint_jitter"})
-+ON_GROUND = 1e-5
-+
-+# Any change to the generated output must be a deliberate update of these pins.
-+SCENARIO_SHA256 = {
-+    "far_leg_occlusion": "5f4fe1a8bb217e1c4a28eae02f5ab273d35e4bd44925f448aba46021d0cb938e",
-+    "joint_jitter": "4dbd2799c308e6fe0c58b16baf34db6f201d062e0f392e3f7a97a6de92ae2f0e",
-+    "older_adult_self_selected": (
-+        "1c9e454f76e0f381864758eef9419054cb9130e2a6a130d7b7a406cf2c07eeb9"
-+    ),
-+    "short_stride_low_lift": "ae06659e9cfa3c303389bf96da2309d9f29d4a74747984ce0b88796a1e23f6a5",
-+    "step_time_asymmetry": "e8f229fc80647181ec8d839732af0fe88fec53eaa2e35e05fa7d44b4692ae504",
-+    "two_walkers": "32d2c04aac922cd62c18ce106e33958cdedb3d97ac7598192b555b0c68f309fc",
-+    "typical_adult": "f112a17749e448418e7f5dcb42ee449adae62347a32cec4a48bf89023cc13355",
-+}
-+
-+
-+def _digest(fixture):
-+    payload = json.dumps(
-+        dataclasses.asdict(fixture), sort_keys=True, separators=(",", ":")
-+    )
-+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
-+
-+
-+def _metric_distance(a, b):
-+    """Distance with both axes in image-width units (pixels are square)."""
-+    return math.hypot(a[0] - b[0], (a[1] - b[1]) / ASPECT)
-+
-+
-+def _series(track, joint, axis):
-+    return [None if f[J[joint]] is None else f[J[joint]][axis] for f in track.frames]
-+
-+
-+def _zeni(track, foot):
-+    """Heel strike at max heel-minus-pelvis x, toe off at min toe-minus-pelvis x."""
-+    pelvis = _series(track, "left_hip", 0)
-+    heel = [h - p for h, p in zip(_series(track, f"{foot}_heel", 0), pelvis)]
-+    toe = [t - p for t, p in zip(_series(track, f"{foot}_foot_index", 0), pelvis)]
-+    inner = range(1, len(pelvis) - 1)
-+    strikes = [i for i in inner if heel[i - 1] <= heel[i] > heel[i + 1]]
-+    offs = [i for i in inner if toe[i - 1] >= toe[i] < toe[i + 1]]
-+    return strikes, offs
-+
-+
-+def _interior(events, foot, frame_count):
-+    return [i for f, i in events if f == foot and 2 <= i <= frame_count - 3]
-+
-+
-+@pytest.mark.parametrize("name", sorted(SCENARIOS))
-+def test_same_arguments_give_identical_output(name):
-+    assert scenario(name) == scenario(name)
-+    assert _digest(scenario(name)) == _digest(scenario(name))
-+
-+
-+def test_seed_drives_noise_only():
-+    assert scenario("joint_jitter", seed=1) != scenario("joint_jitter", seed=2)
-+    assert scenario("typical_adult", seed=1) == scenario("typical_adult", seed=2)
-+
-+
-+@pytest.mark.parametrize("name", sorted(SCENARIOS))
-+def test_events_are_ordered_and_alternate(name):
-+    for track in scenario(name).walkers:
-+        truth = track.truth
-+        for events in (truth.heel_strike_times_s, truth.toe_off_times_s):
-+            times = [t for _, t in events]
-+            assert times == sorted(times) and len(set(times)) == len(times)
-+            feet = [f for f, _ in events]
-+            assert all(a != b for a, b in zip(feet, feet[1:]))
-+        for foot in FEET:
-+            merged = sorted(
-+                [(t, "hs") for f, t in truth.heel_strike_times_s if f == foot]
-+                + [(t, "to") for f, t in truth.toe_off_times_s if f == foot]
-+            )
-+            kinds = [k for _, k in merged]
-+            assert all(a != b for a, b in zip(kinds, kinds[1:]))
-+
-+
-+@pytest.mark.parametrize("fps", [25.0, 30.0, 60.0])
-+@pytest.mark.parametrize("cadence", [80.0, 113.0, 140.0])
-+def test_cadence_matches_events_within_one_frame(fps, cadence):
-+    spec = WalkerSpec(cadence_spm=cadence)
-+    track = synthetic_pose_sequence(walkers=(spec,), fps=fps).walkers[0]
-+    frames = [i for _, i in track.truth.heel_strikes]
-+    expected = 60.0 * fps / cadence
-+    assert len(frames) >= 4
-+    assert all(abs((b - a) - expected) <= 1 for a, b in zip(frames, frames[1:]))
-+    mean = (frames[-1] - frames[0]) / (len(frames) - 1)
-+    assert abs(60.0 * fps / mean - cadence) <= cadence / expected
-+
-+
-+@pytest.mark.parametrize("asymmetry", [-0.15, 0.0, 0.1])
-+def test_step_time_asy
+ def test_concurrent_receivers_cannot_both_claim_one_delivery(tmp_path: Path) -> None:
+     # Separate receiver and ledger objects share one file, as separate worker
+     # processes would; the file lock serializes their claims.
 ```
 
 ---
 
-### Incident Patch 2: `5243d92e` (2026-11-20)
-**Commit Message**: Merge master into synthetic gait fixture tests
+### Incident Patch 2: `bbec8495` (2026-11-26)
+**Commit Message**: Fix Windows failures in the full regression suite (#5821)
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `.gitattributes` (added, +2/-0)
 ```diff
-@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   second walker, plus seven curated scenarios with literature-grounded
-   parameters and pinned digests. The truth is checked against the generated
-   contact geometry and an independent pelvis-relative event detector (#4760).
-+- Added a body-signal model license provenance page listing code, weight and
-+  training-data licenses, intended use and check dates for candidate pose,
-+  audio, sleep and chest X-ray models, and marking models with unstated weight
-+  licenses as user-supplied only (#4759).
- - Added versioned JSON Schemas for the async job record, the terminal webhook
-   payload, and the REST error envelope, registered in the bundled schema
-   fingerprint snapshot, with drift tests that fail when a required field is
+@@ -0,0 +1,2 @@
++# Preserve the bytes of digest-pinned assets and reproducible artifacts on every OS.
++* text=auto eol=lf
 ```
 
-**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
+**File**: `docs/testing.md` (modified, +4/-0)
 ```diff
-@@ -637,6 +637,7 @@ classification:
-     - multimodal/preprocessing-conformance.md
-     - multimodal/provider-capability-matrix.md
-     - multimodal/provider-capability-schema.md
-+    - multimodal/body-signal-model-licenses.md
-     - multimodal/thermal-latency-gates.md
-     - multimodal/runtime-session.md
-     - multimodal/generated-text-guard.md
+@@ -59,6 +59,10 @@ Configure these markers via `pytest.ini` entries in `pyproject.toml`.
+ 
+ ## Running the suite
+ 
++Git preserves LF line endings for text files on every platform through
++`.gitattributes`. This keeps digest-pinned assets and generated test fixtures
++byte-identical in Windows source checkouts.
++
+ ```bash
+ uv pip install ".[dev,hf]"
+ make lint
 ```
 
-**File**: `docs/multimodal/body-signal-model-licenses.md` (added, +66/-0)
+**File**: `examples/federated_round_walkthrough.py` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,66 @@
-+# Body-signal Model License Provenance
-+
-+This page records what upstream sources say about the licenses of candidate
-+models for pose, audio, sleep and chest X-ray pipelines. Read it before an
-+adapter, example or fixture names one of these models. It is a provenance
-+record taken from upstream LICENSE files and model cards, not legal advice and
-+not an approval to use a model for any purpose.
-+
-+## Repository rule
-+
-+`AGENTS.md` requires core dependencies to stay permissive-license compatible.
-+GPL, source-available, proprietary and DUA-gated assets, including MIMIC, must
-+not be bundled. Restricted integrations stay behind optional user-supplied
-+assets or out-of-process bridges. For the models on this page that means:
-+
-+- OpenMed does not bundle, download by default or pin any of these weights.
-+- A model whose weight license is not stated, or whose weights were trained on
-+  DUA-gated data, is **user-supplied only**: the user obtains the weights,
-+  verifies that the intended use is permitted, accepts the applicable terms and
-+  passes a local path. Supplying a file does not itself grant usage rights.
-+- A model under a copyleft or non-commercial license is not used by OpenMed
-+  code, examples or fixtures.
-+- Check the scope of the code, weight and training-data terms separately. A
-+  repository license may cover distributed model files, but a code-license
-+  badge alone does not establish the terms of every checkpoint or dataset.
-+
-+The statuses below are conservative OpenMed integration decisions. Training on
-+restricted data is a reason to review the applicable agreement; it does not by
-+itself prove that the same license governs the resulting weights. "Not stated"
-+means no separate weight-license statement was found in the cited sources, not
-+that the weights are public domain or that the repository license cannot apply.
-+
-+Model-license propagation into exported artifacts and app bundles is covered
-+in [Export Toolchains, Artifact Licenses and
-+Redistribution](../security/export-redistribution.md).
-+
-+## Candidate models
-+
-+Sources in this table were checked on 2026-11-19.
-+
-+| Model | Code license | Weight license | Training-data notes | Intended use and out-of-scope notes | Status |
-+| --- | --- | --- | --- | --- | --- |
-+| torchxrayvision (chest X-ray) | `Apache-2.0` ([LICENSE](https://github.com/mlmed/torchxrayvision/blob/master/LICENSE)) | Not stated. The [README](https://github.com/mlmed/torchxrayvision/blob/master/README.md) lists pretrained weights but states no weight license. | Weights such as `densenet121-res224-mimic_nb`, `-mimic_ch` and `-chex`, and the `all` models, are trained on MIMIC-CXR or CheXpert. MIMIC-CXR is credentialed access under the [PhysioNet Credentialed Health Data License 1.5.0](https://physionet.org/content/mimic-cxr/2.1.0/). For CheXpert, consult the [Stanford dataset access route](https://aimi.stanford.edu/datasets/chexpert-chest-x-rays) and [AIMI licensing terms](https://aimi.stanford.edu/datasets-commercial-use): non-commercial access and commercial licensing are separate. | Research baselines and feature extractors. The README states no clinical intended use. | User-supplied only |
-+| YAMNet (audio events) | `Apache-2.0` ([TensorFlow Model Garden LICENSE](https://github.com/tensorflow/models/blob/master/LICENSE), which covers `research/`) | `Apache-2.0`, stated by a maintainer on the [audioset-users list](https://groups.google.com/g/audioset-users/c/Ly4guQnlv_o) by reference to the Model Garden license (2020-04-06). This is the weight-license evidence used here. | Trained on AudioSet ([README](https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/README.md)). The AudioSet dataset is `CC-BY-4.0` and its ontology, the source of the class names in `yamnet_class_map.csv`, is `CC-BY-SA-4.0` ([download page](https://research.google.com/audioset/download.html), [ontology README](https://github.com/audioset/ontology/blob/master/README.md)). | General audio-event classification over 521 AudioSet classes. The [upstream model documentation](https://github.com/tensorflow/tfhub.dev/blob/master/assets/docs/google/models/yamnet/1.md) warns that scores are uncalibrated and task-specific domain mismatch is possible; it provides no clinical-use validation. | User-supplied. Review ontology-derived class-map redistribution separately; preserve attribution and applicable CC BY-SA terms. |
-+| MediaPipe BlazePose GHUM 3D (pose) | `Apache-2.0` ([MediaPipe LICENSE](https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE)) | `Apache-2.0`, stated in the [model card](https://storage.googleapis.com/mediapipe-assets/Model%20Card%20BlazePose%20GHUM%203D.pdf) (April 2021). | The card reports 30K consented mobile-AR images and says most training images depict fitness poses. The z coordinate is up to scale, not metric. | Card lists augmented reality, pose and gesture recognition, fitness and repetition counting, and pose measurements. Out of scop
+@@ -10,6 +10,7 @@
+ 
+ import argparse
+ import json
++import sys
+ from datetime import datetime, timedelta, timezone
+ from typing import Any
+ 
+@@ -189,4 +190,5 @@ def main(argv: list[str] | None = None) -> int:
+ 
+ 
+ if __name__ == "__main__":
++    sys.stdout.reconfigure(encoding="utf-8", newline="\n")
+     raise SystemExit(main())
 ```
 
-**File**: `mkdocs.yml` (modified, +1/-0)
+**File**: `openmed/core/export_provenance.py` (modified, +25/-3)
 ```diff
-@@ -584,6 +584,7 @@ nav:
-           - VLM Preprocessing Conformance: multimodal/preprocessing-conformance.md
-           - Provider Capability Compatibility Matrix: multimodal/provider-capability-matrix.md
-           - Provider Capability Matrix Schema: multimodal/provider-capability-schema.md
-+          - Body-signal Model License Provenance: multimodal/body-signal-model-licenses.md
-           - Sustained Thermal and Latency Gates: multimodal/thermal-latency-gates.md
-           - Local Multimodal Runtime Sessions: multimodal/runtime-session.md
-           - Generated Text Release Guard: multimodal/generated-text-guard.md
+@@ -444,6 +444,25 @@ def write_observation_report(
+             handle.write(content)
+ 
+ 
++def _create_observation(path: Path) -> int:
++    if os.name != "nt":
++        return os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o666)
++
++    import _winapi
++    import msvcrt
++
++    # CREATE_NEW on the reparse point itself also refuses dangling symlinks.
++    # Inherit the directory ACL and permit the same read/write sharing as os.open.
++    handle = _winapi.CreateFile(
++        str(path), _winapi.GENERIC_WRITE, 3, 0, 1, 0x00200080, 0
++    )
++    try:
++        return msvcrt.open_osfhandle(handle, os.O_WRONLY | os.O_BINARY)
++    except BaseException:
++        _winapi.CloseHandle(handle)
++        raise
++
++
+ @contextmanager
+ def _observation_descriptor(
+     path: Path, *, create: bool = False
+@@ -460,10 +479,13 @@ def _observation_descriptor(
+         not stat.S_ISREG(expected.st_mode) or expected.st_nlink != 1
+     ):
+         raise ValueError(error)
+-    flags = os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+     if expected is None:
+-        flags |= os.O_CREAT | os.O_EXCL
+-    descriptor = os.open(path, flags, 0o666)
++        descriptor = _create_observation(path)
++    else:
++        flags = (
++            os.O_WRONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
++        )
++        descriptor = os.open(path, flags)
+     created = expected is None
+     opened: os.stat_result | None = None
+     succeeded = False
 ```
 
-**File**: `tests/fuzz/test_deidentify_fuzz.py` (modified, +13/-3)
+**File**: `openmed/eval/leaderboard.py` (modified, +5/-3)
 ```diff
-@@ -383,11 +383,13 @@ def test_every_sentinel_is_deterministically_covered_and_removed(label, value):
+@@ -411,13 +411,15 @@ def write_leaderboard(
+     for archive in archives:
+         report_output = reports_output / archive.relative_path
+         report_output.parent.mkdir(parents=True, exist_ok=True)
+-        report_output.write_text(_json_text(archive.payload), encoding="utf-8")
++        report_output.write_text(
++            _json_text(archive.payload), encoding="utf-8", newline="\n"
++        )
+         copied_reports.append(report_output)
+ 
+     html_path = destination / "index.html"
+     json_path = destination / "leaderboard.json"
+-    html_path.write_text(render_leaderboard_html(rows), encoding="utf-8")
+-    json_path.write_text(render_leaderboard_json(rows), encoding="utf-8")
++    html_path.write_text(render_leaderboard_html(rows), encoding="utf-8", newline="\n")
++    json_path.write_text(render_leaderboard_json(rows), encoding="utf-8", newline="\n")
+     return LeaderboardArtifacts(
+         html_path=html_path,
+         json_path=json_path,
+```
+
+**File**: `openmed/service/diagnostics.py` (modified, +13/-2)
+```diff
+@@ -889,9 +889,17 @@ def read_bytes(self, path: Path) -> bytes:
+         limits = shared.limits
+         shared.open_file()
+         try:
+-            descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
++            descriptor = os.open(
++                path,
++                os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0),
++            )
+         except FileNotFoundError:
+             raise _SourceProblem("source_absent") from None
++        except PermissionError:
++            # Windows refuses a directory at open, before fstat can classify it.
++            if path.is_dir():
++                raise _SourceProblem("source_unsafe") from None
++            raise _SourceProblem("source_unreadable") from None
+         except OSError:
+             raise _SourceProblem("source_unreadable") from None
+         try:
+@@ -2896,7 +2904,10 @@ def read_diagnostic_bundle(path: str | Path) -> bytes:
+         OSError: If the file cannot be opened or is not a regular file.
+     """
+ 
+-    descriptor = os.open(Path(path), os.O_RDONLY | getattr(os, "O_NONBLOCK", 0))
++    descriptor = os.open(
++        Path(path),
++        os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0),
++    )
+     try:
+         if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+             raise OSError("bundle source is not a regular file")
+```
+
+**File**: `openmed/service/secret_files.py` (modified, +7/-1)
+```diff
+@@ -62,6 +62,7 @@
+ _READ_CHUNK_BYTES = 64 * 1024
+ _OPEN_FLAGS = (
+     os.O_RDONLY
++    | getattr(os, "O_BINARY", 0)
+     | getattr(os, "O_CLOEXEC", 0)
+     | getattr(os, "O_NOCTTY", 0)
+     # A FIFO would otherwise block the open until a writer appears.
+@@ -221,12 +222,17 @@ def read_secret_file(
+     # Errors are raised outside ``except`` blocks so that no OSError (which
+     # carries the path) is chained to, or kept as context of, the failure.
+     descriptor: Optional[int]
++    open_error = SECRET_FILE_UNREADABLE
+     try:
+         descriptor = os.open(path, _OPEN_FLAGS)
++    except PermissionError:
++        descriptor = None
++        if os.path.isdir(path):
++            open_error = SECRET_FILE_NOT_REGULAR
+     except (OSError, TypeError, ValueError):
+         descriptor = None
+     if descriptor is None:
+-        raise SecretSourceError(setting, SECRET_FILE_UNREADABLE)
++        raise SecretSourceError(setting, open_error)
+     try:
+         data, code = _read_descriptor(
+             descriptor,
+```
+
+**File**: `scripts/generate_grpc_stubs.py` (modified, +2/-1)
+```diff
+@@ -100,6 +100,7 @@ def _generate_into(output_dir: Path) -> None:
+         "from . import kserve_v2_pb2, openmed_pb2, openmed_pb2_grpc\n\n"
+         '__all__ = ["kserve_v2_pb2", "openmed_pb2", "openmed_pb2_grpc"]\n',
+         encoding="utf-8",
++        newline="\n",
      )
  
  
--def test_malformed_iscii_preserves_clinical_text_and_identifier_spans(subtests):
-+@pytest.mark.parametrize("label", ["NAME", "PERSON"])
-+def test_malformed_iscii_preserves_clinical_text_and_identifier_spans(subtests, label):
-+    """Malformed input keeps its spans for both legacy and canonical name labels."""
-     for prefix in ["", "ïB"]:
-         for use_safety_sweep in [False, True]:
-             with subtests.test(prefix=prefix, use_safety_sweep=use_safety_sweep):
--                label, value = _PLANTED_IDENTIFIERS[0]
-+                _, value = _PLANTED_IDENTIFIERS[0]
-                 planted = ((label, value),)
-                 # Enough high bytes to exercise the heuristic even with an ASCII suffix.
-                 text = prefix + "³" * 80 + "ï Patient " + value + " BP 120/80"
-@@ -414,9 +416,17 @@ def test_malformed_iscii_preserves_clinical_text_and_identifier_spans(subtests):
-                 _assert_planted_spans_covered(
-                     result.pii_entities, result.original_text, planted
-                 )
-+                _assert_identifier_absent(
-+                    result.deidentified_text,
-+                    label,
-+                    value,
-+                    context="malformed ISCII masked output",
-+                )
-+                # Mask placeholders name the canonical label, so NAME masks as
-+                # [PERSON] (see ``_placeholder_label``).
-                 _assert_text_equal(
-                     result.deidentified_text,
--                    text.replace(value, "[NAME]"),
-+                    text.replace(value, "[PERSON]"),
-                     context="masked clinical text mismatch",
-                 )
+@@ -109,7 +110,7 @@ def _patch_relative_import(path: Path) -> None:
+         "import openmed_pb2 as openmed__pb2",
+         "from . import openmed_pb2 as openmed__pb2",
+     )
+-    path.write_text(text, encoding="utf-8")
++    path.write_text(text, encoding="utf-8", newline="\n")
  
+ 
+ def _diff_generated_files(expected_dir: Path, actual_dir: Path) -> list[str]:
 ```
 
+---
+
+### Incident Patch 3: `64c1746f` (2026-11-25)
+**Commit Message**: Refresh documentation snapshots for the 4.0 upgrade guidance
+
+
+
 #### Recent Merged Pull Requests:
+- **PR #5823** (2026-11-27): Fix Windows webhook lock initialization under contention (@maziyarpanahi)
+- **PR #5822** (2026-11-27): Authenticate ephemeral service load tests (@maziyarpanahi)
+- **PR #5821** (2026-11-26): Fix Windows failures in the full regression suite (@maziyarpanahi)
+- **PR #5820** (2026-11-26): Prepare OpenMed v4.0.0 release candidate (@maziyarpanahi)
 - **PR #5703** (2026-11-20): test: expect canonical [PERSON] mask in malformed ISCII fuzz case (@alirezarezvani)
 - **PR #5701** (2026-11-20): docs: record license provenance for body-signal model candidates (@alirezarezvani)
-- **PR #5699** (2026-11-20): test: add synthetic pose sequences with gait-cycle truth (@alirezarezvani)
-- **PR #5670** (2026-11-16): feat(mlx): give MapleResponseError stable reason codes (@krisnaparahita)
-- **PR #5669** (2026-11-16): fix: key result cache on model revision and generation (@AnvitDevadiga)
-- **PR #5585** (2026-11-16): fix: block promotion when the challenger omits a critical axis (@noahkhomer18)
 
 ---
 
@@ -2096,33 +1929,30 @@ test: add synthetic pose sequences with gait-cycle truth
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. Windows webhook lock initialization under contention
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `openmed/service/_state_files.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ee61a86`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b79cae5`: Windows webhook lock initialization under contention. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openmed/service/_state_files.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Add a standard-library synthetic side-view walker fixture for pose and gait
-  tests: seeded joint sequences with heel-strike, toe-off, cadence, step-time and
-  double-support truth, asymmetry, far-leg occlusion, joint jitter and a
-  second walker, plus seven curated scenarios with literature-grounded
-  parameters and pinned digests. The truth is checked against the generated
-  contact geometry and an independent pelvis-relative event detector (#4760).
+            # Windows can lock a range past EOF. Writing a marker here races
+            # with other descriptors that have already locked byte zero.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            if os.fstat(descriptor).st_size == 0:
+                os.write(descriptor, b"0")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ee61a86` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b79cae5` are properly handled with clean fallback behavior.
