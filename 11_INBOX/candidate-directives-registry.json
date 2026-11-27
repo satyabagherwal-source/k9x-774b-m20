@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:30:25.764Z",
+  "last_updated": "2026-11-27T05:39:57.865Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68905,6 +68905,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-Y265",
+      "directive_title": "Empirical Invariant Guard in merge-fixup.sh",
+      "source_repo": "provablehq-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y265-empirical-invariant-guard-in-merge-fixup-sh.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-Y336",
+      "directive_title": "Some changes for Bridge UI",
+      "source_repo": "ydb-platform-ydb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y336-some-changes-for-bridge-ui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-B1877A",
+      "directive_title": "Empirical Invariant Guard in merge-fixup.sh",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B1877A-empirical-invariant-guard-in-merge-fixup.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-6810F8",
+      "directive_title": "Some changes for Bridge UI",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ydb-platform-ydb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6810F8-some-changes-for-bridge-ui.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }

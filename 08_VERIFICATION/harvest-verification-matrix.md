@@ -13688,3 +13688,6 @@
 | `CYCLE-20261127-LCVH` | `2026-11-27T05:30:04.013Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`562d5f6a...`) |
 | `CYCLE-20261127-LEQD` | `2026-11-27T05:30:06.421Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10835` | Yes (`57659565...`) |
 | `CYCLE-20261127-LPKA` | `2026-11-27T05:30:20.458Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10836` | Yes (`65570df2...`) |
+| `CYCLE-20261127-XM44` | `2026-11-27T05:39:35.860Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`0c5e699c...`) |
+| `CYCLE-20261127-XV87` | `2026-11-27T05:39:47.671Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10837` | Yes (`38384991...`) |
+| `CYCLE-20261127-XY21` | `2026-11-27T05:39:51.337Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10838` | Yes (`8274743d...`) |

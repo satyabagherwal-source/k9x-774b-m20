@@ -13721,3 +13721,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-27T05:30:04.018Z |
 | `learn-github-topgrade-rs-topgrade` | `https://github.com/topgrade-rs/topgrade` | `95c5787f` | Multi-dimensional audit evidence | 2026-11-27T05:30:06.433Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `bceb12f7` | Multi-dimensional audit evidence | 2026-11-27T05:30:20.471Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-27T05:39:35.865Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `aa0282b2` | Multi-dimensional audit evidence | 2026-11-27T05:39:47.687Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `8194d077` | Multi-dimensional audit evidence | 2026-11-27T05:39:51.355Z |

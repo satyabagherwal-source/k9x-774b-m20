@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T05:30:20.484Z",
+  "last_updated": "2026-11-27T05:39:51.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
-      "verified_at": "2026-11-23T20:30:27.302Z",
+      "content_hash": "0c5e699c9e4db0847a1033f3737ec04e07dda7380331b74e438cbe3589e8026a",
+      "verified_at": "2026-11-27T05:39:35.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:30:27.302Z"
+      "last_updated": "2026-11-27T05:39:35.883Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
-      "verified_at": "2026-11-27T03:35:21.205Z",
+      "content_hash": "383849911816e4b9ee68f5b3270e12e3892a9f82f4599708ff364feccfcfe1fd",
+      "verified_at": "2026-11-27T05:39:47.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:35:21.205Z"
+      "last_updated": "2026-11-27T05:39:47.705Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
-      "verified_at": "2026-11-26T11:39:55.055Z",
+      "content_hash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
+      "verified_at": "2026-11-27T05:39:51.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T11:39:55.055Z"
+      "last_updated": "2026-11-27T05:39:51.379Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",

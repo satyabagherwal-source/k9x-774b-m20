@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T05:30:26.179Z",
+  "last_updated": "2026-11-27T05:39:58.408Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26389,
+  "total_items": 26393,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "27da81ce",
-      "content_hash": "54becfedc2d1bb1543fcaf89065a0d7ce0779e85e4bf4251a69a8ad9f1aae7b2",
+      "source_version": "aa0282b2",
+      "content_hash": "ba89c1dfd433f245d1c1527d1bf7a3ab76120b8e179d0f0c04c21b7c8f1f357c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T03:35:21.800Z"
+      "persisted_at": "2026-11-27T05:39:48.299Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "27da81ce",
-      "content_hash": "eed582347d8b4ec6fd69c626d02fdf27fc41be3e440c7d616de2288815625c78",
+      "source_version": "aa0282b2",
+      "content_hash": "343a85b5055c0e86b3cbaa1f9d64d207c1f7b9c56ec940d2da0e17b6e0798fa8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:35:22.285Z"
+      "persisted_at": "2026-11-27T05:39:48.598Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "d4da2743c1f2a15d8ebae5b5e42b9f123212c306ed85644a19bae546343510ea",
+      "content_hash": "e6cbbbdfc874c4bae7b2d930d74ee4f868f9e1597d4915a0ef5323cd67cd4067",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T03:04:47.786Z"
+      "persisted_at": "2026-11-27T05:39:56.946Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -216303,13 +216303,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "27da81ce",
-      "content_hash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "aa0282b2",
+      "content_hash": "383849911816e4b9ee68f5b3270e12e3892a9f82f4599708ff364feccfcfe1fd",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216435,6 +216435,11 @@
           "number": 10818,
           "title": "Empirical Invariant Guard in release-version",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10837,
+          "title": "Empirical Invariant Guard in merge-fixup.sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216442,7 +216447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:35:20.835Z",
+      "verified_at": "2026-11-27T05:39:47.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221022,9 +221027,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "235e24b4ae08d3e465a4d58e3f9885ee77ece5df4181e87ece4517eb9b626c32",
+      "content_hash": "7436a60a3ce0f152a492ecc3c72c1fa5b3300b849c6ac6bda0359f63afa59a3c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:04:48.020Z"
+      "persisted_at": "2026-11-27T05:39:57.236Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -237834,8 +237839,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "1810e35c",
-      "content_hash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
+      "source_version": "8194d077",
+      "content_hash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -237888,6 +237893,11 @@
           "number": 10668,
           "title": "rename Fix_KIKIMR_14259 -> CleanupRowVersionsBelowLowWatermark",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10838,
+          "title": "Some changes for Bridge UI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237895,7 +237905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:39:54.770Z",
+      "verified_at": "2026-11-27T05:39:51.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237937,10 +237947,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "repository": "ydb-platform/ydb",
-      "source_version": "1810e35c",
-      "content_hash": "1f78c0925da9a578bfa05012a050c1ce3720573f782c84a2bf8bee3f3581663c",
+      "source_version": "8194d077",
+      "content_hash": "a37bc7667da033b570a5e1aaa03ff0a1d2c851606ffde3e3602678eccb70c25d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T11:39:55.474Z"
+      "persisted_at": "2026-11-27T05:39:51.989Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb",
@@ -237949,10 +237959,10 @@
       "relative_path": "08_VERIFICATION/ydb-platform-ydb-verification-protocol-empirical-defect-shield-for-ydb-platform-.md",
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform/ydb",
       "repository": "ydb-platform/ydb",
-      "source_version": "1810e35c",
-      "content_hash": "93c1ded9675baaa2de2d32ece424dc5528b3f338525576a604cd10cf42c51c6c",
+      "source_version": "8194d077",
+      "content_hash": "e25edb027b0de5791ca45b8e2822f0c183928524280c0a6048d38cd20c473628",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:39:55.664Z"
+      "persisted_at": "2026-11-27T05:39:52.258Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -241032,7 +241042,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
+      "content_hash": "0c5e699c9e4db0847a1033f3737ec04e07dda7380331b74e438cbe3589e8026a",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
@@ -241041,7 +241051,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:30:27.051Z",
+      "verified_at": "2026-11-27T05:39:35.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241058,9 +241068,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/FrogNano-4B-2609 Core Invariants",
       "repository": "microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "dfe2a398ae6d049c6a9fc2612c27cc2534527a21865f38d1b26997b70131bf05",
+      "content_hash": "72ae27fa51653ee384ffa3064987eccc315d6afb860f5a446f6bb455b3ec1fad",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:30:27.524Z"
+      "persisted_at": "2026-11-27T05:39:36.199Z"
     },
     "learn-github-max-sixty-worktrunk": {
       "learning_id": "learn-github-max-sixty-worktrunk",
@@ -241234,9 +241244,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-frognano-4b-2609-learnings Core Invariants",
       "repository": "hf-microsoft-frognano-4b-2609-learnings",
       "source_version": "HEAD",
-      "content_hash": "d148ed41433bafcdabb97bfa4ab38b608c7fe808d463ecb0396fc5e4cc95b810",
+      "content_hash": "d1f6b73c797c6b2255ad82f39981a21b5afcc13f3df548de231dd09a111ac004",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:30:48.887Z"
+      "persisted_at": "2026-11-27T05:39:55.614Z"
     },
     "learn-huggingface-francisring-prism": {
       "learning_id": "learn-huggingface-francisring-prism",
@@ -258073,9 +258083,9 @@
       "title": "Technical Construction Intelligence: ydb-platform-ydb-learnings Core Invariants",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef711c136874d68116b28b2cac6eb7a0d5e9e86c1f26f3fd7e24cb3dec8f95a4",
+      "content_hash": "756b327ae8759b6b44a2100234b24a4d33924cc97269d6983465897f79553bc0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T10:07:40.635Z"
+      "persisted_at": "2026-11-27T05:39:58.138Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ydb-platform-ydb-learnings",
@@ -258085,9 +258095,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ydb-platform-ydb-learnings",
       "repository": "ydb-platform-ydb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8de4779d5a931ab024cf35d44767e3bf7cc0a44a049b0e76fef5a9a400c8807",
+      "content_hash": "2fc0289697dd5ab977bd48b088e9c8ce89ec07a1129e310c6a80e2975aacc0ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:07:40.816Z"
+      "persisted_at": "2026-11-27T05:39:58.408Z"
     },
     "rule-8694": {
       "learning_id": "rule-8694",
@@ -362042,6 +362052,58 @@
       "content_hash": "eeda180014f298c304839f2b88fed91f27b11cf0b598a8469b1998c068825726",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T05:30:25.764Z"
+    },
+    "rule-10837": {
+      "learning_id": "rule-10837",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10837,
+      "title": "Empirical Invariant Guard in merge-fixup.sh",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "aa0282b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:39:47.349Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-merge-fixup-sh": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-merge-fixup-sh",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y265-empirical-invariant-guard-in-merge-fixup-sh.md",
+      "title": "Empirical Invariant Guard in merge-fixup.sh",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dbfe1b61e9f646f0a977e02fea133d5a780868968746b22e31760cd6c87196c3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T05:39:56.675Z"
+    },
+    "rule-10838": {
+      "learning_id": "rule-10838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10838,
+      "title": "Some changes for Bridge UI",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "8194d077",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:39:51.015Z"
+    },
+    "candidate_directive-some-changes-for-bridge-ui": {
+      "item_id": "candidate_directive-some-changes-for-bridge-ui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y336-some-changes-for-bridge-ui.md",
+      "title": "Some changes for Bridge UI",
+      "repository": "ydb-platform-ydb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3455dab2c98b0f409dc767a9b0955665280e835d6ab42da301d7c0737430652a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T05:39:57.865Z"
     }
   },
   "ai-builder-brain": {

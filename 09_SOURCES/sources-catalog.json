@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "787020d3f786e0c430358663063cb5b36b89d13b581953be6fa35cd998ad81b8",
-    "lastHarvestedAt": "2026-11-23T20:30:27.292Z",
+    "contentHash": "0c5e699c9e4db0847a1033f3737ec04e07dda7380331b74e438cbe3589e8026a",
+    "lastHarvestedAt": "2026-11-27T05:39:35.865Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "f2c57796",
+    "sourceVersion": "aa0282b2",
     "license": "Apache-2.0",
-    "contentHash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
-    "lastHarvestedAt": "2026-11-26T12:29:09.262Z",
+    "contentHash": "383849911816e4b9ee68f5b3270e12e3892a9f82f4599708ff364feccfcfe1fd",
+    "lastHarvestedAt": "2026-11-27T05:39:47.687Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "1810e35c",
+    "sourceVersion": "8194d077",
     "license": "Apache-2.0",
-    "contentHash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
-    "lastHarvestedAt": "2026-11-26T11:39:55.032Z",
+    "contentHash": "8274743d7e26e6d60523877e6a8f9b989879449b6e9b6917c72e0338d7911e39",
+    "lastHarvestedAt": "2026-11-27T05:39:51.355Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
