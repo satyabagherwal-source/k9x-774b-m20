@@ -13623,3 +13623,4 @@
 | `CYCLE-20261127-6PRO` | `2026-11-27T01:06:44.340Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`9fba4f1f...`) |
 | `CYCLE-20261127-6RXL` | `2026-11-27T01:06:47.145Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10806` | Yes (`472a9a90...`) |
 | `CYCLE-20261127-6WTA` | `2026-11-27T01:06:53.470Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10807` | Yes (`dd17f64a...`) |
+| `CYCLE-20261127-JTJM` | `2026-11-27T01:16:55.762Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`3eb2e09b...`) |

@@ -13656,3 +13656,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T01:06:44.344Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `920720a2` | Multi-dimensional audit evidence | 2026-11-27T01:06:47.149Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `41016e77` | Multi-dimensional audit evidence | 2026-11-27T01:06:53.473Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-27T01:16:55.766Z |

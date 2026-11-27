@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-K0ZB",
-    "timestamp": "2026-11-25T13:49:34.583Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "f5855f34044e197e6895d784e08acacd07dd13eee613e18b1e0983f4cb844711",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-3OSV",
     "timestamp": "2026-11-25T14:04:51.919Z",
     "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "dd17f64a301903566732145f7705932ef3fb64e5c3313d7edf333a361ae00241",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JTJM",
+    "timestamp": "2026-11-27T01:16:55.762Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+    "contentHash": "3eb2e09b9d75b9841f4c3b2fedb53d76c4a9d379b5860d17afa1a7e4a9e91029",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

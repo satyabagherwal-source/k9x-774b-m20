@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T01:06:58.873Z",
+  "last_updated": "2026-11-27T01:17:09.112Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -8562,8 +8562,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b64ec4125ee201ad458f62826464b05338f19c7c758757c576846690e8b61839",
-      "created_at": "2026-11-27T00:16:09.354Z"
+      "content_hash": "8fc5aee72c12de923f23cab209724930ba2f66b477b9950facfd0483ca03992b",
+      "created_at": "2026-11-27T01:17:09.112Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -16486,8 +16486,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-base-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-research-knowledge-intelligence-baai-bge-base-en-v1-5-c.md",
       "repository": "BAAI/bge-base-en-v1.5",
-      "content_hash": "ac2ea783558580e7ace37bf752c78e5f84b0be4a7bfd5d14f64fd3253a8861c3",
-      "created_at": "2026-11-23T16:20:29.729Z"
+      "content_hash": "d4cdf51eb3b145166af33649b1ba268dff9cd5b34eb36ce55b39ccd8fe60dddd",
+      "created_at": "2026-11-27T01:16:55.973Z"
     },
     "DOM-D-641F7D27": {
       "record_id": "DOM-D-641F7D27",
@@ -16537,8 +16537,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-base-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-b.md",
       "repository": "hf-baai-bge-base-en-v1.5-learnings",
-      "content_hash": "65dd2d86f9318394bb83f83a54e04633a4bd7482751650d125cba1184a2bd7e3",
-      "created_at": "2026-11-23T16:20:43.450Z"
+      "content_hash": "2be40aadc2b8d219a6eca5fc82257096312dd2db59ed2febae68063e7a064d8c",
+      "created_at": "2026-11-27T01:17:07.354Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
@@ -46739,8 +46739,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c614b5a37f8ed393fa35434b4ca9d9f00920495d443f8d6e4635fc7bda391d6b",
-      "created_at": "2026-11-27T00:41:49.094Z"
+      "content_hash": "0af3c0e384c2e5b4f3b5b8fbc95e70b1c97e1c075cd279e9b75b32a44968e195",
+      "created_at": "2026-11-27T01:17:08.203Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
