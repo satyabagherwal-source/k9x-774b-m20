@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:44:32.748Z",
-  "total_cycles_completed": 13073,
-  "total_learnings_persisted": 13073,
-  "total_rules_promoted": 11801,
+  "last_updated": "2026-11-27T11:54:25.293Z",
+  "total_cycles_completed": 13074,
+  "total_learnings_persisted": 13074,
+  "total_rules_promoted": 11802,
   "history": [
-    {
-      "timestamp": "2026-11-26T21:17:41.331Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T21:26:03.221Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T11:44:32.748Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:54:25.293Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

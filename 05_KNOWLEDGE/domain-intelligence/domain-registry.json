@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T11:44:39.029Z",
+  "last_updated": "2026-11-27T11:54:32.928Z",
   "total_records": 2831,
   "domains": {
     "A": {
@@ -18106,8 +18106,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "e3cfba4a5734305780e24b14e90274eaf0a026fbd7a753630150dd3b75b9a29a",
-      "created_at": "2026-11-26T18:24:22.021Z"
+      "content_hash": "c329b45aa9e319c578f5ced019c94a93196d4b6445b2c06cfc9526d9449ad4c0",
+      "created_at": "2026-11-27T11:54:25.877Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -18166,8 +18166,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "3fdc2e1e3fd4e7805b5f69b664773c0635e49e1cb25d00bde84e57d9b806c033",
-      "created_at": "2026-11-26T18:24:31.119Z"
+      "content_hash": "f8d74cea25eb349dea73db41f2d463a364b8996244b4a67df45795eafe05a930",
+      "created_at": "2026-11-27T11:54:29.940Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -33961,8 +33961,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e87cd93e4b00541b9207ae02b087ef7f5799feb32dbfcc68d2845dc1b8149e86",
-      "created_at": "2026-11-27T11:14:41.294Z"
+      "content_hash": "aa080fb604a4664613f389c0752365db1b16022560823126e225aeba0373718a",
+      "created_at": "2026-11-27T11:54:32.928Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46778,8 +46778,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "24421a10d848edf4574dcb26fa2e4ff6831ab712cbf40557c9c94e74f94165d0",
-      "created_at": "2026-11-27T11:14:39.937Z"
+      "content_hash": "f2ab05a1e9cb52df390df27b92aa45916c387f271bf2173e0fcfa4905399f057",
+      "created_at": "2026-11-27T11:54:31.408Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

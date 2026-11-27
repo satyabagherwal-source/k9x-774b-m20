@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "b07e3171",
+    "sourceVersion": "8fe14014",
     "license": "NOASSERTION",
-    "contentHash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
-    "lastHarvestedAt": "2026-11-26T18:24:21.404Z",
+    "contentHash": "b0ac7a1cc71b4a631058a573010d19830a847768a15e5fd4d245e92500c2b9ce",
+    "lastHarvestedAt": "2026-11-27T11:54:25.279Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {

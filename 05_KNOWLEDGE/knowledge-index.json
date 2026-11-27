@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T11:44:39.245Z",
+  "last_updated": "2026-11-27T11:54:33.424Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26538,
+  "total_items": 26540,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3b3cf8ff94c21c5db55c6f48932cc568c23c3ba5978339b91d2f1df987c81ca",
+      "content_hash": "15ab5e90238de1dc76da0b95fb2ddac39ec5af103c26e22b352e3872acda14c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:14:41.520Z"
+      "persisted_at": "2026-11-27T11:54:33.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "450873242932c82f6b917afba9f31a5cdc2c1c9d73c99c7f2dedbf706c9bf66c",
+      "content_hash": "21de691bd609b22819a1e1ac5eb78cbca1873016a1d93d6d6bddc22bca79c9bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:14:41.714Z"
+      "persisted_at": "2026-11-27T11:54:33.424Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "193cd8b80fee5538a1e438d0c5623a7e23e5dd620b41288ccd13dc08f68ab1f8",
+      "content_hash": "f8c6512fa46196badd4e0d4d3f2bd43f1833e13ca289d40df146de80db110563",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:14:40.173Z"
+      "persisted_at": "2026-11-27T11:54:31.690Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -238545,8 +238545,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "b07e3171",
-      "content_hash": "675d54f1ccdb27b6c9f29759e31d03ad1f46731e41e1a2c78120b8a9018c8d6a",
+      "source_version": "8fe14014",
+      "content_hash": "b0ac7a1cc71b4a631058a573010d19830a847768a15e5fd4d245e92500c2b9ce",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -238604,6 +238604,11 @@
           "number": 10751,
           "title": "Bump hcl/v2 to 2.25.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10890,
+          "title": "command/state migrate: Enable using providers not managed by Terraform.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238611,7 +238616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:24:21.047Z",
+      "verified_at": "2026-11-27T11:54:24.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238653,10 +238658,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "b07e3171",
-      "content_hash": "e3cfba4a5734305780e24b14e90274eaf0a026fbd7a753630150dd3b75b9a29a",
+      "source_version": "8fe14014",
+      "content_hash": "c329b45aa9e319c578f5ced019c94a93196d4b6445b2c06cfc9526d9449ad4c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:24:22.021Z"
+      "persisted_at": "2026-11-27T11:54:25.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -238665,10 +238670,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "b07e3171",
-      "content_hash": "731e7237e04d29103ddffe0186fee9ed63892350849d0fd5a4f9b732408efcb0",
+      "source_version": "8fe14014",
+      "content_hash": "78b70eed98dba04296e730e09664c8679b8ea4677e8f6e8e0d1134ad72345bab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:24:22.331Z"
+      "persisted_at": "2026-11-27T11:54:26.139Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -238690,9 +238695,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fdc2e1e3fd4e7805b5f69b664773c0635e49e1cb25d00bde84e57d9b806c033",
+      "content_hash": "f8d74cea25eb349dea73db41f2d463a364b8996244b4a67df45795eafe05a930",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:24:31.119Z"
+      "persisted_at": "2026-11-27T11:54:29.940Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -238702,9 +238707,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b1fcb0b7f30dcd57243e21b0de1b0502c99dfa5a181af38437a806e494dc845",
+      "content_hash": "897d878265efe5f6cb152732e4b4f765058243e7a828dc87d9a8fda8ec7fb2d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:24:31.403Z"
+      "persisted_at": "2026-11-27T11:54:30.208Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -300951,9 +300956,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e87cd93e4b00541b9207ae02b087ef7f5799feb32dbfcc68d2845dc1b8149e86",
+      "content_hash": "aa080fb604a4664613f389c0752365db1b16022560823126e225aeba0373718a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:14:41.294Z"
+      "persisted_at": "2026-11-27T11:54:32.928Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358206,13 +358211,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WIAK-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRKL-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "471efc0fd1c851025ba15342dd98090ed758407b1a1aeb41ee5767194f5566fe",
+      "content_hash": "f0a6934b4837f0e50bebec8163155875397a517bbb67da0738ba4c70141ae559",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:14:39.649Z"
+      "persisted_at": "2026-11-27T11:54:31.131Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358222,9 +358227,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "24421a10d848edf4574dcb26fa2e4ff6831ab712cbf40557c9c94e74f94165d0",
+      "content_hash": "f2ab05a1e9cb52df390df27b92aa45916c387f271bf2173e0fcfa4905399f057",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:14:39.937Z"
+      "persisted_at": "2026-11-27T11:54:31.408Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362692,13 +362697,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WJBZ-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BSQC-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e07fe070345e64f029f0e4198dc7f25964ac6b54029e58281b4121e00340cb9",
+      "content_hash": "976de6cb3cc5c1808a5d17c11718e899dc5acc46c779a03be65aa34ecc5e648c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:14:40.992Z"
+      "persisted_at": "2026-11-27T11:54:32.629Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -364242,6 +364247,32 @@
       "content_hash": "5b13d422f9e7a465a38723f629980ca143e095c0f9d3af14f5a1ba1a67973e41",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T11:44:36.762Z"
+    },
+    "rule-10890": {
+      "learning_id": "rule-10890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10890,
+      "title": "command/state migrate: Enable using providers not managed by Terraform.",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "8fe14014",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T11:54:24.945Z"
+    },
+    "candidate_directive-command-state-migrate-enable-using-providers-not-managed-by-terraform": {
+      "item_id": "candidate_directive-command-state-migrate-enable-using-providers-not-managed-by-terraform",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BQFQ-command-state-migrate-enable-using-providers-not-managed-by-terraform.md",
+      "title": "command/state migrate: Enable using providers not managed by Terraform.",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "103ce9fc5090c533e707cfcbaacc61aa95badddb51106ceae5c03a080f2e94c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T11:54:29.661Z"
     }
   },
   "ai-builder-brain": {

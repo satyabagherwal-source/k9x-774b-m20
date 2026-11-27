@@ -13774,3 +13774,4 @@
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T11:34:28.744Z` | `nguyenphutrong-quotio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-457F0DDF` [Domain D] | Yes (`2617fdd2...`) |
 | `CYCLE-20261127-YWQ9` | `2026-11-27T11:44:31.281Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10888` | Yes (`9fa43264...`) |
 | `CYCLE-20261127-YXU8` | `2026-11-27T11:44:32.720Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10889` | Yes (`1da26c3d...`) |
+| `CYCLE-20261127-BN1P` | `2026-11-27T11:54:25.261Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10890` | Yes (`b0ac7a1c...`) |

@@ -13807,3 +13807,4 @@ Every entry in this ledger must capture:
 | `learn-dom-d-457f0ddf` | `project://nguyenphutrong-quotio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | 2026-11-27T11:34:28.744Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `daddd4e1` | Multi-dimensional audit evidence | 2026-11-27T11:44:31.298Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `d0d659bf` | Multi-dimensional audit evidence | 2026-11-27T11:44:32.736Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `8fe14014` | Multi-dimensional audit evidence | 2026-11-27T11:54:25.279Z |

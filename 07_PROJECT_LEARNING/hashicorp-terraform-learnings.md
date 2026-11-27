@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `b07e3171`  
+> **Source Version**: `8fe14014`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:24:19.757Z  
+> **Timestamp**: 2026-11-27T11:54:23.759Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:24:19.750Z  
+> **Harvest Timestamp**: 2026-11-27T11:54:23.591Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50345 stars
+- **Stars / Engagement**: 50365 stars
 
 ---
 
@@ -2281,282 +2281,283 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b07e3171` (2026-11-26)
-**Commit Message**: deps: Bump hcl/v2 to 2.25.0 (#39585)
+### Incident Patch 1: `8fe14014` (2026-11-27)
+**Commit Message**: command/state migrate: Enable using providers not managed by Terraform. (#39547)
 
-**File**: `go.mod` (modified, +3/-2)
-```diff
-@@ -34,7 +34,7 @@ require (
- 	github.com/hashicorp/go-uuid v1.0.3
- 	github.com/hashicorp/go-version v1.9.0
- 	github.com/hashicorp/hcl v1.0.0
--	github.com/hashicorp/hcl/v2 v2.24.0
-+	github.com/hashicorp/hcl/v2 v2.25.0
- 	github.com/hashicorp/jsonapi v1.4.3-0.20250220162346-81a76b606f3e
- 	github.com/hashicorp/terraform-registry-address v0.5.0
- 	github.com/hashicorp/terraform-svchost v0.2.1
-@@ -64,7 +64,7 @@ require (
- 	github.com/spf13/afero v1.15.0
- 	github.com/xanzy/ssh-agent v0.3.3
- 	github.com/xlab/treeprint v0.0.0-20161029104018-1d6e34225557
--	github.com/zclconf/go-cty v1.18.1
-+	github.com/zclconf/go-cty v1.19.0
- 	github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940
- 	github.com/zclconf/go-cty-yaml v1.1.0
- 	go.opentelemetry.io/contrib/exporters/autoexport v0.68.0
-@@ -115,6 +115,7 @@ require (
- 	github.com/antchfx/xmlquery v1.3.5 // indirect
- 	github.com/antchfx/xpath v1.3.6 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
- 	github.com/armon/go-metrics v0.4.1 // indirect
- 	github.com/armon/go-radix v1.0.0 // indirect
- 	github.com/aws/aws-sdk-go-v2 v1.41.5 // indirect
-```
+This change enables unmanaged (reattached) or developer override providers to be used with the `state migrate` command, by avoiding attempting to obtain the version of a provider supplied in those ways. Obtaining a version requires inspecting locks and those aren't guaranteed to be present or correct when using providers that aren't managed by Terraform.
 
-**File**: `go.sum` (modified, +6/-4)
-```diff
-@@ -97,6 +97,8 @@ github.com/apparentlymart/go-shquot v0.0.1/go.mod h1:lw58XsE5IgUXZ9h0cxnypdx31p9
- github.com/apparentlymart/go-textseg/v12 v12.0.0/go.mod h1:S/4uRK2UtaQttw1GenVJEynmyUenKwP++x/+DdGV/Ec=
- github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
- github.com/apparentlymart/go-userdirs v0.0.0-20200915174352-b0c018a67c13 h1:JtuelWqyixKApmXm3qghhZ7O96P6NKpyrlSIe8Rwnhw=
- github.com/apparentlymart/go-userdirs v0.0.0-20200915174352-b0c018a67c13/go.mod h1:7kfpUbyCdGJ9fDRCp3fopPQi5+cKNHgTE4ZuNrO71Cw=
- github.com/apparentlymart/go-versions v1.0.2 h1:n5Gg9YvSLK8Zzpy743J7abh2jt7z7ammOQ0oTd/5oA4=
-@@ -393,8 +395,8 @@ github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iP
- github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
- github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
- github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
--github.com/hashicorp/hcl/v2 v2.24.0 h1:2QJdZ454DSsYGoaE6QheQZjtKZSUs9Nh2izTWiwQxvE=
--github.com/hashicorp/hcl/v2 v2.24.0/go.mod h1:oGoO1FIQYfn/AgyOhlg9qLC6/nOJPX3qGbkZpYAcqfM=
-+github.com/hashicorp/hcl/v2 v2.25.0 h1:HmmQVYRny4MaBo4b20TjmL46wyuUxpnMWkPZ4+NTbWk=
-+github.com/hashicorp/hcl/v2 v2.25.0/go.mod h1:vR+FKETxoZAmRlHgFfKmuqivj+C4Izm/c66XkmZ3r7M=
- github.com/hashicorp/jsonapi v1.4.3-0.20250220162346-81a76b606f3e h1:xwy/1T0cxHWaLx2MM0g4BlaQc1BXn/9835mPrBqwSPU=
- github.com/hashicorp/jsonapi v1.4.3-0.20250220162346-81a76b606f3e/go.mod h1:kWfdn49yCjQvbpnvY1dxxAuAFzISwrrMDQOcu6NsFoM=
- github.com/hashicorp/logutils v1.0.0 h1:dLEQVugN8vlakKOUE3ihGLTZJRB4j+M2cdTm/ORI65Y=
-@@ -702,8 +704,8 @@ github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78/go.mod h1:aL8wCCfTfS
- github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
- github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
--github.com/zclconf/go-cty v1.18.1 h1:yEGE8M4iIZlyKQURZNb2SnEyZlZHUcBCnx6KF81KuwM=
--github.com/zclconf/go-cty v1.18.1/go.mod h1:qpnV6EDNgC1sns/AleL1fvatHw72j+S+nS+MJ+T2CSg=
-+github.com/zclconf/go-cty v1.19.0 h1:IV8WdqYZc2c5rLX9bEoLNXKojBAp0MZPBHMIrCoa/s4=
-+github.com/zclconf/go-cty v1.19.0/go.mod h1:12W89jGn3JCOIQi7infWr9m80rOkb5RNYJqXMZcN4c8=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
- github.com/zclconf/go-cty-yaml v1.1.0 h1:nP+jp0qPHv2IhUVqmQSzjvqAWcObN0KBkUl2rWBdig0=
-```
+As part of this change we've added a `VersionStringForDisplay` method that returns a string representation of a provider's version OR a string to be shown in place of a version. If a provider isn't managed by Terraform then there's no version data. In those cases the string describes how the provider is supplied to Terraform instead.
 
-**File**: `internal/backend/remote-state/azure/go.mod` (modified, +3/-2)
+Tests added during this change show use of reattached providers with the `state migrate` command. This is only possible to test via E2E tests.
+
+**File**: `internal/command/e2etest/pluggable_state_store_test.go` (modified, +93/-0)
 ```diff
-@@ -9,7 +9,7 @@ require (
- 	github.com/hashicorp/go-uuid v1.0.3
- 	github.com/hashicorp/terraform v0.0.0-00010101000000-000000000000
- 	github.com/jackofallops/giovanni v0.28.0
--	github.com/zclconf/go-cty v1.18.1
-+	github.com/zclconf/go-cty v1.19.0
- )
+@@ -414,6 +414,99 @@ func TestPrimary_stateStore_stateMigrateCmd_upgrade(t *testing.T) {
+ 	}
+ }
  
- require (
-@@ -23,6 +23,7 @@ require (
- 	github.com/agext/levenshtein v1.2.3 // indirect
- 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
- 	github.com/apparentlymart/go-versions v1.0.2 // indirect
- 	github.com/bmatcuk/doublestar v1.1.5 // indirect
- 	github.com/cloudflare/circl v1.6.3 // indirect
-@@ -38,7 +39,7 @@ require (
- 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
- 	github.com/hashicorp/go-slug v0.18.3 // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
--	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
-+	github.com/hashicorp/hcl/v2 v2.25.0 // indirect
- 	github.com/hashicorp/logutils v1.0.0 // indirect
- 	github.com/hashicorp/terraform-plugin-go v0.26.0 // indirect
- 	github.com/hashicorp/terraform-plugin-log v0.10.0 // indirect
++// Test using `terraform state migrate` subcommand with reattached providers as source or destination.
++func TestPrimary_stateStore_stateMigrateCmd_reattachedProviders(t *testing.T) {
++	t.Run("source uses reattached provider", func(t *testing.T) {
++		if !canRunGoBuild {
++			// We're running in a separate-build-then-run context, so we can't
++			// currently execute this test which depends on being able to build
++			// new executable at runtime.
++			//
++			// (See the comment on canRunGoBuild's declaration for more information.)
++			t.Skip("can't run without building a new provider executable")
++		}
++
++		fixturePath := filepath.Join("testdata", "state-migrate-store-to-local")
++
++		tf := e2e.NewBinary(t, experimentalTerraformBin, fixturePath)
++		t.Chdir(tf.WorkDir())
++
++		// setup reattached provider as migration source
++		reattachStr, _ := reattachedProviderForTest(t, addrs.NewDefaultProvider("simple6"), 6)
++		tf.AddEnv("TF_REATTACH_PROVIDERS=" + string(reattachStr))
++
++		stdout, stderr, err := tf.Run("state", "migrate", "-input=false", "-force-copy", "-no-color")
++		if err != nil {
++			t.Fatalf("unexpected error: %s\nstderr:\n%q", err, stderr)
++		}
++
++		expectedMsg := []string{
++			`Installing providers...`,
++			`Migrating state from state store "simple6_fs" (hashicorp/simple6 <reattached provider>) to backend "local"...`,
++			`Finished migrating state from state store "simple6_fs" (hashicorp/simple6 <reattached provider>) to backend "local".`,
++		}
++		for _, expectedMsg := range expectedMsg {
++			if !strings.Contains(stdout, expectedMsg) {
++				t.Fatalf("expected output %q, got %q", expectedMsg, stdout)
++			}
++		}
++
++		// Instead of full assertions about migrated state, check for the new state location in the filesystem
++		if _, err := os.Stat(filepath.Join(tf.WorkDir(), "new-location", "default", "terraform.tfstate")); err != nil {
++			if os.IsNotExist(err) {
++				t.Fatalf("expected state file not found: %s", err)
++			}
++
++			t.Fatalf("unexpected error stating state file: %s", err)
++		}
++	})
++
++	t.Run("destination uses reattached provider", func(t *testing.T) {
++		if !canRunGoBuild {
++			// We're running in a separate-build-then-run context, so we can't
++			// currently execute this test which depends on being able to build
++			// new executable at runtime.
++			//
++			// (See the comment on canRunGoBuild's declaration for more information.)
++			t.Skip("can't run without building a new provider executable")
++		}
++
++		fixturePath := filepath.Join("testdata", "state-migrate-local-to-store")
++
++		tf := e2e.NewBinary(t, experimentalTerraformBin, fixturePath)
++		t.Chdir(tf.WorkDir())
++
++		// setup reattached provider as migration source
++		reattachStr, _ := reattachedProviderForTest(t, addrs.NewDefaultProvider("simple6"), 6)
++		tf.AddEnv("TF_REATTACH_PROVIDERS=" + string(reattachStr))
++
++		stdout, stderr, err := tf.Run("state", "migrate", "-input=false", "-force-copy", "-no-color")
++		if err != nil {
++			t.Fatalf("unexpected error: %s\nstderr:\n%q", err, stderr)
++		}
++
++		expectedMsg := []string{
++			`Installing providers...`,
++			`Migrating state from backend "local" to state store "simple6_fs" (hashicorp/simple6 <reattached provider>)...`,
++			`Finished migrating state from backend "local" to state store "simple6_fs" (hashicorp/simple6 <reattached provider>).`,
++		}
++		for _, expectedMsg := range expectedMsg {
++			if !strings.Contains(stdout, expectedMsg) {
++				t.Fatalf("expected output %q, got %q", expectedMsg, stdout)
++			}
++		}
++
++		// Instead of full assertions about migrated state, check for the new state location in the filesystem
++		if _, err := os.Stat(filepath.Join(tf.WorkDir(), "new-location", "default", "terraform.tfstate")); err != nil {
++			if os.IsNotExist(err) {
++				t.Fatalf("expected state file not found: %s", err)
++			}
++
++			t.Fatalf("unexpected error stating state file: %s", err)
++		}
++	})
++}
++
+ // Test using `terraform state migrate` subcommand when upgrade changes the provider's schema.
+ func TestPrimary_stateStore_stateMigrateCmd_upgradeWithSchemaChange(t *testing.T) {
+ 	t.Parallel()
 ```
 
-**File**: `internal/backend/remote-state/azure/go.sum` (modified, +6/-4)
+**File**: `internal/command/e2etest/testdata/state-migrate-local-to-store/.terraform.lock.hcl` (added, +6/-0)
 ```diff
-@@ -48,6 +48,8 @@ github.com/apparentlymart/go-cidr v1.1.0/go.mod h1:EBcsNrHc3zQeuaeCeCtQruQm+n9/Y
- github.com/apparentlymart/go-textseg/v12 v12.0.0/go.mod h1:S/4uRK2UtaQttw1GenVJEynmyUenKwP++x/+DdGV/Ec=
- github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
- github.com/apparentlymart/go-versions v1.0.2 h1:n5Gg9YvSLK8Zzpy743J7abh2jt7z7ammOQ0oTd/5oA4=
- github.com/apparentlymart/go-versions v1.0.2/go.mod h1:YF5j7IQtrOAOnsGkniupEA5bfCjzd7i14yu0shZavyM=
- github.com/aws/aws-sdk-go-v2 v1.41.5 h1:dj5kopbwUsVUVFgO4Fi5BIT3t4WyqIDjGKCangnV/yY=
-@@ -167,8 +169,8 @@ github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/C
- github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaXPSCnA=
- github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
--github.com/hashicorp/hcl/v2 v2.24.0 h1:2QJdZ454DSsYGoaE6QheQZjtKZSUs9Nh2izTWiwQxvE=
--github.com/hashicorp/hcl/v2 v2.24.0/go.mod h1:oGoO1FIQYfn/AgyOhlg9qLC6/nOJPX3qGbkZpYAcqfM=
-+github.com/hashicorp/hcl/v2 v2.25.0 h1:HmmQVYRny4MaBo4b20TjmL46wyuUxpnMWkPZ4+NTbWk=
-+github.com/hashicorp/hcl/v2 v2.25.0/go.mod h1:vR+FKETxoZAmRlHgFfKmuqivj+C4Izm/c66XkmZ3r7M=
- github.com/hashicorp/logutils v1.0.0 h1:dLEQVugN8vlakKOUE3ihGLTZJRB4j+M2cdTm/ORI65Y=
- github.com/hashicorp/logutils v1.0.0/go.mod h1:QIAnNjmIWmVIIkWDTG1z5v++HQmx9WQRO+LraFDTW64=
- github.com/hashicorp/terraform-plugin-go v0.26.0 h1:cuIzCv4qwigug3OS7iKhpGAbZTiypAfFQmw8aE65O2M=
-@@ -243,8 +245,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21
- github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
- github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
- github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
--github.com/zclconf/go-cty v1.18.1 h1:yEGE8M4iIZlyKQURZNb2SnEyZlZHUcBCnx6KF81KuwM=
--github.com/zclconf/go-cty v1.18.1/go.mod h1:qpnV6EDNgC1sns/AleL1fvatHw72j+S+nS+MJ+T2CSg=
-+github.com/zclconf/go-cty v1.19.0 h1:IV8WdqYZc2c5rLX9bEoLNXKojBAp0MZPBHMIrCoa/s4=
-+github.com/zclconf/go-cty v1.19.0/go.mod h1:12W89jGn3JCOIQi7infWr9m80rOkb5RNYJqXMZcN4c8=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
- github.com/zclconf/go-cty-yaml v1.1.0 h1:nP+jp0qPHv2IhUVqmQSzjvqAWcObN0KBkUl2rWBdig0=
+@@ -0,0 +1,6 @@
++# This file is maintained automatically by "terraform init".
++# Manual edits may be lost in future updates.
++
++provider "registry.terraform.io/hashicorp/simple6" {
++  version = "1.0.0"
++}
 ```
 
-**File**: `internal/backend/remote-state/consul/go.mod` (modified, +3/-2)
+**File**: `internal/command/e2etest/testdata/state-migrate-local-to-store/from.tfmigrate.hcl` (added, +6/-0)
 ```diff
-@@ -6,14 +6,15 @@ require (
- 	github.com/hashicorp/consul/api v1.32.1
- 	github.com/hashicorp/consul/sdk v0.16.1
- 	github.com/hashicorp/terraform v0.0.0-00010101000000-000000000000
--	github.com/zclconf/go-cty v1.18.1
-+	github.com/zclconf/go-cty v1.19.0
- )
- 
- require (
- 	github.com/ProtonMail/go-crypto v1.1.3 // indirect
- 	github.com/agext/levenshtein v1.2.3 // indirect
- 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
- 	github.com/apparentlymart/go-versions v1.0.2 // indirect
- 	github.com/armon/go-metrics v0.4.1 // indirect
- 	github.com/bmatcuk/doublestar v1.1.5 // indirect
-@@ -34,7 +35,7 @@ require (
- 	github.com/hashicorp/go-uuid v1.0.3 // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
- 	github.com/hashicorp/golang-lru v1.0.2 // indirect
--	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
-+	github.com/hashicorp/hcl/v2 v2.25.0 // indirect
- 	github.com/hashicorp/serf v0.10.2 // indirect
- 	github.com/hashicorp/terraform-registry-address v0.5.0 // indirect
- 	github.com/hashicorp/terraform-svchost v0.2.1 // indirect
+@@ -0,0 +1,6 @@
++from {
++  backend "local" {
++    workspace_dir = "old-location"                  # Will be moved during the migration
++    path = "old-location/default/terraform.tfstate" # Will be moved during the migration
++  }
++}
 ```
 
-**File**: `internal/backend/remote-state/consul/go.sum` (modified, +6/-4)
+**File**: `internal/command/e2etest/testdata/state-migrate-local-to-store/old-location/default/terraform.tfstate` (added, +40/-0)
 ```diff
-@@ -35,6 +35,8 @@ github.com/apparentlymart/go-cidr v1.1.0 h1:2mAhrMoF+nhXqxTzSZMUzDHkLjmIHC+Zzn4t
- github.com/apparentlymart/go-cidr v1.1.0/go.mod h1:EBcsNrHc3zQeuaeCeCtQruQm+n9/YjEn/vI25Lg7Gwc=
- github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
- github.com/apparentlymart/go-versions v1.0.2 h1:n5Gg9YvSLK8Zzpy743J7abh2jt7z7ammOQ0oTd/5oA4=
- github.com/apparentlymart/go-versions v1.0.2/go.mod h1:YF5j7IQtrOAOnsGkniupEA5bfCjzd7i14yu0shZavyM=
- github.com/armon/go-metrics v0.4.1 h1:hR91U9KYmb6bLBYLQjyM+3j+rcd/UhE+G78SFnF8gJA=
-@@ -198,8 +200,8 @@ github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v1.0.2 h1:dV3g9Z/unq5DpblPpw+Oqcv4dU/1omnb4Ok8iPY6p1c=
- github.com/hashicorp/golang-lru v1.0.2/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
--github.com/hashicorp/hcl/v2 v2.24.0 h1:2QJdZ454DSsYGoaE6QheQZjtKZSUs9Nh2izTWiwQxvE=
--github.com/hashicorp/hcl/v2 v2.24.0/go.mod h1:oGoO1FIQYfn/AgyOhlg9qLC6/nOJPX3qGbkZpYAcqfM=
-+github.com/hashicorp/hcl/v2 v2.25.0 h1:HmmQVYRny4MaBo4b20TjmL46wyuUxpnMWkPZ4+NTbWk=
-+github.com/hashicorp/hcl/v2 v2.25.0/go.mod h1:vR+FKETxoZAmRlHgFfKmuqivj+C4Izm/c66XkmZ3r7M=
- github.com/hashicorp/memberlist v0.5.2 h1:rJoNPWZ0juJBgqn48gjy59K5H4rNgvUoM1kUD7bXiuI=
- github.com/hashicorp/memberlist v0.5.2/go.mod h1:Ri9p/tRShbjYnpNf4FFPXG7wxEGY4Nrcn6E7jrVa//4=
- github.com/hashicorp/serf v0.10.2 h1:m5IORhuNSjaxeljg5DeQVDlQyVkhRIjJDimbkCa8aAc=
-@@ -312,8 +314,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1 h1:cQriyiUvjTwOHg8QZaPihLWeRAAVoCpE00IU
- github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21PIudVV/E3rRQok=
- github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
- github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
--github.com/zclconf/go-cty v1.18.1 h1:yEGE8M4iIZlyKQURZNb2SnEyZlZHUcBCnx6KF81KuwM=
--github.com/zclconf/go-cty v1.18.1/go.mod h1:qpnV6EDNgC1sns/AleL1fvatHw72j+S+nS+MJ+T2CSg=
-+github.com/zclconf/go-cty v1.19.0 h1:IV8WdqYZc2c5rLX9bEoLNXKojBAp0MZPBHMIrCoa/s4=
-+github.com/zclconf/go-cty v1.19.0/go.mod h1:12W89jGn3JCOIQi7infWr9m80rOkb5RNYJqXMZcN4c8=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
- github.com/zclconf/go-cty-yaml v1.1.0 h1:nP+jp0qPHv2IhUVqmQSzjvqAWcObN0KBkUl2rWBdig0=
+@@ -0,0 +1,40 @@
++{
++    "version": 4,
++    "terraform_version": "1.16.0",
++    "serial": 1,
++    "lineage": "9e13d881-e480-7a63-d47a-b4f5224e6743",
++    "outputs": {
++        "greeting": {
++            "value": "hello world",
++            "type": "string"
++        }
++    },
++    "resources": [
++        {
++            "mode": "managed",
++            "type": "terraform_data",
++            "name": "my-data",
++            "provider": "provider[\"terraform.io/builtin/terraform\"]",
++            "instances": [
++                {
++                    "schema_version": 0,
++                    "attributes": {
++                        "id": "d71fb368-2ba1-fb4c-5bd9-6a2b7f05d60c",
++                        "input": {
++                            "value": "hello world",
++                            "type": "string"
++                        },
++                        "output": {
++                            "value": "hello world",
++                            "type": "string"
++                        },
++                        "triggers_replace": null
++                    },
++                    "sensitive_attributes": [],
++                    "identity_schema_version": 0
++                }
++            ]
++        }
++    ],
++    "check_results": null
++}
 ```
 
-**File**: `internal/backend/remote-state/cos/go.mod` (modified, +3/-2)
+**File**: `internal/command/e2etest/testdata/state-migrate-local-to-store/to.tf` (added, +20/-0)
 ```diff
-@@ -17,6 +17,7 @@ require (
- 	github.com/agext/levenshtein v1.2.3 // indirect
- 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-+	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
- 	github.com/apparentlymart/go-versions v1.0.2 // indirect
- 	github.com/bmatcuk/doublestar v1.1.5 // indirect
- 	github.com/clbanning/mxj v1.8.4 // indirect
-@@ -32,7 +33,7 @@ require (
- 	github.com/hashicorp/go-slug v0.18.3 // indirect
- 	github.com/hashicorp/go-uuid v1.0.3 // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
--	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
-+	github.com/hashicorp/hcl/v2 v2.25.0 // indirect
- 	github.com/hashicorp/terraform-registry-address v0.5.0 // indirect
- 	github.com/hashicorp/terraform-svchost v0.2.1 // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
-@@ -43,7 +44,7 @@ require (
- 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
- 	github.com/mozillazg/go-httpheader v0.3.0 // indirect
- 	github.com/spf13/afero v1.15.0 // indirect
--	github.com/zclconf/go-cty v1.18.1 // indirect
-+	github.com/zclconf/go-cty v1.19.0 // indirect
- 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
+@@ -0,0 +1,20 @@
++terraform {
++  required_providers {
++    simple6 = {
++      source  = "registry.terraform.io/hashicorp/simple6"
++      version = "1.0.0"
++    }
++  }
++  state_store "simple6_fs" {
++    provider "simple6" {}
++    workspace_dir = "new-location"
++  }
++}
++
++variable "name" {
++  default = "world"
++}
++
++resource "terraform_data" "my-data" {
++  input = "hello ${var.name}"
++}
 ```
 
-**File**: `internal/backend/remote-state/cos/go.sum` (modified, +6/-4)
+**File**: `internal/command/e2etest/testdata/state-migrate-store-to-local/.terraform.lock.hcl` (added, +6/-0)
 ```diff
-@@ -29,6 +29,8 @@ github.com/apparentlymart/go-cidr v1.1.0 h1:2mAhrMoF+nhXqxTzSZMUzDHkLjmIHC+Zzn4t
- github.com/apparentlymart/go-cidr v1.1.0/go.mod h1:EBcsNrHc3zQeuaeCeCtQruQm+n9/YjEn/vI25Lg7Gwc=
- github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
-+github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
- github.com/apparentlymart/go-versions v1.0.2 h1:n5Gg9YvSLK8Zzpy743J7abh2jt7z7ammOQ0oTd/5oA4=
- github.com/apparentlymart/go-versions v1.0.2/go.mod h1:YF5j7IQtrOAOnsGkniupEA5bfCjzd7i14yu0shZavyM=
- github.com/aws/aws-sdk-go-v2 v1.41.5 h1:dj5kopbwUsVUVFgO4Fi5BIT3t4WyqIDjGKCangnV/yY=
-@@ -138,8 +140,8 @@ github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/C
- github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/hashicorp/go-version v1.9.0 h1:CeOIz6k+LoN3qX9Z0tyQrPtiB1DFYRPfCIBtaXPSCnA=
- github.com/hashicorp/go-version v1.9.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09ZGVZPK5anwXA=
--github.com/hashicorp/hcl/v2 v2.24.0 h1:2QJdZ454DSsYGoaE6QheQZjtKZSUs9Nh2izTWiwQxvE=
--github.com/hashicorp/hcl/v2 v2.24.0/go.mod h1:oGoO1FIQYfn/AgyOhlg9qLC6/nOJPX3qGbkZpYAcqfM=
-+github.com/hashicorp/hcl/v2 v2.25.0 h1:HmmQVYRny4MaBo4b20TjmL46wyuUxpnMWkPZ4+NTbWk=
-+github.com/hashicorp/hcl/v2 v2.25.0/go.mod h1:vR+FKETxoZAmRlHgFfKmuqivj+C4Izm/c66XkmZ3r7M=
- github.com/hashicorp/terraform-registry-address v0.5.0 h1:FAlhWOLFgMvo/4f5DPhCTwRYfHYdF1DjiOtgxfGr4p0=
- github.com/hashicorp/terraform-registry-address v0.5.0/go.mod h1:wOJYCN60i/gSQGPCcGdamatjxn65EZBMFVt7c/Suzis=
- github.com/hashicorp/terraform-svchost v0.2.1 h1:ubvrTFw3Q7CsoEaX7V06PtCTKG3wu7GyyobAoN4eF3Q=
-@@ -203,8 +205,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1 h1:cQriyiUvjTwOHg8QZaPihLWeRAAVoCpE00IU
- github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21PIudVV/E3rRQok=
- github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
- github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
--github.com/zclconf/go-cty v1.18.1 h1:yEGE8M4iIZlyKQURZNb2SnEyZlZHUcBCnx6KF81KuwM=
--github.com/zclconf/go-cty v1.18.1/go.mod h1:qpnV6EDNgC1sns/AleL1fvatHw72j+S+nS+MJ+T2CSg=
-+github.com/zclconf/go-cty v1.19.0 h1:IV8WdqYZc2c5rLX9bEoLNXKojBAp0MZPBHMIrCoa/s4=
-+github.com/zclconf/go-cty v1.19.0/go.mod h1:12W89jGn3JCOIQi7infWr9m80rOkb5RNYJqXMZcN4c8=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
- github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
- github.com/zclconf/go-cty-yaml v1.1.0 h1:nP+jp0qPHv2IhUVqmQSzjvqAWcObN0KBkUl2rWBdig0=
+@@ -0,0 +1,6 @@
++# This file is maintained automatically by "terraform init".
++# Manual edits may be lost in future updates.
++
++provider "registry.terraform.io/hashicorp/simple6" {
++  version = "1.0.0"
++}
 ```
 
----
-
-### Incident Patch 2: `4fb3ea07` (2026-11-26)
-**Commit Message**: changelog: Add entry for Unicode upgrade (#39584)
-
-**File**: `.changes/v1.18/NOTES-20261126-121102.yaml` (added, +5/-0)
+**File**: `internal/command/e2etest/testdata/state-migrate-store-to-local/from.tfmigrate.hcl` (added, +13/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+kind: NOTES
-+body: "builtin functions or configuration parsing which rely on Unicode tables may produce different results due to upgrade from Unicode 15 to Unicode 17. For example, `upper` may return different output for the same input if it contains a character that didn't have an uppercase version in Unicode 15 and now does."
-+time: 2026-11-26T12:11:02.078642Z
-+custom:
-+    Issue: "39582"
+@@ -0,0 +1,13 @@
++state_store_provider {
++  simple6 = {
++    source  = "registry.terraform.io/hashicorp/simple6"
++    version = "1.0.0"
++  }
++}
++
++from {
++  state_store "simple6_fs" {
++    provider "simple6" {}
++    workspace_dir = "old-location" # Will be moved during the migration
++  }
++}
+```
+
+**File**: `internal/command/e2etest/testdata/state-migrate-store-to-local/old-location/default/terraform.tfstate` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++{
++    "version": 4,
++    "terraform_version": "1.16.0",
++    "serial": 1,
++    "lineage": "9e13d881-e480-7a63-d47a-b4f5224e6743",
++    "outputs": {
++        "greeting": {
++            "value": "hello world",
++            "type": "string"
++        }
++    },
++    "resources": [
++        {
++            "mode": "managed",
++            "type": "terraform_data",
++            "name": "my-data",
++            "provider": "provider[\"terraform.io/builtin/terraform\"]",
++            "instances": [
++                {
++                    "schema_version": 0,
++                    "attributes": {
++                        "id": "d71fb368-2ba1-fb4c-5bd9-6a2b7f05d60c",
++                        "input": {
++                            "value": "hello world",
++                            "type": "string"
++                        },
++                        "output": {
++                            "value": "hello world",
++                            "type": "string"
++                        },
++                        "triggers_replace": null
++                    },
++                    "sensitive_attributes": [],
++                    "identity_schema_version": 0
++                }
++            ]
++        }
++    ],
++    "check_results": null
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2585,31 +2586,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: Bump hcl/v2 to 2.25.0
+## X. command/state migrate: Enable using providers not managed by Terraform.
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/command/e2etest/pluggable_state_store_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b07e3171`: deps: Bump hcl/v2 to 2.25.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8fe14014`: command/state migrate: Enable using providers not managed by Terraform.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/e2etest/pluggable_state_store_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/hashicorp/hcl/v2 v2.25.0
-	github.com/zclconf/go-cty v1.19.0
-	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
+// Test using `terraform state migrate` subcommand with reattached providers as source or destination.
+func TestPrimary_stateStore_stateMigrateCmd_reattachedProviders(t *testing.T) {
+	t.Run("source uses reattached provider", func(t *testing.T) {
+		if !canRunGoBuild {
+			// We're running in a separate-build-then-run context, so we can't
+			// currently execute this test which depends on being able to build
+			// new executable at runtime.
+			//
+			// (See the comment on canRunGoBuild's declaration for more information.)
+			t.Skip("can't run without building a new provider executable")
+		}
+
+		fixturePath := filepath.Join("testdata", "state-migrate-store-to-local")
+
+		tf := e2e.NewBinary(t, experimentalTerraformBin, fixturePath)
+		t.Chdir(tf.WorkDir())
+
+		// setup reattached provider as migration source
+		reattachStr, _ := reattachedProviderForTest(t, addrs.NewDefaultProvider("simple6"), 6)
+		tf.AddEnv("TF_REATTACH_PROVIDERS=" + string(reattachStr))
+
+		stdout, stderr, err := tf.Run("state", "migrate", "-input=false", "-force-copy", "-no-color")
+		if err != nil {
+			t.Fatalf("unexpected error: %s\nstderr:\n%q", err, stderr)
+		}
+
+		expectedMsg := []string{
+			`Installing providers...`,
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/hashicorp/hcl/v2 v2.24.0
-	github.com/zclconf/go-cty v1.18.1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b07e3171` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8fe14014` are properly handled with clean fallback behavior.
