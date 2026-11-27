@@ -13742,3 +13742,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inclusionai-ling-3-2-air` | `https://huggingface.co/inclusionAI/Ling-3.2-air` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-27T07:03:36.609Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c07795fa` | Multi-dimensional audit evidence | 2026-11-27T07:03:49.835Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `8a314aed` | Multi-dimensional audit evidence | 2026-11-27T07:03:52.507Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-27T07:13:34.913Z |

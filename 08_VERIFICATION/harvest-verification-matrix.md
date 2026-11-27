@@ -13709,3 +13709,4 @@
 | `CYCLE-20261127-XNKT` | `2026-11-27T07:03:36.605Z` | `inclusionAI/Ling-3.2-air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | Yes (`d5dae586...`) |
 | `CYCLE-20261127-XXRW` | `2026-11-27T07:03:49.820Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10846` | Yes (`b497c7da...`) |
 | `CYCLE-20261127-XZU6` | `2026-11-27T07:03:52.494Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10847` | Yes (`0131b285...`) |
+| `CYCLE-20261127-AH8C` | `2026-11-27T07:13:34.908Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`faa68d6a...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T07:03:58.692Z",
+  "last_updated": "2026-11-27T07:13:40.818Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1220457ac05500274c8c624cedeb61f4d0b82a9fa185cc35e39afedd3abbc4a",
+      "content_hash": "cfb775f5128b4b7f6922a45b2cbc9f9481fc57667e7e300023aa706aba1564be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T06:37:54.216Z"
+      "persisted_at": "2026-11-27T07:13:39.454Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce3007a5c233b174e033265f85fc3f348cd09c2b637e1312e257965342cb34c1",
+      "content_hash": "6cd7c351a0994df38f6a5a8953747c255b70b8d572f4b6e0e6acc4376200cb83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:37:54.398Z"
+      "persisted_at": "2026-11-27T07:13:39.625Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -239681,9 +239681,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "f59892e9938f1ed8151f5f51fbc667ee529c6022cb667d09e68b6e5ec380c59f",
+      "content_hash": "a3882d5091ddc424524ff4d48808ed083d6c155e889ba314bab69e9faced1ca0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:08:07.128Z"
+      "persisted_at": "2026-11-27T07:13:40.818Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -243287,7 +243287,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "917c50f99b7f07d6e77a06c9d081a848c4268ac78cec036dbe03c022e07f855e",
+      "content_hash": "faa68d6a6c557ea6aaa455ffe9c07aa71575e351cb33a4586e182e01c05f6563",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [],
@@ -243296,7 +243296,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:48:04.150Z",
+      "verified_at": "2026-11-27T07:13:34.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243313,9 +243313,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "4638b3e64c0bb1b6ca0e51fa97bc64d73f8b38db2c1198cc98c0464e352c3fa1",
+      "content_hash": "f34a55bc9536e8fba4ff9db2b364c6ccea573bcaf4f589617fbbe2dd00f794fe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:48:04.579Z"
+      "persisted_at": "2026-11-27T07:13:35.155Z"
     },
     "learn-github-cachix-devenv": {
       "learning_id": "learn-github-cachix-devenv",
@@ -243683,9 +243683,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
       "source_version": "HEAD",
-      "content_hash": "719225c6c72341a030c2d53116c866db01c19919c6c4cc9db8d5a402f57acc99",
+      "content_hash": "2446d53e321f8d5edb71311e3a7f2c38070ddf916a65fb9ddb8475660a9f104d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:48:47.268Z"
+      "persisted_at": "2026-11-27T07:13:38.302Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "item_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -300755,9 +300755,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "363b92b2eb7e03b74ac2efce46a05b3084ae6bbca369e6fd2ef21b066ed01ba4",
+      "content_hash": "fc7ccf766e3712feb785035cc43bd4d168df88b7577f3b0f94530802de238a05",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T06:37:53.994Z"
+      "persisted_at": "2026-11-27T07:13:39.249Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -362486,13 +362486,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0L4L-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AKF9-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab5a673515fecb306bcaca98d8cac2a7a0d3906353d0dced851d0dcbd0ac9134",
+      "content_hash": "444f264a7721a5f7a35d66025a7f250eb2dfac521a8053cf1ba76d362c0f744c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T06:37:53.782Z"
+      "persisted_at": "2026-11-27T07:13:39.045Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",

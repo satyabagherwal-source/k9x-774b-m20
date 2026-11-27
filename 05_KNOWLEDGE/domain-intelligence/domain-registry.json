@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T07:03:58.322Z",
+  "last_updated": "2026-11-27T07:13:40.818Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -18465,8 +18465,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "f59892e9938f1ed8151f5f51fbc667ee529c6022cb667d09e68b6e5ec380c59f",
-      "created_at": "2026-11-27T02:08:07.128Z"
+      "content_hash": "a3882d5091ddc424524ff4d48808ed083d6c155e889ba314bab69e9faced1ca0",
+      "created_at": "2026-11-27T07:13:40.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -19456,8 +19456,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-research-knowledge-intelligence-openbmb-minicpm-v-4-.md",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "content_hash": "4638b3e64c0bb1b6ca0e51fa97bc64d73f8b38db2c1198cc98c0464e352c3fa1",
-      "created_at": "2026-11-23T21:48:04.579Z"
+      "content_hash": "f34a55bc9536e8fba4ff9db2b364c6ccea573bcaf4f589617fbbe2dd00f794fe",
+      "created_at": "2026-11-27T07:13:35.155Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
@@ -19534,8 +19534,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-learnings-research-knowledge-intelligence-hf-openbmb.md",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
-      "content_hash": "719225c6c72341a030c2d53116c866db01c19919c6c4cc9db8d5a402f57acc99",
-      "created_at": "2026-11-23T21:48:47.268Z"
+      "content_hash": "2446d53e321f8d5edb71311e3a7f2c38070ddf916a65fb9ddb8475660a9f104d",
+      "created_at": "2026-11-27T07:13:38.302Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -33945,8 +33945,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "363b92b2eb7e03b74ac2efce46a05b3084ae6bbca369e6fd2ef21b066ed01ba4",
-      "created_at": "2026-11-27T06:37:53.994Z"
+      "content_hash": "fc7ccf766e3712feb785035cc43bd4d168df88b7577f3b0f94530802de238a05",
+      "created_at": "2026-11-27T07:13:39.249Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

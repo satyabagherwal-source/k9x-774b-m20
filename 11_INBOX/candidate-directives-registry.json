@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:03:58.116Z",
+  "last_updated": "2026-11-27T07:13:39.809Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69127,11 +69127,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-0L4L",
+      "id": "CD-AKF9",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0L4L-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-AKF9-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69240,6 +69240,24 @@
       "source_repo": "vespa-engine-vespa",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-360D3C-empirical-invariant-guard-in-docsummary-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-B2A34A",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B2A34A-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-2D9C13",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2D9C13-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-27"
     }
   ]

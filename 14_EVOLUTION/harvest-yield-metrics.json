@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:03:52.517Z",
-  "total_cycles_completed": 13013,
-  "total_learnings_persisted": 13013,
+  "last_updated": "2026-11-27T07:13:34.919Z",
+  "total_cycles_completed": 13014,
+  "total_learnings_persisted": 13014,
   "total_rules_promoted": 11757,
   "history": [
-    {
-      "timestamp": "2026-11-26T18:05:38.414Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T18:05:45.670Z",
       "repository": "pubkey/rxdb",
@@ -1403,6 +1396,13 @@
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:13:34.919Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
