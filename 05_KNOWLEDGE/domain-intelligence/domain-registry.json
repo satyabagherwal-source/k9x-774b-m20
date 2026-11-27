@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T06:55:12.034Z",
+  "last_updated": "2026-11-27T07:03:58.322Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -8558,8 +8558,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "727469b6a8211abfd63f9d58b7e1d95b948d9fd65488d4a4b179781d5d70d0dd",
-      "created_at": "2026-11-26T18:14:38.409Z"
+      "content_hash": "94e53a68e5cfcb106341f4bde7a2ec07675839b73515cde7b19f9703a50a1d47",
+      "created_at": "2026-11-27T07:03:50.277Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8576,8 +8576,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "ec1456944e223aa4536fd244416f2adb7389c549bb94333901c7aa18f482db51",
-      "created_at": "2026-11-26T18:14:44.164Z"
+      "content_hash": "fce2c5a31fa416a3f0b9d6ddd1c4b638f17461e5a8b009b9d9694440e646db00",
+      "created_at": "2026-11-27T07:03:57.323Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -18501,8 +18501,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "3ab26d489db8f7c070c01ba05af926957c7c45ea8c3e4978544d133924a88660",
-      "created_at": "2026-11-26T13:08:25.880Z"
+      "content_hash": "24a9b9fcb922ebf4da9caf3c9cd3c92130e0982278d0caea96ddfe95400d601a",
+      "created_at": "2026-11-27T07:03:52.951Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -18571,8 +18571,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "2cdcd344fb0616d431c6c86f49929d892f74b496b1551e182c2803b726ef4012",
-      "created_at": "2026-11-26T13:08:30.816Z"
+      "content_hash": "257c4752dc9286523201965413d58662a6de4ab78bf36e873ead3bb094b9ccc9",
+      "created_at": "2026-11-27T07:03:58.322Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
@@ -41517,8 +41517,8 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ling-3.2-air Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-research-knowledge-intelligence-inclusionai-ling-3-2.md",
       "repository": "inclusionAI/Ling-3.2-air",
-      "content_hash": "34624688816c3d69ec6615a39f2f60e2d25d7d264c933d0cda27dfc9646eefd8",
-      "created_at": "2026-11-23T21:48:01.987Z"
+      "content_hash": "7a3eedb84be1d3410ec2109e62a782774de74de1a5ff7572770d8ddf247f8690",
+      "created_at": "2026-11-27T07:03:36.847Z"
     },
     "DOM-D-7E47FE9B": {
       "record_id": "DOM-D-7E47FE9B",
@@ -41568,8 +41568,8 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ling-3.2-air-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ling-3-2-air-learnings-research-knowledge-intelligence-hf-inclusi.md",
       "repository": "hf-inclusionai-ling-3.2-air-learnings",
-      "content_hash": "1aea67dd65dcc7c9f066b34d6888518364137e74cd5ae2607f83e32e52769a4f",
-      "created_at": "2026-11-23T21:48:46.859Z"
+      "content_hash": "9d4c35650c76855544ce5ac3bc474bcb666fdf671e6f56dcc48d9838d699e522",
+      "created_at": "2026-11-27T07:03:56.473Z"
     },
     "domain_intelligence-quality-verification-intelligence-apache-pinot-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-apache-pinot-core-invariants",

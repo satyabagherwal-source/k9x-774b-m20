@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HFVC",
-    "timestamp": "2026-11-26T00:59:24.696Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "6a8e8193f8400f14600d6b6749e935f01d7fc8f17c57286b566198cc18e380a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-SFI5",
-    "timestamp": "2026-11-26T01:07:57.437Z",
-    "repository": "baidu/ERNIE-5.5-Flash-Base",
-    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
-    "contentHash": "62139ab7da6e3248cbe69f867e0855b00675bd5d36d2207bf6db2523d696a5f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-SNOS",
-    "timestamp": "2026-11-26T01:08:08.044Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "e082e0bb3a865701ee015d58e2683c4b31d3f980c9b547eb1cbea97edf3c8623",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-SPFA",
     "timestamp": "2026-11-26T01:08:10.294Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7445,51 @@
     "repository": "MariaDB/server",
     "learningId": "learn-github-mariadb-server",
     "contentHash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XNKT",
+    "timestamp": "2026-11-27T07:03:36.605Z",
+    "repository": "inclusionAI/Ling-3.2-air",
+    "learningId": "learn-huggingface-inclusionai-ling-3-2-air",
+    "contentHash": "d5dae586c4120d0cb9d3e67cf5cfa1f8ca265efb2c3d8fbb87be838429bcd925",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XXRW",
+    "timestamp": "2026-11-27T07:03:49.820Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XZU6",
+    "timestamp": "2026-11-27T07:03:52.494Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

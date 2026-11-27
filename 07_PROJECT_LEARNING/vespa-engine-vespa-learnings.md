@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `83e98ce8`  
+> **Source Version**: `8a314aed`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T13:08:23.921Z  
+> **Timestamp**: 2026-11-27T07:03:51.291Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:08:23.916Z  
+> **Harvest Timestamp**: 2026-11-27T07:03:51.286Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1065,194 +1065,378 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83e98ce8` (2026-11-26)
-**Commit Message**: Merge pull request #38673 from vespa-engine/dependabot/npm_and_yarn/client/js/app/brace-expansion-1.1.22
+### Incident Patch 1: `8a314aed` (2026-11-26)
+**Commit Message**: Merge pull request #38680 from vespa-engine/toregge/more-use-of-document-db-main-thread-service
 
-Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app
+More usage of document db main thread service.
 
-**File**: `client/js/app/yarn.lock` (modified, +3/-3)
+**File**: `searchcore/src/tests/proton/docsummary/docsummary_test.cpp` (modified, +1/-1)
 ```diff
-@@ -1047,9 +1047,9 @@ baseline-browser-mapping@^2.11.12:
-   integrity sha512-JyJ954WzuIR8/FFzX0o5krdSTrBAkcCSRfWSleRsIHSWV+cZe2FI1PKggVkFke1hBldRs+LRxUczzE9iPmgZww==
- 
- brace-expansion@^1.1.7:
--  version "1.1.18"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
--  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
-+  version "1.1.22"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
-+  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
-   dependencies:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
+@@ -298,7 +298,7 @@ class DBContext : public DummyDBOwner {
+         op->setDbDocumentId(dbdId);
+         op->setPrevDbDocumentId(prevDbdId);
+         vespalib::Gate commitDone;
+-        _ddb->getWriteService().master().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
++        _ddb->getWriteService().main().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
+             _ddb->getFeedHandler().appendOperation(*op, std::make_shared<vespalib::GateCallback>(commitDone));
+         }));
+         commitDone.await();
 ```
 
----
-
-### Incident Patch 2: `2c237631` (2026-11-26)
-**Commit Message**: Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app
-
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 1.1.18 to 1.1.22.
-- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
-- [Commits](https://github.com/juliangruber/brace-expansion/compare/v1.1.18...v1.1.22)
-
----
-updated-dependencies:
-- dependency-name: brace-expansion
-  dependency-version: 1.1.22
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `client/js/app/yarn.lock` (modified, +3/-3)
+**File**: `searchcore/src/tests/proton/documentdb/document_subdbs_test.cpp` (modified, +1/-1)
 ```diff
-@@ -1047,9 +1047,9 @@ baseline-browser-mapping@^2.11.12:
-   integrity sha512-JyJ954WzuIR8/FFzX0o5krdSTrBAkcCSRfWSleRsIHSWV+cZe2FI1PKggVkFke1hBldRs+LRxUczzE9iPmgZww==
- 
- brace-expansion@^1.1.7:
--  version "1.1.18"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
--  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
-+  version "1.1.22"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
-+  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
-   dependencies:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
+@@ -315,7 +315,7 @@ template <typename Traits> struct FixtureBase {
+         init();
+     }
+     ~FixtureBase() {
+-        _service.write().master().execute(makeLambdaTask([this]() { _subDb.close(); }));
++        _service.write().main().execute(makeLambdaTask([this]() { _subDb.close(); }));
+         _service.shutdown();
+     }
+     void setBucketStateCalculator(const std::shared_ptr<IBucketStateCalculator>& calc) {
 ```
 
----
-
-### Incident Patch 3: `b7166eea` (2026-11-25)
-**Commit Message**: Merge pull request #38659 from vespa-engine/hakonhall/20261125-verify-sequence-of-prepares-from-builders-service-cluster-pairs
-
-Verify sequence of prepares from (builders, service cluster) pairs
-
-**File**: `config-model/src/test/java/com/yahoo/config/model/provision/EarlyProvisioningTest.java` (modified, +97/-84)
+**File**: `searchcore/src/tests/proton/documentdb/documentbucketmover_test.cpp` (modified, +7/-7)
 ```diff
-@@ -9,105 +9,104 @@
- import com.yahoo.vespa.model.test.VespaModelTester;
- import org.junit.jupiter.api.Test;
+@@ -40,7 +40,7 @@ struct ControllerFixtureBase : public ::testing::Test {
+     test::ResourceUsageNotifier              _resource_usage_notifier;
+     MonitoredRefCount                        _refCount;
+     ThreadStackExecutor                      _singleExecutor;
+-    SyncableExecutorThreadService            _master;
++    SyncableExecutorThreadService            _main_thread_service;
+     DummyBucketExecutor                      _bucketExecutor;
+     MyMoveHandler                            _moveHandler;
+     DocumentDBTaggedMetrics                  _metrics;
+@@ -97,12 +97,12 @@ struct ControllerFixtureBase : public ::testing::Test {
+     }
+     void sync() {
+         _bucketExecutor.sync();
+-        _master.sync();
+-        _master.sync(); // Handle that  master schedules onto master again
++        _main_thread_service.sync();
++        _main_thread_service.sync(); // Handle that document db main thread service schedules onto main again
+     }
+     template <typename FunctionType> void masterExecute(FunctionType&& function) {
+-        _master.execute(vespalib::makeLambdaTask(std::forward<FunctionType>(function)));
+-        _master.sync();
++        _main_thread_service.execute(vespalib::makeLambdaTask(std::forward<FunctionType>(function)));
++        _main_thread_service.sync();
+     }
+ };
  
--import java.util.ArrayList;
- import java.util.List;
- import java.util.Set;
- 
- import static org.junit.jupiter.api.Assertions.assertEquals;
--import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- 
- /**
-- * Verifies that the clusters collected for early provisioning, see
-+ * Verifies which clusters are collected for early provisioning, see
-  * {@link com.yahoo.config.model.builder.xml.ConfigModelBuilder#collectAllocationRequests},
-- * are equal to those prepared.
-+ * and that they are equal to those prepared.
-  *
-  * @author hakonhall
-  */
- public class EarlyProvisioningTest {
- 
-     @Test
-     void containerAndContentWithImplicitAdmin() {
--        String services = """
--                          <?xml version='1.0' encoding='utf-8' ?>
--                          <services>
--                            <container version='1.0' id='foo'>
--                              <nodes count='2'/>
--                            </container>
--                            <content version='1.0' id='bar'>
--                              <redundancy>2</redundancy>
--                              <documents>
--                                <document type='type1' mode='index'/>
--                              </documents>
--                              <nodes count='2'/>
--                            </content>
--                          </services>
--                          """;
--
--        // TODO: Remove the cluster IDs below as collectAllocationRequests() is implemented for their builders
--        assertEarlyProvisioning(services, 10, "foo");
-+        assertPrepares("""
-+                       <?xml version='1.0' encoding='utf-8' ?>
-+                       <services>
-+                         <container version='1.0' id='foo'>
-+                           <nodes count='2'/>
-+                         </container>
-+                         <content version='1.0' id='bar'>
-+                           <redundancy>2</redundancy>
-+                           <documents>
-+                             <document type='type1' mode='index'/>
-+                           </documents>
-+                           <nodes count='2'/>
-+                         </content>
-+                       </services>
-+                       """,
-+                       10,
-+                       "(container.foo)", "admin.logserver", "content.bar", "admin.cluster-controllers");
+@@ -120,11 +120,11 @@ ControllerFixtureBase::ControllerFixtureBase(const BlockableMaintenanceJobConfig
+       _resource_usage_notifier(),
+       _refCount(),
+       _singleExecutor(1),
+-      _master(_singleExecutor),
++      _main_thread_service(_singleExecutor),
+       _bucketExecutor(4),
+       _moveHandler(*_bucketDB, storeMoveDoneContexts),
+       _metrics("test", 1),
+-      _bmj(BucketMoveJob::create(_calc, RetainGuard(_refCount), _moveHandler, _modifiedHandler, _master,
++      _bmj(BucketMoveJob::create(_calc, RetainGuard(_refCount), _moveHandler, _modifiedHandler, _main_thread_service,
+                                  _bucketExecutor, _ready._subDb, _notReady._subDb, _bucketCreateNotifier,
+                                  _clusterStateHandler, _bucketHandler, _resource_usage_notifier, blockableConfig,
+                                  _doc_type_name.getName(), makeBucketSpace())),
+```
+
+**File**: `searchcore/src/tests/proton/documentdb/feedhandler/feedhandler_test.cpp` (modified, +12/-12)
+```diff
+@@ -408,11 +408,11 @@ struct FeedHandlerFixture {
      }
  
-     @Test
-     void clusterControllersAreCollectedOnceWithSeveralContentClusters() {
--        String services = """
--                          <?xml version='1.0' encoding='utf-8' ?>
--                          <services>
--                            <container version='1.0' id='foo'>
--                              <nodes count='2'/>
--                            </container>
--                            <content version='1.0' id='bar'>
--                              <redundancy>2</redundancy>
--                              <documents>
--                                <document type='type1' mode='index'/>
--                              </documents>
--                              <nodes count='2'/>
--                            </content>
--                            <content version='1.0' id='baz'>
--                              <redundancy>2</redundancy>
--                              <documents>
--                                <document type='type1' mode='index'/>
--                              </documents>
--                              <nodes count='2'/>
--                            </content>
--                          </services>
--                          """;
--
--        // TODO: Remove the cluster IDs below as collectAllocationRequests() is implemented for their builders
--        assertEarlyProvisioning(services, 10, "foo");
-+        assertPrepares("""
-+                       <?xml version='1.0' encoding='utf-8' ?>
-+                       <services>
-+                         <container version='1.0' id='foo'>
-+                           <nodes count='2'/>
-+                         </container>
-+                         <content version='1.0' id='bar'>
-+                           <redundancy>2</redundancy>
-+                           <documents>
-+                             <document type='type1' mode='index'/>
-+                           </documents>
-+                           <nodes count='2'/>
-+                         </content>
-+                         <content version='1.0' id='baz'>
-+                           <redundancy>2</redundancy>
-+                           <documents>
-+                             <document type='type1' mode='index'/>
-+                           </documents>
-+                           <nodes count='2'/>
-+                         </content>
-+                       </services>
-+                       """,
-+                       10,
-+                       "(conta
+     ~FeedHandlerFixture() { _service.shutdown(); }
+-    template <class FunctionType> inline void runAsMaster(FunctionType&& function) {
+-        _service.write().master().execute(makeLambdaTask(std::move(function)));
+-        syncMaster();
++    template <class FunctionType> inline void run_in_main_thread_service(FunctionType&& function) {
++        _service.write().main().execute(makeLambdaTask(std::move(function)));
++        sync_main_thread_service();
+     }
+-    void syncMaster() { _service.write().master().sync(); }
++    void sync_main_thread_service() { _service.write().main().sync(); }
+ };
+ 
+ } // namespace
+@@ -438,7 +438,7 @@ void FeedHandlerTest::TearDownTestSuite() {
+ 
+ TEST_F(FeedHandlerTest, require_that_heartBeat_calls_FeedViews_heartBeat) {
+     FeedHandlerFixture f;
+-    f.runAsMaster([&]() { f.handler.heartBeat(); });
++    f.run_in_main_thread_service([&]() { f.handler.heartBeat(); });
+     EXPECT_EQ(1, f.feedView.heartbeat_count);
+ }
+ 
+@@ -481,7 +481,7 @@ TEST_F(FeedHandlerTest, require_that_handleMove_calls_FeedView) {
+     DocumentContext    doc_context("id:ns:searchdocument::foo", f.schema.builder);
+     MoveOperation      op(doc_context.bucketId, Timestamp(2), doc_context.doc, DbDocumentId(0, 2), 1);
+     op.setDbDocumentId(DbDocumentId(1, 2));
+-    f.runAsMaster([&]() { f.handler.handleMove(op, IDestructorCallback::SP()); });
++    f.run_in_main_thread_service([&]() { f.handler.handleMove(op, IDestructorCallback::SP()); });
+     EXPECT_EQ(1, f.feedView.move_count);
+     EXPECT_EQ(1, f.tls_writer.store_count);
+ }
+@@ -511,27 +511,27 @@ TEST_F(FeedHandlerTest, require_that_flush_done_calls_prune) {
+     f.handler.changeToNormalFeedState();
+     f.owner._allowPrune = true;
+     f.handler.flushDone(10);
+-    f.syncMaster();
++    f.sync_main_thread_service();
+     EXPECT_EQ(1, f.tls_writer.erase_count);
+     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
+ }
+ 
+ TEST_F(FeedHandlerTest, require_that_flush_in_init_state_delays_pruning) {
+     FeedHandlerFixture f;
+     f.handler.flushDone(10);
+-    f.syncMaster();
++    f.sync_main_thread_service();
+     EXPECT_EQ(0, f.tls_writer.erase_count);
+     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
+ }
+ 
+ TEST_F(FeedHandlerTest, require_that_flush_cannot_unprune) {
+     FeedHandlerFixture f;
+     f.handler.flushDone(10);
+-    f.syncMaster();
++    f.sync_main_thread_service();
+     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
+ 
+     f.handler.flushDone(5); // Try to unprune.
+-    f.syncMaster();
++    f.sync_main_thread_service();
+     EXPECT_EQ(10u, f.handler.getPrunedSerialNum());
+ }
+ 
+@@ -692,8 +692,8 @@ TEST_F(FeedHandlerTest, require_that_feed_stats_are_updated) {
+     auto op = std::make_unique<PutOperation>(doc_context.bucketId, Timestamp(10), std::move(doc_context.doc));
+     FeedTokenContext token_context;
+     f.handler.performOperation(std::move(token_context.token), std::move(op));
+-    f.syncMaster(); // wait for initateCommit
+-    f.syncMaster(); // wait for onCommitDone
++    f.sync_main_thread_service(); // wait for initateCommit
++    f.sync_main_thread_service(); // wait for onCommitDone
+     auto stats = f.handler.get_stats(false);
+     EXPECT_EQ(1u, stats.get_commits());
+     EXPECT_EQ(1u, stats.get_operations());
+```
+
+**File**: `searchcore/src/tests/proton/documentdb/feedview_test.cpp` (modified, +9/-9)
+```diff
+@@ -639,7 +639,7 @@ struct FixtureBase {
+         runInMaster(
+             [this, onDone = std::make_shared<GateCallback>(gate)]() { performForceCommit(std::move(onDone)); });
+         gate.await();
+-        _writeService.master().sync();
++        _writeService.main().sync();
+     }
+ 
+     std::string get_trace() { return _tracer._os.str(); }
+@@ -656,7 +656,7 @@ struct FixtureBase {
+         Gate gate;
+         runInMaster([&]() { performCompactLidSpace(wantedLidLimit, std::make_shared<GateCallback>(gate)); });
+         gate.await();
+-        _writeService.master().sync();
++        _writeService.main().sync();
+     }
+     LastChange get_last_change() { return _gidToLidChangeHandler->get_last_change(); }
+     uint32_t get_change_handler_count() { return _gidToLidChangeHandler->get_num_changes(); }
+@@ -908,12 +908,12 @@ TEST(FeedViewTest, require_that_remove_calls_removes_complete_via_delayed_thread
+     EXPECT_EQ(std::make_tuple(0u, 0u, 0u), get_execute_counts(f.writeServiceObserver()));
+     f.putAndWait(f.doc1(10));
+     f.forceCommitAndWait();
+-    // put index fields handled in index thread
++    // put index fields handled in document db index thread
+     EXPECT_EQ(std::make_tuple(2u, 2u, 2u), get_execute_counts(f.writeServiceObserver()));
+     f.removeAndWait(f.doc1(20));
+     f.forceCommitAndWait();
+-    // remove index fields handled in index thread
+-    // delayed remove complete handled in same index thread, then master thread
++    // remove index fields handled in document db index thread
++    // delayed remove complete handled in same document db index thread, then document db main thread
+     EXPECT_EQ(std::make_tuple(5u, 4u, 4u), get_execute_counts(f.writeServiceObserver()));
+     EXPECT_EQ(1u, f.metaStoreObserver()._removes_complete_cnt);
+     ASSERT_FALSE(f.metaStoreObserver()._removes_complete_lids.empty());
+@@ -1300,8 +1300,8 @@ TEST(
+     f.populateBeforeCompactLidSpace();
+     EXPECT_EQ(std::make_tuple(5u, 4u, 4u), get_execute_counts(f.writeServiceObserver()));
+     f.compactLidSpaceAndWait(2);
+-    // performIndexForceCommit in index thread, then completion callback
+-    // in master thread.
++    // performIndexForceCommit in document db index thread, then completion callback
++    // in document db main thread.
+     EXPECT_EQ(std::make_tuple(7u, 7u, 7u), get_execute_counts(f.writeServiceObserver()));
+     EXPECT_EQ(2u, f.metaStoreObserver()._compactLidSpaceLidLimit);
+     EXPECT_EQ(2u, f.getDocumentStore()._compactLidSpaceLidLimit);
+@@ -1321,8 +1321,8 @@ TEST(
+     f.runInMaster(
+         [&, onDone = std::make_shared<GateCallback>(gate)]() { f.fv.handleCompactLidSpace(op, std::move(onDone)); });
+     gate.await();
+-    f._writeService.master().sync();
+-    // Delayed holdUnblockShrinkLidSpace() in index thread, then master thread
++    f._writeService.main().sync();
++    // Delayed holdUnblockShrinkLidSpace() in document db index thread, then document db main thread
+     EXPECT_EQ(std::make_tuple(6u, 6u, 5u), get_execute_counts(f.writeServiceObserver()));
+     EXPECT_EQ(0u, f.metaStoreObserver()._compactLidSpaceLidLimit);
+     EXPECT_EQ(0u, f.getDocumentStore()._compactLidSpaceLidLimit);
+```
+
+**File**: `searchcore/src/tests/proton/documentdb/lid_space_jobtest.cpp` (modified, +5/-5)
+```diff
+@@ -46,18 +46,18 @@ void JobTestBase::init(uint32_t allowedLidBloat, double allowedLidBloatFactor, d
+ 
+     _job.reset();
+     _singleExecutor = std::make_unique<vespalib::ThreadStackExecutor>(1);
+-    _master = std::make_unique<proton::SyncableExecutorThreadService>(*_singleExecutor);
++    _main_thread_service = std::make_unique<proton::SyncableExecutorThreadService>(*_singleExecutor);
+     _bucketExecutor = std::make_unique<storage::spi::dummy::DummyBucketExecutor>(4);
+-    _job = lidspace::CompactionJob::create(compactCfg, RetainGuard(_refCount), _handler, _storer, *_master,
+-                                           *_bucketExecutor, _resource_usage_notifier, blockableCfg,
+-                                           _clusterStateHandler, node_retired_or_maintenance,
++    _job = lidspace::CompactionJob::create(compactCfg, RetainGuard(_refCount), _handler, _storer,
++                                           *_main_thread_service, *_bucketExecutor, _resource_usage_notifier,
++                                           blockableCfg, _clusterStateHandler, node_retired_or_maintenance,
+                                            document::BucketSpace::placeHolder(), _maintenance_job_token_source);
+ }
+ 
+ void JobTestBase::sync() const {
+     if (_bucketExecutor) {
+         _bucketExecutor->sync();
+-        _master->sync();
++        _main_thread_service->sync();
+     }
+ }
+ 
+```
+
+**File**: `searchcore/src/tests/proton/documentdb/lid_space_jobtest.h` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ struct JobTestBase : public ::testing::Test {
+     proton::test::ResourceUsageNotifier                           _resource_usage_notifier;
+     std::unique_ptr<storage::spi::dummy::DummyBucketExecutor>     _bucketExecutor;
+     std::unique_ptr<vespalib::SyncableThreadExecutor>             _singleExecutor;
+-    std::unique_ptr<searchcorespi::index::ISyncableThreadService> _master;
++    std::unique_ptr<searchcorespi::index::ISyncableThreadService> _main_thread_service;
+     std::shared_ptr<MyHandler>                                    _handler;
+     MyStorer                                                      _storer;
+     std::shared_ptr<MaintenanceJobTokenSource>                    _maintenance_job_token_source;
+```
+
+**File**: `searchcore/src/tests/proton/documentmetastore/lidreusedelayer/lidreusedelayer_test.cpp` (modified, +1/-1)
+```diff
+@@ -147,7 +147,7 @@ void LidReuseDelayerTest::cycleLids(const std::vector<uint32_t>& lids, vespalib:
+ 
+ void LidReuseDelayerTest::performCycleLids(const std::vector<uint32_t>&      lids,
+                                            vespalib::IDestructorCallback::SP onDone) {
+-    _writeService.master().execute(makeLambdaTask([this, lids, onDone]() {
++    _writeService.main().execute(makeLambdaTask([this, lids, onDone]() {
+         (void)onDone;
+         cycledLids(lids);
+     }));
+```
+
+---
+
+### Incident Patch 2: `8ccf04f3` (2026-11-26)
+**Commit Message**: Merge pull request #38683 from vespa-engine/johsol/rename-field-path-assign-function
+
+rename fpupd function in test to field_path_assign
+
+**File**: `searchcore/src/tests/proton/attribute/attribute_test.cpp` (modified, +12/-12)
+```diff
+@@ -545,7 +545,7 @@ void assert_str_array(AttributeVector& attr, uint32_t lid, const std::vector<con
+ template <typename T>
+ concept FpValue = std::convertible_to<T, int> || std::convertible_to<T, std::string_view>;
+ 
+-auto fpupd(const DocumentUpdate& upd, const std::string& field_path, FpValue auto&& value) {
++auto field_path_assign(const DocumentUpdate& upd, const std::string& field_path, FpValue auto&& value) {
+     using T = std::decay_t<decltype(value)>;
+     std::unique_ptr<FieldValue> fv;
+     if constexpr (std::convertible_to<T, int>) {
+@@ -611,28 +611,28 @@ AttributeWriterFieldPathTest::~AttributeWriterFieldPathTest() = default;
+ 
+ TEST_F(AttributeWriterFieldPathTest, assign_element_updates_array_attributes) {
+     auto upd = make_update();
+-    upd.addFieldPathUpdate(fpupd(upd, "a1[1]", 99));
+-    upd.addFieldPathUpdate(fpupd(upd, "a2[0]", "baz"));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a1[1]", 99));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a2[0]", "baz"));
+     apply(2, upd);
+     assert_int_array(*_a1, LID1, {10, 99, 30});
+     assert_str_array(*_a2, LID1, {"baz", "bar"});
+ }
+ 
+ TEST_F(AttributeWriterFieldPathTest, assign_element_out_of_bounds_is_ignored) {
+     auto upd = make_update();
+-    upd.addFieldPathUpdate(fpupd(upd, "a1[5]", 77));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a1[5]", 77));
+     apply(2, upd);
+     assert_int_array(*_a1, LID1, {10, 20, 30});
+ }
+ 
+ TEST_F(AttributeWriterFieldPathTest, assign_element_is_not_reapplied_on_replay) {
+     auto upd = make_update();
+-    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
+     apply(2, upd);
+     assert_int_array(*_a1, LID1, {42, 20, 30});
+ 
+     auto replay = make_update();
+-    replay.addFieldPathUpdate(fpupd(replay, "a1[0]", 77));
++    replay.addFieldPathUpdate(field_path_assign(replay, "a1[0]", 77));
+     apply(2, replay); // same sync token as previous => ignored
+     assert_int_array(*_a1, LID1, {42, 20, 30});
+     apply(3, replay); // newer sync token => applied
+@@ -641,16 +641,16 @@ TEST_F(AttributeWriterFieldPathTest, assign_element_is_not_reapplied_on_replay)
+ 
+ TEST_F(AttributeWriterFieldPathTest, assign_element_to_non_attribute_field_is_ignored) {
+     auto upd = make_update();
+-    upd.addFieldPathUpdate(fpupd(upd, "extra[0]", 5));
+-    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
++    upd.addFieldPathUpdate(field_path_assign(upd, "extra[0]", 5));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
+     apply(2, upd);
+     assert_int_array(*_a1, LID1, {42, 20, 30});
+ }
+ 
+ TEST_F(AttributeWriterFieldPathTest, assign_element_observes_remove_in_same_update) {
+     auto upd = make_update();
+     upd.addUpdate(remove_fupd(upd, "a2", "foo"));
+-    upd.addFieldPathUpdate(fpupd(upd, "a2[1]", "x"));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a2[1]", "x"));
+     apply(2, upd);
+     // In the document model, regular field updates are applied before field path updates.
+     // So, removing "foo" shifts "bar" over to position 0 and the field path update is
+@@ -677,9 +677,9 @@ struct RecordingFieldUpdateCallback : IFieldUpdateCallback {
+ TEST_F(AttributeWriterFieldPathTest, field_path_updates_report_fields_to_update_callback) {
+     auto upd = make_update();
+     // attribute: reported and applied.
+-    upd.addFieldPathUpdate(fpupd(upd, "a1[0]", 42));
++    upd.addFieldPathUpdate(field_path_assign(upd, "a1[0]", 42));
+     // not an attribute: reported without attribute.
+-    upd.addFieldPathUpdate(fpupd(upd, "extra[0]", 5));
++    upd.addFieldPathUpdate(field_path_assign(upd, "extra[0]", 5));
+     // attribute, but an unsupported assign kind (expression based): reported, but not applied.
+     upd.addFieldPathUpdate(std::make_unique<AssignFieldPathUpdate>("a1[1]", "", "5"));
+     // field does not exist: not reported.
+@@ -704,7 +704,7 @@ TEST_F(AttributeWriterFieldPathTest, assign_element_observes_remove_from_earlier
+     _aw->update(2, remove_upd, LID1, emptyCallback, on_update);
+ 
+     auto assign_upd = make_update();
+-    assign_upd.addFieldPathUpdate(fpupd(assign_upd, "a2[1]", "x"));
++    assign_upd.addFieldPathUpdate(field_path_assign(assign_upd, "a2[1]", "x"));
+     _aw->update(3, assign_upd, LID1, emptyCallback, on_update);
+     commit(3);
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38673** (2026-11-26): Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app (@dependabot[bot])
-- **PR #38670** (2026-11-26): Match UriPattern hosts case-insensitively and ignore a trailing dot (@glebashnik)
-- **PR #38668** (2026-11-26): Upgrade MCP Java SDK to 1.1.5 (CVE-2026-35568) (@ean)
-- **PR #38666** (2026-11-25): Wait longer for otelcol to start in test (@hmusum)
-- **PR #38665** (2026-11-26): Validate paths used in RankSetupValidator (@hmusum)
-- **PR #38664** (2026-11-26): Adjust variable names (main -> main_thread_service). (@toregge)
+- **PR #38683** (2026-11-26): rename fpupd function in test to field_path_assign (@johansolbakken)
+- **PR #38682** (closed): Add remove_element to AttributeUpdater (@johansolbakken)
+- **PR #38681** (2026-11-26): Upgrade @vscode/vsce to 4.1.1 in vscode client (@ean)
+- **PR #38680** (2026-11-26): More usage of document db main thread service. (@toregge)
+- **PR #38679** (2026-11-26): Upgrade org.json to 20260814 (CVE-2026-59171) (@ean)
+- **PR #38678** (2026-11-26): Add methods for the customer tags among cloud resource tags (@gjoranv)
 
 ---
 
@@ -1272,32 +1456,28 @@ Verify sequence of prepares from (builders, service cluster) pairs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in yarn.lock
+## X. Empirical Invariant Guard in docsummary_test.cpp
 
 **RULE**:
-When implementing operations in `client/js/app/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `searchcore/src/tests/proton/docsummary/docsummary_test.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83e98ce8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a314aed`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/js/app/yarn.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchcore/src/tests/proton/docsummary/docsummary_test.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  version "1.1.22"
-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
-  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
+        _ddb->getWriteService().main().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
-  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
+        _ddb->getWriteService().master().execute(vespalib::makeLambdaTask([this, op = std::move(op), &commitDone]() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83e98ce8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a314aed` are properly handled with clean fallback behavior.

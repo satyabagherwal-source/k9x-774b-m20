@@ -13739,3 +13739,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T06:46:19.184Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-27T06:54:51.527Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `d2844a41` | Multi-dimensional audit evidence | 2026-11-27T06:55:06.377Z |
+| `learn-huggingface-inclusionai-ling-3-2-air` | `https://huggingface.co/inclusionAI/Ling-3.2-air` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-27T07:03:36.609Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c07795fa` | Multi-dimensional audit evidence | 2026-11-27T07:03:49.835Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `8a314aed` | Multi-dimensional audit evidence | 2026-11-27T07:03:52.507Z |

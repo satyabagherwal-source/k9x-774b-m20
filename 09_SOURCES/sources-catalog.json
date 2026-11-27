@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "b2d0110f",
+    "sourceVersion": "c07795fa",
     "license": "Apache-2.0",
-    "contentHash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
-    "lastHarvestedAt": "2026-11-26T18:14:37.952Z",
+    "contentHash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
+    "lastHarvestedAt": "2026-11-27T07:03:49.835Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "83e98ce8",
+    "sourceVersion": "8a314aed",
     "license": "Apache-2.0",
-    "contentHash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
-    "lastHarvestedAt": "2026-11-26T13:08:25.364Z",
+    "contentHash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
+    "lastHarvestedAt": "2026-11-27T07:03:52.507Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -13285,8 +13285,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ling-3.2-air",
     "sourceVersion": "hf-inclusionai-ling-3.2-air",
     "license": "Open-Source",
-    "contentHash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
-    "lastHarvestedAt": "2026-11-23T21:48:01.786Z",
+    "contentHash": "d5dae586c4120d0cb9d3e67cf5cfa1f8ca265efb2c3d8fbb87be838429bcd925",
+    "lastHarvestedAt": "2026-11-27T07:03:36.609Z",
     "learningId": "learn-huggingface-inclusionai-ling-3-2-air"
   },
   "microfeed-microfeed": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `b2d0110f`  
+> **Source Version**: `c07795fa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T18:14:36.720Z  
+> **Timestamp**: 2026-11-27T07:03:48.608Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:14:36.715Z  
+> **Harvest Timestamp**: 2026-11-27T07:03:48.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25919 stars
+- **Stars / Engagement**: 25922 stars
 
 ---
 
@@ -1262,10 +1262,9 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 - **Issue #50280** (2026-11-26): **ci: Read the Hubble CLI job's kind config from KIND_CONFIG**
   *Symptoms*: The Hubble CLI integration test has always declared kind_config at the workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action. The env context is case sensitive, so the expression expands to the empty string and kind creates its default single-node cluster with kindnet. Cilium installs on top of it and both IPAMs then hand out addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially before Cilium's CNI config exists, while Cilium picks its router IP at random among 254 addresses. In 1 run out of 254, cilium_host takes the relay's address and its local route shadows the pod's route, so the kubelet probes and DNS replies for the relay reach the host stack. The relay never connects to hubble-peer and `cilium status --wait` gives up after 5 minutes:    Deployment             hubble-relay             Desired: 1, Unavailable: 1/1   Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready  This commit renames the key to KIND_CONFIG, the spelling the other kind workflows use. .github/kind-config.yaml then applies, so the cluster comes up without a CNI on the control-plane and worker it declares, and Cilium is the only IPAM on each node.  This PR was prepared with AIL:3. I personally checked the kind-action inputs in run 37774557276.  Fixes: bc294a83d5a1 ("Add hubble CLI integration tests") 
 
-- **Issue #50277** (2026-11-26): **DO NOT MERGE ci: use versioned Ubuntu 26 runners**
-  *Symptoms*: DO NOT MERGE THIS IS A TEST PR FOR https://github.com/cilium/cilium/pull/49623
+- **Issue #50279** (2026-11-26): **v1.19: Revert "bpf: Recreate ingress CT entry if proxy_redirect is stale"**
+  *Symptoms*: Reverts one of the backport from https://github.com/cilium/cilium/pull/50041, that of https://github.com/cilium/cilium/pull/49592.
   **Post-Mortem & Fix Analysis**:
-  > /test
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1283,63 +1282,98 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `043fd9e1` (2026-11-04)
-**Commit Message**: cilium-cli: Follow Cilium logs only with debug logging
+### Incident Patch 1: `0bcc7103` (2026-07-29)
+**Commit Message**: cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)
 
-Without debug logging, the agents of an AWS-CNI job [1] would take 5 to
-11 hours to fill a 10 MiB log file, so following them only costs
-bandwidth. This commit only follows clusters whose cilium-config sets
-debug to true, which CI does by default.
+In ENI mode Pods are allocated IPs possibly from different ENI
+devices. In this case the check that validates that excluded traffic
+is masqueraded with the node host IP may be wrong if the client Pod
+is actually on a secondary ENI device.
 
-This commit was prepared with AIL:3. I personally checked the kind runs
-with and without debug logging.
+Implementing the logic to determine what the correct masquerade
+IP for a ENI Pod seems brittle. Instead, when the external endpoint
+is excluded in egw policy we choose to assert that the client
+connection was *not* masqueraded by the egress IP
 
-1: https://github.com/cilium/cilium/actions/runs/39635245257/job/119344831387
+To avoid failing when the ENI pod is masqueraded by the same IP as
+as the egress IP (i.e. primary ENI device Pods) we skip this check
+when the assertion is ambiguous.
 
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
+Fixes: #47530
 
-**File**: `cilium-cli/connectivity/check/podlogs.go` (modified, +9/-1)
+AIL:3
+
+Signed-off-by: Tom Hadlaw <[REDACTED_EMAIL]>
+
+**File**: `cilium-cli/connectivity/tests/egressgateway.go` (modified, +34/-8)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	typedcorev1 "k8s.io/client-go/kubernetes/typed/core/v1"
- 	"k8s.io/client-go/rest"
+@@ -792,23 +792,49 @@ func (s *egressGatewayExcludedCIDRs) Run(ctx context.Context, t *check.Test) {
+ 			externalEcho := externalEcho.ToEchoIPPod()
  
-+	"github.com/cilium/cilium/cilium-cli/defaults"
- 	"github.com/cilium/cilium/pkg/lock"
- )
- 
-@@ -47,14 +48,21 @@ type logFollower struct {
- }
- 
- // FollowCiliumLogs keeps the Cilium pod log lines for which keep returns true
--// until ctx ends. It does nothing when the user filtered out the scenario.
-+// until ctx ends. It does nothing when the user filtered out the scenario, and
-+// skips the clusters whose agents do not log at debug level.
- func (ct *ConnectivityTest) FollowCiliumLogs(ctx context.Context, scenario string, keep func(line string) bool) {
- 	if !ct.params.testEnabled(scenario) {
- 		return
- 	}
- 
- 	f := &logFollower{keep: keep, logs: make(map[string]*followedLog)}
- 	for _, client := range ct.Clients() {
-+		// Without debug logging, an agent takes hours to fill a kubelet log file.
-+		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
-+		if err != nil || cm.Data["debug"] != "true" {
-+			continue
-+		}
+ 			t.ForEachIPFamily(func(ipFam features.IPFamily) {
+-				hostIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
++				if ipFam == features.IPFamilyV6 && !ipv6Enabled {
++					return
++				}
 +
- 		// A clientset of its own keeps the log streams off the rate limiter of the tests.
- 		clientset, err := kubernetes.NewForConfig(rest.CopyConfig(client.Config))
- 		if err != nil {
++				egressIP := egressGatewayNodeInternalIP
++				if ipFam == features.IPFamilyV6 {
++					egressIP = egressGatewayNodeInternalIPv6
++				}
++
++				clientNodeIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
+ 				if ipFam == features.IPFamilyV6 {
+-					if !ipv6Enabled {
+-						return
+-					}
+ 					for _, addr := range client.Pod.Status.HostIPs {
+-						ip, err := netip.ParseAddr(addr.IP)
+-						if err == nil && ip.Unmap().Is6() {
+-							hostIP = ip
++						parsed, err := netip.ParseAddr(addr.IP)
++						if err == nil && parsed.Unmap().Is6() {
++							clientNodeIP = parsed
+ 							break
+ 						}
+ 					}
+ 				}
+ 
+ 				t.NewAction(s, fmt.Sprintf("curl-%s-%d", ipFam, i), &client, externalEcho, ipFam).Run(func(a *check.Action) {
+ 					a.ExecInPod(ctx, a.CurlCommandWithOutput(externalEcho))
+-					validateEgressGatewayClientIP(a, hostIP)
++					if a.Failed() {
++						return
++					}
++
++					clientIP, err := extractClientIPFromResponse(a.CmdOutput())
++					if err != nil {
++						a.Failf("Cannot extract client IP from response %q: %s", a.CmdOutput(), err)
++						return
++					}
++
++					// If the egress IP would be the same as the client's node IP then
++					// we don't know whether it was masqueraded locally due to exclusion
++					// or due to egress-gateway.
++					if clientNodeIP == egressIP {
++						a.Logf("client node IP and egress IP are the same (%s), check to ensure connection was not masqueraded by egress-gateway IP is inconclusive", clientNodeIP)
++					} else {
++						if ip.CompareUnmap(clientIP, egressIP) == 0 {
++							a.Failf("Excluded-CIDR traffic was masqueraded with egress gateway IP %s for pod %s/%s (actual: %s); exclusion did not take effect",
++								egressIP, client.Pod.Namespace, client.Pod.Name, clientIP)
++						}
++					}
+ 				})
+ 			})
+ 			i++
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #50280** (2026-11-26): ci: Read the Hubble CLI job's kind config from KIND_CONFIG (@aanm)
+- **PR #50279** (2026-11-26): v1.19: Revert "bpf: Recreate ingress CT entry if proxy_redirect is stale" (@pchaigno)
 - **PR #50277** (closed): DO NOT MERGE ci: use versioned Ubuntu 26 runners (@nbusseneau)
 - **PR #50268** (2026-11-25): .github: don't use ubuntu-slim for labeling External Contributions (@julianwiedmann)
 - **PR #50266** (2026-11-26): [v1.19] loadbalancer: preserve sockets to shared live backends (@ysksuzuki)
 - **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
-- **PR #50263** (closed): Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed (@cilium-renovate[bot])
 
 ---
 
@@ -1359,36 +1393,65 @@ Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cilium-cli: Follow Cilium logs only with debug logging
+## X. cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)
 
 **RULE**:
-When implementing operations in `cilium-cli/connectivity/check/podlogs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cilium-cli/connectivity/tests/egressgateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `043fd9e1`: cilium-cli: Follow Cilium logs only with debug logging. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0bcc7103`: cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/check/podlogs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/tests/egressgateway.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/cilium/cilium/cilium-cli/defaults"
-// until ctx ends. It does nothing when the user filtered out the scenario, and
-// skips the clusters whose agents do not log at debug level.
-		// Without debug logging, an agent takes hours to fill a kubelet log file.
-		cm, err := client.GetConfigMap(ctx, ct.params.CiliumNamespace, defaults.ConfigMapName, metav1.GetOptions{})
-		if err != nil || cm.Data["debug"] != "true" {
-			continue
-		}
+				if ipFam == features.IPFamilyV6 && !ipv6Enabled {
+					return
+				}
 
+				egressIP := egressGatewayNodeInternalIP
+				if ipFam == features.IPFamilyV6 {
+					egressIP = egressGatewayNodeInternalIPv6
+				}
+
+				clientNodeIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
+						parsed, err := netip.ParseAddr(addr.IP)
+						if err == nil && parsed.Unmap().Is6() {
+							clientNodeIP = parsed
+					if a.Failed() {
+						return
+					}
+
+					clientIP, err := extractClientIPFromResponse(a.CmdOutput())
+					if err != nil {
+						a.Failf("Cannot extract client IP from response %q: %s", a.CmdOutput(), err)
+						return
+					}
+
+					// If the egress IP would be the same as the client's node IP then
+					// we don't know whether it was masqueraded locally due to exclusion
+					// or due to egress-gateway.
+					if clientNodeIP == egressIP {
+						a.Logf("client node IP and egress IP are the same (%s), check to ensure connection was not masqueraded by egress-gateway IP is inconclusive", clientNodeIP)
+					} else {
+						if ip.CompareUnmap(clientIP, egressIP) == 0 {
+							a.Failf("Excluded-CIDR traffic was masqueraded with egress gateway IP %s for pod %s/%s (actual: %s); exclusion did not take 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// until ctx ends. It does nothing when the user filtered out the scenario.
+				hostIP, _ := netip.ParseAddr(client.Pod.Status.HostIP)
+					if !ipv6Enabled {
+						return
+					}
+						ip, err := netip.ParseAddr(addr.IP)
+						if err == nil && ip.Unmap().Is6() {
+							hostIP = ip
+					validateEgressGatewayClientIP(a, hostIP)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `043fd9e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0bcc7103` are properly handled with clean fallback behavior.

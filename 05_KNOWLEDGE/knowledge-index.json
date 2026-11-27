@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T06:55:12.229Z",
+  "last_updated": "2026-11-27T07:03:58.692Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26420,
+  "total_items": 26424,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "b2d0110f",
-      "content_hash": "727469b6a8211abfd63f9d58b7e1d95b948d9fd65488d4a4b179781d5d70d0dd",
+      "source_version": "c07795fa",
+      "content_hash": "94e53a68e5cfcb106341f4bde7a2ec07675839b73515cde7b19f9703a50a1d47",
       "domain_letter": "B",
-      "persisted_at": "2026-11-26T18:14:38.409Z"
+      "persisted_at": "2026-11-27T07:03:50.277Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "b2d0110f",
-      "content_hash": "b15af2fc35279da6ab49983985970284f8b18f15c7079f57810a652b0a6a449a",
+      "source_version": "c07795fa",
+      "content_hash": "b69d5fdc4f07d23b4754dcac59894e9986bf34325e6eb44459216bde954e15fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:14:38.632Z"
+      "persisted_at": "2026-11-27T07:03:50.473Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec1456944e223aa4536fd244416f2adb7389c549bb94333901c7aa18f482db51",
+      "content_hash": "fce2c5a31fa416a3f0b9d6ddd1c4b638f17461e5a8b009b9d9694440e646db00",
       "domain_letter": "B",
-      "persisted_at": "2026-11-26T18:14:44.164Z"
+      "persisted_at": "2026-11-27T07:03:57.323Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "a85efb54523a67a3a032469d6aa0cc256e9a656b239cf8a26b58a32bb5f16bc4",
+      "content_hash": "aec049dd6413474fc55bc021b200bfc0101a63d2098ae9830368f24d5f3e21e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:14:44.371Z"
+      "persisted_at": "2026-11-27T07:03:57.524Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214447,8 +214447,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "b2d0110f",
-      "content_hash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
+      "source_version": "c07795fa",
+      "content_hash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214596,6 +214596,11 @@
           "number": 10749,
           "title": "Follow Cilium logs only with debug logging",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10846,
+          "title": "cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214603,7 +214608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:14:37.689Z",
+      "verified_at": "2026-11-27T07:03:49.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239827,8 +239832,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "83e98ce8",
-      "content_hash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
+      "source_version": "8a314aed",
+      "content_hash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -239876,6 +239881,11 @@
           "number": 10684,
           "title": "Empirical Invariant Guard in yarn.lock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10847,
+          "title": "Empirical Invariant Guard in docsummary_test.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239883,7 +239893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:08:24.887Z",
+      "verified_at": "2026-11-27T07:03:52.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239925,10 +239935,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "83e98ce8",
-      "content_hash": "3ab26d489db8f7c070c01ba05af926957c7c45ea8c3e4978544d133924a88660",
+      "source_version": "8a314aed",
+      "content_hash": "24a9b9fcb922ebf4da9caf3c9cd3c92130e0982278d0caea96ddfe95400d601a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:08:25.880Z"
+      "persisted_at": "2026-11-27T07:03:52.951Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -239937,10 +239947,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "83e98ce8",
-      "content_hash": "77ff79656a0892ac2b84cdbca1bb206263c2eb356c3565611a5d017750e1f33a",
+      "source_version": "8a314aed",
+      "content_hash": "9f1be92ce6b5cc44a4859007c6f110008e23f90a6765eb68b57b44ca219b6f93",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:08:26.130Z"
+      "persisted_at": "2026-11-27T07:03:53.148Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -239949,10 +239959,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "83e98ce8",
-      "content_hash": "4894c97e7b1294f86c6338c22ab69afcaf030614414323b8da535e250fedd401",
+      "source_version": "8a314aed",
+      "content_hash": "ffbedbecbbad33ab6281e050f334fbfe5cf7513e4feb5484a59919b8e0a47cc2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:08:26.325Z"
+      "persisted_at": "2026-11-27T07:03:53.339Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -240160,9 +240170,9 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "2cdcd344fb0616d431c6c86f49929d892f74b496b1551e182c2803b726ef4012",
+      "content_hash": "257c4752dc9286523201965413d58662a6de4ab78bf36e873ead3bb094b9ccc9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:08:30.816Z"
+      "persisted_at": "2026-11-27T07:03:58.322Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
@@ -240172,9 +240182,9 @@
       "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d2d64c7232c4f5bbbf3b916700193f8c36ed712102577472f2b74bc89c54635",
+      "content_hash": "d5618653d0238d3397b3f54388661693b45af299b32172ad1d78a99a409c8e5a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:08:31.097Z"
+      "persisted_at": "2026-11-27T07:03:58.522Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
@@ -240184,9 +240194,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine-vespa-learnings",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "750a2bed0ac2afe292a7d7c84c89043a484dbfe59b5c799161bbbd430d033d26",
+      "content_hash": "fae3a15484c777a649304af40996fd79630bc93d616d6ebb2d060b988a225952",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:08:31.315Z"
+      "persisted_at": "2026-11-27T07:03:58.692Z"
     },
     "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2": {
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
@@ -333596,7 +333606,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ling-3.2-air",
       "source_version": "hf-inclusionai-ling-3.2-air",
-      "content_hash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
+      "content_hash": "d5dae586c4120d0cb9d3e67cf5cfa1f8ca265efb2c3d8fbb87be838429bcd925",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md",
       "promoted_rules": [],
@@ -333605,7 +333615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:48:01.563Z",
+      "verified_at": "2026-11-27T07:03:36.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -333622,9 +333632,9 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ling-3.2-air Core Invariants",
       "repository": "inclusionAI/Ling-3.2-air",
       "source_version": "hf-inclusionai-ling-3.2-air",
-      "content_hash": "34624688816c3d69ec6615a39f2f60e2d25d7d264c933d0cda27dfc9646eefd8",
+      "content_hash": "7a3eedb84be1d3410ec2109e62a782774de74de1a5ff7572770d8ddf247f8690",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:48:01.987Z"
+      "persisted_at": "2026-11-27T07:03:36.847Z"
     },
     "rule-10130": {
       "learning_id": "rule-10130",
@@ -333672,9 +333682,9 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ling-3.2-air-learnings Core Invariants",
       "repository": "hf-inclusionai-ling-3.2-air-learnings",
       "source_version": "HEAD",
-      "content_hash": "1aea67dd65dcc7c9f066b34d6888518364137e74cd5ae2607f83e32e52769a4f",
+      "content_hash": "9d4c35650c76855544ce5ac3bc474bcb666fdf671e6f56dcc48d9838d699e522",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:48:46.859Z"
+      "persisted_at": "2026-11-27T07:03:56.473Z"
     },
     "candidate_directive-connect-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room": {
       "item_id": "candidate_directive-connect-bound-per-joiner-native-setups-decide-udp-when-there-is-no-room",
@@ -362509,6 +362519,58 @@
       "content_hash": "5b13d9b19d8e7abeac1448f72a5b9e2a0ad85dc5482ad206553a7c12933da28d",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T06:55:10.779Z"
+    },
+    "rule-10846": {
+      "learning_id": "rule-10846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10846,
+      "title": "cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "c07795fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:03:49.562Z"
+    },
+    "candidate_directive-cilium-cli-egressgateway-fix-non-egress-ip-host-ip-checks-eni": {
+      "item_id": "candidate_directive-cilium-cli-egressgateway-fix-non-egress-ip-host-ip-checks-eni",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y3E5-cilium-cli-egressgateway-fix-non-egress-ip-host-ip-checks-eni.md",
+      "title": "cilium-cli/egressgateway: fix non-egress IP host IP checks (ENI)",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ccf5cbc0942ef0456a352a3016efc73261cca723fe235e567486b0e0b67fe3da",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T07:03:57.102Z"
+    },
+    "rule-10847": {
+      "learning_id": "rule-10847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10847,
+      "title": "Empirical Invariant Guard in docsummary_test.cpp",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "8a314aed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:03:52.239Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-docsummary_test-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-docsummary_test-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y46C-empirical-invariant-guard-in-docsummary_test-cpp.md",
+      "title": "Empirical Invariant Guard in docsummary_test.cpp",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "24e8599db88f6f30791994bfe23624df51d789870e84eb695cd758d0ec2b9a51",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T07:03:58.116Z"
     }
   },
   "ai-builder-brain": {

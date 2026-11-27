@@ -13706,3 +13706,6 @@
 | `CYCLE-20261127-BF3F` | `2026-11-27T06:46:19.179Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`39b9b6ab...`) |
 | `CYCLE-20261127-MEF7` | `2026-11-27T06:54:51.523Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`36e09dcb...`) |
 | `CYCLE-20261127-MPVH` | `2026-11-27T06:55:06.365Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10845` | Yes (`8643f1e4...`) |
+| `CYCLE-20261127-XNKT` | `2026-11-27T07:03:36.605Z` | `inclusionAI/Ling-3.2-air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md` | Yes (`d5dae586...`) |
+| `CYCLE-20261127-XXRW` | `2026-11-27T07:03:49.820Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10846` | Yes (`b497c7da...`) |
+| `CYCLE-20261127-XZU6` | `2026-11-27T07:03:52.494Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10847` | Yes (`0131b285...`) |

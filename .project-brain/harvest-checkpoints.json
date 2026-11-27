@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T06:55:06.391Z",
+  "last_updated": "2026-11-27T07:03:52.520Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "ad5ea98ee545f58f2aa8bd50e955db6f0449c2aed72986e27c43765ee5d65977",
-      "verified_at": "2026-11-26T18:14:37.973Z",
+      "content_hash": "b497c7dafb7dcee8c060d11f52376e512908e43273876388f640eb822f33e91d",
+      "verified_at": "2026-11-27T07:03:49.847Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:14:37.973Z"
+      "last_updated": "2026-11-27T07:03:49.847Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
-      "verified_at": "2026-11-26T13:08:25.387Z",
+      "content_hash": "0131b285acf228e3623bb8b6eb68fa60eb0ae0857cf7998603d12ed2f47f4f12",
+      "verified_at": "2026-11-27T07:03:52.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:08:25.387Z"
+      "last_updated": "2026-11-27T07:03:52.519Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -20046,14 +20046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ling-3-2-air",
-      "content_hash": "1f337715333a685131fbf58ab395a286113f57def0211d3466e48d82fcef8eba",
-      "verified_at": "2026-11-23T21:48:01.794Z",
+      "content_hash": "d5dae586c4120d0cb9d3e67cf5cfa1f8ca265efb2c3d8fbb87be838429bcd925",
+      "verified_at": "2026-11-27T07:03:36.625Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:48:01.794Z"
+      "last_updated": "2026-11-27T07:03:36.625Z"
     },
     "microfeed/microfeed": {
       "repository": "microfeed/microfeed",

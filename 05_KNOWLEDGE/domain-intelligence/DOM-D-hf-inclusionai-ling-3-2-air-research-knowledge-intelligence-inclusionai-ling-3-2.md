@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/inclusionAI/Ling-3.2-air",
   "source_version": "hf-inclusionai-ling-3.2-air",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:48:01.986Z",
+  "timestamp": "2026-11-27T07:03:36.846Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-inclusionai-ling-3-2-air",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [inclusionAI/Ling-3.2-air](https://huggingface.co/inclusionAI/Ling-3.2-air) (Revision: `hf-inclusi`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:48:01.986Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:03:36.846Z`  
 > **Learning ID**: `learn-huggingface-inclusionai-ling-3-2-air`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ling-3.2-air-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/inclusionAI/Ling-3.2-air](https://huggingface.co/inclusionAI/Ling-3.2-air))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:48:01.136Z  
+> **Harvest Timestamp**: 2026-11-27T07:03:35.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 87 likes
+- **Stars / Engagement**: 1467 downloads | 274 likes
 
 ---
 

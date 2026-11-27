@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T06:55:10.496Z",
+  "updated_at": "2026-11-27T07:03:57.862Z",
   "stats": {
-    "total_discovered": 10257,
-    "approved_pending_harvest": 9728,
+    "total_discovered": 10260,
+    "approved_pending_harvest": 9731,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9733,
+      "COMMUNITY_AND_EXPERT": 9735,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 55,
+      "SECURITY_ADVISORIES": 56,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -221978,6 +221978,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
         "fileName": "mariadb-server-learnings.md"
+      }
+    },
+    "SRC-43F9FAB990F7": {
+      "id": "SRC-43F9FAB990F7",
+      "url": "https://github.com/cilium/cilium/pull/50041",
+      "title": "https://github.com/cilium/cilium/pull/50041",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:03:56.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-B8DF7B4EEEBB": {
+      "id": "SRC-B8DF7B4EEEBB",
+      "url": "https://github.com/cilium/cilium/pull/49592",
+      "title": "https://github.com/cilium/cilium/pull/49592",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:03:56.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-121459737C33": {
+      "id": "SRC-121459737C33",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-59171",
+      "title": "Vulnerability Advisory CVE-2026-59171",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:03:57.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
       }
     }
   }
