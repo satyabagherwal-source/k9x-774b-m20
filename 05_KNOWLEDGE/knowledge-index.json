@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T17:02:00.242Z",
+  "last_updated": "2026-11-27T17:10:45.747Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "34046140a37af78f1cb255d7b3422822fc3a4ad5fd1c01ba3e3ac4360f70a065",
+      "content_hash": "928f9542d5b7919b6d99650ca2dbb1ab7762394887aaeb62b5e9dda79da3e374",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T16:52:48.693Z"
+      "persisted_at": "2026-11-27T17:10:45.564Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3e6b11f8b76e9881af538a9ba6104ff4e25d6aa974a63aa547f470bd4d6d800",
+      "content_hash": "00e7cbb1107508dbc8a4fef950cc9223a942f973e236af6f8916922439947ed6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:52:48.962Z"
+      "persisted_at": "2026-11-27T17:10:45.747Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c04abc5f55cd52ffd9c0b4f83773b8db834af7abf5712ebe6b12e17aa509e8f9",
+      "content_hash": "aa91f8ec891baec28c3b6beee3c3cac182c6f9ac75ebac8da8d9c97cb7a9da86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:52:46.989Z"
+      "persisted_at": "2026-11-27T17:10:44.437Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "76f2f83b74053b3ae722b9de1c5690f929506c4a7236fad2f20f69ab86b4e9ac",
+      "content_hash": "c95ea3bca6d4ca320cb0c8db1ab40cd04dad590557d1f07ca35de86446234941",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T16:12:59.988Z"
+      "persisted_at": "2026-11-27T17:10:43.135Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "57ce8c8d80bf08c7ce13ca3874c16efcaeea37728abc791bd992fd20faab75b3",
+      "content_hash": "359a67c133739fa5ab2ccefb37b26e90c593a8c130a2fa18294a9c3f5ff5e9cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:13:00.308Z"
+      "persisted_at": "2026-11-27T17:10:43.334Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -301151,9 +301151,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b9dc38225a52a89c55a7ef5cef2fe7762fc8fa99cddf368cc8cdab371836434",
+      "content_hash": "2d0da4c50c0c6585cc19638398992fa28baf183533be4c2a048c5f42d56cd9bc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T16:52:48.399Z"
+      "persisted_at": "2026-11-27T17:10:45.356Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358416,13 +358416,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZBMW-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MF5I-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e7498bda48385a5d14c19c75a299ab37ec26b3df28dc1aa539fd8b94199210e",
+      "content_hash": "119260faa0debb67c944eadb06af979d0b6629e3ccee0144029336ed88244356",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T16:52:46.390Z"
+      "persisted_at": "2026-11-27T17:10:44.025Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358432,9 +358432,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "86d93785cf8c2c9dc1870d6a7c6df5007fb68f86f8e9724d3b0eaf27d5a78a36",
+      "content_hash": "2d63767ffff4d52af6c89a09627178b5dcdead3c56f2de150d012c56ca550706",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T16:52:46.691Z"
+      "persisted_at": "2026-11-27T17:10:44.240Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361323,13 +361323,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K60U-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MEAS-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "81c659d1235572af7f79d316922aa7d28e92a3e02fca5046168dba295b878495",
+      "content_hash": "6596fde99e500a08a90db64a8e1bb5610c91052342d15f7aeebada61a5ea3c4b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T16:12:59.651Z"
+      "persisted_at": "2026-11-27T17:10:42.920Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -362902,13 +362902,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZCYA-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MG10-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ae28ec511f65c0c36d848a48345698a294b9613bb7f4ed2849a5a2d176ee2a3",
+      "content_hash": "1e9b8bed16267b8b7d0434eb8e9fac7cd29ecfd16721b4b9f50220e91cf95fdf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T16:52:48.083Z"
+      "persisted_at": "2026-11-27T17:10:45.157Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
