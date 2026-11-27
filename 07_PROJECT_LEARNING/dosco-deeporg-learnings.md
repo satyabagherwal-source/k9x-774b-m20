@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source**: github ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
-> **Source Version**: `c57c1b1c`  
+> **Source Version**: `91c1df80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T17:14:59.489Z  
+> **Timestamp**: 2026-11-27T10:34:23.112Z  
 > **Learning ID**: `learn-github-dosco-deeporg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T17:14:59.482Z  
+> **Harvest Timestamp**: 2026-11-27T10:34:23.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2552,481 +2552,838 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab2b14e1` (2026-11-26)
-**Commit Message**: docs: quick start and README describe the setup flow
+### Incident Patch 1: `178469e5` (2026-11-27)
+**Commit Message**: fix: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page
 
-The quick start began by writing a config file. It now follows what a new
-install does: run deeporg, create the admin, connect a database or the sample
-data, choose a model, ask a question, then connect Claude Code and invite the
-team. The config-file path stays as a section for people who run DeepORG as
-an API service.
+Three problems found by running a server install, and the website page
+that walks through one.
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Health check. A new install answered 503 on /health until a database
+was connected on the setup page, so hosting that restarts a failing
+program killed it before setup could finish. It now pings its own store
+and answers 200 "Waiting for setup". An install run from config files
+still answers 503 with no database.
 
-**File**: `README.md` (modified, +17/-15)
+Server image. The image is stamped main.imageRole=server, and a first
+run in it writes listen: 0.0.0.0:8080, so publishing the port is
+enough. A laptop build still writes 127.0.0.1:8080. When the folder for
+the start config and store cannot be written, the error names the
+folder and the user id, and in the image says to mount the volume at
+the user's home. A start config that already holds a loopback address
+is used as written, with a hint on how to open it.
+
+Runtime page. A new install does not serve gj_security, because
+security.read is off by default on an agent server, but the console
+asked for it and showed "table not found". The Runtime page now leaves
+the Security pa
+
+**File**: `.goreleaser.yml` (modified, +5/-0)
 ```diff
-@@ -62,30 +62,32 @@ are on the same page, and Docker is `docker pull dosco/deeporg`.
- ## Try it
- 
- ```bash
--deeporg serve --demo
-+deeporg
- ```
- 
--This starts a demo SaaS company (accounts, subscriptions, invoices, support
--tickets) with seeded data. Put a model key in `./.env` (`OPENAI_API_KEY`,
--`ANTHROPIC_API_KEY` or `GOOGLE_API_KEY`) and ask it something:
-+This starts DeepORG and opens a setup page in your browser. You create an admin
-+account, connect a database or choose the sample data, and pick a model. Then
-+you ask a question. There is no config file to write: DeepORG keeps its own
-+files in `~/.deeporg/`.
- 
--```bash
--curl -sS localhost:8083/api/v1/agent \
--  -H 'content-type: application/json' \
--  -d '{"instruction": "Which account is most at risk of churning?"}'
--```
-+The setup steps are in the [quick start](https://deeporg.io/start/quick-start/).
-+For a larger demo company with routines and saved work already in it, run
-+`deeporg serve --demo`; see [Demos](https://deeporg.io/start/demos/).
- 
--Or chat with it at <http://localhost:8083/agent>. More demos:
--[Demos](https://deeporg.io/start/demos/).
-+## Use it from Claude Code
- 
--## Use it from Claude, Codex or any MCP client
-+Open **Connect** in the console and copy the command it shows:
- 
- ```bash
--deeporg mcp add claude http://localhost:8083
-+claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
- ```
- 
--Other clients: [MCP](https://deeporg.io/agentic/mcp/). Hosted servers with sign-in:
--[MCP OAuth](https://deeporg.io/agentic/oauth/).
-+Then type `/mcp` in Claude Code, choose `deeporg` and Authenticate. Your browser
-+opens on DeepORG, where you choose Allow. There is no token to copy. Claude Code
-+asks DeepORG's built-in agent, so choose a model during setup first.
-+
-+Other clients: [MCP](https://deeporg.io/agentic/mcp/). Servers that sign people
-+in through an identity provider: [MCP OAuth](https://deeporg.io/agentic/oauth/).
- 
- ## Learn more
+@@ -61,12 +61,17 @@ kos:
+       - latest
+       - "{{ .Version }}"
+     bare: true
++    # ko cannot set an environment variable, a command or a volume, so the
++    # role ldflag tells the binary it is the server image. A new install then
++    # listens where a container can be reached, and a volume it cannot write
++    # to is reported with the folder to mount.
+     ldflags:
+       - -s -w
+       - -X main.version={{ .Version }}
+       - -X main.commit={{ .Commit }}
+       - -X main.date={{ .Date }}
+       - -X github.com/dosco/graphjin/serv/v3.version={{ .Version }}
++      - -X main.imageRole=server
+     env:
+       - CGO_ENABLED=0
  
 ```
 
-**File**: `website/content/start/quick-start.md` (modified, +68/-24)
+**File**: `cmd/cmd_serv.go` (modified, +6/-0)
 ```diff
-@@ -1,50 +1,94 @@
- ---
- title: "Quick Start"
--description: "Run the smallest useful DeepORG query against a discovered schema."
-+description: "Install DeepORG, run one command, and ask your first question about your own data."
- nav_group: "start"
- doc_kind: "guide"
- weight: 20
- ---
- 
--Want seeded data and the built-in agent immediately? Boot a [demo vertical](/start/demos/) first - this page is for pointing DeepORG at your own database.
-+This page takes you from nothing to a first answer from your own data. It takes about five minutes, and you do not write a config file.
- 
--## Minimal config
-+## 1. Install and start
- 
--Point DeepORG at your database in `config/dev.yml`. New source-aware projects should use `sources:`:
-+[Install the CLI](/start/install/), then run it:
-+
-+```bash
-+curl -fsSL https://deeporg.io/install.sh | bash
-+deeporg
-+```
-+
-+DeepORG starts and opens a setup page in your browser. If it cannot open a browser, it prints the link for you to open.
-+
-+It keeps its own files in `~/.deeporg/`: a small start config and a database for its own data. Nothing is written to the directory you ran it in. If port 8080 is already in use on your computer, DeepORG uses the next free port and tells you which.
-+
-+## 2. Create your admin account
-+
-+The first screen asks for an email and a password. This is the account you sign in with, and the one that can change settings later.
-+
-+## 3. Connect your data
-+
-+Paste your database's connection URL, such as `postgres://user:password@host:5432/database`, or fill in the host, user and database name separately. DeepORG tests the connection before it saves it, and then tells you how many tables it found. If the connection fails, the page says why and what to change.
-+
-+If you have no database to hand, choose **Use sample data**. It connects a small sample company: accounts, users, subscriptions, invoices, payments, support tickets and usage events.
-+
-+By default everyone who signs in can read every table in the databases you connect, and nobody can write to them. You limit this later with [roles and filters](/configure/auth-rbac/).
-+
-+## 4. Choose a model
-+
-+The built-in agent uses a model from a provider you have an account with: OpenAI, Anthropic or Google Gemini. Paste an API key. DeepORG checks it with one small request and keeps it encrypted.
-+
-+You can leave this for later. Until you choose a model, the built-in agent is off.
-+
-+## 5. Ask your first question
-+
-+Setup ends on the agent page, with a few questions suggested from your own tables, such as "How many accounts are there?". Pick one, or type your own.
-+
-+## Connect Claude Code
-+
-+You can also ask from Claude Code. Open **Connect** in the console and copy the command it shows:
-+
-+```bash
-+claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
-+```
-+
-+Then start Claude Code, type `/mcp`, choose `deeporg` and then Authenticate. Your browser opens on DeepORG, where you choose **Allow**. Claude Code signs in as you, so there is no token to copy.
-+
-+Claude Code gets its answers by asking DeepORG's built-in agent, so choose a model first.
-+
-+## Invite your team
-+
-+Open **Admin → Setup**, enter a teammate's email, and send them the link it makes. They choose their own password. The same page is where you connect another database or change the model.
-+
-+## Run it on a server
-+
-+Set the address to listen on, then open the setup link DeepORG prints. The link is written for the server itself, so replace the host with the server's address if you open it from another computer.
-+
-+```bash
-+DEEPORG_LISTEN=0.0.0.0:8080 deeporg
-+```
-+
-+There is one limit to know about: DeepORG keeps its own data in a local file for now, so the server needs a disk that survives restarts.
-+
-+## Using config files instead
-+
-+Before this setup flow, DeepORG was configured with YAML files, and that still works. If the directory you start it in has a `config/` folder, DeepORG uses those files and shows no setup page. This is the path to use when you run DeepORG as an API service for an application, with [saved queries](/start/saved-queries/) and no agent.
- 
- ```yaml
-+# config/dev.yml
- sources:
-   - name: app
-     kind: database
-     type: postgres
-     default: true
--    connection_string: ${DATABASE_URL}
-+    connection_string: postgres://user:password@localhost:5432/app
-     schema: public
- ```
- 
--Then start the service:
--
- ```bash
- deeporg serve
- ```
- 
--## Open the Web UI
--
--Open [http://localhost:8080/](http://localhost:8080/) after the service starts. The console opens in the **User** workspace with the built-in Agent. Use the User/Admin switcher at the top to move between using the agent and administering the server.
--
--Open **Admin → Runtime** directly at [http://localhost:8080/admin/runtime](http://localhost:8080/admin/runtime). It is a quick visual check that DeepORG discovered the configured sources and is serving the built-in system roots.
--
--<figure class="doc-screenshot">
--  <img src="/assets/webui-runt
-```
-
-**File**: `website/content/why/complete-agent.md` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ Every DeepORG server includes a first-party console. Ask the agent, inspect sour
- 
- <div class="console-gallery"><figure class="console-shot"><img src="/assets/webui-runtime-overview.webp" width="1440" height="900" alt="DeepORG Console Admin Runtime view showing source health, table discovery, catalog readiness, and security posture." loading="lazy" decoding="async"><figcaption><strong>Runtime</strong><span>Source health, table discovery, catalog readiness, and effective security posture.</span></figcaption></figure><figure class="console-shot"><img src="/assets/webui-workbench-query.webp" width="1440" height="900" alt="DeepORG Console Workbench running a read-only GraphQL query with JSON results." loading="lazy" decoding="async"><figcaption><strong>Workbench</strong><span>Run application and system-root queries against the same GraphQL endpoint your clients use.</span></figcaption></figure></div>
- 
--<div class="home-actions"><a class="button-primary" href="/start/quick-start/#open-the-web-ui">Open it locally</a><a class="button-secondary" href="/#quickstart">Run the 2-minute demo</a></div>
-+<div class="home-actions"><a class="button-primary" href="/start/quick-start/">Run it on your computer</a><a class="button-secondary" href="/#quickstart">Run the 2-minute demo</a></div>
- 
- {{< endband >}}
- 
-```
-
----
-
-### Incident Patch 2: `d2315e1e` (2026-11-26)
-**Commit Message**: fix(cli): mcp add sets up the client named as an argument
-
-`deeporg mcp add claude <url>` read the client from its arguments and then
-ignored it: without a terminal it set up Codex, and with one it asked which
-client was meant. This is the command the server prints when it starts.
-
-When the server has the client sign in for itself, the guide printed
-afterwards now says how: type /mcp in Claude Code, choose the server and
-Authenticate.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `cmd/mcp_install.go` (modified, +35/-16)
-```diff
-@@ -46,6 +46,8 @@ type mcpInstallOptions struct {
- 	NoBrowser   bool
- 	ConfigPath  string
- 	DeviceStart *deviceStartResp
-+	// SignIn is true when the server asked the client to sign in for itself.
-+	SignIn bool
- }
- 
- type mcpInstallResolveInput struct {
-@@ -162,24 +164,16 @@ func newMCPInstallCommand(cfg mcpInstallCommandConfig) *cobra.Command {
- 				log.Fatalf("failed to get absolute config path: %s", err)
- 			}
- 
--			posClient := ""
--			posServer := ""
--			if len(args) > 0 {
--				if looksLikeURLish(args[0]) {
--					posServer = args[0]
--				} else {
--					posClient = args[0]
--				}
--			}
--			if len(args) > 1 {
--				posServer = args[1]
--			}
-+			posClient, posServer := splitMCPAddArgs(args)
- 			if posClient != "" && !cmd.Flags().Changed("client") {
- 				client = posClient
- 			}
- 			if posServer != "" && !cmd.Flags().Changed("server") {
- 				server = posServer
- 			}
-+			// A client or server named on the command line has been chosen,
-+			// whether it came as a flag or as a plain argument.
-+			clientSet := cmd.Flags().Changed("client") || posClient != ""
- 			serverSet := cmd.Flags().Changed("server") || posServer != ""
- 
- 			interactive := isInteractiveTTY() && !yes
-@@ -190,7 +184,7 @@ func newMCPInstallCommand(cfg mcpInstallCommandConfig) *cobra.Command {
- 
- 			opts, err := resolveInstallOptions(mcpInstallResolveInput{
- 				Client:      client,
--				ClientSet:   cmd.Flags().Changed("client"),
-+				ClientSet:   clientSet,
- 				Scope:       scope,
- 				ScopeSet:    cmd.Flags().Changed("scope"),
- 				Server:      server,
-@@ -356,6 +350,23 @@ func resolveInstallOptions(in mcpInstallResolveInput) (mcpInstallOptions, error)
- 	return opts, nil
- }
- 
-+// splitMCPAddArgs reads `deeporg mcp add [client] [server-url]`. Either part
-+// may be left out, so a lone argument is told apart by whether it looks like
-+// an address.
-+func splitMCPAddArgs(args []string) (client, server string) {
-+	if len(args) > 0 {
-+		if looksLikeURLish(args[0]) {
-+			server = args[0]
-+		} else {
-+			client = args[0]
-+		}
-+	}
-+	if len(args) > 1 {
-+		server = args[1]
-+	}
-+	return client, server
-+}
-+
- func looksLikeURLish(v string) bool {
- 	v = strings.TrimSpace(v)
- 	return strings.Contains(v, "://") ||
-@@ -478,6 +489,7 @@ func applyMCPProbeResult(ctx context.Context, cmd *cobra.Command, opts *mcpInsta
- 	switch probe.Kind {
- 	case mcpProbeNoAuth, mcpProbeOAuth:
- 		opts.Mode = mcpInstallModeDirect
-+		opts.SignIn = probe.Kind == mcpProbeOAuth
- 		return nil
- 	case mcpProbeAuthLogin:
- 		opts.Mode = mcpInstallModeProxy
-@@ -866,9 +878,16 @@ func printPostInstallGuide(w io.Writer, opts mcpInstallOptions, codexPlan codexI
- 	fmt.Fprintf(w, "Server: %s\n", opts.Server)
- 
- 	if usesClaude(opts.Client) {
--		fmt.Fprintf(w, "\nClaude Desktop / Claude Code\n")
--		fmt.Fprintf(w, "  1) Restart Claude Desktop.\n")
--		fmt.Fprintf(w, "  2) Verify with: claude mcp list\n")
-+		if opts.SignIn {
-+			fmt.Fprintf(w, "\nClaude Code\n")
-+			fmt.Fprintf(w, "  1) Start Claude Code and type /mcp.\n")
-+			fmt.Fprintf(w, "  2) Choose %s, then Authenticate.\n", claudeMCPServerName)
-+			fmt.Fprintf(w, "  3) Your browser opens on the server. Sign in and choose Allow.\n")
-+		} else {
-+			fmt.Fprintf(w, "\nClaude Desktop / Claude Code\n")
-+			fmt.Fprintf(w, "  1) Restart Claude Desktop.\n")
-+			fmt.Fprintf(w, "  2) Verify with: claude mcp list\n")
-+		}
- 	}
- 
- 	if usesCodex(opts.Client) {
-```
-
-**File**: `cmd/mcp_install_test.go` (modified, +46/-0)
-```diff
-@@ -473,3 +473,49 @@ func TestPrintPostInstallGuide(t *testing.T) {
- 		t.Fatalf("expected codex config path note, got:\n%s", out)
- 	}
- }
-+
-+// `deeporg mcp add claude <url>` is the command the server prints when it
-+// starts. The client named there was read and then thrown away, so the
-+// command set up Codex, or asked which client was meant.
-+func TestSplitMCPAddArgs(t *testing.T) {
-+	for _, tc := range []struct {
-+		args           []string
-+		client, server string
-+	}{
-+		{nil, "", ""},
-+		{[]string{"claude"}, "claude", ""},
-+		{[]string{"http://127.0.0.1:8080"}, "", "http://127.0.0.1:8080"},
-+		{[]string{"localhost:8080"}, "", "localhost:8080"},
-+		{[]string{"claude", "http://127.0.0.1:8080"}, "claude", "http://127.0.0.1:8080"},
-+		{[]string{"all", "data.example.com"}, "all", "data.example.com"},
-+	} {
-+		client, server := splitMCPAddArgs(tc.args)
-+		if client != tc.client || server != tc.server {
-+			t.Errorf("splitMCPAddArgs(%q) = %q, %q; want %q, %q", tc.args, client, server, tc.client, tc.server)
-+		}
-+	}
-+
-+	// The client named as an argument is the one set up, with no prompt.
-+	client, _ := splitMCPAddArgs([]string{"claude", "http://127.0.0.1:8080"})
-+	opts, err := resolveInstallOptions(mcpInstallResolveInput{Client: client, ClientSet: client != "", Server: "http://127.0.0.1:8080", ServerSet: true})
-+	if err != nil || opts.Client != "claude" {
-+		t.Fatalf("the named client was not used: %q, %v", opts.Client, err)
-+	}
-+}
-+
-+// When the server has the client sign in for itself, the next step is in
-+// Claude Code, and the person has to be told what it is.
-+func TestPostInstallGuideSaysHowToSignIn(t *testing.T) {
-+	var out bytes.Buffer
-+	printPostInstallGuide(&out, mcpInstallOptions{Client: "claude", Server: "http://127.0.0.1:8080/api/v1/mcp", SignIn: true}, codexInstallPlan{})
-+	for _, want := range []string{"type /mcp", "then Authenticate", "choose Allow"} {
-+		if !strings.Contains(out.String(), want) {
-+			t.Errorf("the guide does not say %q:\n%s", want, out.String())
-+		}
-+	}
-+	out.Reset()
-+	printPostInstallGuide(&out, mcpInstallOptions{Client: "claude", Server: "http://127.0.0.1:8080/api/v1/mcp"}, codexInstallPlan{})
-+	if strings.Contains(out.String(), "Authenticate") {
-+		t.Errorf("a server with no sign-in was given sign-in steps:\n%s", out.String())
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `29a0ff52` (2026-11-26)
-**Commit Message**: fix(mcp): describe a field of any type as an object schema
-
-A tool's output schema described a field that can hold anything with the
-schema `true`. The MCP client library Claude Code is built on accepts only an
-object where a schema goes and rejects the whole tool list over one `true`,
-so every tool disappeared for such a client. On an agentic server the first
-tool listed, ask_graphjin_agent, has six such fields.
-
-These fields are now described as `{}`, which means the same thing. Found by
-connecting a client built on that library to a real server.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `serv/internal/mcpcompat/mcp/mcp.go` (modified, +27/-0)
-```diff
-@@ -274,11 +274,38 @@ func WithOutputSchema[T any]() ToolOption {
- 			if out.Type == "" && reflect.TypeOf(zero) != nil {
- 				out.Type = "object"
- 			}
-+			for name, prop := range out.Properties {
-+				out.Properties[name] = objectSchema(prop)
+@@ -129,6 +129,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
+ 		if file, ok := usesStartConfig(cmd); ok {
+ 			var err error
+ 			if start, err = loadStartConfig(file); err == nil {
++				err = start.storeWritable()
 +			}
- 			t.OutputSchema = out
++			if err == nil {
+ 				err = start.findListen()
+ 			}
+ 			if err != nil {
+@@ -143,6 +146,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
+ 			if start.created {
+ 				fmt.Printf("Created %s\n\n", start.path)
+ 			}
++			if advice := start.unreachableListenAdvice(); advice != "" {
++				fmt.Fprintf(os.Stderr, "%s\n\n", advice)
++			}
  		}
  	}
- }
- 
-+// objectSchema rewrites the schema `true`, which a field of any type reflects
-+// to, as the empty schema `{}`. The two mean the same thing, but the MCP
-+// client library Claude Code is built on only accepts an object where a
-+// schema goes and otherwise throws the whole tool list away.
-+func objectSchema(schema any) any {
-+	switch v := schema.(type) {
-+	case bool:
-+		if v {
-+			return map[string]any{}
-+		}
-+		return map[string]any{"not": map[string]any{}}
-+	case map[string]any:
-+		if props, ok := v["properties"].(map[string]any); ok {
-+			for name, prop := range props {
-+				props[name] = objectSchema(prop)
-+			}
-+		}
-+		if items, ok := v["items"]; ok {
-+			v["items"] = objectSchema(items)
-+		}
-+	}
-+	return schema
-+}
-+
- type ReadResourceParams struct{ URI string }
- type ReadResourceRequest struct{ Params ReadResourceParams }
  
 ```
 
-**File**: `serv/internal/mcpcompat/mcp/output_schema_test.go` (added, +55/-0)
+**File**: `cmd/image_role.go` (modified, +17/-0)
 ```diff
-@@ -0,0 +1,55 @@
-+package mcp
+@@ -26,6 +26,15 @@ var imageRole string
+ // a plain `go build` leave it at the historical behaviour.
+ var currentImageRole = imageRoleServer
+ 
++// serverImage is true when this binary was built as the server image, which
++// is the one build that says so with main.imageRole=server. A plain
++// `go build` and the release archives say nothing and are not an image, and
++// the environment image has a role of its own.
++//
++// The server needs to know because a new install is right for a laptop by
++// default and wrong for a container: see startDefaultListen.
++var serverImage bool
 +
-+import (
-+	"encoding/json"
-+	"strings"
-+	"testing"
-+)
-+
-+type outputSchemaSample struct {
-+	Answer string           `json:"answer"`
-+	Data   any              `json:"data,omitempty"`
-+	Raw    json.RawMessage  `json:"raw,omitempty"`
-+	Rows   []any            `json:"rows,omitempty"`
-+	Nested outputSchemaNest `json:"nested"`
+ const (
+ 	// imageRoleServer is the historical image: the database server.
+ 	imageRoleServer = "server"
+@@ -52,6 +61,13 @@ func resolveImageRole(role string) (string, error) {
+ 	}
+ }
+ 
++// builtAsServerImage reports whether the role stamped into the binary names
++// the server image. An empty role also resolves to the server, but it means a
++// build that is not an image at all.
++func builtAsServerImage(stamped string) bool {
++	return strings.EqualFold(strings.TrimSpace(stamped), imageRoleServer)
 +}
 +
-+type outputSchemaNest struct {
-+	Variables any `json:"variables,omitempty"`
+ // imageRoleArgs supplies the command line an image's role implies.
+ //
+ // Anything explicit wins: `docker run <image> version` runs version, so a
+@@ -119,6 +135,7 @@ func applyImageRole() error {
+ 		return err
+ 	}
+ 	currentImageRole = role
++	serverImage = builtAsServerImage(imageRole)
+ 	os.Args = append(os.Args[:1], imageRoleArgs(role, os.Args[1:])...)
+ 	return nil
+ }
+```
+
+**File**: `cmd/ldflags_pin_test.go` (modified, +14/-0)
+```diff
+@@ -58,6 +58,20 @@ func TestEveryBuildStampsTheSameIdentity(t *testing.T) {
+ 	if !role {
+ 		t.Fatal("no build stamps main.imageRole, so no image can be an environment")
+ 	}
++
++	// Each image says which one it is, and nothing else does: the server
++	// image first, then the environment. The archives people install on a
++	// laptop carry no role, or a laptop install would listen on every address.
++	var roles []string
++	for _, match := range regexp.MustCompile(`main\.imageRole=(\S+)`).FindAllStringSubmatch(string(release), -1) {
++		roles = append(roles, match[1])
++	}
++	if strings.Join(roles, ",") != imageRoleServer+","+imageRoleEnv {
++		t.Fatalf("the release stamps the roles %v, want the server image then the environment image", roles)
++	}
++	if contains(baseline, "main.imageRole") {
++		t.Fatal("the builds block stamps main.imageRole, so an installed binary would think it is an image")
++	}
+ }
+ 
+ // ldflagBlocks returns the -X keys of each ldflags list in a YAML document.
+```
+
+**File**: `cmd/start_config.go` (modified, +99/-4)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"io/fs"
+ 	"net"
+ 	"net/http"
+ 	"os"
+@@ -33,8 +34,20 @@ const (
+ 
+ 	// A laptop install listens on this machine only. A server sets listen.
+ 	startDefaultListen = "127.0.0.1:8080"
++	// Inside a container, this machine only means the container only: nothing
++	// outside it could reach the server. The server image listens on every
++	// address, and what is published from the container decides who gets in.
++	startImageListen = "0.0.0.0:8080"
+ )
+ 
++// firstRunListen is the address a new install is given when nobody chose one.
++func firstRunListen() string {
++	if serverImage {
++		return startImageListen
++	}
++	return startDefaultListen
 +}
 +
-+// A field that can hold anything reflects to the schema `true`. The MCP client
-+// library Claude Code is built on accepts only objects where a schema goes,
-+// and rejects the whole tool list over one `true`, so every tool disappears.
-+func TestOutputSchemaNeverUsesABooleanSchema(t *testing.T) {
-+	tool := NewTool("sample", WithOutputSchema[outputSchemaSample]())
-+	raw, err := json.Marshal(tool.OutputSchema)
+ type startConfig struct {
+ 	Store     string `yaml:"store"`
+ 	SecretKey string `yaml:"secret_key"`
+@@ -134,11 +147,13 @@ func loadStartConfig(file string) (*startConfig, error) {
+ 	case os.IsNotExist(err):
+ 		sc.Store = filepath.Join(filepath.Dir(file), "store.db")
+ 		sc.SecretKey = newInstallSecret()
+-		sc.Listen = startDefaultListen
++		sc.Listen = firstRunListen()
+ 		if err := writeStartConfig(sc); err != nil {
+-			return nil, err
++			return nil, homeNotWritableError(filepath.Dir(file), err)
+ 		}
+ 		sc.created = true
++	case errors.Is(err, fs.ErrPermission):
++		return nil, fmt.Errorf("DeepORG cannot read %s: permission denied.\nMake the file readable for the user DeepORG runs as (user %d) and start again.", file, os.Getuid())
+ 	default:
+ 		return nil, err
+ 	}
+@@ -169,6 +184,78 @@ func loadStartConfig(file string) (*startConfig, error) {
+ 	return sc, nil
+ }
+ 
++// storeWritable makes sure the store's folder can be written before the
++// server opens the store. A store that cannot be written fails there with a
++// database error that says nothing about folders.
++func (sc *startConfig) storeWritable() error {
++	dir := filepath.Dir(sc.Store)
++	if err := checkWritable(dir); err != nil {
++		return homeNotWritableError(dir, err)
++	}
++	return nil
++}
++
++// unreachableListenAdvice is what the server image says when it is about to
++// listen where nothing outside the container can reach it. That is what a
++// start config written by an image older than this default holds.
++func (sc *startConfig) unreachableListenAdvice() string {
++	host, port, err := net.SplitHostPort(sc.Listen)
++	if !serverImage || err != nil || !loopbackHost(host) {
++		return ""
++	}
++	return fmt.Sprintf("DeepORG is listening on %s, which nothing outside this container can reach.\nTo open it, set `listen: 0.0.0.0:%s` in %s, or set %s, and start again.",
++		sc.Listen, port, sc.path, startListenEnv)
++}
++
++// checkWritable makes sure files can be created in dir, creating it first
++// when it is not there.
++func checkWritable(dir string) error {
++	if err := os.MkdirAll(dir, 0o700); err != nil {
++		return err
++	}
++	probe, err := os.CreateTemp(dir, ".deeporg-write-*")
++	if err != nil {
++		return err
++	}
++	probe.Close() //nolint:errcheck
++	return os.Remove(probe.Name())
++}
++
++// homeNotWritableError says which folder could not be written and what to do
++// about it. Any other failure is returned as it is.
++//
++// In the server image this is the first thing most people hit: the image runs
++// as an ordinary user, and a volume mounted anywhere but that user's home
++// belongs to root.
++func homeNotWritableError(dir string, err error) error {
++	if !errors.Is(err, fs.ErrPermission) && !errors.Is(err, syscall.EROFS) {
++		return err
++	}
++	reason := "permission denied"
++	if errors.Is(err, syscall.EROFS) {
++		reason = "it is read-only"
++	}
++	who := "the user it runs as"
++	if uid := os.Getuid(); uid >= 0 {
++		who = fmt.Sprintf("user %d", uid)
++	}
++	lines := []string{
++		fmt.Sprintf("DeepORG cannot write to %s: %s.", dir, reason),
++		"It keeps its start config and its store in that folder.",
++	}
++	home, homeErr := os.UserHomeDir()
++	if !serverImage || homeErr != nil || home == "" {
++		lines = append(lines, fmt.Sprintf("Make the folder writable for %s, or set %s to a folder that is, and start again.", who, startConfigDirEnv))
++		return errors.New(strings.Join(lines, "\n"))
++	}
++	lines = append(lines,
++		fmt.Sprintf("In this image DeepORG runs as %s, and a volume mounted anywhere else belongs to root.", who),
++		fmt.Sprintf("Mount the volume at %s itself, which that user owns, and leave %s unset.", home, startConfigDirEnv),
++		fmt.Sprintf("If the folder comes from the host or from Kubernetes, make it writable for %s first.", who),
++	)
++	return errors.New(strings.Join(lines, "\n"))
++}
++
+ // startPortTries is how many ports after the wanted one are tried.
+ const startPortTries = 20
+ 
+@@ -274,12 +361,20 @@ store: %s
+ # lost, everyone is signed out and stored database passwords cannot be read.
+ secret_key: %s
+ 
+-# Address and port to listen on. This one is reachable from this machine only.
++# Address and port to listen on. %s
+ listen: %s
+-`, yamlString(sc.Store), yamlString(sc.SecretKey), yamlString(sc.Listen))
++`, yamlString(sc.Store), yamlString(sc.SecretKey), listenReach(sc.Listen),
+```
+
+**File**: `cmd/start_config_test.go` (modified, +180/-0)
+```diff
+@@ -3,6 +3,7 @@ package main
+ import (
+ 	"context"
+ 	"fmt"
++	"io"
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -175,6 +176,168 @@ func TestStartConfigProblemsSayWhatToDo(t *testing.T) {
+ 	}
+ }
+ 
++// asServerImage runs the test as the binary in the server image does.
++func asServerImage(t *testing.T) {
++	t.Helper()
++	previous := serverImage
++	serverImage = true
++	t.Cleanup(func() { serverImage = previous })
++}
++
++// A container that listens on this machine only is one nothing can reach. The
++// server image is the one build that knows it is in a container, so a new
++// install there listens on every address without being told to.
++func TestServerImageListensWhereAContainerCanBeReached(t *testing.T) {
++	// Only the server image's own stamp makes a binary the server image.
++	for stamped, want := range map[string]bool{"": false, "server": true, " Server\n": true, "env": false} {
++		if got := builtAsServerImage(stamped); got != want {
++			t.Fatalf("builtAsServerImage(%q) = %v, want %v", stamped, got, want)
++		}
++	}
++
++	_, home := inEmptyDir(t)
++	file := filepath.Join(home, startConfigName)
++	asServerImage(t)
++
++	sc, err := loadStartConfig(file)
++	if err != nil {
++		t.Fatalf("first run in the image: %v", err)
++	}
++	if sc.Listen != "0.0.0.0:8080" {
++		t.Fatalf("listen = %q in the server image, want every address", sc.Listen)
++	}
++	raw, err := os.ReadFile(file)
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	var schema struct {
-+		Type       string         `json:"type"`
-+		Properties map[string]any `json:"properties"`
++	if !strings.Contains(string(raw), "listen: 0.0.0.0:8080") || strings.Contains(string(raw), "this machine only") {
++		t.Fatalf("the start config written in the image does not say where it listens:\n%s", raw)
 +	}
-+	if err := json.Unmarshal(raw, &schema); err != nil {
++	if opensBrowser(sc) {
++		t.Fatal("the server image tried to open a browser")
++	}
++	if advice := sc.unreachableListenAdvice(); advice != "" {
++		t.Fatalf("a reachable address was warned about: %s", advice)
++	}
++	// The environment still chooses the address.
++	t.Setenv(startListenEnv, "0.0.0.0:9999")
++	if sc, err = loadStartConfig(file); err != nil || sc.Listen != "0.0.0.0:9999" {
++		t.Fatalf("%s did not override the image's address: %+v %v", startListenEnv, sc, err)
++	}
++	t.Setenv(startListenEnv, "")
++
++	// A start config written by an older image holds the laptop's address.
++	// It is used as it is, since someone may have meant it, and the server
++	// says how to open it.
++	body := strings.Replace(string(raw), "listen: 0.0.0.0:8080", "listen: "+startDefaultListen, 1)
++	if err := os.WriteFile(file, []byte(body), 0o600); err != nil {
 +		t.Fatal(err)
 +	}
-+	if schema.Type != "object" || len(schema.Properties) != 5 {
-+		t.Fatalf("unexpected schema: %s", raw)
++	if sc, err = loadStartConfig(file); err != nil || sc.Listen != startDefaultListen {
++		t.Fatalf("an existing start config was not used as written: %+v %v", sc, err)
 +	}
-+	for name, prop := range schema.Properties {
-+		if _, ok := prop.(map[string]any); !ok {
-+			t.Errorf("property %q is %v, not an object schema", name, prop)
++	advice := sc.unreachableListenAdvice()
++	for _, want := range []string{startDefaultListen, "listen: 0.0.0.0:8080", file, startListenEnv} {
++		if !strings.Contains(advice, want) {
++			t.Fatalf("the advice does not say %q:\n%s", want, advice)
 +		}
 +	}
-+	// Nested schemas and array items are rewritten too.
-+	for _, bad := range []string{`"variables":true`, `"items":true`, `"data":true`, `"raw":true`} {
-+		if strings.Contains(string(raw), bad) {
-+			t.Errorf("the schema still contains %s: %s", bad, raw)
-+		}
-+	}
-+	// A typed field keeps its type.
-+	if answer, _ := schema.Properties["answer"].(map[string]any); answer["type"] != "string" {
-+		t.Errorf("a typed field lost its type: %s", raw)
++	// On a laptop the same address is the right one, and nothing is said.
++	serverImage = false
++	if advice := sc.unreachableListenAdvice(); advice != "" {
++		t.Fatalf("a laptop was warned about listening on this machine only: %s", advice)
 +	}
 +}
++
++// A volume mounted anywhere but the image user's home belongs to root, and the
++// first run cannot write to it. The error names the folder and says what to
++// mount, where it used to be `open /data/deeporg.yml: permission denied`.
++func TestUnwritableHomeSaysWhichFolderAndWhatToMount(t *testing.T) {
++	if os.Getuid() == 0 {
++		t.Skip("root can write anywhere")
++	}
++	inEmptyDir(t)
++	userHome := t.TempDir()
++	t.Setenv("HOME", userHome)
++	locked := filepath.Join(t.TempDir(), "data")
++	if err := os.Mkdir(locked, 0o500); err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { os.Chmod(locked, 0o700) }) //nolint:errcheck
++	t.Setenv(startConfigDirEnv, locked)
++	file, ok := usesStartConfig(nil)
++	if !ok || file != filepath.Join(locked, startConfigName) {
++		t.Fatalf("file=%q ok=%v", file, ok)
++	}
++	uid := fmt.Sprintf("user %d", os.Getuid())
++
++	// On a laptop: which folder, who has to be able to write it, and the
++	// setting that picks another folder.
++	_, err := loadStartConfig(file)
++	if err == nil {
++		t.Fatal("a start config was written to a folder that cannot be written")
++	}
++	for _, want := range []string{"cannot write to " + locked, "permission denied", uid, startConfigDirEnv} {
++		if !strings.Contains(err.Error(), want) {
++			t.Fatalf("the error does not say %q:\n%s", want, err)
++		}
++	}
++	if strings.Contains(err.Error(), "Mount the volume") {
++		t.Fatalf("a laptop was told to mount a volume:\n%s", err)
++	}
++
++	// In the server image: where to mount the volume.
++	asServerImage(t)
++	_, err = loadStartConfig(file)
++	if err == nil {
++		t.Fatal("a start config was written to a folder that cannot be written")
++	}
++	for _, want := range []string{"cannot write to " + locked, uid, "Mount the volume at " + userHome + " itself", "leave " + startConfigDirEnv + " unset"} {
++		if !strings.Contains(err.Error(), wan
+```
+
+**File**: `serv/health.go` (modified, +23/-0)
+```diff
+@@ -11,6 +11,10 @@ import (
+ 
+ var healthyResponse = []byte("All's Well")
+ 
++// waitingForSetupResponse is what a new install answers before a database has
++// been connected on the setup page.
++var waitingForSetupResponse = []byte("Waiting for setup")
++
+ // defaultHealthPingTimeout bounds the health probe when no ping_timeout is
+ // configured. In sources mode the legacy DB block is never populated, so
+ // conf.DB.PingTimeout is zero — without this guard the probe context is
+@@ -33,6 +37,25 @@ func healthCheckHandler(s1 *HttpService) http.Handler {
+ 		defer span.End()
+ 
+ 		db := s.anyDB()
++		if db == nil && s.setupNeedsDatabase() {
++			// A new install has no database until someone connects one on
++			// the setup page. Answering unhealthy here makes a host that
++			// restarts a failing program kill the server before anyone can
++			// finish setup, so the install is healthy while its own store
++			// answers.
++			if store := s.dbs[s.managedArtifactDB]; store != nil {
++				if err := store.PingContext(c1); err != nil {
++					spanError(span, err)
++
++					s.zlog.Error("Health Check", []zapcore.Field{zap.Error(err)}...)
++					w.WriteHeader(http.StatusInternalServerError)
++					_, _ = w.Write([]byte("store ping failed"))
++					return
++				}
++			}
++			_, _ = w.Write(waitingForSetupResponse)
++			return
++		}
+ 		if db == nil {
+ 			w.WriteHeader(http.StatusServiceUnavailable)
+ 			_, _ = w.Write([]byte("no database connection"))
+```
+
+**File**: `serv/health_test.go` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++package serv
++
++import (
++	"database/sql"
++	"net/http"
++	"net/http/httptest"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/dosco/graphjin/core/v3"
++	"go.uber.org/zap"
++)
++
++// A new install has no database until someone connects one on the setup page.
++// A host that restarts a program failing its health check would otherwise
++// kill the server before anyone could finish setup. An install configured
++// from config files keeps answering unhealthy with no database.
++func TestHealthWhileWaitingForSetup(t *testing.T) {
++	logger := zap.NewNop()
++	const store = "gj_store"
++	openStore := func(t *testing.T) *sql.DB {
++		t.Helper()
++		db, err := sql.Open("sqlite", filepath.Join(t.TempDir(), "store.db"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		t.Cleanup(func() { db.Close() }) //nolint:errcheck
++		return db
++	}
++	health := func(svc *graphjinService) (int, string) {
++		svc.log, svc.zlog = logger.Sugar(), logger
++		hs := &HttpService{}
++		hs.Store(svc)
++		rec := httptest.NewRecorder()
++		healthCheckHandler(hs).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, healthRoute, nil))
++		return rec.Code, rec.Body.String()
++	}
++	// storeBacked builds the service a start config gives: its configuration
++	// is in the store, and the store is the only database it has open.
++	storeBacked := func(t *testing.T, sources ...core.SourceConfig) *graphjinService {
++		conf := &Config{Core: core.Config{Sources: sources}}
++		conf.SetStore("/somewhere/store.db", "seal")
++		return &graphjinService{
++			conf:              conf,
++			accounts:          &accountService{},
++			dbs:               map[string]*sql.DB{store: openStore(t)},
++			managedArtifactDB: store,
++		}
++	}
++
++	t.Run("a new install waiting for its database is healthy", func(t *testing.T) {
++		code, body := health(storeBacked(t))
++		if code != http.StatusOK || !strings.Contains(body, "Waiting for setup") {
++			t.Fatalf("health = %d %q, want 200 and a line saying setup is not finished", code, body)
++		}
++	})
++
++	t.Run("a new install whose store does not answer is not", func(t *testing.T) {
++		svc := storeBacked(t)
++		svc.dbs[store].Close() //nolint:errcheck
++		if code, body := health(svc); code != http.StatusInternalServerError {
++			t.Fatalf("health = %d %q with a closed store, want 500", code, body)
++		}
++	})
++
++	t.Run("a database that was connected and is gone is still unhealthy", func(t *testing.T) {
++		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
++		if code, body := health(svc); code != http.StatusServiceUnavailable {
++			t.Fatalf("health = %d %q with a database configured and none open, want 503", code, body)
++		}
++	})
++
++	t.Run("an install from config files with no database is unhealthy", func(t *testing.T) {
++		svc := &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{}}
++		if code, body := health(svc); code != http.StatusServiceUnavailable || !strings.Contains(body, "no database connection") {
++			t.Fatalf("health = %d %q, want 503 as before", code, body)
++		}
++		// The same install with a store file of its own for artifacts: the
++		// store being open does not make it a new install.
++		svc = &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{store: openStore(t)}, managedArtifactDB: store}
++		if code, body := health(svc); code != http.StatusServiceUnavailable {
++			t.Fatalf("health = %d %q with only an artifact store open, want 503 as before", code, body)
++		}
++	})
++
++	t.Run("a connected database is pinged as before", func(t *testing.T) {
++		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
++		svc.dbs["main"] = openStore(t)
++		if code, body := health(svc); code != http.StatusOK || body != string(healthyResponse) {
++			t.Fatalf("health = %d %q with a database connected, want 200 %q", code, body, healthyResponse)
++		}
++	})
++}
+```
+
+---
+
+### Incident Patch 2: `8f454813` (2026-11-26)
+**Commit Message**: fix(core): introspection builds a valid client schema with API sources
+
+GraphiQL in the console Workbench refused the saas-ops schema: "unknown
+type: account_healthWhereInput". Every column field took includeIf/skipIf
+typed as its table's where input, but API remote tables and OpenAPI
+mutation results never define one (only filesystem remotes do). Those
+fields now get the conditional args only where the where type exists.
+
+With that fixed, graphql-js validateSchema still rejected the schema:
+rolesEnum listed the control store's internal role
+__graphjin_internal_store, and "__" names are reserved. The roles enum
+now skips names that are not legal enum values.
+
+The new tests check the introspection JSON the way buildClientSchema and
+validateSchema do (unknown types, input/output positions, name grammar,
+reserved prefix, root types), and fail without each fix.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/intro.go` (modified, +46/-6)
+```diff
+@@ -407,7 +407,8 @@ func (in *Introspection) addOpenAPIMutationTable(table sdata.DBTable, alias stri
+ 		if column.Blocked {
+ 			continue
+ 		}
+-		field, err := in.getColumnField(column)
++		// A mutation result has no where type to condition its fields on.
++		field, err := in.getColumnField(column, false)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -435,11 +436,17 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
+ 	ft.Name = in.getName(name)
+ 	ft.Description = table.Comment
+ 
++	// Only a filesystem remote gets a where type (added below), so only its
++	// fields can take includeIf/skipIf. Advertising them on an API remote
++	// names a type the schema never defines, and GraphiQL then refuses to
++	// build the client schema at all.
++	filesystemRemote := isFilesystemRemoteTable(table)
++
+ 	for _, c := range table.Columns {
+ 		if c.Blocked {
+ 			continue
+ 		}
+-		f, err := in.getColumnField(c)
++		f, err := in.getColumnField(c, filesystemRemote)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -453,7 +460,6 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
+ 		}
+ 		ft.addArg(a.Name, base)
+ 	}
+-	filesystemRemote := isFilesystemRemoteTable(table)
+ 	if filesystemRemote {
+ 		ft.addOrReplaceArg("id", newTypeRef("", "ID", nil))
+ 		ft.addOrReplaceArg("limit", newTypeRef("", "Int", nil))
+@@ -596,7 +602,7 @@ func (in *Introspection) addTableTypeWithDepth(
+ 			hasRecursive = true
+ 		}
+ 		var f1 FieldObject
+-		f1, err = in.getColumnField(c)
++		f1, err = in.getColumnField(c, true)
+ 		if err != nil {
+ 			return
+ 		}
+@@ -729,6 +735,12 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
+ 	}
+ 	sort.Strings(roleNames)
+ 	for _, name := range roleNames {
++		// Internal roles such as __graphjin_internal_store are not for
++		// clients, and a name outside the enum value grammar makes GraphiQL
++		// reject the whole schema.
++		if !isIntroEnumValueName(name) {
++			continue
++		}
+ 		ro := roles[name]
+ 		cmt := ro.Comment
+ 		if ro.Match != "" {
+@@ -742,6 +754,28 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
+ 	in.addType(ft)
+ }
+ 
++// isIntroEnumValueName reports whether name can be a GraphQL enum value:
++// the name grammar [_A-Za-z][_0-9A-Za-z]*, no reserved "__" prefix, and not
++// true, false or null.
++func isIntroEnumValueName(name string) bool {
++	if name == "" || strings.HasPrefix(name, "__") {
++		return false
++	}
++	switch name {
++	case "true", "false", "null":
++		return false
++	}
++	for i, r := range name {
++		switch {
++		case r == '_', r >= 'A' && r <= 'Z', r >= 'a' && r <= 'z':
++		case i > 0 && r >= '0' && r <= '9':
++		default:
++			return false
++		}
++	}
++	return true
++}
++
+ // addOrderByType adds an order by type to the introspection schema
+ func (in *Introspection) addOrderByType(t sdata.DBTable, ft *FullType) {
+ 	ty := FullType{
+@@ -936,8 +970,10 @@ func (in *Introspection) addArgsType(table sdata.DBTable, fn sdata.DBFunction) (
+ 	return
+ }
+ 
+-// getColumnField returns the field object for the given column
+-func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObject, err error) {
++// getColumnField returns the field object for the given column. conditional
++// adds the includeIf/skipIf arguments, which take the table's where type; pass
++// it only when the caller also defines that type.
++func (in *Introspection) getColumnField(column sdata.DBColumn, conditional bool) (field FieldObject, err error) {
+ 	field.Args = []InputValue{}
+ 	field.Name = in.getName(column.Name)
+ 	typeValue := newTypeRef("", "String", nil)
+@@ -957,6 +993,10 @@ func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObjec
+ 
+ 	field.Type = typeValue
+ 
++	if !conditional {
++		return
++	}
++
+ 	field.Args = append(field.Args, InputValue{
+ 		Name: "includeIf", Type: newTypeRef("", (column.Table + SUFFIX_WHERE), nil),
+ 	})
+```
+
+**File**: `core/intro_client_schema_test.go` (added, +368/-0)
+```diff
+@@ -0,0 +1,368 @@
++package core
++
++import (
++	"encoding/json"
++	"fmt"
++	"regexp"
++	"sort"
++	"strings"
++	"testing"
++
++	"github.com/dosco/graphjin/core/v3/internal/sdata"
++)
++
++// The console's Workbench hands this introspection result to GraphiQL, which
++// calls graphql-js buildClientSchema. That call refuses the whole schema if a
++// single field, argument or input field names a type the result never
++// defines, so one dangling name blanks the editor for every table.
++
++func TestIntrospectionBuildsClientSchema(t *testing.T) {
++	result := introspectRaw(t, sdata.GetTestDBInfo(), nil)
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++}
++
++// An API source joined onto a table (the saas-ops demo's account_health) and
++// a top-level API list are remote tables with no where type. Their fields
++// used to take includeIf/skipIf typed as account_healthWhereInput anyway.
++func TestIntrospectionWithAPIRemotesBuildsClientSchema(t *testing.T) {
++	di := sdata.GetTestDBInfo()
++
++	joined := sdata.NewDBTable("public", "account_health", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "account_health", Name: "account_id", Type: "bigint"},
++		{Schema: "public", Table: "account_health", Name: "health", Type: "text"},
++		{Schema: "public", Table: "account_health", Name: "open_risks", Type: "json"},
++	})
++	idcol := sdata.DBColumn{
++		PrimaryKey: true, Schema: "public", Table: "account_health",
++		Name: "__account_health_id", Type: "bigint",
++		FKeySchema: "public", FKeyTable: "users", FKeyCol: "id",
++	}
++	joined.PrimaryCols = []sdata.DBColumn{idcol}
++	joined.PrimaryCol = idcol
++	joined.StrictColumns = true
++	di.AddTable(joined)
++
++	list := sdata.NewDBTable("public", "incidents_api", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "incidents_api", Name: "id", Type: "text"},
++		{Schema: "public", Table: "incidents_api", Name: "severity", Type: "text"},
++	})
++	list.Args = []sdata.DBColumn{
++		{Schema: "public", Table: "incidents_api", Name: "status", Type: "text"},
++	}
++	di.AddTable(list)
++
++	mutation := sdata.NewDBTable("public", "create_incident", "openapi_mutation", []sdata.DBColumn{
++		{Schema: "public", Table: "create_incident", Name: "id", Type: "text"},
++	})
++	di.AddTable(mutation)
++
++	result := introspectRaw(t, di, map[string]bool{"create_incident": true})
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	// The fix must not cost the remote tables their fields or their roots.
++	health := requireIntroType(t, intro, "account_health")
++	requireIntroField(t, health, "health")
++	query := requireIntroType(t, intro, "Query")
++	requireIntroField(t, query, "account_health")
++	requireIntroField(t, query, "incidents_api")
++	mut := requireIntroType(t, intro, "Mutation")
++	requireIntroField(t, mut, "create_incident")
++}
++
++// The control store's internal role is in the role map but is not a valid
++// enum value; neither is a role name with a dash. Valid roles stay listed.
++func TestIntrospectionRolesEnumBuildsClientSchema(t *testing.T) {
++	schema, err := sdata.NewDBSchema(sdata.GetTestDBInfo(), nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	gj := &graphjinEngine{
++		conf: &Config{DBType: "postgres"},
++		roles: map[string]*Role{
++			"user":                      {Name: "user"},
++			"anon":                      {Name: "anon"},
++			"__graphjin_internal_store": {Name: "__graphjin_internal_store"},
++			"support-agent":             {Name: "support-agent"},
++		},
++		defaultDB: "default",
++		databases: map[string]*dbContext{
++			"default": {name: "default", schema: schema},
++		},
++	}
++	result, err := gj.introQuery()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	roles := requireIntroType(t, intro, "rolesEnum")
++	var got []string
++	for _, v := range roles.EnumValues {
++		got = append(got, v.Name)
++	}
++	if strings.Join(got, ",") != "anon,user" {
++		t.Fatalf("rolesEnum values = %v, want [anon user]", got)
++	}
++}
++
++// A filesystem remote defines a where type, so its fields keep includeIf.
++func TestIntrospectionFilesystemRemoteKeepsFieldConditions(t *testing.T) {
++	di := sdata.GetTestDBInfo()
++	fs := sdata.NewDBTable("public", "avatars", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "avatars", Name: "key", Type: "text"},
++		{Schema: "public", Table: "avatars", Name: "url", Type: "text"},
++	})
++	fs.Args = []sdata.DBColumn{
++		{Schema: "public", Table: "avatars", Name: "prefix", Type: "text"},
++		{Schema: "public", Table: "avatars", Name: "inline_data", Type: "boolean"},
++	}
++	di.AddTable(fs)
++
++	result := introspectRaw(t, di, nil)
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	avatars :
 ```
 
 #### Recent Merged Pull Requests:
@@ -3055,58 +3412,32 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: quick start and README describe the setup flow
+## X. a server install is healthy before setup and the image is reachable; add the Set
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.goreleaser.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab2b14e1`: docs: quick start and README describe the setup flow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `178469e5`: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.goreleaser.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-deeporg
-This starts DeepORG and opens a setup page in your browser. You create an admin
-account, connect a database or choose the sample data, and pick a model. Then
-you ask a question. There is no config file to write: DeepORG keeps its own
-files in `~/.deeporg/`.
-The setup steps are in the [quick start](https://deeporg.io/start/quick-start/).
-For a larger demo company with routines and saved work already in it, run
-`deeporg serve --demo`; see [Demos](https://deeporg.io/start/demos/).
-## Use it from Claude Code
-Open **Connect** in the console and copy the command it shows:
-claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
-Then type `/mcp` in Claude Code, choose `deeporg` and Authenticate. Your browser
-opens on DeepORG, where you choose Allow. There is no token to copy. Claude Code
-asks DeepORG's built-in agent, so choose a model during setup first.
-
-Other clients: [MCP](https://deeporg.io/agentic/mcp/). Servers that sign people
-in through an identity provider: [MCP OAuth](https://deeporg.io/agentic/oauth/).
+    # ko cannot set an environment variable, a command or a volume, so the
+    # role ldflag tells the binary it is the server image. A new install then
+    # listens where a container can be reached, and a volume it cannot write
+    # to is reported with the folder to mount.
+      - -X main.imageRole=server
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-deeporg serve --demo
-This starts a demo SaaS company (accounts, subscriptions, invoices, support
-tickets) with seeded data. Put a model key in `./.env` (`OPENAI_API_KEY`,
-`ANTHROPIC_API_KEY` or `GOOGLE_API_KEY`) and ask it something:
-```bash
-curl -sS localhost:8083/api/v1/agent \
-  -H 'content-type: application/json' \
-  -d '{"instruction": "Which account is most at risk of churning?"}'
-```
-Or chat with it at <http://localhost:8083/agent>. More demos:
-[Demos](https://deeporg.io/start/demos/).
-## Use it from Claude, Codex or any MCP client
-deeporg mcp add claude http://localhost:8083
-Other clients: [MCP](https://deeporg.io/agentic/mcp/). Hosted servers with sign-in:
-[MCP OAuth](https://deeporg.io/agentic/oauth/).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab2b14e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `178469e5` are properly handled with clean fallback behavior.

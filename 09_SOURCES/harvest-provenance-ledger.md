@@ -13791,3 +13791,6 @@ Every entry in this ledger must capture:
 | `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `5371c772` | Multi-dimensional audit evidence | 2026-11-27T10:16:50.575Z |
 | `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-27T10:25:51.800Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `2b11b056` | Multi-dimensional audit evidence | 2026-11-27T10:25:53.470Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `d82a8a7b` | Multi-dimensional audit evidence | 2026-11-27T10:34:17.797Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-27T10:34:22.416Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T10:34:23.853Z |

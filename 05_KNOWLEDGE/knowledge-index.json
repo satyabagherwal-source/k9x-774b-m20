@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T10:26:06.159Z",
+  "last_updated": "2026-11-27T10:34:29.426Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26504,
+  "total_items": 26507,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -236292,8 +236292,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "e13b16bc",
-      "content_hash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
+      "source_version": "d82a8a7b",
+      "content_hash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -236336,6 +236336,11 @@
           "number": 10641,
           "title": "dns, core: do not panic when the OS has no random bytes to give",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10878,
+          "title": "fix end labels in the trim graph and ldp in the arm64 check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236343,7 +236348,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T09:47:53.498Z",
+      "verified_at": "2026-11-27T10:34:17.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236359,10 +236364,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "repository": "oven-sh/bun",
-      "source_version": "d3588a3c",
-      "content_hash": "2e5fe6ffd7c0be0236011a234f4d9466da1d2f0b72a5a44e51b23af0a66021e0",
+      "source_version": "d82a8a7b",
+      "content_hash": "fd8eeb8111f3c4062eab7e59a6497ae89ca57554fd723abea437b29ee373be60",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T02:38:40.436Z"
+      "persisted_at": "2026-11-27T10:34:18.262Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
@@ -236371,10 +236376,10 @@
       "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "e13b16bc",
-      "content_hash": "23216fb788336b45388e78b48b7928cd34fbe6573c62b1c8e47ed4c9860e444d",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:47:54.821Z"
+      "source_version": "d82a8a7b",
+      "content_hash": "50bccb4c312e6127d51287d0d49bf0791837232eb586c21f9ff3550d80f78b32",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:34:18.437Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -236423,9 +236428,9 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "7adb1454b60fb6568f7a04c74c09cc9d5132d9e41389b49a2b4ddc644afa67fe",
+      "content_hash": "a74cda7b8ff3bb0bc4238993fa62f0433edf732b9723a257ce8c3ac1bf368d54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T02:39:20.121Z"
+      "persisted_at": "2026-11-27T10:34:27.899Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
@@ -236435,9 +236440,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "91786e85552cc3a96edbf0134c86031e4dcf89ba6afc17a99316815f70813cbe",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:52:54.839Z"
+      "content_hash": "953edadd14e0943a74cc60f62daf2185a83f942f4dc94cb2363ca229391bb0c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:34:28.069Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
@@ -247832,7 +247837,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
+      "content_hash": "740a11057ed108007336bb6f5c4a5ffd26bb4c89f49daa80e718c9db20fad442",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -247841,7 +247846,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:48:56.902Z",
+      "verified_at": "2026-11-27T10:34:22.214Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247858,9 +247863,9 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "repository": "tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "f440e862b09dca14aef44db8dadd0484c4b5fcfdb28a3c57d072deca65cd06d7",
+      "content_hash": "3efb80af90be6effdcf99e89b9ce36db4585d63683c1d2bf6261f9957316e839",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T00:48:57.365Z"
+      "persisted_at": "2026-11-27T10:34:22.640Z"
     },
     "rule-8585": {
       "learning_id": "rule-8585",
@@ -247896,9 +247901,9 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "75efac70d3896b7e5f135c26aeddf76baecf3907477f8e604deaaece94d67a59",
+      "content_hash": "a6f5c1d10237afdb4840ff551f5c5276f7b6a6d112ac245b58d55a15401723cc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T00:49:12.714Z"
+      "persisted_at": "2026-11-27T10:34:28.620Z"
     },
     "learn-github-clementtsang-bottom": {
       "learning_id": "learn-github-clementtsang-bottom",
@@ -261257,10 +261262,10 @@
       "relative_path": "08_VERIFICATION/oven-sh-bun-verification-protocol-empirical-defect-shield-for-oven-sh-bun.md",
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "e13b16bc",
-      "content_hash": "240ba558fbada1f6a19f2fe8bff9955fb25ab5a960af38fa6d6be86b04623374",
+      "source_version": "d82a8a7b",
+      "content_hash": "94d68d379e073b70d355aca32f7e2b105c489f11413cd0da797b827fe5cfea02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:47:55.060Z"
+      "persisted_at": "2026-11-27T10:34:18.587Z"
     },
     "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners": {
       "item_id": "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners",
@@ -261282,9 +261287,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "90a7a1a19bb68e5854fbd0c3947deb49826dcf03732e5676297ecdfddeeebaaf",
+      "content_hash": "2e95970c97d0f9517399c611b1d19524cce8ef3840058420b7239e94cd7071cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T09:52:55.074Z"
+      "persisted_at": "2026-11-27T10:34:28.227Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -315184,13 +315189,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
+      "source_url": "https://github.com/dosco/deeporg",
       "source_version": "91c1df80",
-      "content_hash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "content_hash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -315230,7 +315235,7 @@
         {
           "number": 10860,
           "title": "a server install is healthy before setup and the image is reachable; add the Set",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -315238,7 +315243,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T08:14:44.576Z",
+      "verified_at": "2026-11-27T10:34:23.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315251,25 +315256,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-graphjin-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
       "source_version": "91c1df80",
-      "content_hash": "d69986d49fa7a070e3e8db07b194c938c1c529e9e7ec0c00b7c869b31c3b8682",
+      "content_hash": "5cbd82338819c5f4e71c04c729bf48b1452b48dfd819e9135763e50560b3c3b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T08:14:45.558Z"
+      "persisted_at": "2026-11-27T10:34:24.344Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
       "source_version": "91c1df80",
-      "content_hash": "2cc04bdbd239c5afa1cfaf19f505e1d2e33c1b99d80371a3c50f20a53772f1cb",
+      "content_hash": "436eb6fa36f8b39e20fbb4c49bb9cd9631d182f3c54340d6e00a3bc1439d1d55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T08:14:45.810Z"
+      "persisted_at": "2026-11-27T10:34:24.522Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -315343,9 +315348,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac4755084a47ad9e42a2a9f3f8a7899384fbeb80435add0919daa8fb1b54ac21",
+      "content_hash": "438e863c8e0c92c15f2a2e2fdcd4966082d20f1cc92b503a4c5361ada4674d9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:15:11.509Z"
+      "persisted_at": "2026-11-27T10:34:29.426Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -323869,9 +323874,9 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "13cd0f03c2958d33611e611f9eb95ae20676b3c97667950fa6bbb8069b8a9540",
+      "content_hash": "59d9cbefa722ee26d5dd5a96d0962a873f0b01f7d8764d0486a38a050e67d8ee",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T23:32:44.997Z"
+      "persisted_at": "2026-11-27T10:34:29.257Z"
     },
     "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci": {
       "item_id": "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci",
@@ -363088,26 +363093,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10860,
       "title": "a server install is healthy before setup and the image is reachable; add the Set",
-      "source_url": "https://github.com/dosco/graphjin",
+      "source_url": "https://github.com/dosco/deeporg",
       "source_version": "91c1df80",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-27T08:14:44.576Z"
+      "verified_at": "2026-11-27T10:34:23.631Z"
     },
     "candidate_directive-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set": {
       "item_id": "candidate_directive-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H8WW-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GUA2-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
       "title": "a server install is healthy before setup and the image is reachable; add the Set",
-      "repository": "dosco-graphjin-learnings",
+      "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "931d709d2e7b63e6e2bb5685dc0dd2d06ab4491f5c90c568af3c0038f092fd00",
+      "content_hash": "65962906e6c8e3f2c9d2a03d7b09a4351f22a27b0dfc9a8045c1cd4a1d3fccdf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T08:14:49.956Z"
+      "persisted_at": "2026-11-27T10:34:29.072Z"
     },
     "rule-10861": {
       "learning_id": "rule-10861",
@@ -363757,6 +363762,44 @@
       "content_hash": "49c4fa4ea0ecbbb7ab5d4f7517e1d0c9af8c29ac8a618ef3b993f7359c6c3ccd",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T10:26:04.160Z"
+    },
+    "rule-10878": {
+      "learning_id": "rule-10878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10878,
+      "title": "fix end labels in the trim graph and ldp in the arm64 check",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "d82a8a7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T10:34:17.552Z"
+    },
+    "candidate_directive-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check": {
+      "item_id": "candidate_directive-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GLSY-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check.md",
+      "title": "fix end labels in the trim graph and ldp in the arm64 check",
+      "repository": "oven-sh/bun",
+      "source_version": "d82a8a7b",
+      "content_hash": "859af4e2aeb65d791bb831e62344c7da797744a8ccc4606b92125ae0a813d1bf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:34:18.088Z"
+    },
+    "candidate_directive-build-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check": {
+      "item_id": "candidate_directive-build-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GT84-build-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check.md",
+      "title": "build: fix end labels in the trim graph and ldp in the arm64 check",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7b345a1b5d9158a460b85e20770fab6fbdff5ed55bdff850c7179a7a218c04e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T10:34:27.706Z"
     }
   },
   "ai-builder-brain": {

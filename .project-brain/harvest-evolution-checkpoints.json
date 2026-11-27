@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:26:06.344Z",
+  "last_updated": "2026-11-27T10:34:29.631Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T08:46:49.070Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-26T09:52:53.704Z",
+      "processed_at": "2026-11-27T10:34:27.360Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2908,7 +2908,7 @@
       "staged_for_review": 0
     },
     "hf-tencent-hy-memory-30b-a3b-learnings.md": {
-      "processed_at": "2026-11-24T00:49:12.514Z",
+      "processed_at": "2026-11-27T10:34:28.394Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3648,7 +3648,7 @@
       "staged_for_review": 1
     },
     "dosco-deeporg-learnings.md": {
-      "processed_at": "2026-11-26T17:15:10.513Z",
+      "processed_at": "2026-11-27T10:34:28.809Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4038,7 +4038,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4911,
+  "total_dossiers_evaluated": 4914,
   "total_canonical_promoted": 578,
-  "total_staged_for_review": 3672
+  "total_staged_for_review": 3674
 }

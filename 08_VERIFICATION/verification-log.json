@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-EUFL",
-    "timestamp": "2026-11-26T04:13:20.913Z",
-    "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
-    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-    "contentHash": "0558c0a397134845cfb0973571e326edba1a9161ad56637bd91e4761987a861c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-EWX2",
-    "timestamp": "2026-11-26T04:13:24.134Z",
-    "repository": "apache/maka",
-    "learningId": "learn-github-apache-maka",
-    "contentHash": "5456f5001dab66d2731ae3ac1ab9eef80298355f17f80a9c82db28ae3573f158",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-F663",
-    "timestamp": "2026-11-26T04:13:36.123Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "1207486f59bcb945d7ec1bac8ff1e4c1a287aa9dbe08218e7bc76d101456cb97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QMOO",
     "timestamp": "2026-11-26T04:22:30.744Z",
     "repository": "thinkingmachines/Inkling-2-Small",
@@ -7490,6 +7445,51 @@
     "repository": "tokio-rs/tokio",
     "learningId": "learn-github-tokio-rs-tokio",
     "contentHash": "bd907fd193800b8c9c16dbc595b123be7ef643da083f515a689759903956bebf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GLKM",
+    "timestamp": "2026-11-27T10:34:17.782Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GP59",
+    "timestamp": "2026-11-27T10:34:22.413Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "740a11057ed108007336bb6f5c4a5ffd26bb4c89f49daa80e718c9db20fad442",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GQ90",
+    "timestamp": "2026-11-27T10:34:23.844Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

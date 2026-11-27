@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:26:05.950Z",
+  "last_updated": "2026-11-27T10:34:29.257Z",
   "total_records": 2827,
   "domains": {
     "A": {
@@ -17475,8 +17475,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "2e5fe6ffd7c0be0236011a234f4d9466da1d2f0b72a5a44e51b23af0a66021e0",
-      "created_at": "2026-11-25T02:38:40.436Z"
+      "content_hash": "fd8eeb8111f3c4062eab7e59a6497ae89ca57554fd723abea437b29ee373be60",
+      "created_at": "2026-11-27T10:34:18.262Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -17535,8 +17535,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "7adb1454b60fb6568f7a04c74c09cc9d5132d9e41389b49a2b4ddc644afa67fe",
-      "created_at": "2026-11-25T02:39:20.121Z"
+      "content_hash": "a74cda7b8ff3bb0bc4238993fa62f0433edf732b9723a257ce8c3ac1bf368d54",
+      "created_at": "2026-11-27T10:34:27.899Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -20923,8 +20923,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-research-knowledge-intelligence-tencent-hy-memory-3.md",
       "repository": "tencent/Hy-Memory-30B-A3B",
-      "content_hash": "f440e862b09dca14aef44db8dadd0484c4b5fcfdb28a3c57d072deca65cd06d7",
-      "created_at": "2026-11-24T00:48:57.365Z"
+      "content_hash": "3efb80af90be6effdcf99e89b9ce36db4585d63683c1d2bf6261f9957316e839",
+      "created_at": "2026-11-27T10:34:22.640Z"
     },
     "DOM-H-8C16206C": {
       "record_id": "DOM-H-8C16206C",
@@ -20980,8 +20980,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-learnings-research-knowledge-intelligence-hf-tencen.md",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
-      "content_hash": "75efac70d3896b7e5f135c26aeddf76baecf3907477f8e604deaaece94d67a59",
-      "created_at": "2026-11-24T00:49:12.714Z"
+      "content_hash": "a6f5c1d10237afdb4840ff551f5c5276f7b6a6d112ac245b58d55a15401723cc",
+      "created_at": "2026-11-27T10:34:28.620Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
@@ -37667,10 +37667,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-graphjin-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "d69986d49fa7a070e3e8db07b194c938c1c529e9e7ec0c00b7c869b31c3b8682",
-      "created_at": "2026-11-27T08:14:45.558Z"
+      "content_hash": "5cbd82338819c5f4e71c04c729bf48b1452b48dfd819e9135763e50560b3c3b6",
+      "created_at": "2026-11-27T10:34:24.344Z"
     },
     "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
@@ -39757,8 +39757,8 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "13cd0f03c2958d33611e611f9eb95ae20676b3c97667950fa6bbb8069b8a9540",
-      "created_at": "2026-11-25T23:32:44.997Z"
+      "content_hash": "59d9cbefa722ee26d5dd5a96d0962a873f0b01f7d8764d0486a38a050e67d8ee",
+      "created_at": "2026-11-27T10:34:29.257Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",

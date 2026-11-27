@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `e13b16bc`  
+> **Source Version**: `d82a8a7b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T09:47:52.275Z  
+> **Timestamp**: 2026-11-27T10:34:16.787Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T09:47:50.957Z  
+> **Harvest Timestamp**: 2026-11-27T10:34:16.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96982 stars
+- **Stars / Engagement**: 97009 stars
 
 ---
 
@@ -978,11 +978,11 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #49631** (2026-11-27): **Bun.CryptoHasher#digest(hashInto) requires a 64-byte buffer for every algorithm**
+  *Symptoms*: # Bun.CryptoHasher#digest(hashInto) requires a 64-byte buffer for every algorithm  ## What version of Bun is running?  `1.4.5+a7733435c`  ## What platform is your computer?  `Darwin 25.6.0 arm64 arm`  ## What steps can reproduce the bug?  ```ts const hasher = new Bun.CryptoHasher("sha256"); hasher.update("abc");  // The docs say a 32-byte buffer is enough for SHA-256. hasher.digest(new Uint8Array(32)); ```  Actual:  ```text TypeError: TypedArray must be at least 64 bytes ```  A 64-byte buffer works, but only the first 32 bytes are the digest; the tail is left untouched:  ```ts const buf = new Uint8Array(64).fill(0xaa); new Bun.CryptoHasher("sha256").update("abc").digest(buf); // first 32 bytes: ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad // last 32 bytes: still 0xaa ```  The same 64-byte floor applies to every algorithm on the generic hasher, even when `byteLength` is smaller:  ```ts new Bun.CryptoHasher("md5").digest(new Uint8Array(16));      // throws new Bun.CryptoHasher("sha1").digest(new Uint8Array(20));     // throws new Bun.CryptoHasher("shake128").digest(new Uint8Array(16)); // throws ```  In contrast, the specialized classes and both static forms use the algorithm's actual digest size:  | Call | 32-byte buffer | | --- | --- | | `new Bun.CryptoHasher("sha256").digest(buf)` | throws `at least 64 bytes` | | `new Bun.SHA256().update("abc").digest(buf)` | works | | `Bun.CryptoHasher.hash("sha256", "abc", buf)` | works | | `new Bun.SHA1().digest(new Ui
+
 - **Issue #49611** (2026-11-26): **macOS arm64: terminating or closing a Worker leaks 1 kqueue fd and 540,672 bytes (528 KiB) per Worker**
   *Symptoms*: ### What version of Bun is running? 1.3.14+0d9b296af  ### What platform is your computer? Darwin 25.5.0 arm64 arm (macOS Apple Silicon)  ### What steps can reproduce the bug? 1. Create a minimal file-backed worker `worker.js`: ```js self.onmessage = () => postMessage(1); ``` 2. Spawn and terminate (or self-close) N Workers sequentially in a single Bun process, then inspect the live process with `lsof -p <pid> | grep KQUEUE` and `heap -s <pid>`: ```js // repro.js const workerUrl = new URL("./worker.js", import.meta.url).href; for (let i = 0; i < 50; i++) {   const w = new Worker(workerUrl);   await new Promise(resolve => {     w.onmessage = resolve;     w.postMessage(0);   });   w.terminate(); } Bun.gc(true); await Bun.sleep(15000); ``` 3. Run `bun repro.js` and measure `KQUEUE` fds and `DefaultMallocZone` 528 KB blocks while sleeping.  ### What is the expected behavior? After a `Worker` finishes (via `worker.terminate()` or `self.close()` + `close` event + GC), its OS thread, `kqueue` fd, and event-loop allocation are all reclaimed. Both `KQUEUE` count and native heap size should return to baseline (or remain bounded).  ### What do you see instead? The OS thread exits, but **every single `Worker` permanently leaks exactly 1 `KQUEUE` fd and one 540,672-byte (528 KiB) allocation in `DefaultMallocZone`**. The leak grows linearly with total Workers created and is not reclaimed by `self.close()`, awaiting the `close` event, repeated `Bun.gc(true)`, or waiting several seconds. In l
-
-- **Issue #49610** (2026-11-26): **bun:test: expect(p).rejects / .resolves on a promise that never settles spins at 100% CPU and ignores the test timeout**
-  *Symptoms*: ### What version of Bun is running?  1.4.5 (a7733435c), also 1.4.4  ### What platform is your computer?  Darwin 25.4.0 arm64  ### What steps can reproduce the bug?  ```ts // repro.test.ts import { test, expect } from "bun:test";  test("never-settling promise", () => {   expect(new Promise(() => {})).rejects.toThrow(); }, 2000); ```  ```sh bun test ./repro.test.ts ```  ### What is the expected behavior?  The test fails after its 2 s timeout, like any other test whose promise never settles.  ### What do you see instead?  `bun test` never finishes and uses ~100% of a CPU core (98–99% in `ps`) until it is killed. The 2 s timeout never fires.  Same result with:  - `await expect(new Promise(() => {})).rejects.toThrow()` in an `async` test - `expect(new Promise(() => {})).resolves.toBe(1)`  For comparison, `await new Promise(() => {})` alone in a test with a 2000 ms timeout correctly fails with "this test timed out after 2000ms".  ### Additional information  It looks like the matcher waits for the promise synchronously in a busy loop, and the per-test timeout isn't checked inside that loop.  This hurt us in practice: a test whose code under test was half-written (a promise that never settled) spun for 11 hours of CPU before anyone noticed.  Related, closed issues that cover other cases of the same matcher: #14670 (Bun shell promise), #40949 (Promise subclass with an overridden `then`), #36828 and #46506 (NAPI promises). This one is a plain `Promise` that simply never settles.  (Opus
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -999,402 +999,479 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e321d89` (2026-11-25)
-**Commit Message**: dns, core: do not panic when the OS has no random bytes to give (#49568)
+### Incident Patch 1: `736fe118` (2026-11-27)
+**Commit Message**: build: fix end labels in the trim graph and ldp in the arm64 check (#49590)
 
 ### What does this PR do?
 
-Bun panicked when `getrandom()` was refused (Linux before 3.17, a
-seccomp filter) and `/dev/urandom` could not be opened, for example with
-no file descriptor left. `os_entropy()` now returns whether it got the
-bytes, on all platforms, and its two callers go on:
+Fixes two build steps that misread a linked binary.
 
-- A DNS query fails with `ECONNREFUSED`, as it does when it gets no
-socket. The resolver is a caller since oven-sh/bun#49429.
-- `fast_random()` (temporary names, the bundler's chunk key, retry
-jitter) uses the clock for that call. `Bun.build()` and `cc()` reach it.
+**Trimmable link.** On macOS a label without bytes, such as
+`bun_builtin_sources_end`, was taken for a name of whatever the linker
+put behind it. With `__cstring` behind it the link failed with
+`UnresolvedReference`. With a retained constant behind it the archive
+was never trimmed. The object file now says which names end a section or
+an atom (the unit the linker strips), and they stand for the bytes in
+front. ELF had a milder form, also fixed.
 
-A failed `open` is no longer remembered, so both recover once a
-descriptor is free.
+**`verify-binary.ts`.** The Windows arm64 check missed the second
+register of `ldp`, `ldnp`, `ldpsw`, `ldxp` and `ldaxp`, and reported a
+false weak reference.
 
-Other sources of random bytes, in BoringSSL and WebKit, are not changed.
+To check:
 
-### How did you verify your code works?
+- An existing test counted an `.alt_entry` end label as outside the
+graph. It now expects exact counts.
+- The link now fails if the map has no name for the bytes in front.
+- `sectionNumberAt` is gone: a section relocation uses the section it
+names.
 
-- New tests in `node-dns.test.js` and `bundler/cli.test.ts` preload a
-shim that refuses `getrandom()`. Three of the four cases fail on the
-previous build. The fourth is the case that was there already.
-- `cargo test -p bun_dns_client`: 233 tests, 100% of lines and branches.
-- By hand under a seccomp filter (`ENOSYS`, `EPERM`): errors while no
-descriptor is free, answ
+Unchanged: weak end labels still go by address, Windows never trims the
+archive (no COMDAT), and the arm64 scan runs past unconditional jumps.
 
-**File**: `src/bun_core/util.rs` (modified, +29/-29)
+### How did you verify your 
+
+**File**: `scripts/build/trim/elf-graph.ts` (modified, +14/-5)
 ```diff
-@@ -2352,7 +2352,9 @@ pub fn is_writable(fd: Fd) -> Pollable {
- // thread-local PRNG once per thread. Prefer `bun_boringssl_sys::rand_bytes`
- // (userspace DRBG, no syscall per call) unless the bytes are asked for in
- // batches.
--pub fn os_entropy(bytes: &mut [u8]) {
-+/// Returns whether the system filled `bytes`.
-+#[must_use]
-+pub fn os_entropy(bytes: &mut [u8]) -> bool {
-     #[cfg(any(target_os = "linux", target_os = "android"))]
-     {
-         let mut filled = 0usize;
-@@ -2365,34 +2367,31 @@ pub fn os_entropy(bytes: &mut [u8]) {
-                     0,
-                 )
-             };
--            if rc < 0 {
--                let err = crate::ffi::errno();
--                if err == libc::EINTR {
-+            if rc <= 0 {
-+                if rc < 0 && crate::ffi::errno() == libc::EINTR {
-                     continue;
-                 }
-                 // Linux before 3.17 returns ENOSYS, and a seccomp filter can return EPERM.
-                 use std::io::Read;
-                 // It stays open: there may be no descriptor left the next time.
--                static URANDOM: Once<std::io::Result<std::fs::File>> = Once::new();
--                let file = URANDOM.get_or_init(|| std::fs::File::open("/dev/urandom"));
--                if !(file.as_ref()).is_ok_and(|mut f| f.read_exact(&mut bytes[filled..]).is_ok()) {
--                    panic!("getrandom failed: errno {err}");
--                }
--                return;
-+                static URANDOM: Once<std::fs::File> = Once::new();
-+                let file = URANDOM.get().or_else(|| {
-+                    let file = std::fs::File::open("/dev/urandom").ok()?;
-+                    Some(URANDOM.get_or_init(|| file))
-+                });
-+                return file.is_some_and(|mut f| f.read_exact(&mut bytes[filled..]).is_ok());
-             }
-             filled += rc as usize;
-         }
-+        true
-     }
-     #[cfg(any(target_os = "macos", target_os = "ios", target_os = "freebsd"))]
-     {
-         // getentropy caps at 256 bytes per call.
--        for chunk in bytes.chunks_mut(256) {
-+        bytes.chunks_mut(256).all(|chunk| {
-             // SAFETY: chunk is a valid writable slice ≤ 256 bytes.
--            let rc = unsafe { libc::getentropy(chunk.as_mut_ptr().cast(), chunk.len()) };
--            if rc != 0 {
--                panic!("getentropy failed");
--            }
--        }
-+            unsafe { libc::getentropy(chunk.as_mut_ptr().cast(), chunk.len()) == 0 }
-+        })
-     }
-     #[cfg(windows)]
-     {
-@@ -2401,13 +2400,10 @@ pub fn os_entropy(bytes: &mut [u8]) {
-             #[link_name = "SystemFunction036"]
-             fn RtlGenRandom(buf: *mut u8, len: u32) -> u8;
-         }
--        for chunk in bytes.chunks_mut(u32::MAX as usize) {
-+        bytes.chunks_mut(u32::MAX as usize).all(|chunk| {
-             // SAFETY: chunk fits in u32; RtlGenRandom writes exactly that many bytes.
--            let ok = unsafe { RtlGenRandom(chunk.as_mut_ptr(), chunk.len() as u32) };
--            if ok == 0 {
--                panic!("RtlGenRandom failed");
--            }
--        }
-+            unsafe { RtlGenRandom(chunk.as_mut_ptr(), chunk.len() as u32) != 0 }
-+        })
-     }
+@@ -26,6 +26,7 @@ interface LinkedSymbols {
+ interface InputObjects {
+   objects: Map<string, ElfObjectReferences | undefined>;
+   defined: Map<string, string[]>;
++  stronglyDefined: Map<string, string>;
+   failures: GraphFailure[];
  }
  
-@@ -3105,11 +3101,12 @@ pub mod rand {
- 
- /// Port of `bun.fastRandom()`. Thread-local xoshiro256++ seeded once per
- /// process from the OS CSPRNG (or `BUN_DEBUG_HASH_RANDOM_SEED` in debug).
-+/// The clock stands in for as long as the OS has no seed to give.
- pub fn fast_random() -> u64 {
-     use core::cell::Cell;
-     use core::sync::atomic::{AtomicU64, Ordering as O};
-     static SEED: AtomicU64 = AtomicU64::new(0);
--    fn random_seed() -> u64 {
-+    fn random_seed() -> Option<u64> {
-         let mut v = SEED.load(O::Relaxed);
-         while v == 0 {
-             // Should also apply to canary builds, but bun_core has no `canary`
-@@ -3118,23 +3115,26 @@ pub fn fast_random() -> u64 {
-             #[cfg(debug_assertions)]
-             if let Some(n) = crate::env_var::BUN_DEBUG_HASH_RANDOM_SEED.get() {
-                 SEED.store(n, O::Relaxed);
--                return n;
-+                return Some(n);
-             }
-             let mut buf = [0u8; 8];
--            os_entropy(&mut buf);
--            v = u64::from_ne_bytes(buf);
-+            v = os_entropy(&mut buf).then(|| u64::from_ne_bytes(buf))?;
-             SEED.store(v, O::Relaxed);
-             v = SEED.load(O::Relaxed);
-         }
--        v
-+        Some(v)
+@@ -125,6 +126,7 @@ function readObjects(liveSections: Map<string, Set<string>>): InputObjects {
+   const archives = new ArchiveCache();
+   const objects = new Map<string, ElfObjectReferences | undefined>();
+   const defined = new Map<string, string[]>();
++  const stronglyDefined = new Map<string, string>();
+   const failures: GraphFailure[] = [];
+   for (const [object, live] of liveSections) {
+     if (object === "<internal>") continue;
+@@ -135,19 +137,21 @@ function readObjects(liveSections: Map<string, Set<string>>): InputObjects {
+       continue;
      }
-     thread_local! {
-         static PRNG: Cell<Option<rand::DefaultPrng>> = const { Cell::new(None) };
+     objects.set(object, read);
+-    for (const [name, section] of read.definitions) {
++    for (const [name, section, isStrong] of read.definitions) {
++      if (isStrong) stronglyDefined.set(name, object + "\0" + section);
+       const list = defined.get(name);
+       if (list === undefined) defined.set(name, [object + "\0" + section]);
+       else list.push(object + "\0" + section);
      }
-     PRNG.with(|p| {
--        let mut prng = p
-+        let prng = p
-             .take()
--            .unwrap_or_else(|| rand::DefaultPrng::init(random_seed()));
-+            .or_else(|| random_seed().map(rand::DefaultPrng::init));
-+        let Some(mut prng) = prng else {
-+            let now = crate::time::nano_timestamp() as u64;
-+            return rand::DefaultPrng::init(now ^ (u64::from(std::process::id()) << 32)).next_u64();
-+ 
-```
-
-**File**: `src/dns/client/client.rs` (modified, +2/-1)
-```diff
-@@ -88,7 +88,8 @@ impl<S: System, R> Client<S, R> {
-         config.timeout = timeout.map(|timeout| timeout.max(MIN_TIMEOUT));
-         let mut servers = Servers::default();
-         servers.replace(core::mem::take(&mut config.servers).into_iter());
--        let seed = (0..4).fold(0, |seed, _| seed << 16 | u64::from(system.random()));
-+        let seed = (0..4).try_fold(0, |seed, _| Some(seed << 16 | u64::from(system.random()?)));
-+        let seed = seed.unwrap_or_else(|| system.now().as_nanos() as u64);
-         Self {
-             system,
-             config,
-```
-
-**File**: `src/dns/client/system.rs` (modified, +2/-2)
-```diff
-@@ -83,8 +83,8 @@ pub trait System: Sized {
-     /// Seconds since the Unix epoch.
-     fn wall_clock(&self) -> i64;
- 
--    /// Nobody else can predict it.
--    fn random(&mut self) -> u16;
-+    /// Nobody else can predict it. `None` if the system has none to give.
-+    fn random(&mut self) -> Option<u16>;
- 
-     fn connect(
-         &mut self,
-```
-
-**File**: `src/dns/client/tests/client/machine.rs` (modified, +5/-3)
-```diff
-@@ -64,6 +64,8 @@ pub(crate) struct World {
-     /// Once they are used up, the numbers are odd and take long to repeat.
-     pub(crate) randoms: VecDeque<u16>,
-     last_random: u16,
-+    /// But for those in `randoms`.
-+    pub(crate) has_no_randoms: bool,
-     pub(crate) files: BTreeMap<Vec<u8>, (Option<Vec<u8>>, FileStamp)>,
-     pub(crate) has_no_stamps: bool,
-     pub(crate) hosts_reads: usize,
-@@ -180,11 +182,11 @@ impl System for Machine {
-         self.world.borrow().wall_clock
-     }
- 
--    fn random(&mut self) -> u16 {
-+    fn random(&mut self) -> Option<u16> {
-         let world = &mut *self.world.borrow_mut();
--        world.randoms.pop_front().unwrap_or_else(|| {
-+        world.randoms.pop_front().or_else(|| {
-             world.last_random = world.last_random.wrapping_add(10) | 1;
--            world.last_random
-+            (!world.has_no_randoms).then_some(world.last_random)
-         })
-     }
- 
-```
-
-**File**: `src/dns/client/tests/client/transport.rs` (modified, +31/-0)
-```diff
-@@ -68,6 +68,37 @@ fn ids_on_a_socket_differ() {
-     assert_eq!(ids, [7, 8, 9]);
+   }
+-  return { objects, defined, failures };
++  return { objects, defined, stronglyDefined, failures };
  }
  
-+#[test]
-+fn no_random_numbers() {
-+    for mut setup in [one_server(), over_tcp(), resolv_conf("options rotate")] {
-+        setup.world.has_no_randoms = true;
-+        let mut test = setup.start();
-+        assert_eq!(test.resolve(RecordType::A, "a.test"), ["ECONNREFUSED"]);
-+        assert!(test.is_idle() && test.sent().is_empty());
-+
-+        test.world().has_no_randoms = false;
-+        let query = test.ask("b.test");
-+        test.world().has_no_randoms = true;
-+        assert_eq!(test.resolve(RecordType::A, "c.test"), ["3: ECONNREFUSED"]);
-+        assert_eq!(test.deliver(&query, &good(&query)), ["2: 1.1.1.1/60"]);
-+        assert!(test.is_idle());
-+    }
-+}
-+
-+#[test]
-+fn random_numbers_run_out() {
-+    let mut test = one_server().start();
-+    test.ask("a.test");
-+    test.world().has_no_randoms = true;
-+    test.world().randoms.push_back(8);
-+    assert_eq!(test.wait(2000), NOTHING);
-+    assert_eq!(test.sent_one().id(), 8);
-+    assert_eq!(test.resolve(RecordType::A, "b.test"), ["2: ECONNREFUSED"]);
-+    assert_eq!(test.wait(3999), NOTHING);
-+    assert_eq!(test.wait(1), ["ECONNREFUSED"]);
-+    assert!(test.is_idle());
-+}
-+
- #[test]
- fn half_of_the_ids_fill_a_socket() {
-     for setup in [one_server(), over_tcp()] {
+ function readLinkedSymbols(
+   elf: ElfFile,
+   placedNodes: PlacedNodes,
+   emptySections: Set<number>,
++  findEndedNode: (name: string, address: number) => number | undefined,
+   executable: string,
+ ): LinkedSymbols {
+   const symbolTable = elf.sections.find(section => section.type === 2) ?? fail(`${executable} has no symbol table`);
+@@ -165,7 +169,7 @@ function readLinkedSymbols(
+     // An object without bytes, as a static of a type without fields is. What stands at its address may be the neighbour of its section, so only the
+     // file that defines it says where it is.
+     if (type === 1 && symbols.readBigUInt64LE(at + 16) === 0n && emptySections.has(address)) continue;
+-    const node = nodeAt(placedNodes, address);
++    const node = findEndedNode(name, address) ?? nodeAt(placedNodes, address);
+     if (node < 0) continue;
+     if (type === 10) ifuncNodes.push(node);
+     if (name.startsWith("$")) continue;
+@@ -291,15 +295,20 @@ function createReading(
+   };
+   const { nodesBySection, liveSections } = indexSections(entries);
+   const findNode = (key: string) => nodesBySection.get(key)?.[0] ?? nodesBySection.get(folded.get(key) ?? "")?.[0];
+-  const { objects, defined, failures: unreadInputs } = readObjects(liveSections);
++  const { objects, defined, stronglyDefined, failures: unreadInputs } = readObjects(liveSections);
+   const resolveGlobal = (name: string) => {
+     for (const key of defined.get(name) ?? []) {
+       const node = findNode(key);
+       if (node !== undefined) return node;
+     }
+     return undefined;
+   };
+-  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, executable);
++  // A label at the end of its section has the address of the neighbour, which may be what replaced a weak one.
++  const findEndedNode = (name: string, address: number) =>
++    nodesBySection
++      .get(stronglyDefined.get(name) ?? "")
++      ?.find(node => entries[node]!.address + entries[node]!.size === address);
++  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, findEndedNode, executable);
+   const { nodesBySymbol, ifuncNodes } = symbols;
+   const connections = connect(entries.length, objects, { nodesBySection, findNode, resolveGlobal }, symbols);
+   const symbolNodes = [...ifuncNodes, ...connections.unwindTableNodes];
 ```
 
-**File**: `src/dns/client/transport.rs` (modified, +11/-4)
+**File**: `scripts/build/trim/elf-objects.ts` (modified, +3/-2)
 ```diff
-@@ -406,7 +406,9 @@ impl<S: System, R> Client<S, R> {
-                 last_error: Error::ETIMEOUT,
-             }),
-         };
--        if self.servers.any_failed() && self.system.random().is_multiple_of(PROBE_ODDS) {
-+        if self.servers.any_failed()
-+            && (self.system.random()).is_some_and(|it| it.is_multiple_of(PROBE_ODDS))
-+        {
-             self.probe(&question, self.config.transport);
-         }
-         self.send(question, None);
-@@ -481,7 +483,7 @@ impl<S: System, R> Client<S, R> {
-         let mut query = find(&mut self.queries, &question);
-         let (server, transport) = match (&mut query, probed) {
-             (Some(query), _) => {
--                let random = self.config.rotate.then(|| self.system.random());
-+                let random = self.config.rotate.then(|| self.system.random()).flatten();
-                 let out_of_turn = query.last_error == Error::ECONNREFUSED;
-                 let server = self.servers.choose(random, &mut query.avoided, out_of_turn);
-                 (server, query.transport)
-@@ -554,7 +556,12 @@ impl<S: System, R> Client<S, R> {
-         let id = match late_tries.copied().find(is_ours) {
-             Some((_, id)) => id,
-             None => loop {
--                let id = self.system.random();
-+                let Some(id) = self.system.random() else {
-+                    self.connections.idle.push(socket);
-+                    let end = Step::End(question, Err(Error::ECONNREFUSED));
-+                    self.steps.push_back(end);
-+                    return Ok(());
-+                };
-                 if !connection.tries.contains_key(&id) {
-                     break id;
-                 }
-@@ -983,7 +990,7 @@ fn back_off(
-     let doubled = (timeout.as_millis() as u64).saturating_mul(2u64.saturating_pow(rounds as u32));
-     let doubled = Duration::from_millis(doubled).min(max.unwrap_or(Duration::MAX));
-     let doubled = doubled.as_millis() as u64;
--    let jitter = f32::from(system.random()) / f32::from(u16::MAX) * 0.5;
-+    let jitter = f32::from(system.random().unwrap_or(0)) / f32::from(u16::MAX) * 0.5;
-     timeout.max(Duration::from_millis(
-         doubled - (doubled as f32 * jitter) as u64,
-     ))
+@@ -13,6 +13,7 @@ export const mayMove = /^\.(text|rodata|bun_builtins)(\.|$)/;
+ export const isOrdinary = (output: string) => isMovable(output) || [".data", ".data.rel.ro", ".bss"].includes(output);
+ export const ignoredOutputs = /^\.(debug|gdb_index|symtab|strtab|comment|shstrtab|eh_frame|rela|tbss)/;
+ 
++const STB_GLOBAL = 1;
+ const EM_X86_64 = 62;
+ const EM_AARCH64 = 183;
+ const R_X86_64_64 = 1;
+@@ -24,7 +25,7 @@ const pointerRelocationTypes = new Map([
+ 
+ export interface ElfObjectReferences {
+   references: Map<string, Set<string>>;
+-  definitions: [name: string, section: string][];
++  definitions: [name: string, section: string, isStrong: boolean][];
+   named: [name: string, section: string][];
+   namedByUnwindTables: Set<string>;
+   recordSections: { bytes: Buffer; references: Map<number, string> }[];
+@@ -99,7 +100,7 @@ function readObjectTables(
+     const isGlobal = info >> 4 !== 0;
+     if (!isGlobal && !mayMove.test(section)) continue;
+     const name = stringAt(strings, symbols.readUInt32LE(index * 24));
+-    if (isGlobal) result.definitions.push([name, section]);
++    if (isGlobal) result.definitions.push([name, section, info >> 4 === STB_GLOBAL]);
+     // AArch64's mapping symbols, $x and $d, mark where code and data begin.
+     if (mayMove.test(section) && !name.startsWith("$")) result.named.push([name, section]);
+   }
 ```
 
-**File**: `src/dns/os.rs` (modified, +12/-9)
+**File**: `scripts/build/trim/macho-graph.ts` (modified, +18/-0)
 ```diff
-@@ -109,6 +109,12 @@ impl<P: Poll> Os<P> {
-             randoms: Default::default(),
-         }
+@@ -268,7 +268,12 @@ function indexSymbols(
+   const mergedStringFiles = new Map<number, number[]>();
+   const symbolsWithoutBytes = new Set<string>();
+   const namesWithoutBytes = new Set<string>();
++  // The map lists an external name of an object compiled from bitcode under the file of the bitcode.
++  const externalEndLabels = new Set<string>();
++  for (const read of objects.values())
++    for (const name of read?.externals ?? []) if (read!.endLabels.has(name)) externalEndLabels.add(name);
+   for (const symbol of zeroSizeSymbols) {
++    if ((objects.get(symbol.file)?.endLabels ?? externalEndLabels).has(symbol.name)) continue;
+     const node = nodeByAddress.get(symbol.address);
+     if (node === undefined) {
+       symbolsWithoutBytes.add(symbol.file + "\0" + symbol.name);
+@@ -305,6 +310,19 @@ function indexSymbols(
      }
-+
-+    fn renew_randoms(&mut self) -> Option<()> {
-+        let mut randoms = [[0; 2]; _];
-+        bun_core::util::os_entropy(randoms.as_flattened_mut())
-+            .then(|| self.randoms = randoms.into_iter())
-+    }
- }
- 
- impl<P: Poll> System for Os<P> {
-@@ -127,15 +133,11 @@ impl<P: Poll> System for Os<P> {
-         bun_core::time::timestamp()
-     }
- 
--    fn random(&mut self) -> u16 {
--        loop {
--            if let Some(random) = self.randoms.next() {
--                return u16::from_ne_bytes(random);
--            }
--            let mut randoms = [[0; 2]; _];
--            bun_core::util::os_entropy(randoms.as_flattened_mut());
--            self.randoms = randoms.into_iter();
-+    fn random(&mut self) -> Option<u16> {
-+        if self.randoms.len() == 0 {
-+            self.renew_randoms()?;
-         }
-+        self.randoms.next().map(u16::from_ne_bytes)
-     }
- 
-     fn connect(
-@@ -144,7 +146,8 @@ impl<P: Poll> System for Os<P> {
-         server: SocketAddr,
-         local: Option<IpAddr>,
-     ) -> Option<Socket<P>> {
--        self.randoms = Default::default();
-+        // First: it may take a descriptor, which it needs only once.
-+        self.renew_randoms()?;
-         let mut address = Address::from_ip(server.ip(), server.port());
-         if let SocketAddr::V6(server) = server {
-             address.set_scope_id(server.scope_id());
-```
-
-**File**: `test/bundler/cli.test.ts` (modified, +36/-0)
-```diff
-@@ -1232,3 +1232,39 @@ describe.concurrent("diagnostic markup", () => {
-     expect(stderr).not.toContain("\x1b[");
-   });
- });
-+
-+const cc = Bun.which("cc") || Bun.which("gcc") || Bun.which("clang");
-+test.skipIf(!isLinux || !cc)("bun build works without getrandom() and /dev/urandom", async () => {
-+  using dir = tempDir("build-no-getrandom", {
-+    "index.js": `console.log(1);`,
-+    "shim.c": `
-+      #define _GNU_SOURCE
-+      #include <dlfcn.h>
-+      #include <errno.h>
-+      #include <string.h>
-+      #include <unistd.h>
-+      long getrandom(void) { return errno = ENOSYS, -1; }
-+      static int refuse(const char *name, const char *path, int flags, int mode) {
-+        if (strcmp(path, "/dev/urandom")) return ((int (*)(const char *, int, ...))dlsym(RTLD_NEXT, name))(path, flags, mode);
-+        write(2, "refused\\n", 8);
-+        return errno = EMFILE, -1;
+   }
+   const lookup = createAtomLookup(nodeInFile, nodeByName, external);
++  for (const [file, read] of objects) {
++    for (const [name, atom] of read?.endLabels ?? []) {
++      if (atom === undefined) {
++        symbolsWithoutBytes.add(file + "\0" + name);
++        namesWithoutBytes.add(name);
++        continue;
 +      }
-+      int open(const char *path, int flags, int mode) { return refuse("open", path, flags, mode); }
-+      int open64(const char *path, int flags, int mode) { return refuse("open64", path, flags, mode); }
-+    `,
++      const node = lookup.findInFile(file, atom);
++      if (node === undefined) continue;
++      nodeInFile.set(file + "\0" + name, node);
++      if (read!.externals.includes(name)) external.set(name, node);
++    }
++  }
+   return { ...lookup, external, fileOfNode, aliases, mergedStringFiles, symbolsWithoutBytes, namesWithoutBytes };
+ }
+ 
+```
+
+**File**: `scripts/build/trim/macho-objects.ts` (modified, +52/-17)
+```diff
+@@ -17,6 +17,7 @@ const N_TYPE = 0x0e;
+ const N_SECT = 0x0e;
+ const N_EXT = 0x01;
+ const N_NO_DEAD_STRIP = 0x0020;
++const N_WEAK_DEF = 0x0080;
+ const N_ALT_ENTRY = 0x0200;
+ const SECTION_TYPE = 0xff;
+ const S_CSTRING_LITERALS = 2;
+@@ -61,6 +62,8 @@ export interface MachOReferences {
+   /** Of each atom. "L", "G": a local, a global name. "S": a string. "W": a literal. "U": why a literal was not read. */
+   references: Map<string, Set<string>>;
+   externals: string[];
++  /** The names at the end of a section or of an atom, which have no bytes → the atom in front, if the linker keeps them in it. */
++  endLabels: Map<string, string | undefined>;
+   retained: string[];
+   liveWithoutReference: string[];
+   unreadStrings: number;
+@@ -85,6 +88,7 @@ interface SymbolEntry {
+   name: string;
+   type: number;
+   section: number;
++  description: number;
+   value: number;
+ }
+ 
+@@ -150,11 +154,12 @@ function readSymbols({ entries, strings }: SymbolTable, sections: Section[], res
+       name: stringAt(strings, entries.readUInt32LE(entry)),
+       type: entries[entry + 4]!,
+       section: entries[entry + 5]!,
++      description: entries.readUInt16LE(entry + 6),
+       value: Number(entries.readBigUInt64LE(entry + 8)),
+     };
+     symbols.push(symbol);
+     if ((symbol.type & N_STAB) !== 0 || (symbol.type & N_TYPE) !== N_SECT) continue;
+-    const description = entries.readUInt16LE(entry + 6);
++    const { description } = symbol;
+     if ((description & N_ALT_ENTRY) === 0) {
+       const names = namesByAddress[symbol.section - 1]!;
+       names.set(symbol.value, names.has(symbol.value) ? names.get(symbol.value) + "\x01" + symbol.name : symbol.name);
+@@ -182,8 +187,6 @@ function createObjectLookup(readFrom: ReadBytes, sections: Section[], atoms: Ato
+     }
+     return low > 0 ? list[low - 1]![1] : undefined;
+   };
+-  const sectionNumberAt = (address: number) =>
+-    sections.findIndex(other => other.address <= address && address < other.address + other.size) + 1;
+   const sectionType = (section: number) => (sections[section - 1]?.flags ?? 0) & SECTION_TYPE;
+   const isCStringSection = (section: number) => sectionType(section) === S_CSTRING_LITERALS;
+   const literalSize = (section: number) => literalSizes.get(sectionType(section));
+@@ -206,7 +209,7 @@ function createObjectLookup(readFrom: ReadBytes, sections: Section[], atoms: Ato
+     const end = text.indexOf(0, at);
+     return text.toString("latin1", at === 0 ? 0 : text.lastIndexOf(0, at - 1) + 1, end < 0 ? text.length : end);
+   };
+-  return { atomAt, sectionNumberAt, isCStringSection, literalSize, literalAt, enclosingString };
++  return { atomAt, isCStringSection, literalSize, literalAt, enclosingString };
+ }
+ 
+ interface ObjectFile {
+@@ -224,8 +227,38 @@ function addReference(result: MachOReferences, from: string, to: string): void {
+   else set.add(to);
+ }
+ 
++// As ObjFile::parseSymbols of ld64.lld: in the order of the symbol table, weak external names last, the first plain name of an address starts an atom.
++function findEndLabels(
++  { sections, symbols, lookup: { atomAt } }: ObjectFile,
++  hasSubsectionsViaSymbols: boolean,
++): MachOReferences["endLabels"] {
++  const isWeak = ({ type, description }: SymbolEntry) => (type & N_EXT) !== 0 && (description & N_WEAK_DEF) !== 0;
++  const defined = symbols.filter(({ type }) => (type & N_STAB) === 0 && (type & N_TYPE) === N_SECT);
++  const started = sections.map(() => new Set<number>());
++  const endLabels: MachOReferences["endLabels"] = new Map();
++  for (const symbol of [...defined.filter(symbol => !isWeak(symbol)), ...defined.filter(isWeak)]) {
++    const { name, section, description, value } = symbol;
++    const { address, size } = sections[section - 1]!;
++    if ((description & N_ALT_ENTRY) === 0) started[section - 1]!.add(value);
++    const isInAtomInFront = !hasSubsectionsViaSymbols || !started[section - 1]!.has(value);
++    const endsAtom =
++      hasSubsectionsViaSymbols &&
++      isInAtomInFront &&
++      value > address &&
++      atomAt(section, value) !== atomAt(section, value - 1);
++    if (!endsAtom && value !== address + size) continue;
++    if (!isWeak(symbol)) {
++      endLabels.set(name, isInAtomInFront ? atomAt(section, value - 1) : undefined);
++      continue;
++    }
++    // The linker moves the names beside a weak one to the definition it selects: only the map says where they are.
++    for (const other of defined) if (other.section === section && other.value === value) endLabels.delete(other.name);
++  }
++  return endLabels;
++}
++
+ function readRecordSection({ readFrom, symbols, lookup }: ObjectFile, section: Section) {
+-  const { atomAt, sectionNumberAt } = lookup;
++  const { atomAt } = lookup;
+   const relocations = readFrom(section.relocations, section.count * 8);
+   const bytes = readFrom(section.offset, section.size);
+   const references = new Map<number, string>();
+@@ -237,7 +270,7 @@ function readRecordSection({ readFrom, symbols, lookup }: ObjectFile, section: S
+     if (!isPointer || field < 0 
+```
+
+**File**: `scripts/build/verify-binary.ts` (modified, +6/-1)
+```diff
+@@ -686,10 +686,15 @@ export function arm64PointerLoads(image: Buffer): { pointerLoads: number; fromCo
+       offset: image.readUInt32LE(section + 20),
+     }));
+   // In the low bits a branch has its condition or offset, and a vector instruction a register of the other file.
+-  const writes = (instruction: number, register: number) =>
++  const writesFirst = (instruction: number, register: number) =>
+     (instruction & 31) === register &&
+     (instruction & 0x1c000000) !== 0x14000000 &&
+     (instruction & 0x0c000000) !== 0x0c000000;
++  // ldp, ldnp, ldpsw, ldxp, ldaxp. The other exclusive and ordered loads match too, and have 31 there.
++  const writesSecond = (instruction: number, register: number) =>
++    (instruction & 0x1e400000) === 0x08400000 && ((instruction >>> 10) & 31) === register;
++  const writes = (instruction: number, register: number) =>
++    writesFirst(instruction, register) || writesSecond(instruction, register);
+   const address = (rva: number) => `0x${(imageBase + BigInt(rva)).toString(16)}`;
+   let pointerLoads = 0;
+   const fromCode: string[] = [];
+```
+
+**File**: `test/internal/source-lints/windows-cross-config.test.ts` (modified, +28/-0)
+```diff
+@@ -237,12 +237,40 @@ describe("the check for weak references that LLVM miscompiles on arm64", () => {
+       1,
+       ["0x14000300c loads from 0x140003028"],
+     ],
++    [
++      "a function, behind what looks like a load of a pair into the register",
++      [
++        adrpX1.thisPage,
++        0xa9000440 /* stp x0, x1, [x2] */,
++        0x6d400440 /* ldp d0, d1, [x2] */,
++        0xa9400c40 /* ldp x0, x3, [x2] */,
++        0xc8230440 /* stxp w3, x0, x1, [x2] */,
++        0xf9400440 /* ldr x0, [x2, #8] */,
++        0x8b430440 /* add x0, x2, x3, lsr #1 */,
++        ldrX1,
++      ],
++      1,
++      ["0x14000301c loads from 0x140003028"],
++    ],
+     ["what the register holds next", [adrpX1.thisPage, 0xaa0003e1 /* mov x1, x0 */, ldrX1], 0, []],
+     ["nothing", [adrpX1.thisPage, 0x9100a021 /* add x1, x1, #0x28 */], 0, []],
+   ])("a load from %s", (_, instructions, pointerLoads, fromCode) => {
+     expect(arm64PointerLoads(image(instructions))).toEqual({ pointerLoads, fromCode });
+   });
+ 
++  test.each([
++    ["ldp x0, x1, [x2]", 0xa9400440],
++    ["ldp x0, x1, [x2, #16]!", 0xa9c10440],
++    ["ldp x0, x1, [x2], #16", 0xa8c10440],
++    ["ldp w0, w1, [x2]", 0x29400440],
++    ["ldnp x0, x1, [x2]", 0xa8400440],
++    ["ldpsw x0, x1, [x2]", 0x69400440],
++    ["ldxp x0, x1, [x2]", 0xc87f0440],
++    ["ldaxp x0, x1, [x2]", 0xc87f8440],
++  ])("a load from what %s puts in its second register", (_, pair) => {
++    expect(arm64PointerLoads(image([adrpX1.thisPage, pair, ldrX1]))).toEqual({ pointerLoads: 0, fromCode: [] });
 +  });
-+  const shim = join(String(dir), "shim.so");
-+  await Bun.$`${cc} -shared -fPIC -o ${shim} ${join(String(dir), "shim.c")} -ldl`.env(bunEnv).quiet();
-+  await using proc = Bun.spawn({
-+    cmd: [bunExe(), "build", "index.js"],
-+    env: { ...bunEnv, LD_PRELOAD: [shim, bunEnv.LD_PRELOAD].filter(Boolean).join(":") },
-+    cwd: String(dir),
-+    stderr: "pipe",
++
+   test.each(["\n", "\r\n"])("a reference to a variable, with lines that end in %j", end => {
+     const references = ["variable", "constant", "func", "native", "missing"].map(
+       name => `C:\\a.lib:a.obj:                  (undefined) weak external ${name}`,
+```
+
+**File**: `test/internal/trim/link-elf-graph.test.ts` (modified, +66/-0)
+```diff
+@@ -154,6 +154,72 @@ describeLink("the graph reader", () => {
+     expect(graph.section.filter((_, node) => reaches(node))).toEqual([]);
+   });
+ 
++  const constants = (name: string, text: string, unique = "") =>
++    `.section .rodata.${name},"aR",@progbits${unique}\n${text}`;
++  const weakLabel = constants("weak", ".weak label\nlabel:\n.quad 7\n");
++  const neighbour = constants("neighbour", ".quad 9\n.addrsig\n");
++
++  test.each([
++    {
++      title: "at the end of a section to that section",
++      first: "",
++      second: constants("ended", ".globl label\n.quad 8\nlabel:\n") + neighbour,
++      adjacent: ["ended", "neighbour"],
++      reached: ["ended"],
++    },
++    {
++      title: "at the end of a section to that section where it replaces a weak one",
++      first: weakLabel,
++      second: constants("ended", ".globl label\n.quad 8\nlabel:\n") + neighbour,
++      adjacent: ["ended", "neighbour"],
++      reached: ["weak", "ended"],
++    },
++    {
++      title: "at the end of the second section of a name to that section",
++      first: "",
++      second:
++        constants("twice", ".quad 6\n", ",unique,1") +
++        constants("twice", ".globl label\n.quad 8\nlabel:\n", ",unique,2") +
++        neighbour,
++      adjacent: ["twice", "neighbour"],
++      reached: ["twice", "twice"],
++    },
++    {
++      title: "at the start of a section to that section, right behind the section of the weak one that it replaces",
++      first: weakLabel,
++      second: constants("started", ".globl label\nlabel:\n.quad 8\n") + neighbour,
++      adjacent: ["weak", "started"],
++      reached: ["weak", "started"],
++    },
++    {
++      title: "to the section that its own was folded into, right behind the section of the weak one that it replaces",
++      first: weakLabel + neighbour,
++      second: constants("folded", ".globl label\nlabel:\n.quad 9\n.addrsig\n"),
++      adjacent: ["weak", "neighbour"],
++      reached: ["weak", "neighbour"],
++    },
++  ])("follows a reference to a label without a size $title", async ({ first, second, adjacent, reached }) => {
++    using dir = tempDir("trim-elf-reader", {
++      ...files,
++      "more.c": `extern const char label[]; int more(int x) { return label[x]; }`,
++      "first.c": `__asm__(${JSON.stringify(first + ".text\n")});`,
++      "second.c": `__asm__(${JSON.stringify(second + ".text\n")});`,
++    });
++    const folder = String(dir);
++    const linkedObjects = [...objects, "first", "second"];
++    await compileObjects(folder, linkedObjects);
++    const link = { name: "second", output: "hand", objects: linkedObjects };
++    const { executable, map, log } = await linkByHand(folder, link);
++    const { graph, failures } = readElfGraph(executable, map, log);
++    expect(failures).toEqual([]);
++    const nodeOf = (name: string) => graph.section.lastIndexOf(`.rodata.${name}`);
++    const [front, behind] = adjacent.map(nodeOf) as [number, number];
++    expect(graph.address[front]! + graph.size[front]!).toBe(graph.address[behind]!);
++    const more = graph.section.indexOf(".text.more");
++    const successors = graph.successors.subarray(graph.successorStart[more]!, graph.successorStart[more + 1]!);
++    expect(Array.from(successors, node => graph.section[node])).toEqual(reached.map(name => `.rodata.${name}`));
 +  });
-+  const [stdout, stderr, exitCode] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
-+  expect({ stdout, stderr, exitCode }).toEqual({
-+    stdout: "// index.js\nconsole.log(1);\n",
-+    stderr: expect.stringMatching(/^(refused\n)+$/),
-+    exitCode: 0,
-+  });
-+});
++
+   test("reports a reference to a section the map does not list", async () => {
+     using dir = tempDir("trim-elf-reader", files);
+     const folder = String(dir);
+```
+
+**File**: `test/internal/trim/link-macho-support.ts` (modified, +6/-6)
+```diff
+@@ -62,7 +62,7 @@ interface Section {
+   offset: number;
+ }
+ 
+-function readMachO(file: Buffer) {
++export function readMachO(file: Buffer) {
+   const segments: Section[] = [];
+   const sections: Section[] = [];
+   const readOnlySegments: string[] = [];
+@@ -196,14 +196,14 @@ function lostFixups(whole: Buffer, trimmed: Buffer, removedRanges: { start: numb
+   return lost;
+ }
+ 
+-export function recordRelocationKinds(object: Buffer) {
++export function relocationKinds(object: Buffer, sectionName: string) {
+   const kinds = new Set<"symbol" | "section">();
+   let at = 32;
+   for (let command = object.readUInt32LE(16); command > 0; command--) {
+     const sectionCount = object.readUInt32LE(at) === 0x19 ? object.readUInt32LE(at + 64) : 0;
+     for (let index = 0; index < sectionCount; index++) {
+       const section = at + 72 + index * 80;
+-      if (object.toString("latin1", section, section + 16).replace(/\0.*$/, "") !== "__bun_entries") continue;
++      if (object.toString("latin1", section, section + 16).replace(/\0.*$/, "") !== sectionName) continue;
+       const relocations = object.readUInt32LE(section + 56);
+       for (let entry = 0; entry < object.readUInt32LE(section + 60); entry++) kinds.add((object.readUInt32LE(relocations + entry * 8 + 4) >>> 27) & 1 ? "symbol" : "section");
+     }
+@@ -264,11 +264,11 @@ export async function wrapped(machine: Machine, folder: string, program: Program
+   return await run(linkArguments(writeLinkInputs(folder, { minimums, builtins }), command, { demangler: tools["llvm-cxxfilt"]! }), folder);
+ }
+ 
+-export async function linkByHand(machine: Machine, folder: string, objects: string[]) {
+-  await compileObjects(machine, folder, objects);
++export async function linkByHand(machine: Machine, folder: string, objects: string[], { compileFlags, linkFlags = [] }: Pick<Program, "compileFlags" | "linkFlags"> = {}) {
++  await compileObjects(machine, folder, objects, compileFlags);
+   const inputs = objects.map(name => (isSharedObject(name) ? featureCodeObjects.get(machine.name)! : join(folder, `${name}.o`)));
+   const [executable, map] = [join(folder, "hand"), join(folder, "hand.map")];
+-  expect((await run([tools.clang!, ...inputs, ...baseLinkFlags(machine, map), "-o", executable], folder)).exitCode).toBe(0);
++  expect((await run([tools.clang!, ...inputs, ...baseLinkFlags(machine, map), ...linkFlags, "-o", executable], folder)).exitCode).toBe(0);
+   return { executable, map, exportedSymbols: join(folder, "exported.txt") };
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49636** (2026-11-27): thread pool: notify for a task pushed while the queue had a consumer (@sosukesuzuki)
+- **PR #49590** (2026-11-27): build: fix end labels in the trim graph and ldp in the arm64 check (@dylan-conway)
 - **PR #49587** (closed): node:path: answer from the operands' own code units (@robobun)
 - **PR #49582** (closed): dns: read the system config again after the fallback server refuses (@robobun)
 - **PR #49578** (2026-11-26): Bun.diff: compare a Latin-1 text with a UTF-16 text without a copy (@alii)
 - **PR #49577** (2026-11-25): redis: deprecate getBuffer() (@alii)
-- **PR #49573** (2026-11-25): Bun.diff: whole words in more scripts, and throw for unsupported options (@alii)
-- **PR #49568** (2026-11-25): dns, core: do not panic when the OS has no random bytes to give (@dylan-conway)
 
 ---
 
@@ -1414,81 +1491,45 @@ descriptor is free, answ
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dns, core: do not panic when the OS has no random bytes to give
+## X. build: fix end labels in the trim graph and ldp in the arm64 check
 
 **RULE**:
-When implementing operations in `src/bun_core/util.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/build/trim/elf-graph.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e321d89`: dns, core: do not panic when the OS has no random bytes to give. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `736fe118`: build: fix end labels in the trim graph and ldp in the arm64 check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/bun_core/util.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/build/trim/elf-graph.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Returns whether the system filled `bytes`.
-#[must_use]
-pub fn os_entropy(bytes: &mut [u8]) -> bool {
-            if rc <= 0 {
-                if rc < 0 && crate::ffi::errno() == libc::EINTR {
-                static URANDOM: Once<std::fs::File> = Once::new();
-                let file = URANDOM.get().or_else(|| {
-                    let file = std::fs::File::open("/dev/urandom").ok()?;
-                    Some(URANDOM.get_or_init(|| file))
-                });
-                return file.is_some_and(|mut f| f.read_exact(&mut bytes[filled..]).is_ok());
-        true
-        bytes.chunks_mut(256).all(|chunk| {
-            unsafe { libc::getentropy(chunk.as_mut_ptr().cast(), chunk.len()) == 0 }
-        })
-        bytes.chunks_mut(u32::MAX as usize).all(|chunk| {
-            unsafe { RtlGenRandom(chunk.as_mut_ptr(), chunk.len() as u32) != 0 }
-        })
-/// The clock stands in for as long as the OS has no seed to give.
-    fn random_seed() -> Option<u64> {
-                return Some(n);
-            v = os_entropy(&mut buf).then(|| u64::from_ne_bytes(buf))?;
-        Some(v)
-        let prng = p
-            .or_else(|| random_seed().map(rand::DefaultPrng::init));
-        let Some(mut pr
+  stronglyDefined: Map<string, string>;
+  const stronglyDefined = new Map<string, string>();
+    for (const [name, section, isStrong] of read.definitions) {
+      if (isStrong) stronglyDefined.set(name, object + "\0" + section);
+  return { objects, defined, stronglyDefined, failures };
+  findEndedNode: (name: string, address: number) => number | undefined,
+    const node = findEndedNode(name, address) ?? nodeAt(placedNodes, address);
+  const { objects, defined, stronglyDefined, failures: unreadInputs } = readObjects(liveSections);
+  // A label at the end of its section has the address of the neighbour, which may be what replaced a weak one.
+  const findEndedNode = (name: string, address: number) =>
+    nodesBySection
+      .get(stronglyDefined.get(name) ?? "")
+      ?.find(node => entries[node]!.address + entries[node]!.size === address);
+  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, findEndedNode, executable);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-pub fn os_entropy(bytes: &mut [u8]) {
-            if rc < 0 {
-                let err = crate::ffi::errno();
-                if err == libc::EINTR {
-                static URANDOM: Once<std::io::Result<std::fs::File>> = Once::new();
-                let file = URANDOM.get_or_init(|| std::fs::File::open("/dev/urandom"));
-                if !(file.as_ref()).is_ok_and(|mut f| f.read_exact(&mut bytes[filled..]).is_ok()) {
-                    panic!("getrandom failed: errno {err}");
-                }
-                return;
-        for chunk in bytes.chunks_mut(256) {
-            let rc = unsafe { libc::getentropy(chunk.as_mut_ptr().cast(), chunk.len()) };
-            if rc != 0 {
-                panic!("getentropy failed");
-            }
-        }
-        for chunk in bytes.chunks_mut(u32::MAX as usize) {
-            let ok = unsafe { RtlGenRandom(chunk.as_mut_ptr(), chunk.len() as u32) };
-            if ok == 0 {
-                panic!("RtlGenRandom failed");
-            }
-        }
-    fn random_seed() -> u64 {
-                return n;
-            os_entropy(&mut buf);
-            v = u64::from_ne_bytes(buf);
-        v
-        let mut prng = p
-            .unwrap_or_else(|| rand::Def
+    for (const [name, section] of read.definitions) {
+  return { objects, defined, failures };
+    const node = nodeAt(placedNodes, address);
+  const { objects, defined, failures: unreadInputs } = readObjects(liveSections);
+  const symbols = readLinkedSymbols(elf, placedNodes, emptySections, executable);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e321d89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `736fe118` are properly handled with clean fallback behavior.

@@ -13758,3 +13758,6 @@
 | `CYCLE-20261127-U5J7` | `2026-11-27T10:16:50.563Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10876` | Yes (`2b731e98...`) |
 | `CYCLE-20261127-5R5G` | `2026-11-27T10:25:51.796Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`94266187...`) |
 | `CYCLE-20261127-5SFI` | `2026-11-27T10:25:53.454Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10877` | Yes (`bd907fd1...`) |
+| `CYCLE-20261127-GLKM` | `2026-11-27T10:34:17.782Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10878` | Yes (`8d06ab91...`) |
+| `CYCLE-20261127-GP59` | `2026-11-27T10:34:22.413Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`740a1105...`) |
+| `CYCLE-20261127-GQ90` | `2026-11-27T10:34:23.844Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10860` | Yes (`4a8d1779...`) |

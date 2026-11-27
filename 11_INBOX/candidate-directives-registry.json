@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:26:05.741Z",
+  "last_updated": "2026-11-27T10:34:29.072Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69482,11 +69482,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-H8WW",
+      "id": "CD-GUA2",
       "directive_title": "a server install is healthy before setup and the image is reachable; add the Set",
-      "source_repo": "dosco-graphjin-learnings",
+      "source_repo": "dosco-deeporg-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-H8WW-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-GUA2-a-server-install-is-healthy-before-setup-and-the-image-is-reachable-add-the-set.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69874,6 +69874,37 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-73EEF3-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-GLSY",
+      "directive_title": "fix end labels in the trim graph and ldp in the arm64 check",
+      "source_repo": "oven-sh/bun",
+      "source_commit": "d82a8a7b",
+      "staged_file": "11_INBOX/candidate-directives/CD-GLSY-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GT84",
+      "directive_title": "build: fix end labels in the trim graph and ldp in the arm64 check",
+      "source_repo": "oven-sh-bun-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GT84-build-fix-end-labels-in-the-trim-graph-and-ldp-in-the-arm64-check.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-9CD32E",
+      "directive_title": "a server install is healthy before setup and the image is reachable; add the Set",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-deeporg",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9CD32E-a-server-install-is-healthy-before-setup.md",
       "staged_date": "2026-11-27"
     }
   ]

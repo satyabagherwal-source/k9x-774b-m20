@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T23:32:44.685Z",
+  "timestamp": "2026-11-27T10:34:28.955Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dosco-deeporg-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dosco-deeporg-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T23:32:44.685Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:34:28.955Z`  
 > **Learning ID**: `LEARN-EVO-dosco-deeporg-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dosco-deeporg-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source**: github ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
-> **Source Version**: `6acc0f9b`  
+> **Source Version**: `91c1df80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:32:32.982Z  
+> **Timestamp**: 2026-11-27T10:34:23.112Z  
 > **Learning ID**: `learn-github-dosco-deeporg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:32:32.976Z  
+> **Harvest Timestamp**: 2026-11-27T10:34:23.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3238 stars
+- **Stars / Engagement**: 3239 stars
 
 ---
 
@@ -2580,765 +2580,838 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a09ead9` (2026-11-25)
-**Commit Message**: fix(agentic): make a freshly generated agentic config work
+### Incident Patch 1: `178469e5` (2026-11-27)
+**Commit Message**: fix: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page
 
-A generated agentic.yml did not work on first boot: catalog search failed
-for an admin and the watch, schedule, task and thread loops failed on
-every cycle. The template set production: true, which turned on the
-saved-queries-only rule and rejected both agent-written queries and the
-unnamed queries the service runs against its own store. The demos never
-hit this because their agentic configs inherit dev.yml.
+Three problems found by running a server install, and the website page
+that walks through one.
 
-- Agentic ignores the production flag, in the engine and at config load,
-  so every agentic config runs the path the demos exercise.
-- A signed-in user reads every table by default in agentic mode. The old
-  default scoped rows by an account_id column and blocked tables without
-  one, for every role including admin. Writes stay off.
-- The catalog needs a sign-in in agentic mode. It was readable with no
-  token. The MCP catalog tool is registered from config instead of from
-  what the anonymous startup caller may see.
-- A Postgres connection string that cannot be parsed returns an error
-  naming the unfilled placeholder, where it used to panic.
-- The generated agentic.yml drops production and carries a signing
-  secret
+Health check. A new install answered 503 on /health until a database
+was connected on the setup page, so hosting that restarts a failing
+program killed it before setup could finish. It now pings its own store
+and answers 200 "Waiting for setup". An install run from config files
+still answers 503 with no database.
 
-**File**: `SECURITY.md` (modified, +2/-2)
+Server image. The image is stamped main.imageRole=server, and a first
+run in it writes listen: 0.0.0.0:8080, so publishing the port is
+enough. A laptop build still writes 127.0.0.1:8080. When the folder for
+the start config and store cannot be written, the error names the
+folder and the user id, and in the image says to mount the volume at
+the user's home. A start config that already holds a loopback address
+is used as written, with a hint on how to open it.
+
+Runtime page. A new install does not serve gj_security, because
+security.read is off by default on an agent server, but the console
+asked for it and showed "table not found". The Runtime page now leaves
+the Security pa
+
+**File**: `.goreleaser.yml` (modified, +5/-0)
 ```diff
-@@ -350,7 +350,7 @@ configuration (see [Operating Modes](#operating-modes)).
- ```yaml
- system:
-   root_access:
--    gj_catalog: public
-+    gj_catalog: authenticated
-     gj_artifacts: owner
-     gj_watch: owner
-     gj_watch_event: owner
-@@ -376,7 +376,7 @@ roots fit together architecturally, see the canonical diagram in
+@@ -61,12 +61,17 @@ kos:
+       - latest
+       - "{{ .Version }}"
+     bare: true
++    # ko cannot set an environment variable, a command or a volume, so the
++    # role ldflag tells the binary it is the server image. A new install then
++    # listens where a container can be reached, and a volume it cannot write
++    # to is reported with the folder to mount.
+     ldflags:
+       - -s -w
+       - -X main.version={{ .Version }}
+       - -X main.commit={{ .Commit }}
+       - -X main.date={{ .Date }}
+       - -X github.com/dosco/graphjin/serv/v3.version={{ .Version }}
++      - -X main.imageRole=server
+     env:
+       - CGO_ENABLED=0
  
- | Root | Agentic access | Notes |
- | ---- | -------------- | ----- |
--| `gj_catalog` | `public` | Read-only. |
-+| `gj_catalog` | `authenticated` | Read-only, for signed-in users. It names every table and column and carries sampled values, so it is not served to anonymous callers. Set `gj_catalog: public` to open it. |
- | `gj_code` | read: `authenticated`; write: role-gated (default `admin`) | Code writes are global source-file edits, not per-row scopable, so write is gated by role rather than filtered. Connecting a code source is an explicit operator choice — see the supply-chain note below. |
- | `gj_artifacts` | `owner` (`user_id`) | Read/write, owner-private. |
- | `gj_watch` / `gj_watch_event` | `owner` (`user_id`) | Read/write, owner-private standing queries and durable inbox events. Watches must reference subscriptions. |
 ```
 
-**File**: `cmd/agentic_first_boot_test.go` (added, +358/-0)
+**File**: `cmd/cmd_serv.go` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,358 @@
-+package main
+@@ -129,6 +129,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
+ 		if file, ok := usesStartConfig(cmd); ok {
+ 			var err error
+ 			if start, err = loadStartConfig(file); err == nil {
++				err = start.storeWritable()
++			}
++			if err == nil {
+ 				err = start.findListen()
+ 			}
+ 			if err != nil {
+@@ -143,6 +146,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
+ 			if start.created {
+ 				fmt.Printf("Created %s\n\n", start.path)
+ 			}
++			if advice := start.unreachableListenAdvice(); advice != "" {
++				fmt.Fprintf(os.Stderr, "%s\n\n", advice)
++			}
+ 		}
+ 	}
+ 
+```
+
+**File**: `cmd/image_role.go` (modified, +17/-0)
+```diff
+@@ -26,6 +26,15 @@ var imageRole string
+ // a plain `go build` leave it at the historical behaviour.
+ var currentImageRole = imageRoleServer
+ 
++// serverImage is true when this binary was built as the server image, which
++// is the one build that says so with main.imageRole=server. A plain
++// `go build` and the release archives say nothing and are not an image, and
++// the environment image has a role of its own.
++//
++// The server needs to know because a new install is right for a laptop by
++// default and wrong for a container: see startDefaultListen.
++var serverImage bool
++
+ const (
+ 	// imageRoleServer is the historical image: the database server.
+ 	imageRoleServer = "server"
+@@ -52,6 +61,13 @@ func resolveImageRole(role string) (string, error) {
+ 	}
+ }
+ 
++// builtAsServerImage reports whether the role stamped into the binary names
++// the server image. An empty role also resolves to the server, but it means a
++// build that is not an image at all.
++func builtAsServerImage(stamped string) bool {
++	return strings.EqualFold(strings.TrimSpace(stamped), imageRoleServer)
++}
++
+ // imageRoleArgs supplies the command line an image's role implies.
+ //
+ // Anything explicit wins: `docker run <image> version` runs version, so a
+@@ -119,6 +135,7 @@ func applyImageRole() error {
+ 		return err
+ 	}
+ 	currentImageRole = role
++	serverImage = builtAsServerImage(imageRole)
+ 	os.Args = append(os.Args[:1], imageRoleArgs(role, os.Args[1:])...)
+ 	return nil
+ }
+```
+
+**File**: `cmd/ldflags_pin_test.go` (modified, +14/-0)
+```diff
+@@ -58,6 +58,20 @@ func TestEveryBuildStampsTheSameIdentity(t *testing.T) {
+ 	if !role {
+ 		t.Fatal("no build stamps main.imageRole, so no image can be an environment")
+ 	}
++
++	// Each image says which one it is, and nothing else does: the server
++	// image first, then the environment. The archives people install on a
++	// laptop carry no role, or a laptop install would listen on every address.
++	var roles []string
++	for _, match := range regexp.MustCompile(`main\.imageRole=(\S+)`).FindAllStringSubmatch(string(release), -1) {
++		roles = append(roles, match[1])
++	}
++	if strings.Join(roles, ",") != imageRoleServer+","+imageRoleEnv {
++		t.Fatalf("the release stamps the roles %v, want the server image then the environment image", roles)
++	}
++	if contains(baseline, "main.imageRole") {
++		t.Fatal("the builds block stamps main.imageRole, so an installed binary would think it is an image")
++	}
+ }
+ 
+ // ldflagBlocks returns the -X keys of each ldflags list in a YAML document.
+```
+
+**File**: `cmd/start_config.go` (modified, +99/-4)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"io/fs"
+ 	"net"
+ 	"net/http"
+ 	"os"
+@@ -33,8 +34,20 @@ const (
+ 
+ 	// A laptop install listens on this machine only. A server sets listen.
+ 	startDefaultListen = "127.0.0.1:8080"
++	// Inside a container, this machine only means the container only: nothing
++	// outside it could reach the server. The server image listens on every
++	// address, and what is published from the container decides who gets in.
++	startImageListen = "0.0.0.0:8080"
+ )
+ 
++// firstRunListen is the address a new install is given when nobody chose one.
++func firstRunListen() string {
++	if serverImage {
++		return startImageListen
++	}
++	return startDefaultListen
++}
++
+ type startConfig struct {
+ 	Store     string `yaml:"store"`
+ 	SecretKey string `yaml:"secret_key"`
+@@ -134,11 +147,13 @@ func loadStartConfig(file string) (*startConfig, error) {
+ 	case os.IsNotExist(err):
+ 		sc.Store = filepath.Join(filepath.Dir(file), "store.db")
+ 		sc.SecretKey = newInstallSecret()
+-		sc.Listen = startDefaultListen
++		sc.Listen = firstRunListen()
+ 		if err := writeStartConfig(sc); err != nil {
+-			return nil, err
++			return nil, homeNotWritableError(filepath.Dir(file), err)
+ 		}
+ 		sc.created = true
++	case errors.Is(err, fs.ErrPermission):
++		return nil, fmt.Errorf("DeepORG cannot read %s: permission denied.\nMake the file readable for the user DeepORG runs as (user %d) and start again.", file, os.Getuid())
+ 	default:
+ 		return nil, err
+ 	}
+@@ -169,6 +184,78 @@ func loadStartConfig(file string) (*startConfig, error) {
+ 	return sc, nil
+ }
+ 
++// storeWritable makes sure the store's folder can be written before the
++// server opens the store. A store that cannot be written fails there with a
++// database error that says nothing about folders.
++func (sc *startConfig) storeWritable() error {
++	dir := filepath.Dir(sc.Store)
++	if err := checkWritable(dir); err != nil {
++		return homeNotWritableError(dir, err)
++	}
++	return nil
++}
++
++// unreachableListenAdvice is what the server image says when it is about to
++// listen where nothing outside the container can reach it. That is what a
++// start config written by an image older than this default holds.
++func (sc *startConfig) unreachableListenAdvice() string {
++	host, port, err := net.SplitHostPort(sc.Listen)
++	if !serverImage || err != nil || !loopbackHost(host) {
++		return ""
++	}
++	return fmt.Sprintf("DeepORG is listening on %s, which nothing outside this container can reach.\nTo open it, set `listen: 0.0.0.0:%s` in %s, or set %s, and start again.",
++		sc.Listen, port, sc.path, startListenEnv)
++}
++
++// checkWritable makes sure files can be created in dir, creating it first
++// when it is not there.
++func checkWritable(dir string) error {
++	if err := os.MkdirAll(dir, 0o700); err != nil {
++		return err
++	}
++	probe, err := os.CreateTemp(dir, ".deeporg-write-*")
++	if err != nil {
++		return err
++	}
++	probe.Close() //nolint:errcheck
++	return os.Remove(probe.Name())
++}
++
++// homeNotWritableError says which folder could not be written and what to do
++// about it. Any other failure is returned as it is.
++//
++// In the server image this is the first thing most people hit: the image runs
++// as an ordinary user, and a volume mounted anywhere but that user's home
++// belongs to root.
++func homeNotWritableError(dir string, err error) error {
++	if !errors.Is(err, fs.ErrPermission) && !errors.Is(err, syscall.EROFS) {
++		return err
++	}
++	reason := "permission denied"
++	if errors.Is(err, syscall.EROFS) {
++		reason = "it is read-only"
++	}
++	who := "the user it runs as"
++	if uid := os.Getuid(); uid >= 0 {
++		who = fmt.Sprintf("user %d", uid)
++	}
++	lines := []string{
++		fmt.Sprintf("DeepORG cannot write to %s: %s.", dir, reason),
++		"It keeps its start config and its store in that folder.",
++	}
++	home, homeErr := os.UserHomeDir()
++	if !serverImage || homeErr != nil || home == "" {
++		lines = append(lines, fmt.Sprintf("Make the folder writable for %s, or set %s to a folder that is, and start again.", who, startConfigDirEnv))
++		return errors.New(strings.Join(lines, "\n"))
++	}
++	lines = append(lines,
++		fmt.Sprintf("In this image DeepORG runs as %s, and a volume mounted anywhere else belongs to root.", who),
++		fmt.Sprintf("Mount the volume at %s itself, which that user owns, and leave %s unset.", home, startConfigDirEnv),
++		fmt.Sprintf("If the folder comes from the host or from Kubernetes, make it writable for %s first.", who),
++	)
++	return errors.New(strings.Join(lines, "\n"))
++}
++
+ // startPortTries is how many ports after the wanted one are tried.
+ const startPortTries = 20
+ 
+@@ -274,12 +361,20 @@ store: %s
+ # lost, everyone is signed out and stored database passwords cannot be read.
+ secret_key: %s
+ 
+-# Address and port to listen on. This one is reachable from this machine only.
++# Address and port to listen on. %s
+ listen: %s
+-`, yamlString(sc.Store), yamlString(sc.SecretKey), yamlString(sc.Listen))
++`, yamlString(sc.Store), yamlString(sc.SecretKey), listenReach(sc.Listen),
+```
+
+**File**: `cmd/start_config_test.go` (modified, +180/-0)
+```diff
+@@ -3,6 +3,7 @@ package main
+ import (
+ 	"context"
+ 	"fmt"
++	"io"
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -175,6 +176,168 @@ func TestStartConfigProblemsSayWhatToDo(t *testing.T) {
+ 	}
+ }
+ 
++// asServerImage runs the test as the binary in the server image does.
++func asServerImage(t *testing.T) {
++	t.Helper()
++	previous := serverImage
++	serverImage = true
++	t.Cleanup(func() { serverImage = previous })
++}
++
++// A container that listens on this machine only is one nothing can reach. The
++// server image is the one build that knows it is in a container, so a new
++// install there listens on every address without being told to.
++func TestServerImageListensWhereAContainerCanBeReached(t *testing.T) {
++	// Only the server image's own stamp makes a binary the server image.
++	for stamped, want := range map[string]bool{"": false, "server": true, " Server\n": true, "env": false} {
++		if got := builtAsServerImage(stamped); got != want {
++			t.Fatalf("builtAsServerImage(%q) = %v, want %v", stamped, got, want)
++		}
++	}
++
++	_, home := inEmptyDir(t)
++	file := filepath.Join(home, startConfigName)
++	asServerImage(t)
++
++	sc, err := loadStartConfig(file)
++	if err != nil {
++		t.Fatalf("first run in the image: %v", err)
++	}
++	if sc.Listen != "0.0.0.0:8080" {
++		t.Fatalf("listen = %q in the server image, want every address", sc.Listen)
++	}
++	raw, err := os.ReadFile(file)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(string(raw), "listen: 0.0.0.0:8080") || strings.Contains(string(raw), "this machine only") {
++		t.Fatalf("the start config written in the image does not say where it listens:\n%s", raw)
++	}
++	if opensBrowser(sc) {
++		t.Fatal("the server image tried to open a browser")
++	}
++	if advice := sc.unreachableListenAdvice(); advice != "" {
++		t.Fatalf("a reachable address was warned about: %s", advice)
++	}
++	// The environment still chooses the address.
++	t.Setenv(startListenEnv, "0.0.0.0:9999")
++	if sc, err = loadStartConfig(file); err != nil || sc.Listen != "0.0.0.0:9999" {
++		t.Fatalf("%s did not override the image's address: %+v %v", startListenEnv, sc, err)
++	}
++	t.Setenv(startListenEnv, "")
++
++	// A start config written by an older image holds the laptop's address.
++	// It is used as it is, since someone may have meant it, and the server
++	// says how to open it.
++	body := strings.Replace(string(raw), "listen: 0.0.0.0:8080", "listen: "+startDefaultListen, 1)
++	if err := os.WriteFile(file, []byte(body), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	if sc, err = loadStartConfig(file); err != nil || sc.Listen != startDefaultListen {
++		t.Fatalf("an existing start config was not used as written: %+v %v", sc, err)
++	}
++	advice := sc.unreachableListenAdvice()
++	for _, want := range []string{startDefaultListen, "listen: 0.0.0.0:8080", file, startListenEnv} {
++		if !strings.Contains(advice, want) {
++			t.Fatalf("the advice does not say %q:\n%s", want, advice)
++		}
++	}
++	// On a laptop the same address is the right one, and nothing is said.
++	serverImage = false
++	if advice := sc.unreachableListenAdvice(); advice != "" {
++		t.Fatalf("a laptop was warned about listening on this machine only: %s", advice)
++	}
++}
++
++// A volume mounted anywhere but the image user's home belongs to root, and the
++// first run cannot write to it. The error names the folder and says what to
++// mount, where it used to be `open /data/deeporg.yml: permission denied`.
++func TestUnwritableHomeSaysWhichFolderAndWhatToMount(t *testing.T) {
++	if os.Getuid() == 0 {
++		t.Skip("root can write anywhere")
++	}
++	inEmptyDir(t)
++	userHome := t.TempDir()
++	t.Setenv("HOME", userHome)
++	locked := filepath.Join(t.TempDir(), "data")
++	if err := os.Mkdir(locked, 0o500); err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { os.Chmod(locked, 0o700) }) //nolint:errcheck
++	t.Setenv(startConfigDirEnv, locked)
++	file, ok := usesStartConfig(nil)
++	if !ok || file != filepath.Join(locked, startConfigName) {
++		t.Fatalf("file=%q ok=%v", file, ok)
++	}
++	uid := fmt.Sprintf("user %d", os.Getuid())
++
++	// On a laptop: which folder, who has to be able to write it, and the
++	// setting that picks another folder.
++	_, err := loadStartConfig(file)
++	if err == nil {
++		t.Fatal("a start config was written to a folder that cannot be written")
++	}
++	for _, want := range []string{"cannot write to " + locked, "permission denied", uid, startConfigDirEnv} {
++		if !strings.Contains(err.Error(), want) {
++			t.Fatalf("the error does not say %q:\n%s", want, err)
++		}
++	}
++	if strings.Contains(err.Error(), "Mount the volume") {
++		t.Fatalf("a laptop was told to mount a volume:\n%s", err)
++	}
++
++	// In the server image: where to mount the volume.
++	asServerImage(t)
++	_, err = loadStartConfig(file)
++	if err == nil {
++		t.Fatal("a start config was written to a folder that cannot be written")
++	}
++	for _, want := range []string{"cannot write to " + locked, uid, "Mount the volume at " + userHome + " itself", "leave " + startConfigDirEnv + " unset"} {
++		if !strings.Contains(err.Error(), wan
+```
+
+**File**: `serv/health.go` (modified, +23/-0)
+```diff
+@@ -11,6 +11,10 @@ import (
+ 
+ var healthyResponse = []byte("All's Well")
+ 
++// waitingForSetupResponse is what a new install answers before a database has
++// been connected on the setup page.
++var waitingForSetupResponse = []byte("Waiting for setup")
++
+ // defaultHealthPingTimeout bounds the health probe when no ping_timeout is
+ // configured. In sources mode the legacy DB block is never populated, so
+ // conf.DB.PingTimeout is zero — without this guard the probe context is
+@@ -33,6 +37,25 @@ func healthCheckHandler(s1 *HttpService) http.Handler {
+ 		defer span.End()
+ 
+ 		db := s.anyDB()
++		if db == nil && s.setupNeedsDatabase() {
++			// A new install has no database until someone connects one on
++			// the setup page. Answering unhealthy here makes a host that
++			// restarts a failing program kill the server before anyone can
++			// finish setup, so the install is healthy while its own store
++			// answers.
++			if store := s.dbs[s.managedArtifactDB]; store != nil {
++				if err := store.PingContext(c1); err != nil {
++					spanError(span, err)
++
++					s.zlog.Error("Health Check", []zapcore.Field{zap.Error(err)}...)
++					w.WriteHeader(http.StatusInternalServerError)
++					_, _ = w.Write([]byte("store ping failed"))
++					return
++				}
++			}
++			_, _ = w.Write(waitingForSetupResponse)
++			return
++		}
+ 		if db == nil {
+ 			w.WriteHeader(http.StatusServiceUnavailable)
+ 			_, _ = w.Write([]byte("no database connection"))
+```
+
+**File**: `serv/health_test.go` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++package serv
 +
 +import (
-+	"bytes"
-+	"crypto/hmac"
-+	"crypto/sha256"
 +	"database/sql"
-+	"encoding/base64"
-+	"encoding/json"
-+	"fmt"
-+	"io"
 +	"net/http"
 +	"net/http/httptest"
 +	"path/filepath"
 +	"strings"
-+	"sync"
 +	"testing"
-+	"time"
 +
-+	"github.com/dosco/graphjin/serv/v3"
-+	"go.uber.org/zap/zapcore"
++	"github.com/dosco/graphjin/core/v3"
++	"go.uber.org/zap"
 +)
 +
-+// A generated agentic config has to work the first time it is started.
-+//
-+// The demos cannot prove this: their agentic configs inherit dev.yml and never
-+// set `production: true`, while the generated template did. That one flag
-+// turned on the saved-queries-only rule, which rejected the catalog search and
-+// the queries the service runs against its own store, so a fresh install
-+// answered nothing while every demo stayed green. This test boots the template
-+// itself.
-+func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
-+	if testing.Short() {
-+		t.Skip("embedded service integration")
-+	}
-+	for _, tc := range []struct {
-+		name  string
-+		extra string
-+	}{
-+		{name: "as generated"},
-+		// Older generated configs carry the flag. It must make no difference.
-+		{name: "with the production flag set", extra: "\nproduction: true\n"},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			dir := t.TempDir()
-+			appPath := filepath.Join(dir, "app.sqlite3")
-+			seedFirstBootDatabase(t, appPath)
-+
-+			rendered, err := newTempl(map[string]any{
-+				"AppName":     "First Boot",
-+				"AppNameSlug": "first_boot",
-+				"DBType":      "postgres",
-+				"DBHost":      "db",
-+				"DBPort":      "5432",
-+				"DBUser":      "postgres",
-+				"DBPass":      "postgres",
-+				"DBName":      "first_boot",
-+			}).get("agentic.yml")
-+			if err != nil {
-+				t.Fatalf("render agentic.yml: %v", err)
-+			}
-+			config := string(rendered)
-+			if strings.Contains(config, "\nproduction:") {
-+				t.Fatal("the generated agentic config must not set production")
-+			}
-+
-+			// Keep everything the template says about mode, sign-in and MCP,
-+			// and point its one source at a local SQLite file so the test
-+			// needs no database server.
-+			head, _, found := strings.Cut(config, "\nsources:\n")
-+			if !found {
-+				t.Fatal("the generated agentic config has no sources block")
-+			}
-+			config = head + fmt.Sprintf("\nsources:\n  - name: default\n    kind: database\n    default: true\n    type: sqlite\n    path: %q\n", appPath) + tc.extra
-+
-+			conf, err := serv.NewConfig(config, "yaml")
-+			if err != nil {
-+				t.Fatalf("load generated config: %v", err)
-+			}
-+			conf.Serv.ConfigPath = dir
-+			secret := conf.Auth.JWT.Secret
-+			if len(secret) < 32 {
-+				t.Fatalf("the generated config needs its own signing secret, got %d characters", len(secret))
-+			}
-+
-+			logs := &lockedBuffer{}
-+			hs, err := serv.NewGraphJinService(conf, serv.OptionSetLogOutput(zapcore.AddSync(logs)))
-+			if err != nil {
-+				t.Fatalf("start service: %v", err)
-+			}
-+			defer hs.Close() //nolint:errcheck
-+
-+			mux := http.NewServeMux()
-+			if err := hs.Attach(mux); err != nil {
-+				t.Fatalf("attach routes: %v", err)
-+			}
-+			server := httptest.NewServer(mux)
-+			defer server.Close()
-+
-+			admin := signFirstBootToken(t, secret, "ada", "admin")
-+			member := signFirstBootToken(t, secret, "sam", "")
-+
-+			// Sign-in is required: no token, no access.
-+			anonCatalog := firstBootMCPCall(t, server.URL, "", "query_catalog", map[string]any{"search": "customers and their orders"})
-+			if strings.Contains(anonCatalog, `\"cards\"`) || strings.Contains(anonCatalog, `"cards"`) {
-+				t.Fatalf("the catalog was readable without signing in: %s", clip(anonCatalog))
-+			}
-+			anonGraph := firstBootGraphQL(t, server.URL, "", `query { gj_catalog(limit: 1) { id } }`)
-+			if !strings.Contains(anonGraph, "errors") {
-+				t.Fatalf("the catalog was readable over GraphQL without signing in: %s", clip(anonGraph))
-+			}
-+			anonData := firstBootGraphQL(t, server.URL, "", `query { orders { id total } }`)
-+			if !strings.Contains(anonData, "errors") {
-+				t.Fatalf("a table was readable without signing in: %s", clip(anonData))
-+			}
-+			// The console still has to learn how to sign in before anyone has.
-+			if page := firstBootGet(t, server.URL+"/api/v1/console/bootstrap"); !strings.HasPrefix(page, "200 ") || !strings.Contains(page, `"sign_in"`) {
-+				t.Fatalf("the console could not load its sign-in options: %s", clip(page))
-+			}
-+
-+			// The catalog search is the first thing an MCP client calls.
-+			catalog := firstBootMCPCall(t, server.URL, admin, "query_catalog", map[string]any{"search": "customers and their orders"})
-+			if strings.Contains(catalog, "invalid query or fragment name") {
-+				t.Fatalf("catalog search was rejected by the saved-queries-only rule: %s", clip(catalog))
-+			}
-+			if !strings.Contains(catalog, `"cards"`) || !strings.Contains(catalog, "orders") {
-+				t.Fatalf("catalog search returned no cards for the seeded tables: %s", clip(catalog))
-+			}
-+
-+			// A signed-in user who is not an admin can read a table that has
-+			// no account_id column. T
-```
-
-**File**: `cmd/cmd_new.go` (modified, +19/-0)
-```diff
-@@ -2,7 +2,9 @@ package main
- 
- import (
- 	"bytes"
-+	"crypto/rand"
- 	"embed"
-+	"encoding/hex"
- 	"net/url"
- 	"os"
- 	"path"
-@@ -146,9 +148,26 @@ type Templ struct {
- }
- 
- func newTempl(values map[string]interface{}) *Templ {
-+	// The agentic config requires sign-in, so every generated install gets its
-+	// own signing secret. A fixed value in the template would be shared by
-+	// every install and let anyone sign a token for any of them.
-+	if _, ok := values["JWTSecret"]; !ok {
-+		values["JWTSecret"] = newInstallSecret()
-+	}
- 	return &Templ{values}
- }
- 
-+// newInstallSecret returns 32 random bytes as hex.
-+func newInstallSecret() string {
-+	b := make([]byte, 32)
-+	if _, err := rand.Read(b); err != nil {
-+		// crypto/rand does not fail on supported platforms; without it there
-+		// is no safe secret to write.
-+		log.Fatalf("Failed to generate a signing secret: %s", err)
-+	}
-+	return hex.EncodeToString(b)
-+}
-+
- func (t *Templ) get(name string) ([]byte, error) {
- 	v, err := tmpl.ReadFile("tmpl/" + name)
- 	if err != nil {
-```
-
-**File**: `cmd/tmpl/agentic.yml` (modified, +9/-1)
-```diff
-@@ -4,7 +4,7 @@ mode: agentic
- # Agentic mode includes a private managed artifact store, approved-watch
- # runner, built-in agent, dual modern/legacy MCP HTTP, and primitive MCP tools.
- # Add explicit settings only to opt out or customize them.
--production: true
-+# Agentic mode behaves the same everywhere; the `production` flag is ignored.
- host_port: 0.0.0.0:8080
- # Defaults on in agentic mode so operators can inspect catalog, runtime,
- # security, code, and config system roots from the console.
-@@ -16,6 +16,14 @@ auth_fail_block: true
- enable_tracing: false
- reload_on_config_change: false
- 
-+# Sign-in is required. Requests carry a token signed with this secret; the
-+# `sub` claim is the user id and a `role` claim of `admin` gives admin access.
-+# The secret below was generated for this install. Keep it private.
-+auth:
-+  type: jwt
-+  jwt:
-+    secret: {{ printf "%q" .JWTSecret }}
-+
- # Agentic deployments keep legacy MCP compatibility tools disabled. Agents
- # should use catalog/control-plane GraphQL roots instead.
- mcp:
-```
-
-**File**: `core/api.go` (modified, +6/-6)
-```diff
-@@ -378,8 +378,8 @@ func (g *GraphJin) newGraphJin(conf *Config,
- 	gj := &graphjinEngine{
- 		conf:        conf,
- 		log:         _log.New(os.Stderr, "", 0),
--		prod:        conf.Production,
--		prodSec:     conf.Production,
-+		prod:        productionEnabled(conf),
-+		prodSec:     productionEnabled(conf),
- 		learn:       !conf.Production && !isAgenticMode(conf),
- 		printFormat: []byte(fmt.Sprintf("gj-%x:", t.UnixNano())),
- 		opts:        options,
-@@ -1296,8 +1296,8 @@ func (g *GraphJin) newGraphJinReloadingConfigDatabases(base *graphjinEngine, nex
- 	gj := &graphjinEngine{
- 		conf:        conf,
- 		log:         log,
--		prod:        conf.Production,
--		prodSec:     conf.Production,
-+		prod:        productionEnabled(conf),
-+		prodSec:     productionEnabled(conf),
- 		learn:       !conf.Production && !isAgenticMode(conf),
- 		printFormat: printFormat,
- 		opts:        opts,
-@@ -1466,8 +1466,8 @@ func (g *GraphJin) newGraphJinReloadingDatabase(base *graphjinEngine, database s
- 	gj := &graphjinEngine{
- 		conf:        conf,
- 		log:         log,
--		prod:        conf.Production,
--		prodSec:     conf.Production,
-+		prod:        productionEnabled(conf),
-+		prodSec:     productionEnabled(conf),
- 		learn:       !conf.Production && !isAgenticMode(conf),
- 		printFormat: printFormat,
- 		opts:        base.opts,
-```
-
-**File**: `core/config.go` (modified, +28/-6)
-```diff
-@@ -50,6 +50,14 @@ func isAgenticMode(c *Config) bool {
- 	return err == nil && mode == sourcecap.ModeAgentic
- }
- 
-+// productionEnabled reports whether the legacy production behaviour applies.
-+// Agentic mode ignores the production flag. The agent writes its queries as
-+// it goes, so the saved-queries-only rule cannot hold there, and that rule
-+// also rejects the unnamed queries the service runs against its own store.
-+func productionEnabled(c *Config) bool {
-+	return c != nil && c.Production && !isAgenticMode(c)
-+}
-+
- // NormalizeMode makes mode the single deployment-mode selector. When mode is
- // omitted, existing production:true configs continue to imply prod mode.
- func (c *Config) NormalizeMode() error {
-@@ -733,7 +741,7 @@ func (c *Config) normalizeSourceAccessDefaults() {
- 		kind := c.Sources[i].CanonicalKind()
- 		switch kind {
- 		case sourcecap.KindDatabase:
--			c.Sources[i].Access = effectiveDatabaseAccess(c.Sources[i].Access)
-+			c.Sources[i].Access = effectiveDatabaseAccess(c.Sources[i].Access, c.modeForSourceDefaults())
- 		case sourcecap.KindAPI:
- 			c.Sources[i].Access = effectiveAPIAccess(c.Sources[i].Access)
- 		}
-@@ -759,9 +767,21 @@ func effectiveAPIAccess(access SourceAccessConfig) SourceAccessConfig {
- 	return access
- }
- 
--func effectiveDatabaseAccess(access SourceAccessConfig) SourceAccessConfig {
-+// effectiveDatabaseAccess fills in the access a database source gets when its
-+// config does not say.
-+//
-+// In agentic mode every signed-in user can read every table: the agent is a
-+// general database agent and cannot assume the tables carry a tenant column.
-+// The admin narrows access with table blocks, row filters and roles.
-+//
-+// The legacy dev and prod modes keep the older default, which scopes rows by
-+// the namespace column and blocks tables that lack it.
-+func effectiveDatabaseAccess(access SourceAccessConfig, mode string) SourceAccessConfig {
- 	if strings.TrimSpace(access.Read) == "" {
- 		access.Read = AccessModeAccount
-+		if strings.EqualFold(strings.TrimSpace(mode), sourcecap.ModeAgentic) {
-+			access.Read = AccessModeAuthenticated
++// A new install has no database until someone connects one on the setup page.
++// A host that restarts a program failing its health check would otherwise
++// kill the server before anyone could finish setup. An install configured
++// from config files keeps answering unhealthy with no database.
++func TestHealthWhileWaitingForSetup(t *testing.T) {
++	logger := zap.NewNop()
++	const store = "gj_store"
++	openStore := func(t *testing.T) *sql.DB {
++		t.Helper()
++		db, err := sql.Open("sqlite", filepath.Join(t.TempDir(), "store.db"))
++		if err != nil {
++			t.Fatal(err)
 +		}
- 	} else {
- 		access.Read = normalizeAccessMode(access.Read)
- 	}
-@@ -840,10 +860,12 @@ func (c *Config) EffectiveSystemRootAccess() map[string]string {
- 			"gj_config":             AccessModePublic,
- 		}
- 	case sourcecap.ModeAgentic:
--		// Trusted-agent matrix: discovery open (read-only), personal
--		// artifacts/workflows owner-scoped, control plane admin-only.
-+		// Sign-in is required in agentic mode. The catalog names every table
-+		// and column and carries sampled values, so it is for signed-in users
-+		// only; personal artifacts/workflows are owner-scoped and the control
-+		// plane is admin-only.
- 		defaults = map[string]string{
--			"gj_catalog":            AccessModePublic,
-+			"gj_catalog":            AccessModeAuthenticated,
- 			"gj_artifacts":          AccessModeOwner,
- 			"gj_watch":              AccessModeOwner,
- 			"gj_watch_event":        AccessModeOwner,
-@@ -1056,7 +1078,7 @@ func (c *Config) EffectiveThreadsConfig() ThreadsConfig {
- func (c *Config) EffectiveSourceAccess(source SourceConfig) SourceAccessConfig {
- 	switch source.CanonicalKind() {
- 	case sourcecap.KindDatabase:
--		return effectiveDatabaseAccess(source.Access.clone())
-+		return effectiveDatabaseAccess(source.Access.clone(), c.modeForSourceDefaults())
- 	case sourcecap.KindAPI:
- 		return effectiveAPIAccess(source.Access.clone())
- 	default:
-```
-
-**File**: `core/validate_test.go` (modified, +8/-1)
-```diff
-@@ -394,8 +394,15 @@ func TestNormalizeSourcesAppliesIdentityAccessAndArtifactDefaults(t *testing.T)
- 	if err := agentic.NormalizeSources(); err != nil {
- 		t.Fatalf("NormalizeSources agentic: %v", err)
- 	}
-+	// Agentic is a general database agent: a signed-in user reads every table
-+	// unless the admin narrows it. No tenant column is assumed.
-+	agenticApp, _ := agentic.SourceByName("app")
-+	if agenticApp.Access.Read != AccessModeAuthenticated || agenticApp.Access.Write != AccessModeBlocked || agenticApp.Access.Delete != AccessModeBlocked {
-+		t.Fatalf("agentic database access defaults not applied: %+v", agenticApp.Access)
++		t.Cleanup(func() { db.Close() }) //nolint:errcheck
++		return db
 +	}
-+	// Sign-in is required, so the catalog is for signed-in users too.
- 	agenticAccess := agentic.EffectiveSystemRootAccess()
--	if agenticAccess["gj_catalog"] != AccessModePublic ||
-+	if agenticAccess["gj_catalog"] != AccessModeAuthenticated ||
- 		agenticAccess["gj_security"] != AccessModeAdmin || agenticAccess["gj_runtime"] != AccessModeAdmin ||
- 		agenticAccess["gj_config"] != AccessModeAdmin ||
- 		agenticAccess["gj_artifacts"] != AccessModeOwner ||
-```
-
-**File**: `docs/DESIGN-FIRST-RUN.md` (modified, +15/-0)
-```diff
-@@ -383,6 +383,21 @@ error instead of crashing on a connection string that does not parse. Add a
- test that boots from an empty directory. The path is still file-based after
- this phase, but it works.
- 
-+Done on 2026-11-24:
++	health := func(svc *graphjinService) (int, string) {
++		svc.log, svc.zlog = logger.Sugar(), logger
++		hs := &HttpService{}
++		hs.Store(svc)
++		rec := httptest.NewRecorder()
++		healthCheckHandler(hs).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, healthRoute, nil))
++		return rec.Code, rec.Body.String()
++	}
++	// storeBacked builds the service a start config gives: its configuration
++	// is in the store, and the store is the only database it has open.
++	storeBacked := func(t *testing.T, sources ...core.SourceConfig) *graphjinService {
++		conf := &Config{Core: core.Config{Sources: sources}}
++		conf.SetStore("/somewhere/store.db", "seal")
++		return &graphjinService{
++			conf:              conf,
++			accounts:          &accountService{},
++			dbs:               map[string]*sql.DB{store: openStore(t)},
++			managedArtifactDB: store,
++		}
++	}
 +
-+- Agentic ignores the `production` flag, in the engine (`productionEnabled`, `core/config.go`) and at config load (`normalizeConfigMode`, `serv/config.go`). A generated config now runs the same path the demos do.
-+- A signed-in user reads every table by default (`effectiveDatabaseAccess`). Writes stay off.
-+- The catalog needs a sign-in. It was readable with no token, which exposed every table and column name. The MCP catalog tool is now registered from config, not from what the anonymous startup caller may see (`registerCatalogTools`, `serv/mcp_catalog.go`).
-+- A Postgres connection string that cannot be read is an error that names the unfilled placeholder.
-+- The generated `agentic.yml` has no `production` line and carries a signing secret generated for that install.
-+- `cmd/agentic_first_boot_test.go` boots the generated template and checks all of the above.
++	t.Run("a new install waiting for its database is healthy", func(t *testing.T) {
++		code, body := health(storeBacked(t))
++		if code != http.StatusOK || !strings.Contains(body, "Waiting for setup") {
++			t.Fatalf("health = %d %q, want 200 and a line saying setup is not finished", code, body)
++		}
++	})
 +
-+Left for later phases:
++	t.Run("a new install whose store does not answer is not", func(t *testing.T) {
++		svc := storeBacked(t)
++		svc.dbs[store].Close() //nolint:errcheck
++		if code, body := health(svc); code != http.StatusInternalServerError {
++			t.Fatalf("health = %d %q with a closed store, want 500", code, body)
++		}
++	})
 +
-+- **A person cannot sign in yet without making a token.** The generated config accepts tokens signed with its secret; accounts and a sign-in page arrive in Phase 2.
-+- **The "dev defaults" still apply to an agentic config that leaves `mcp.allow_*` unset.** The demos depend on four of them (raw queries, mutations, workflow execution, dev tools). They go away when those switches stop being user-facing, in Phase 2.
-+- **A signed-in user who is not an admin can read `gj_config`** (secrets are redacted). The root is meant to be admin-only. Seen in the first-boot test, cause not yet traced.
++	t.Run("a database that was connected and is gone is still unhealthy", func(t *testing.T) {
++		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
++		if code, body := health(svc); code != http.StatusServiceUnavailable {
++			t.Fatalf("health = %d %q with a database configured and none open, want 503", code, body)
++		}
++	})
 +
- **Phase 2: Setup on a laptop.**
- The start config and the store opening first. Admin account and password
- sign-in. The setup page with the sample data, database and model steps. Config
++	t.Run("an install from config files with no database is unhealthy", func(t *testing.T) {
++		svc := &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{}}
++		if code, body := health(svc); code != http.StatusServiceUnavailable || !strings.Contains(body, "no database connection") {
++			t.Fatalf("health = %d %q, want 503 as before", code, body)
++		}
++		// The same install with a store file of its own for artifacts: the
++		// store being open does not make it a new install.
++		svc = &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{store: openStore(t)}, managedArtifactDB: store}
++		if code, body := health(svc); code != http.StatusServiceUnavailable {
++			t.Fatalf("health = %d %q with only an artifact store open, want 503 as before", code, body)
++		}
++	})
++
++	t.Run("a connected database is pinged as before", func(t *testing.T) {
++		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
++		svc.dbs["main"] = openStore(t)
++		if code, body := health(svc); code != http.StatusOK || body != string(healthyResponse) {
++			t.Fatalf("health = %d %q with a database connected, want 200 %q", code, body, healthyResponse)
++		}
++	})
++}
 ```
 
 ---
 
-### Incident Patch 2: `c7599c95` (2026-11-25)
-**Commit Message**: fix(agentic): keep the account table out of GraphQL
+### Incident Patch 2: `8f454813` (2026-11-26)
+**Commit Message**: fix(core): introspection builds a valid client schema with API sources
 
-Accounts and their password hashes are kept in the store's keyed table.
-That table was only blocked from GraphQL when built-in login was on, so
-on a server with local accounts and no built-in login any signed-in
-caller could read the account rows by the table's name. This has been
-the case since local accounts were added in b3f0b9b1c.
+GraphiQL in the console Workbench refused the saas-ops schema: "unknown
+type: account_healthWhereInput". Every column field took includeIf/skipIf
+typed as its table's where input, but API remote tables and OpenAPI
+mutation results never define one (only filesystem remotes do). Those
+fields now get the conditional args only where the where type exists.
 
-The table is now created before the engine starts and blocked for every
-role, the internal one included, wherever it is in use: built-in login
-or local accounts.
+With that fixed, graphql-js validateSchema still rejected the schema:
+rolesEnum listed the control store's internal role
+__graphjin_internal_store, and "__" names are reserved. The roles enum
+now skips names that are not legal enum values.
 
-The accounts test asks for the table as the admin and as an ordinary
-signed-in user and fails if any row comes back. It fails without this
-change.
+The new tests check the introspection JSON the way buildClientSchema and
+validateSchema do (unknown types, input/output positions, name grammar,
+reserved prefix, root types), and fail without each fix.
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `cmd/agentic_accounts_test.go` (modified, +26/-0)
+**File**: `core/intro.go` (modified, +46/-6)
 ```diff
-@@ -67,6 +67,14 @@ func TestFirstAdminSetupAndPasswordSignIn(t *testing.T) {
- 		t.Fatalf("the new admin could not read the configuration: %s", clip(body))
- 	}
+@@ -407,7 +407,8 @@ func (in *Introspection) addOpenAPIMutationTable(table sdata.DBTable, alias stri
+ 		if column.Blocked {
+ 			continue
+ 		}
+-		field, err := in.getColumnField(column)
++		// A mutation result has no where type to condition its fields on.
++		field, err := in.getColumnField(column, false)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -435,11 +436,17 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
+ 	ft.Name = in.getName(name)
+ 	ft.Description = table.Comment
  
-+	// Accounts and their password hashes are in the store. No role reads the
-+	// store's tables through GraphQL: not the admin, not anyone else.
-+	assertAccountsNotReadable(t, base, map[string]string{"the admin": cookie})
-+	member := signFirstBootToken(t, secret, "sam", "")
-+	if body := firstBootGraphQL(t, base, member, storeAccountsQuery); strings.Contains(body, "password_hash") || strings.Contains(body, `"kind"`) {
-+		t.Fatalf("a signed-in user read the account table: %s", clip(body))
-+	}
++	// Only a filesystem remote gets a where type (added below), so only its
++	// fields can take includeIf/skipIf. Advertising them on an API remote
++	// names a type the schema never defines, and GraphiQL then refuses to
++	// build the client schema at all.
++	filesystemRemote := isFilesystemRemoteTable(table)
 +
- 	// Signing in again: a wrong password is refused, the right one works, and
- 	// the email is not case sensitive.
- 	if status, body, _ := accountsPost(t, base+"/api/v1/auth/session", "", map[string]any{"method": "password", "email": email, "password": "not the password"}); status != http.StatusUnauthorized {
-@@ -148,3 +156,21 @@ func accountsGraphQL(t *testing.T, base, cookie, query string) string {
- 	_, body, _ := accountsPost(t, base+"/api/v1/graphql", cookie, map[string]any{"query": query})
- 	return body
+ 	for _, c := range table.Columns {
+ 		if c.Blocked {
+ 			continue
+ 		}
+-		f, err := in.getColumnField(c)
++		f, err := in.getColumnField(c, filesystemRemote)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -453,7 +460,6 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
+ 		}
+ 		ft.addArg(a.Name, base)
+ 	}
+-	filesystemRemote := isFilesystemRemoteTable(table)
+ 	if filesystemRemote {
+ 		ft.addOrReplaceArg("id", newTypeRef("", "ID", nil))
+ 		ft.addOrReplaceArg("limit", newTypeRef("", "Int", nil))
+@@ -596,7 +602,7 @@ func (in *Introspection) addTableTypeWithDepth(
+ 			hasRecursive = true
+ 		}
+ 		var f1 FieldObject
+-		f1, err = in.getColumnField(c)
++		f1, err = in.getColumnField(c, true)
+ 		if err != nil {
+ 			return
+ 		}
+@@ -729,6 +735,12 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
+ 	}
+ 	sort.Strings(roleNames)
+ 	for _, name := range roleNames {
++		// Internal roles such as __graphjin_internal_store are not for
++		// clients, and a name outside the enum value grammar makes GraphiQL
++		// reject the whole schema.
++		if !isIntroEnumValueName(name) {
++			continue
++		}
+ 		ro := roles[name]
+ 		cmt := ro.Comment
+ 		if ro.Match != "" {
+@@ -742,6 +754,28 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
+ 	in.addType(ft)
  }
-+
-+// storeAccountsQuery asks for the store's keyed table by the name it has on
-+// SQLite. It holds the accounts and their password hashes.
-+const storeAccountsQuery = `query { _graphjin_auth_sessions { kind id data } }`
-+
-+// assertAccountsNotReadable fails if any of the sessions can read the account
-+// table through GraphQL.
-+func assertAccountsNotReadable(t *testing.T, base string, sessions map[string]string) {
-+	t.Helper()
-+	for who, cookie := range sessions {
-+		// A blocked table answers with an error or with null, depending on
-+		// whether another database is connected. Either way no row comes back.
-+		body := accountsGraphQL(t, base, cookie, storeAccountsQuery)
-+		if strings.Contains(body, "password_hash") || strings.Contains(body, `"kind"`) || strings.Contains(body, "account") {
-+			t.Fatalf("%s read the account table through GraphQL: %s", who, clip(body))
+ 
++// isIntroEnumValueName reports whether name can be a GraphQL enum value:
++// the name grammar [_A-Za-z][_0-9A-Za-z]*, no reserved "__" prefix, and not
++// true, false or null.
++func isIntroEnumValueName(name string) bool {
++	if name == "" || strings.HasPrefix(name, "__") {
++		return false
++	}
++	switch name {
++	case "true", "false", "null":
++		return false
++	}
++	for i, r := range name {
++		switch {
++		case r == '_', r >= 'A' && r <= 'Z', r >= 'a' && r <= 'z':
++		case i > 0 && r >= '0' && r <= '9':
++		default:
++			return false
 +		}
 +	}
-+}
-```
-
-**File**: `serv/artifacts.go` (modified, +1/-1)
-```diff
-@@ -663,7 +663,7 @@ func (s *graphjinService) ensureStoreTables() error {
- 			}
- 		}
- 	}
--	if s.authStoreEnabled() {
-+	if s.keyedStoreInUse() {
- 		for _, stmt := range authStoreDDL(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema) {
- 			if _, err := db.ExecContext(context.Background(), stmt); err != nil {
- 				return err
-```
-
-**File**: `serv/auth_store.go` (modified, +9/-0)
-```diff
-@@ -98,6 +98,15 @@ func (a *authLoginService) state() authStateStore {
- 	return memoryAuthStore{a: a}
- }
- 
-+// keyedStoreInUse reports whether the store's keyed table exists on this
-+// server. It holds sign-in state for built-in login and, on an agentic server
-+// with local accounts, the accounts themselves with their password hashes.
-+// Wherever the table exists it has to be created before the engine starts and
-+// blocked from GraphQL for every role.
-+func (s *graphjinService) keyedStoreInUse() bool {
-+	return s != nil && s.conf != nil && (s.authStoreEnabled() || localAccountsEnabled(s.conf))
-+}
-+
- func (s *graphjinService) authStoreEnabled() bool {
- 	return s != nil && s.conf != nil && s.conf.AuthLogin.Enabled && s.conf.Core.Artifacts.Enabled
- }
-```
-
-**File**: `serv/control_store_internal.go` (modified, +4/-3)
-```diff
-@@ -149,8 +149,9 @@ func (s *graphjinService) injectInternalStoreRole() {
- 			})
- 		}
- 	}
--	// Login state holds credentials-derived rows that GraphJin reads with
--	// raw SQL only, so it is blocked for every role including the internal one.
-+	// The keyed table holds sign-in state and, with local accounts, password
-+	// hashes. GraphJin reads it with raw SQL only, so it is blocked for every
-+	// role including the internal one.
- 	blockAll := func(table, schema string) {
- 		for _, role := range append([]string{graphjinInternalStoreRole}, blockRoles...) {
- 			appendRuntimeRoleTable(coreConf, role, core.RoleTable{
-@@ -166,7 +167,7 @@ func (s *graphjinService) injectInternalStoreRole() {
- 		}
- 	}
- 	addRevisionSignal()
--	if s.authStoreEnabled() {
-+	if s.keyedStoreInUse() {
- 		if root, schema, ok := s.internalStoreRoot(authStoreTable); ok {
- 			blockAll(root, schema)
- 		}
-```
-
-**File**: `serv/store_admin.go` (modified, +1/-1)
-```diff
-@@ -162,7 +162,7 @@ func (s *graphjinService) storeStatus(ctx context.Context) (StoreStatus, error)
- 	}
- 	// Login state is outside storeTableNames because no role, not even the
- 	// internal one, may read it through GraphQL.
--	if s.authStoreEnabled() {
-+	if s.keyedStoreInUse() {
- 		table := artifactTableName(dbType, cfg.Schema, authStoreTable)
- 		st.Tables = append(st.Tables, StoreTable{Name: authStoreTable, Exists: storeTableExists(ctx, db, table)})
- 	}
-```
-
----
-
-### Incident Patch 3: `60e78f25` (2026-11-25)
-**Commit Message**: fix(agentic): only an admin reads gj_config
-
-Any signed-in user could read gj_config on an agentic server. The table
-is mounted in a bundle with the catalog, but access rules are generated
-only for roots whose feature is on. Reading config was off by default in
-agentic, so the root had no rules and the mounted table was open.
-
-- A control-plane table whose root is switched off is no longer mounted
-  in source mode, so a root that is off is not there for anyone.
-- config.read is on by default in agentic. The gj_config root is
-  admin-only, so the admin reads it and every other role is refused.
-
-The first-boot test covers both: admin reads, a non-admin and an
-anonymous caller are refused, and with config.read off nobody reads it.
-That last case fails without the mount filter.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `CONFIG.md` (modified, +1/-1)
-```diff
-@@ -398,7 +398,7 @@ Deployment modes:
- |------|-------------------|-----------------|
- | `dev` | Developers | Broad catalog, config, security, workflow-code, raw GraphQL, schema, and dev-tool access for local development |
- | `prod` | Production applications | Production protections and allow-list discipline; the agentic system surface does not mount |
--| `agentic` | Authenticated company end users using an approved agent | Production protections plus `catalog.read` and approved `workflow.execute`; detailed `security.read`, `config.read`, `workflow.read`, writes, raw GraphQL, schema writes, dev tools, and legacy discovery stay blocked unless explicitly enabled |
-+| `agentic` | Authenticated company end users using an approved agent | Production protections plus `catalog.read`, admin-only `config.read` and approved `workflow.execute`; detailed `security.read`, `workflow.read`, writes, raw GraphQL, schema writes, dev tools, and legacy discovery stay blocked unless explicitly enabled |
- 
- | Source kind | Capability keys |
- |-------------|-----------------|
-```
-
-**File**: `SECURITY.md` (modified, +1/-1)
-```diff
-@@ -382,7 +382,7 @@ roots fit together architecturally, see the canonical diagram in
- | `gj_watch` / `gj_watch_event` | `owner` (`user_id`) | Read/write, owner-private standing queries and durable inbox events. Watches must reference subscriptions. |
- | `gj_task` / `gj_task_entry` | `owner` (`user_id`) | Read/write, owner-private declared goals and immutable provenance trail. A task ID is correlation only and never grants access. |
- | `gj_workflow` / `gj_workflow_execution` | `owner` (`user_id`) | Read/write, owner-private. Workflows execute under the caller's identity. DB-backed workflows are owner/account-private saved artifacts. Filesystem/global workflows are operator-vetted, read-only, and runnable by all callers (each as themselves). "Global" status is filesystem-only and never user-settable. |
--| `gj_config` | `admin` | Read/write. |
-+| `gj_config` | `admin` | Admin reads by default. Writes need `config.write`. With `config.read` and `config.write` both off the root is not mounted at all. |
- | `gj_security` | `admin` | Read-only. |
- | `gj_runtime` | `admin` | Read-only. |
- 
-```
-
-**File**: `cmd/agentic_first_boot_test.go` (modified, +23/-0)
-```diff
-@@ -36,10 +36,16 @@ func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
- 	for _, tc := range []struct {
- 		name  string
- 		extra string
-+		// configReadsOff is set when the config switches config reads off.
-+		// Then nobody reads gj_config, the admin included.
-+		configReadsOff bool
- 	}{
- 		{name: "as generated"},
- 		// Older generated configs carry the flag. It must make no difference.
- 		{name: "with the production flag set", extra: "\nproduction: true\n"},
-+		// The gj_config table is mounted along with the catalog. With its
-+		// feature off it had no access rules and any signed-in user read it.
-+		{name: "with config reads switched off", extra: "\nsystem:\n  capabilities:\n    config.read: false\n", configReadsOff: true},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			dir := t.TempDir()
-@@ -134,6 +140,23 @@ func TestGeneratedAgenticConfigWorksOnFirstBoot(t *testing.T) {
- 				t.Fatalf("a signed-in user could not read the orders table: %s", clip(body))
- 			}
- 
-+			// Configuration is the admin's. It names the databases, the roles
-+			// and the access rules, so nobody else reads it.
-+			const readConfig = `query { gj_config(id: "current") { id sources } }`
-+			adminBody := firstBootGraphQL(t, server.URL, admin, readConfig)
-+			adminRead := strings.Contains(adminBody, `"sources"`) && !strings.Contains(adminBody, "errors")
-+			if tc.configReadsOff && adminRead {
-+				t.Fatalf("the configuration was readable with config reads switched off: %s", clip(adminBody))
-+			}
-+			if !tc.configReadsOff && !adminRead {
-+				t.Fatalf("the admin could not read the configuration: %s", clip(adminBody))
-+			}
-+			for who, token := range map[string]string{"a signed-in user who is not an admin": member, "an anonymous caller": ""} {
-+				if body := firstBootGraphQL(t, server.URL, token, readConfig); !strings.Contains(body, "errors") || strings.Contains(body, `"sources"`) {
-+					t.Fatalf("%s could read the configuration: %s", who, clip(body))
-+				}
-+			}
-+
- 			// Writes stay off until the admin turns them on.
- 			body = firstBootGraphQL(t, server.URL, member, `mutation { orders(insert: { id: 99, customer_id: 1, total: 5 }) { id } }`)
- 			if !strings.Contains(body, "errors") {
-```
-
-**File**: `core/featurecap/featurecap.go` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ var systemRoots = []string{
- var definitions = []Definition{
- 	def(KindSystem, KeyCatalogRead, ActionRead, true, true, true, "medium", false, "Read the GraphJin catalog."),
- 	def(KindSystem, KeySecurityRead, ActionRead, true, false, false, "high", false, "Read detailed GraphJin security audit rows."),
--	def(KindSystem, KeyConfigRead, ActionRead, true, false, false, "high", false, "Read GraphJin configuration rows."),
-+	def(KindSystem, KeyConfigRead, ActionRead, true, false, true, "high", false, "Read GraphJin configuration rows."),
- 	def(KindSystem, KeyConfigWrite, ActionWrite, true, false, false, "critical", true, "Write GraphJin configuration.", mcp(MCPAllowConfigUpdates)),
- 	def(KindSystem, KeyRuntimeRead, ActionRead, true, false, true, "medium", false, "Read compact GraphJin runtime status and recent redacted events."),
- 	def(KindSystem, KeyRawGraphQLQuery, ActionQuery, true, false, false, "high", false, "Execute raw GraphQL queries through MCP.", mcp(MCPAllowRawQueries)),
-```
-
-**File**: `docs/DESIGN-FIRST-RUN.md` (modified, +1/-1)
-```diff
-@@ -390,13 +390,13 @@ Done on 2026-11-24:
- - The catalog needs a sign-in. It was readable with no token, which exposed every table and column name. The MCP catalog tool is now registered from config, not from what the anonymous startup caller may see (`registerCatalogTools`, `serv/mcp_catalog.go`).
- - A Postgres connection string that cannot be read is an error that names the unfilled placeholder.
- - The generated `agentic.yml` has no `production` line and carries a signing secret generated for that install.
-+- Only an admin reads `gj_config`. The table was mounted along with the catalog while its feature was off, so it had no access rules and any signed-in user could read it. A control-plane table whose root is off is no longer mounted (`registeredManagedTables`, `serv/control_plane_graphql.go`), and reading config is on in agentic for admins.
- - `cmd/agentic_first_boot_test.go` boots the generated template and checks all of the above.
- 
- Left for later phases:
- 
- - **A person cannot sign in yet without making a token.** The generated config accepts tokens signed with its secret; accounts and a sign-in page arrive in Phase 2.
- - **The "dev defaults" still apply to an agentic config that leaves `mcp.allow_*` unset.** The demos depend on four of them (raw queries, mutations, workflow execution, dev tools). They go away when those switches stop being user-facing, in Phase 2.
--- **A signed-in user who is not an admin can read `gj_config`** (secrets are redacted). The root is meant to be admin-only. Seen in the first-boot test, cause not yet traced.
- 
- **Phase 2: Setup on a laptop.**
- The start config and the store opening first. Admin account and password
-```
-
-**File**: `serv/control_plane_graphql.go` (modified, +19/-0)
-```diff
-@@ -36,6 +36,25 @@ func (h controlPlaneGraphQL) ManagedQueryTables() []core.ManagedTable {
- 	if h.service != nil && h.service.conf != nil && h.service.conf.workflowsEnabled() {
- 		out = append(out, workflowControlPlaneTables()...)
- 	}
-+	return registeredManagedTables(h.service, out)
++	return true
 +}
 +
-+// registeredManagedTables drops the tables whose system root is switched off.
-+//
-+// The tables come in bundles: gj_config rides along with the catalog. Access
-+// rules are only generated for registered roots, so a table mounted without
-+// its root had no rules and every signed-in caller could read it. A root that
-+// is off is simply not there.
-+func registeredManagedTables(s *graphjinService, tables []core.ManagedTable) []core.ManagedTable {
-+	if s == nil || s.conf == nil || !s.conf.Core.IsSourcesUsed() {
-+		return tables
-+	}
-+	out := tables[:0:0]
-+	for _, table := range tables {
-+		if systemRootRegistered(s.conf, table.Name) {
-+			out = append(out, table)
-+		}
-+	}
- 	return out
+ // addOrderByType adds an order by type to the introspection schema
+ func (in *Introspection) addOrderByType(t sdata.DBTable, ft *FullType) {
+ 	ty := FullType{
+@@ -936,8 +970,10 @@ func (in *Introspection) addArgsType(table sdata.DBTable, fn sdata.DBFunction) (
+ 	return
  }
  
-```
-
-**File**: `serv/control_plane_graphql_test.go` (modified, +11/-4)
-```diff
-@@ -1102,12 +1102,11 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
- 		if string(out["catalog"]) == "null" || len(out["catalog"]) == 0 {
- 			t.Fatalf("expected agentic user catalog access, got %s", string(res.Data))
- 		}
--		// Workflow-definition, security, and config capabilities default off in
-+		// Workflow-definition and security capabilities default off in
- 		// agentic mode, so access policy cannot resurrect these roots.
- 		for root, query := range map[string]string{
- 			"gj_workflow": `query { workflow: gj_workflow(id: "daily_report") { name } }`,
- 			"gj_security": `query { security: gj_security(id: "summary") { id } }`,
--			"gj_config":   `query { config: gj_config(id: "current") { id } }`,
- 		} {
- 			res, err := svc.gj.GraphQL(userCtx, query, nil, &core.RequestConfig{})
- 			if err == nil {
-@@ -1117,6 +1116,14 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
- 				t.Fatalf("expected %s absence error, got: %v", root, err)
- 			}
- 		}
-+		// Configuration is there for the admin and refused to everyone else.
-+		res, err = svc.gj.GraphQL(userCtx, `query { config: gj_config(id: "current") { id } }`, nil, &core.RequestConfig{})
-+		if err == nil {
-+			t.Fatalf("a normal user read gj_config: %s", string(res.Data))
-+		}
-+		if !strings.Contains(err.Error(), "blocked") {
-+			t.Fatalf("expected gj_config to be refused for a normal user, got: %v", err)
-+		}
+-// getColumnField returns the field object for the given column
+-func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObject, err error) {
++// getColumnField returns the field object for the given column. conditional
++// adds the includeIf/skipIf arguments, which take the table's where type; pass
++// it only when the caller also defines that type.
++func (in *Introspection) getColumnField(column sdata.DBColumn, conditional bool) (field FieldObject, err error) {
+ 	field.Args = []InputValue{}
+ 	field.Name = in.getName(column.Name)
+ 	typeValue := newTypeRef("", "String", nil)
+@@ -957,6 +993,10 @@ func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObjec
+ 
+ 	field.Type = typeValue
+ 
++	if !conditional {
++		return
++	}
++
+ 	field.Args = append(field.Args, InputValue{
+ 		Name: "includeIf", Type: newTypeRef("", (column.Table + SUFFIX_WHERE), nil),
  	})
- 
- 	t.Run("explicit security grant unblocks only gj_security", func(t *testing.T) {
-@@ -1150,8 +1157,8 @@ func TestGraphQLControlPlaneAgenticSystemPermissions(t *testing.T) {
- 		if err == nil {
- 			t.Fatalf("expected gj_config to remain denied, got %s", string(res.Data))
- 		}
--		if !strings.Contains(err.Error(), "not found") {
--			t.Fatalf("expected disabled gj_config root to remain absent, got: %v", err)
-+		if !strings.Contains(err.Error(), "blocked") {
-+			t.Fatalf("expected gj_config to stay refused for a normal user, got: %v", err)
- 		}
- 	})
- 
 ```
 
-**File**: `serv/mcp_registration_test.go` (modified, +3/-2)
+**File**: `core/intro_client_schema_test.go` (added, +368/-0)
 ```diff
-@@ -822,12 +822,13 @@ func TestMCPCallerCapabilityProfileReflectsSourceRootAccess(t *testing.T) {
- 	}
- 
- 	adminProfile := ms.callerCapabilityProfile(sourceModeAdminTestContext(), false)
--	for _, root := range []string{"gj_runtime"} {
-+	// The admin reads runtime status and the configuration.
-+	for _, root := range []string{"gj_runtime", "gj_config"} {
- 		if !rootProfilesContain(adminProfile.AvailableRoots, root) {
- 			t.Fatalf("expected %s available to admin, got %+v", root, adminProfile.AvailableRoots)
- 		}
- 	}
--	for _, root := range []string{"gj_security", "gj_config", "gj_workflow"} {
-+	for _, root := range []string{"gj_security", "gj_workflow"} {
- 		if !rootProfilesContain(adminProfile.BlockedRoots, root) {
- 			t.Fatalf("expected disabled %s to remain unavailable to admin, got %+v", root, adminProfile.BlockedRoots)
- 		}
+@@ -0,0 +1,368 @@
++package core
++
++import (
++	"encoding/json"
++	"fmt"
++	"regexp"
++	"sort"
++	"strings"
++	"testing"
++
++	"github.com/dosco/graphjin/core/v3/internal/sdata"
++)
++
++// The console's Workbench hands this introspection result to GraphiQL, which
++// calls graphql-js buildClientSchema. That call refuses the whole schema if a
++// single field, argument or input field names a type the result never
++// defines, so one dangling name blanks the editor for every table.
++
++func TestIntrospectionBuildsClientSchema(t *testing.T) {
++	result := introspectRaw(t, sdata.GetTestDBInfo(), nil)
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++}
++
++// An API source joined onto a table (the saas-ops demo's account_health) and
++// a top-level API list are remote tables with no where type. Their fields
++// used to take includeIf/skipIf typed as account_healthWhereInput anyway.
++func TestIntrospectionWithAPIRemotesBuildsClientSchema(t *testing.T) {
++	di := sdata.GetTestDBInfo()
++
++	joined := sdata.NewDBTable("public", "account_health", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "account_health", Name: "account_id", Type: "bigint"},
++		{Schema: "public", Table: "account_health", Name: "health", Type: "text"},
++		{Schema: "public", Table: "account_health", Name: "open_risks", Type: "json"},
++	})
++	idcol := sdata.DBColumn{
++		PrimaryKey: true, Schema: "public", Table: "account_health",
++		Name: "__account_health_id", Type: "bigint",
++		FKeySchema: "public", FKeyTable: "users", FKeyCol: "id",
++	}
++	joined.PrimaryCols = []sdata.DBColumn{idcol}
++	joined.PrimaryCol = idcol
++	joined.StrictColumns = true
++	di.AddTable(joined)
++
++	list := sdata.NewDBTable("public", "incidents_api", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "incidents_api", Name: "id", Type: "text"},
++		{Schema: "public", Table: "incidents_api", Name: "severity", Type: "text"},
++	})
++	list.Args = []sdata.DBColumn{
++		{Schema: "public", Table: "incidents_api", Name: "status", Type: "text"},
++	}
++	di.AddTable(list)
++
++	mutation := sdata.NewDBTable("public", "create_incident", "openapi_mutation", []sdata.DBColumn{
++		{Schema: "public", Table: "create_incident", Name: "id", Type: "text"},
++	})
++	di.AddTable(mutation)
++
++	result := introspectRaw(t, di, map[string]bool{"create_incident": true})
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	// The fix must not cost the remote tables their fields or their roots.
++	health := requireIntroType(t, intro, "account_health")
++	requireIntroField(t, health, "health")
++	query := requireIntroType(t, intro, "Query")
++	requireIntroField(t, query, "account_health")
++	requireIntroField(t, query, "incidents_api")
++	mut := requireIntroType(t, intro, "Mutation")
++	requireIntroField(t, mut, "create_incident")
++}
++
++// The control store's internal role is in the role map but is not a valid
++// enum value; neither is a role name with a dash. Valid roles stay listed.
++func TestIntrospectionRolesEnumBuildsClientSchema(t *testing.T) {
++	schema, err := sdata.NewDBSchema(sdata.GetTestDBInfo(), nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	gj := &graphjinEngine{
++		conf: &Config{DBType: "postgres"},
++		roles: map[string]*Role{
++			"user":                      {Name: "user"},
++			"anon":                      {Name: "anon"},
++			"__graphjin_internal_store": {Name: "__graphjin_internal_store"},
++			"support-agent":             {Name: "support-agent"},
++		},
++		defaultDB: "default",
++		databases: map[string]*dbContext{
++			"default": {name: "default", schema: schema},
++		},
++	}
++	result, err := gj.introQuery()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	roles := requireIntroType(t, intro, "rolesEnum")
++	var got []string
++	for _, v := range roles.EnumValues {
++		got = append(got, v.Name)
++	}
++	if strings.Join(got, ",") != "anon,user" {
++		t.Fatalf("rolesEnum values = %v, want [anon user]", got)
++	}
++}
++
++// A filesystem remote defines a where type, so its fields keep includeIf.
++func TestIntrospectionFilesystemRemoteKeepsFieldConditions(t *testing.T) {
++	di := sdata.GetTestDBInfo()
++	fs := sdata.NewDBTable("public", "avatars", "remote", []sdata.DBColumn{
++		{Schema: "public", Table: "avatars", Name: "key", Type: "text"},
++		{Schema: "public", Table: "avatars", Name: "url", Type: "text"},
++	})
++	fs.Args = []sdata.DBColumn{
++		{Schema: "public", Table: "avatars", Name: "prefix", Type: "text"},
++		{Schema: "public", Table: "avatars", Name: "inline_data", Type: "boolean"},
++	}
++	di.AddTable(fs)
++
++	result := introspectRaw(t, di, nil)
++	if err := checkClientSchema(result); err != nil {
++		t.Fatal(err)
++	}
++	var intro IntroResult
++	if err := json.Unmarshal(result, &intro); err != nil {
++		t.Fatal(err)
++	}
++	avatars :
 ```
 
 #### Recent Merged Pull Requests:
@@ -3367,33 +3440,35 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): make a freshly generated agentic config work
+## X. a server install is healthy before setup and the image is reachable; add the Set
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.goreleaser.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a09ead9`: agentic): make a freshly generated agentic config work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `178469e5`: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.goreleaser.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    gj_catalog: authenticated
-| `gj_catalog` | `authenticated` | Read-only, for signed-in users. It names every table and column and carries sampled values, so it is not served to anonymous callers. Set `gj_catalog: public` to open it. |
+    # ko cannot set an environment variable, a command or a volume, so the
+    # role ldflag tells the binary it is the server image. A new install then
+    # listens where a container can be reached, and a volume it cannot write
+    # to is reported with the folder to mount.
+      - -X main.imageRole=server
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    gj_catalog: public
-| `gj_catalog` | `public` | Read-only. |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a09ead9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `178469e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

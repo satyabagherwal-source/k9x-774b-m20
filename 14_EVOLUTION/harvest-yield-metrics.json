@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:25:53.483Z",
-  "total_cycles_completed": 13058,
-  "total_learnings_persisted": 13058,
-  "total_rules_promoted": 11788,
+  "last_updated": "2026-11-27T10:34:23.900Z",
+  "total_cycles_completed": 13061,
+  "total_learnings_persisted": 13061,
+  "total_rules_promoted": 11790,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:23:05.845Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:31:39.108Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:31:53.767Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:40:20.824Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T10:25:53.483Z",
       "repository": "tokio-rs/tokio",
       "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:34:17.806Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:34:22.428Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:34:23.900Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

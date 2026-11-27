@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
   "source_version": "hf-tencent-hy-memory-30b-a3b",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T00:48:57.364Z",
+  "timestamp": "2026-11-27T10:34:22.640Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent/Hy-Memory-30B-A3B](https://huggingface.co/tencent/Hy-Memory-30B-A3B) (Revision: `hf-tencent`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T00:48:57.364Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:34:22.640Z`  
 > **Learning ID**: `learn-huggingface-tencent-hy-memory-30b-a3b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy-Memory-30B-A3B](https://huggingface.co/tencent/Hy-Memory-30B-A3B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:48:56.456Z  
+> **Harvest Timestamp**: 2026-11-27T10:34:13.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4829 downloads | 328 likes
+- **Stars / Engagement**: 4623 downloads | 328 likes
 
 ---
 

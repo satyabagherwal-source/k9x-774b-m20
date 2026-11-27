@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T10:25:53.486Z",
+  "last_updated": "2026-11-27T10:34:23.903Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2751,14 +2751,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "content_hash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
-      "verified_at": "2026-11-24T00:48:57.160Z",
+      "content_hash": "740a11057ed108007336bb6f5c4a5ffd26bb4c89f49daa80e718c9db20fad442",
+      "verified_at": "2026-11-27T10:34:22.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:48:57.160Z"
+      "last_updated": "2026-11-27T10:34:22.431Z"
     },
     "Addy0-com/free-open-technical-SEO-crawler": {
       "repository": "Addy0-com/free-open-technical-SEO-crawler",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
-      "verified_at": "2026-11-26T09:47:53.862Z",
+      "content_hash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
+      "verified_at": "2026-11-27T10:34:17.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T09:47:53.862Z"
+      "last_updated": "2026-11-27T10:34:17.809Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
-      "verified_at": "2026-11-27T08:14:44.999Z",
+      "content_hash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
+      "verified_at": "2026-11-27T10:34:23.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T08:14:44.999Z"
+      "last_updated": "2026-11-27T10:34:23.903Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

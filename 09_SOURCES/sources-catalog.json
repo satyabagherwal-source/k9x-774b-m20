@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "c9880e917b66829e8fac30c45cae5653dab845639aa4648ad75e6ecc55ebafac",
-    "lastHarvestedAt": "2026-11-24T00:48:57.143Z",
+    "contentHash": "740a11057ed108007336bb6f5c4a5ffd26bb4c89f49daa80e718c9db20fad442",
+    "lastHarvestedAt": "2026-11-27T10:34:22.416Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "e13b16bc",
+    "sourceVersion": "d82a8a7b",
     "license": "NOASSERTION",
-    "contentHash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
-    "lastHarvestedAt": "2026-11-26T09:47:53.835Z",
+    "contentHash": "8d06ab910685b27241f188ff7e2d4f1363a7e345eb5e1b8369b473ae5e686e04",
+    "lastHarvestedAt": "2026-11-27T10:34:17.797Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "c57c1b1c",
+    "sourceVersion": "91c1df80",
     "license": "Apache-2.0",
-    "contentHash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
-    "lastHarvestedAt": "2026-11-26T17:15:00.097Z",
+    "contentHash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
+    "lastHarvestedAt": "2026-11-27T10:34:23.853Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {
