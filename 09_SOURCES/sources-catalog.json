@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "24f28e0f",
+    "sourceVersion": "6837149e",
     "license": "Apache-2.0",
-    "contentHash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
-    "lastHarvestedAt": "2026-11-26T21:52:42.629Z",
+    "contentHash": "e68c8f57a9ef420dc6ccdfdb858fe09a3fa99199e84f1e41bab505bdca0f2eef",
+    "lastHarvestedAt": "2026-11-27T21:56:33.512Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "e97111d2",
+    "sourceVersion": "06f8d78a",
     "license": "MPL-2.0",
-    "contentHash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
-    "lastHarvestedAt": "2026-11-27T03:55:06.392Z",
+    "contentHash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
+    "lastHarvestedAt": "2026-11-27T21:56:41.190Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

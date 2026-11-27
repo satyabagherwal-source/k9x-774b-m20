@@ -13913,3 +13913,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1441b6a4` | Multi-dimensional audit evidence | 2026-11-27T21:39:09.137Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `f38b446f` | Multi-dimensional audit evidence | 2026-11-27T21:47:51.963Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `40f0b84f` | Multi-dimensional audit evidence | 2026-11-27T21:47:56.317Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `6837149e` | Multi-dimensional audit evidence | 2026-11-27T21:56:33.512Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `06f8d78a` | Multi-dimensional audit evidence | 2026-11-27T21:56:41.190Z |

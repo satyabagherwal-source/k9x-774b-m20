@@ -13880,3 +13880,5 @@
 | `CYCLE-20261127-7LXH` | `2026-11-27T21:39:09.125Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10970` | Yes (`fd5c67d7...`) |
 | `CYCLE-20261127-ITCE` | `2026-11-27T21:47:51.950Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10971` | Yes (`7ea87ea7...`) |
 | `CYCLE-20261127-IWPC` | `2026-11-27T21:47:56.304Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10972` | Yes (`7de45d4c...`) |
+| `CYCLE-20261127-TZRS` | `2026-11-27T21:56:33.496Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10973` | Yes (`e68c8f57...`) |
+| `CYCLE-20261127-U5P5` | `2026-11-27T21:56:41.177Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10974` | Yes (`dd1525c2...`) |

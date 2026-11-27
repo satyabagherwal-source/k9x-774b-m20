@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:48:02.838Z",
+  "last_updated": "2026-11-27T21:56:47.482Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26779,
+  "total_items": 26785,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113937,10 +113937,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "repository": "pimalaya/himalaya",
-      "source_version": "fceae497",
-      "content_hash": "b7be17517fbe9ee6f107d58f294ea4cb376e643d24526b106d7d7755856b4d6e",
+      "source_version": "6837149e",
+      "content_hash": "0fc7f469101c57dee7ec15a840f9a4e7a7900a2303835704649beab78c2819e2",
       "domain_letter": "B",
-      "persisted_at": "2026-11-25T14:41:44.086Z"
+      "persisted_at": "2026-11-27T21:56:33.992Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
@@ -113949,10 +113949,10 @@
       "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
       "repository": "pimalaya/himalaya",
-      "source_version": "24f28e0f",
-      "content_hash": "6b65b8e5d4aab02fb301bb241f79d18edb5818fca2fde5fee4d6e7389fdf0d99",
+      "source_version": "6837149e",
+      "content_hash": "93dc26e5590c2e65089e780a2c2ed8c48804fd257c08a7ecdee87b8bcc7125ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:52:43.285Z"
+      "persisted_at": "2026-11-27T21:56:34.192Z"
     },
     "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
       "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
@@ -113998,9 +113998,9 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca0579951c04872fa857d492aac635f8b0062efd2d457db01b7bb316e953a4ff",
+      "content_hash": "8eb01e4e5559222c6f138bf3766fc9a36138bf8f7a204494ac258e348d1c86f3",
       "domain_letter": "B",
-      "persisted_at": "2026-11-24T13:56:47.360Z"
+      "persisted_at": "2026-11-27T21:56:45.321Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings",
@@ -114010,9 +114010,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
       "repository": "pimalaya-himalaya-learnings",
       "source_version": "HEAD",
-      "content_hash": "e69e8641d188a2c9f9c9ece5b6f170a59618c98f777530aa3bec1e9c97843b35",
+      "content_hash": "5d0b7bc4e0556c17433af384f6d59f12fed87ac6e01181e2c1f7786bb2b82690",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:52:59.219Z"
+      "persisted_at": "2026-11-27T21:56:45.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
@@ -223918,8 +223918,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "e97111d2",
-      "content_hash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
+      "source_version": "06f8d78a",
+      "content_hash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -223982,6 +223982,11 @@
           "number": 10821,
           "title": "type runAsMaxID as uint32 to fix 32-bit builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10974,
+          "title": "harden the image verification matching rules",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223989,7 +223994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:55:06.025Z",
+      "verified_at": "2026-11-27T21:56:40.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224043,10 +224048,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "e97111d2",
-      "content_hash": "0ddf218d45bfaba632e4a768d2b22431a4e96670569dea495ed19a0252f6a8b5",
+      "source_version": "06f8d78a",
+      "content_hash": "48758e754d37f8f7262b2e8cdffa72bbea151210e622dafc5eebc82e647ef115",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:55:07.293Z"
+      "persisted_at": "2026-11-27T21:56:41.825Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -224541,9 +224546,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c521bce3267826e14889139580efed51545d77450b106de940da4ca552d542e",
+      "content_hash": "efbecf40927e9d4510512ded7c23687e4bf6d0070b85acbff5a77d3f63c2af4d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:55:16.158Z"
+      "persisted_at": "2026-11-27T21:56:46.424Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -230446,9 +230451,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "2374679f6e4922e37a862063912381542968b5cf85238954e22282770765e81f",
+      "content_hash": "340a38caef4aa83a2b4f129e806d6f644aaea6d8800768928bc6583b9c2ea13b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:57:52.087Z"
+      "persisted_at": "2026-11-27T21:56:47.282Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230458,9 +230463,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "586de00fc7236715211dbd50f7f1f04a5da33a29d06a712cdf6336e4f45a5f8a",
+      "content_hash": "8027f1f81778a04afedb91e63321cadec19e58932b6485ecf5c358b5d4a4dbcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:57:52.312Z"
+      "persisted_at": "2026-11-27T21:56:47.482Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -251713,8 +251718,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "24f28e0f",
-      "content_hash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
+      "source_version": "6837149e",
+      "content_hash": "e68c8f57a9ef420dc6ccdfdb858fe09a3fa99199e84f1e41bab505bdca0f2eef",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -251767,6 +251772,11 @@
           "number": 10780,
           "title": "fold the v3 pre-tag fixes into the spec, changelog and guide",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10973,
+          "title": "use the verbatim Apache-2.0 license text",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251774,7 +251784,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T21:52:42.371Z",
+      "verified_at": "2026-11-27T21:56:33.228Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -350605,13 +350615,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QJ6E-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UA8S-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "02ec2b5bacc3eb3e6deac00d200a1ee0b76ce4ea259a68d06a9fe13a5105dab2",
+      "content_hash": "1d77c9a84995280c15d5a69ebce3d1baf091aa80e296940281dbda9fe29c64fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:57:52.791Z"
+      "persisted_at": "2026-11-27T21:56:47.068Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -367800,6 +367810,82 @@
       "content_hash": "40d37420a10c4f333edb6b00fed01034b114536438aa9dd39f1a5bc0e73aa22e",
       "domain_letter": "L",
       "persisted_at": "2026-11-27T21:48:00.747Z"
+    },
+    "rule-10973": {
+      "learning_id": "rule-10973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10973,
+      "title": "use the verbatim Apache-2.0 license text",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "6837149e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:56:33.228Z"
+    },
+    "candidate_directive-use-the-verbatim-apache-2-0-license-text": {
+      "item_id": "candidate_directive-use-the-verbatim-apache-2-0-license-text",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U8Q0-use-the-verbatim-apache-2-0-license-text.md",
+      "title": "use the verbatim Apache-2.0 license text",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "29441083922945e634a68c8607655ef4949e5acccf91aa7c00e253569b39b3f3",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T21:56:45.099Z"
+    },
+    "rule-10974": {
+      "learning_id": "rule-10974",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10974,
+      "title": "harden the image verification matching rules",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "06f8d78a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:56:40.923Z"
+    },
+    "candidate_directive-harden-the-image-verification-matching-rules": {
+      "item_id": "candidate_directive-harden-the-image-verification-matching-rules",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U9FK-harden-the-image-verification-matching-rules.md",
+      "title": "harden the image verification matching rules",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0bb96ec6dda9c02b3ae2933de70880de935158809854adc5da01a7036b24d1b5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T21:56:46.019Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-siderolabs-talos-deployment-operations-intelligence-siderolabs-talos-core-invari.md",
+      "title": "Deployment & Operations Intelligence: siderolabs/talos Core Invariants",
+      "repository": "siderolabs/talos",
+      "source_version": "06f8d78a",
+      "content_hash": "eb319a666b8377510bee0c6b1e5d6e8b49843d77c2946e4cfc273b6fd2d5a5b8",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:56:41.629Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-siderolabs-talos-learnings-deployment-operations-intelligence-siderolabs-talos-l.md",
+      "title": "Deployment & Operations Intelligence: siderolabs-talos-learnings Core Invariants",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2b8dd099ea910afbedbc205d8cc3cc0a87fd6842d429000707bb39ec790a03c",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T21:56:46.221Z"
     }
   },
   "ai-builder-brain": {

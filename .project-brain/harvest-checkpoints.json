@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T21:47:56.326Z",
+  "last_updated": "2026-11-27T21:56:41.199Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
-      "verified_at": "2026-11-26T21:52:42.649Z",
+      "content_hash": "e68c8f57a9ef420dc6ccdfdb858fe09a3fa99199e84f1e41bab505bdca0f2eef",
+      "verified_at": "2026-11-27T21:56:33.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T21:52:42.649Z"
+      "last_updated": "2026-11-27T21:56:33.520Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
-      "verified_at": "2026-11-27T03:55:06.410Z",
+      "content_hash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
+      "verified_at": "2026-11-27T21:56:41.198Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:55:06.410Z"
+      "last_updated": "2026-11-27T21:56:41.198Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",

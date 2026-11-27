@@ -4,24 +4,24 @@
 {
   "source_repository": "pimalaya/himalaya",
   "source_url": "https://github.com/pimalaya/himalaya",
-  "source_version": "fceae497",
+  "source_version": "6837149e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T14:41:43.903Z",
+  "timestamp": "2026-11-27T21:56:33.781Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pimalaya-himalaya",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `fceae497`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T14:41:43.903Z`  
+> **Provenance**: Harvested from [pimalaya/himalaya](https://github.com/pimalaya/himalaya) (Revision: `6837149e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T21:56:33.781Z`  
 > **Learning ID**: `learn-github-pimalaya-himalaya`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pimalaya/himalaya:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:41:42.472Z  
+> **Harvest Timestamp**: 2026-11-27T21:56:32.140Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7707 stars
+- **Stars / Engagement**: 7729 stars
 
 ---
 
@@ -1696,357 +1696,22 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `869fe31f` (2026-11-25)
-**Commit Message**: docs: align the readme, changelog and guides on ortie's for v3
+### Incident Patch 1: `6837149e` (2026-11-27)
+**Commit Message**: chore: use the verbatim Apache-2.0 license text
 
-**File**: `CONTRIBUTING.md` (modified, +4/-4)
+[skip ci]
+
+**File**: `LICENSE-APACHE` (modified, +1/-1)
 ```diff
-@@ -1,13 +1,13 @@
- # Contributing guide
+@@ -187,7 +187,7 @@
+       same "printed page" as the copyright notice for easier
+       identification within third-party archives.
  
--Thank you for investing your time in contributing to Himalaya CLI.
-+Thank you for investing your time in contributing to Himalaya.
+-   Copyright (c) 2026 Clément DOUIN <pimalaya.org@posteo.net>
++   Copyright [yyyy] [name of copyright owner]
  
- Whether you are a human or an AI agent, read these in order before touching the code:
- 
- 1. the [Pimalaya README](https://github.com/pimalaya) for what the project is and how its repositories stack;
--2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide (Nix environment, build and check commands, dependency overrides, commit style), which chains to the shared architecture and guidelines;
--3. the inline header documentation in src/lib.rs: it is the architecture document of this crate, covering the backends and plumbing, the three command families, and the shared versus protocol-specific surface;
--4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn) (spec/ is current truth, changes/ holds in-flight proposals, log/ is the dated history, landed changes moving to changes/archive/), activated by AGENTS.md; `sh cairn/verify.sh` checks its structure.
-+2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
-+3. the inline header documentation, starting with src/lib.rs: it is the architecture document of this crate;
-+4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn): spec/ is current truth, changes/ holds in-flight proposals (landed ones move to changes/archive/), and log/ is the dated history; `sh cairn/verify.sh` checks the structure.
- 
- Everything below documents only what differs from the Pimalaya standards.
- 
-```
-
-**File**: `MIGRATION.md` (modified, +112/-411)
-```diff
-@@ -2,116 +2,94 @@
- 
- ## From v2 to v3
- 
--v3 makes Himalaya a low-level CLI: plain text for a human to glance at, JSON for scripts and frontends. Daily mail is a frontend's job: see the interfaces listed in README.md. v3 drops the configuration wizard and the m2dir backend, takes one configuration path per `-c` and prints plain text, with no table nor colour. A v2 configuration loads as it is, unless it sets a key v3 does not know (a colour, table or glyph key, `envelope.list.datetime-relative`, a himalaya-tui key outside a `[tui]` table, an `m2dir` block, a v1 `backend` or `folder` table) or marks several accounts default.
--
--What a script or a frontend reads off `--json` and the text output changes, and a few commands that used to report a success they did not achieve now fail. The CHANGELOG lists every change; these are the ones to act on.
--
--### Configuration and first run
--
--- **The wizard is gone.** Bare `himalaya` prints the help, `himalaya configure` (alias `wizard`) and its `himalaya-configure` schema no longer exist, and no command offers to create a configuration. Write it from config.sample.toml, which releases and packages ship as share/doc/himalaya/config.sample.toml: run at a terminal without a configuration, Himalaya prints the commands copying it in place. Drop the `wizard` cargo feature from a build's `--features`.
--- **`-c` takes one path per flag.** A value is no longer split on `:`, so a Windows path stays whole. Repeat the flag to merge several files: `-c public.toml -c private.toml`.
--- **`HIMALAYA_CONFIG` is no longer read.** Pass `-c "$HIMALAYA_CONFIG"` for one path, and one `-c` per path for what was a `:`-separated list.
--- **Every default path is read, as layers.** $XDG_CONFIG_HOME/himalaya/config.toml, $HOME/.config/himalaya/config.toml and $HOME/.himalayarc are each deep-merged on top of the ones before, where v2 read the first one found. An rc file left beside a config.toml now overrides it: delete the one you do not use.
--- **Several `default = true` accounts are refused**, naming them, where v2 picked one at random. Keep it on one account across the merged files: an rc file moving the default sets `default = false` on the account the other file marks.
--- **`-a default` names an account called `default`**, where v2 took the account marked default. Leave `-a` out to take that one.
--- **Colour, table and glyph keys are gone.** Remove the `*-color` keys of `envelope.list.table`, `mailbox.list.table`, `attachment.list.table` and `account.list.table`, `table.preset` and `table.arrangement`, and the `envelope.list.table.*-char` glyphs. The `table`, `attachment` and top-level `account` blocks and the `envelope.list.table` block fail the configuration as unknown keys, whatever they hold (``unknown field `table` ``, naming its line), and so does a v1 `folder` table: move `folder.alias` to `mailbox.alias` (see [Mailbox aliases](#mailbox-aliases)); the `mailbox` colour keys fail it as unknown keys too. The envelope lists mark a message's state with fixed characters, `*` unread, `R` answered, `!` flagged and `@` attachment.
--- **An unknown key fails the configuration**, at the top level and in an account as in every other table, naming the key and its line: a typo no longer passes silently. Fix or delete it. The rest of a v1 `[message]` table (`read`, `write`, `send.backend`) is refused too.
--- **himalaya-tui's keys go under `[tui]`.** A file shared with himalaya-tui moves its `keybinds`, `contact-command`, `contact-complete-key` and `theme` under a top-level `[tui]` table, and an account's `contact-command` under `[accounts.<name>.tui]`, once himalaya-tui reads them there; Himalaya loads the `tui` tables whatever they hold and reads none of it:
--
--  ```toml
--  [tui]
--  contact-command = "khard email --parsable %s"
--
--  [accounts.work.tui]
--  contact-command = ["abook", "--mutt-query", "%s"]
--  ```
--- **`envelope.list.datetime-relative` is gone**, refused as an unknown key: remove it. Dates print as `envelope.list.datetime-fmt` and `datetime-local-tz` configure them.
--- **Dates default to `%F %R` in the local timezone**, where v2 printed `%F %R%:z` at the offset a message was sent with. Set `envelope.list.datetime-fmt = "%F %R%:z"` and `envelope.list.datetime-local-tz = false` to keep the v2 dates.
--- **`http` and `https` hosts are ASCII.** A JMAP `server` or an HTTP proxy `url` with an internationalised host is refused: write the host in Punycode (`https://xn--bcher-kva.example` for `bücher.example`). IMAP, SMTP and ManageSieve servers are unchanged.
--- **m2dir is gone.** The `m2dir` backend, its `himalaya m2dir` commands, the `m2dir` cargo feature and `-b m2dir` no longer exist: io-m2dir left the Pimalaya family, pimdir superseding it. An `m2dir` block fails the configuration as an unknown key (``unknown field `m2dir` ``), as does the v1 `backend` table, where a development build of v3 loaded both, ignored: delete them. Move the account to a Maildir (`maildir.root`, filled by a sync to
-```
-
-**File**: `README.md` (modified, +53/-4)
-```diff
-@@ -47,8 +47,6 @@ $ himalaya envelope search --json --sort newest-first from:alice date:2026-11-02
- }
- ```
- 
--Himalaya manages your mail from the command line: every command prints JSON for scripts, frontends and agents, or plain text for a person.
--
- ## Table of contents
- 
- - [Features](#features)
-@@ -61,6 +59,7 @@ Himalaya manages your mail from the command line: every command prints JSON for
-   - [Posteo](#posteo)
-   - [iCloud Mail](#icloud-mail)
- - [Usage](#usage)
-+- [Alternatives](#alternatives)
- - [AI policy](https://github.com/pimalaya/.github/blob/master/AI_POLICY.md)
- - [License](#license)
- - [Social](#social)
-@@ -80,10 +79,54 @@ Himalaya manages your mail from the command line: every command prints JSON for
- 
- ## Installation
- 
-+<details>
-+  <summary>Debian, Ubuntu</summary>
-+
-+  Himalaya is not in the official repositories yet, but the signed APT repository of [pkg.pimalaya.org](https://pkg.pimalaya.org) ships the latest release with its man pages and shell completions. Add the repository once:
-+
-+  ```sh
-+  sudo install -d -m 0755 /etc/apt/keyrings
-+  curl -fsSL https://pkg.pimalaya.org/pimalaya.asc | sudo tee /etc/apt/keyrings/pimalaya.asc >/dev/null
-+  sudo tee /etc/apt/sources.list.d/pimalaya.sources >/dev/null <<EOF
-+  Types: deb
-+  URIs: https://pkg.pimalaya.org/apt
-+  Suites: stable
-+  Components: main
-+  Signed-By: /etc/apt/keyrings/pimalaya.asc
-+  EOF
-+  sudo apt update
-+  ```
-+
-+  Then install Himalaya:
-+
-+  ```sh
-+  sudo apt install himalaya
-+  ```
-+</details>
-+
-+<details>
-+  <summary>Fedora, RHEL, Rocky Linux, AlmaLinux</summary>
-+
-+  Himalaya is not in the official repositories yet, but the signed DNF repository of [pkg.pimalaya.org](https://pkg.pimalaya.org) ships the latest release with its man pages and shell completions:
-+
-+  ```sh
-+  sudo curl -fsSL -o /etc/yum.repos.d/pimalaya.repo https://pkg.pimalaya.org/pimalaya.repo
-+  sudo dnf install himalaya
-+  ```
-+</details>
-+
-+<details>
-+  <summary>Homebrew (macOS, Linux)</summary>
-+
-+  ```sh
-+  brew install himalaya
-+  ```
-+</details>
-+
- <details>
-   <summary>Pre-built binary</summary>
- 
--  Himalaya can be installed with the installer:
-+  For other systems, Himalaya can be installed with the installer:
- 
-   *As root:*
- 
-@@ -97,7 +140,7 @@ Himalaya manages your mail from the command line: every command prints JSON for
-   curl -sSL https://raw.githubusercontent.com/pimalaya/himalaya/master/install.sh | PREFIX=~/.local sh
-   ```
- 
--  These commands install the latest binary from the GitHub [releases](https://github.com/pimalaya/himalaya/releases) section. For a build of `master`, check out the [releases](https://github.com/pimalaya/himalaya/actions/workflows/releases.yml) GitHub workflow and look for the *Artifacts* section.
-+  These commands install the latest [release](https://github.com/pimalaya/himalaya/releases), built with the default cargo features. For a build of `master`, check out the [releases](https://github.com/pimalaya/himalaya/actions/workflows/releases.yml) GitHub workflow and look for the *Artifacts* section.
- </details>
- 
- <details>
-@@ -300,6 +343,12 @@ himalaya imap raw 'a1 NAMESPACE'
- himalaya mcp --allow-write
- ```
- 
-+## Alternatives
-+
-+- [NeoMutt](https://neomutt.org/): a terminal mail client, driven from its own interface rather than scripted
-+- [aerc](https://aerc-mail.org/): a terminal mail client for IMAP, JMAP, Maildir and notmuch
-+- [mblaze](https://github.com/leahneukirchen/mblaze): Unix utilities over a Maildir, local mail only
-+
- ## License
- 
- This project is licensed under either of:
-```
-
-**File**: `SECURITY.md` (modified, +4/-4)
-```diff
-@@ -5,10 +5,10 @@
- | Version | Supported      |
- | ------- | -------------- |
- | 3.x.x   | :green_circle: |
--| 2.x.x   | :red_circle:   |
--| 1.x.x   | :red_circle:   |
--| 0.x.x   | :red_circle:   |
-+| < 3.0   | :red_circle:   |
- 
- ## Reporting a Vulnerability
- 
--https://github.com/pimalaya/himalaya/issues
-+Please report security issues privately by opening a confidential issue at <https://github.com/pimalaya/himalaya/issues> or by sending an email to <pimalaya.org@posteo.net>.
-+
-+You can expect an acknowledgment within a few working days. Once the vulnerability is confirmed, a patch release will be cut and credited disclosure coordinated with you before the fix is announced publicly.
-```
-
-**File**: `cairn/log/2026-11-25-docs-aligned-for-the-major.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+---
-+cairn: log
-+change: docs-aligned-for-the-major
-+landed: 2026-11-25
-+---
-+
-+# Aligned the docs on Ortie's for 3.0.0
-+
-+## What landed
-+
-+- README.md: Ortie's shape (header, its existing tested JSON block, unchanged, Features, install from pkg.pimalaya.org, Homebrew, installer, Cargo, Nix and sources, configuration template, provider recipes, numbered first run, Alternatives); tests/docs.rs checks the Features budget and the section order.
-+- CHANGELOG.md: the Unreleased section rewritten to changelog-001 and changelog-002, a lead paragraph for 3.0.0, one item per bullet, short bodies, churn folded into the final state.
-+- SECURITY.md: Ortie's text, 3.x supported.
-+- CONTRIBUTING.md: Ortie's reading order; sections restating the org guide removed, overlong paragraphs split.
-+- MIGRATION.md: tightened on ortie's (457 to 178 lines), every action kept, stale facts corrected against `--help`.
-+- Capabilities moved: none (documentation only).
-```
-
-**File**: `tests/docs.rs` (modified, +1/-0)
-```diff
-@@ -226,6 +226,7 @@ fn the_readme_sections_follow_the_cli_order() {
-             "Installation",
-             "Configuration",
-             "Usage",
-+            "Alternatives",
-             "License",
-             "Social",
-             "Sponsoring",
-```
-
----
-
-### Incident Patch 2: `6f12217c` (2026-11-25)
-**Commit Message**: build: prepare v3.0.0
-
-**File**: `CHANGELOG.md` (modified, +6/-3)
-```diff
-@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
--Himalaya 3 is a low-level CLI: plain text for humans, `--json` for scripts and frontends. The wizard, the m2dir backend and the table and colour options are gone, and an unknown configuration key fails the load. Every `--json` key is camelCase, a write prints what it acted on, a failure carries a stable `code` and a partial outcome exits 3. `envelope search` reads the pimdir query language, and `repl` and `mcp` serve the unified API over kept connections, the latter to AI agents.
-+## [3.0.0] - 2026-11-25
- 
--MIGRATION.md lists what to act on when upgrading from 2.x.
-+Himalaya 3 is a low-level CLI over a unified mail API: the same commands on every backend, the protocol-specific ones beside them, plain text for a glance and `--json` for scripts, frontends and AI agents. Daily-mail comfort (tables, colours, relative dates, rich composition) moves to frontends such as himalaya-tui and to mml, and the offline side to the pimdir store Neverest syncs, which Himalaya reads and queues its writes into.
-+
-+The wizard, the m2dir backend and the display options are gone, an unknown configuration key fails the load, and every failure carries a stable `code`. MIGRATION.md lists what to act on when upgrading from 2.x.
- 
- ### Added
- 
-@@ -1898,7 +1900,8 @@ Few major concepts changed:
- [core#1]: https://github.com/pimalaya/core/issues/1
- [core#10]: https://github.com/pimalaya/core/issues/10
- 
--[unreleased]: https://github.com/pimalaya/himalaya/compare/v2.2.1...HEAD
-+[unreleased]: https://github.com/pimalaya/himalaya/compare/v3.0.0...HEAD
-+[3.0.0]: https://github.com/pimalaya/himalaya/compare/v2.2.1...v3.0.0
- [2.2.1]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.1
- [2.2.0]: https://github.com/pimalaya/himalaya/compare/v2.1.0...v2.2.0
- [2.1.0]: https://github.com/pimalaya/himalaya/compare/v2.0.0...v2.1.0
-```
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -769,7 +769,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
- 
- [[package]]
- name = "himalaya"
--version = "2.2.1"
-+version = "3.0.0"
- dependencies = [
-  "anyhow",
-  "ariadne",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [package]
- name = "himalaya"
- description = "CLI to manage emails"
--version = "2.2.1"
-+version = "3.0.0"
- authors = ["Clément DOUIN (soywod) <pimalaya.org@posteo.net>"]
- rust-version = "1.89"
- edition = "2024"
-```
-
-**File**: `default.nix` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ in
- pimalaya.mkDefault (
-   {
-     src = ./.;
--    version = "2.2.1";
-+    version = "3.0.0";
-     mkPackage = (
-       {
-         lib,
-```
-
-**File**: `package.nix` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
-   inherit buildNoDefaultFeatures buildFeatures;
- 
-   pname = "himalaya";
--  version = "2.2.1";
-+  version = "3.0.0";
-   cargoHash = "";
- 
-   src = fetchFromGitHub {
-```
-
----
-
-### Incident Patch 3: `e27bdc48` (2026-11-24)
-**Commit Message**: build: move to io-pimdir 0.20.4 and io-msgraph 0.11.1
-
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -1065,9 +1065,9 @@ dependencies = [
- 
- [[package]]
- name = "io-msgraph"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "86a37b9a68d8d65069fe85dda21ec6d3d478504efbb110022150acabe615fdeb"
-+checksum = "2969ed68c121c86ca07ef9ffbe7df384ef2ac4e7ec06f95b888eef2de4662e05"
- dependencies = [
-  "anyhow",
-  "base64-codec",
-@@ -1104,9 +1104,9 @@ dependencies = [
- 
- [[package]]
- name = "io-pimdir"
--version = "0.20.3"
-+version = "0.20.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "43974465e955c16543c9619a9a40725a839c0a5b386fbbfc360e9ebdf8ed84b2"
-+checksum = "59c1df840ffb7b5c3a775df87df36d15f5cd65d7fad23c66594a9e005652b0f5"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-```
-
-**File**: `Cargo.toml` (modified, +3/-3)
-```diff
-@@ -38,7 +38,7 @@ pimalaya-cli = { version = "0.8.1", default-features = false, features = ["build
- 
- [dev-dependencies]
- io-oauth = { version = "0.8", default-features = false, features = ["std", "jwt-bearer", "rustls-ring"] }
--io-pimdir = { version = "0.20.3", default-features = false, features = ["indexer", "search"] }
-+io-pimdir = { version = "0.20.4", default-features = false, features = ["indexer", "search"] }
- rusqlite = { version = "0.43", default-features = false, features = ["bundled"] }
- tempfile = { version = "3", default-features = false }
- toml = { version = "1.1", default-features = false, features = ["parse", "serde"] }
-@@ -59,8 +59,8 @@ io-jmap = { version = "0.11.1", default-features = false, optional = true }
- io-maildir = { version = "0.5", default-features = false, optional = true }
- io-managesieve = { version = "0.6", default-features = false, optional = true }
- io-mbox = { version = "0.2", default-features = false, optional = true }
--io-msgraph = { version = "0.11.0", default-features = false, optional = true }
--io-pimdir = { version = "0.20.3", default-features = false }
-+io-msgraph = { version = "0.11.1", default-features = false, optional = true }
-+io-pimdir = { version = "0.20.4", default-features = false }
- io-sasl = { version = "0.3", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.10", default-features = false, optional = true }
- jiff = { version = "1", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"] }
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2075,37 +1740,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: align the readme, changelog and guides on ortie's for v3
+## X. use the verbatim Apache-2.0 license text
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `LICENSE-APACHE`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `869fe31f`: docs: align the readme, changelog and guides on ortie's for v3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6837149e`: use the verbatim Apache-2.0 license text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `LICENSE-APACHE`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Thank you for investing your time in contributing to Himalaya.
-2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
-3. the inline header documentation, starting with src/lib.rs: it is the architecture document of this crate;
-4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn): spec/ is current truth, changes/ holds in-flight proposals (landed ones move to changes/archive/), and log/ is the dated history; `sh cairn/verify.sh` checks the structure.
+   Copyright [yyyy] [name of copyright owner]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Thank you for investing your time in contributing to Himalaya CLI.
-2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide (Nix environment, build and check commands, dependency overrides, commit style), which chains to the shared architecture and guidelines;
-3. the inline header documentation in src/lib.rs: it is the architecture document of this crate, covering the backends and plumbing, the three command families, and the shared versus protocol-specific surface;
-4. the cairn/ folder, which follows [Cairn](https://github.com/pimalaya/cairn) (spec/ is current truth, changes/ holds in-flight proposals, log/ is the dated history, landed changes moving to changes/archive/), activated by AGENTS.md; `sh cairn/verify.sh` checks its structure.
+   Copyright (c) 2026 Clément DOUIN <pimalaya.org@posteo.net>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `869fe31f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6837149e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

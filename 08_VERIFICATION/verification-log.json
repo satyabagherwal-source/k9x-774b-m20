@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-I6PY",
-    "timestamp": "2026-11-26T11:15:51.046Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-YYQ0",
-    "timestamp": "2026-11-26T11:28:53.832Z",
-    "repository": "KORMo-VL/KORMo-Web-11B",
-    "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-    "contentHash": "da9f71c616502ca062cf847454290983599ddca14c44dfa0459179b3927ba2a9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-YZLH",
     "timestamp": "2026-11-26T11:28:54.965Z",
     "repository": "tw93/Pake",
@@ -7490,6 +7460,36 @@
     "repository": "gluesql/gluesql",
     "learningId": "learn-github-gluesql-gluesql",
     "contentHash": "7de45d4c17f5cc6179fc2cdef9d86b99fe1c53b5948f66ef136119c40a72100f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-TZRS",
+    "timestamp": "2026-11-27T21:56:33.496Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "e68c8f57a9ef420dc6ccdfdb858fe09a3fa99199e84f1e41bab505bdca0f2eef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-U5P5",
+    "timestamp": "2026-11-27T21:56:41.177Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

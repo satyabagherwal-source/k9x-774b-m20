@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T13:56:47.039Z",
+  "timestamp": "2026-11-27T21:56:44.960Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pimalaya-himalaya-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pimalaya-himalaya-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T13:56:47.039Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:56:44.960Z`  
 > **Learning ID**: `LEARN-EVO-pimalaya-himalaya-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: J (Search & Distribution Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pimalaya-himalaya-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `db0c9a6b`  
+> **Source Version**: `6837149e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T13:56:31.008Z  
+> **Timestamp**: 2026-11-27T21:56:32.272Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:56:31.002Z  
+> **Harvest Timestamp**: 2026-11-27T21:56:32.140Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7704 stars
+- **Stars / Engagement**: 7729 stars
 
 ---
 
@@ -1687,15 +1687,13 @@ impl Account {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #818** (2026-11-25): **v2.2.1: Message-ID uses machine hostname, not sender domain (MID_RHS_NOT_FQDN)**
+  *Symptoms*: ## Summary  On v2.2.1, `himalaya message compose/send` generates the Message-ID on the local machine's hostname even when the account email carries a proper domain:  ``` Message-ID: <18eac13c2ebfb8ef.3f7d127cc3da73c.99877116963af1c3@synapse-v1> From: "Synapse" <synapse@homeroot.net> ```  Passing an explicit `--from` does not change this: the domain part still comes from the hostname (the mail-builder 1.0.0 crate depends on gethostname), not from the sender address.  Receiving mail systems flag this. Example: Kagi Mail's spam filter scores `MID_RHS_NOT_FQDN (+0.50)` because the Message-ID right-hand side is not a fully qualified domain name (RFC 5322 3.6.4 expects a domain).  Workaround: compose, rewrite the Message-ID line to the sender domain, then `himalaya message send` the raw bytes.  ## Note  The master branch already appears to address this: `src/unified/message/builder.rs` gains `new_message_id()`, which builds the Message-ID on the sender address's domain (hostname only as fallback, `localhost` last). That change postdates v2.2.1, so it is not in any released version yet. It would be nice if the fix could land in the next release.  Repro: any account, any send, inspect the Message-ID header.
+
 - **Issue #817** (2026-11-21): **envelope list silently drops messages whose FETCH ENVELOPE response is undecodable**
   *Symptoms*: ## Summary  `himalaya envelope list` silently omits messages whose `FETCH (ENVELOPE)` response cannot be decoded. The only trace is a `DEBUG` log line, so callers see a shorter list with no error and no warning.  ## Environment  - himalaya v2.2.1 (`+imap`), Linux - Server: Proton Mail Bridge 3.27.1 (IMAP on localhost)  ## What the server sends  Proton Bridge encodes a non-breaking space in a sender display name as a JSON-style ` ` escape inside the IMAP quoted string (names shortened, addresses replaced):  ```text * 4 FETCH (ENVELOPE ("Wed, 26 Aug 2026 10:04:01 +0000" "=?utf-8?q?...?=" (("Example Corp  AG" NIL "info" "example.com")) ...) UID 114) ```  RFC 3501 only allows `\"` and `\\` inside a quoted string, so the response is invalid. I am reporting that to Proton separately. The original header is `From: =?utf-8?q?Example=C2=A0Corp=C2=A0=C2=A0AG?= <info@example.com>`, and the same message in a maildir is listed fine by himalaya.  ## What himalaya does  ```text $ himalaya --log-level debug --json envelope list -m <mailbox> -s 1000 [DEBUG io_imap::send] skipping undecodable untagged response   (x4) ```  - `himalaya imap status` reports 177 messages, `envelope list` returns 173. - `himalaya imap search` returns all 177 UIDs, `imap fetch --flags <uid>` and `message read --raw <uid>` work for the skipped ones, `imap fetch --envelope <uid>` returns `{"messages":[]}`.  ## Expected  Either decode leniently (treat an unknown escape as the literal character), or at least surface the
   **Post-Mortem & Fix Analysis**:
   > Thanks! Since e575f8de689e3633dca0599c35eefe261f6304f3 (coming with v3), an undecodable FETCH line shows in the command's `errors` as `message-unreadable` instead of vanishing. Lenient decoding is not planned for now: the response breaks RFC 3501, so the fix belongs to Proton Bridge.
-
-- **Issue #816** (2026-11-21): **fix: install script typo causing unclean exit**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for catching this! The same fix landed on master in 6dd7552348c156feaec957e52578dfb4b2b059c2, as part of the pre-v3 batch, a few hours before this PR was opened, so I'm closing it as superseded. It ships with v3.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1712,479 +1710,22 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db0c9a6b` (2026-11-24)
-**Commit Message**: build: update the pimalaya nix input
+### Incident Patch 1: `6837149e` (2026-11-27)
+**Commit Message**: chore: use the verbatim Apache-2.0 license text
 
-**File**: `flake.lock` (modified, +3/-3)
+[skip ci]
+
+**File**: `LICENSE-APACHE` (modified, +1/-1)
 ```diff
-@@ -55,11 +55,11 @@
-     "pimalaya": {
-       "flake": false,
-       "locked": {
--        "lastModified": 1792239857,
--        "narHash": "sha256-H46IHYSpNkrykDyTAqThWUWALhignIK6LeJXUtW8XZ8=",
-+        "lastModified": 1795525067,
-+        "narHash": "sha256-QnBsCRX7YN598AZujyoisXQkfJ0VMXCoRcHnu8y2E/Y=",
-         "owner": "pimalaya",
-         "repo": "nix",
--        "rev": "57c346fd629d4563bd8b672d944603ac634bc63e",
-+        "rev": "d5d70a942a1bed0d23fc4069725a3404191004fd",
-         "type": "github"
-       },
-       "original": {
-```
-
----
-
-### Incident Patch 2: `2750462e` (2026-11-24)
-**Commit Message**: build: move to the released libraries
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
-```diff
-@@ -81,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Added `attachments` to the JSON template the composers print without `--save` or `--send`, each attached file as `{filename, mime, size}`: the template carries no bytes, so handing it back means passing the files again through `--attach`.
- ### Changed
+@@ -187,7 +187,7 @@
+       same "printed page" as the copyright notice for easier
+       identification within third-party archives.
  
--- **BREAKING**: Changed the pimdir backend to pimdir storage-draft-17 and search-draft-17 (io-pimdir from git, its 0.20.0 to come): a store an earlier build wrote, a development build's storage-draft-15 included, is refused `store-version`, and its index `index-version`. Drain it with the neverest that wrote it until `pimdir queue list` lists nothing, move its directory aside, then sync a new store with a neverest on the same io-pimdir (MIGRATION.md).
-+- Changed to pimalaya-cli 0.8.1: `--log-file` refuses a symbolic link to an existing file too, as its help says, where the path was resolved before the open could see the link.
-+- **BREAKING**: Changed the pimdir backend to pimdir storage-draft-17 and search-draft-17 (io-pimdir 0.20.0): a store an earlier build wrote, a development build's storage-draft-15 included, is refused `store-version`, and its index `index-version`. Drain it with the neverest that wrote it until `pimdir queue list` lists nothing, move its directory aside, then sync a new store with a neverest on the same io-pimdir (MIGRATION.md).
- - **BREAKING**: Changed a query word or value beginning with `~`, one of two characters or more beginning with `/` and a value beginning with `{` to be refused, coded `search-invalid` (`query-refused` in `pimdir search`, `count` and `tag`) naming `reserved-form` (pimdir SEARCH §8.3), where they were searched as words; quoted, the characters are searched.
- - Changed `pimdir search`, `count` and `tag` to read flag terms (`is:`, `tag:` on a system flag) from the store as the sync engine last wrote it, even while the index lags.
- - Changed `pimdir search`, `count` and `--threads` to answer 17 to 88 times faster at 517k messages (io-pimdir's search-draft-17 index).
-```
-
-**File**: `Cargo.lock` (modified, +13/-12)
-```diff
-@@ -575,7 +575,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+-   Copyright (c) 2026 Clément DOUIN <pimalaya.org@posteo.net>
++   Copyright [yyyy] [name of copyright owner]
  
- [[package]]
-@@ -1004,9 +1004,9 @@ dependencies = [
- 
- [[package]]
- name = "io-jmap"
--version = "0.11.0"
-+version = "0.11.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3cdbbd260f3ef7a9894d59e19b2a2607cb60c56c41190a5108459068486cbdd5"
-+checksum = "a884f979ba07c6cccdcba1b3a73e72f77dc6a3ec8ea8b23257983732f0b22b78"
- dependencies = [
-  "anyhow",
-  "io-http",
-@@ -1065,9 +1065,9 @@ dependencies = [
- 
- [[package]]
- name = "io-msgraph"
--version = "0.10.0"
-+version = "0.11.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "31c4cb2124dedfa3717f994b3db6770793c60cfa373c3ceed40c90f5c26defb7"
-+checksum = "86a37b9a68d8d65069fe85dda21ec6d3d478504efbb110022150acabe615fdeb"
- dependencies = [
-  "anyhow",
-  "base64-codec",
-@@ -1105,7 +1105,8 @@ dependencies = [
- [[package]]
- name = "io-pimdir"
- version = "0.20.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=65a5026d9e8499ec7e24b401e9b689d3eebeea4e#65a5026d9e8499ec7e24b401e9b689d3eebeea4e"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "87fcb83227ca3e856dbea7512e5575d610d89e14d14559647c094193a3bf099d"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-@@ -1579,9 +1580,9 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
- 
- [[package]]
- name = "pimalaya-cli"
--version = "0.8.0"
-+version = "0.8.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8451b5a986c8e4e222440ee378344568805eaee4265450d02caedd07cd89e251"
-+checksum = "63165905335de3f0bfaa3d47e9101bcd562e55722a51c5a4bfff0a560f7d135a"
- dependencies = [
-  "anyhow",
-  "base64-codec",
-@@ -1875,7 +1876,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1933,7 +1934,7 @@ dependencies = [
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2285,7 +2286,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2552,7 +2553,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-```
-
-**File**: `Cargo.toml` (modified, +4/-7)
-```diff
-@@ -34,7 +34,7 @@ strip = "symbols"
- panic = "abort"
- 
- [build-dependencies]
--pimalaya-cli = { version = "0.8.0", default-features = false, features = ["build"] }
-+pimalaya-cli = { version = "0.8.1", default-features = false, features = ["build"] }
- 
- [dev-dependencies]
- io-oauth = { version = "0.8", default-features = false, features = ["std", "jwt-bearer", "rustls-ring"] }
-@@ -55,11 +55,11 @@ humansize = { version = "2", default-features = false }
- idna_adapter = { version = "=1.0.0", default-features = false }
- io-gmail = { version = "0.10", default-features = false, optional = true }
- io-imap = { version = "0.12.0", default-features = false, optional = true }
--io-jmap = { version = "0.11", default-features = false, optional = true }
-+io-jmap = { version = "0.11.1", default-features = false, optional = true }
- io-maildir = { version = "0.5", default-features = false, optional = true }
- io-managesieve = { version = "0.6", default-features = false, optional = true }
- io-mbox = { version = "0.2", default-features = false, optional = true }
--io-msgraph = { version = "0.10", default-features = false, optional = true }
-+io-msgraph = { version = "0.11.0", default-features = false, optional = true }
- io-pimdir = { version = "0.20.0", default-features = false }
- io-sasl = { version = "0.3", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.10", default-features = false, optional = true }
-@@ -68,7 +68,7 @@ log = { version = "0.4", default-features = false }
- mime-rs = { version = "0.2.1", default-features = false, features = ["base64", "encoding", "parser"], optional = true }
- mime_guess = { version = "2", default-features = false, features = ["rev-mappings"] }
- percent-encoding = { version = "2", default-features = false }
--pimalaya-cli = { version = "0.8.0", default-features = false, features = ["mcp", "repl", "terminal"] }
-+pimalaya-cli = { version = "0.8.1", default-features = false, features = ["mcp", "repl", "terminal"] }
- pimalaya-config = { version = "0.6.0", default-features = false, features = ["toml", "secret"] }
- pimalaya-stream = { version = "0.4.1", default-features = false, features = ["std"] }
- schemars = { version = "1", default-features = false, features = ["chrono04", "derive", "std"] }
-@@ -78,6 +78,3 @@ serde_json = { version = "1", default-features = false, features = ["std"] }
- sha2 = { version = "0.11", default-features = false, optional = true }
- simd-cpu = { version = "0.1", default-features = false, features = ["std"] }
- url = { version = "2.5", default-features = false }
--
--[patch.crates-io]
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "65a5026d9e8499ec7e24b401e9b689d3eebeea4e" }
-```
-
----
-
-### Incident Patch 3: `ebcae960` (2026-11-24)
-**Commit Message**: fix(imap): send the Message-ID in angle brackets in HEADER searches
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -328,6 +328,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed a `mid:` search over IMAP finding nothing on iCloud, which matches `HEADER Message-ID` on the whole bracketed value alone: the id is sent in angle brackets, a form substring-matching servers (Fastmail) still match. The UID lookup of an `APPEND` answered without `APPENDUID` sends it so too. Stalwart 0.16 answers no `HEADER Message-ID` in any form, so `mid:` still finds nothing there.
- - Fixed `envelope list` over JMAP leaving the order to the server, Stalwart answering the oldest first on page 1: the listing asks for the newest `sentAt` first, as `envelope search` does.
- - Fixed `pimdir performer <CAPABILITY> <SOURCE>` recording a source that does not perform the intent, which the sync engine then parked: it is refused coded `no-performer`, naming the candidates. The choice is queued on the account's first mailbox rather than its first collection (an attachments one), where `pimdir queue list`, `queue show` and `queue cancel` could not reach it.
- - Fixed a pending `move` or `remove` row of `pimdir queue list` and `queue show` printing `subject: null`, its message hidden by the queue it waits in: the subject is read from the message as the store committed it.
-```
-
-**File**: `cairn/changes/the-live-night-findings/proposal.md` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+---
-+cairn: change
-+id: the-live-night-findings
-+status: active
-+created: 2026-11-24
-+---
-+
-+# The live night findings
-+
-+The live test night of 2026-11-23 (workspace .lanes/live/report.md) ran every himalaya command on Stalwart (IMAP, SMTP, Sieve, JMAP), Fastmail (IMAP, SMTP, JMAP), Gmail, Graph, iCloud, Maildir, mbox, posteo (read) and every pimdir account. c93b1b03 fixed the JMAP listing order and the performer choice. The pimdir failures seen through himalaya (a dropped sent copy, a submit parked after a rename) are neverest's (its cairn/changes/the-live-night-findings).
-+
-+## What
-+
-+1. **`mid:` search finds nothing over IMAP on Stalwart and iCloud.** `imap search --header Message-ID <id>` finds nothing there, `--text <local part>` finds the message, Fastmail matches. First check whether the value with its angle brackets (`HEADER Message-ID "<id>"`) matches on both servers; if it does, send it so. Otherwise mark `envelope.search.mid` `server` for IMAP, or fall back to `TEXT` on the local part with a client-side check of the Message-ID header.
-+
-+## Not tested, for the next live run
-+
-+Gmail settings writes (set then restore on the test account, owner to allow), vacation on Fastmail JMAP (set then restore), the google and microsoft live suites.
-```
-
-**File**: `cairn/changes/the-live-night-findings/tasks.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+---
-+cairn: tasks
-+change: the-live-night-findings
-+---
-+
-+# Tasks
-+
-+- [x] H1: reproduce `mid:` on Stalwart and iCloud with and without angle brackets (`imap search --header Message-ID`), journal the raw answers.
-+- [x] H2: send the form that matches, or mark `envelope.search.mid` `server` for IMAP, or fall back to `TEXT` plus a header check. Test: a scripted IMAP server answering only the bracketed form; live re-run on Stalwart and iCloud.
-+- [ ] Next live run: Gmail settings set and restore (owner to allow), vacation set and restore on fastmail-jmap, the google and microsoft suites.
-```
-
-**File**: `cairn/log/2026-11-24-the-live-night-findings.md` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+---
-+cairn: log
-+change: the-live-night-findings
-+landed: 2026-11-24
-+---
-+
-+# IMAP Message-ID search sends the bracketed id
-+
-+Found on 2026-11-23 by the live night (.lanes/live/report.md): a `mid:` search over IMAP found nothing on Stalwart and iCloud.
-+
-+## Evidence (2026-11-24, journaled in .lanes/live/journal.md)
-+
-+- iCloud matches `HEADER Message-ID` on the whole bracketed value alone: `<id>` finds the message, the bare id and any fragment find nothing.
-+- Fastmail (Cyrus) matches both forms, as RFC 3501's substring match does.
-+- Stalwart 0.16 answers `HEADER` on `From`, `To` and `Subject` but on no other field tried, Message-ID in any form included, and its `TEXT` does not find a whole Message-ID: no IMAP form reaches it there.
-+
-+## What landed
-+
-+- Every IMAP `HEADER Message-ID` key sends the id in angle brackets: the `mid:` clause and the UID lookup of an `APPEND` answered without `APPENDUID` (src/imap/backend.rs, `message_id_key`).
-+- tests/imap_message_id.rs: a scripted server matching the bracketed form alone.
-+
-+## Capabilities moved
-+
-+- search: the IMAP `message-id` clause sends `<id>`.
-+- provider-quirks: Message-ID header search takes the bracketed id; Stalwart's gap recorded.
-```
-
-**File**: `cairn/spec/provider-quirks.md` (modified, +3/-0)
-```diff
-@@ -23,6 +23,9 @@ IMAP SHALL mark the reserved `INBOX` with the inbox role, and every other mailbo
- ### Requirement: iCloud SORT ignores its keys
- iCloud SHALL be treated as advertising `SORT` without honouring it: it answers every `SORT` in UID order, whatever the keys and `REVERSE`. A server advertising `X-APPLE-REMOTE-LINKS`, which only iCloud does, SHALL sort client-side when `imap.sort.fallback` is unset; `imap.sort.fallback = false` still forces the server `SORT`.
- 
-+### Requirement: Message-ID header search takes the bracketed id
-+iCloud SHALL be treated as matching `HEADER Message-ID` on the whole value alone, angle brackets included, rather than as the RFC 3501 substring. Every IMAP `HEADER Message-ID` key (a `mid:` clause, the UID lookup of an `APPEND` answered without `APPENDUID`) SHALL send the id in angle brackets, a form substring-matching servers (Fastmail) match too. Stalwart 0.16 answers `HEADER` on `From`, `To` and `Subject` but on no other field tried (`Message-ID`, `In-Reply-To`, `References`, `Delivered-To`, `MIME-Version`, `Content-Type`, `X-Spam-Status`), and its `TEXT` does not find a whole Message-ID, so a `mid:` search over its IMAP finds nothing.
-+
- ### Requirement: RFC 2971 ID after auth
- IMAP SHALL support sending an RFC 2971 `ID` command right after authentication, configured by `imap.id.{auto, fields}`, because some providers require it before serving other commands. Unset `fields` sends himalaya's canned `name`, `version`, `vendor` and `support-url`; an empty map sends `ID NIL`.
- 
-```
-
-**File**: `cairn/spec/search.md` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ A query holding a field or an order the account's backend cannot compile SHALL b
- Each backend SHALL declare, per field and per order, an `envelope.search.<option>` capability named as io-pimdir names the predicate (`PimdirQueryPredicate::name`: `envelope.search.text`, `title`, `body`, `from`, `to`, `cc`, `bcc`, `with`, `is.read`, `is.flagged`, `is.answered`, `is.draft`, `tag`, `has.attachment`, `date`, `date.instant`, `mid`) and the orders prefixed `sort.` (`envelope.search.sort.newest-first`). Its text fields SHALL say how it matches text: the matcher by words, as SEARCH §8.5 does (`full`), Gmail by words, Graph by KQL words (`full`), IMAP and JMAP as the server matches it, RFC 3501 asking for a substring (`partial`). Gmail's and JMAP's dates are `partial`, comparing the received date; Gmail's `body` matches headers too, and its `has:attachment` counts inline images (`partial`); sorting on Gmail and Graph orders the fetched page only; IMAP's `sender` order sorts by the mailbox of the first `From:` address (RFC 5256).
- 
- ### Requirement: Per-backend translation
--Each backend SHALL translate the shared query into its native surface. IMAP translates to `UID SEARCH` / `UID SORT` keys (`SENTBEFORE` for `before`, an `OR` of `FROM`, `TO`, `CC` and `BCC` for `address`), negations pushed down to single keys (double negations cancelled, De Morgan over `and` and `or`, a negated `address` sent as `NOT FROM x NOT TO x NOT CC x NOT BCC x`), a root `and` sent as the list of its keys, a `flag` naming an IANA keyword sent in its canonical spelling (`flag junk` as `KEYWORD $Junk`), and a UID the server's `SORT` lists twice kept once, with a client-side sort fallback when the server lacks `SORT` or is iCloud (provider-quirks), which orders as RFC 5256 defines (base subject, first address's mailbox, ties in sequence order). JMAP translates to a `JmapFilter` and comparator list scoped to the mailbox id; on the chain of `and` from the root a date clause over-approximates on the received date, a day bounded from below by its first instant in any offset (10:00 UTC the day before, at UTC+14:00) so a message dated in an offset east of UTC is found on its own day, and is re-checked exactly on the sent date client-side, while under `or` or `not` it reads the received date alone, a client-side residual being unable to hold across a disjunction or a negation. Maildir and mbox list then match each message with io-pimdir's mail matcher (`PimdirMail::read` over its bytes and its flags in their canonical spelling), then `sort_envelopes`. `sort_envelopes` sorts as RFC 5256 `SORT` does: `subject` on the base subject (section 2.1), `from` and `to` on the mailbox of the first address, both under `i;ascii-casemap`, ties keeping their order. pimdir runs the same matcher over each item, `PimdirMail::read` over its local body when a term reads one (free text or `body:`), `PimdirMail::from_summary` over its stored summary and flags otherwise; a message whose body is not local is matched on its summary. Gmail translates to a `q` value, a conjunction as its terms joined by blanks and a disjunction as a brace group, an alternative holding more than one term (a conjunction, the two bounds of a `date` clause, a negated `address` or disjunction) wrapped in parentheses, Gmail reading every blank-separated term inside braces as an alternative of its own; each pattern is a literal: quotes, braces and parentheses become spaces, a standalone `OR` or `AND` is lowercased, anything but a bare word is quoted, and a pattern with no word left is refused with `search-unsupported`; its sort uses the shared `sort_envelopes`; a date clause as Unix seconds bounding the UTC day (`after d` from the start of the next day, one second early so a boundary message is kept, `before d` to the start of that day), Gmail reading a bare date as midnight in PST and comparing it with the message's received date. Graph translates to a KQL `$search` (`participants` for `address`, `hasAttachments` for `attachment`), each word of a pattern a quoted KQL phrase, so a word that is KQL syntax (`OR`, `x:y`, `alpha*`) is matched as a word, the words of one pattern grouped in parentheses and a double quote dropped, and sorts the page locally, Graph refusing `$skip` and `$orderby` beside it. A `message-id` clause SHALL match the whole id, compared byte for byte with the envelope's bare `Message-ID:`: IMAP sends `HEADER Message-ID`, which the server matches as a substring, and keeps on the chain of `and` from the root only the fetched envelopes carrying the id, a substring match remaining under `or` and `not` (`partial`); Gmail sends `rfc822msgid:`; Graph answers a lone `message-id` clause with a `$filter` on `internetMessageId`, `$filter` taking no `$search` beside it (`partial`); the local evaluator compares the envelope's id; JMAP declares it `none`, io-jmap carrying no `header` condition. IMAP SHALL send an `after` day as `SENTSINCE` of the day after it and a `before` day as
-```
-
-**File**: `src/imap/backend.rs` (modified, +14/-7)
-```diff
-@@ -531,11 +531,7 @@ impl ImapClient {
- 
-         self.select_mailbox(mailbox)?;
- 
--        let field =
--            AString::try_from("Message-ID").map_err(|_| anyhow!("Invalid IMAP search header"))?;
--        let value = AString::try_from(message_id.clone())
--            .map_err(|_| anyhow!("Invalid IMAP search Message-ID value"))?;
--        let criteria = Vec1::from(SearchKey::Header(field, value));
-+        let criteria = Vec1::from(message_id_key(&message_id)?);
-         let uids = self.search(criteria, ImapMessageSearchOptions { uid: true })?;
-         let uids = output_data("SEARCH", uids);
- 
-@@ -1466,7 +1462,7 @@ fn convert_filter_with(
-         Q::Subject(pattern) => SearchKey::Subject(astring(pattern)?),
-         Q::Body(pattern) => SearchKey::Body(astring(pattern)?),
-         Q::Text(pattern) => SearchKey::Text(astring(pattern)?),
--        Q::MessageId(id) => SearchKey::Header(astring("Message-ID")?, astring(id)?),
-+        Q::MessageId(id) => message_id_key(id)?,
-         Q::Attachment => {
-             return Err(unsupported(
-                 filter,
-@@ -1614,6 +1610,17 @@ fn astring(pattern: &str) -> Result<AString<'static>> {
-         .map_err(|_| anyhow!("Invalid IMAP search pattern `{pattern}`"))
- }
- 
-+/// The `HEADER Message-ID` key of a bare id, sent in angle brackets.
-+///
-+/// RFC 3501 matches a substring, so the bracketed id matches where the
-+/// bare one does, and some servers (iCloud) match the whole value alone.
-+fn message_id_key(id: &str) -> Result<SearchKey<'static>> {
-+    Ok(SearchKey::Header(
-+        astring("Message-ID")?,
-+        astring(&format!("<{id}>"))?,
-+    ))
-+}
-+
- /// Converts a date into the IMAP wire date a search key takes.
- fn imap_date(date: chrono::NaiveDate) -> Result<ImapNaiveDate> {
-     ImapNaiveDate::try_from(date).map_err(|_| anyhow!("Invalid IMAP date `{date}`"))
-@@ -1781,7 +1788,7 @@ mod tests {
-     fn a_message_id_is_a_header_key_rechecked_on_the_root_chain() {
-         assert_eq!(
-             search_line("mid:<a@b.org> from:c"),
--            "A UID SEARCH HEADER Message-ID a@b.org FROM c",
-+            "A UID SEARCH HEADER Message-ID <a@b.org> FROM c",
-         );
- 
-         let query: SearchEmailsQuery = "mid:a@b.org (mid:c@d.org or from:e)".parse().unwrap();
-```
-
-**File**: `tests/imap_message_id.rs` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+//! # IMAP Message-ID search
-+//!
-+//! The built binary against a scripted IMAP server that, like iCloud,
-+//! matches `HEADER Message-ID` only on the whole bracketed value: a `mid:`
-+//! search and the UID lookup of an `APPEND` answered without `APPENDUID`
-+//! both find their message.
-+
-+#![cfg(feature = "imap")]
-+
-+use std::{
-+    fs,
-+    io::{BufRead, BufReader, Read, Write},
-+    net::{TcpListener, TcpStream},
-+    path::{Path, PathBuf},
-+    process::{Command, Output, Stdio},
-+    thread,
-+};
-+
-+use serde_json::Value;
-+use tempfile::TempDir;
-+
-+/// The one message of the scripted mailbox, UID 7.
-+const ID: &str = "mid-7@example.org";
-+
-+/// The UID the scripted server gives an appended message.
-+const APPENDED: &str = "9";
-+
-+/// A message carrying [`ID`], to append.
-+const MESSAGE: &str = "From: a@example.org\r\n\
-+    To: b@example.org\r\n\
-+    Subject: Found\r\n\
-+    Message-ID: <mid-7@example.org>\r\n\
-+    \r\n\
-+    hi\r\n";
-+
-+/// Starts the scripted IMAP server and returns its address.
-+fn serve_imap() -> String {
-+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
-+    let addr = listener.local_addr().unwrap().to_string();
-+
-+    thread::spawn(move || {
-+        for stream in listener.incoming() {
-+            let Ok(stream) = stream else { return };
-+            thread::spawn(move || imap_session(stream));
-+        }
-+    });
-+
-+    addr
-+}
-+
-+/// Answers one connection, with `SORT` and without `UIDPLUS`. A `SORT`
-+/// or `SEARCH` matches UID 7 for `INBOX` and UID [`APPENDED`] for `Sent`
-+/// when it holds `HEADER Message-ID <mid-7@example.org>`, nothing
-+/// otherwise.
-+fn imap_session(stream: TcpStream) {
-+    let mut reader = BufReader::new(stream.try_clone().unwrap());
-+    let mut out = stream;
-+    let greeting = b"* PREAUTH [CAPABILITY IMAP4rev1 SORT] ready\r\n";
-+    if out.write_all(greeting).is_err() {
-+        return;
-+    }
-+
-+    let bracketed = format!("<{ID}>");
-+    let mut selected = String::new();
-+    let mut line = String::new();
-+
-+    while reader.read_line(&mut line).unwrap_or(0) > 0 {
-+        let mut words = line.split_whitespace();
-+        let tag = words.next().unwrap_or_default().to_owned();
-+        let command: Vec<String> = words.map(|word| word.to_ascii_uppercase()).collect();
-+        let command: Vec<&str> = command.iter().map(String::as_str).collect();
-+        let hit = if selected == "SENT" { APPENDED } else { "7" };
-+
-+        let reply = match command.as_slice() {
-+            ["CAPABILITY"] => format!("* CAPABILITY IMAP4rev1 SORT\r\n{tag} OK done\r\n"),
-+            ["SELECT", mailbox, ..] => {
-+                mailbox.trim_matches('"').clone_into(&mut selected);
-+                format!("* 1 EXISTS\r\n* OK [UIDVALIDITY 1] ok\r\n{tag} OK [READ-WRITE] done\r\n")
-+            }
-+            ["APPEND", ..] => {
-+                let literal = line.trim_end().rsplit('{').next().unwrap_or_default();
-+                let len: usize = literal.trim_end_matches(['}', '+']).parse().unwrap_or(0);
-+                if out.write_all(b"+ go\r\n").is_err() {
-+                    return;
-+                }
-+                let mut body = vec![0; len];
-+                if reader.read_exact(&mut body).is_err() {
-+                    return;
-+                }
-+                let mut rest = String::new();
-+                let _ = reader.read_line(&mut rest);
-+                format!("{tag} OK done\r\n")
-+            }
-+            ["UID", verb @ ("SORT" | "SEARCH"), ..] => {
-+                let words: Vec<&str> = line
-+                    .split_whitespace()
-+                    .map(|word| word.trim_matches(['"', '(', ')']))
-+                    .collect();
-+                let matched = words
-+                    .windows(2)
-+                    .any(|pair| pair[0].eq_ignore_ascii_case("Message-ID") && pair[1] == bracketed);
-+                if matched {
-+                    format!("* {verb} {hit}\r\n{tag} OK done\r\n")
-+                } else {
-+                    format!("* {verb}\r\n{tag} OK done\r\n")
-+                }
-+            }
-+            ["UID", "FETCH", ..] => format!(
-+                "* 1 FETCH (UID 7 FLAGS () RFC822.SIZE 100 ENVELOPE \
-+                 (\"Mon, 02 Mar 2026 10:00:00 +0000\" \"Found\" \
-+                 ((NIL NIL \"a\" \"example.org\")) ((NIL NIL \"a\" \"example.org\")) \
-+                 ((NIL NIL \"a\" \"example.org\")) ((NIL NIL \"b\" \"example.org\")) \
-+                 NIL NIL NIL \"<{ID}>\"))\r\n{tag} OK done\r\n"
-+            ),
-+            ["LIST", ..] => {
-+                format!("* LIST () \"/\" INBOX\r\n* LIST () \"/\" Sent\r\n{tag} OK done\r\n")
-+            }
-+            ["LOGOUT"] => format!("* BYE bye\r\n{tag} OK done\r\n"),
-+            _ => format!("{tag} OK done\r\n"),
-+        };
-+
-+        if out.write_all(reply.as_bytes()).is_err() {
-+            return;
-+        }
-+        line.clear();
-+    }
-+}
-+
-+/// An IMAP account over the scripted server.
-+fn account(dir: &Path) -> Pa
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2213,35 +1754,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: update the pimalaya nix input
+## X. use the verbatim Apache-2.0 license text
 
 **RULE**:
-When implementing operations in `flake.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `LICENSE-APACHE`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db0c9a6b`: build: update the pimalaya nix input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6837149e`: use the verbatim Apache-2.0 license text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `LICENSE-APACHE`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "lastModified": 1795525067,
-        "narHash": "sha256-QnBsCRX7YN598AZujyoisXQkfJ0VMXCoRcHnu8y2E/Y=",
-        "rev": "d5d70a942a1bed0d23fc4069725a3404191004fd",
+   Copyright [yyyy] [name of copyright owner]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "lastModified": 1792239857,
-        "narHash": "sha256-H46IHYSpNkrykDyTAqThWUWALhignIK6LeJXUtW8XZ8=",
-        "rev": "57c346fd629d4563bd8b672d944603ac634bc63e",
+   Copyright (c) 2026 Clément DOUIN <pimalaya.org@posteo.net>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db0c9a6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6837149e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

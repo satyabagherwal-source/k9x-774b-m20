@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T03:55:15.428Z",
+  "timestamp": "2026-11-27T21:56:45.883Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-siderolabs-talos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [siderolabs-talos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T03:55:15.428Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:56:45.883Z`  
 > **Learning ID**: `LEARN-EVO-siderolabs-talos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `e97111d2`  
+> **Source Version**: `06f8d78a`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T03:55:04.763Z  
+> **Timestamp**: 2026-11-27T21:56:39.980Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T03:55:04.757Z  
+> **Harvest Timestamp**: 2026-11-27T21:56:39.974Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11600 stars
+- **Stars / Engagement**: 11605 stars
 
 ---
 
@@ -1063,19 +1063,19 @@ func CoreDNSService(spec *k8s.BootstrapManifestsConfigSpec) runtime.Object {
 					Name:       "dns",
 					Port:       53,
 					Protocol:   corev1.ProtocolUDP,
-					TargetPort: intstr.FromInt(53),
+					TargetPort: intstr.FromInt32(53),
 				},
 				{
 					Name:       "dns-tcp",
 					Port:       53,
 					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(53),
+					TargetPort: intstr.FromInt32(53),
 				},
 				{
 					Name:       "metrics",
 					Port:       9153,
 					Protocol:   corev1.ProtocolTCP,
-					TargetPort: intstr.FromInt(9153),
+					TargetPort: intstr.FromInt32(9153),
 				},
 			},
 		},
@@ -1227,7 +1227,7 @@ func CoreDNSDeployment(spec *k8s.BootstrapManifestsConfigSpec) runtime.Object {
 			Strategy: appsv1.DeploymentStrategy{
 				Type: appsv1.RollingUpdateDeploymentStrategyType,
 				RollingUpdate: &appsv1.RollingUpdateDeployment{
-					MaxUnavailable: new(intstr.FromInt(1)),
+					MaxUnavailable: new(intstr.FromInt32(1)),
 				},
 			},
 			Selector: &metav1.LabelSelector{
@@ -1329,7 +1329,7 @@ func CoreDNSDeployment(spec *k8s.BootstrapManifestsConfigSpec) runtime.Object {
 							LivenessProbe: &corev1.Probe{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/health",
-									Port:   intstr.FromInt(8080),
+									Port:   intstr.FromInt32(8080),
 									Scheme: corev1.URISchemeHTTP,
 								},
 								InitialDelaySeconds: 60,
@@ -1340,7 +1340,7 @@ func CoreDNSDeployment(spec *k8s.BootstrapManifestsConfigSpec) runtime.Object {
 							ReadinessProbe: &corev1.Probe{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/ready",
-									Port:   intstr.FromInt(8181),
+									Port:   intstr.FromInt32(8181),
 									Scheme: corev1.URISchemeHTTP,
 								},
 							},
@@ -2162,11 +2162,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15105** (2026-11-26): **chore: refactor bgp tests**
-  *Symptoms*: Refactor BGP test to drop export_test.go semantics Also use proto.Equal to compare bgp messages
+- **Issue #15115** (2026-11-27): **fix: avoid ETXTBSY flake in fake mdadm scripts**
+  *Symptoms*: Parallel tests wrote the fake mdadm script and exec'd it while other tests forked; a child inheriting the write fd made exec fail with "text file busy". Exec one wrapper written in TestMain and keep per-test bodies as plain data behind a symlink.  Signed-off-by: Mateusz Urbanek <mateusz.urbanek@siderolabs.com> 
 
-- **Issue #15103** (2026-11-26): **release(v1.15.0-beta.1): prepare release**
-  *Symptoms*: This is the official v1.15.0-beta.1 release. 
+- **Issue #15109** (2026-11-27): **fix: harden the image verification matching rules**
+  *Symptoms*: Normalize the reference around the port number to make ghcr.io and ghcr.io:443 match each other.  Add an important security boundary: without default deny rule, any image can be pulled via another registry. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2183,402 +2183,809 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b788950c` (2026-11-26)
-**Commit Message**: fix: type runAsMaxID as uint32 to fix 32-bit builds
+### Incident Patch 1: `c5d94504` (2026-11-27)
+**Commit Message**: fix: harden the image verification matching rules
 
-runAsMaxID was an untyped constant (4294967294). Passing it to
-fmt.Errorf made it an int, and that overflows on 32-bit targets. As a
-result, talosctl failed to build for linux/armv7.
+Normalize the reference around the port number to make ghcr.io and
+ghcr.io:443 match each other.
 
-Fixes regression introduced in 3ad7cc32e ("refactor: align ctr.runas with OCI - use uint32")
+Add an important security boundary: without default deny rule, any image
+can be pulled via another registry.
 
-Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
-**File**: `pkg/machinery/config/types/container/runas.go` (modified, +1/-1)
+**File**: `internal/pkg/containers/image/imageref/imageref.go` (modified, +80/-15)
 ```diff
-@@ -53,7 +53,7 @@ type ContainerRunAs struct {
- // runAsMaxID is the highest user or group ID a container can run as.
- //
- // 4294967295 ((uid_t)-1) is not a valid ID: the kernel reads it as "leave unchanged".
--const runAsMaxID = 4294967294
-+const runAsMaxID uint32 = 4294967294
+@@ -33,6 +33,13 @@ const (
+ 	// the very same image as one written against `docker.io`.
+ 	endpointDockerHubDomain = "registry-1.docker.io"
  
- // Check interfaces.
- var _ config.ContainerRunAsConfig = &ContainerRunAs{}
++	// hubDockerHubDomain is one more name the Docker Hub registry endpoint is served under.
++	hubDockerHubDomain = "registry.hub.docker.com"
++
++	// defaultPort is the port a registry is reached on when the reference carries none: an
++	// image is always pulled over HTTPS unless a registry mirror is configured to do otherwise.
++	defaultPort = "443"
++
+ 	// officialRepoPrefix is the implicit namespace of the official Docker Hub images.
+ 	officialRepoPrefix = "library/"
+ 
+@@ -46,9 +53,11 @@ const (
+ // On top of the normalization done by github.com/distribution/reference (defaulting the domain,
+ // adding the implicit `library/` namespace on Docker Hub, defaulting the tag to `latest` and
+ // dropping the tag from a reference carrying both a tag and a digest), the registry domain is
+-// lower-cased, as registry domains are DNS names and DNS is case-insensitive, and the alternative
+-// spellings of the Docker Hub domain, `index.docker.io` and `registry-1.docker.io`, are folded
+-// into `docker.io`.
++// lower-cased, as registry domains are DNS names and DNS is case-insensitive, the port is reduced to
++// its canonical decimal spelling and dropped when it is the default one (`registry:443/image` and
++// `registry:0443/image` are both `registry/image`), and the alternative spellings of the Docker Hub
++// domain, `index.docker.io`, `registry-1.docker.io` and `registry.hub.docker.com`, are folded into
++// `docker.io`.
+ //
+ // Normalization is idempotent: parsing the result again yields the same reference.
+ func Parse(imageRef string) (reference.Named, error) {
+@@ -104,14 +113,14 @@ func RepositoryKey(namedRef reference.Named) string {
+ 	return reference.TrimNamed(namedRef).String()
+ }
+ 
+-// NormalizePattern normalizes the registry domain of an image reference glob pattern, so that the
+-// pattern is matched in the same namespace the output of [RepositoryKey] is in.
++// NormalizePattern normalizes an image reference glob pattern, so that the pattern is matched in
++// the same namespace the output of [RepositoryKey] is in.
+ //
+-// Only the domain part of the pattern is normalized: the repository part of a canonical reference
+-// is always lower-case already, so folding its case would make a pattern match references it was
+-// not written for.
++// The pattern is lower-cased as a whole: a repository key is always lower-case, so a pattern
++// written in any other case would match nothing at all. The registry domain of the pattern is then
++// normalized the way the domain of a reference is.
+ func NormalizePattern(pattern string) string {
+-	domain, repository, hasRepository := strings.Cut(pattern, "/")
++	domain, repository, hasRepository := strings.Cut(strings.ToLower(pattern), "/")
+ 
+ 	// a pattern which carries no `/` yet is still a pattern on the domain: the domain is the
+ 	// first thing the normalized reference starts with, so `index.docker.io*` has to be folded
+@@ -125,31 +134,87 @@ func NormalizePattern(pattern string) string {
+ 	return normalizedDomain + "/" + repository
+ }
+ 
+-// normalizeDomainPattern normalizes the glob pattern matched against a registry domain.
++// normalizeDomainPattern normalizes the (lower-case) glob pattern matched against a registry domain.
+ func normalizeDomainPattern(domain string) string {
+-	globIdx := strings.IndexRune(domain, '*')
++	globIdx := strings.IndexByte(domain, '*')
+ 	if globIdx < 0 {
+ 		return normalizeDomain(domain)
+ 	}
+ 
++	// a port spelled out behind the glob is normalized just as the port of a reference is: a
++	// reference never carries the default port, so `*.example.com:443/*` would match nothing.
++	//
++	// A port is all digits, so the glob is always in the host part, and globIdx stays valid.
++	if host, port, hasPort := splitPort(domain); hasPort {
++		domain = host
++
++		if port = canonicalPort(port); port != defaultPort {
++			domain += ":" + port
++		}
++	}
++
+ 	// the glob matcher anchors the literal in front of the first `*` at the start of the
+-	// reference, so that literal is normalized, while whatever the glob itself covers is matched
+-	// as written
+-	return normalizeDomain(domain[:globIdx]) + domain[globIdx:]
++	// reference, so the Docker Hub spellings are folded in that literal, while whatever the glob
++	// itself covers is matched as written
++	return foldDockerHubDomain(domain[:globIdx]) + domain[globIdx:]
+ }
+ 
+ // normalizeDomain normalizes a registry domain to its canonical spelling.
+ func normalizeDomain(domain string) string {
+ 	domain = strings.ToLower(domain)
+ 
++	host, port, hasPort := splitPort(domain)
++	if !hasPort {
++		return foldDockerHubDomain(domain)
++	}
++
++	port = canonicalPort(port)
++
++	// A single-label host is taken for a registry domain only because of its port: without the
++	// port it would turn into a Docker Hub namespace, so the port is kept there.
++	if port == defaultPort && isExplicitDomain(host) {
++		ret
+```
+
+**File**: `internal/pkg/containers/image/imageref/imageref_test.go` (modified, +153/-0)
+```diff
+@@ -41,6 +41,103 @@ func TestParse(t *testing.T) {
+ 			expected:    "registry.k8s.io:5000/pause:3.9",
+ 			expectedKey: "registry.k8s.io:5000/pause",
+ 		},
++		{ // the default port is not a part of the canonical reference
++			imageRef: "registry.k8s.io:443/pause:3.9",
++
++			expected:    "registry.k8s.io/pause:3.9",
++			expectedKey: "registry.k8s.io/pause",
++		},
++		{ // leading zeros are valid in a port, and the dialer ignores them
++			imageRef: "registry.k8s.io:0443/pause:3.9",
++
++			expected:    "registry.k8s.io/pause:3.9",
++			expectedKey: "registry.k8s.io/pause",
++		},
++		{
++			imageRef: "REGISTRY.K8S.IO:00000443/pause@sha256:7031c1b283388d2c2e09b57badb803c05ebed362dc88d84b480cc47f72a21097",
++
++			expected:    "registry.k8s.io/pause@sha256:7031c1b283388d2c2e09b57badb803c05ebed362dc88d84b480cc47f72a21097",
++			expectedKey: "registry.k8s.io/pause",
++		},
++		{ // any other port gets its canonical spelling
++			imageRef: "registry.k8s.io:05000/pause:3.9",
++
++			expected:    "registry.k8s.io:5000/pause:3.9",
++			expectedKey: "registry.k8s.io:5000/pause",
++		},
++		{
++			imageRef: "registry.k8s.io:4430/pause:3.9",
++
++			expected:    "registry.k8s.io:4430/pause:3.9",
++			expectedKey: "registry.k8s.io:4430/pause",
++		},
++		{
++			imageRef: "localhost:443/foo",
++
++			expected:    "localhost/foo:latest",
++			expectedKey: "localhost/foo",
++		},
++		{
++			imageRef: "[::1]:443/foo",
++
++			expected:    "[::1]/foo:latest",
++			expectedKey: "[::1]/foo",
++		},
++		{
++			imageRef: "[::1]/foo",
++
++			expected:    "[::1]/foo:latest",
++			expectedKey: "[::1]/foo",
++		},
++		{
++			imageRef: "[FE80::1]:05000/foo",
++
++			expected:    "[fe80::1]:5000/foo:latest",
++			expectedKey: "[fe80::1]:5000/foo",
++		},
++		{ // a single-label host is a registry domain only because of its port: dropping the
++			// port would turn it into a Docker Hub namespace
++			imageRef: "registry:443/foo",
++
++			expected:    "registry:443/foo:latest",
++			expectedKey: "registry:443/foo",
++		},
++		{
++			imageRef: "Registry:0443/foo",
++
++			expected:    "registry:443/foo:latest",
++			expectedKey: "registry:443/foo",
++		},
++		{ // the Docker Hub spellings fold once the default port is dropped
++			imageRef: "registry-1.docker.io:443/library/alpine:3.19",
++
++			expected:    "docker.io/library/alpine:3.19",
++			expectedKey: "docker.io/library/alpine",
++		},
++		{
++			imageRef: "INDEX.DOCKER.IO:0443/alpine",
++
++			expected:    "docker.io/library/alpine:latest",
++			expectedKey: "docker.io/library/alpine",
++		},
++		{
++			imageRef: "docker.io:443/alpine:3.19",
++
++			expected:    "docker.io/library/alpine:3.19",
++			expectedKey: "docker.io/library/alpine",
++		},
++		{
++			imageRef: "registry.hub.docker.com/library/alpine:3.19",
++
++			expected:    "docker.io/library/alpine:3.19",
++			expectedKey: "docker.io/library/alpine",
++		},
++		{ // on any other port it is not known to be Docker Hub
++			imageRef: "index.docker.io:5000/library/alpine:3.19",
++
++			expected:    "index.docker.io:5000/library/alpine:3.19",
++			expectedKey: "index.docker.io:5000/library/alpine",
++		},
+ 		{
+ 			imageRef: "docker.io/library/alpine:3.19",
+ 
+@@ -195,6 +292,62 @@ func TestNormalizePattern(t *testing.T) {
+ 			pattern:  "*.docker.io/library/*",
+ 			expected: "*.docker.io/library/*",
+ 		},
++		{ // the whole pattern is lower-cased, as the repository key always is
++			pattern:  "*.Example.COM/Team/*",
++			expected: "*.example.com/team/*",
++		},
++		{ // the default port is dropped, just as it is from a reference
++			pattern:  "registry.k8s.io:443/*",
++			expected: "registry.k8s.io/*",
++		},
++		{
++			pattern:  "REGISTRY.K8S.IO:0443/*",
++			expected: "registry.k8s.io/*",
++		},
++		{
++			pattern:  "registry.k8s.io:443",
++			expected: "registry.k8s.io",
++		},
++		{ // including the port behind a glob
++			pattern:  "*.example.com:443/*",
++			expected: "*.example.com/*",
++		},
++		{
++			pattern:  "*.example.com:0443/team/*",
++			expected: "*.example.com/team/*",
++		},
++		{
++			pattern:  "*.example.com:05000/*",
++			expected: "*.example.com:5000/*",
++		},
++		{
++			pattern:  "*:443/*",
++			expected: "*/*",
++		},
++		{ // the port is under the glob, so it is matched as written
++			pattern:  "registry.k8s.io:44*",
++			expected: "registry.k8s.io:44*",
++		},
++		{
++			pattern:  "registry.k8s.io:*/pause",
++			expected: "registry.k8s.io:*/pause",
++		},
++		{
++			pattern:  "registry-1.docker.io:443/library/*",
++			expected: "docker.io/library/*",
++		},
++		{
++			pattern:  "registry.hub.docker.com/library/*",
++			expected: "docker.io/library/*",
++		},
++		{ // a single-label host keeps its port in a reference, and so it does in a pattern
++			pattern:  "registry:0443/*",
++			expected: "registry:443/*",
++		},
++		{
++			pattern:  "[::1]:443/*",
++			expected: "[::1]/*",
++		},
+ 		{
+ 			pattern:  "*/library/*",
+ 			expected: "*/library/*",
+```
+
+**File**: `internal/pkg/containers/image/verify/rules_test.go` (modified, +39/-0)
+```diff
+@@ -25,6 +25,7 @@ func TestRuleMatcher(t *testing.T) {
+ 		"docker.io/library/busybox*",
+ 		"index.docker.io/library/alpine*",
+ 		"ghcr.io/siderolabs/*",
++		"*.Example.COM:443/*",
+ 		"index.docker.io*",
+ 	}
+ 
+@@ -95,8 +96,46 @@ func TestRuleMatcher(t *testing.T) {
+ 		{ // a rule pattern carrying no `/` is anchored at the registry domain and is folded
+ 			// just like one written as `index.docker.io/*`
+ 			imageRef:       "nginx:latest",
++			expectedRuleID: "0005",
++		},
++		{ // the default port is not a different registry, so spelling it out must not evade the rule
++			imageRef:       "registry.k8s.io:443/pause:3.9",
++			expectedRuleID: "0000",
++		},
++		{
++			imageRef:       "registry.k8s.io:0443/pause:3.9",
++			expectedRuleID: "0000",
++		},
++		{
++			imageRef:       "REGISTRY.K8S.IO:00443/pause@sha256:7031c1b283388d2c2e09b57badb803c05ebed362dc88d84b480cc47f72a21097",
++			expectedRuleID: "0000",
++		},
++		{
++			imageRef:       "registry-1.docker.io:443/library/busybox:1.36",
++			expectedRuleID: "0001",
++		},
++		{
++			imageRef:       "index.docker.io:0443/busybox:1.36",
++			expectedRuleID: "0001",
++		},
++		{
++			imageRef:       "registry.hub.docker.com/library/busybox:1.36",
++			expectedRuleID: "0001",
++		},
++		{ // a rule which spells out the default port behind a glob, in mixed case
++			imageRef:       "registry.example.com/team/app:v1",
+ 			expectedRuleID: "0004",
+ 		},
++		{
++			imageRef:       "Registry.Example.Com:443/team/app:v1",
++			expectedRuleID: "0004",
++		},
++		{ // a different port is a different registry
++			imageRef: "registry.k8s.io:5000/pause:3.9",
++		},
++		{
++			imageRef: "registry.example.com:8443/team/app:v1",
++		},
+ 		{
+ 			imageRef: "quay.io/some/image:v1.0.0",
+ 		},
+```
+
+**File**: `pkg/machinery/config/types/security/image_verification.go` (modified, +24/-0)
+```diff
+@@ -40,6 +40,26 @@ var (
+ 
+ // ImageVerificationConfigV1Alpha1 configures image signature verification policy.
+ //
++//	description: |
++//	  Rules are evaluated in order, and the first rule matching the image applies.
++//	  An image which matches no rule is allowed without verification.
++//
++//	  This makes a policy which only lists the registries to verify or to deny a way to
++//	  catch mistakes, not a security boundary: the same image can be pulled under a different
++//	  name from a registry alias, from a pull-through mirror, or from a copy pushed to any other
++//	  registry, and none of those names match the rule.
++//	  To enforce the policy against anyone able to choose the image reference (e.g. to create a pod),
++//	  end the list with a catch-all rule denying every image not matched by the rules in front of it:
++//
++//	  ```yaml
++//	  rules:
++//	    # ... the rules for the allowed images
++//	    - image: "*"
++//	      deny: true
++//	  ```
++//
++//	  With such a rule in place, the images Talos itself runs (e.g. the kubelet, etcd, the installer)
++//	  have to be matched by one of the rules in front of it as well.
+ //	examples:
+ //	  - value: exampleImageVerificationConfigV1Alpha1()
+ //	alias: ImageVerificationConfig
+@@ -51,6 +71,8 @@ type ImageVerificationConfigV1Alpha1 struct {
+ 	//   description: |
+ 	//     List of verification rules.
+ 	//     Rules are evaluated in order; first matching rule applies.
++	//     An image matching no rule is allowed without verification: end the list with
++	//     a catch-all `image: "*"` rule with `deny: true` to deny any other image.
+ 	ConfigRules ImageVerificationRules `yaml:"rules,omitempty"`
+ }
+ 
+@@ -101,6 +123,8 @@ type ImageVerificationRuleV1Alpha1 struct {
+ 	//     domain: `docker.io/library/nginx*` matches `nginx:latest`, while `library/nginx*` matches nothing.
+ 	//     The Docker Hub domain is always normalized to `docker.io`, so a pattern written against
+ 	//     `index.docker.io` or `registry-1.docker.io` matches the same images a `docker.io` one does.
++	//     The default registry port is dropped as well: `registry.k8s.io/*` matches `registry.k8s.io:443/pause`,
++	//     and so does `registry.k8s.io:443/*`.
+ 	//   examples:
+ 	//     - value: >
+ 	//         "docker.io/library/nginx"
+```
+
+**File**: `pkg/machinery/config/types/security/security_doc.go` (modified, +3/-3)
+```diff
+@@ -46,7 +46,7 @@ func (ImageVerificationConfigV1Alpha1) Doc() *encoder.Doc {
+ 	doc := &encoder.Doc{
+ 		Type:        "ImageVerificationConfig",
+ 		Comments:    [3]string{"" /* encoder.HeadComment */, "ImageVerificationConfig configures image signature verification policy." /* encoder.LineComment */, "" /* encoder.FootComment */},
+-		Description: "ImageVerificationConfig configures image signature verification policy.",
++		Description: "ImageVerificationConfig configures image signature verification policy.\nRules are evaluated in order, and the first rule matching the image applies.\nAn image which matches no rule is allowed without verification.\n\nThis makes a policy which only lists the registries to verify or to deny a way to\ncatch mistakes, not a security boundary: the same image can be pulled under a different\nname from a registry alias, from a pull-through mirror, or from a copy pushed to any other\nregistry, and none of those names match the rule.\nTo enforce the policy against anyone able to choose the image reference (e.g. to create a pod),\nend the list with a catch-all rule denying every image not matched by the rules in front of it:\n\n```yaml\nrules:\n  # ... the rules for the allowed images\n  - image: \"*\"\n    deny: true\n```\n\nWith such a rule in place, the images Talos itself runs (e.g. the kubelet, etcd, the installer)\nhave to be matched by one of the rules in front of it as well.\n",
+ 		Fields: []encoder.Doc{
+ 			{
+ 				Type:   "Meta",
+@@ -56,7 +56,7 @@ func (ImageVerificationConfigV1Alpha1) Doc() *encoder.Doc {
+ 				Name:        "rules",
+ 				Type:        "[]ImageVerificationRuleV1Alpha1",
+ 				Note:        "",
+-				Description: "List of verification rules.\nRules are evaluated in order; first matching rule applies.",
++				Description: "List of verification rules.\nRules are evaluated in order; first matching rule applies.\nAn image matching no rule is allowed without verification: end the list with\na catch-all `image: \"*\"` rule with `deny: true` to deny any other image.",
+ 				Comments:    [3]string{"" /* encoder.HeadComment */, "List of verification rules." /* encoder.LineComment */, "" /* encoder.FootComment */},
+ 			},
+ 		},
+@@ -83,7 +83,7 @@ func (ImageVerificationRuleV1Alpha1) Doc() *encoder.Doc {
+ 				Name:        "image",
+ 				Type:        "string",
+ 				Note:        "",
+-				Description: "Image reference pattern to match for this rule.\nSupports glob patterns, matches only on the image registry and repository, not on the tag or digest.\n\nThe pattern is matched against the normalized image reference, which always starts with a registry\ndomain: `docker.io/library/nginx*` matches `nginx:latest`, while `library/nginx*` matches nothing.\nThe Docker Hub domain is always normalized to `docker.io`, so a pattern written against\n`index.docker.io` or `registry-1.docker.io` matches the same images a `docker.io` one does.",
++				Description: "Image reference pattern to match for this rule.\nSupports glob patterns, matches only on the image registry and repository, not on the tag or digest.\n\nThe pattern is matched against the normalized image reference, which always starts with a registry\ndomain: `docker.io/library/nginx*` matches `nginx:latest`, while `library/nginx*` matches nothing.\nThe Docker Hub domain is always normalized to `docker.io`, so a pattern written against\n`index.docker.io` or `registry-1.docker.io` matches the same images a `docker.io` one does.\nThe default registry port is dropped as well: `registry.k8s.io/*` matches `registry.k8s.io:443/pause`,\nand so does `registry.k8s.io:443/*`.",
+ 				Comments:    [3]string{"" /* encoder.HeadComment */, "Image reference pattern to match for this rule." /* encoder.LineComment */, "" /* encoder.FootComment */},
+ 			},
+ 			{
+```
+
+**File**: `website/content/v1.15/reference/configuration/security/imageverificationconfig.md` (modified, +23/-3)
+```diff
+@@ -1,5 +1,25 @@
+ ---
+-description: ImageVerificationConfig configures image signature verification policy.
++description: |
++    ImageVerificationConfig configures image signature verification policy.
++    Rules are evaluated in order, and the first rule matching the image applies.
++    An image which matches no rule is allowed without verification.
++
++    This makes a policy which only lists the registries to verify or to deny a way to
++    catch mistakes, not a security boundary: the same image can be pulled under a different
++    name from a registry alias, from a pull-through mirror, or from a copy pushed to any other
++    registry, and none of those names match the rule.
++    To enforce the policy against anyone able to choose the image reference (e.g. to create a pod),
++    end the list with a catch-all rule denying every image not matched by the rules in front of it:
++
++    ```yaml
++    rules:
++      # ... the rules for the allowed images
++      - image: "*"
++        deny: true
++    ```
++
++    With such a rule in place, the images Talos itself runs (e.g. the kubelet, etcd, the installer)
++    have to be matched by one of the rules in front of it as well.
+ title: ImageVerificationConfig
+ ---
+ 
+@@ -40,7 +60,7 @@ rules:
+ 
+ | Field | Type | Description | Value(s) |
+ |-------|------|-------------|----------|
+-|`rules` |<a href="#ImageVerificationConfig.rules.">[]ImageVerificationRuleV1Alpha1</a> |List of verification rules.<br>Rules are evaluated in order; first matching rule applies.  | |
++|`rules` |<a href="#ImageVerificationConfig.rules.">[]ImageVerificationRuleV1Alpha1</a> |List of verification rules.<br>Rules are evaluated in order; first matching rule applies.<br>An image matching no rule is allowed without verification: end the list with<br>a catch-all `image: "*"` rule with `deny: true` to deny any other image.  | |
+ 
+ 
+ 
+@@ -54,7 +74,7 @@ ImageVerificationRuleV1Alpha1 defines a verification rule.
+ 
+ | Field | Type | Description | Value(s) |
+ |-------|------|-------------|----------|
+-|`image` |string |Image reference pattern to match for this rule.<br>Supports glob patterns, matches only on the image registry and repository, not on the tag or digest.<br><br>The pattern is matched against the normalized image reference, which always starts with a registry<br>domain: `docker.io/library/nginx*` matches `nginx:latest`, while `library/nginx*` matches nothing.<br>The Docker Hub domain is always normalized to `docker.io`, so a pattern written against<br>`index.docker.io` or `registry-1.docker.io` matches the same images a `docker.io` one does. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
++|`image` |string |Image reference pattern to match for this rule.<br>Supports glob patterns, matches only on the image registry and repository, not on the tag or digest.<br><br>The pattern is matched against the normalized image reference, which always starts with a registry<br>domain: `docker.io/library/nginx*` matches `nginx:latest`, while `library/nginx*` matches nothing.<br>The Docker Hub domain is always normalized to `docker.io`, so a pattern written against<br>`index.docker.io` or `registry-1.docker.io` matches the same images a `docker.io` one does.<br>The default registry port is dropped as well: `registry.k8s.io/*` matches `registry.k8s.io:443/pause`,<br>and so does `registry.k8s.io:443/*`. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
+ image: docker.io/library/nginx
+ {{< /highlight >}}{{< highlight yaml >}}
+ image: registry.k8s.io/*
 ```
 
 ---
 
-### Incident Patch 2: `b8163762` (2026-11-26)
-**Commit Message**: fix: stop a DNS upstream health check in flight on close
+### Incident Patch 2: `8700e6b4` (2026-11-27)
+**Commit Message**: fix: avoid ETXTBSY flake in fake mdadm scripts
 
-Closing a proxy stopped the health check loop only after the check
-in progress returned. A check against an upstream that doesn't
-answer blocks in the read for up to a second, because miekg/dns
-takes only the deadline from the context. The goroutine outlived
-Close, and TestHealthcheck failed goleak in CI when Close landed
-during a query.
+Parallel tests wrote the fake mdadm script and exec'd it while
+other tests forked; a child inheriting the write fd made exec fail
+with "text file busy". Exec one wrapper written in TestMain and keep
+per-test bodies as plain data behind a symlink.
 
-Close now cancels a context which closes the health check
-connection, so the read returns right away.
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-The test now waits for a query to reach the silent upstream before
-closing, so a check is always in flight.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/pkg/dns/dns_test.go` (modified, +2/-2)
+**File**: `internal/pkg/md/array_test.go` (modified, +28/-1)
 ```diff
-@@ -34,8 +34,8 @@ import (
- 
- func TestDNS(t *testing.T) {
- 	t.Cleanup(func() {
--		// Failed upstreams kick off health checks: stopping the proxy doesn't abort
--		// the health check in flight, so wait for it to terminate on its own.
-+		// Failed upstreams kick off health checks: the probe loop notices the stopped
-+		// proxy only after its sleep between checks, so wait for it to terminate.
- 		for range 50 {
- 			if goleak.Find() == nil {
- 				break
-```
-
-**File**: `internal/pkg/dns/proxy/proxy.go` (modified, +24/-8)
-```diff
-@@ -56,7 +56,9 @@ var ErrClosed = errors.New("proxy is closed")
- type Proxy struct {
- 	tlsConfig *tls.Config
- 
--	stop chan struct{}
-+	// stop is canceled by Close, also interrupting a health check in progress.
-+	stop       context.Context //nolint:containedctx
-+	cancelStop context.CancelFunc
- 
- 	idle   map[string][]*idleConn
- 	addr   string
-@@ -78,11 +80,14 @@ type idleConn struct {
- // If tlsConfig is not nil, the queries are sent over DNS-over-TLS, otherwise over plain DNS
- // using the protocol the query was received over (UDP or TCP).
- func New(addr string, tlsConfig *tls.Config) *Proxy {
-+	stop, cancelStop := context.WithCancel(context.Background())
-+
- 	return &Proxy{
--		addr:      addr,
--		tlsConfig: tlsConfig,
--		idle:      map[string][]*idleConn{},
--		stop:      make(chan struct{}),
-+		addr:       addr,
-+		tlsConfig:  tlsConfig,
-+		idle:       map[string][]*idleConn{},
-+		stop:       stop,
-+		cancelStop: cancelStop,
- 	}
+@@ -368,11 +368,38 @@ exit 1
+ 	assert.False(t, called, "callback must not fire for the no-array condition")
  }
  
-@@ -121,7 +126,7 @@ func (p *Proxy) Close() {
- 	}
- 
- 	p.closed = true
--	close(p.stop)
-+	p.cancelStop()
- 
- 	idle := p.idle
- 	p.idle = nil
-@@ -370,7 +375,7 @@ func (p *Proxy) cleanupLoop() {
- 
- 	for {
- 		select {
--		case <-p.stop:
-+		case <-p.stop.Done():
- 			return
- 		case <-ticker.C:
- 			p.cleanup()
-@@ -444,7 +449,18 @@ func (p *Proxy) healthcheck() error {
- 	ping := new(dns.Msg)
- 	ping.SetQuestion(".", dns.TypeNS)
- 
--	resp, _, err := client.Exchange(ping, p.addr)
-+	conn, err := client.DialContext(p.stop, p.addr)
++// scriptWrapper is the only executable the fake mdadm scripts run through. It is
++// written before any test runs: an executable written while parallel tests fork
++// can be held open by a forked child, and exec of it then fails with ETXTBSY.
++var scriptWrapper string
++
++func TestMain(m *testing.M) {
++	dir, err := os.MkdirTemp("", "md-test")
 +	if err != nil {
-+		return err
++		panic(err)
 +	}
 +
-+	defer conn.Close() //nolint:errcheck
++	scriptWrapper = filepath.Join(dir, "wrapper")
 +
-+	// the read deadline ignores cancellation, so close the connection to end a check stuck on a dead upstream
-+	stopClose := context.AfterFunc(p.stop, func() { conn.Close() }) //nolint:errcheck
-+	defer stopClose()
++	if err = os.WriteFile(scriptWrapper, []byte("#!/bin/sh\nexec /bin/sh \"$0.sh\" \"$@\"\n"), 0o700); err != nil {
++		panic(err)
++	}
 +
-+	resp, _, err := client.ExchangeWithConnContext(p.stop, ping, conn)
- 	if err != nil && resp != nil && (resp.Response || resp.Opcode == dns.OpcodeQuery) {
- 		// any response from the upstream means it's alive
- 		err = nil
++	code := m.Run()
++
++	os.RemoveAll(dir) //nolint:errcheck
++
++	os.Exit(code)
++}
++
++// newScriptMD fakes mdadm with a shell script body. The body is plain data run by
++// the wrapper through a per-test symlink, so no test writes a file it executes.
+ func newScriptMD(t *testing.T, body string) *md.MD {
+ 	t.Helper()
+ 
+ 	script := filepath.Join(t.TempDir(), "mdadm")
+-	require.NoError(t, os.WriteFile(script, []byte("#!/bin/sh\n"+body), 0o700))
++	require.NoError(t, os.WriteFile(script+".sh", []byte(body), 0o600))
++	require.NoError(t, os.Symlink(scriptWrapper, script))
+ 
+ 	m, err := md.New(md.WithMdadmPath(script))
+ 	require.NoError(t, err)
 ```
 
-**File**: `internal/pkg/dns/proxy/proxy_test.go` (modified, +25/-4)
+---
+
+### Incident Patch 3: `b4df645f` (2026-11-26)
+**Commit Message**: fix: give libvirt domain start/stop a 2 minute session
+
+A VM controller pass and the forced-reboot API ran domain
+create/destroy on a session with a 5s total budget. Once the
+budget expired the transport closed, and go-libvirt failed every
+later RPC with a bare EINVAL ("invalid argument"). A destroy cut
+off mid-call left libvirt finishing it for a client that was gone.
+
+Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_server.go` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,6 @@ import (
- 	"go.uber.org/goleak"
+@@ -175,7 +175,7 @@ func (s *Server) Register(obj *grpc.Server) {
+ 		resourceState,
+ 		connector.OpenConsole,
+ 		hypervisord.WithVNCConnector(connector.OpenVNC),
+-		hypervisord.WithDomainConnector(connector.Open),
++		hypervisord.WithDomainConnector(connector.OpenLifecycle),
+ 		// Raw rather than the client-facing filtered state, and only for the power operations: they
+ 		// write power overrides, which no client may write for itself, and read the sensitive spec
+ 		// on behalf of operators. Console and VNC sessions keep reading through the filter.
+```
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha2/v1alpha2_controller.go` (modified, +1/-1)
+```diff
+@@ -320,7 +320,7 @@ func (ctrl *Controller) Run(ctx context.Context, drainer *runtime.Drainer) error
+ 		},
+ 		&hypervisorctrls.VirtualMachineController{
+ 			V1Alpha1Mode: ctrl.v1alpha1Runtime.State().Platform().Mode(),
+-			Open:         virtClient.Domain,
++			Open:         virtClient.DomainConnector().OpenLifecycle,
+ 		},
+ 		&cri.CustomizationConfigController{},
+ 		cri.NewImageGCController("containerd", constants.SystemContainerdNamespace, nil),
+```
+
+**File**: `internal/integration/hypervisor/virtual_machine_domain.go` (modified, +101/-0)
+```diff
+@@ -95,6 +95,107 @@ func (suite *DomainSuite) TestDomainDefinition() {
+ 	suite.assertNoDomain(node, name)
+ }
  
- 	"github.com/siderolabs/talos/internal/pkg/dns/proxy"
--	"github.com/siderolabs/talos/internal/pkg/testport"
- )
- 
- // testServer is a DNS server answering with A records, counting the queries and connections.
-@@ -347,16 +346,38 @@ func TestHealthcheck(t *testing.T) {
- 	assert.Zero(t, healthy.Fails())
- 
- 	// nothing answers on the port: the health check times out and fails
--	dead := proxy.New(testport.UnansweredUDPAddress(t), nil)
-+	silent, err := (&net.ListenConfig{}).ListenPacket(t.Context(), "udp4", "127.0.0.1:0")
-+	require.NoError(t, err)
++// TestDomainChurn verifies repeated VM create/destroy cycles neither crash
++// virtqemud nor leave domain state behind which breaks later creates.
++func (suite *DomainSuite) TestDomainChurn() {
++	const (
++		flaps  = 10
++		cycles = 10
++		batch  = 8
++	)
 +
-+	t.Cleanup(func() { silent.Close() }) //nolint:errcheck
++	node := suite.RandomDiscoveredNodeInternalIP()
++	nodeCtx := client.WithNode(suite.ctx, node)
 +
-+	var queries atomic.Int32
++	suite.AssertServicesRunning(suite.ctx, node, map[string]string{"ext-virtqemud": "Running"})
 +
-+	go func() {
-+		buf := make([]byte, dns.MinMsgSize)
++	virtqemudPID, err := safe.ReaderGetByID[*runtime.ServicePID](nodeCtx, suite.Client.State(), "ext-virtqemud")
++	suite.Require().NoError(err)
 +
-+		for {
-+			if _, _, err := silent.ReadFrom(buf); err != nil {
-+				return
-+			}
++	assertVirtqemudSurvived := func(phase string, round int) {
++		pid, err := safe.ReaderGetByID[*runtime.ServicePID](nodeCtx, suite.Client.State(), "ext-virtqemud")
++		suite.Require().NoError(err)
++		suite.Require().Equal(virtqemudPID.TypedSpec().PID, pid.TypedSpec().PID, "ext-virtqemud restarted in %s round %d", phase, round)
++	}
 +
-+			queries.Add(1)
++	// Every name carries run, and is short enough that libvirt keeps it whole in domain-<id>-<name>.
++	run := uuid.NewString()[:8]
++
++	newBatch := func(phase string, round int) ([]string, []any) {
++		names := make([]string, 0, batch)
++		docs := make([]any, 0, batch)
++
++		for i := range batch {
++			doc := hypervisorcfg.NewVirtualMachineConfigV1Alpha1()
++			doc.MetaName = fmt.Sprintf("%s-%s-%d-%d", phase, run, round, i)
++			doc.PowerStateConfig = hypervisorhelpers.PowerStateRunning
++			doc.FirmwareConfig.FirmwareType = suite.guestArch(node).firmware
++			doc.CPUConfig.CPUCount = 1
++			doc.MemoryConfig.MemorySize = meta.MustByteSize("128MiB")
++
++			names = append(names, doc.MetaName)
++			docs = append(docs, doc)
 +		}
-+	}()
 +
-+	dead := proxy.New(silent.LocalAddr().String(), nil)
- 	dead.Start(10 * time.Millisecond)
- 
- 	dead.Healthcheck()
- 
-+	// the third query waits for the read timeout
- 	require.EventuallyWithT(t, func(collect *assert.CollectT) {
--		assert.GreaterOrEqual(collect, dead.Fails(), uint32(2))
-+		assert.GreaterOrEqual(collect, queries.Load(), int32(3))
- 	}, 10*time.Second, 10*time.Millisecond)
- 
--	// the health check is retried until it succeeds, stopped by Close
-+	assert.GreaterOrEqual(t, dead.Fails(), uint32(2))
++		suite.T().Cleanup(func() {
++			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
++			defer cancel()
 +
-+	// the health check is retried until it succeeds, stopped by Close even in the middle of a query
- 	dead.Close()
- }
- 
++			suite.RemoveMachineConfigDocumentsByName(client.WithNode(ctx, node), hypervisorcfg.VirtualMachineConfigKind, names...)
++		})
++
++		return names, docs
++	}
++
++	for round := range flaps {
++		names, docs := newBatch("flap", round)
++
++		suite.PatchMachineConfig(nodeCtx, docs...)
++		suite.RemoveMachineConfigDocumentsByName(nodeCtx, hypervisorcfg.VirtualMachineConfigKind, names...)
++		assertVirtqemudSurvived("flap", round)
++	}
++
++	suite.assertNoDomainsLeft(nodeCtx, node, run)
++	assertVirtqemudSurvived("flap", flaps)
++
++	for round := range cycles {
++		names, docs := newBatch("cycle", round)
++
++		suite.PatchMachineConfig(nodeCtx, docs...)
++
++		for _, name := range names {
++			suite.assertVirtualMachineStatus(nodeCtx, name, hypervisorhelpers.VirtualMachinePowerStateRunning)
++		}
++
++		suite.RemoveMachineConfigDocumentsByName(nodeCtx, hypervisorcfg.VirtualMachineConfigKind, names...)
++
++		for _, name := range names {
++			rtestutils.AssertNoResource[*hypervisor.VirtualMachineDomainSpec](nodeCtx, suite.T(), suite.Client.State(), name)
++		}
++
++		suite.assertNoDomainsLeft(nodeCtx, node, run)
++		assertVirtqemudSurvived("cycle", round)
++	}
++}
++
++// assertNoDomainsLeft waits until neither libvirt nor its domain-<id>-<name>
++// directories know any domain whose name contains marker.
++func (suite *LibvirtSuite) assertNoDomainsLeft(ctx context.Context, node, marker string) {
++	suite.T().Helper()
++
++	script := "/usr/local/bin/virsh --connect '" + libvirtURI + "' list --all --name && " +
++		"/nix/var/nix/profiles/default/bin/busybox ls -1 /var/lib/libvirt/qemu"
++
++	suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
++		output, exitCode := suite.RunDebugContainer(ctx, node, "/nix/var/nix/profiles/default/bin/sh", "-c", script)
++		if !assert.EqualValues(collect, 0, exitCode, "listing domains failed: %s", output) {
++			return
++		}
++
++		assert.NotContains(collect, output, marker, "domains or domain directories left behind")
++	}, 2*time.Minute, time.Second)
++}
++
+ // TestConsoleAttach verifies a live console session owns the managed VM's libvirt console.
+ func (suite *DomainSuite) TestConsoleAttach() {
+ 	node := suite.RandomDiscoveredNodeInternalIP()
 ```
 
-**File**: `internal/pkg/testport/testport_linux.go` (modified, +0/-13)
+**File**: `internal/pkg/libvirt/client.go` (modified, +1/-7)
 ```diff
-@@ -46,19 +46,6 @@ func ClosedAddress(t *testing.T) string {
- 	return net.JoinHostPort("127.0.0.1", strconv.FormatUint(uint64(Closed(t)), 10))
+@@ -68,13 +68,7 @@ func (c *Client) StorageVolumes(ctx context.Context) (storage.VolumeClient, erro
+ 	return c.storage.OpenVolumes(ctx)
  }
  
--// UnansweredUDPAddress returns a loopback UDP address, as host:port, which nothing answers on until
--// the test ends.
--func UnansweredUDPAddress(t *testing.T) string {
--	t.Helper()
--
--	conn, err := (&net.ListenConfig{}).ListenPacket(t.Context(), "udp4", "127.0.0.1:0")
--	require.NoError(t, err)
--
--	t.Cleanup(func() { conn.Close() }) //nolint:errcheck
--
--	return conn.LocalAddr().String()
+-// Domain connects to the modular QEMU daemon with the caller's context.
+-func (c *Client) Domain(ctx context.Context) (domain.Client, error) {
+-	return c.domain.Open(ctx)
 -}
 -
- // Listenable returns a port which the code under test can listen on for TCP, on any address, and
- // which stays reserved until the test ends.
- //
+-// DomainConnector exposes the configured QEMU endpoint for long-lived lifecycle
+-// watches without changing the timeout of short-lived Domain sessions.
++// DomainConnector exposes the configured QEMU endpoint.
+ func (c *Client) DomainConnector() *domain.Connector {
+ 	return c.domain
+ }
 ```
 
----
-
-### Incident Patch 3: `b4f81860` (2026-11-26)
-**Commit Message**: fix: stop the DNS health check loop without waiting out the interval
-
-After a failed check, the probe loop slept the full interval (500ms
-by default) before it noticed Stop, so the goroutine outlived the
-proxy's Close. TestExchangeTLS failed goleak in CI when its health
-check failed as the test tore down: goleak gives up after about
-450ms.
-
-Stop now closes a channel which ends the wait between checks.
-
-TestDNS no longer needs to poll for the health check goroutines to
-exit before checking for leaks.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/pkg/dns/dns_test.go` (modified, +1/-13)
+**File**: `internal/pkg/libvirt/client_test.go` (modified, +3/-3)
 ```diff
-@@ -33,19 +33,7 @@ import (
+@@ -34,7 +34,7 @@ func TestClientUsesConfiguredDaemonSockets(t *testing.T) {
+ 	_, err := client.Storage(t.Context())
+ 	require.ErrorContains(t, err, storageSocket)
+ 
+-	_, err = client.Domain(t.Context())
++	_, err = client.DomainConnector().Open(t.Context())
+ 	require.ErrorContains(t, err, domainSocket)
+ 
+ 	_, err = client.DomainConnector().Watch(t.Context())
+@@ -63,7 +63,7 @@ func TestClientUsesConfiguredDaemonURIs(t *testing.T) {
+ 	storageClient.Close()
+ 	require.NoError(t, <-storageDone)
+ 
+-	domainClient, err := client.Domain(t.Context())
++	domainClient, err := client.DomainConnector().Open(t.Context())
+ 	require.NoError(t, err)
+ 	domainClient.Close()
+ 	require.NoError(t, <-domainDone)
+@@ -160,7 +160,7 @@ func TestClientComposesIndependentDaemonSessions(t *testing.T) {
+ 	require.ErrorIs(t, err, context.Canceled)
+ 	require.Nil(t, poolClient)
+ 
+-	domainClient, err := client.Domain(ctx)
++	domainClient, err := client.DomainConnector().Open(ctx)
+ 	require.ErrorIs(t, err, context.Canceled)
+ 	require.Nil(t, domainClient)
+ }
+```
+
+**File**: `internal/pkg/libvirt/domain/client.go` (modified, +14/-2)
+```diff
+@@ -25,7 +25,10 @@ import (
+ 	"github.com/siderolabs/talos/pkg/machinery/constants"
  )
  
- func TestDNS(t *testing.T) {
--	t.Cleanup(func() {
--		// Failed upstreams kick off health checks: the probe loop notices the stopped
--		// proxy only after its sleep between checks, so wait for it to terminate.
--		for range 50 {
--			if goleak.Find() == nil {
--				break
--			}
--
--			time.Sleep(100 * time.Millisecond)
--		}
--
--		goleak.VerifyNone(t)
--	})
-+	t.Cleanup(func() { goleak.VerifyNone(t) })
- 
- 	tests := []struct {
- 		name         string
-```
-
-**File**: `internal/pkg/dns/internal/probe/probe.go` (modified, +24/-10)
-```diff
-@@ -25,11 +25,22 @@ const (
- //
- // At most one health check loop runs at a time.
- type Probe struct {
-+	// stop is closed by Stop, created on first use so that the zero value is ready to use.
-+	stop     chan struct{}
- 	mu       sync.Mutex
- 	state    state
- 	interval time.Duration
- }
- 
-+// stopCh returns the channel closed by Stop; p.mu must be held.
-+func (p *Probe) stopCh() chan struct{} {
-+	if p.stop == nil {
-+		p.stop = make(chan struct{})
-+	}
-+
-+	return p.stop
-+}
-+
- // Do starts running the check in the background every interval until it returns nil.
- //
- // If the check is already running, or the probe is stopped, Do is a no-op.
-@@ -43,6 +54,7 @@ func (p *Probe) Do(check func() error) {
- 	}
- 
- 	p.state = active
-+	stop := p.stopCh()
- 
- 	interval := p.interval
- 	if interval <= 0 {
-@@ -53,14 +65,10 @@ func (p *Probe) Do(check func() error) {
- 
- 	go func() {
- 		for check() != nil {
--			time.Sleep(interval)
--
--			p.mu.Lock()
--			stop := p.state == stopped
--			p.mu.Unlock()
--
--			if stop {
-+			select {
-+			case <-stop:
- 				return
-+			case <-time.After(interval):
- 			}
- 		}
- 
-@@ -81,9 +89,15 @@ func (p *Probe) Start(interval time.Duration) {
- 	p.mu.Unlock()
- }
- 
--// Stop stops the running check loop (after the check in progress finishes), and prevents new ones.
-+// Stop stops the running check loop without waiting for the next interval, and prevents new ones.
-+//
-+// A check in progress runs to completion.
- func (p *Probe) Stop() {
- 	p.mu.Lock()
--	p.state = stopped
--	p.mu.Unlock()
-+	defer p.mu.Unlock()
-+
-+	if p.state != stopped {
-+		p.state = stopped
-+		close(p.stopCh())
-+	}
- }
-```
-
-**File**: `internal/pkg/dns/internal/probe/probe_test.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package probe_test
-+
-+import (
-+	"errors"
-+	"sync/atomic"
-+	"testing"
-+	"testing/synctest"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/goleak"
-+
-+	"github.com/siderolabs/talos/internal/pkg/dns/internal/probe"
+-const operationTimeout = 5 * time.Second
++const (
++	operationTimeout          = 5 * time.Second
++	lifecycleOperationTimeout = 2 * time.Minute
 +)
-+
-+func TestStopInterruptsInterval(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		ignore := goleak.IgnoreCurrent()
-+
-+		var (
-+			p      probe.Probe
-+			checks atomic.Int32
-+		)
-+
-+		p.Start(time.Hour)
-+
-+		p.Do(func() error {
-+			checks.Add(1)
-+
-+			return errors.New("upstream down")
-+		})
-+
-+		synctest.Wait()
-+
-+		p.Stop()
-+		p.Stop()
-+
-+		synctest.Wait()
-+
-+		// goleak waits well below the interval, so a loop sleeping out the interval is reported
-+		require.NoError(t, goleak.Find(ignore), "Stop must not leave the loop waiting for the next check")
-+		assert.EqualValues(t, 1, checks.Load())
-+
-+		// a stopped probe starts no new checks
-+		p.Do(func() error {
-+			checks.Add(1)
-+
-+			return nil
-+		})
-+
-+		synctest.Wait()
-+
-+		assert.EqualValues(t, 1, checks.Load())
-+	})
+ 
+ // Connector opens bounded sessions against one modular QEMU daemon.
+ type Connector struct {
+@@ -41,7 +44,16 @@ func New(socket, uri string) *Connector {
+ // Open bounds dialing, handshake, operations, and disconnect. go-libvirt RPCs
+ // have no context argument, so cancellation closes the transport.
+ func (c *Connector) Open(ctx context.Context) (Client, error) {
+-	sessionCtx, cancel := context.WithTimeout(ctx, operationTimeout)
++	return c.openWithTimeout(ctx, operationTimeout)
 +}
++
++// OpenLifecycle opens a session with the budget domain start and stop need.
++func (c *Connector) OpenLifecycle(ctx context.Context) (Client, error) {
++	return c.openWithTimeout(ctx, lifecycleOperationTimeout)
++}
++
++func (c *Connector) openWithTimeout(ctx context.Context, timeout time.Duration) (Client, error) {
++	sessionCtx, cancel := context.WithTimeout(ctx, timeout)
+ 
+ 	conn, err := (&net.Dialer{}).DialContext(sessionCtx, "unix", c.socket)
+ 	if err != nil {
+```
+
+**File**: `internal/pkg/libvirt/storage/client.go` (modified, +5/-9)
+```diff
+@@ -19,14 +19,10 @@ import (
+ 	"libvirt.org/go/libvirtxml"
+ )
+ 
+-const operationTimeout = 5 * time.Second
+-
+-// VolumeOperationTimeout is the budget a session doing volume work is given.
+-//
+-// Larger than operationTimeout: creating a volume is real filesystem work behind an RPC, where pool
+-// metadata calls are not. A session which expires mid-create has its transport closed while libvirt
+-// carries on server-side, which is exactly what the staged name in volume.go exists to survive.
+-const VolumeOperationTimeout = 2 * time.Minute
++const (
++	operationTimeout       = 5 * time.Second
++	volumeOperationTimeout = 2 * time.Minute
++)
+ 
+ // Connector opens bounded sessions against one modular storage daemon.
+ type Connector struct {
+@@ -48,7 +44,7 @@ func (c *Connector) Open(ctx context.Context) (PoolClient, error) {
+ 
+ // OpenVolumes opens a volume session with the budget provisioning needs.
+ func (c *Connector) OpenVolumes(ctx context.Context) (VolumeClient, error) {
+-	return c.openWithTimeout(ctx, VolumeOperationTimeout)
++	return c.openWithTimeout(ctx, volumeOperationTimeout)
+ }
+ 
+ // openWithTimeout bounds the shared transport session.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15115** (2026-11-27): fix: avoid ETXTBSY flake in fake mdadm scripts (@shanduur)
+- **PR #15109** (2026-11-27): fix: harden the image verification matching rules (@smira)
+- **PR #15108** (2026-11-27): chore: update Kubernetes to 1.36-beta (@smira)
 - **PR #15105** (2026-11-26): chore: refactor bgp tests (@frezbo)
+- **PR #15104** (2026-11-27): fix: give libvirt domain start/stop a 2 minute session (@shanduur)
 - **PR #15103** (2026-11-26): release(v1.15.0-beta.1): prepare release (@smira)
-- **PR #15101** (2026-11-26): fix: flaky dns tests (@frezbo)
-- **PR #15100** (2026-11-26): fix: make the user volume ID limit fit 32-bit builds (@majabojarska)
-- **PR #15099** (2026-11-26): feat: update Linux to 7.3.6 (@smira)
-- **PR #15097** (2026-11-26): fix: type `runAsMaxID` as uint32 to fix 32-bit builds (@majabojarska)
 
 ---
 
@@ -2598,31 +3005,61 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. type runAsMaxID as uint32 to fix 32-bit builds
+## X. harden the image verification matching rules
 
 **RULE**:
-When implementing operations in `pkg/machinery/config/types/container/runas.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pkg/containers/image/imageref/imageref.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b788950c`: type runAsMaxID as uint32 to fix 32-bit builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5d94504`: harden the image verification matching rules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/container/runas.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/containers/image/imageref/imageref.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-const runAsMaxID uint32 = 4294967294
+	// hubDockerHubDomain is one more name the Docker Hub registry endpoint is served under.
+	hubDockerHubDomain = "registry.hub.docker.com"
+
+	// defaultPort is the port a registry is reached on when the reference carries none: an
+	// image is always pulled over HTTPS unless a registry mirror is configured to do otherwise.
+	defaultPort = "443"
+
+// lower-cased, as registry domains are DNS names and DNS is case-insensitive, the port is reduced to
+// its canonical decimal spelling and dropped when it is the default one (`registry:443/image` and
+// `registry:0443/image` are both `registry/image`), and the alternative spellings of the Docker Hub
+// domain, `index.docker.io`, `registry-1.docker.io` and `registry.hub.docker.com`, are folded into
+// `docker.io`.
+// NormalizePattern normalizes an image reference glob pattern, so that the pattern is matched in
+// the same namespace the output of [RepositoryKey] is in.
+// The pattern is lower-cased as a whole: a repository key is always lower-case, so a pattern
+// written in any other case would match nothing at all. The registry domain of the pattern is then
+// normalized the way the domain of a reference is.
+	domain, repository, hasRepository 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-const runAsMaxID = 4294967294
+// lower-cased, as registry domains are DNS names and DNS is case-insensitive, and the alternative
+// spellings of the Docker Hub domain, `index.docker.io` and `registry-1.docker.io`, are folded
+// into `docker.io`.
+// NormalizePattern normalizes the registry domain of an image reference glob pattern, so that the
+// pattern is matched in the same namespace the output of [RepositoryKey] is in.
+// Only the domain part of the pattern is normalized: the repository part of a canonical reference
+// is always lower-case already, so folding its case would make a pattern match references it was
+// not written for.
+	domain, repository, hasRepository := strings.Cut(pattern, "/")
+// normalizeDomainPattern normalizes the glob pattern matched against a registry domain.
+	globIdx := strings.IndexRune(domain, '*')
+	// reference, so that literal is normalized, while whatever the glob itself covers is matched
+	// as written
+	return normalizeDomain(domain[:globIdx]) + domain[globIdx:]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b788950c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5d94504` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

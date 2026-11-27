@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T21:48:02.620Z",
-  "total_records": 2857,
+  "last_updated": "2026-11-27T21:56:47.282Z",
+  "total_records": 2859,
   "domains": {
     "A": {
       "total": 25,
@@ -2888,7 +2888,7 @@
       ]
     },
     "L": {
-      "total": 28,
+      "total": 30,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2917,7 +2917,9 @@
         "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-apache-incubator-pegasus-learnings-core-invar",
         "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar"
+        "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar",
+        "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants"
       ]
     },
     "M": {
@@ -9704,8 +9706,8 @@
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "b7be17517fbe9ee6f107d58f294ea4cb376e643d24526b106d7d7755856b4d6e",
-      "created_at": "2026-11-25T14:41:44.086Z"
+      "content_hash": "0fc7f469101c57dee7ec15a840f9a4e7a7900a2303835704649beab78c2819e2",
+      "created_at": "2026-11-27T21:56:33.992Z"
     },
     "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
@@ -9722,8 +9724,8 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
       "repository": "pimalaya-himalaya-learnings",
-      "content_hash": "ca0579951c04872fa857d492aac635f8b0062efd2d457db01b7bb316e953a4ff",
-      "created_at": "2026-11-24T13:56:47.360Z"
+      "content_hash": "8eb01e4e5559222c6f138bf3766fc9a36138bf8f7a204494ac258e348d1c86f3",
+      "created_at": "2026-11-27T21:56:45.321Z"
     },
     "DOM-F-456EB881": {
       "record_id": "DOM-F-456EB881",
@@ -15648,8 +15650,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "2374679f6e4922e37a862063912381542968b5cf85238954e22282770765e81f",
-      "created_at": "2026-11-27T20:57:52.087Z"
+      "content_hash": "340a38caef4aa83a2b4f129e806d6f644aaea6d8800768928bc6583b9c2ea13b",
+      "created_at": "2026-11-27T21:56:47.282Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -48299,6 +48301,24 @@
       "repository": "gatenlp-ultimate-sitemap-parser-learnings",
       "content_hash": "b0542517c6f9b5c9784b76b512186fdad0305894f761a7d30377015ec28dda6d",
       "created_at": "2026-11-27T21:11:34.353Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: siderolabs/talos Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-siderolabs-talos-deployment-operations-intelligence-siderolabs-talos-core-invari.md",
+      "repository": "siderolabs/talos",
+      "content_hash": "eb319a666b8377510bee0c6b1e5d6e8b49843d77c2946e4cfc273b6fd2d5a5b8",
+      "created_at": "2026-11-27T21:56:41.629Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: siderolabs-talos-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-siderolabs-talos-learnings-deployment-operations-intelligence-siderolabs-talos-l.md",
+      "repository": "siderolabs-talos-learnings",
+      "content_hash": "f2b8dd099ea910afbedbc205d8cc3cc0a87fd6842d429000707bb39ec790a03c",
+      "created_at": "2026-11-27T21:56:46.221Z"
     }
   }
 }

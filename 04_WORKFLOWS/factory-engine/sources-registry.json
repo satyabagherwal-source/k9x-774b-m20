@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T21:47:59.692Z",
-    "lastVerified": "2026-11-27T21:47:59.692Z",
+    "lastChecked": "2026-11-27T21:56:44.544Z",
+    "lastVerified": "2026-11-27T21:56:44.544Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -398,12 +398,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T21:20:20.699Z",
-    "lastVerified": "2026-11-27T21:20:20.699Z",
+    "lastChecked": "2026-11-27T21:56:43.816Z",
+    "lastVerified": "2026-11-27T21:56:43.816Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -412,7 +412,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "17ea4bc4"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1969,14 +1970,14 @@
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:55:04.757Z",
-    "lastVerified": "2026-11-27T03:55:04.757Z",
+    "lastChecked": "2026-11-27T21:56:39.974Z",
+    "lastVerified": "2026-11-27T21:56:39.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "9a6aaf1d49b8d1f59bc2b453ac22a0b7feb620ce2799ba848abef8d5d2e939ee",
+    "contentHash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2448,8 +2449,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T17:41:53.673Z",
-    "lastVerified": "2026-11-27T17:41:53.673Z",
+    "lastChecked": "2026-11-27T21:56:38.759Z",
+    "lastVerified": "2026-11-27T21:56:38.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -4592,14 +4593,14 @@
     "officialUrl": "https://github.com/pimalaya/himalaya",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T21:52:41.396Z",
-    "lastVerified": "2026-11-26T21:52:41.396Z",
+    "lastChecked": "2026-11-27T21:56:32.140Z",
+    "lastVerified": "2026-11-27T21:56:32.140Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "3484557a7fadf415f7c3f0d8ffdb0281602a2d9bb6169235f8b0716c33f61cf6",
+    "contentHash": "e68c8f57a9ef420dc6ccdfdb858fe09a3fa99199e84f1e41bab505bdca0f2eef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5386,9 +5387,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-27T02:49:45.221Z",
+    "lastChecked": "2026-11-27T21:56:41.188Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-27T02:49:45.221Z"
+    "lastVerified": "2026-11-27T21:56:41.188Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -10211,9 +10212,9 @@
   "thebaselab-codeapp": {
     "name": "codeapp",
     "officialUrl": "https://github.com/thebaselab/codeapp",
-    "lastChecked": "2026-11-25T13:20:26.925Z",
+    "lastChecked": "2026-11-27T21:56:33.848Z",
     "revisionIdentifier": "ef33ee57",
-    "lastVerified": "2026-11-25T13:20:26.925Z"
+    "lastVerified": "2026-11-27T21:56:33.848Z"
   },
   "matthews-wong-structured-data-validator": {
     "name": "structured-data-validator",
@@ -10742,9 +10743,9 @@
   "trybyte-app-sitemap-validator": {
     "name": "sitemap-validator",
     "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
-    "lastChecked": "2026-11-24T13:47:12.723Z",
+    "lastChecked": "2026-11-27T21:56:31.196Z",
     "revisionIdentifier": "a7fc287e",
-    "lastVerified": "2026-11-24T13:47:12.723Z"
+    "lastVerified": "2026-11-27T21:56:31.196Z"
   },
   "joreilly-confetti": {
     "name": "Confetti",
