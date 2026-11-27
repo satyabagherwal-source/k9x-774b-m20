@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
   "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T15:20:45.903Z",
+  "timestamp": "2026-11-27T00:15:55.880Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nomic-ai/nomic-embed-text-v1.5](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5) (Revision: `hf-nomic-a`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T15:20:45.903Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T00:15:55.880Z`  
 > **Learning ID**: `learn-huggingface-nomic-ai-nomic-embed-text-v1-5`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nomic-ai/nomic-embed-text-v1.5](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:20:45.116Z  
+> **Harvest Timestamp**: 2026-11-27T00:15:55.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 11394567 downloads | 996 likes
+- **Stars / Engagement**: 11336395 downloads | 997 likes
 
 ---
 

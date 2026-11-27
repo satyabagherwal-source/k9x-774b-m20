@@ -13641,3 +13641,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T00:07:15.645Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1e794b83` | Multi-dimensional audit evidence | 2026-11-27T00:07:24.726Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `14c70177` | Multi-dimensional audit evidence | 2026-11-27T00:07:31.868Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-27T00:15:55.651Z |

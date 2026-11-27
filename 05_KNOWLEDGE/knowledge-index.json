@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T00:07:38.735Z",
+  "last_updated": "2026-11-27T00:16:09.683Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fcbba18a32f047abdf5e560bb88c719d09594f9e3a9e163e71578ccf1c136e6",
+      "content_hash": "b64ec4125ee201ad458f62826464b05338f19c7c758757c576846690e8b61839",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T23:58:46.222Z"
+      "persisted_at": "2026-11-27T00:16:09.354Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce88608a53e28126318d1e966b3214ffc3168fab832de21b366a1fa0b4dc135a",
+      "content_hash": "dcbc5a6e6fced0ed6f72fe7b35374ee594d6c8c1dd472ed56d185964f8cf80c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T23:58:46.413Z"
+      "persisted_at": "2026-11-27T00:16:09.540Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e370abf1377bb26e64c95020f48ec2bfb18b3562c747e5ebd113e88b31dcbd7a",
+      "content_hash": "b834747750e67d12d9fa34db3e63b9bddc05ce4ff6de539c9bc50611572342bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:58:46.555Z"
+      "persisted_at": "2026-11-27T00:16:09.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "21b20cb3aaa513943c24e214ddd56e315894e519c394e78968a788f23157d6b4",
+      "content_hash": "78dc8dfb78cd509b927e83d758228f3253c81b60002dcd76f5d80b658d14e891",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:32:30.574Z"
+      "persisted_at": "2026-11-27T00:16:08.579Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -231640,7 +231640,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "ac9cd589f5000be6a131ad49c90cbb0dd119c47310853ab7b5a0a11f3061edf5",
+      "content_hash": "fcb7564110773038f2ca03693d17d2fbcf36bb2fa5ebc332811accb7936b7d6c",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [],
@@ -231649,7 +231649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:20:45.513Z",
+      "verified_at": "2026-11-27T00:15:55.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231666,9 +231666,9 @@
       "title": "Research & Knowledge Intelligence: nomic-ai/nomic-embed-text-v1.5 Core Invariants",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "ce1c8b2246ab2ed1d156c91d905c9ac7be566c6e852978570af159b420e181a8",
+      "content_hash": "dbe043c9d72fc97c867c5db8a94abad60e267b9d8356f636bb544981aa8cae92",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:20:45.904Z"
+      "persisted_at": "2026-11-27T00:15:55.880Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core",
@@ -231678,9 +231678,9 @@
       "title": "Research & Knowledge Intelligence: hf-nomic-ai-nomic-embed-text-v1.5-learnings Core Invariants",
       "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
       "source_version": "HEAD",
-      "content_hash": "be156000e5360c2927865c7f2587ffa8cad4f1d16bbff46cd48e2e7126b385a9",
+      "content_hash": "02c4a31b666517358b815540ca6707e8b027d92d8dda7794c5bbf5bcf80bc9fb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:20:57.565Z"
+      "persisted_at": "2026-11-27T00:16:07.543Z"
     },
     "learn-huggingface-google-gemma-4-26b-a4b-it": {
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
@@ -352580,13 +352580,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RAXI-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DNTM-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b2bcd32d92aa3f9aa4ba9b48c28605c5f14d6e13d171cb13bc8c67bbfbd4629",
+      "content_hash": "3d673ae11c863adbcc9a41e06819bf182f9f0b3256732f996941bb6baf44dab0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T23:58:46.038Z"
+      "persisted_at": "2026-11-27T00:16:09.178Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -357765,13 +357765,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TIYM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DN2E-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f586d8c736edb6ec51be3669cfee0f8b3c582027ddd08ac78ce6ba7c05cce769",
+      "content_hash": "962356a42badfa9ab0deab0c3ed2884d68f4d9cd78c82c0aedd350060b7b747c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T23:32:30.145Z"
+      "persisted_at": "2026-11-27T00:16:08.200Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357781,9 +357781,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9da4d60eda891e28be28bbda0da0198a79c412f2e2969437d4b69d5ee85be0dc",
+      "content_hash": "fc96fd3c76a1a14aa940a7a65f7b6d41a1433bcd2436d11f7c2659f53fdbb502",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T23:32:30.384Z"
+      "persisted_at": "2026-11-27T00:16:08.382Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",

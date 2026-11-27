@@ -13608,3 +13608,4 @@
 | `CYCLE-20261127-2855` | `2026-11-27T00:07:15.641Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`d027008c...`) |
 | `CYCLE-20261127-2F5D` | `2026-11-27T00:07:24.721Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10798` | Yes (`b7b0cdcb...`) |
 | `CYCLE-20261127-2KNS` | `2026-11-27T00:07:31.864Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10799` | Yes (`9a144f66...`) |
+| `CYCLE-20261127-DDDR` | `2026-11-27T00:15:55.647Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`fcb75641...`) |

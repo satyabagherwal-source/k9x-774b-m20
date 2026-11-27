@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T00:07:38.493Z",
+  "last_updated": "2026-11-27T00:16:09.354Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -8562,8 +8562,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "7fcbba18a32f047abdf5e560bb88c719d09594f9e3a9e163e71578ccf1c136e6",
-      "created_at": "2026-11-26T23:58:46.222Z"
+      "content_hash": "b64ec4125ee201ad458f62826464b05338f19c7c758757c576846690e8b61839",
+      "created_at": "2026-11-27T00:16:09.354Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -15949,8 +15949,8 @@
       "title": "Research & Knowledge Intelligence: nomic-ai/nomic-embed-text-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-research-knowledge-intelligence-nomic-ai-nomic.md",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "content_hash": "ce1c8b2246ab2ed1d156c91d905c9ac7be566c6e852978570af159b420e181a8",
-      "created_at": "2026-11-23T15:20:45.904Z"
+      "content_hash": "dbe043c9d72fc97c867c5db8a94abad60e267b9d8356f636bb544981aa8cae92",
+      "created_at": "2026-11-27T00:15:55.880Z"
     },
     "DOM-D-BFA5A06D": {
       "record_id": "DOM-D-BFA5A06D",
@@ -16000,8 +16000,8 @@
       "title": "Research & Knowledge Intelligence: hf-nomic-ai-nomic-embed-text-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-learnings-research-knowledge-intelligence-hf-n.md",
       "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
-      "content_hash": "be156000e5360c2927865c7f2587ffa8cad4f1d16bbff46cd48e2e7126b385a9",
-      "created_at": "2026-11-23T15:20:57.565Z"
+      "content_hash": "02c4a31b666517358b815540ca6707e8b027d92d8dda7794c5bbf5bcf80bc9fb",
+      "created_at": "2026-11-27T00:16:07.543Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-26b-a4b-it-core-invariants",
@@ -46739,8 +46739,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "9da4d60eda891e28be28bbda0da0198a79c412f2e2969437d4b69d5ee85be0dc",
-      "created_at": "2026-11-26T23:32:30.384Z"
+      "content_hash": "fc96fd3c76a1a14aa940a7a65f7b6d41a1433bcd2436d11f7c2659f53fdbb502",
+      "created_at": "2026-11-27T00:16:08.382Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

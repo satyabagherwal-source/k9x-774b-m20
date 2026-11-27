@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:07:38.270Z",
+  "last_updated": "2026-11-27T00:16:09.178Z",
   "directives": [
     {
       "id": "CD-001",
@@ -63405,14 +63405,14 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-RAXI",
+      "id": "CD-DNTM",
       "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-RAXI-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DNTM-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-26",
+      "date_staged": "2026-11-27",
       "domain_letter": "H"
     },
     {
@@ -66257,14 +66257,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-TIYM",
+      "id": "CD-DN2E",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-TIYM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DN2E-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-26",
+      "date_staged": "2026-11-27",
       "domain_letter": "I"
     },
     {
@@ -67796,6 +67796,24 @@
       "source_repo": "dathere-qsv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A8D9C1-replace-deprecated-filetime-calls-with-s.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-7B80F8",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7B80F8-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-A977A3",
+      "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A977A3-daemon-drain-buffered-watcher-changes-be.md",
       "staged_date": "2026-11-27"
     }
   ]

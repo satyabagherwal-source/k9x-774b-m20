@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-CY59",
-    "timestamp": "2026-11-25T12:48:05.085Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "347610a96cf9e29230169a1711d807fe8c89eec87753f885997ab5838f23f1ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-NR3Y",
     "timestamp": "2026-11-25T12:56:29.182Z",
     "repository": "LiquidAI/LFM3-Audio-2B",
@@ -7492,6 +7477,21 @@
     "contentHash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-DDDR",
+    "timestamp": "2026-11-27T00:15:55.647Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "fcb7564110773038f2ca03693d17d2fbcf36bb2fa5ebc332811accb7936b7d6c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

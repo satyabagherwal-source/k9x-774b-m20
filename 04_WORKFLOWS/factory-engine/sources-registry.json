@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T00:07:35.377Z",
-    "lastVerified": "2026-11-27T00:07:35.377Z",
+    "lastChecked": "2026-11-27T00:16:07.173Z",
+    "lastVerified": "2026-11-27T00:16:07.173Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T23:41:04.439Z",
+    "lastChecked": "2026-11-27T00:16:07.163Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T23:41:04.439Z"
+    "lastVerified": "2026-11-27T00:16:07.163Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -571,8 +571,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T19:55:05.532Z",
-    "lastVerified": "2026-11-26T19:55:05.532Z",
+    "lastChecked": "2026-11-27T00:16:02.165Z",
+    "lastVerified": "2026-11-27T00:16:02.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -4301,12 +4301,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "risingwavelabs-risingwave": {
-    "name": "risingwavelabs/risingwave",
+    "name": "risingwave",
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T05:29:18.626Z",
-    "lastVerified": "2026-11-26T05:29:18.626Z",
+    "lastChecked": "2026-11-27T00:16:05.253Z",
+    "lastVerified": "2026-11-27T00:16:05.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
@@ -4315,7 +4315,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "151572e0"
   },
   "svenstaro-miniserve": {
     "name": "svenstaro/miniserve",
@@ -4466,9 +4467,9 @@
   "midudev-preguntas-entrevista-react": {
     "name": "preguntas-entrevista-react",
     "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
-    "lastChecked": "2026-11-24T16:01:29.524Z",
+    "lastChecked": "2026-11-27T00:15:57.244Z",
     "revisionIdentifier": "99d805f1",
-    "lastVerified": "2026-11-24T16:01:29.524Z"
+    "lastVerified": "2026-11-27T00:15:57.244Z"
   },
   "go-eagle-eagle": {
     "name": "eagle",
@@ -5466,9 +5467,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-25T23:59:07.301Z",
+    "lastChecked": "2026-11-27T00:15:52.250Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-25T23:59:07.301Z"
+    "lastVerified": "2026-11-27T00:15:52.250Z"
   },
   "hf-baidu-unlimited-ocr": {
     "name": "baidu/Unlimited-OCR",
@@ -6418,12 +6419,12 @@
     "officialUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T15:20:45.116Z",
-    "lastVerified": "2026-11-23T15:20:45.116Z",
+    "lastChecked": "2026-11-27T00:15:55.004Z",
+    "lastVerified": "2026-11-27T00:15:55.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "ac9cd589f5000be6a131ad49c90cbb0dd119c47310853ab7b5a0a11f3061edf5",
+    "contentHash": "fcb7564110773038f2ca03693d17d2fbcf36bb2fa5ebc332811accb7936b7d6c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7523,8 +7524,8 @@
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T06:26:55.402Z",
-    "lastVerified": "2026-11-26T06:26:55.402Z",
+    "lastChecked": "2026-11-27T00:15:59.644Z",
+    "lastVerified": "2026-11-27T00:15:59.644Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
