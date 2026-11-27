@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:30:22.901Z",
+  "last_updated": "2026-11-27T21:39:15.705Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26769,
+  "total_items": 26772,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "5feb8f1e",
-      "content_hash": "b375d90d21f8c0b6dae85fea0f4512323c777747b6ff94f82f00798a7f4f1927",
+      "source_version": "1441b6a4",
+      "content_hash": "7bab072226ddbb930c27fc83d97b39090ce0ee90a36626afbd3fb2f7715e478c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:20:03.888Z"
+      "persisted_at": "2026-11-27T21:39:09.797Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "77bec5a2b14a9ff1b4243a53608f97e9e412f4dd880ed1425e61e3024d4b3204",
+      "content_hash": "cb6ff1a37405a9e40cfacf4edc761baba6996aa2d037c666ce8c69ee3e3377ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:20:49.020Z"
+      "persisted_at": "2026-11-27T21:39:14.738Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a7592f5d6cc9798edaa42b344daff6ef2945a0fc44a3de59b5650e1febb1d15",
+      "content_hash": "b9ce5af18e60a09687f901924feee63712984d7836c9bf8a9dbd9cb8a844372c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:20:27.346Z"
+      "persisted_at": "2026-11-27T21:39:15.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "00c4ff340ab3ba41ae377fa8fa1f7f8c767c95a26dca5d5d8cb5614342295184",
+      "content_hash": "c28016760ef7eec976e1f3031743ff9814bb8c085d67f04fe9c8f47be806799c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:20:27.555Z"
+      "persisted_at": "2026-11-27T21:39:15.705Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -220829,8 +220829,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "5feb8f1e",
-      "content_hash": "924b169ad95a4da42f1ef98dced8111ab12a093f925a7d23411eb69c8553e2eb",
+      "source_version": "1441b6a4",
+      "content_hash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221078,6 +221078,11 @@
           "number": 10960,
           "title": "bump polars-readstat-rs to 0.27.1 (rebased fork)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10970,
+          "title": "count rows when no columns remain for --values; rename clashing generat",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221085,7 +221090,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T20:20:02.581Z",
+      "verified_at": "2026-11-27T21:39:08.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222237,10 +222242,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "5feb8f1e",
-      "content_hash": "c3c79e244f9f2005a60b3cb6b5ccca08b5136c0221329df219b51268c671aa1f",
+      "source_version": "1441b6a4",
+      "content_hash": "a4afe7172ff965d8f2d4a12172f3b3cc87ddea2f60256263238f94c265d97cc3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T20:20:03.587Z"
+      "persisted_at": "2026-11-27T21:39:09.600Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222310,9 +222315,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "be72e633ce4a2de22092ab323b80e77d1211321369c6c0a19b66909746f373db",
+      "content_hash": "38818b56485570433fb61323d1d53ce89fb51352d76ef2295f0a7f12ad5e2223",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T20:20:48.692Z"
+      "persisted_at": "2026-11-27T21:39:14.530Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -309025,7 +309030,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clairic",
       "source_version": "hf-cloudflare-clairic",
-      "content_hash": "eda95deaeb4af932f1329306c7804fb721cee463ced8abdb3f372d72c6dfc622",
+      "content_hash": "a747855b5063fce1007623401110baf33ff208022f878323884edc4a77d4c315",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md",
       "promoted_rules": [],
@@ -309034,7 +309039,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:30:05.983Z",
+      "verified_at": "2026-11-27T21:38:52.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309051,9 +309056,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clairic Core Invariants",
       "repository": "Cloudflare/clairic",
       "source_version": "hf-cloudflare-clairic",
-      "content_hash": "ec33f1663defb5115b2951b3f2c08bc404702d11083621f745a7b5163cb4324f",
+      "content_hash": "a1892b3eefc4ea7373708dff75dda737a7b26048a8a8807bc5c021329142b476",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:30:06.577Z"
+      "persisted_at": "2026-11-27T21:38:53.516Z"
     },
     "rule-9550": {
       "learning_id": "rule-9550",
@@ -309151,9 +309156,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clairic-learnings Core Invariants",
       "repository": "hf-cloudflare-clairic-learnings",
       "source_version": "HEAD",
-      "content_hash": "64241fe48c04bbf99cfc355c42454a778bf7b454698454da93f04c29b74afbbe",
+      "content_hash": "f2cbc054cdefb1d103140ba5fcdcf581052d5a31922003ddef9f63b613f2819a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:30:27.906Z"
+      "persisted_at": "2026-11-27T21:39:12.961Z"
     },
     "rule-9552": {
       "learning_id": "rule-9552",
@@ -361503,13 +361508,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JK72-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7QO8-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "36d73cad83202038126073a6812655ef81101ed5acc716eb3cdb9dc3fae426ac",
+      "content_hash": "8b0cca968e23bad3be6643ed2d50bb4b544635c91c07ba7816a362f3508782b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:20:27.137Z"
+      "persisted_at": "2026-11-27T21:39:15.275Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -367659,6 +367664,44 @@
       "content_hash": "c09ccb83b98edbd9efc858f6e457ded9c273df757112a2b742e2cf0e003874b6",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T21:30:20.637Z"
+    },
+    "rule-10970": {
+      "learning_id": "rule-10970",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10970,
+      "title": "count rows when no columns remain for --values; rename clashing generat",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "1441b6a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:39:08.869Z"
+    },
+    "candidate_directive-count-rows-when-no-columns-remain-for-values-rename-clashing-generat": {
+      "item_id": "candidate_directive-count-rows-when-no-columns-remain-for-values-rename-clashing-generat",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7M4W-count-rows-when-no-columns-remain-for-values-rename-clashing-generat.md",
+      "title": "count rows when no columns remain for --values; rename clashing generat",
+      "repository": "dathere/qsv",
+      "source_version": "1441b6a4",
+      "content_hash": "7004dad1bf5e576ad8d678e3a07e9977067efd7e6ec6cfca63f250e279352240",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:39:09.396Z"
+    },
+    "candidate_directive-pivotp-count-rows-when-no-columns-remain-for-values-rename-clashing-generat": {
+      "item_id": "candidate_directive-pivotp-count-rows-when-no-columns-remain-for-values-rename-clashing-generat",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7PXP-pivotp-count-rows-when-no-columns-remain-for-values-rename-clashing-generat.md",
+      "title": "pivotp): count rows when no columns remain for --values; rename clashing generat",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94c75fd644b8fb648c009d30432d4250801c45e9fe16c8b270e1a22e4b0e99bf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:39:14.320Z"
     }
   },
   "ai-builder-brain": {

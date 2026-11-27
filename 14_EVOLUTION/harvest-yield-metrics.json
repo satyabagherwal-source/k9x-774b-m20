@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:30:13.768Z",
-  "total_cycles_completed": 13168,
-  "total_learnings_persisted": 13168,
-  "total_rules_promoted": 11883,
+  "last_updated": "2026-11-27T21:39:09.142Z",
+  "total_cycles_completed": 13170,
+  "total_learnings_persisted": 13170,
+  "total_rules_promoted": 11884,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:18:16.335Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T04:18:23.870Z",
-      "repository": "callstack/agent-device",
-      "learningId": "learn-github-callstack-agent-device",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:18:31.818Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T21:30:13.768Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:38:53.289Z",
+      "repository": "Cloudflare/clairic",
+      "learningId": "learn-huggingface-cloudflare-clairic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:39:09.142Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

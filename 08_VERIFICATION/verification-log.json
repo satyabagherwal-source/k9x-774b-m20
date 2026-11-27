@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-2RCG",
-    "timestamp": "2026-11-26T11:03:51.280Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "381414aa49d4c9aa188b2c33c3057e31b854175bfc9ab3f90b3684bc11cf7a1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-HUQB",
-    "timestamp": "2026-11-26T11:15:35.507Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "fb055bb7303214537894751f484dcd4f2893faceb037c771c9c334c12b916a1b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HW6X",
     "timestamp": "2026-11-26T11:15:37.401Z",
     "repository": "kividbio/kividb",
@@ -7490,6 +7460,36 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-79P4",
+    "timestamp": "2026-11-27T21:38:53.272Z",
+    "repository": "Cloudflare/clairic",
+    "learningId": "learn-huggingface-cloudflare-clairic",
+    "contentHash": "a747855b5063fce1007623401110baf33ff208022f878323884edc4a77d4c315",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7LXH",
+    "timestamp": "2026-11-27T21:39:09.125Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

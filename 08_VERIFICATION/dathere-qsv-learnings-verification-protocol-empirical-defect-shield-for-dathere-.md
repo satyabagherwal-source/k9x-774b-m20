@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T20:20:48.187Z",
+  "timestamp": "2026-11-27T21:39:14.171Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T20:20:48.187Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:39:14.171Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `5feb8f1e`  
+> **Source Version**: `1441b6a4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T20:20:01.365Z  
+> **Timestamp**: 2026-11-27T21:39:07.882Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T20:20:01.358Z  
+> **Harvest Timestamp**: 2026-11-27T21:39:07.876Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3875 stars
+- **Stars / Engagement**: 3876 stars
 
 ---
 
@@ -2283,11 +2283,11 @@ mod tests;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5105** (2026-11-24): **moarstats, pragmastat and scoresql reuse a stats cache without checking how it was parsed**
-  *Symptoms*: Follow-up to #5104 (#4610), from its "Known gaps".  A stats cache is located by input path and validated by mtime, not by the options the input was parsed with. `util::stats_cache::stats_cache_parsing_opts_match` closes that gap for the `get_stats_records` loaders, which serve `schema`, `tojsonl`, `pivotp`, `viz`, `sortcheck` and others. It checks `--no-headers`, `--delimiter`, `--prefer-dmy`, `--flexible`, sniffed preamble rows and, since #5104, `--quote`/`--escape`/`--no-quoting`.  Three commands read the cache files themselves and skip that check:  | command | reads | checks today | |---|---|---| | `moarstats` | the baseline `<stem>.stats.csv` (then rewrites it and regenerates the `.data.jsonl`) | freshness, qsv version, `QSV_STATS_SEPARATOR`, percentile coverage | | `pragmastat` | `<stem>.stats.csv.data.jsonl` | mtime only | | `scoresql` | `<stem>.stats.csv.data.jsonl` | mtime only |  So a cache computed under other parsing options than the command reads with is used anyway. The two repros below use `--quote`, and the same applies to `--flexible` and the other options above.  ### Repro: `moarstats` republishes stats of another reading ```bash printf "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n" > d.csv qsv stats --quote "'" --stats-jsonl d.csv > /dev/null qsv moarstats d.csv qsv select field,max d.stats.csv     # b max = 4 qsv stats --force d.csv | qsv select field,max    # read with the default quoting: b max = 9 ``` `moarstats` adds its columns to the `'`-quoted baseline, and it r
+- **Issue #5123** (2026-11-27): **pivotp: default --values can produce an output name that collides with an --index column ("Duplicate: column with name ... has more than one occurrence")**
+  *Symptoms*: ## Problem  Without `--values`, every remaining column is a value column, and Polars names the outputs `<value col>_<pivot value>`. If one of those names equals an `--index` column name, the pivot fails:  ```console $ qsv readstat --sentinels-as value resources/test/readstat_sentinels.sav -o survey.csv $ cat survey.csv id,income,income_null,rating,rating_null,name,name_null,plain 1.0,1500.5,,3.0,,Ana,,1.0 2.0,,99,,8,,NA,2.0 3.0,,950,4.0,,Cy,,3.0 4.0,,,,9,,,4.0 $ qsv pivotp rating_null --index name_null survey.csv Polars error: Duplicate(ErrString("column with name 'name_null' has more than one occurrence")) ```  The value column `name` with the pivot value `null` (the empty `rating_null` cells) produces `name_null`, the name of the `--index` column. `readstat --sentinels-as` creates `<col>_null` columns next to `<col>`, so this layout is common for files converted from SPSS/Stata/SAS.  With explicit `--values`, it works:  ```console $ qsv pivotp rating_null --index name_null --values income survey.csv name_null,null,8,9 ... ```  ## Expected  The output column names never collide with the index columns. For example, qsv could detect the collision and add a suffix to the generated names, or stop with a qsv error that names the colliding column and suggests `--values`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
-- **Issue #4829** (2026-10-16): **schema: --enum-threshold ignored when no column is under it (every column gets a full enum)**
-  *Symptoms*: ## Summary  `qsv schema --enum-threshold N` is supposed to limit `enum` constraints to columns with at most N distinct values. But when **no** column has between 2 and N distinct values, **every** column gets a complete `enum`, however many distinct values it has. When at least one column does qualify, the threshold works as documented. So whether a column gets an `enum` depends on the *other* columns in the file.  Found while reviewing #4827.  ## Repro (qsv 25.0.0 / master)  ```sh # every column is above the threshold -> every column gets a full enum { echo id,txt; for i in $(seq 1 80); do echo "$i,v$i"; done; } > hc.csv qsv schema hc.csv --enum-threshold 50 jq -c '.properties|map_values(.enum|length)' hc.csv.schema.json # {"id":80,"txt":80}  # add one column with 3 distinct values -> the threshold suddenly applies { echo id,txt,cat; for i in $(seq 1 80); do echo "$i,v$i,c$((i%3))"; done; } > mx.csv qsv schema mx.csv jq -c '.properties|map_values(.enum|length)' mx.csv.schema.json # {"id":0,"txt":0,"cat":3} ```  Similarly, `--enum-threshold 1` (where no column with more than one value can qualify) enumerates every column instead of none.  ## Cause  `build_low_cardinality_column_selector_arg` returns `""` when no column qualifies. `get_unique_values` then calls `SelectColumns::parse("")`, which means "select all columns", so `frequency` gathers values for every column, and an `enum` is emitted for each one (80 values each in the first repro, even though the threshold is 50).  
+- **Issue #5122** (2026-11-27): **pivotp: --agg len without --values fails with a raw Polars error when no columns remain**
+  *Symptoms*: ## Problem  When every column is used as `<on-cols>` or `--index`, there is nothing left for `--values` to default to, and `pivotp` stops with a raw Polars error instead of a qsv message:  ```console $ printf 'region,sex\nN,M\nN,F\nS,M\n' > ct.csv $ qsv pivotp region --index sex --agg len ct.csv Polars error: InvalidOperation(ErrString("`pivot` called without `values` columns.")) ```  The help says `--values` defaults to "all remaining columns not specified on --on and --index", and that `len` is a "Count of values". For a crosstab-style count (SPSS `CROSSTABS`, Stata `tabulate a b`) a user expects counts here.  The form that works today is to repeat the `on` column as the values:  ```console $ qsv pivotp region --index sex --values region --agg len ct.csv ```  ## Expected  One of: - with `--agg len` and no remaining columns, count rows per index/on combination; or - a clear qsv error that names the problem and suggests `--values <on-col>`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2304,129 +2304,341 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5feb8f1e` (2026-11-27)
-**Commit Message**: deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (#5121)
+### Incident Patch 1: `1441b6a4` (2026-11-27)
+**Commit Message**: fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (#5124)
 
-* deps: bump polars-readstat-rs to 0.27.1 (rebased fork)
+* fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns
 
-Crates.io 0.27.1 still calls DataFrame::slice(offset, len), which the
-pinned polars rev replaced with slice(impl Into<Slice>), so keep the
-dathere fork, now rebased onto upstream 0.27.1 with only the slice change
-(43b9b7b). Upstream's own exact .por number fix (ace0caa) replaces ours:
-writestat_por_small_numbers passes on it and fails without it (#5094).
+#5122: when every column is a pivot or --index column, the default
+--values (all remaining columns) was empty and Polars failed with
+"`pivot` called without `values` columns". With len (the default then),
+count the first pivot column, as `--values <on-col> --agg len` does; any
+other aggregation now stops with an error asking for --values.
+
+#5123: a generated column named <value><sep><pivot value> (or just the
+pivot value) could equal an --index column's name, e.g. `name` x `null`
+-> `name_null` on readstat --sentinels-as output, and the pivot failed
+with a Polars Duplicate error. Pivot on temporary copies of the index
+columns, then give them back their names; a clashing generated column
+takes the first free `<name>_<n>` from 2, with a warning. Two generated
+names that coincide still stop the pivot, now with a qsv error.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5121 [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(writestat): require bit-exact .por small-number round trips
-
-polars-readstat-rs 0.27.1 reads .por numbers exactly, so drop the
-few-ulp tolerance the old fork's reader needed. Against the old fork
-(18551f9) the exact check fails: 1e-50 read back as 9.999999999999999e-51.
+* docs(changelog): cite #5124 [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-author
 
-**File**: `CHANGELOG.md` (modified, +2/-1)
+**File**: `.claude/skills/qsv/qsv-pivotp.json` (modified, +2/-2)
 ```diff
-@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -29,7 +29,7 @@
+       {
+         "flag": "--col-separator",
+         "type": "string",
+-        "description": "The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode)",
++        "description": "The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode)",
+         "default": "_"
+       },
+       {
+@@ -113,7 +113,7 @@
+       {
+         "flag": "--values",
+         "type": "string",
+-        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single \"count\" column is produced."
++        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single \"count\" column is produced."
+       }
+     ]
+   },
+```
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+ 
+ ### Fixed
++- `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
++- `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
  - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
  - `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
  - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
--- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
-+- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes every finite number so that it reads back exactly. The `.por` writer and reader fixes come from `polars-readstat-rs` 0.27.1 ([jrothbaum/polars_readstat@ace0caa](https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c)), after our fix was offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103), [#5121](https://github.com/dathere/qsv/pull/5121))
- - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
- - `sy
 ```
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `docs/help/pivotp.md` (modified, +2/-2)
 ```diff
-@@ -6535,8 +6535,8 @@ dependencies = [
- 
- [[package]]
- name = "polars-readstat-rs"
--version = "0.27.0"
--source = "git+https://github.com/dathere/polars_readstat?rev=18551f90697b23e677c5e17a0fe8f03ad710d90b#18551f90697b23e677c5e17a0fe8f03ad710d90b"
-+version = "0.27.1"
-+source = "git+https://github.com/dathere/polars_readstat?rev=43b9b7b9d8def3d4883af76409ac885be5873639#43b9b7b9d8def3d4883af76409ac885be5873639"
- dependencies = [
-  "byteorder",
-  "chrono",
+@@ -57,11 +57,11 @@ qsv pivotp --help
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+ | &nbsp;`‑i,`<br>`‑‑index`&nbsp; | string | The column(s) to use as the index (row labels). Specify multiple columns by separating them with a comma. The output will have one row for each unique combination of the index's values. In pivot mode, if None, all remaining columns not specified on --on and --values will be used; at least one of --index and --values must be specified. Required in group-by mode. |  |
+-| &nbsp;`‑v,`<br>`‑‑values`&nbsp; | string | The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single "count" column is produced. |  |
++| &nbsp;`‑v,`<br>`‑‑values`&nbsp; | string | The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single "count" column is produced. |  |
+ | &nbsp;`‑a,`<br>`‑‑agg`&nbsp; | string | The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. High variability means a CV above 100% (stddev > mean). When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode`), also uses mode_count. With a single --values column, smart first runs moarstats --advanced to enrich the input's stats cache (writing <stem>.stats.csv, .stats.csv.json and .stats.csv.data.jsonl beside it) unless the cache already has those stats. This one-time pass reads the whole file; skip it with --no-moarstats. It is also skipped with an explicit --delimiter, stdin and special formats. The moarstats stats used are outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio and quartile coefficient of dispersion (the two ratios only for positive data), moment skewness (\|G1\| >= 1 picks median; Pearson skewness is the fallback), kurtosis, bimodality (bimodality coefficient >= 0.60 with negative excess kurtosis), entropy and Gini coefficient. A single-value column uses first. The choice depends on the data, so pass an explicit --agg to pin a result across qsv versions. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first` | `smart` |
+ | &nbsp;`‑‑sort‑columns`&nbsp; | flag | Sort the transposed columns by name. (pivot mode only) |  |
+ | &nbsp;`‑‑maintain‑order`&nbsp; | flag | Accepted for compatibility. Output is always in first-appearance order: rows follow their index values' first appearance and pivoted columns their <on-cols> values' first appearance. |  |
+-| &nbsp;`‑‑col‑separator`&nbsp; | string | The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode) | `_` |
++| &nbsp;`‑‑col‑separator`&nbsp; | string | The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode) | `_` |
+ | &nbsp;`‑‑validate`&nbsp; | flag | Report the pivot column(s)' cardinality before pivoting. Informational only - it does not refuse a pivot; --max-columns does that. (pivot mode only) |  |
+ | &nbsp;`‑‑max‑columns`&nbsp; | integer | Maximum number of columns the pivot may create before it is refused. Guards against pivoting on a high-cardinality column, which can exhaust memory. Unlike --validate, this ALWAYS runs. Set to 0 for no limit, for a deliberately wide pivot. (pivot mode only; ignored in group-by mode) | `100000` |
+ | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse columns as dates. |  |
 ```
 
-**File**: `Cargo.toml` (modified, +7/-7)
+**File**: `src/cmd/pivotp.rs` (modified, +93/-11)
 ```diff
-@@ -335,7 +335,7 @@ plotly = { version = "0.15", default-features = false, optional = true }
- # `t!` macro expands to `crate::_rust_i18n_t!`. See src/cmd/viz_i18n.rs.
- rust-i18n = { version = "4.2.1", optional = true }
- pragmastat = "14.0"
--polars-readstat-rs = { version = "0.27", optional = true }
-+polars-readstat-rs = { version = "0.27.1", optional = true }
- # only for `default_ipc_fields`, which `sqlp --streaming --format arrow` needs to build a
- # batched IPC writer; it resolves to the same patched git rev as polars itself.
- polars-arrow = { version = "0.55", optional = true }
-@@ -550,12 +550,12 @@ serial_test = { version = "4.0", features = ["file_locks"] }
- # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
- polars-core  = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
- polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
--# polars-readstat-rs 0.27.0 calls DataFrame/Series::slice(offset, len), which polars main
--# replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork passes the pair as a
--# tuple; upstream can't take it while it builds on crates.io polars 0.55.1. The fork also
--# writes & reads .por numbers far below 1 without loss (#5094). Drop once a polars-readstat-rs
--# release builds against the pinned polars rev AND has that .por fix (else #5094 comes back).
--polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "18551f90697b23e677c5e17a0fe8f03ad710d90b" }
-+# polars-readstat-rs 0.27.1 calls DataFrame/Series::slice(offset, len), which polars main
-+# replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork (upstream 0.27.1 plus
-+# one commit) passes the pair as a tuple; upstream can't take it while it builds on crates.io
-+# polars 0.55.1. Drop once a polars-readstat-rs release builds against the pinned polars rev.
-+# 0.27.1 has upstream's exact .por number fix, so #5094 no longer needs the fork.
-+polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "43b9b7b9d8def3d4883af76409ac885be5873639" }
- # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
- # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
- # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
-```
-
-**File**: `tests/test_writestat.rs` (modified, +4/-6)
-```diff
-@@ -586,8 +586,7 @@ fn writestat_xpt_number_too_small_boundary() {
+@@ -48,6 +48,8 @@ pivotp options:
+                             will be computed.
+                             In pivot mode, if None, all remaining columns not specified on --on and --index
+                             will be used; at least one of --index and --values must be specified.
++                            If no columns remain, len (the default then) counts the rows of each
++                            cell; any other aggregation needs --values.
+                             In group-by mode, if omitted, a single "count" column is produced.
+     -a, --agg <func>        The aggregation function to use:
+                               first - First value encountered
+@@ -96,6 +98,8 @@ pivotp options:
+                             order: rows follow their index values' first appearance and
+                             pivoted columns their <on-cols> values' first appearance.
+     --col-separator <arg>   The separator in generated column names in case of multiple --values columns.
++                            A generated name that equals an index column's takes a _2 (_3, ...)
++                            suffix, with a warning.
+                             (pivot mode only; ignored in group-by mode) [default: _]
+     --validate              Report the pivot column(s)' cardinality before pivoting. Informational
+                             only - it does not refuse a pivot; --max-columns does that.
+@@ -1094,6 +1098,20 @@ fn log_mixed_sign(stats: &StatsData) {
+     );
  }
  
- // A portable file holds numbers far closer to 0 than SAS transport files do;
--// they come back as written, not as 0 (#5094). The reader rebuilds them with
--// float arithmetic, so within a few ulps.
-+// they come back exactly as written, not as 0, subnormals included (#5094).
- #[test]
- fn writestat_por_small_numbers() {
-     let wrk = Workdir::new("writestat_por_small_numbers");
-@@ -607,10 +606,9 @@ fn writestat_por_small_numbers() {
-         .collect();
-     assert_eq!(got.len(), values.len(), "{back}");
-     for (want, got) in values.iter().zip(got) {
--        // a subnormal holds fewer digits
--        let tolerance = (4.0 * f64::from_bits(1) / want.abs()).max(1e-15);
--        assert!(
--            got != 0.0 && ((got - want) / want).abs() <= tolerance,
-+        assert_eq!(
-+            want.to_bits(),
-+            got.to_bits(),
-             "{want:e} read back as {got:e}"
-         );
-     }
++/// Polars names the pivoted columns `<value col><sep><pivot value>`, so two of them can
++/// coincide (`a_b` x `c` and `a` x `b_c` are both `a_b_c`). A clash with an index column can't
++/// happen here: the pivot runs on renamed copies of the index columns (#5123).
++fn pivot_name_clash(err: PolarsError) -> crate::CliError {
++    match err {
++        PolarsError::Duplicate(msg) => crate::CliError::IncorrectUsage(format!(
++            "The pivot would output two columns with the same name ({msg}): two generated column \
++             names coincide. Set a different --col-separator, or pass --values <cols> to pick the \
++             value columns."
++        )),
++        other => other.into(),
++    }
++}
++
+ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let args: Args = util::get_args(USAGE, argv)?;
+ 
+@@ -1346,13 +1364,24 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             .map(std::string::String::as_str)
+             .collect();
+ 
+-        Some(
+-            all_cols
+-                .iter()
+-                .filter(|c| !on_set.contains(c.as_str()) && !index_set.contains(c.as_str()))
+-                .cloned()
+-                .collect(),
+-        )
++        let remaining: Vec<String> = all_cols
++            .iter()
++            .filter(|c| !on_set.contains(c.as_str()) && !index_set.contains(c.as_str()))
++            .cloned()
++            .collect();
++        if remaining.is_empty() {
++            // Every column is a pivot or index column (#5122). Len counts rows whatever the
++            // column, so count the first pivot column, as `--values <on-col>` does.
++            if agg_kind != AggKind::Len {
++                return fail_incorrectusage_clierror!(
++                    "No columns are left to aggregate: every column is in <on-cols> or --index. \
++                     Pass --values <cols>, or use --agg len to count rows."
++                );
++            }
++            Some(vec![oc[0].clone()])
++        } else {
++            Some(remaining)
++        }
+     } else {
+         // Group-by mode without --values: no value columns, just count rows
+         None
+@@ -1431,7 +1460,20 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         let separator = PlSmallStr::from_str(&args.flag_col_separator);
+ 
+         let on_selector = cols(on_cols.iter().map(std::string::String::as_str));
+-        let index_selector = cols(actual_index_cols.iter().map(std::string::String::as_str));
++        // Pivot on copies of the index columns, under names no input or generated column takes,
++        // so a generated name equal to an index column's (`name` x `null` -> `name_null`) can't
++        // clash inside Polars. Such names get a suffix after the pivot (#5123).
++        let temp_index_cols: Vec<String> = (0..actual_index_cols.len())
++            .map(|i| format!("\u{1}qsv_pivotp_index_{i}"))
++            .collect();
++        lf = lf.with_columns(
++            actual_index_cols
++                .iter()
++                .zip(&temp_index_cols)
++                .map(|(c, t)| col(c.as_str()).alias(t.as_str()))
++                .collect::<Vec<_>>(),
++        );
++        let index_selector = cols(temp_index_cols.iter().map(std::string::String::as_str));
+         let values_selector = cols(actual_value_cols.iter().map(std::string::String::as_str));
+         let column_naming = PivotColumnNaming::default();
+ 
+@@ -1452,7 +1494,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             // 2.4 GB vs 0.88 GB. group_by_stable keeps first-appearanc
+```
+
+**File**: `tests/test_pivotp.rs` (modified, +146/-0)
+```diff
+@@ -3241,3 +3241,149 @@ fn pivotp_sniff_preamble_skips_preamble_rows() {
+     assert_eq!(got[0][..3], svec!["id", "n1", "n2"]);
+     assert_eq!(got[1][..3], svec!["1", "10", "0"]);
+ }
++
++// With every column in <on-cols> or --index, the default --values is empty: len counts rows of
++// each cell, the same as `--values <on-col>`, instead of failing in Polars (#5122).
++#[test]
++fn pivotp_no_remaining_values_counts_rows() {
++    let wrk = Workdir::new("pivotp_no_remaining_values_counts_rows");
++    wrk.create(
++        "ct.csv",
++        vec![
++            svec!["region", "sex"],
++            svec!["N", "M"],
++            svec!["N", "F"],
++            svec!["S", "M"],
++        ],
++    );
++    let expected = vec![
++        svec!["sex", "N", "S"],
++        svec!["M", "1", "1"],
++        svec!["F", "1", "0"],
++    ];
++    for extra in [
++        &["--agg", "len"][..],
++        &[],
++        &["--values", "region", "--agg", "len"],
++    ] {
++        let mut cmd = wrk.command("pivotp");
++        cmd.args(["region", "--index", "sex"])
++            .args(extra)
++            .arg("ct.csv");
++        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++        assert_eq!(got, expected, "args: {extra:?}");
++    }
++}
++
++// Any aggregation other than len needs a value column; say so instead of a Polars error (#5122).
++#[test]
++fn pivotp_no_remaining_values_other_agg_errors() {
++    let wrk = Workdir::new("pivotp_no_remaining_values_other_agg_errors");
++    wrk.create(
++        "ct.csv",
++        vec![svec!["region", "sex"], svec!["N", "M"], svec!["S", "F"]],
++    );
++    let mut cmd = wrk.command("pivotp");
++    cmd.args(["region", "--index", "sex", "--agg", "sum", "ct.csv"]);
++    let out = cmd.output().unwrap();
++    let stderr = String::from_utf8_lossy(&out.stderr);
++    assert!(!out.status.success(), "{stderr}");
++    assert!(
++        stderr.contains("No columns are left to aggregate"),
++        "{stderr}"
++    );
++    assert!(!stderr.contains("Polars error"), "{stderr}");
++}
++
++// A generated column whose name equals an --index column's takes a `_<n>` suffix, with a
++// warning, instead of failing in Polars (#5123).
++#[test]
++fn pivotp_generated_name_clashes_with_index() {
++    let wrk = Workdir::new("pivotp_generated_name_clashes_with_index");
++    wrk.create(
++        "multi.csv",
++        vec![
++            svec!["id", "name", "name_null", "r"],
++            svec!["1", "Ana", "", ""],
++            svec!["2", "Bo", "NA", "8"],
++        ],
++    );
++    wrk.create(
++        "single.csv",
++        vec![
++            svec!["k", "p", "v"],
++            svec!["x", "k", "1"],
++            svec!["y", "z", "2"],
++        ],
++    );
++    let cases: [(&[&str], Vec<Vec<String>>, &str); 2] = [
++        // several value columns: `name` x pivot value `null` -> `name_null`
++        (
++            &["r", "--index", "name_null", "--agg", "len", "multi.csv"],
++            vec![
++                svec!["name_null", "id_null", "id_8", "name_null_2", "name_8"],
++                svec!["", "1", "0", "1", "0"],
++                svec!["NA", "0", "1", "0", "1"],
++            ],
++            "\"name_null\" to \"name_null_2\"",
++        ),
++        // one value column: the pivot value `k` -> `k`
++        (
++            &[
++                "p",
++                "--index",
++                "k",
++                "--values",
++                "v",
++                "--agg",
++                "sum",
++                "single.csv",
++            ],
++            vec![
++                svec!["k", "k_2", "z"],
++                svec!["x", "1", "0"],
++                svec!["y", "0", "2"],
++            ],
++            "\"k\" to \"k_2\"",
++        ),
++    ];
++    for (args, expected, warning) in cases {
++        let mut cmd = wrk.command("pivotp");
++        cmd.args(args);
++        let out = cmd.output().unwrap();
++        let stderr = String::from_utf8_lossy(&out.stderr);
++        assert!(out.status.success(), "{args:?}: {stderr}");
++        assert!(stderr.contains(warning), "{args:?}: {stderr}");
++        let got: Vec<Vec<String>> = csv::ReaderBuilder::new()
++            .has_headers(false)
++            .from_reader(&out.stdout[..])
++            .records()
++            .map(|r| r.unwrap().iter().map(String::from).collect())
++            .collect();
++        assert_eq!(got, expected, "{args:?}");
++    }
++}
++
++// Two generated names that coincide (`a_b` x `c` and `a` x `b_c` are both `a_b_c`) can't be
++// fixed by renaming the index, so that stays a qsv usage error, not a raw Polars error.
++#[test]
++fn pivotp_generated_names_clash_with_each_other() {
++    let wrk = Workdir::new("pivotp_generated_names_clash_with_each_other");
++    wrk.create(
++        "gen.csv",
++        vec![
++            svec!["i", "a_b", "a", "p"],
++            svec!["x", "1", "2", "c"],
++            svec!["y", "3", "4", "b_c"],
++        ],
++    );
++    let mut cmd = wrk.command("pivotp");
++    cmd.args(["p", "--index", "i", "--agg", "sum", "gen.csv"]);
++    let out = cmd.outpu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
 - **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
 - **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
 - **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 - **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
 - **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
-- **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 
 ---
 
@@ -2446,31 +2658,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump polars-readstat-rs to 0.27.1 (rebased fork)
+## X. pivotp): count rows when no columns remain for --values; rename clashing generat
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-pivotp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5feb8f1e`: deps: bump polars-readstat-rs to 0.27.1 (rebased fork). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1441b6a4`: pivotp): count rows when no columns remain for --values; rename clashing generated columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-pivotp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes every finite number so that it reads back exactly. The `.por` writer and reader fixes come from `polars-readstat-rs` 0.27.1 ([jrothbaum/polars_readstat@ace0caa](https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c)), after our fix was offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103), [#5121](https://github.com/dathere/qsv/pull/5121))
+        "description": "The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode)",
+        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single \"count\" column is produced."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
+        "description": "The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode)",
+        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single \"count\" column is produced."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5feb8f1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1441b6a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

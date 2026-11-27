@@ -13876,3 +13876,5 @@
 | `CYCLE-20261127-JG8T` | `2026-11-27T21:20:22.013Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10967` | Yes (`c979ca2d...`) |
 | `CYCLE-20261127-W1J7` | `2026-11-27T21:30:09.475Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10968` | Yes (`f25eb65d...`) |
 | `CYCLE-20261127-W4TV` | `2026-11-27T21:30:13.747Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10969` | Yes (`0d4a3a2c...`) |
+| `CYCLE-20261127-79P4` | `2026-11-27T21:38:53.272Z` | `Cloudflare/clairic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | Yes (`a747855b...`) |
+| `CYCLE-20261127-7LXH` | `2026-11-27T21:39:09.125Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10970` | Yes (`fd5c67d7...`) |

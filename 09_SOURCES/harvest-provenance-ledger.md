@@ -13909,3 +13909,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `17ea4bc4` | Multi-dimensional audit evidence | 2026-11-27T21:20:22.024Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `52f36cf2` | Multi-dimensional audit evidence | 2026-11-27T21:30:09.490Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `ae0c2b4c` | Multi-dimensional audit evidence | 2026-11-27T21:30:13.761Z |
+| `learn-huggingface-cloudflare-clairic` | `https://huggingface.co/Cloudflare/clairic` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-27T21:38:53.282Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1441b6a4` | Multi-dimensional audit evidence | 2026-11-27T21:39:09.137Z |

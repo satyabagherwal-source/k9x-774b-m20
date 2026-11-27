@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5feb8f1e",
+    "sourceVersion": "1441b6a4",
     "license": "NOASSERTION",
-    "contentHash": "924b169ad95a4da42f1ef98dced8111ab12a093f925a7d23411eb69c8553e2eb",
-    "lastHarvestedAt": "2026-11-27T20:20:02.958Z",
+    "contentHash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
+    "lastHarvestedAt": "2026-11-27T21:39:09.137Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -13005,8 +13005,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clairic",
     "sourceVersion": "hf-cloudflare-clairic",
     "license": "Open-Source",
-    "contentHash": "eda95deaeb4af932f1329306c7804fb721cee463ced8abdb3f372d72c6dfc622",
-    "lastHarvestedAt": "2026-11-24T13:30:06.270Z",
+    "contentHash": "a747855b5063fce1007623401110baf33ff208022f878323884edc4a77d4c315",
+    "lastHarvestedAt": "2026-11-27T21:38:53.282Z",
     "learningId": "learn-huggingface-cloudflare-clairic"
   },
   "kianuni-erosion-cn": {

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Cloudflare/clairic",
   "source_version": "hf-cloudflare-clairic",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T13:30:06.576Z",
+  "timestamp": "2026-11-27T21:38:53.516Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-cloudflare-clairic",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Cloudflare/clairic](https://huggingface.co/Cloudflare/clairic) (Revision: `hf-cloudfl`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T13:30:06.576Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:38:53.516Z`  
 > **Learning ID**: `learn-huggingface-cloudflare-clairic`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cloudflare/clairic](https://huggingface.co/Cloudflare/clairic))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:30:05.513Z  
+> **Harvest Timestamp**: 2026-11-27T21:38:52.559Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1033 downloads | 305 likes
+- **Stars / Engagement**: 1354 downloads | 378 likes
 
 ---
 
