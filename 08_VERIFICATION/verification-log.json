@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-K2TM",
-    "timestamp": "2026-11-26T08:57:21.226Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "a3f07cad995ee99b11e924b404679709de92a7363ce024771de8f7e1b8e8634f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-K5D2",
-    "timestamp": "2026-11-26T08:57:24.518Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "f5bf89192aced5bf4d39f18f1b45f8f6bf79c8a6f9800dc766479fce6646f32e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-K8XI",
-    "timestamp": "2026-11-26T08:57:29.142Z",
-    "repository": "rafsoh/dimeApp",
-    "learningId": "learn-github-rafsoh-dimeapp",
-    "contentHash": "b76afc01e4a9bcb4969ebe64a5f45995022e40cb1e5011b833d4f769052e220f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-KAQU",
     "timestamp": "2026-11-26T08:57:31.494Z",
     "repository": "flux-iac/tofu-controller",
@@ -7490,6 +7445,51 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "48c81c130ec44132b6a166b5f2d3f3051f071a80d578c338324d32984ac96dea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-19E4",
+    "timestamp": "2026-11-27T17:50:16.012Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "d3d5c229d0144ab01db63a9120d91e9641239177de2609be20ff4bdbce04ae45",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-1B8F",
+    "timestamp": "2026-11-27T17:50:18.399Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-1E5T",
+    "timestamp": "2026-11-27T17:50:22.193Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

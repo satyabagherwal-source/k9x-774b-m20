@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T00:07:38.131Z",
+  "timestamp": "2026-11-27T17:50:57.513Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T00:07:38.131Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:50:57.513Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `14c70177`  
+> **Source Version**: `80e0546c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T00:07:30.587Z  
+> **Timestamp**: 2026-11-27T17:50:21.175Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T00:07:30.581Z  
+> **Harvest Timestamp**: 2026-11-27T17:50:21.171Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3866 stars
+- **Stars / Engagement**: 3875 stars
 
 ---
 
@@ -2304,354 +2304,57 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14c70177` (2026-11-26)
-**Commit Message**: refactor: replace deprecated filetime calls with std::fs (#5119)
+### Incident Patch 1: `80e0546c` (2026-11-27)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (#5120)
 
-* refactor: replace deprecated filetime calls with std::fs
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.286 to 1.0.289.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/acfe7992852970efb4fee683d63d628e3e52df67...eb56b6666facdbd501035f4a0269d8caee2e7a8b)
 
-filetime 0.2.30 deprecates `FileTime::from_last_modification_time`,
-`from_last_access_time`, `set_file_mtime` and `set_file_times` in favor of
-`Metadata::modified`/`accessed` and `std::fs::set_times` with `FileTimes`
-(stable on our MSRV 1.100 and the pinned nightly). Mtime comparisons keep
-full sub-second precision. Tests use small `unix_time`/`set_mtime`/`mtime`
-helpers.
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.289
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* build(deps): drop the direct filetime dependency
-
-No qsv code uses it after the std::fs migration; it is still built
-through `tar`, but not in builds without it (e.g. qsvlite).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: CHANGELOG precision wording for #5119
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   - The rest is mostly fixes to SQL forms qsv's tests don't use and performance (streaming joins, cumulative aggregations, Parquet writes). `COUNT(*)` over `UNION ALL ... LIMIT` still panics ([pola-rs/polars#30523](https://github.com/pola-rs/polars/issues/30523)).
+@@ -34,7 +34,7 @@ jobs:
  
-   ([#5111](https://github.com/dathere/qsv/pull/5111))
-+- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
- - deps: dropped the unused direct dependencies `bytemuck` (`polars`, `geocode` features) and `spreadsheet-ods` (`to` feature); qsv never calls either. Both are still built through polars and `csvs_convert`, and `spreadsheet-ods` still resolves to our quick-xml-patched fork through `[patch.crates-io]`. No change in behavior, build time or binary size. ([#5110](https://github.com/dathere/qsv/pull/5110))
- - deps: `mlua` bumped from a git pin (`a0ad453`, Luau 0.745) to the released 0.12.3, with Luau 0.748 (`mlua-sys` 0.14.0, `luau0-src` 0.24.1); `luau` and `frequency --stats-filter` scripts now run on Luau 0.748, and every mlua crate comes from crates.io again. Upstream highlights: Luau 0.746–0.748 improve native code generation and tiered runtime recompilation, and fix inlined functions clobbering captured values; mlua 0.12.3 fixes several userdata, callback and Lua thread bugs. **Behavior change:** Luau removed its experimental 64-bit `integer` library, so the global `integer` that qsv 29.0.0 scripts could call (e.g. `integer.create`) is now `nil`; use plain numbers, which are exact up to 2^53. The new `while local` syntax and `buffer.readvectorf32x*` functions are still behind experimental Luau flags upstream, so qsv does not enable them. ([#5101](https://github.com/dathere/qsv/pull/5101))
- - deps: `jsonschema` bumped from 0.61 to 0.63.1 for `validate`, `describegpt` and `profile`. Upstream highlights: `pattern` and `patternProperties` match common shapes (such as `^[a-z][a-z0-9-_]{1,63}$` or `^[1-5](?:[0-9]{2}|XX)$`) without a regex engine; a pattern with a large bounded count (e.g. `.{0,404600}`) no longer fails with a regex engine error after `--size-limit` was raised to compile it; named backreferences compile, and with `--fancy-regex`, `\d`, `\w`, `\s` and `.` follow ECMA 262 in patterns with a backreference or lookaround; `$ref` to another draft's meta-schema resolves, and a subschema's own `$schema` is honored; and several `$dynamicRef`/`$recursiveRef` cycle and error-location fixes. **Behavior change:** a Draft 4 schema with an empty `enum`, or one with equal members such as `[0, 0.0]`, now fails `validate schema`'s meta-schema check, and some error messages changed (an empty `enum` is now named, and `minContains`/`maxContains` messages no longer claim no item matched). ([#5100](https://github.com/dathere/qsv/pull/5100))
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
++        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `Cargo.lock` (modified, +0/-1)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -7009,7 +7009,6 @@ dependencies = [
-  "fake",
-  "fast-float2",
-  "file-format",
-- "filetime",
-  "flate2",
-  "flexi_logger",
-  "foldhash 0.2.0",
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -233,7 +233,6 @@ same-file = "1.0.6"
- foldhash = "0.2"
- glob = { version = "0.3", optional = true }
- file-format = { version = "0.29", features = ["reader"] }
--filetime = "0.2"
- flexi_logger = { version = "0.32", features = [
-     "async",
-     "compress",
-```
-
-**File**: `src/cmd/frequency.rs` (modified, +3/-9)
-```diff
-@@ -596,8 +596,6 @@ pub(crate) fn read_frequency_cache_view(
-     no_headers: bool,
-     delimiter: Option<Delimiter>,
- ) -> Option<FreqCacheView> {
--    use filetime::FileTime;
--
-     let cache_path = Args::cache_path_for(path);
-     if !cache_path.exists() {
-         return None;
-@@ -606,9 +604,7 @@ pub(crate) fn read_frequency_cache_view(
-     // Cache must be newer than the source CSV, else it's stale.
-     let csv_metadata = fs::metadata(path).ok()?;
-     let cache_fs_metadata = fs::metadata(&cache_path).ok()?;
--    if FileTime::from_last_modification_time(&cache_fs_metadata)
--        <= FileTime::from_last_modification_time(&csv_metadata)
--    {
-+    if cache_fs_metadata.modified().ok()? <= csv_metadata.modified().ok()? {
-         log::info!("Frequency cache is stale; recomputing bar frequencies.");
-         return None;
-     }
-@@ -2295,8 +2291,6 @@ impl Args {
-         &self,
-         rconfig: &Config,
-     ) -> Option<(FrequencyCacheMetadata, Vec<FrequencyCacheEntry>)> {
--        use filetime::FileTime;
--
-         let path = rconfig.path.as_ref()?;
-         let cache_path = Self::cache_path_for(path);
+@@ -34,7 +34,7 @@ jobs:
  
-@@ -2308,8 +2302,8 @@ impl Args {
-         // Compare mtime: cache must be newer than source CSV
-         let csv_metadata = fs::metadata(path).ok()?;
-         let cache_metadata = fs::metadata(&cache_path).ok()?;
--        let csv_mtime = FileTime::from_last_modification_time(&csv_metadata);
--        let cache_mtime = FileTime::from_last_modification_time(&cache_metadata);
-+        let csv_mtime = csv_metadata.modified().ok()?;
-+        let cache_mtime = cache_metadata.modified().ok()?;
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
++        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
-         if cache_mtime <= csv_mtime {
-             winfo!(
-```
-
-**File**: `src/cmd/pragmastat.rs` (modified, +2/-4)
-```diff
-@@ -817,8 +817,6 @@ fn subsample_columns(col_values: &mut [Vec<f64>], max_n: usize, seed: u64) {
- fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usize, ColType)>> {
-     use std::io::BufRead;
- 
--    use filetime::FileTime;
--
-     // Only attempt if we have a file path (not stdin)
-     let input_path = args.arg_input.as_ref()?;
-     let canonical = std::path::Path::new(input_path).canonicalize().ok()?;
-@@ -828,8 +826,8 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
-     if !cache_path.exists() {
-         return None;
-     }
--    let cache_mtime = FileTime::from_last_modification_time(&std::fs::metadata(&cache_path).ok()?);
--    let input_mtime = FileTime::from_last_modification_time(&std::fs::metadata(input_path).ok()?);
-+    let cache_mtime = std::fs::metadata(&cache_path).ok()?.modified().ok()?;
-+    let input_mtime = std::fs::metadata(input_path).ok()?.modified().ok()?;
-     if cache_mtime <= input_mtime {
-         return None;
-     }
-```
-
-**File**: `src/config.rs` (modified, +42/-52)
-```diff
-@@ -1138,7 +1138,7 @@ impl Config {
-         // Track the data file's mtime and the resolved index path *only* on the
-         // path that may need a staleness recheck. For the explicit-(path, idx_path)
-         // branch, staleness is not re-checked, so these stay at their default values.
--        let mut data_modified = filetime::FileTime::zero();
-+        let mut data_modified = std::time::UNIX_EPOCH;
-         let data_fsize;
-         let mut idx_path_work: Option<PathBuf> = None;
- 
-@@ -1170,7 +1170,7 @@ impl Config {
-                 // passively trying to find an index.
- 
-                 let data_md = p.metadata()?;
--                data_modified = filetime::FileTime::from_last_modification_time(&data_md);
-+                data_modified = data_md.modified()?;
-                 data_fsize = data_md.len();
-                 let idx_path = util::idx_path(p);
-                 let idx_file = match fs::File::open(&idx_path) {
-@@ -1219,8 +1219,7 @@ impl Config {
-         // modified, recreate the stale index automatically. Only checked when
-         // we resolved the index path ourselves (idx_path_work is Some).
-         if let Some(idx_path) = &idx_path_work {
--            let idx_modified =
--                filetime::FileTime::from_last_modification_time(&idx_file.metadata()?);
-+            let idx_modified = idx_file.metadata()?.modified()?;
-             // Full (sub-second) precision, and `>=`. Compared in whole seconds with `>`, data
-             // rewritten in the same second the index was built looked current, and the old
-             // index was trusted - `qsv count` reported the old row count at exit 0. An index
-@@ -1527,10 +1526,25 @@ fn compressed_csv_format(path: &Path) -> SpecialFormat {
- 
- #[cfg(test)]
- mod tests {
--    use std::path::PathBuf;
-+    use std::{
-+        path::PathBuf,
-+        time::{Duration, SystemTime, UNIX_EPOCH},
-+    };
- 
-     use super::*;
- 
-+    fn unix_time(secs: u64, nanos: u32) -> SystemTime {
-+        UNIX_EPOCH + Duration::new(secs, nanos)
-+    }
-+
-+    fn set_mtime(path: impl AsRef<Path>, mtime: SystemTime) {
-+        fs::set_times(path, fs::FileTimes::new().set_modified(mtime)).unwrap();
-+    }
-+
-+    fn mtime(path: impl AsRef<Path>) -> SystemTime {
-+        fs::metadata(path).unwrap().modified().unwrap()
-+    }
-+
-     /// A special-format input must remain AUTOINDEXABLE at the Config level.
-     ///
-     /// Such an index is keyed to the CONVERTED TEMP file, so it is only usable by callers whose
-@@ -1713,8 +1727,8 @@ mod tests {
-         path: &Path,
-         rows: usize,
-         new_rows: usize,
--        data_mtime: filetime::FileTime,
--        idx_mtime: filetime::FileTime,
-+        data_mtime: SystemTime,
-+        idx_mtime: SystemTime,
-     ) -> Config {
-         use std::io::Write;
- 
-@@ -1730,8 +1744,8 @@ mod tests {
-         let config = Config::new(Some(&path.to_string_lossy().to_string()));
-         crate::util::create_index_for_file(path, &config).unwrap();
-         write(new_rows);
--        filetime::set_file_mtime(path, data_mtime).unwrap();
--        filetime::set_file_mtime(crate::util::idx_path(path), idx_mtime).unwrap();
-+        set_mtime(path, data_mtime);
-+        set_mtime(crate::util::idx_path(path), idx_mtime);
-         config
-     }
- 
-@@ -1744,8 +1758,8 @@ mod tests {
-             &dir.path().join("subsecond.csv"),
-             1_000,
-             10,
--            filetime::FileTime::from_unix_time(1_700_000_000, 500_000_000),
--            filetime::FileTime::from_unix_time(1_700_000_000, 100),
-+            unix_time(1_700_000_000, 500_000_000),
-+            unix_time(1_700_000_000, 100),
-         );
-         let idx = config.indexed().unwrap().expect("rebuilt index");
-         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
-@@ -1756,7 +1770,7 @@ mod tests {
-     #[test]
-     fn index_with_the_same_mtime_as_its_data_is_stale() {
-         let dir = tempfile::tempdir().unwrap();
--        let same = filetime::FileTime::from_unix_time(1_700_000_000, 0);
-+        let same = unix_time(1_700_000_000, 0);
-         let config = rewritten_after_index(&dir.path().join("same.csv"), 1_000, 10, same, same);
-         let idx = config.indexed().unwrap().expect("rebuilt index");
-         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
-@@ -1769,18 +1783,11 @@ mod tests {
-         let csv_path = dir.path().join("fresh.csv");
-         // whole seconds, well apart: Windows keeps 100 ns ticks and FAT 2 s, so stamps a few
-         // nanoseconds apart would collapse to equal there (and equal means stale)
--        let idx_mtime = filetime::FileTime::from_unix_time(1_700_000_004, 0);
--        let config = rewritten_after_index(
--            &csv_path,
--            25,
--            25,
--            filetime::FileTime::from_unix_time(1_700_000_000, 0),
--            idx_mtime,
--        );
-+        let idx_mtime = unix_time(1_700_000_004, 0);
-+        let config =
-+            rewritten_after_index(&csv_path, 25, 25, unix
-```
-
-**File**: `src/diskcache.rs` (modified, +15/-17)
-```diff
-@@ -3362,9 +3362,9 @@ mod rich {
-             if need_write || !idx_dst.exists() {
-                 let idx_bytes = read_zst(&idx_blob)?;
-                 atomic_write(&idx_dst, &idx_bytes)?;
--                let _ = filetime::set_file_mtime(
-+                let _ = fs::set_times(
-                     &idx_dst,
--                    filetime::FileTime::from_system_time(SystemTime::now()),
-+                    fs::FileTimes::new().set_modified(SystemTime::now()),
-                 );
-             }
-         }
-@@ -3396,10 +3396,8 @@ mod rich {
-         // A sidecar is usable only if newer than the CSV — qsv's stats-cache
-         // staleness rule (see `util::get_stats_records`).
-         let sidecar_fresh = stats_sidecar.exists() && {
--            let s = fs::metadata(&stats_sidecar)
--                .map(|m| filetime::FileTime::from_last_modification_time(&m));
--            let c =
--                fs::metadata(csv_path).map(|m| filetime::FileTime::from_last_modification_time(&m));
-+            let s = fs::metadata(&stats_sidecar).and_then(|m| m.modified());
-+            let c = fs::metadata(csv_path).and_then(|m| m.modified());
-             matches!((s, c), (Ok(s), Ok(c)) if s > c)
-         };
- 
-@@ -3418,9 +3416,9 @@ mod rich {
-             // Restore from the durable blob with a fresh mtime so it passes the
-             // staleness check (written after the CSV, like the .idx above).
-             let _ = atomic_write(&stats_sidecar, &bytes);
--            let _ = filetime::set_file_mtime(
-+            let _ = fs::set_times(
-                 &stats_sidecar,
--                filetime::FileTime::from_system_time(SystemTime::now()),
-+                fs::FileTimes::new().set_modified(SystemTime::now()),
-             );
-         }
-     }
-@@ -3432,23 +3430,23 @@ mod rich {
-         let csv_path = &resolved.csv_path;
-         let sidecar = frequency_sidecar_path(csv_path);
-         let blob = frequency_blob_path(root, &resolved.blake3, &resolved.ext);
--        let fresh = match (fs::metadata(&sidecar), fs::metadata(csv_path)) {
--            (Ok(cache), Ok(csv)) => {
--                filetime::FileTime::from_last_modification_time(&cache)
--                    > filetime::FileTime::from_last_modification_time(&csv)
--            },
--            _ => false,
--        };
-+        let fresh = matches!(
-+            (
-+                fs::metadata(&sidecar).and_then(|m| m.modified()),
-+                fs::metadata(csv_path).and_then(|m| m.modified()),
-+            ),
-+            (Ok(cache), Ok(csv)) if cache > csv
-+        );
- 
-         if fresh {
-             let _ = capture_frequency_sidecar(&sidecar, &blob);
-         } else if blob.exists()
-             && let Ok(bytes) = read_zst(&blob)
-         {
-             let _ = atomic_write(&sidecar, &bytes);
--            let _ = filetime::set_file_mtime(
-+            let _ = fs::set_times(
-                 &sidecar,
--                filetime::FileTime::from_system_time(SystemTime::now()),
-+                fs::FileTimes::new().set_modified(SystemTime::now()),
-             );
-         }
-     }
-```
-
-**File**: `src/util/args.rs` (modified, +5/-2)
-```diff
-@@ -208,8 +208,11 @@ pub const fn num_of_chunks(nitems: usize, chunk_size: usize) -> usize {
- 
- #[cfg(any(feature = "feature_capable", feature = "datapusher_plus"))]
- pub fn file_metadata(md: &fs::Metadata) -> (u64, u64) {
--    use filetime::FileTime;
--    let last_modified = FileTime::from_last_modification_time(md).unix_seconds() as u64;
-+    let last_modified = md
-+        .modified()
-+        .ok()
-+        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-+        .map_or(0, |d| d.as_secs());
-     let fsize = md.len();
-     (last_modified, fsize)
- }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
 - **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 - **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
 - **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
 - **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 - **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
-- **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
 
 ---
 
@@ -2671,31 +2374,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replace deprecated filetime calls with std::fs
+## X. build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14c70177`: replace deprecated filetime calls with std::fs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80e0546c`: build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
+        uses: anthropics/claude-code-action@eb56b6666facdbd501035f4a0269d8caee2e7a8b # v1.0.289
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14c70177` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80e0546c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

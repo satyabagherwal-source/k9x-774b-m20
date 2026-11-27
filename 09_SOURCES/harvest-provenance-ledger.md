@@ -13867,3 +13867,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-33234269` | `project://hf-ai-sage-gigachat4-708b-a41b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md` | 2026-11-27T17:32:58.210Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `9d1c0fc3` | Multi-dimensional audit evidence | 2026-11-27T17:41:49.345Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `73e2292b` | Multi-dimensional audit evidence | 2026-11-27T17:42:02.056Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `e6e92e58` | Multi-dimensional audit evidence | 2026-11-27T17:50:16.016Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `b1999539` | Multi-dimensional audit evidence | 2026-11-27T17:50:18.408Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `80e0546c` | Multi-dimensional audit evidence | 2026-11-27T17:50:22.203Z |
+| `learn-dom-h-c23687a0` | `project://dathere-qsv` | `80e0546c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-27T17:50:56.613Z |

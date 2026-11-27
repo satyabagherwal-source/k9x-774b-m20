@@ -18,12 +18,12 @@
     "revisionIdentifier": "54f54578"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T13:13:59.843Z",
-    "lastVerified": "2026-11-27T13:13:59.843Z",
+    "lastChecked": "2026-11-27T17:50:08.037Z",
+    "lastVerified": "2026-11-27T17:50:08.037Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -32,7 +32,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "26c04faf"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -92,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T17:42:05.383Z",
-    "lastVerified": "2026-11-27T17:42:05.383Z",
+    "lastChecked": "2026-11-27T17:50:25.519Z",
+    "lastVerified": "2026-11-27T17:50:25.519Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,22 +195,21 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T17:10:42.428Z",
-    "lastVerified": "2026-11-27T17:10:42.428Z",
+    "lastChecked": "2026-11-27T17:50:21.171Z",
+    "lastVerified": "2026-11-27T17:50:21.171Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
+    "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "14c70177"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -2822,9 +2822,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-26T17:39:11.415Z",
+    "lastChecked": "2026-11-27T17:49:57.921Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-26T17:39:11.415Z"
+    "lastVerified": "2026-11-27T17:49:57.921Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3659,14 +3659,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T22:39:02.552Z",
-    "lastVerified": "2026-11-26T22:39:02.552Z",
+    "lastChecked": "2026-11-27T17:50:17.343Z",
+    "lastVerified": "2026-11-27T17:50:17.343Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "705cb1f43cfc3ad88e16aeeebfede4814594e19f74e93244aa280c039e2337d2",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 11,
+    "contentHash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7365,12 +7365,12 @@
     "officialUrl": "https://github.com/envoyproxy/envoy",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T23:49:35.489Z",
-    "lastVerified": "2026-11-26T23:49:35.489Z",
+    "lastChecked": "2026-11-27T17:50:14.625Z",
+    "lastVerified": "2026-11-27T17:50:14.625Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
+    "contentHash": "d3d5c229d0144ab01db63a9120d91e9641239177de2609be20ff4bdbce04ae45",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -9748,9 +9748,9 @@
   "mohamedrejeb-calf": {
     "name": "Calf",
     "officialUrl": "https://github.com/MohamedRejeb/Calf",
-    "lastChecked": "2026-11-25T08:13:01.224Z",
+    "lastChecked": "2026-11-27T17:50:02.902Z",
     "revisionIdentifier": "6b13fad1",
-    "lastVerified": "2026-11-25T08:13:01.224Z"
+    "lastVerified": "2026-11-27T17:50:02.902Z"
   },
   "luzikov-codex-seo-skill": {
     "name": "codex-seo-skill",
@@ -10216,9 +10216,9 @@
   "matthews-wong-structured-data-validator": {
     "name": "structured-data-validator",
     "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
-    "lastChecked": "2026-11-24T08:48:12.596Z",
+    "lastChecked": "2026-11-27T17:50:00.352Z",
     "revisionIdentifier": "e85df7a4",
-    "lastVerified": "2026-11-24T08:48:12.596Z"
+    "lastVerified": "2026-11-27T17:50:00.352Z"
   },
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",

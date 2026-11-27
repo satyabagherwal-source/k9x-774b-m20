@@ -13834,3 +13834,7 @@
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T17:32:58.210Z` | `hf-ai-sage-gigachat4-708b-a41b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33234269` [Domain D] | Yes (`5380bfb3...`) |
 | `CYCLE-20261127-QEFS` | `2026-11-27T17:41:49.336Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10937` | Yes (`818fa7fe...`) |
 | `CYCLE-20261127-QO8U` | `2026-11-27T17:42:02.046Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10938` | Yes (`48c81c13...`) |
+| `CYCLE-20261127-19E4` | `2026-11-27T17:50:16.012Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10939` | Yes (`d3d5c229...`) |
+| `CYCLE-20261127-1B8F` | `2026-11-27T17:50:18.399Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10940` | Yes (`9c76863d...`) |
+| `CYCLE-20261127-1E5T` | `2026-11-27T17:50:22.193Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10941` | Yes (`2e98a51d...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T17:50:56.613Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C23687A0` [Domain H] | Yes (`6110ab45...`) |

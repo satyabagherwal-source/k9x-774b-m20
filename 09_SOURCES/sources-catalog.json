@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "14c70177",
+    "sourceVersion": "80e0546c",
     "license": "NOASSERTION",
-    "contentHash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
-    "lastHarvestedAt": "2026-11-27T00:07:31.868Z",
+    "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
+    "lastHarvestedAt": "2026-11-27T17:50:22.203Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "9531e591",
+    "sourceVersion": "b1999539",
     "license": "Apache-2.0",
-    "contentHash": "705cb1f43cfc3ad88e16aeeebfede4814594e19f74e93244aa280c039e2337d2",
-    "lastHarvestedAt": "2026-11-26T22:39:03.185Z",
+    "contentHash": "9c76863d5b4aaac69363491cdc7e4ff18059c0ce626901911d702cf1b70438b9",
+    "lastHarvestedAt": "2026-11-27T17:50:18.408Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "603220f0",
+    "sourceVersion": "e6e92e58",
     "license": "Apache-2.0",
-    "contentHash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
-    "lastHarvestedAt": "2026-11-26T23:49:36.666Z",
+    "contentHash": "d3d5c229d0144ab01db63a9120d91e9641239177de2609be20ff4bdbce04ae45",
+    "lastHarvestedAt": "2026-11-27T17:50:16.016Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

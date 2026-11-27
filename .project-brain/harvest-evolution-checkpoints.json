@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:42:08.870Z",
+  "last_updated": "2026-11-27T17:50:58.276Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T17:10:43.541Z",
@@ -228,9 +228,9 @@
       "staged_for_review": 0
     },
     "envoyproxy-envoy-learnings.md": {
-      "processed_at": "2026-11-26T23:50:09.433Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T17:50:25.686Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "sxyazi-yazi-learnings.md": {
       "processed_at": "2026-11-22T19:10:03.385Z",
@@ -363,9 +363,9 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-26T03:55:53.523Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T17:50:26.710Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "arkivanov-decompose-learnings.md": {
       "processed_at": "2026-11-27T09:35:10.944Z",
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-27T00:07:37.159Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-27T17:50:56.613Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-27T07:39:28.640Z",
@@ -4048,7 +4048,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5037,
-  "total_canonical_promoted": 583,
-  "total_staged_for_review": 3791
+  "total_dossiers_evaluated": 5040,
+  "total_canonical_promoted": 584,
+  "total_staged_for_review": 3793
 }

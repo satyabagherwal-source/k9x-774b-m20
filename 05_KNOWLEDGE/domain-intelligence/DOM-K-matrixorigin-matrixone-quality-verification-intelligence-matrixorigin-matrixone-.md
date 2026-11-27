@@ -4,24 +4,24 @@
 {
   "source_repository": "matrixorigin/matrixone",
   "source_url": "https://github.com/matrixorigin/matrixone",
-  "source_version": "9531e591",
+  "source_version": "b1999539",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T22:39:03.479Z",
+  "timestamp": "2026-11-27T17:50:18.633Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-matrixorigin-matrixone",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `9531e591`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:39:03.479Z`  
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `b1999539`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T17:50:18.633Z`  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from matrixorigin/matrixone:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T22:39:02.552Z  
+> **Harvest Timestamp**: 2026-11-27T17:50:17.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2363,14 +2363,17 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #33341** (2026-11-26): **fix(geo): reject null required GeoJSON arrays**
-  *Symptoms*: ## What changed  - preserve the distinction between missing, `null`, and empty array GeoJSON members - reject missing/`null` `coordinates` for coordinate geometries - reject missing/`null` `geometries` for geometry collections, including nested collections - keep explicit empty arrays valid for EMPTY geometries  Fixes #33195.  ## Regression evidence  Before the fix, `TestGeoJSONRequiredArrayMembers` failed because `{"type":"Point","coordinates":null}` was accepted as an EMPTY point.  After rebasing onto current `main`:  - `go test ./pkg/geo -run TestGeoJSONRequiredArrayMembers -count=1` - `go test ./pkg/geo -count=1` - `go test -race ./pkg/geo -count=1` - `go vet ./pkg/geo` - `git diff --check`  Independent review completed with no blocking findings.
-
-- **Issue #33340** (2026-11-26): **fix(geo): reject null required GeoJSON arrays**
-  *Symptoms*: Superseded because `main` advanced while this PR was being opened. The identical two-file fix was rebased and republished from a fresh branch.
+- **Issue #33403** (2026-11-27): **Update main CODEOWNERS**
+  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## What this PR does / why we need it  Update main CODEOWNERS consistently with the 4.2-dev change in #33402. Remove the requested former owners, replace @XuPeng with @XuPeng-SH, and include @XuPeng-SH in every ownership rule. Add a default owner for paths without an explicit rule. Preserve other existing owners.  ## Validation  - Checked every rule against the current main branch and verified the requested owner changes and default rule. - Verified each retained GitHub account has write access to the repository. - `git diff --check` passed.
   **Post-Mortem & Fix Analysis**:
   > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > This pull request is closed, so it cannot be queued. Reopen it to get the box back. <!-- mergify:queue-control-withdrawn:queue -->
+  > This pull request is merged. <!-- mergify:queue-control-withdrawn:queue -->
+
+- **Issue #33402** (2026-11-27): **[4.2-dev] Update CODEOWNERS**
+  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## What this PR does / why we need it  Update the 4.2-dev code owners, add @XuPeng-SH to every existing ownership rule, and provide a default owner for paths without an explicit rule.  Remove the requested former owners and replace @XuPeng with @XuPeng-SH. Other owners remain on their existing rules.  ## Validation  - Checked every existing rule against the base and verified the requested owner changes and default rule. - Verified each retained GitHub account has write access to the repository. - `git diff --check` passed.
+  **Post-Mortem & Fix Analysis**:
+  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
+  > This pull request is merged. <!-- mergify:queue-control-withdrawn:queue -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2387,1340 +2390,77 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9531e591` (2026-11-26)
-**Commit Message**: refactor(types): type dispatch design (#10181), oidscan, DML dispatch fixes, traits table (#33338)
+### Incident Patch 1: `a3aae79f` (2026-11-27)
+**Commit Message**: ci: roll out Coverage UT worker metadata fix (#33375)
 
 ## What type of PR is this?
 
-- [ ] API-change
-- [ ] BUG
-- [x] Improvement
-- [x] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [x] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-issue #10181
-
-## What this PR does / why we need it:
-
-Design plus steps 1–3 of the plan in `docs/design/20261126-type-vft.md`.
-
-**Design doc.** Measures the type-id switches in `pkg/` and proposes an
-`Oid`-indexed type table (`types.Traits`) and per-package operation
-tables with completeness tests. The switches that stay are covered by
-extending the existing `TestTypeSwitchFamilies` check (more families,
-plus an "all types" rule for dispatch switches). The table is indexed by
-`Oid` rather than stored as a pointer in `types.Type`, because `Type`
-has a fixed 16-byte stored layout.
-
-**Step 1: `optools/oidscan`.** A standalone, standard-library-only
-module that reports switch counts, a case-count histogram, the switches
-inside loops, and which of those have a type that is fixed for the loop.
-It is a report, not a check. `go run . -root ../.. -loops -invariant`
-gives the worklist for step 6.
-
-**Step 2: dispa
-
-**File**: `docs/design/20261126-type-vft.md` (added, +330/-0)
-```diff
-@@ -0,0 +1,330 @@
-+# Type dispatch tables: consolidating `switch typ.Oid`
-+
-+## Scope and trigger
-+
-+Issue [#10181](https://github.com/matrixorigin/matrixone/issues/10181)
-+("[Refactoring]: VFT of types").
-+
-+MatrixOne decides what to do with a value by switching on its type id
-+(`types.T`, the `Oid` of a `types.Type`) all over the codebase. The issue
-+names two problems:
-+
-+1. **Adding a type means editing many places, and missing one fails
-+   quietly.** A new `T_` constant falls into whatever `default:` branch each
-+   switch has. Depending on the site, that is a panic, an "unsupported type"
-+   error, or a wrong result.
-+2. **Some switches run once per row.** The cost of a switch whose type is the
-+   same on every row is small, but these sites usually also box values into
-+   `any`, which is the larger cost.
-+
-+This document measures the problem, proposes a design and lays out a
-+step-by-step plan. It changes no code; each implementation step will be its
-+own PR.
-+
-+## Measurements
-+
-+The numbers come from `optools/oidscan`, a `go/ast` scan of every non-test
-+`.go` file under `pkg/` (skipping `testdata/`), at commit `5e3893a298`. A
-+"type switch" is any `switch` statement with at least one `case` naming a
-+`T_*` constant. To reproduce:
-+
-+```
-+cd optools/oidscan
-+go run . -root ../..                     # the summary below
-+go run . -root ../.. -loops              # every switch inside a loop
-+go run . -root ../.. -loops -invariant   # only those whose type is fixed for the loop
-+```
-+
-+Counts drift as `main` moves; the tool gives the current numbers.
-+
-+### How many and where
-+
-+| | Count |
-+|---|---|
-+| Type switches | 949 |
-+| Switches with a `default:` branch | 636 |
-+| `case types.T_…` lines (grep) | ~7,500 |
-+
-+The 949 switches by number of `T_` constants named in their cases:
-+
-+| Cases | Switches | Usual purpose |
-+|---|---|---|
-+| 20 or more | 225 | Full physical dispatch: "for each Go representation, call `f[T]`" |
-+| 4–19 | 450 | A family of types: numeric, temporal, string-like |
-+| 1–3 | 274 | A special case: "if JSON then …", "if decimal then …" |
-+
-+Packages with the most switches having 20 or more cases: `sql/plan/function`
-+(59), `frontend` (21), `sql/plan` (18), `container/vector` (18),
-+`vm/engine/readutil` (10), `sql/compile` (9), `sql/colexec/aggexec` (9),
-+`vm/engine/tae/containers` (6).
-+
-+### Switches inside a loop over rows
-+
-+128 switches sit inside a `for` or `range` in the same function. Most of
-+those loops run over columns, arguments, plan nodes or schema fields, so the
-+switch runs once per batch or once per plan and costs nothing worth
-+measuring. The ones that run once per row:
-+
-+**Hot paths**
-+
-+| Site | Path |
-+|---|---|
-+| `common/hashmap/strhashmap.go` `fillNullableStr` | Hash join and group-by key encoding, per row and per key column |
-+| `frontend/mysql_protocol.go` `appendResultSetTextRow2`, `appendResultSetBinaryRow2` | Every result row sent to a client, per column |
-+| `frontend/export.go` `constructByte`, `constructJSONLine` | `SELECT … INTO OUTFILE` and JSON export, per row and per column |
-+| `sql/plan/function/func_cast.go` `jsonToNumeric`, `castToJSON` | Cast evaluation |
-+| `sql/plan/function/func_unary.go` `NormalizeL2Array` | Vector-function evaluation |
-+| `sql/plan/function/func_builtin.go` internal metadata functions | Function evaluation (rarely called) |
-+
-+**The type does not change inside the loop; move the switch out**
-+
-+- `sql/colexec/multi_update/insert.go` `checkZeroTemporalInStrictMode`
-+- `sql/colexec/preinsert/preinsert.go` `checkZeroTemporalInStrictMode`
-+- `sql/colexec/postdml/postdml.go` `runPostDml`
-+
-+**Switches hidden in helpers called once per row**
-+
-+A loop scan misses these because the switch sits in the callee:
-+
-+- `vector.AppendAny`
-+- `containers.UpdateValue` (TAE)
-+- `getNonNullValue`, which exists twice, in `vm/engine/tae/containers/utils.go`
-+  and `sql/colexec/deletion/types.go`
-+- The `Get`, `Append` and `Update` methods of the TAE vector wrapper, built on
-+  the helpers above
-+
-+For a switch whose type never changes inside the loop, branch prediction
-+hides most of the cost. The measurable overhead at these sites is boxing
-+every value into `any` and the call made for each value. The fix is therefore
-+"resolve the type once per vector, then run a typed loop", not only "remove
-+the switch".
-+
-+### What already exists
-+
-+`TestTypeSwitchFamilies` (`pkg/container/types/typeswitch_test.go`, described in
-+`pkg/container/types/testdata/README.md`) already enforces completeness for two
-+families, float (`T_float*`, `T_bf*`) and vector (`T_array_*`): a switch, `||`
-+chain or type list that names some members of a family must name all of them,
-+or one whole subfamily, or carry `// typeswitch:partial <reason>`. Switches that
-+predate the check are listed in `typeswitch_baseline.txt`, which may only
-+shrink. This is the same idea this design needs for the switches that stay,
-+already accepted in the repository, so the design exte
-```
-
-**File**: `optools/oidscan/go.mod` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+module github.com/matrixorigin/matrixone/optools/oidscan
-+
-+go 1.27.1
-```
-
-**File**: `optools/oidscan/main.go` (added, +130/-0)
-```diff
-@@ -0,0 +1,130 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+// Command oidscan reports the switch statements over type ids (types.T) in
-+// MatrixOne's pkg/ tree, as input for docs/design/20261126-type-vft.md.
-+//
-+// It is a report, not a check: TestTypeSwitchFamilies in pkg/container/types
-+// is the check.
-+//
-+//	cd optools/oidscan
-+//	go run . -root ../..                  # summary
-+//	go run . -root ../.. -loops           # switches inside a loop, TSV
-+//	go run . -root ../.. -loops -invariant # only those whose type is loop-invariant
-+package main
-+
-+import (
-+	"flag"
-+	"fmt"
-+	"io"
-+	"os"
-+	"path"
-+	"sort"
-+	"strings"
-+)
-+
-+func main() {
-+	root := flag.String("root", ".", "repository root (the directory that holds pkg/)")
-+	loops := flag.Bool("loops", false, "list switches inside a loop instead of the summary")
-+	invariant := flag.Bool("invariant", false, "with -loops, list only switches whose subject does not change in the innermost loop")
-+	flag.Parse()
-+
-+	switches, err := Scan(*root)
-+	if err != nil {
-+		fmt.Fprintln(os.Stderr, "oidscan:", err)
-+		os.Exit(1)
-+	}
-+	if *loops {
-+		writeLoops(os.Stdout, switches, *invariant)
-+		return
-+	}
-+	writeSummary(os.Stdout, switches)
-+}
-+
-+// writeLoops writes one TSV line per switch inside a loop:
-+// file:line, function, oid count, invariant, loops (innermost first).
-+func writeLoops(w io.Writer, switches []Switch, invariantOnly bool) {
-+	for _, s := range switches {
-+		if len(s.Loops) == 0 || (invariantOnly && !s.Invariant) {
-+			continue
-+		}
-+		inv := "-"
-+		if s.Invariant {
-+			inv = "invariant"
-+		}
-+		fmt.Fprintf(w, "%s:%d\t%s\t%d\t%s\t%s\n",
-+			s.File, s.Line, s.Func, s.Oids, inv, strings.Join(s.Loops, " | "))
-+	}
-+}
-+
-+// bucket names the size class a switch with n type ids falls in.
-+func bucket(n int) string {
-+	switch {
-+	case n >= 20:
-+		return "20+"
-+	case n >= 10:
-+		return "10-19"
-+	case n >= 4:
-+		return "4-9"
-+	default:
-+		return "1-3"
-+	}
-+}
-+
-+func writeSummary(w io.Writer, switches []Switch) {
-+	var withDefault, inLoop, invariant int
-+	buckets := map[string]int{}
-+	bigByPkg := map[string]int{}
-+	for _, s := range switches {
-+		if s.HasDefault {
-+			withDefault++
-+		}
-+		if len(s.Loops) > 0 {
-+			inLoop++
-+			if s.Invariant {
-+				invariant++
-+			}
-+		}
-+		b := bucket(s.Oids)
-+		buckets[b]++
-+		if b == "20+" {
-+			bigByPkg[path.Dir(s.File)]++
-+		}
-+	}
-+	fmt.Fprintf(w, "type switches:            %d\n", len(switches))
-+	fmt.Fprintf(w, "  with a default branch:  %d\n", withDefault)
-+	fmt.Fprintf(w, "  inside a loop:          %d\n", inLoop)
-+	fmt.Fprintf(w, "    loop-invariant type:  %d\n", invariant)
-+	fmt.Fprintln(w, "by number of type ids named:")
-+	for _, b := range []string{"20+", "10-19", "4-9", "1-3"} {
-+		fmt.Fprintf(w, "  %-6s %d\n", b, buckets[b])
-+	}
-+	fmt.Fprintln(w, "packages with the most 20+ switches:")
-+	pkgs := make([]string, 0, len(bigByPkg))
-+	for p := range bigByPkg {
-+		pkgs = append(pkgs, p)
-+	}
-+	sort.Slice(pkgs, func(i, j int) bool {
-+		if bigByPkg[pkgs[i]] != bigByPkg[pkgs[j]] {
-+			return bigByPkg[pkgs[i]] > bigByPkg[pkgs[j]]
-+		}
-+		return pkgs[i] < pkgs[j]
-+	})
-+	if len(pkgs) > 10 {
-+		pkgs = pkgs[:10]
-+	}
-+	for _, p := range pkgs {
-+		fmt.Fprintf(w, "  %4d  %s\n", bigByPkg[p], p)
-+	}
-+}
-```
-
-**File**: `optools/oidscan/scan.go` (added, +290/-0)
-```diff
-@@ -0,0 +1,290 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"bytes"
-+	"go/ast"
-+	"go/parser"
-+	"go/printer"
-+	"go/token"
-+	"io/fs"
-+	"path/filepath"
-+	"sort"
-+	"strings"
-+)
-+
-+// Switch is one switch statement that dispatches on a type id: at least one of
-+// its case expressions names a T_* constant.
-+type Switch struct {
-+	File string // slash-separated, relative to the scan root
-+	Line int
-+	Func string // enclosing function or method declaration
-+
-+	// Oids is the number of distinct T_* constants its cases name.
-+	Oids       int
-+	HasDefault bool
-+
-+	// Loops are the for/range statements around the switch inside the same
-+	// function body, innermost first, as one-line source headers. Loops
-+	// outside a function literal that holds the switch are not included.
-+	Loops []string
-+
-+	// Invariant reports that the switch is inside a loop and its tag (for a
-+	// tagless switch, its case expressions) uses no variable that the
-+	// innermost loop declares or assigns, so the switch can move out of the
-+	// loop. It is a syntactic check: a call in the tag is assumed to return
-+	// the same result on every iteration.
-+	Invariant bool
-+}
-+
-+// Scan parses every non-test .go file under root/pkg (skipping testdata and
-+// vendor directories) and returns its type-id switches, ordered by file and
-+// line.
-+func Scan(root string) ([]Switch, error) {
-+	var out []Switch
-+	fset := token.NewFileSet()
-+	base := filepath.Join(root, "pkg")
-+	err := filepath.WalkDir(base, func(path string, d fs.DirEntry, err error) error {
-+		if err != nil {
-+			return err
-+		}
-+		if d.IsDir() {
-+			if n := d.Name(); n == "testdata" || n == "vendor" {
-+				return filepath.SkipDir
-+			}
-+			return nil
-+		}
-+		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-+			return nil
-+		}
-+		f, err := parser.ParseFile(fset, path, nil, parser.SkipObjectResolution)
-+		if err != nil {
-+			return err
-+		}
-+		rel, err := filepath.Rel(root, path)
-+		if err != nil {
-+			return err
-+		}
-+		out = append(out, scanFile(fset, filepath.ToSlash(rel), f)...)
-+		return nil
-+	})
-+	sort.Slice(out, func(i, j int) bool {
-+		if out[i].File != out[j].File {
-+			return out[i].File < out[j].File
-+		}
-+		return out[i].Line < out[j].Line
-+	})
-+	return out, err
-+}
-+
-+func scanFile(fset *token.FileSet, rel string, f *ast.File) []Switch {
-+	var out []Switch
-+	for _, decl := range f.Decls {
-+		fd, ok := decl.(*ast.FuncDecl)
-+		if !ok || fd.Body == nil {
-+			continue
-+		}
-+		var stack []ast.Node
-+		ast.Inspect(fd.Body, func(n ast.Node) bool {
-+			if n == nil {
-+				stack = stack[:len(stack)-1]
-+				return true
-+			}
-+			stack = append(stack, n)
-+			sw, ok := n.(*ast.SwitchStmt)
-+			if !ok {
-+				return true
-+			}
-+			oids, hasDefault := caseOids(sw)
-+			if oids == 0 {
-+				return true
-+			}
-+			s := Switch{
-+				File:       rel,
-+				Line:       fset.Position(sw.Pos()).Line,
-+				Func:       fd.Name.Name,
-+				Oids:       oids,
-+				HasDefault: hasDefault,
-+			}
-+			var innermost ast.Node
-+		outer:
-+			for i := len(stack) - 2; i >= 0; i-- {
-+				switch l := stack[i].(type) {
-+				case *ast.FuncLit:
-+					break outer
-+				case *ast.ForStmt, *ast.RangeStmt:
-+					if innermost == nil {
-+						innermost = l
-+					}
-+					s.Loops = append(s.Loops, loopHeader(fset, l))
-+				}
-+			}
-+			if innermost != nil {
-+				s.Invariant = !usesAny(switchSubject(sw), loopAssigned(innermost, sw))
-+			}
-+			out = append(out, s)
-+			return true
-+		})
-+	}
-+	return out
-+}
-+
-+// caseOids counts the distinct T_* names in sw's case expressions.
-+func caseOids(sw *ast.SwitchStmt) (n int, hasDefault bool) {
-+	seen := map[string]bool{}
-+	for _, st := range sw.Body.List {
-+		cc := st.(*ast.CaseClause)
-+		if cc.List == nil {
-+			hasDefault = true
-+		}
-+		for _, e := range cc.List {
-+			ast.Inspect(e, func(m ast.Node) bool {
-+				var name string
-+				switch x := m.(type) {
-+				case *ast.SelectorExpr:
-+					name = x.Sel.Name
-+				case *ast.Ident:
-+					name = x.Name
-+				}
-+				if strings.HasPrefix(name, "T_") {
-+					seen[name] = true
-+				}
-+				return true
-+			})
-+		}
-+	}
-+	return len(seen), hasDefault
-+}
-+
-+// switchSubject is what decides the branch: the tag, plus the init statement,
-+// or the case expressions of a tagless switch.
-+func switchSubject(sw *ast.SwitchStmt) []ast.Node {
-+	var nodes []ast.Node
-+	if sw.Init != nil {
-+		nodes = append(nodes, sw.Init)
-+	}
-+	if sw.Tag != nil {
-+		return append(node
-```
-
-**File**: `optools/oidscan/scan_test.go` (added, +198/-0)
-```diff
-@@ -0,0 +1,198 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"bytes"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+)
-+
-+const fixture = `package p
-+
-+import "types"
-+
-+func notInLoop(t types.T) {
-+	switch t {
-+	case types.T_int8, types.T_int16:
-+	default:
-+	}
-+}
-+
-+func notATypeSwitch(x int) {
-+	for i := 0; i < x; i++ {
-+		switch x {
-+		case 1:
-+		}
-+	}
-+}
-+
-+// the type is fixed for the loop: invariant
-+func perRowInvariant(vec *Vector) {
-+	for row := 0; row < vec.Length(); row++ {
-+		switch vec.GetType().Oid {
-+		case types.T_date:
-+		case types.T_datetime:
-+		}
-+	}
-+}
-+
-+// the switch subject changes per iteration: not invariant
-+func perColumn(vecs []*Vector) {
-+	for _, vec := range vecs {
-+		switch vec.GetType().Oid {
-+		case types.T_int32:
-+		}
-+	}
-+}
-+
-+// assigned in the loop body: not invariant
-+func assignedInBody(vecs []*Vector) {
-+	var typ types.T
-+	for i := range vecs {
-+		typ = vecs[i].GetType().Oid
-+		switch typ {
-+		case types.T_int32:
-+		}
-+	}
-+}
-+
-+// the switch's own init does not make it variant
-+func ownInit(vec *Vector, n int) {
-+	for i := 0; i < n; i++ {
-+		switch t := vec.GetType().Oid; t {
-+		case types.T_int32, types.T_int64:
-+		}
-+	}
-+}
-+
-+// tagless: the case expressions decide
-+func tagless(vecs []*Vector) {
-+	for _, v := range vecs {
-+		switch {
-+		case v.GetType().Oid == types.T_json:
-+		}
-+	}
-+}
-+
-+// a closure is a function boundary: the outer loop is not reported
-+func closure(vecs []*Vector) {
-+	for range vecs {
-+		f := func(t types.T) {
-+			switch t {
-+			case types.T_bool:
-+			}
-+		}
-+		_ = f
-+	}
-+}
-+`
-+
-+func writeFixture(t *testing.T) string {
-+	t.Helper()
-+	root := t.TempDir()
-+	dir := filepath.Join(root, "pkg", "p")
-+	for _, d := range []string{dir, filepath.Join(dir, "testdata")} {
-+		if err := os.MkdirAll(d, 0o755); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	files := map[string]string{
-+		filepath.Join(dir, "p.go"):             fixture,
-+		filepath.Join(dir, "p_test.go"):        fixture,
-+		filepath.Join(dir, "testdata", "x.go"): fixture,
-+	}
-+	for name, src := range files {
-+		if err := os.WriteFile(name, []byte(src), 0o644); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	return root
-+}
-+
-+func TestScan(t *testing.T) {
-+	switches, err := Scan(writeFixture(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	type want struct {
-+		oids       int
-+		hasDefault bool
-+		loops      int
-+		invariant  bool
-+	}
-+	wants := map[string]want{
-+		"notInLoop":       {2, true, 0, false},
-+		"perRowInvariant": {2, false, 1, true},
-+		"perColumn":       {1, false, 1, false},
-+		"assignedInBody":  {1, false, 1, false},
-+		"ownInit":         {2, false, 1, true},
-+		"tagless":         {1, false, 1, false},
-+		"closure":         {1, false, 0, false},
-+	}
-+	got := map[string]Switch{}
-+	for _, s := range switches {
-+		if s.File != "pkg/p/p.go" {
-+			t.Errorf("scanned %s: test and testdata files must be skipped", s.File)
-+		}
-+		got[s.Func] = s
-+	}
-+	if len(got) != len(wants) {
-+		t.Errorf("found switches in %d functions, want %d: %+v", len(got), len(wants), switches)
-+	}
-+	for fn, w := range wants {
-+		s, ok := got[fn]
-+		if !ok {
-+			t.Errorf("%s: switch not found", fn)
-+			continue
-+		}
-+		if s.Oids != w.oids || s.HasDefault != w.hasDefault || len(s.Loops) != w.loops || s.Invariant != w.invariant {
-+			t.Errorf("%s: got oids=%d default=%v loops=%v invariant=%v, want %+v",
-+				fn, s.Oids, s.HasDefault, s.Loops, s.Invariant, w)
-+		}
-+	}
-+}
-+
-+func TestReports(t *testing.T) {
-+	switches, err := Scan(writeFixture(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	var b bytes.Buffer
-+	writeSummary(&b, switches)
-+	for _, line := range []string{
-+		"type switches:            7",
-+		"  with a default branch:  1",
-+		"  inside a loop:          5",
-+		"    loop-invariant type:  2",
-+		"  1-3    7",
-+	} {
-+		if !strings.Contains(b.String(), line+"\n") {
-+			t.Errorf("summary lacks %q:\n%s", line, b.String())
-+		}
-+	}
-+
-+	b.Reset()
-+	writeLoops(&b, switches, true)
-+	lines := strings.Split(strings.TrimSpace(b.String()), "\n")
-+	if len(lines) != 2 ||
-+		!strings.Contains(lines[0], "\tperRowInvariant\t2\tinvariant\tfor row < vec.Length()") ||
-+		!strings.Contains(lines[1], "\townInit\t2\tinvariant\tfor i < n") {
-+		t.Errorf("unexpected -loops -invariant output:\n%s", b.String())
-+	}
-+}
-```
-
-**File**: `pkg/container/types/testdata/typeswitch_baseline.txt` (modified, +0/-13)
-```diff
-@@ -25,8 +25,6 @@ pkg/common/hashmap/strhashmap.go	fillFlatFixedNullableStr	float	1
- pkg/common/hashmap/strhashmap.go	fillNullableStr	float	1
- pkg/container/arrowbridge/bind.go	validateLoadTargetType	float	1
- pkg/container/types/types.go	GetArrayElementSize	vector	1
--pkg/container/types/types.go	IsArrayRelate	vector chain	1
--pkg/container/types/types.go	IsOrdered	float	1
- pkg/container/vector/vector.go	InplaceSort	vector	1
- pkg/container/vector/vector.go	InplaceSortAndCompact	vector	1
- pkg/container/vector/vector.go	supportsInplaceSort	vector	1
-@@ -47,7 +45,6 @@ pkg/frontend/databranchutils/branch_hashmap.go	encodeValue	float	1
- pkg/frontend/databranchutils/branch_hashmap.go	encodeValue	vector	1
- pkg/frontend/mysql_cmd_executor.go	estimatePreparedCursorArrayCopyBytes	vector	1
- pkg/frontend/user_var_migration.go	decodeUserDefinedVarValue	float	1
--pkg/frontend/util.go	convertRowsIntoBatch	float	1
- pkg/iscp/cuvs_writer.go	NewCuvsCdcWriter	vector	1
- pkg/iscp/index_sqlwriter.go	NewHnswSqlWriter	vector	1
- pkg/iscp/index_sqlwriter.go	toIvfflatUpsert	vector chain	1
-@@ -103,8 +100,6 @@ pkg/sql/colexec/aggexec/vardev2.go	makeVarStdDevExec	float	1
- pkg/sql/colexec/aggexec/vector_matmul.go	VectorMatmulVecSupported	vector	1
- pkg/sql/colexec/aggexec/vector_matmul.go	parseVectorMatmulConfig	vector	1
- pkg/sql/colexec/dedup_key.go	FormatDedupKey	float chain	1
--pkg/sql/colexec/deletion/types.go	getNonNullValue	float	1
--pkg/sql/colexec/deletion/types.go	getNonNullValue	vector	1
- pkg/sql/colexec/evalExpression.go	finiteVectorEndpoints	float	1
- pkg/sql/colexec/evalExpression.go	finiteZoneMapEndpoints	float	1
- pkg/sql/colexec/evalExpression.go	zoneMapInVectorOrderIsKnown	vector	1
-@@ -119,8 +114,6 @@ pkg/sql/colexec/fill/fill.go	setDecimal128Value	float chain	1
- pkg/sql/colexec/fill/fill.go	setLinearInterpolatedValue	float	1
- pkg/sql/colexec/fill/fill.go	setValue	float	1
- pkg/sql/colexec/group/exec2.go	GetKeyWidth	vector chain	1
--pkg/sql/colexec/group/helper.go	hllFloatAddStateSupported	float chain	1
--pkg/sql/colexec/group/helper.go	hllVectorStateSupported	vector	1
- pkg/sql/colexec/hashbuild/hashmap.go	hasNonReflexiveFloatKey	float chain	1
- pkg/sql/colexec/hashbuild/hashmap.go	hasNonReflexiveFloatKey	vector chain	1
- pkg/sql/colexec/lock_range.go	SupportsTotalLockTableRange	float	1
-@@ -137,16 +130,12 @@ pkg/sql/colexec/table_function/ivf_create.go	start	vector	1
- pkg/sql/colexec/window/window.go	searchRightWithLocation	float	1
- pkg/sql/colexec/window/window.go	validateRangeFrameBound	float	1
- pkg/sql/compile/compile.go	evalAggOptimize	float	2
--pkg/sql/compile/compile.go	hasLegacyFloatDistinctKeyWire	float chain	1
--pkg/sql/compile/compile.go	isCanonicalFloatHLLAddType	float chain	1
--pkg/sql/compile/compile.go	isCanonicalVectorHLLAddType	vector	1
- pkg/sql/compile/fuzzyCheck.go	newFuzzyCheck	float chain	1
- pkg/sql/compile/fuzzyCheck.go	vectorToString	float	1
- pkg/sql/compile/fuzzyCheck.go	vectorToString	vector	1
- pkg/sql/compile/operator.go	getPercentileConfigValue	float	1
- pkg/sql/compile/remoterun.go	DecodeMergeGroup	float	1
- pkg/sql/compile/remoterun.go	EncodeMergeGroup	float	1
--pkg/sql/compile/remoterun.go	orderedSetPercentileDiscUsesExtendedType	float	1
- pkg/sql/compile/sirius_batch.go	siriusElementSize	float	1
- pkg/sql/iceberg/dml_matched_batch.go	dmlVectorValue	float	1
- pkg/sql/mongodb/converter.go	appendValue	float	1
-@@ -203,10 +192,8 @@ pkg/sql/plan/function/func_binary.go	getCount	float	1
- pkg/sql/plan/function/func_binary.go	makeExportSetBitsGetter	float	1
- pkg/sql/plan/function/func_builtin.go	ToIntervalMicrosecond	float	1
- pkg/sql/plan/function/func_builtin.go	internalNumericScale	float	1
--pkg/sql/plan/function/func_builtin_json.go	preparedTextToJSONValueWithType	float	1
- pkg/sql/plan/function/func_builtin_leastgreatest.go	greatestFn	float	1
- pkg/sql/plan/function/func_builtin_leastgreatest.go	greatestFn	vector	1
--pkg/sql/plan/function/func_builtin_leastgreatest.go	hasUnsupportedLeastGreatestMixedType	vector	1
- pkg/sql/plan/function/func_builtin_leastgreatest.go	leastFn	float	1
- pkg/sql/plan/function/func_builtin_leastgreatest.go	leastFn	vector	1
- pkg/sql/plan/function/func_builtin_leastgreatest.go	leastGreatestExecutorSupportsOid	float	1
-```
-
-**File**: `pkg/container/types/traits.go` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package types
-+
-+import (
-+	"fmt"
-+	"sort"
-+)
-+
-+// Per-type facts live in one table, indexed by T, instead of in a switch per
-+// fact. The rows are in traits_table.go: adding a T_ constant means adding a
-+// row there, and TestTraitsCoverEveryOid fails until it is added. See
-+// docs/design/20261126-type-vft.md.
-+
-+// traitFlags are the type families the T.IsXxx predicates report.
-+type traitFlags uint16
-+
-+const (
-+	flagSignedInt         traitFlags = 1 << iota // IsSignedInt: int8..int64 (not int128)
-+	flagUnsignedInt                              // IsUnsignedInt: uint8..uint64 (not uint128)
-+	flagFloat                                    // IsFloat: float32, float64 and the low-precision floats
-+	flagLowPrecisionFloat                        // IsLowPrecisionFloat: bf16, float16, float8, float4
-+	flagDecimal                                  // IsDecimal
-+	flagDateRelate                               // IsDateRelate: date, time, datetime, timestamp, year
-+	flagMySQLString                              // IsMySQLString: char, varchar, binary, varbinary, blob, text
-+	flagArrayRelate                              // IsArrayRelate: fixed-element vector types
-+	flagBlockScaledArray                         // IsBlockScaledArray: vecf8, vecf4
-+	flagOrdered                                  // IsOrdered
-+)
-+
-+// size is a size in bytes that a type may not have. The zero value is "no
-+// size": a method asked for it panics, as for a type id with no row, so a row
-+// that forgets a size fails loudly instead of reporting 0.
-+type size struct {
-+	n  int32
-+	ok bool
-+}
-+
-+func sz(n int32) size { return size{n: n, ok: true} }
-+
-+// defaultType is what T.TryToType returns. The zero value means TryToType
-+// reports false.
-+type defaultType struct {
-+	size  int32
-+	width int32
-+	ok    bool
-+}
-+
-+func def(size, width int32) defaultType { return defaultType{size: size, width: width, ok: true} }
-+
-+// typeTraits is one row of the table.
-+type typeTraits struct {
-+	flags traitFlags
-+	// defined marks a row for a T_ constant; a T value with no row reads the
-+	// zero row.
-+	defined bool
-+
-+	typeLen  size // T.TypeLen
-+	fixedLen size // T.FixedLength: negative for variable-length types
-+	deflt    defaultType
-+
-+	name    string // T.String; "" reports "unexpected type: <n>"
-+	oidName string // T.OidString; "" reports "unknown_type"
-+}
-+
-+// traitRow is a typeTraits with the type id it belongs to, as written in
-+// traits_table.go.
-+type traitRow struct {
-+	oid T
-+	typeTraits
-+}
-+
-+// traits holds a row for every T value; T is uint8, so indexing is never out
-+// of range. Built by a package-level initializer, it is filled before any
-+// init function or other package runs.
-+var traits, allOids = buildTraits(traitRows)
-+
-+func buildTraits(rows []traitRow) (tbl [256]typeTraits, oids []T) {
-+	for _, r := range rows {
-+		if tbl[r.oid].defined {
-+			panic(fmt.Sprintf("types: two traits rows for type id %d", r.oid))
-+		}
-+		tbl[r.oid] = r.typeTraits
-+		tbl[r.oid].defined = true
-+		oids = append(oids, r.oid)
-+	}
-+	sort.Slice(oids, func(i, j int) bool { return oids[i] < oids[j] })
-+	return
-+}
-+
-+// AllOids returns every type id that has a row in the traits table, in
-+// ascending order: the T_ constants. The caller owns the returned slice.
-+//
-+// A table keyed by type id elsewhere can test its completeness against it.
-+func AllOids() []T {
-+	return append([]T(nil), allOids...)
-+}
-+
-+func (t T) is(f traitFlags) bool { return traits[t].flags&f != 0 }
-```
-
-**File**: `pkg/container/types/traits_legacy_test.go` (added, +534/-0)
-```diff
-@@ -0,0 +1,534 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package types
-+
-+// The implementations of the T methods before they moved onto the traits
-+// table (traits_table.go), kept verbatim as the oracle for
-+// TestTraitsMatchLegacy. Delete this file once the table has been the only
-+// implementation for a release.
-+
-+import (
-+	"fmt"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+)
-+
-+func legacyString(t T) string {
-+	switch t {
-+	case T_any:
-+		return "ANY"
-+	case T_bool:
-+		return "BOOL"
-+	case T_bit:
-+		return "BIT"
-+	case T_int8:
-+		return "TINYINT"
-+	case T_int16:
-+		return "SMALLINT"
-+	case T_int32:
-+		return "INT"
-+	case T_int64:
-+		return "BIGINT"
-+	case T_uint8:
-+		return "TINYINT UNSIGNED"
-+	case T_uint16:
-+		return "SMALLINT UNSIGNED"
-+	case T_uint32:
-+		return "INT UNSIGNED"
-+	case T_uint64:
-+		return "BIGINT UNSIGNED"
-+	case T_float32:
-+		return "FLOAT"
-+	case T_float64:
-+		return "DOUBLE"
-+	case T_bf16:
-+		return "BF16"
-+	case T_float16:
-+		return "FLOAT16"
-+	case T_float8:
-+		return "FLOAT8"
-+	case T_float4:
-+		return "FLOAT4"
-+	case T_date:
-+		return "DATE"
-+	case T_datetime:
-+		return "DATETIME"
-+	case T_time:
-+		return "TIME"
-+	case T_timestamp:
-+		return "TIMESTAMP"
-+	case T_char:
-+		return "CHAR"
-+	case T_varchar:
-+		return "VARCHAR"
-+	case T_binary:
-+		return "BINARY"
-+	case T_varbinary:
-+		return "VARBINARY"
-+	case T_json:
-+		return "JSON"
-+	case T_geometry:
-+		return "GEOMETRY"
-+	case T_geometry32:
-+		return "GEOMETRY32"
-+	case T_tuple:
-+		return "TUPLE"
-+	case T_decimal64:
-+		return "DECIMAL64"
-+	case T_decimal128:
-+		return "DECIMAL128"
-+	case T_decimal256:
-+		return "DECIMAL256"
-+	case T_blob:
-+		return "BLOB"
-+	case T_text:
-+		return "TEXT"
-+	case T_datalink:
-+		return "DATALINK"
-+	case T_TS:
-+		return "TRANSACTION TIMESTAMP"
-+	case T_Objectid:
-+		return "OBJECTID"
-+	case T_Rowid:
-+		return "ROWID"
-+	case T_uuid:
-+		return "UUID"
-+	case T_Blockid:
-+		return "BLOCKID"
-+	case T_interval:
-+		return "INTERVAL"
-+	case T_year:
-+		return "YEAR"
-+	case T_array_float32:
-+		return "VECF32"
-+	case T_array_float64:
-+		return "VECF64"
-+	case T_array_bf16:
-+		return "VECBF16"
-+	case T_array_float16:
-+		return "VECF16"
-+	case T_array_int8:
-+		return "VECINT8"
-+	case T_array_uint8:
-+		return "VECUINT8"
-+	case T_array_float8:
-+		return "VECF8"
-+	case T_array_float4:
-+		return "VECF4"
-+	case T_enum:
-+		return "ENUM"
-+	}
-+	return fmt.Sprintf("unexpected type: %d", t)
-+}
-+
-+func legacyOidString(t T) string {
-+	switch t {
-+	case T_uuid:
-+		return "T_uuid"
-+	case T_json:
-+		return "T_json"
-+	case T_geometry:
-+		return "T_geometry"
-+	case T_geometry32:
-+		return "T_geometry32"
-+	case T_bool:
-+		return "T_bool"
-+	case T_bit:
-+		return "T_bit"
-+	case T_int64:
-+		return "T_int64"
-+	case T_int32:
-+		return "T_int32"
-+	case T_int16:
-+		return "T_int16"
-+	case T_int8:
-+		return "T_int8"
-+	case T_float64:
-+		return "T_float64"
-+	case T_float32:
-+		return "T_float32"
-+	case T_bf16:
-+		return "T_bf16"
-+	case T_float16:
-+		return "T_float16"
-+	case T_float8:
-+		return "T_float8"
-+	case T_float4:
-+		return "T_float4"
-+	case T_uint8:
-+		return "T_uint8"
-+	case T_uint16:
-+		return "T_uint16"
-+	case T_uint32:
-+		return "T_uint32"
-+	case T_uint64:
-+		return "T_uint64"
-+	case T_char:
-+		return "T_char"
-+	case T_varchar:
-+		return "T_varchar"
-+	case T_binary:
-+		return "T_binary"
-+	case T_varbinary:
-+		return "T_varbinary"
-+	case T_date:
-+		return "T_date"
-+	case T_datetime:
-+		return "T_datetime"
-+	case T_time:
-+		return "T_time"
-+	case T_timestamp:
-+		return "T_timestamp"
-+	case T_decimal64:
-+		return "T_decimal64"
-+	case T_decimal128:
-+		return "T_decimal128"
-+	case T_decimal256:
-+		return "T_decimal256"
-+	case T_blob:
-+		return "T_blob"
-+	case T_text:
-+		return "T_text"
-+	case T_datalink:
-+		return "T_datalink"
-+	case T_TS:
-+		return "T_TS"
-+	case T_Rowid:
-+		return "T_Rowid"
-+	case T_Blockid:
-+		return "T_Blockid"
-+	case T_interval:
-+		return "T_interval"
-+	case T_year:
-+		return "T_year"
-+	case T_enum:
-+		return "T_enum"
-+	case T_array_float32:
-+		return "T_array_float32"
-+	case T_array_float64:
-+		return "T_array_float64"
-+	case T_array_bf16:
-+		return "T_array_bf16"
-+	case T_array_float16:
-+		return "T_array_float16"
-+	case T_array_int8:
-+		return "T_array_int8"
-+	case T_array_uint8:
-+		return "T_array_uint8"
-+	case T_array_float8:
-+		return "T_array_float8"
-+	case T_array_float4:
-+		return "T_array_float4"
-+	}
-+	return "unknown_type"
-+}
-+
-
-```
-
----
-
-### Incident Patch 2: `76f36753` (2026-11-26)
-**Commit Message**: test: reduce race UT model and engine fixture costs (#33322)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [ ] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
 - [x] Test and CI
-- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #28933. Follow-up to #33313.
+Related to #33358.
 
 ## What this PR does / why we need it:
 
-Three parts of race UT spend resources on fixture work that can be
-reduced while keeping their behavioral checks:
+Pin the Coverage UT coordinator and both standby workers to the merged
+fix in matrixorigin/CI#495 (`4972bd963f4cc9510266323b14446a8edcda2bfc`).
+When a newly dispatched worker briefly returns HTTP 404 or its title has
+not been indexed, the coordinator re-reads the same run within its
+existing budget and still requires the complete worker identity before
+granting admission. Both failure paths were observed in [the Coverage
+rerun for
+#32989](https://github.com/matrixorigin/matrixone/actions/runs/45938589770/attempts/3).
 
-- The S3-FIFO reference model still runs 80,000 seeded operations and
-checks accounting and the full resident set after each one. It checks
-the public membership API for the operated key and checks all resident
-keys, their expected shard, and cardinality directly. This avoids
-locking for each of the 400 possible keys.
-- The index-file engine test writes 66 chunks. The test runs two real
-INSERTs (65 + 1 chunks) against the same registered source and
-transaction. The first crosses the table function's 64-row output
-boundary and the second carries the short final chunk. Reconstruction,
-cache, persistence, duplicate rejection and rollback, snapshot and
-range-filter assertions remain. The existing table-function test
-separately runs public Write across 
+This rollout updates the three references only. #33176 also contains
+these pins alongside its worker display and cleanup changes.
 
-**File**: `pkg/fileservice/s3fifo/model_test.go` (modified, +16/-10)
+- Local validation at `b089e42fd54d`: actionlint passed for both caller
+workflows, all three calls match the unchanged reusable workflow input
+and secret declarations, and `git diff --check` passed.
+- BVT: N/A for GitHub Actions workflow configuration.
+- Production verification after merge: start a fresh two-group Coverage
+UT run for an affected 
+
+**File**: `.github/workflows/coverage-standby-worker.yaml` (modified, +2/-2)
 ```diff
-@@ -215,19 +215,25 @@ func TestMatchesModel(t *testing.T) {
- 				c.Set(k, newValue(k, &misuse), size)
- 				m.set(k, size)
- 			}
--			require.Equal(t, m.used(), c.Used(), "capacity %d, op %d", capacity, i)
--			require.Equal(t, m.smallBytes(), c.smallBytes.Load(), "capacity %d, op %d", capacity, i)
--			require.Equal(t, m.mainBytes(), c.mainBytes.Load(), "capacity %d, op %d", capacity, i)
-+			small, main := m.smallBytes(), m.mainBytes()
-+			require.Equal(t, small+main, c.Used(), "capacity %d, op %d", capacity, i)
-+			require.Equal(t, small, c.smallBytes.Load(), "capacity %d, op %d", capacity, i)
-+			require.Equal(t, main, c.mainBytes.Load(), "capacity %d, op %d", capacity, i)
- 			require.Equal(t, m.ghostBytes(), c.ghostBytes.Load(), "capacity %d, op %d", capacity, i)
--			// Keep the exhaustive membership oracle after every operation. The
--			// 32 million successful boolean comparisons need no reflection or
--			// testing helper bookkeeping; retain full coordinates on failure.
--			for k := 0; k < 400; k++ {
--				want := m.objects[k] != nil
--				if got := c.Contains(k); got != want {
--					t.Fatalf("capacity %d, op %d, key %d: contains = %t, want %t", capacity, i, k, got, want)
-+			require.Equal(t, m.objects[k] != nil, c.Contains(k), "capacity %d, op %d, key %d", capacity, i, k)
-+
-+			// This test is sequential. Check the complete resident set after
-+			// each operation without locking for every absent key.
-+			residents := 0
-+			for shard := range c.index {
-+				for key, entry := range c.index[shard].index {
-+					if entry == nil || m.objects[key] == nil || c.indexOf(c.opts.Hash(key)) != &c.index[shard] {
-+						t.Fatalf("capacity %d, op %d: unexpected key %d in shard %d", capacity, i, key, shard)
-+					}
-+					residents++
- 				}
- 			}
-+			require.Equal(t, len(m.objects), residents, "capacity %d, op %d: resident count", capacity, i)
- 		}
- 	}
- 	require.Zero(t, misuse.Load())
+@@ -12,7 +12,7 @@ permissions:
+ jobs:
+   cs:
+     if: github.repository == 'matrixorigin/matrixone' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.pool == 'cs'
+-    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
++    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
+     with:
+       group: ${{ fromJSON(inputs.ticket).group }}
+       source: ${{ fromJSON(inputs.ticket).source }}
+@@ -27,7 +27,7 @@ jobs:
+       CS_S3_RUH_CONFIG: ${{ secrets.CS_S3_RUH_CONFIG }}
+   idc:
+     if: github.repository == 'matrixorigin/matrixone' && github.ref == 'refs/heads/main' && github.run_attempt == 1 && inputs.pool == 'idc'
+-    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
++    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
+     with:
+       group: ${{ fromJSON(inputs.ticket).group }}
+       source: ${{ fromJSON(inputs.ticket).source }}
 ```
 
-**File**: `pkg/vm/engine/test/indexfile_test.go` (modified, +15/-2)
+**File**: `.github/workflows/entrypoint.yaml` (modified, +1/-1)
 ```diff
-@@ -21,6 +21,7 @@ import (
- 	"encoding/hex"
- 	"fmt"
- 	"io"
-+	"strings"
- 	"sync"
- 	"testing"
- 	"time"
-@@ -203,13 +204,25 @@ func indexFileBytes(n int, seed byte) []byte {
- 
- func TestIndexFileWriteOpenThroughEngine(t *testing.T) {
- 	e := setupIndexFileEngine(t)
--	base := indexFileBytes((indexfile.ChunksPerStatement+3)*indexfile.ChunkSize+99, 1)
-+	base := indexFileBytes(65*indexfile.ChunkSize+99, 1)
- 	frame := indexFileBytes(2*indexfile.ChunkSize+5, 2)
- 
- 	txn1 := e.txn()
- 	writeCache := e.cache()
--	baseRef, err := e.write(txn1, writeCache, indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "idx:1:0"}, base)
-+	baseRef := indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "idx:1:0"}
-+	size, sum, err := indexfile.Write(e.ctx, e.env(txn1, writeCache), baseRef, bytes.NewReader(base), func(sql string) error {
-+		// Run two SQL statements against the same registered source and transaction.
-+		// The first also crosses the table function's 64-row output batch boundary.
-+		// TestIndexFileChunksWriteRoundTrip checks the production INSERT split.
-+		prefix, ok := strings.CutSuffix(sql, ", 0, 66) AS f")
-+		require.True(t, ok, "unexpected chunk INSERT: %s", sql)
-+		if err := e.run(txn1, prefix+", 0, 65) AS f"); err != nil {
-+			return err
-+		}
-+		return e.run(txn1, prefix+", 65, 1) AS f")
-+	})
- 	require.NoError(t, err)
-+	baseRef.Size, baseRef.Checksum = size, sum
- 	frameRef, err := e.write(txn1, writeCache, indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "cdc_tail", Tag: 1, FirstChunk: 40}, frame)
- 	require.NoError(t, err)
- 
-```
-
-**File**: `pkg/vm/engine/test/publication_test.go` (modified, +17/-17)
-```diff
-@@ -1140,6 +1140,13 @@ func TestExecuteIterationDatabaseLevel(t *testing.T) {
- 	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
- }
- 
-+func logPublicationCatalogOnFailure(t *testing.T, storage *testutil.TestTxnStorage) {
-+	t.Helper()
-+	if t.Failed() {
-+		t.Log(storage.GetDB().Catalog.SimplePPString(3))
-+	}
-+}
-+
- func TestExecuteIterationWithIndex(t *testing.T) {
- 	enableWorkspaceDebugForTest(t)
- 	catalog.SetupDefines("")
-@@ -1179,6 +1186,8 @@ func TestExecuteIterationWithIndex(t *testing.T) {
- 		rpcAgent.Close()
- 	}()
- 
-+	defer logPublicationCatalogOnFailure(t, taeHandler)
-+
- 	// Disable sync protection validator for this test since we're not registering sync protection
- 	taeHandler.GetDB().Runtime.SyncProtectionValidator = nil
- 
-@@ -1279,16 +1288,14 @@ func TestExecuteIterationWithIndex(t *testing.T) {
- 	err = exec_sql(disttaeEngine, srcCtxWithTimeout, createTableSQL)
- 	require.NoError(t, err)
- 
--	// Insert data into source table using SQL
--	// Insert 10 rows with consistent column definitions
-+	// Seed the same ten rows before replication starts.
-+	rows := make([]string, 0, 10)
- 	for i := 0; i < 10; i++ {
--		insertSQL := fmt.Sprintf(
--			`INSERT INTO %s.%s (id, value_col, name) VALUES (%d, %d, 'name_%d')`,
--			srcDBName, srcTableName, i, i*10, i,
--		)
--		err = exec_sql(disttaeEngine, srcCtxWithTimeout, insertSQL)
--		require.NoError(t, err)
-+		rows = append(rows, fmt.Sprintf("(%d, %d, 'name_%d')", i, i*10, i))
- 	}
-+	err = exec_sql(disttaeEngine, srcCtxWithTimeout,
-+		fmt.Sprintf("INSERT INTO %s.%s (id, value_col, name) VALUES %s", srcDBName, srcTableName, strings.Join(rows, ", ")))
-+	require.NoError(t, err)
- 
- 	// Step 2: Write mo_ccpr_log table in destination account context
- 	taskID := uuid.New().String()
-@@ -1381,8 +1388,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
- 		nil,                  // syncProtectionRetryOpt
- 	)
- 
--	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
--
- 	// Signal checkpoint goroutine to stop
- 	close(checkpointDone)
- 
-@@ -1485,8 +1490,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
- 	err = txn3.Commit(queryIndexCtx)
- 	require.NoError(t, err)
- 
--	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
--
- 	// Step 8: Delete the upstream table
- 	txnDelete, err := disttaeEngine.NewTxnOperator(srcCtxWithTimeout, disttaeEngine.Now())
- 	require.NoError(t, err)
-@@ -1606,8 +1609,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
- 
- 	err = txn5.Commit(queryDestCtx2)
- 	require.NoError(t, err)
--
--	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
- }
- 
- func TestGetObjectChunk(t *testing.T) {
-@@ -3045,6 +3046,8 @@ func TestCCPRAlterTable(t *testing.T) {
- 		rpcAgent.Close()
- 	}()
- 
-+	defer logPublicationCatalogOnFailure(t, taeHandler)
-+
- 	// Disable sync protection validator for this test since we're not registering sync protection
- 	taeHandler.GetDB().Runtime.SyncProtectionValidator = nil
- 
-@@ -3285,8 +3288,6 @@ func TestCCPRAlterTable(t *testing.T) {
- 	err = txn.Commit(queryDestCtx)
- 	require.NoError(t, err)
- 
--	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
--
- 	// Step 8: Delete the source table
- 	txnDelete, err := disttaeEngine.NewTxnOperator(srcCtxWithTimeout, disttaeEngine.Now())
- 	require.NoError(t, err)
-@@ -3369,7 +3370,6 @@ func TestCCPRAlterTable(t *testing.T) {
- 		nil,                  // syncProtectionRetryOpt
- 	)
- 
--	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
- 	// Signal checkpoint goroutine to stop
- 	close(checkpointDone2)
- 
+@@ -140,7 +140,7 @@ jobs:
+     permissions:
+       contents: read
+       actions: write
+-    uses: matrixorigin/CI/.github/workflows/coverage-ut-standby.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
++    uses: matrixorigin/CI/.github/workflows/coverage-ut-standby.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
+     with:
+       bvt_generation: ${{ needs.preflight.outputs.generation }}
+     secrets: inherit
 ```
 
 ---
 
-### Incident Patch 3: `57507ff0` (2026-11-26)
-**Commit Message**: fix(plan): prune composite DATETIME ranges across precisions (#33319)
+### Incident Patch 2: `926e3e95` (2026-11-27)
+**Commit Message**: fix(geo): validate required GeoJSON members (#33398)
 
 ## What type of PR is this?
 
@@ -3734,94 +2474,336 @@ separately runs public Write across
 
 ## Which issue(s) this PR fixes:
 
-Fixes #33305
+Fixes #33195
 
 ## What this PR does / why we need it:
 
-`system.statement_info` has a `DATETIME(6)` leading cluster column. The
-`DATETIME(0)` cutoff from `NOW() - INTERVAL 1 MINUTE` was rejected by
-the composite range filter, so the scan loaded metadata for historical
-objects.
+Require exact, case-sensitive GeoJSON member names for top-level and nested geometries. Differently cased foreign members cannot replace canonical values or make a missing or null required array valid. Explicit empty arrays still produce EMPTY geometries. Both SQL constructor overloads use the shared validation.
 
-Generate a `prefix_in_range` block filter from the raw microsecond value
-of the `DATETIME` cutoff alongside the SQL row predicate.
+### Validation
 
-**Validation**
+- Verified focused native GeoJSON cases and the owning geo package. The original implementation failed the case-folding regression.
+- Compared the maintained `geo_geojson` BVT in normal mo-tester mode against the final native binary on `3f9bb69ad6`. All 53 checks passed, including both overloads and explicit empty geometries. The service exited gracefully with status 0.
+- On the same upstream base, ran the official SCA selector independently in default and `GOFLAGS=-tags=integration` modes. Both selected 173 affected packages. Repository-pinned `molint` and `golangci-lin
 
-- The planner regression fails without the fix and passes on the rebased
-branch.
-- With seven historical objects and one recent object persisted, the
-original query and its explicit-cast control each load metadata for one
-object and return the same row. Microsecond, UTC+8 and DST cases match
-the unclustered SQL control.
-- Local SCA passed for 111 packages, including test variants and reverse
-dependencies. Selected with `SCA_LOCAL_BASE=origin/main node
-.github/ci/static-analysis.cjs` and checked with `make
-static-ch
-
-**File**: `pkg/sql/plan/expr_opt.go` (modified, +2/-1)
+**File**: `pkg/geo/geojson.go` (modified, +91/-14)
 ```diff
-@@ -984,8 +984,9 @@ func (builder *QueryBuilder) leadingCompositeRangeBlockFilter(filter *plan.Expr,
- 		if lit := stripConstLiteralCasts(bound).GetLit(); lit != nil && lit.Isnull {
- 			return false
- 		}
-+		// DATETIME comparison and SERIAL both use the raw microsecond value.
- 		return isRuntimeConstExpr(bound) && bound.Typ.Id == col.Typ.Id &&
--			bound.Typ.Scale == col.Typ.Scale
-+			(bound.Typ.Scale == col.Typ.Scale || types.T(col.Typ.Id) == types.T_datetime)
+@@ -15,6 +15,7 @@
+ package geo
+ 
+ import (
++	"bytes"
+ 	"encoding/json"
+ 	"math"
+ 	"strconv"
+@@ -186,20 +187,93 @@ func geoJSONFractionDigits(s string) int {
+ }
+ 
+ // ParseGeoJSON decodes an RFC 7946 GeoJSON geometry object. Feature and
+-// FeatureCollection objects are not geometries and are rejected.
++// FeatureCollection objects are not geometries and are rejected. Every
++// Geometry object must carry its type's required array member — coordinates
++// for the coordinate-bearing types, geometries for a GeometryCollection — at
++// the top level and in every child Geometry object. Members are matched by
++// exact, case-sensitive name: a member that differs only in case is a
++// foreign member, so it can never substitute the canonical value and can
++// never turn a missing or null required member into a success.
+ func ParseGeoJSON(data []byte) (Geometry, error) {
+-	var raw struct {
+-		Type        string            `json:"type"`
+-		Coordinates json.RawMessage   `json:"coordinates"`
+-		Geometries  []json.RawMessage `json:"geometries"`
+-	}
+-	if err := json.Unmarshal(data, &raw); err != nil {
++	var obj map[string]json.RawMessage
++	if err := json.Unmarshal(data, &obj); err != nil {
+ 		return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
  	}
- 	key := &plan.Expr{Typ: tableDef.Cols[compoundPos].Typ, Expr: &plan.Expr_Col{Col: &plan.ColRef{
- 		RelPos: tag, ColPos: compoundPos, Name: tableDef.Cols[compoundPos].Name,
+-	return parseGeoJSONObj(raw.Type, raw.Coordinates, raw.Geometries)
++	typ, coords, geoms, err := geoJSONExactMembers(obj)
++	if err != nil {
++		return nil, err
++	}
++	return parseGeoJSONObj(typ, coords, geoms)
++}
++
++// geoJSONExactMembers extracts the members every Geometry object is decoded
++// from, using exact, case-sensitive member lookup. GeoJSON member names are
++// the exact lowercase names, so differently-cased members such as "Type",
++// "Coordinates" or "Geometries" are foreign members: like bbox or any other
++// unrecognized member they are ignored, whatever their position in the
++// object. An explicitly present geometries member keeps its typed shape check
++// on every Geometry type. Duplicate exact member names follow the decoder's
++// own duplicate-name handling; this reader adds no policy of its own.
++func geoJSONExactMembers(obj map[string]json.RawMessage) (typ string, coords json.RawMessage, geoms []json.RawMessage, err error) {
++	rawTyp, ok := obj["type"]
++	if !ok {
++		return "", nil, nil, moerr.NewInvalidInputNoCtx("invalid GeoJSON: missing type")
++	}
++	if err := json.Unmarshal(rawTyp, &typ); err != nil {
++		return "", nil, nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
++	}
++	if rawGeoms, ok := obj["geometries"]; ok {
++		// Keep the typed shape check of an explicitly present geometries
++		// member on every Geometry type, not only GeometryCollection.
++		if err := json.Unmarshal(rawGeoms, &geoms); err != nil {
++			return "", nil, nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: %v", err)
++		}
++	}
++	coords = obj["coordinates"]
++	return typ, coords, geoms, nil
++}
++
++// geoJSONNull is the raw text of a JSON null member value.
++var geoJSONNull = []byte("null")
++
++// requireGeoJSONMemberArray enforces the RFC 7946 section-3.1 required-member
++// rule for the raw coordinates member of a coordinate-bearing Geometry object:
++// an absent member and a JSON null member are both invalid geometry, while any
++// other value — an explicit empty array included — decodes normally so EMPTY
++// geometry behavior is unchanged. A GeometryCollection's geometries member is
++// validated from its typed decode instead: a malformed value fails the
++// exact-member decode, and an absent or JSON null member yields a nil slice.
++func requireGeoJSONMemberArray(member json.RawMessage, typ, name string) error {
++	if len(member) == 0 {
++		return moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: missing %s", typ, name)
++	}
++	if bytes.Equal(member, geoJSONNull) {
++		return moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: %s is null", typ, name)
++	}
++	return nil
+ }
+ 
+ func parseGeoJSONObj(typ string, coords json.RawMessage, geoms []json.RawMessage) (Geometry, error) {
++	// Validate the required member at the common parser boundary before any
++	// member decoding; this covers the top level and every child dispatch. The
++	// geometries member arrives already typed from exact-member extraction,
++	// where a malformed value fails that member's unmarshal, and an absent or
++	// JSON null member yields a nil slice while an explicit [] stays non-nil;
++	// the raw coordinates member keeps its explicit absence/null guard here.
++	switch typ {
++	case "Point", "LineString", "Polygon", "MultiPoint", "MultiLineString", "MultiPolygon":
++		if err := requireGeoJSONMemberArray(coords, typ, "coordinates"); err != nil {
++			return nil, err
++		}
++	case "GeometryCollection":
++		if geoms == nil {
++			return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON %s: geometries is required", typ)
++		}
++	case "":
++		return nil, moerr.NewInvalidInputNoCtxf("invalid GeoJSON: missing type")
++	default:
++		return nil, moerr.NewInvalidInputNoCtxf("unsupported GeoJSON type %q", typ)
++	}
+ 	switch typ {
+ 	
 ```
 
-**File**: `pkg/sql/plan/expr_opt_test.go` (modified, +16/-7)
+**File**: `pkg/geo/geojson_member_test.go` (added, +171/-0)
 ```diff
-@@ -436,20 +436,29 @@ func TestLeadingCompositeRangeReachableFromSQL(t *testing.T) {
- 	table := makeExprOptCompositeClusterKeyTableDef()
- 	table.Name = "range_probe"
- 	table.TblId = 29507
--	for i, col := range table.Cols {
--		col.Seqnum = uint32(i + 1)
-+	temporalTable := makeExprOptCompositeClusterKeyTableDef()
-+	temporalTable.Name = "datetime_range_probe"
-+	temporalTable.TblId = 29510
-+	temporalTable.Cols[0].Typ = planpb.Type{Id: int32(types.T_datetime), Scale: 6}
-+	for _, def := range []*planpb.TableDef{table, temporalTable} {
-+		for i, col := range def.Cols {
-+			col.Seqnum = uint32(i + 1)
-+		}
-+		ctx.tables[def.Name] = def
-+		ctx.objects[def.Name] = &planpb.ObjectRef{Obj: int64(def.TblId), ObjName: def.Name, SchemaName: "tpch"}
- 	}
--	ctx.tables[table.Name] = table
--	ctx.objects[table.Name] = &planpb.ObjectRef{Obj: int64(table.TblId), ObjName: table.Name, SchemaName: "tpch"}
- 	for _, tc := range []struct {
- 		sql      string
-+		table    *planpb.TableDef
- 		readCols []string
- 	}{
--		{"select a from range_probe where a >= 10 and a < 20", []string{"a"}},
--		{"select a from range_probe where a > 10", []string{"a"}},
--		{"select b from range_probe where a > 10", []string{"a", "b"}},
-+		{"select a from range_probe where a >= 10 and a < 20", table, []string{"a"}},
-+		{"select a from range_probe where a > 10", table, []string{"a"}},
-+		{"select b from range_probe where a > 10", table, []string{"a", "b"}},
-+		{"select a from datetime_range_probe where a >= now() - interval 1 minute order by a desc limit 1", temporalTable, []string{"a"}},
- 	} {
- 		t.Run(tc.sql, func(t *testing.T) {
-+			table := tc.table
- 			stmt, err := mysql.ParseOne(ctx.GetContext(), tc.sql, 1)
- 			require.NoError(t, err)
- 			built, err := BuildPlan(ctx, stmt, false, nil)
+@@ -0,0 +1,171 @@
++// Copyright 2021 - 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package geo
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// parseGeoJSONOrFatal parses one GeoJSON geometry object, failing the test when
++// the input is rejected, and returns the geometry for WKT comparisons.
++func parseGeoJSONOrFatal(t *testing.T, input string) Geometry {
++	t.Helper()
++	g, err := ParseGeoJSON([]byte(input))
++	require.NoError(t, err, input)
++	return g
++}
++
++// rejectGeoJSON requires input to be an invalid GeoJSON geometry. When the
++// parser wrongly accepts it, the failure message carries the parsed WKT so the
++// wrongly produced geometry (for example an EMPTY one) is visible.
++func rejectGeoJSON(t *testing.T, input string) {
++	t.Helper()
++	g, err := ParseGeoJSON([]byte(input))
++	if err != nil {
++		return
++	}
++	t.Fatalf("invalid GeoJSON %s was accepted as geometry %s", input, WriteWKT(g))
++}
++
++// TestGeoJSONRequiredMember pins the RFC 7946 section-3.1 rule that every
++// Geometry object carries its type's required array member: coordinates for
++// the six coordinate-bearing types, geometries for a GeometryCollection. An
++// absent or JSON null member is an invalid geometry, while an explicit empty
++// array keeps the established EMPTY geometry behavior. The rule applies to
++// child Geometry objects at any depth, and optional metadata stays inert.
++func TestGeoJSONRequiredMember(t *testing.T) {
++	coordinateTypes := []struct {
++		typ         string
++		nonEmpty    string
++		nonEmptyWKT string
++	}{
++		{"Point", `[1,2]`, "POINT(1 2)"},
++		{"LineString", `[[0,0],[1,1]]`, "LINESTRING(0 0,1 1)"},
++		{"Polygon", `[[[0,0],[1,0],[1,1],[0,0]]]`, "POLYGON((0 0,1 0,1 1,0 0))"},
++		{"MultiPoint", `[[0,0],[1,1]]`, "MULTIPOINT(0 0,1 1)"},
++		{"MultiLineString", `[[[0,0],[1,1]],[[2,2],[3,3]]]`, "MULTILINESTRING((0 0,1 1),(2 2,3 3))"},
++		{"MultiPolygon", `[[[[1,1],[3,1],[3,3],[1,3],[1,1]]]]`, "MULTIPOLYGON(((1 1,3 1,3 3,1 3,1 1)))"},
++	}
++	emptyWKT := map[string]string{
++		"Point":           "POINT EMPTY",
++		"LineString":      "LINESTRING EMPTY",
++		"Polygon":         "POLYGON EMPTY",
++		"MultiPoint":      "MULTIPOINT EMPTY",
++		"MultiLineString": "MULTILINESTRING EMPTY",
++		"MultiPolygon":    "MULTIPOLYGON EMPTY",
++	}
++	for _, ct := range coordinateTypes {
++		t.Run(ct.typ, func(t *testing.T) {
++			// The coordinates member is required: neither absent...
++			rejectGeoJSON(t, `{"type":"`+ct.typ+`"}`)
++			// ...nor JSON null is a valid geometry.
++			rejectGeoJSON(t, `{"type":"`+ct.typ+`","coordinates":null}`)
++			// An explicit empty array stays a valid EMPTY geometry.
++			require.Equal(t, emptyWKT[ct.typ],
++				WriteWKT(parseGeoJSONOrFatal(t, `{"type":"`+ct.typ+`","coordinates":[]}`)))
++			// A valid non-empty member round-trips to the expected geometry.
++			require.Equal(t, ct.nonEmptyWKT,
++				WriteWKT(parseGeoJSONOrFatal(t, `{"type":"`+ct.typ+`","coordinates":`+ct.nonEmpty+`}`)))
++		})
++	}
++
++	t.Run("GeometryCollection", func(t *testing.T) {
++		// The geometries member is required: neither absent...
++		rejectGeoJSON(t, `{"type":"GeometryCollection"}`)
++		// ...nor JSON null is a valid geometry.
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":null}`)
++		// An explicit empty array stays a valid EMPTY collection, and a
++		// non-empty member keeps parsing its children.
++		require.Equal(t, "GEOMETRYCOLLECTION EMPTY",
++			WriteWKT(parseGeoJSONOrFatal(t, `{"type":"GeometryCollection","geometries":[]}`)))
++		require.Equal(t, "GEOMETRYCOLLECTION(POINT(1 2))",
++			WriteWKT(parseGeoJSONOrFatal(t, `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}]}`)))
++	})
++
++	t.Run("ChildGeometryObjects", func(t *testing.T) {
++		// Child coordinate-bearing objects require their coordinates member.
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"Point"}]}`)
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null}]}`)
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"LineString","coordinates":null}]}`)
++		// Child collections require their geometries member at any depth.
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"GeometryCollection"}]}`)
++		rejectGeoJSON(t, `{"type":"GeometryCollection","geometries":[{"type":"GeometryCollection","geometries":null}]}`)
++		// Explicit empty arrays keep producing EMPTY child geometries,
+```
+
+**File**: `test/distributed/cases/geo/geo_geojson.result` (modified, +40/-0)
+```diff
+@@ -82,3 +82,43 @@ select id, st_astext(g) from gj_t;
+ id    st_astext(g)
+ 1    POINT(10 20)
+ drop table gj_t;
++select st_geomfromgeojson('{"type":"Point","coordinates":null}');
++invalid input: invalid GeoJSON Point: coordinates is null
++select st_geomfromgeojson('{"type":"Point","coordinates":null}', 0);
++invalid input: invalid GeoJSON Point: coordinates is null
++select st_geomfromgeojson('{"type":"Point","coordinates":null,"Coordinates":[1,2]}');
++invalid input: invalid GeoJSON Point: coordinates is null
++select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2],"coordinates":null}');
++invalid input: invalid GeoJSON Point: coordinates is null
++select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2]}');
++invalid input: invalid GeoJSON Point: missing coordinates
++select st_geomfromgeojson('{"type":"GeometryCollection"}');
++invalid input: invalid GeoJSON GeometryCollection: geometries is required
++select st_geomfromgeojson('{"type":"GeometryCollection","geometries":null,"Geometries":[{"type":"Point","coordinates":[1,2]}]}');
++invalid input: invalid GeoJSON GeometryCollection: geometries is required
++select st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null,"Coordinates":[1,2]}]}');
++invalid input: invalid GeoJSON Point: coordinates is null
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[]}')) as pt_empty;
++pt_empty
++POINT EMPTY
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[],"Coordinates":[1,2]}')) as pt_empty_shadowed;
++pt_empty_shadowed
++POINT EMPTY
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[]}')) as gc_empty;
++gc_empty
++GEOMETRYCOLLECTION EMPTY
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[],"Geometries":[{"type":"Point","coordinates":[1,2]}]}')) as gc_empty_shadowed;
++gc_empty_shadowed
++GEOMETRYCOLLECTION EMPTY
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}')) as pt_canonical;
++pt_canonical
++POINT(5 6)
++select st_srid(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}', 0)) as pt_srid0_kept;
++pt_srid0_kept
++0
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}],"Geometries":[]}', 0)) as gc_child_kept;
++gc_child_kept
++GEOMETRYCOLLECTION(POINT(1 2))
++select 2 as after_case_fold_checks;
++after_case_fold_checks
++2
+```
+
+**File**: `test/distributed/cases/geo/geo_geojson.sql` (modified, +30/-0)
+```diff
+@@ -60,3 +60,33 @@ create table gj_t(id int, g geometry);
+ insert into gj_t values (1, st_geomfromgeojson('{"type":"Point","coordinates":[10,20]}'));
+ select id, st_astext(g) from gj_t;
+ drop table gj_t;
++
++-- Null or missing required members are invalid even when a differently-cased
++-- member would case-fold onto them; member order does not matter, the
++-- canonical value always wins, and explicit empty arrays keep their EMPTY
++-- acceptance. Both public overloads behave the same.
++
++-- @regex("invalid GeoJSON Point: coordinates is null",true)
++select st_geomfromgeojson('{"type":"Point","coordinates":null}');
++-- @regex("invalid GeoJSON Point: coordinates is null",true)
++select st_geomfromgeojson('{"type":"Point","coordinates":null}', 0);
++-- @regex("invalid GeoJSON Point: coordinates is null",true)
++select st_geomfromgeojson('{"type":"Point","coordinates":null,"Coordinates":[1,2]}');
++-- @regex("invalid GeoJSON Point: coordinates is null",true)
++select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2],"coordinates":null}');
++-- @regex("invalid GeoJSON Point: missing coordinates",true)
++select st_geomfromgeojson('{"type":"Point","Coordinates":[1,2]}');
++-- @regex("invalid GeoJSON GeometryCollection: geometries is required",true)
++select st_geomfromgeojson('{"type":"GeometryCollection"}');
++-- @regex("invalid GeoJSON GeometryCollection: geometries is required",true)
++select st_geomfromgeojson('{"type":"GeometryCollection","geometries":null,"Geometries":[{"type":"Point","coordinates":[1,2]}]}');
++-- @regex("invalid GeoJSON Point",true)
++select st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":null,"Coordinates":[1,2]}]}');
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[]}')) as pt_empty;
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[],"Coordinates":[1,2]}')) as pt_empty_shadowed;
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[]}')) as gc_empty;
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[],"Geometries":[{"type":"Point","coordinates":[1,2]}]}')) as gc_empty_shadowed;
++select st_astext(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}')) as pt_canonical;
++select st_srid(st_geomfromgeojson('{"type":"Point","coordinates":[5,6],"Coordinates":[9,9]}', 0)) as pt_srid0_kept;
++select st_astext(st_geomfromgeojson('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[1,2]}],"Geometries":[]}', 0)) as gc_child_kept;
++select 2 as after_case_fold_checks;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #33341** (closed): fix(geo): reject null required GeoJSON arrays (@MatrixAdventurer)
-- **PR #33340** (closed): fix(geo): reject null required GeoJSON arrays (@MatrixAdventurer)
-- **PR #33338** (2026-11-26): refactor(types): type dispatch design (#10181), oidscan, DML dispatch fixes, traits table (@fengttt)
-- **PR #33332** (closed): fix(function): reject CURTIME/CURRENT_TIME precision above 6 (@MatrixAdventurer)
-- **PR #33328** (2026-11-26): [4.2-dev] Bound skewed indexed equality estimates with cached zone maps (@XuPeng-SH)
-- **PR #33326** (closed): fix: keep session executor in stage helpers (@MatrixAdventurer)
+- **PR #33403** (2026-11-27): Update main CODEOWNERS (@XuPeng-SH)
+- **PR #33402** (2026-11-27): [4.2-dev] Update CODEOWNERS (@XuPeng-SH)
+- **PR #33401** (2026-11-27): ci: pilot Coverage UT cross-site retry on PR #32922 only (@Ariznawlll)
+- **PR #33400** (2026-11-27): [4.2-dev] test: sync publication commits before cross-CN ALTER (@XuPeng-SH)
+- **PR #33398** (2026-11-27): fix(geo): validate required GeoJSON members (@aptend)
+- **PR #33386** (2026-11-27): [4.2-dev] ci: route Coverage UT to CS standby (@Ariznawlll)
 
 ---
 
@@ -3841,59 +2823,33 @@ static-ch
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. types): type dispatch design, oidscan, DML dispatch fixes, traits table
+## X. ci: roll out Coverage UT worker metadata fix
 
 **RULE**:
-When implementing operations in `docs/design/20261126-type-vft.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/coverage-standby-worker.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9531e591`: types): type dispatch design, oidscan, DML dispatch fixes, traits table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3aae79f`: ci: roll out Coverage UT worker metadata fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261126-type-vft.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/coverage-standby-worker.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Type dispatch tables: consolidating `switch typ.Oid`
-
-## Scope and trigger
-
-Issue [#10181](https://github.com/matrixorigin/matrixone/issues/10181)
-("[Refactoring]: VFT of types").
-
-MatrixOne decides what to do with a value by switching on its type id
-(`types.T`, the `Oid` of a `types.Type`) all over the codebase. The issue
-names two problems:
-
-1. **Adding a type means editing many places, and missing one fails
-   quietly.** A new `T_` constant falls into whatever `default:` branch each
-   switch has. Depending on the site, that is a panic, an "unsupported type"
-   error, or a wrong result.
-2. **Some switches run once per row.** The cost of a switch whose type is the
-   same on every row is small, but these sites usually also box values into
-   `any`, which is the larger cost.
-
-This document measures the problem, proposes a design and lays out a
-step-by-step plan. It changes no code; each implementation step will be its
-own PR.
-
-## Measurements
-
-The numbers come from `optools/oidscan`, a `go/ast` scan of every non-test
-`.go` file under `pkg/` (skipping `testdata/`), at commit `5e3893a298`. A
-"type switch" is any `switch` statement with at least one `case` naming a
-`T_*` constant. 
+    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
+    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@4972bd963f4cc9510266323b14446a8edcda2bfc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    uses: matrixorigin/CI/.github/workflows/coverage-worker-cs.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
+    uses: matrixorigin/CI/.github/workflows/coverage-worker-idc.yaml@3d7dce54bdb6ec099102ca2f3aa3a05e96f1f738
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9531e591` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3aae79f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

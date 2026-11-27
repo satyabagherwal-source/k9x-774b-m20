@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T17:42:06.691Z",
+  "updated_at": "2026-11-27T17:50:57.280Z",
   "stats": {
-    "total_discovered": 10503,
-    "approved_pending_harvest": 9970,
+    "total_discovered": 10508,
+    "approved_pending_harvest": 9975,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9977,
-      "OFFICIAL_DOCUMENTATION": 288,
+      "COMMUNITY_AND_EXPERT": 9980,
+      "OFFICIAL_DOCUMENTATION": 290,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 57,
@@ -227362,6 +227362,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
         "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-0B9C6E88CA6B": {
+      "id": "SRC-0B9C6E88CA6B",
+      "url": "https://github.com/envoyproxy/envoy/pull/49253",
+      "title": "https://github.com/envoyproxy/envoy/pull/49253",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:50:25.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-6B832F0E97D8": {
+      "id": "SRC-6B832F0E97D8",
+      "url": "https://docs.qodo.ai/subscription-plans",
+      "title": "https://docs.qodo.ai/subscription-plans",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:50:26.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-531DC8FC737B": {
+      "id": "SRC-531DC8FC737B",
+      "url": "https://docs.qodo.ai/qodo-support",
+      "title": "https://docs.qodo.ai/qodo-support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:50:26.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-4710724A63F4": {
+      "id": "SRC-4710724A63F4",
+      "url": "https://github.com/matrixorigin/matrixone/actions/runs/45938589770/attempts/3",
+      "title": "https://github.com/matrixorigin/matrixone/actions/runs/45938589770/attempts/3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:50:26.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-E9BF056F5D35": {
+      "id": "SRC-E9BF056F5D35",
+      "url": "https://github.com/anthropics/claude-code-action/compare/acfe7992852970efb4fee683d63d628e3e52df67...eb56b6666facdbd501035f4a0269d8caee2e7a8b",
+      "title": "https://github.com/anthropics/claude-code-action/compare/acfe7992852970efb4fee683d63d628e3e52df67...eb56b6666facdbd501035f4a0269d8caee2e7a8b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:50:57.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

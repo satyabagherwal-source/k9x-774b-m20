@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T23:50:09.674Z",
+  "timestamp": "2026-11-27T17:50:25.988Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-envoyproxy-envoy-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [envoyproxy-envoy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T23:50:09.674Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:50:25.988Z`  
 > **Learning ID**: `LEARN-EVO-envoyproxy-envoy-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy-envoy-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `603220f0`  
+> **Source Version**: `e6e92e58`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:49:35.493Z  
+> **Timestamp**: 2026-11-27T17:50:14.887Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:49:35.489Z  
+> **Harvest Timestamp**: 2026-11-27T17:50:14.625Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29303 stars
+- **Stars / Engagement**: 29305 stars
 
 ---
 
@@ -1075,61 +1075,1188 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `603220f0` (2026-11-26)
-**Commit Message**: wasm: enable per-filter buffer in upstream wasm integration tests (#49639)
+### Incident Patch 1: `e6e92e58` (2026-11-27)
+**Commit Message**: reverse_tunnel: extract pluggable handshake seams on initiator and responder (#49221)
 
-Commit Message: wasm: enable per-filter buffer in upstream wasm
-integration tests
-Additional Description: The upstream variants of the Wasm body
-integration tests (BodyBuffered*Manipulation) are flaky in debug builds.
-On the legacy shared buffer, UpstreamCodecFilter::continueDecoding()
-after the upstream connects can drain body data buffered by the stopped
-Wasm filter, which trips an ASSERT. This enables
-`envoy.reloadable_features.filter_manager_per_filter_buffer` for
-upstream Wasm filter setups, so each filter keeps its own buffer. It
-also removes the upstream skip in LargeRequestHitBufferLimit, which now
-passes. This is an alternative to dropping the assert or adding holder
-workarounds in the filter manager.
-Risk Level: Low (test only)
-Testing: 1000 debug runs of the upstream Body* and
-LargeRequestHitBufferLimit cases, all passed.
-Docs Changes: N/A
-Release Notes: N/A
+**Commit Message:** reverse_tunnel: extract pluggable handshake seams on
+initiator and responder
 
-Developed with AI assistance; the submitter has reviewed and understands
-all changes.
+**Additional Description:**
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+The reverse-tunnel handshake is hard-coded to HTTP/1.1 on both ends.
+This change puts the protocol work behind configurator interfaces so
+other handshakes can plug in. Behavior is identical.
+https://github.com/envoyproxy/envoy/pull/49253 makes the handshake
+selectable through config.
 
-Signed-off-by: wbpcode <[REDACTED_EMAIL]>
+On the initiator side, `InitiatorHandshake` /
+`InitiatorHandshakeConfigurator` (`handshake_initiator.h`) own the
+protocol half. The HTTP/1 implementation
+(`http1_handshake_initiator.{h,cc}`) owns its framing (path, upgrade,
+additional headers), request assembly, response classification,
+`Retry-After` parsing, and capture of bytes coalesced with the response.
+It reads the formatted handshake headers the extension publishes once on
+the main thread, so the shared callbacks carry only identity, transport
+and outcome. `RCConnectionWrapper` keeps transport and lifecycle: it
+owns the read filter and feeds `onData()`, runs the deadline, and counts
+stats. The host ignores a `retry_after` hint below o
 
-**File**: `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc` (modified, +6/-5)
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/BUILD` (modified, +24/-0)
 ```diff
-@@ -80,6 +80,12 @@ class WasmFilterIntegrationTest
-         module, R"EOF("
-         )EOF"));
-     config_helper_.prependFilter(yaml, downstream);
-+    if (!downstream) {
-+      // On the legacy shared buffer, UpstreamCodecFilter::continueDecoding() after the upstream
-+      // connects can drain body data buffered by the stopped Wasm filter.
-+      config_helper_.addRuntimeOverride(
-+          "envoy.reloadable_features.filter_manager_per_filter_buffer", "true");
+@@ -44,3 +44,27 @@ envoy_cc_library(
+         "//source/common/network:io_socket_error_lib",
+     ],
+ )
++
++envoy_cc_library(
++    name = "handshake_initiator_lib",
++    hdrs = ["handshake_initiator.h"],
++    deps = [
++        "//envoy/buffer:buffer_interface",
++        "//envoy/network:connection_interface",
++        "//envoy/upstream:upstream_interface",
++    ],
++)
++
++envoy_cc_library(
++    name = "handshake_responder_lib",
++    hdrs = ["handshake_responder.h"],
++    deps = [
++        "//envoy/buffer:buffer_interface",
++        "//envoy/http:codes_interface",
++        "//envoy/http:header_map_interface",
++        "//envoy/network:connection_interface",
++        "//envoy/network:filter_interface",
++        "//envoy/server/overload:overload_manager_interface",
++        "//envoy/stats:scope_interface",
++    ],
++)
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/handshake_initiator.h` (added, +233/-0)
+```diff
+@@ -0,0 +1,233 @@
++#pragma once
++
++#include <chrono>
++#include <memory>
++#include <optional>
++#include <string>
++
++#include "envoy/buffer/buffer.h"
++#include "envoy/network/connection.h"
++#include "envoy/upstream/upstream.h"
++
++#include "absl/status/status.h"
++#include "absl/strings/str_cat.h"
++#include "absl/strings/string_view.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace Bootstrap {
++namespace ReverseConnection {
++
++/**
++ * Class representing handshake failure with type and context.
++ * Provides methods to generate detailed error messages and stat names.
++ */
++class HandshakeFailureReason {
++public:
++  enum class Type {
++    HttpStatusError, // HTTP response with non-200 status code
++    EncodeError,     // HTTP request encoding failed
++    Timeout,         // Handshake response not received within the deadline
++    ConnectionClose, // Connection closed or the codec failed before the response
++  };
++
++  /**
++   * Create a handshake failure reason for HTTP status errors.
++   * @param status_code the HTTP status code received
++   */
++  static HandshakeFailureReason httpStatusError(absl::string_view status_code) {
++    return {Type::HttpStatusError, status_code};
++  }
++
++  /**
++   * Create a handshake failure reason for encoding errors.
++   */
++  static HandshakeFailureReason encodeError() { return {Type::EncodeError, ""}; }
++
++  /**
++   * Create a handshake failure reason for a deadline expiry.
++   */
++  static HandshakeFailureReason timeout() { return {Type::Timeout, ""}; }
++
++  /**
++   * Create a handshake failure reason for a connection close or codec failure before the response.
++   * @param detail optional context describing the close.
++   */
++  static HandshakeFailureReason connectionClose(absl::string_view detail = "") {
++    return {Type::ConnectionClose, detail};
++  }
++
++  /**
++   * Get a detailed human-readable error message.
++   * @return detailed error message string
++   */
++  std::string getDetailedName() const {
++    switch (type_) {
++    case Type::HttpStatusError:
++      return absl::StrCat("HTTP handshake failed with status ", context_);
++    case Type::EncodeError:
++      return "HTTP handshake encode failed";
++    case Type::Timeout:
++      return "HTTP handshake timed out";
++    case Type::ConnectionClose:
++      return context_.empty() ? "HTTP handshake connection closed"
++                              : absl::StrCat("HTTP handshake connection closed: ", context_);
 +    }
++    return "Unknown handshake failure";
++  }
++
++  /**
++   * Get the stat name suffix for this failure.
++   * @return stat name suffix (e.g., "http.401", "encode_error")
++   */
++  std::string getNameForStats() const {
++    switch (type_) {
++    case Type::HttpStatusError:
++      return absl::StrCat("http.", context_);
++    case Type::EncodeError:
++      return "encode_error";
++    case Type::Timeout:
++      return "timeout";
++    case Type::ConnectionClose:
++      return "connection_close";
++    }
++    return "unknown";
++  }
++
++private:
++  HandshakeFailureReason(Type type, absl::string_view context) : type_(type), context_(context) {}
++
++  Type type_;
++  std::string context_;
++};
++
++/**
++ * Terminal outcome of a handshake attempt, reported to the owning io handle.
++ */
++struct HandshakeOutcome {
++  bool accepted{false};
++  // Typed failure classification; both failure() factories set it.
++  std::optional<HandshakeFailureReason> failure_reason;
++  // Human-readable outcome message used in logs.
++  std::string message;
++
++  static HandshakeOutcome success() {
++    return HandshakeOutcome{true, std::nullopt, "reverse connection accepted"};
++  }
++  static HandshakeOutcome failure(HandshakeFailureReason reason) {
++    HandshakeOutcome outcome;
++    outcome.failure_reason = std::move(reason);
++    outcome.message = outcome.failure_reason->getDetailedName();
++    return outcome;
++  }
++  // Classifies as a connection close; the message stays verbatim for logs.
++  static HandshakeOutcome failure(absl::string_view message) {
++    HandshakeOutcome outcome;
++    outcome.failure_reason = HandshakeFailureReason::connectionClose(message);
++    outcome.message = std::string(message);
++    return outcome;
++  }
++};
++
++/**
++ * Sink through which a per-connection initiator handshake reaches the dial it belongs to.
++ * Implemented by RCConnectionWrapper; all methods run on the worker that owns the connection,
++ * between handshake creation and terminal outcome. Carries only identity, transport and outcome;
++ * protocol-specific settings live in the handshake's own factory.
++ */
++class InitiatorHandshakeCallbacks {
++public:
++  virtual ~InitiatorHandshakeCallbacks() = default;
++
++  // Connection the handshake runs on; valid until the handshake completes or is cancelled.
++  virtual Network::ClientConnection& connection() = 0;
++
++  // Host description of the dialed endpoint; carries the codec settings and limits.
++  virtual Upstream::HostDescriptionConstSharedPtr host() = 0;
++
++  // Name of the upstream cluster the tunnel is dial
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/common/handshake_responder.h` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++#pragma once
++
++#include <memory>
++#include <optional>
++
++#include "envoy/buffer/buffer.h"
++#include "envoy/http/codes.h"
++#include "envoy/http/header_map.h"
++#include "envoy/network/connection.h"
++#include "envoy/network/filter.h"
++#include "envoy/server/overload/overload_manager.h"
++#include "envoy/stats/scope.h"
++
++#include "absl/strings/string_view.h"
++
++namespace Envoy {
++namespace Extensions {
++namespace Bootstrap {
++namespace ReverseConnection {
++
++// Handshake request parsed by a responder handshake. Every view is valid only during
++// ResponderHandshakeCallbacks::onTunnelRequest().
++struct TunnelRequest {
++  // An empty tenant id is rejected. An empty node or cluster id passes the filter's checks and the
++  // tunnel is dropped at registration, after the acceptance reply.
++  absl::string_view node_id;
++  absl::string_view cluster_id;
++  absl::string_view tenant_id;
++  // Attributes the required cluster name check, the JWT check and the %REQ(...)% identifier
++  // validation read. A non-HTTP handshake supplies the equivalent key/values.
++  const Http::RequestHeaderMap& headers;
++  // Raw initiation time in epoch millis, absent when not advertised. The filter parses it.
++  std::optional<absl::string_view> initiation_time_ms;
++  absl::string_view initiator_worker_id;
++  absl::string_view initiator_connection_id;
++};
++
++// Decision on a tunnel request. Both views point at constants. The reply does not carry
++// ``details``.
++struct TunnelDecision {
++  bool accepted{false};
++  Http::Code code{Http::Code::Forbidden};
++  absl::string_view body;
++  absl::string_view details;
++};
++
++// Framing rejections whose stats are owned by the filter; the reply is sent by the handshake.
++enum class HandshakeFramingRejection { ParseError, BodyRejected };
++
++/**
++ * Callbacks from a responder handshake into the owning filter. All methods run synchronously on
++ * the worker that owns the handshake connection, from within the handshake's onData.
++ */
++class ResponderHandshakeCallbacks {
++public:
++  virtual ~ResponderHandshakeCallbacks() = default;
++
++  // Connection carrying the handshake.
++  virtual Network::Connection& connection() = 0;
++
++  // Scope the handshake allocates its codec resources in.
++  virtual Stats::Scope& statsScope() = 0;
++
++  // Overload manager backing the connection, consulted when codec resources are created.
++  virtual Server::OverloadManager& overloadManager() = 0;
++
++  // Runs the policy checks on a framed request and, when they pass, prepares the tunnel: the
++  // socket is duplicated and reads are disabled. Called once per connection, and increments its
++  // own stats. On accept the handshake sends its acceptance reply and then calls
++  // onAcceptanceResponseEncoded(). On reject it sends ``code`` and ``body`` and closes the
++  // connection with FlushWrite.
++  virtual TunnelDecision onTunnelRequest(const TunnelRequest& request) = 0;
++
++  // Stats sink for a framing rejection; the handshake sends the matching reply itself.
++  virtual void onFramingRejection(HandshakeFramingRejection rejection) = 0;
++
++  // A rejection reply is about to be sent and the connection closed, so the handshake deadline no
++  // longer applies.
++  virtual void onTerminalRejection() = 0;
++
++  // The acceptance reply has been encoded. ``response_wire_bytes`` is its exact size on the wire;
++  // the filter registers the tunnel once that many bytes are sent.
++  virtual void onAcceptanceResponseEncoded(uint64_t response_wire_bytes) = 0;
++};
++
++/**
++ * Server-side handshake on the connection the filter owns. One instance per connection; onData is
++ * called with every received byte until the connection is closed.
++ */
++class ResponderHandshake {
++public:
++  virtual ~ResponderHandshake() = default;
++
++  virtual Network::FilterStatus onData(Buffer::Instance& data) = 0;
++};
++
++using ResponderHandshakePtr = std::unique_ptr<ResponderHandshake>;
++
++/**
++ * Creates responder handshakes. Implemented per handshake protocol; a protocol-agnostic seam for
++ * the filter, which always talks to a ResponderHandshake.
++ */
++class ResponderHandshakeConfigurator {
++public:
++  virtual ~ResponderHandshakeConfigurator() = default;
++
++  // Never returns null.
++  virtual ResponderHandshakePtr createHandshake(ResponderHandshakeCallbacks& callbacks) const = 0;
++};
++
++} // namespace ReverseConnection
++} // namespace Bootstrap
++} // namespace Extensions
++} // namespace Envoy
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/BUILD` (modified, +4/-9)
+```diff
+@@ -59,8 +59,10 @@ envoy_cc_library(
+         "//source/common/http:headers_lib",
+         "//source/common/stats:symbol_table_lib",
+         "//source/common/stream_info:stream_info_lib",
++        "//source/extensions/bootstrap/reverse_tunnel/common:handshake_initiator_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface:reverse_connection_io_handle_includes",
++        "//source/extensions/bootstrap/reverse_tunnel/http1:http1_handshake_lib",
+         "//source/server:generic_factory_context_lib",
+         "@envoy_api//envoy/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/v3:pkg_cc_proto",
+     ],
+@@ -90,10 +92,6 @@ envoy_cc_library(
+         "//source/common/common:logger_lib",
+         "//source/common/event:real_time_system_lib",
+         "//source/common/grpc:typed_async_client_lib",
+-        "//source/common/http:codec_client_lib",
+-        "//source/common/http:response_decoder_impl_base",
+-        "//source/common/http/http1:codec_lib",
+-        "//source/common/http/http1:codec_stats_lib",
+         "//source/common/network:address_lib",
+         "//source/common/network:connection_socket_lib",
+         "//source/common/network:default_socket_interface_lib",
+@@ -102,9 +100,9 @@ envoy_cc_library(
+         "//source/common/stream_info:stream_info_lib",
+         "//source/common/tls:ssl_handshaker_lib",
+         "//source/common/upstream:load_balancer_context_base_lib",
++        "//source/extensions/bootstrap/reverse_tunnel/common:handshake_initiator_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/common:rping_interceptor_lib",
+-        "@envoy_api//envoy/config/core/v3:pkg_cc_proto",
+     ],
+ )
  
-     // Set buffer limit for HTTP1 to same value with the default limit of HTTP2.
-     config_helper_.setBufferLimits(65535, 65535);
-@@ -297,11 +303,6 @@ TEST_P(WasmFilterIntegrationTest, PanicReturn503) {
+@@ -134,13 +132,10 @@ envoy_cc_library(
+         "//envoy/upstream:cluster_manager_interface",
+         "//source/common/api:os_sys_calls_lib",
+         "//source/common/buffer:buffer_lib",
++        "//source/common/common:assert_lib",
+         "//source/common/common:logger_lib",
+         "//source/common/event:real_time_system_lib",
+         "//source/common/grpc:typed_async_client_lib",
+-        "//source/common/http:codec_client_lib",
+-        "//source/common/http:response_decoder_impl_base",
+-        "//source/common/http/http1:codec_lib",
+-        "//source/common/http/http1:codec_stats_lib",
+         "//source/common/network:address_lib",
+         "//source/common/network:connection_socket_lib",
+         "//source/common/network:default_socket_interface_lib",
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/rc_connection_wrapper.cc` (modified, +87/-260)
+```diff
+@@ -1,24 +1,15 @@
+ #include "source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/rc_connection_wrapper.h"
+ 
+-#include <algorithm>
+ #include <optional>
+ 
+ #include "envoy/network/address.h"
+ #include "envoy/network/connection.h"
+ 
+-#include "source/common/buffer/buffer_impl.h"
++#include "source/common/common/assert.h"
+ #include "source/common/common/logger.h"
+-#include "source/common/http/header_map_impl.h"
+-#include "source/common/http/utility.h"
+-#include "source/common/network/address_impl.h"
+-#include "source/common/network/connection_socket_impl.h"
+-#include "source/common/stream_info/stream_info_impl.h"
+-#include "source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/reverse_connection_io_handle.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/reverse_tunnel_initiator_extension.h"
+ 
+-#include "absl/strings/numbers.h"
+-
+ namespace Envoy {
+ namespace Extensions {
+ namespace Bootstrap {
+@@ -31,7 +22,7 @@ RCConnectionWrapper::RCConnectionWrapper(ReverseConnectionIOHandle& parent,
+                                          const std::string& cluster_name)
+     : parent_(parent), connection_(std::move(connection)), host_(std::move(host)),
+       cluster_name_(cluster_name) {
+-  ENVOY_LOG(debug, "RCConnectionWrapper: Using HTTP handshake for reverse connections");
++  ENVOY_LOG(debug, "RCConnectionWrapper: created for reverse connections");
  }
  
- TEST_P(WasmFilterIntegrationTest, LargeRequestHitBufferLimit) {
--  // TODO(wbpcode): upstream HTTP filter couldn't stop the iteration correctly.
--  if (bool downstream = std::get<2>(GetParam()); !downstream) {
--    return;
+ // RCConnectionWrapper destructor implementation.
+@@ -50,6 +41,10 @@ void RCConnectionWrapper::onEvent(Network::ConnectionEvent event) {
+       event != Network::ConnectionEvent::LocalClose) {
+     return;
+   }
++  // The parent already handled this attempt's terminal outcome and dropped the wrapper.
++  if (handshake_terminal_) {
++    return;
++  }
+   if (!connection_) {
+     ENVOY_LOG(debug, "RCConnectionWrapper: connection is null, skipping event handling");
+     return;
+@@ -65,160 +60,62 @@ void RCConnectionWrapper::onEvent(Network::ConnectionEvent event) {
+ 
+   // Do not call shutdown() here, as that may trigger cleanup during event processing. Notify the
+   // parent instead, which treats the premature close as a terminal handshake failure.
+-  parent_.onConnectionDone("Connection closed", this, true);
++  disarmHandshakeTimer();
++  parent_.onConnectionDone(HandshakeOutcome::failure("Connection closed"), this, true);
+ }
+ 
+-// SimpleConnReadFilter::onData implementation.
+-Network::FilterStatus SimpleConnReadFilter::onData(Buffer::Instance& buffer, bool end_stream) {
+-  if (parent_ == nullptr) {
+-    return Network::FilterStatus::StopIteration;
++Network::FilterStatus SimpleConnReadFilter::onData(Buffer::Instance& buffer, bool) {
++  if (parent_ != nullptr) {
++    parent_->onHandshakeData(buffer);
+   }
+-
+-  // Cast parent_ back to RCConnectionWrapper.
+-  RCConnectionWrapper* wrapper = static_cast<RCConnectionWrapper*>(parent_);
+-
+-  wrapper->dispatchHttp1(buffer);
+-  UNREFERENCED_PARAMETER(end_stream);
+   return Network::FilterStatus::StopIteration;
+ }
+ 
+ absl::Status RCConnectionWrapper::connect(const std::string& src_tenant_id,
+                                           const std::string& src_cluster_id,
+                                           const std::string& src_node_id,
+                                           std::optional<int64_t> initiation_time_ms) {
++  src_tenant_id_ = src_tenant_id;
++  src_cluster_id_ = src_cluster_id;
++  src_node_id_ = src_node_id;
++
+   // Register connection callbacks.
+   ENVOY_LOG(debug, "RCConnectionWrapper: connection: {}, adding connection callbacks",
+             connection_->id());
+   connection_->addConnectionCallbacks(*this);
+   connection_->connect();
+ 
+-  // Use HTTP handshake.
+   ENVOY_LOG(debug,
+             "RCConnectionWrapper: connection: {}, sending reverse connection creation "
+             "request through HTTP",
+             connection_->id());
+ 
+-  // Create HTTP/1 codec to parse the response.
+-  Http::Http1Settings http1_settings = host_->cluster().httpProtocolOptions().http1Settings();
+-  http1_client_codec_ = std::make_unique<Http::Http1::ClientConnectionImpl>(
+-      *connection_, host_->cluster().http1CodecStats(), *this, http1_settings,
+-      host_->cluster().maxResponseHeadersKb(), host_->cluster().maxResponseHeadersCount());
+-  http1_parse_connection_ = http1_client_codec_.get();
++  const InitiatorHandshakeConfigurator* configurator = parent_.handshakeConfigurator();
++  if (configurator == nullptr) {
++    IS_ENVOY_BUG("reverse_tunnel: socket config carries no handshake configurator");
++    onHandshakeDone(HandshakeOutcome::failure("No handshake configurator"), std::nullopt);
++    return absl::InternalError("no handshake configurator");
++  }
+ 
+-  // Add a tiny read filter to feed bytes into the codec for response parsing.
++  // Feed every read into the handshake until it completes or is cancelled.
+   connection_->addReadFilter(read_filter_);
+ 
+-  /
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/rc_connection_wrapper.h` (modified, +41/-188)
+```diff
+@@ -8,19 +8,14 @@
+ #include "envoy/buffer/buffer.h"
+ #include "envoy/event/deferred_deletable.h"
+ #include "envoy/event/timer.h"
+-#include "envoy/http/codec.h"
+ #include "envoy/network/connection.h"
+-#include "envoy/network/filter.h"
+ #include "envoy/upstream/upstream.h"
+ 
+ #include "source/common/common/logger.h"
+-#include "source/common/http/http1/codec_impl.h"
+-#include "source/common/http/response_decoder_impl_base.h"
+ #include "source/common/network/filter_impl.h"
++#include "source/extensions/bootstrap/reverse_tunnel/common/handshake_initiator.h"
+ 
+ #include "absl/status/status.h"
+-#include "absl/strings/str_cat.h"
+-#include "absl/strings/string_view.h"
+ 
+ namespace Envoy {
+ namespace Extensions {
+@@ -30,127 +25,34 @@ namespace ReverseConnection {
+ // Forward declarations.
+ class ReverseConnectionIOHandle;
+ class ReverseTunnelInitiatorExtension;
++class RCConnectionWrapper;
+ 
+ /**
+- * Class representing handshake failure with type and context.
+- * Provides methods to generate detailed error messages and stat names.
++ * Read filter that forwards bytes received during the handshake to the owning wrapper.
+  */
+-class HandshakeFailureReason {
++class SimpleConnReadFilter : public Network::ReadFilterBaseImpl {
+ public:
+-  enum class Type {
+-    HttpStatusError, // HTTP response with non-200 status code
+-    EncodeError,     // HTTP request encoding failed
+-    Timeout,         // Handshake response not received within the deadline
+-    ConnectionClose, // Connection closed or the codec failed before the response
+-  };
++  explicit SimpleConnReadFilter(RCConnectionWrapper& parent) : parent_(&parent) {}
+ 
+-  /**
+-   * Create a handshake failure reason for HTTP status errors.
+-   * @param status_code the HTTP status code received
+-   */
+-  static HandshakeFailureReason httpStatusError(absl::string_view status_code) {
+-    return {Type::HttpStatusError, status_code};
 -  }
 -
-   setupWasmFilter("", "body");
-   HttpIntegrationTest::initialize();
+-  /**
+-   * Create a handshake failure reason for encoding errors.
+-   */
+-  static HandshakeFailureReason encodeError() { return {Type::EncodeError, ""}; }
+-
+-  /**
+-   * Create a handshake failure reason for a deadline expiry.
+-   */
+-  static HandshakeFailureReason timeout() { return {Type::Timeout, ""}; }
+-
+-  /**
+-   * Create a handshake failure reason for a connection close or codec failure before the response.
+-   * @param detail optional context describing the close.
+-   */
+-  static HandshakeFailureReason connectionClose(absl::string_view detail = "") {
+-    return {Type::ConnectionClose, detail};
+-  }
+-
+-  /**
+-   * Get a detailed human-readable error message.
+-   * @return detailed error message string
+-   */
+-  std::string getDetailedName() const {
+-    switch (type_) {
+-    case Type::HttpStatusError:
+-      return absl::StrCat("HTTP handshake failed with status ", context_);
+-    case Type::EncodeError:
+-      return "HTTP handshake encode failed";
+-    case Type::Timeout:
+-      return "HTTP handshake timed out";
+-    case Type::ConnectionClose:
+-      return context_.empty() ? "HTTP handshake connection closed"
+-                              : absl::StrCat("HTTP handshake connection closed: ", context_);
+-    }
+-    return "Unknown handshake failure";
+-  }
+-
+-  /**
+-   * Get the stat name suffix for this failure.
+-   * @return stat name suffix (e.g., "http.401", "encode_error")
+-   */
+-  std::string getNameForStats() const {
+-    switch (type_) {
+-    case Type::HttpStatusError:
+-      return absl::StrCat("http.", context_);
+-    case Type::EncodeError:
+-      return "encode_error";
+-    case Type::Timeout:
+-      return "timeout";
+-    case Type::ConnectionClose:
+-      return "connection_close";
+-    }
+-    return "unknown";
+-  }
+-
+-private:
+-  HandshakeFailureReason(Type type, absl::string_view context) : type_(type), context_(context) {}
+-
+-  Type type_;
+-  std::string context_;
+-};
+-
+-/**
+- * Simple read filter for handling reverse connection handshake responses.
+- * This filter processes the HTTP response from the upstream server during handshake.
+- */
+-class SimpleConnReadFilter : public Network::ReadFilterBaseImpl,
+-                             public Logger::Loggable<Logger::Id::main> {
+-public:
+-  /**
+-   * Constructor that stores pointer to parent wrapper.
+-   */
+-  explicit SimpleConnReadFilter(void* parent) : parent_(parent) {}
+-
+-  /**
+-   * Clear the back-pointer to the owning wrapper. Called from RCConnectionWrapper::shutdown()
+-   * so a late onData() after teardown cannot dispatch into a destroyed / half-destroyed codec.
+-   */
++  // Cleared on teardown so a late read cannot reach the wrapper.
+   void clearParent() { parent_ = nullptr; }
  
+-  // Network::ReadFilter overrides
++  // Network::ReadFilter
+   Network::FilterStatus onData(Buffer::Instance& buffer, bool end_stream) override;
+ 
+ private:
+-  void* parent_; // Pointer to RCConnectionWrapper to avoid circular dependency.
++  RCConnectionWrapper* parent_;
+ };
+ 
+ /**
+- * Wrapper for reverse connections that manages the connection lifecycle and handshake.
+- *
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/reverse_connection_io_handle.cc` (modified, +10/-10)
+```diff
+@@ -707,7 +707,9 @@ void ReverseConnectionIOHandle::trackConnectionFailure(
+   const uint64_t max_backoff_ms = extension_->maxReconnectBackoffMs();
+ 
+   uint64_t backoff_delay_ms;
+-  if (retry_after.has_value()) {
++  // A hint below one second would redial on every maintenance tick, so it falls back to the
++  // computed backoff.
++  if (retry_after.has_value() && *retry_after >= std::chrono::seconds(1)) {
+     // Honor the server's explicit cool-off hint
+     backoff_delay_ms =
+         std::min<uint64_t>(static_cast<uint64_t>(retry_after->count()), max_backoff_ms);
+@@ -1175,11 +1177,11 @@ bool ReverseConnectionIOHandle::initiateOneReverseConnection(const std::string&
+ }
+ 
+ void ReverseConnectionIOHandle::onConnectionDone(
+-    const std::string& error, RCConnectionWrapper* wrapper, bool closed,
++    const HandshakeOutcome& outcome, RCConnectionWrapper* wrapper, bool closed,
+     std::optional<std::chrono::milliseconds> retry_after) {
+   ENVOY_LOG(info,
+             "reverse_tunnel: Connection wrapper done - error: '{}', closed: {}, for node_id: {}",
+-            error, closed, config_.src_node_id);
++            outcome.message, closed, config_.src_node_id);
+ 
+   // Validate wrapper pointer before any access.
+   if (!wrapper) {
+@@ -1233,13 +1235,10 @@ void ReverseConnectionIOHandle::onConnectionDone(
+   }
+ 
+   // Process connection result safely.
+-  bool is_success = (error == "reverse connection accepted" || error == "success" ||
+-                     error == "handshake successful" || error == "connection established");
+-
+-  if (closed || (!error.empty() && !is_success)) {
++  if (closed || !outcome.accepted) {
+     // Handle connection failure.
+-    ENVOY_LOG(error, "reverse_tunnel: Connection failed - error '{}', cleaning up host {}", error,
+-              host_address);
++    ENVOY_LOG(error, "reverse_tunnel: Connection failed - error '{}', cleaning up host {}",
++              outcome.message, host_address);
+ 
+     updateConnectionState(host_address, cluster_name, connection_key,
+                           ReverseConnectionState::Failed);
+@@ -1253,7 +1252,8 @@ void ReverseConnectionIOHandle::onConnectionDone(
+     trackConnectionFailure(host_address, cluster_name, retry_after);
+ 
+     emitAccessLog("handshake_failure", host_address, cluster_name, connection_key,
+-                  connection ? std::make_optional(connection->id()) : std::nullopt, error);
++                  connection ? std::make_optional(connection->id()) : std::nullopt,
++                  outcome.message);
+ 
+   } else {
+     // Handle connection success.
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/reverse_connection_io_handle.h` (modified, +14/-33)
+```diff
+@@ -10,7 +10,6 @@
+ #include "envoy/access_log/access_log.h"
+ #include "envoy/buffer/buffer.h"
+ #include "envoy/common/platform.h"
+-#include "envoy/config/core/v3/base.pb.h"
+ #include "envoy/network/io_handle.h"
+ #include "envoy/network/socket.h"
+ #include "envoy/stats/scope.h"
+@@ -23,6 +22,7 @@
+ #include "source/common/network/socket_interface.h"
+ #include "source/common/stats/timespan_impl.h"
+ #include "source/common/upstream/load_balancer_context_base.h"
++#include "source/extensions/bootstrap/reverse_tunnel/common/handshake_initiator.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/downstream_reverse_connection_io_handle.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/downstream_socket_interface/rc_connection_wrapper.h"
+@@ -41,7 +41,6 @@ namespace ReverseConnection {
+ // Forward declarations.
+ class ReverseTunnelInitiatorExtension;
+ class ReverseConnectionIOHandle;
+-struct HandshakeHeader;
+ 
+ namespace {
+ // HTTP protocol constants.
+@@ -89,12 +88,9 @@ struct ReverseConnectionSocketConfig {
+   std::string src_cluster_id; // Cluster identifier of local envoy instance.
+   std::string src_node_id;    // Node identifier of local envoy instance.
+   std::string src_tenant_id;  // Tenant identifier of local envoy instance.
+-  std::string request_path{
+-      std::string(ReverseConnectionUtility::DEFAULT_REVERSE_TUNNEL_REQUEST_PATH)};
+-  std::vector<envoy::config::core::v3::HeaderValueOption>
+-      additional_headers;       // Additional headers for the handshake request.
+-  bool use_http_upgrade{false}; // Negotiate handshake as HTTP/1.1 Upgrade -> 101.
+-  std::shared_ptr<const std::vector<HandshakeHeader>> handshake_headers;
++  // Creates the per-connection initiator handshake. Always set by the extension; a dial without
++  // one fails.
++  std::shared_ptr<const InitiatorHandshakeConfigurator> handshake_configurator;
+   // How often to re-check each host and dial missing tunnels.
+   uint64_t maintain_interval_ms{ReverseConnectionUtility::kDefaultMaintainIntervalMs};
+   // Deadline for receiving the handshake response after a dial opens the connection.
+@@ -269,13 +265,14 @@ class ReverseConnectionIOHandle : public Network::IoSocketHandleImpl,
+    * Called when a reverse connection handshake completes. This method wakes up accept() if the
+    * reverse connection handshake was successful. If not, it performs necessary cleanup and triggers
+    * backoff for the host.
+-   * @param error error message if the handshake failed, empty string if successful.
++   * @param outcome the terminal handshake outcome; success flag drives accept, message drives the
++   * access log on failure.
+    * @param wrapper pointer to the connection wrapper that wraps over the established connection.
+    * @param closed whether the connection was closed during handshake.
+    * @param retry_after optional server-provided cool-off hint (from a ``Retry-After`` header on a
+    * 429 handshake response) to use as the per-host backoff; ignored when unset.
+    */
+-  void onConnectionDone(const std::string& error, RCConnectionWrapper* wrapper, bool closed,
++  void onConnectionDone(const HandshakeOutcome& outcome, RCConnectionWrapper* wrapper, bool closed,
+                         std::optional<std::chrono::milliseconds> retry_after = std::nullopt);
+ 
+   // Backoff logic for connection failures.
+@@ -402,34 +399,18 @@ class ReverseConnectionIOHandle : public Network::IoSocketHandleImpl,
+   ReverseTunnelInitiatorExtension* getDownstreamExtension() const;
+ 
+   /**
+-   * @return reference to the configured HTTP handshake request path.
+-   */
+-  const std::string& requestPath() const { return config_.request_path; }
+-
+-  /**
+-   * @return reference to the additional headers for the handshake request.
+-   */
+-  const std::vector<envoy::config::core::v3::HeaderValueOption>& additionalHeaders() const {
+-    return config_.additional_headers;
+-  }
+-
+-  /**
+-   * @return whether the handshake is negotiated as an HTTP/1.1 Upgrade exchange.
+-   */
+-  bool useHttpUpgrade() const { return config_.use_http_upgrade; }
+-
+-  /**
+-   * @return handshake headers (key + append action + value formatter), or nullptr if none.
++   * @return the handshake response deadline applied to each dial attempt.
+    */
+-  const std::shared_ptr<const std::vector<HandshakeHeader>>& handshakeHeaders() const {
+-    return config_.handshake_headers;
++  std::chrono::milliseconds handshakeTimeout() const {
++    return std::chrono::milliseconds(config_.handshake_timeout_ms);
+   }
+ 
+   /**
+-   * @return the handshake response deadline applied to each dial attempt.
++   * @return the factory creating per-connection initiator handshakes. Null only when the socket
++   * was built without the extension, in which case a dial fails.
+    */
+-  std::chrono::milliseconds handshakeTimeout() const {
+-    return std::chrono::milliseconds(config_.handshake_timeout_ms);
++  
+```
+
+---
+
+### Incident Patch 2: `011da0e4` (2026-11-27)
+**Commit Message**: ai_protocol_manager: do not detect neighboring endpoints as an LLM API (#49604)
+
+Commit Message: The schema validation AI filter detected requests to a
+provider's other endpoints as a chat API. /v1/messages/count_tokens and
+/v1/messages/batches were rejected with a 400 against the Anthropic
+Messages schema, and embeddings, moderations and speech requests
+were treated as OpenAI Responses calls. Detection is now narrower:
+- A path under /v1/messages, /chat/completions or /responses detects
+nothing.
+- The anthropic-version header only counts beside messages[]; alone it
+detects nothing.
+- A payload is detected as Messages only when it carries max_tokens.
+- Responses is detected by its path only.
+- A Gemini payload sent to a method other than :generateContent or
+:streamGenerateContent
+  detects nothing.
+
+Additional Description: This affects routes that leave the API to
+detection, such as a
+catch-all or dynamic forward proxy route with parse_unconfigured_routes.
+One behavior change:
+a Messages request on an undeclared path that omits max_tokens is now
+forwarded unvalidated
+instead of rejected. Requests detected by path are unaffected.
+
+Risk Level: Low
+Testing: Unit, filter and integratio
+
+**File**: `api/envoy/extensions/http/ai_filters/schema_validation/v3/schema_validation.proto` (modified, +2/-2)
+```diff
+@@ -29,8 +29,8 @@ message SchemaValidation {
+   // ``envoy.ai.llm_protocol.request`` filter state object or the route's :ref:`llm_protocol
+   // <envoy_v3_api_field_extensions.filters.http.ai_protocol_manager.v3.RequestPerRoute.llm_protocol>`.
+   // ``LLM_PROTOCOL_UNSPECIFIED``, the default, detects it from the request path, then the
+-  // ``anthropic-version`` header, then the payload's shape. A request none of them identifies is
+-  // forwarded unvalidated.
++  // payload's shape together with the ``anthropic-version`` header. A request they do not identify
++  // is forwarded unvalidated.
+   type.ai.v3.LLMProtocol default_llm_protocol = 1 [(validate.rules).enum = {defined_only: true}];
+ 
+   // Forward a payload that violates its schema instead of rejecting it. It is still counted.
+```
+
+**File**: `changelogs/current/bug_fixes/ai_protocol_manager__llm-detection-neighbor-endpoints.rst` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++Fixed the ``schema_validation`` AI filter detecting requests to a provider's other endpoints as a
++chat API: ``/v1/messages/count_tokens`` requests were rejected with a ``400``, and embeddings
++requests were treated as OpenAI Responses calls. :ref:`API detection
++<config_http_ai_filters_schema_validation_detection>` describes the rules.
+```
+
+**File**: `docs/root/configuration/http/ai_filters/schema_validation_filter.rst` (modified, +54/-11)
+```diff
+@@ -37,17 +37,60 @@ The payload is validated against the API the request declares: the
+ <envoy_v3_api_field_extensions.filters.http.ai_protocol_manager.v3.RequestPerRoute.llm_protocol>`.
+ A request that declares none falls back to :ref:`default_llm_protocol
+ <envoy_v3_api_field_extensions.http.ai_filters.schema_validation.v3.SchemaValidation.default_llm_protocol>`,
+-and by default the API is detected from the request: its path, matched as a
+-suffix against each provider's REST path (``/chat/completions``,
+-``/responses``, ``/v1/messages``, ``:generateContent``,
+-``:streamGenerateContent``); then the ``anthropic-version`` header; then the
+-payload's shape.
+-
+-Chat Completions and Anthropic Messages share the ``messages[]`` request
+-shape, so only keys exclusive to one of them tell the two apart. A payload
+-carrying markers of both, or of neither -- including
+-``{"model": ..., "messages": [{"role": "user", "content": ...}]}``, which is
+-valid under either -- names no API, and is forwarded unvalidated.
++and when that is unset too, the API is detected from the request.
++
++.. _config_http_ai_filters_schema_validation_detection:
++
++API detection
++-------------
++
++The path decides, and the payload only when the path names no API. The first
++row that matches wins:
++
++.. csv-table::
++  :header: The request, Detected API
++  :widths: 3, 1
++
++  "Path ends with ``/chat/completions``", ``OPENAI_CHAT_COMPLETIONS``
++  "Path ends with ``/responses``", ``OPENAI_RESPONSES``
++  "Path ends with ``/v1/messages``", ``ANTHROPIC_MESSAGES``
++  "Path ends with ``:generateContent`` or ``:streamGenerateContent``", ``GEMINI_GENERATE_CONTENT``
++  "Path goes on after one of the first three, as in ``/v1/messages/count_tokens``", None
++  "Payload has Gemini markers, but the path ends with another method, as in ``:countTokens``", None
++  "Payload has Gemini markers", ``GEMINI_GENERATE_CONTENT``
++  "Payload has ``messages`` and only Chat Completions markers", ``OPENAI_CHAT_COMPLETIONS``
++  "Payload has ``messages``, ``max_tokens`` and only Anthropic markers", ``ANTHROPIC_MESSAGES``
++  Anything else, None
++
++The path is matched without its query and as a suffix, so a gateway prefix such
++as ``/anthropic/v1/messages`` does not hide it.
++
++Markers are what only one API has:
++
++* Gemini: ``contents``, ``systemInstruction`` or ``generationConfig``, the last
++  two in either camel or snake case.
++* Chat Completions: ``max_completion_tokens``, ``response_format``,
++  ``frequency_penalty``, ``presence_penalty``, ``stream_options``,
++  ``logit_bias``, a tool with ``function``, or a message whose role is
++  ``system``, ``developer`` or ``tool``.
++* Anthropic: ``system``, ``stop_sequences``, ``top_k``, ``thinking``, a tool
++  with ``input_schema``, or an ``anthropic-version`` request header.
++
++A wrong guess rejects a valid request, so detection gives up when unsure:
++
++* Markers of both APIs, or of neither, detect nothing. That includes
++  ``{"model": ..., "messages": [{"role": "user", "content": ...}]}``, which is
++  valid under both.
++* Without ``messages`` in the payload, an ``anthropic-version`` header detects
++  nothing, because Anthropic clients send it to every endpoint.
++* Anthropic Messages needs ``max_tokens``, which that API requires and a
++  token-counting request does not carry.
++* The Responses API is detected by its path only, because
++  ``{"model": ..., "input": ...}`` is also an embeddings request.
++
++A request whose API is not detected is forwarded unvalidated and counted as
++``skipped``. Name its API on the route or with ``default_llm_protocol`` to
++validate it.
+ 
+ Statistics
+ ----------
+```
+
+**File**: `source/extensions/http/ai_filters/schema_validation/filter.cc` (modified, +1/-4)
+```diff
+@@ -65,10 +65,7 @@ LLMProtocol SchemaValidationFilter::resolveLlmProtocol(const AiRequest& request)
+   if (config_->defaultLlmProtocol() != LLMProtocol::Unspecified) {
+     return config_->defaultLlmProtocol();
+   }
+-  LLMProtocol detected = detectFromHeaders(context_.request_headers);
+-  if (detected == LLMProtocol::Unspecified) {
+-    detected = detectFromPayload(request.json());
+-  }
++  const LLMProtocol detected = detectLlmProtocol(context_.request_headers, request.json());
+   if (detected != LLMProtocol::Unspecified) {
+     config_->stats().llm_protocol_detected_.inc();
+   }
+```
+
+**File**: `source/extensions/http/ai_filters/schema_validation/llm_protocol_detection.cc` (modified, +26/-11)
+```diff
+@@ -53,9 +53,21 @@ bool hasOpenAiOnlyRole(const nlohmann::json& messages) {
+          });
+ }
+ 
++// `/v1/messages/count_tokens` and the like take a body shaped like the API they sit under.
++bool isApiSubResource(absl::string_view path) {
++  static constexpr absl::string_view ApiPaths[]{"/chat/completions/", "/responses/",
++                                                "/v1/messages/"};
++  return absl::c_any_of(
++      ApiPaths, [path](absl::string_view api_path) { return absl::StrContains(path, api_path); });
++}
++
++bool endsInMethod(absl::string_view path) {
++  return absl::StrContains(path.substr(path.rfind('/') + 1), ':');
++}
++
+ } // namespace
+ 
+-LLMProtocol detectFromHeaders(const Http::RequestHeaderMap& headers) {
++LLMProtocol detectLlmProtocol(const Http::RequestHeaderMap& headers, const nlohmann::json& json) {
+   struct PathSuffix {
+     absl::string_view suffix;
+     LLMProtocol protocol;
+@@ -74,28 +86,31 @@ LLMProtocol detectFromHeaders(const Http::RequestHeaderMap& headers) {
+       return protocol;
+     }
+   }
+-  return headers.get(anthropicVersionHeader()).empty() ? LLMProtocol::Unspecified
+-                                                       : LLMProtocol::AnthropicMessages;
+-}
+-
+-LLMProtocol detectFromPayload(const nlohmann::json& json) {
+-  if (!json.is_object()) {
++  if (!json.is_object() || isApiSubResource(path)) {
+     return LLMProtocol::Unspecified;
+   }
+   if (hasAnyKey(json, GeminiOnlyKeys)) {
+-    return LLMProtocol::GeminiGenerateContent;
++    // `:countTokens` and Gemini's other methods take `contents` too.
++    return endsInMethod(path) ? LLMProtocol::Unspecified : LLMProtocol::GeminiGenerateContent;
+   }
++  // `input` alone is `/v1/embeddings` or `/v1/moderations` as much as the Responses API.
+   const auto messages = json.find(Keys::Messages);
+   if (messages == json.end()) {
+-    return json.contains(Keys::Input) ? LLMProtocol::OpenAiResponses : LLMProtocol::Unspecified;
++    return LLMProtocol::Unspecified;
+   }
+-  const bool anthropic = hasAnyKey(json, AnthropicOnlyKeys) || anyToolHas(json, "input_schema");
++  // Anthropic clients send the header to every endpoint, so it counts only beside `messages`.
++  const bool anthropic = hasAnyKey(json, AnthropicOnlyKeys) || anyToolHas(json, "input_schema") ||
++                         !headers.get(anthropicVersionHeader()).empty();
+   const bool openai = hasAnyKey(json, OpenAiOnlyKeys) || anyToolHas(json, "function") ||
+                       hasOpenAiOnlyRole(*messages);
+   if (anthropic == openai) {
+     return LLMProtocol::Unspecified;
+   }
+-  return anthropic ? LLMProtocol::AnthropicMessages : LLMProtocol::OpenAiChatCompletions;
++  if (openai) {
++    return LLMProtocol::OpenAiChatCompletions;
++  }
++  // Messages requires `max_tokens`, which the token-counting endpoints shaped like it do not take.
++  return json.contains(Keys::MaxTokens) ? LLMProtocol::AnthropicMessages : LLMProtocol::Unspecified;
+ }
+ 
+ } // namespace SchemaValidation
+```
+
+**File**: `source/extensions/http/ai_filters/schema_validation/llm_protocol_detection.h` (modified, +6/-8)
+```diff
+@@ -11,14 +11,12 @@ namespace Extensions {
+ namespace AiFilters {
+ namespace SchemaValidation {
+ 
+-// The API a request's path names, matched as a suffix so a gateway prefix does not hide it, then
+-// the `anthropic-version` header.
+-HttpFilters::AiProtocolManager::LLMProtocol
+-detectFromHeaders(const Http::RequestHeaderMap& headers);
+-
+-// The API a payload's shape names. Chat Completions and Anthropic Messages share `messages[]`, so
+-// markers of both, or of neither, detect nothing.
+-HttpFilters::AiProtocolManager::LLMProtocol detectFromPayload(const nlohmann::json& json);
++// The API a request's path names, matched as a suffix so a gateway prefix does not hide it, else
++// the one its payload's shape names. Chat Completions and Anthropic Messages share `messages[]`,
++// so markers of both, or of neither, detect nothing. Nor does a path that names another endpoint
++// of a provider, such as `/v1/messages/count_tokens`, whatever its payload.
++HttpFilters::AiProtocolManager::LLMProtocol detectLlmProtocol(const Http::RequestHeaderMap& headers,
++                                                              const nlohmann::json& json);
+ 
+ } // namespace SchemaValidation
+ } // namespace AiFilters
+```
+
+**File**: `test/extensions/http/ai_filters/schema_validation/filter_test.cc` (modified, +23/-2)
+```diff
+@@ -68,8 +68,8 @@ class SchemaValidationFilterTest : public testing::Test {
+ 
+   void run(JsonWithExtBuf doc, LLMProtocol declared_protocol,
+            absl::string_view path = "/v1/chat/completions") {
+-    request_headers_ =
+-        Http::TestRequestHeaderMapImpl{{":method", "POST"}, {":path", std::string(path)}};
++    request_headers_.setMethod("POST");
++    request_headers_.setPath(path);
+     envoy::extensions::http::ai_filters::schema_validation::v3::SchemaValidation proto;
+     proto.set_default_llm_protocol(default_llm_protocol_);
+     proto.set_fail_open(fail_open_);
+@@ -216,6 +216,27 @@ TEST_F(SchemaValidationFilterTest, UndetectedApiIsForwardedUnvalidated) {
+   EXPECT_EQ(counterValue("skipped"), 1);
+ }
+ 
++// Anthropic clients send the header to every endpoint, and this one takes a Messages-shaped body
++// without the `max_tokens` that schema requires.
++TEST_F(SchemaValidationFilterTest, CountTokensIsNotDetectedAsMessages) {
++  request_headers_.addCopy("anthropic-version", "2023-06-01");
++  run(R"({"model":"claude","system":"be terse","messages":[{"role":"user","content":"hi"}]})",
++      LLMProtocol::Unspecified, "/v1/messages/count_tokens");
++  expectForwarded();
++  EXPECT_EQ(seen_protocol_, LLMProtocol::Unspecified);
++  EXPECT_EQ(counterValue("llm_protocol_detected"), 0);
++  EXPECT_EQ(counterValue("skipped"), 1);
++}
++
++TEST_F(SchemaValidationFilterTest, EmbeddingsIsNotDetectedAsResponses) {
++  run(R"({"model":"text-embedding-3-small","input":"hi"})", LLMProtocol::Unspecified,
++      "/v1/embeddings");
++  expectForwarded();
++  EXPECT_EQ(seen_protocol_, LLMProtocol::Unspecified);
++  EXPECT_EQ(counterValue("llm_protocol_detected"), 0);
++  EXPECT_EQ(counterValue("skipped"), 1);
++}
++
+ // Neither the default nor detection second-guesses a declared API.
+ TEST_F(SchemaValidationFilterTest, DeclaredApiOutranksDefaultAndDetection) {
+   default_llm_protocol_ = envoy::type::ai::v3::ANTHROPIC_MESSAGES;
+```
+
+**File**: `test/extensions/http/ai_filters/schema_validation/llm_protocol_detection_test.cc` (modified, +91/-17)
+```diff
+@@ -15,19 +15,29 @@ namespace {
+ 
+ using HttpFilters::AiProtocolManager::LLMProtocol;
+ 
+-LLMProtocol fromPath(const std::string& path) {
+-  return detectFromHeaders(Http::TestRequestHeaderMapImpl{{":path", path}});
+-}
++constexpr absl::string_view EitherChatApiPayload =
++    R"({"model":"m","max_tokens":8,"messages":[{"role":"user","content":"hi"}]})";
+ 
+-LLMProtocol fromPayload(const std::string& json) {
+-  return detectFromPayload(nlohmann::json::parse(json));
++LLMProtocol detect(absl::string_view path, absl::string_view payload,
++                   bool anthropic_version = false) {
++  Http::TestRequestHeaderMapImpl headers{{":path", std::string(path)}};
++  if (anthropic_version) {
++    headers.addCopy("anthropic-version", "2023-06-01");
++  }
++  return detectLlmProtocol(headers, nlohmann::json::parse(payload));
+ }
+ 
+-TEST(DetectFromHeadersTest, MatchesProviderPathSuffix) {
++LLMProtocol fromPath(const std::string& path) { return detect(path, "{}"); }
++
++LLMProtocol fromPayload(const std::string& json) { return detect("/generate", json); }
++
++TEST(DetectLlmProtocolTest, MatchesProviderPathSuffix) {
+   EXPECT_EQ(fromPath("/v1/chat/completions"), LLMProtocol::OpenAiChatCompletions);
+   EXPECT_EQ(fromPath("/openai/v1/chat/completions?trace=1"), LLMProtocol::OpenAiChatCompletions);
+   EXPECT_EQ(fromPath("/v1/responses"), LLMProtocol::OpenAiResponses);
+   EXPECT_EQ(fromPath("/proxy/v1/messages"), LLMProtocol::AnthropicMessages);
++  EXPECT_EQ(fromPath("/v1/messages"), LLMProtocol::AnthropicMessages);
++  EXPECT_EQ(fromPath("/v1/messages?beta=true"), LLMProtocol::AnthropicMessages);
+   EXPECT_EQ(fromPath("/v1beta/models/gemini-2.5-pro:generateContent"),
+             LLMProtocol::GeminiGenerateContent);
+   EXPECT_EQ(fromPath("/v1beta/models/gemini-2.5-pro:streamGenerateContent?alt=sse"),
+@@ -36,24 +46,88 @@ TEST(DetectFromHeadersTest, MatchesProviderPathSuffix) {
+   EXPECT_EQ(fromPath("/"), LLMProtocol::Unspecified);
+ }
+ 
+-TEST(DetectFromHeadersTest, PathWinsOverTheAnthropicVersionHeader) {
+-  EXPECT_EQ(detectFromHeaders(Http::TestRequestHeaderMapImpl{{":path", "/generate"},
+-                                                             {"anthropic-version", "2023-06-01"}}),
++// `/v1/messages/count_tokens` takes a Messages body without the `max_tokens` that API requires.
++TEST(DetectLlmProtocolTest, PathUnderAnApiPathDetectsNothing) {
++  for (const absl::string_view path : {
++           "/v1/messages/count_tokens",
++           "/anthropic/v1/messages/count_tokens?beta=true",
++           "/v1/messages/batches",
++           "/anthropic/v1/messages/batches",
++           "/v1/responses/input_tokens",
++           "/v1/chat/completions/chatcmpl-1",
++       }) {
++    for (const absl::string_view payload : {
++             R"({"model":"m","system":"be terse","messages":[{"role":"user","content":"hi"}]})",
++             R"({"requests":[]})",
++             R"({"model":"m","input":"hi"})",
++             R"({"messages":[{"role":"system","content":"be terse"}]})",
++             R"({"contents":[{"parts":[{"text":"hi"}]}]})",
++         }) {
++      for (const bool anthropic_version : {false, true}) {
++        EXPECT_EQ(detect(path, payload, anthropic_version), LLMProtocol::Unspecified)
++            << path << " " << payload << " anthropic-version: " << anthropic_version;
++      }
++    }
++  }
++}
++
++// `:rawPredict` is how Vertex AI serves Claude, so another method discounts Gemini's keys only.
++TEST(DetectLlmProtocolTest, GeminiPayloadOnAnotherMethodDetectsNothing) {
++  constexpr absl::string_view payload = R"({"contents":[{"parts":[{"text":"hi"}]}]})";
++  EXPECT_EQ(detect("/generate", payload), LLMProtocol::GeminiGenerateContent);
++  EXPECT_EQ(detect("/v1beta/models/gemini-2.5-pro:countTokens", payload), LLMProtocol::Unspecified);
++  EXPECT_EQ(detect("/v1/publishers/anthropic/models/claude:rawPredict",
++                   R"({"max_tokens":8,"system":"be terse","messages":[]})"),
+             LLMProtocol::AnthropicMessages);
+-  EXPECT_EQ(detectFromHeaders(Http::TestRequestHeaderMapImpl{{":path", "/v1/chat/completions"},
+-                                                             {"anthropic-version", "2023-06-01"}}),
++}
++
++// Messages requires `max_tokens`. Token counting takes the same body without it, and for Claude
++// on Vertex AI the path names no API.
++TEST(DetectLlmProtocolTest, MessagesPayloadWithoutMaxTokensDetectsNothing) {
++  constexpr absl::string_view payload =
++      R"({"model":"m","system":"be terse","messages":[{"role":"user","content":"hi"}]})";
++  for (const absl::string_view path : {
++           "/v1/projects/p/locations/us-east5/publishers/anthropic/models/count-tokens:rawPredict",
++           "/generate",
++       }) {
++    for (const bool anthropic_version : {false, true}) {
++      EXPECT_EQ(detect(path, payload, anthropic_version), LLMProtocol::Unspecified)
++          << path << " anthropic-version: " << anthropic_version;
++    }
++  }
++}
++
++// Anthropic clients send the header to every endpoint, so it names the
 ```
 
 #### Recent Merged Pull Requests:
@@ -1158,40 +2285,54 @@ Signed-off-by: wbpcode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wasm: enable per-filter buffer in upstream wasm integration tests
+## X. reverse_tunnel: extract pluggable handshake seams on initiator and responder
 
 **RULE**:
-When implementing operations in `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `source/extensions/bootstrap/reverse_tunnel/common/BUILD`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `603220f0`: wasm: enable per-filter buffer in upstream wasm integration tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6e92e58`: reverse_tunnel: extract pluggable handshake seams on initiator and responder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/extensions/filters/http/wasm/wasm_filter_integration_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/extensions/bootstrap/reverse_tunnel/common/BUILD`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    if (!downstream) {
-      // On the legacy shared buffer, UpstreamCodecFilter::continueDecoding() after the upstream
-      // connects can drain body data buffered by the stopped Wasm filter.
-      config_helper_.addRuntimeOverride(
-          "envoy.reloadable_features.filter_manager_per_filter_buffer", "true");
-    }
+
+envoy_cc_library(
+    name = "handshake_initiator_lib",
+    hdrs = ["handshake_initiator.h"],
+    deps = [
+        "//envoy/buffer:buffer_interface",
+        "//envoy/network:connection_interface",
+        "//envoy/upstream:upstream_interface",
+    ],
+)
+
+envoy_cc_library(
+    name = "handshake_responder_lib",
+    hdrs = ["handshake_responder.h"],
+    deps = [
+        "//envoy/buffer:buffer_interface",
+        "//envoy/http:codes_interface",
+        "//envoy/http:header_map_interface",
+        "//envoy/network:connection_interface",
+        "//envoy/network:filter_interface",
+        "//envoy/server/overload:overload_manager_interface",
+        "//envoy/stats:scope_interface",
+    ],
+)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  // TODO(wbpcode): upstream HTTP filter couldn't stop the iteration correctly.
-  if (bool downstream = std::get<2>(GetParam()); !downstream) {
-    return;
-  }
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `603220f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6e92e58` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
