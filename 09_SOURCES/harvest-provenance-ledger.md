@@ -13770,3 +13770,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inclusionai-ming-image-0-2-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.2-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-27T08:58:12.141Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-27T08:58:14.715Z |
 | `learn-dom-f-b48fd193` | `project://hf-inclusionai-ming-image-0.2-design` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md` | 2026-11-27T08:58:55.783Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-27T09:08:04.598Z |
+| `learn-github-abue-ammar-tinycast` | `https://github.com/abue-ammar/tinycast` | `c2690533` | Multi-dimensional audit evidence | 2026-11-27T09:08:06.861Z |

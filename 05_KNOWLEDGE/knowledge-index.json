@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T08:58:57.792Z",
+  "last_updated": "2026-11-27T09:08:13.878Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26459,
+  "total_items": 26463,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219697,9 +219697,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "59b87c6494cafd17dadbb5d4612b0de8c41d0675a65d8a143989db9fc01178cb",
+      "content_hash": "5324f898ea2e179cd48bf5d99a0365bf8d06d1b18f0c46f58ea703a032de57a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T07:39:30.246Z"
+      "persisted_at": "2026-11-27T09:08:13.704Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219709,9 +219709,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "adc4028f67b14041e0b03608b07041b5c0ba3c7b6a67f3fd7541d77225bf1d2f",
+      "content_hash": "d81e619d54ef095edff44168f8c02d1df88ca153101794c991b2befbedc24b20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:39:30.464Z"
+      "persisted_at": "2026-11-27T09:08:13.878Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -246153,7 +246153,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
+      "content_hash": "d36f86d772150663ff5500253c2e926ef991436604d969c1f297bc36ca758933",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [],
@@ -246162,7 +246162,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:31:24.295Z",
+      "verified_at": "2026-11-27T09:08:04.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246179,9 +246179,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein-comfy Core Invariants",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "5a20e292a8b0d61e31a8eb5d20f459539435f52bf7c967739ae69cc1ee4aeccc",
+      "content_hash": "8a7a7e55aa71e8c176d96988e87daad695316e9832562404e90fcc407617567d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T23:31:24.727Z"
+      "persisted_at": "2026-11-27T09:08:04.834Z"
     },
     "learn-github-kuddev-pebrel": {
       "learning_id": "learn-github-kuddev-pebrel",
@@ -246304,9 +246304,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-comfy-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
       "source_version": "HEAD",
-      "content_hash": "95b0867ea5558eb61ba725f95889f0c5fbcd1acb7bb77b7feea9b6f2436b30e9",
+      "content_hash": "e357b8b06d0150f57205c66bfef3795c2dd28bb78fe40c5b9bfbe8f5ab022015",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T23:31:41.452Z"
+      "persisted_at": "2026-11-27T09:08:12.008Z"
     },
     "learn-github-zeronsh-zeron": {
       "learning_id": "learn-github-zeronsh-zeron",
@@ -324933,8 +324933,8 @@
       "slug": "abue-ammar-tinycast",
       "platform": "github",
       "source_url": "https://github.com/abue-ammar/tinycast",
-      "source_version": "ed7c2917",
-      "content_hash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
+      "source_version": "c2690533",
+      "content_hash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
       "dossier_path": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
       "promoted_rules": [
@@ -324947,6 +324947,11 @@
           "number": 10405,
           "title": "fixes and UI enhancements",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10862,
+          "title": "Confirm quicklink, snippet and custom command saves with a HUD",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -324954,7 +324959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:43:32.715Z",
+      "verified_at": "2026-11-27T09:08:06.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -325008,10 +325013,10 @@
       "relative_path": "08_VERIFICATION/abue-ammar-tinycast-verification-protocol-empirical-defect-shield-for-abue-ammar.md",
       "title": "Verification Protocol: Empirical Defect Shield for abue-ammar/tinycast",
       "repository": "abue-ammar/tinycast",
-      "source_version": "ed7c2917",
-      "content_hash": "3e190d154c48a80dc91c764b04527ca86616c349d524b3ef8baeb7b2987ac016",
+      "source_version": "c2690533",
+      "content_hash": "30277bd7f0101a6eebfd71525a3251cc643a1e0ac99873f399f5db072025c134",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:33.498Z"
+      "persisted_at": "2026-11-27T09:08:07.463Z"
     },
     "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant": {
       "item_id": "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant",
@@ -325045,9 +325050,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for abue-ammar-tinycast-learnings",
       "repository": "abue-ammar-tinycast-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6d81e67eacc28343e845cccfd6b047f447734904745d5cd123e877cd60c8f1e",
+      "content_hash": "677c22a29b9c6285ffc728feebfbbd16ddb5660da02ec562a0ff32c1023bd24b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:43:49.197Z"
+      "persisted_at": "2026-11-27T09:08:12.988Z"
     },
     "rule-9924": {
       "learning_id": "rule-9924",
@@ -350064,13 +350069,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7T62-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DWRP-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3b40e8da0929174a06dfd5e9a3b253f7735e1b7befbf77104586091b8f8c48d",
+      "content_hash": "8377e1f090055c82536666a60a10a4f6beee3c1835e5c1e2279153ea82e3a723",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T07:39:30.026Z"
+      "persisted_at": "2026-11-27T09:08:13.478Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363104,6 +363109,56 @@
       "content_hash": "28254b515a83930cb4ea3e7ecffa95484894fbd347549c112f1167676cb36df8",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T08:58:56.134Z"
+    },
+    "rule-10862": {
+      "learning_id": "rule-10862",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10862,
+      "title": "Confirm quicklink, snippet and custom command saves with a HUD",
+      "source_url": "https://github.com/abue-ammar/tinycast",
+      "source_version": "c2690533",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:08:06.630Z"
+    },
+    "candidate_directive-confirm-quicklink-snippet-and-custom-command-saves-with-a-hud": {
+      "item_id": "candidate_directive-confirm-quicklink-snippet-and-custom-command-saves-with-a-hud",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DW3S-confirm-quicklink-snippet-and-custom-command-saves-with-a-hud.md",
+      "title": "Confirm quicklink, snippet and custom command saves with a HUD",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc23e72fbe8f4d6ca78146235cc41e87e36b8feaa2ceff3dcdbd7d07addc7208",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:08:12.622Z"
+    },
+    "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-abue-ammar-tinycast-architecture-intelligence-abue-ammar-tinycast-core-invariant.md",
+      "title": "Architecture Intelligence: abue-ammar/tinycast Core Invariants",
+      "repository": "abue-ammar/tinycast",
+      "source_version": "c2690533",
+      "content_hash": "356bd78edfa5b082ec98e1205952c758476947f8625420edc66d05d2f8a6be02",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:08:07.288Z"
+    },
+    "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-abue-ammar-tinycast-learnings-architecture-intelligence-abue-ammar-tinycast-lear.md",
+      "title": "Architecture Intelligence: abue-ammar-tinycast-learnings Core Invariants",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "386923e5c9884e2d915cd39a4633b6ac126574ba203ac86f3c408a2349404bf1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:08:12.797Z"
     }
   },
   "ai-builder-brain": {

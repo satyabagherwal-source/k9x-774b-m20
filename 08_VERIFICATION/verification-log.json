@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-BCG6",
-    "timestamp": "2026-11-26T02:46:38.790Z",
-    "repository": "MiniMaxAI/MiniMax-H3-Image",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
-    "contentHash": "6fcd38a88b3b5fae9422265995249451352caf75055c69e2045145ebef0d5e4d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-M6U2",
-    "timestamp": "2026-11-26T02:55:04.730Z",
-    "repository": "Comfy-Org/MiniMax-H3-Image",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-    "contentHash": "480b71ed35bddc7edf04e8f3f972a99b1d040c7bf54f765380505ca97c366cc7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-MIMS",
     "timestamp": "2026-11-26T02:55:20.020Z",
     "repository": "xerj-org/xerj",
@@ -7492,6 +7462,36 @@
     "contentHash": "077ecf9115237fb1d75ce07863750d68f1ad5809eab2a0f3b5eea23b601d2e0d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-DPWY",
+    "timestamp": "2026-11-27T09:08:04.594Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "d36f86d772150663ff5500253c2e926ef991436604d969c1f297bc36ca758933",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-DRNJ",
+    "timestamp": "2026-11-27T09:08:06.847Z",
+    "repository": "abue-ammar/tinycast",
+    "learningId": "learn-github-abue-ammar-tinycast",
+    "contentHash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

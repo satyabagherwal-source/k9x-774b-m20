@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T08:14:35.702Z",
-    "lastVerified": "2026-11-27T08:14:35.702Z",
+    "lastChecked": "2026-11-27T09:08:11.630Z",
+    "lastVerified": "2026-11-27T09:08:11.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T08:58:26.185Z",
-    "lastVerified": "2026-11-27T08:58:26.185Z",
+    "lastChecked": "2026-11-27T09:08:11.640Z",
+    "lastVerified": "2026-11-27T09:08:11.640Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -574,8 +574,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T04:36:53.614Z",
-    "lastVerified": "2026-11-27T04:36:53.614Z",
+    "lastChecked": "2026-11-27T09:08:06.791Z",
+    "lastVerified": "2026-11-27T09:08:06.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -4160,9 +4160,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-26T16:10:46.062Z",
+    "lastChecked": "2026-11-27T09:08:04.149Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-26T16:10:46.062Z"
+    "lastVerified": "2026-11-27T09:08:04.149Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -7848,9 +7848,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-11-26T14:53:31.003Z",
+    "lastChecked": "2026-11-27T09:08:09.121Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-26T14:53:31.003Z"
+    "lastVerified": "2026-11-27T09:08:09.121Z"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -8613,9 +8613,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-26T07:57:43.549Z",
+    "lastChecked": "2026-11-27T09:07:56.573Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-26T07:57:43.549Z"
+    "lastVerified": "2026-11-27T09:07:56.573Z"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
     "name": "openbmb/MiniCPM-V-4.7-1B",
@@ -9093,12 +9093,12 @@
     "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T23:31:23.918Z",
-    "lastVerified": "2026-11-23T23:31:23.918Z",
+    "lastChecked": "2026-11-27T09:07:59.236Z",
+    "lastVerified": "2026-11-27T09:07:59.236Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
+    "contentHash": "d36f86d772150663ff5500253c2e926ef991436604d969c1f297bc36ca758933",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -14913,12 +14913,12 @@
     "officialUrl": "https://github.com/abue-ammar/tinycast",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-25T00:43:31.655Z",
-    "lastVerified": "2026-11-25T00:43:31.655Z",
+    "lastChecked": "2026-11-27T09:08:05.803Z",
+    "lastVerified": "2026-11-27T09:08:05.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-abue-ammar-tinycast",
-    "contentHash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
+    "contentHash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,

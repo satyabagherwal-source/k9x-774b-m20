@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:58:14.727Z",
-  "total_cycles_completed": 13039,
-  "total_learnings_persisted": 13039,
-  "total_rules_promoted": 11772,
+  "last_updated": "2026-11-27T09:08:06.871Z",
+  "total_cycles_completed": 13041,
+  "total_learnings_persisted": 13041,
+  "total_rules_promoted": 11773,
   "history": [
-    {
-      "timestamp": "2026-11-26T19:16:07.581Z",
-      "repository": "kandinskylab/Kandinsky-ImageSR-2.0",
-      "learningId": "learn-huggingface-kandinskylab-kandinsky-imagesr-2-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T19:16:10.195Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T19:25:18.525Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1403,6 +1389,20 @@
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
       "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T09:08:04.612Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T09:08:06.871Z",
+      "repository": "abue-ammar/tinycast",
+      "learningId": "learn-github-abue-ammar-tinycast",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

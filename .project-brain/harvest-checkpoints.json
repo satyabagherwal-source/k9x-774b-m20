@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T08:58:14.730Z",
+  "last_updated": "2026-11-27T09:08:06.874Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
-      "verified_at": "2026-11-23T23:31:24.540Z",
+      "content_hash": "d36f86d772150663ff5500253c2e926ef991436604d969c1f297bc36ca758933",
+      "verified_at": "2026-11-27T09:08:04.615Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:31:24.540Z"
+      "last_updated": "2026-11-27T09:08:04.615Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -19896,14 +19896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-abue-ammar-tinycast",
-      "content_hash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
-      "verified_at": "2026-11-25T00:43:32.934Z",
+      "content_hash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
+      "verified_at": "2026-11-27T09:08:06.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:43:32.934Z"
+      "last_updated": "2026-11-27T09:08:06.874Z"
     },
     "BaaRai/ARTEX": {
       "repository": "BaaRai/ARTEX",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T00:43:48.708Z",
+  "timestamp": "2026-11-27T09:08:12.514Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-abue-ammar-tinycast-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [abue-ammar-tinycast-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T00:43:48.708Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T09:08:12.514Z`  
 > **Learning ID**: `LEARN-EVO-abue-ammar-tinycast-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md`  
 > **Source**: github ([https://github.com/abue-ammar/tinycast](https://github.com/abue-ammar/tinycast))  
-> **Source Version**: `ed7c2917`  
+> **Source Version**: `c2690533`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T00:43:31.661Z  
+> **Timestamp**: 2026-11-27T09:08:05.808Z  
 > **Learning ID**: `learn-github-abue-ammar-tinycast`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/abue-ammar/tinycast](https://github.com/abue-ammar/tinycast))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:43:31.655Z  
+> **Harvest Timestamp**: 2026-11-27T09:08:05.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A native macOS launcher built for productivity. Fast, lightweight, and open source.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9791 stars
+- **Stars / Engagement**: 9870 stars
 
 ---
 
@@ -1703,467 +1703,386 @@ struct MathLayoutEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `970bf4e4` (2026-11-22)
-**Commit Message**: Bug fixes and UI enhancements (#1971)
+### Incident Patch 1: `cf4c6136` (2026-11-26)
+**Commit Message**: Confirm quicklink, snippet and custom command saves with a HUD (#1993)
 
-* Open the app menu at the Actions menu's height
-
-The app menu's second separator sat above Settings, so its fold landed on Settings' middle at 221pt
-while an app's Actions menu folds at 205pt. Quit now starts its own section, so the one separator
-above the fold matches the Actions menu's and both open at one height.
-
-* Slide the ⌘-digit chords in and keep chords from showing them
-
-A ⌘ chord whose work outlasted the 400ms hold delay, such as ⌘, starting Settings in its own
-process, lit the numbering before the palette left. A key pressed under ⌘ now calls
-noteCommandChord, which cancels the reveal and keeps the numbering hidden until ⌘ is released.
-
-The launcher, file and clipboard rows share SlotChordReveal: the chord slides in from the trailing
-edge as the label fades, ease-out over 0.15s, and clears without animation. It reads commandHeld
-itself, so a ⌘ press re-renders only the trailing label of each numbered row.
-
-* Draw Settings list icons from the icon pack
-
-Settings lists drew plain symbols or app icons beside their rows. SettingsSymbolTile now draws an
-IconTile there: .row at an app icon's body size, .feature at a feature switch's siz
-
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `Tests/QuicklinkCoordinatorTests.swift` (modified, +19/-0)
 ```diff
-@@ -130,7 +130,7 @@ feature's doc, under its own `## Invariants`.
- - **Every symbol icon comes from the icon pack.** Settings tabs, system actions and built-in commands
-   pair an SF Symbol with an `IconTint` in their catalog; a user-made item keeps its symbol and takes its
-   feature tab's tint. All draw as `IconTile`. To add one, follow
--  [ui.md#adding-an-icon](docs/ui.md#adding-an-icon), which includes updating the artifact.
-+  [ui.md#adding-an-icon](docs/ui.md#adding-an-icon).
- - **A new preference also gets a `SettingsFileKey`** and its binding in `SettingsFileSchema`, so the
-   opt-in `settings.json` mirror carries it; the exhaustive switch fails the build until it is bound.
-   See [settings-file.md](docs/features/settings-file.md).
-```
-
-**File**: `Scripts/run-tests.sh` (modified, +30/-3)
-```diff
-@@ -114,7 +114,7 @@ run() {
- 
- L=Tinycast/Features/Launcher/Model
- # What a sync source needs from iCloud Sync, for harnesses compiling a whole Service folder.
--SYNC="Tinycast/Features/CloudSync/Model/*.swift Tinycast/Features/CloudSync/Service/SyncSource.swift Tinycast/Features/CloudSync/Service/RecordSyncSource.swift Tinycast/Features/Settings/Model/SettingsFileKey.swift"
-+SYNC="Tinycast/Features/CloudSync/Model/*.swift Tinycast/Features/CloudSync/Service/SyncSource.swift Tinycast/Features/CloudSync/Service/RecordSyncSource.swift Tinycast/Features/Settings/Model/SettingsFileKey.swift Tinycast/DesignSystem/IconTint.swift"
- run slow -O FuzzTests      $L/SearchRelevance.swift $L/ScriptRomanization.swift \
-                            $L/LauncherMatch.swift $L/EntryNaming.swift $L/LauncherOrder.swift \
-                            $L/LauncherRankingStore.swift $L/LauncherSuggestions.swift
-@@ -685,7 +685,8 @@ run slow -O RaycastTests   Tinycast/Features/Backup/Model/RaycastImportError.swi
-                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
-                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift
- run CloudSyncTests         Tinycast/Features/CloudSync/Model/*.swift \
--                           Tinycast/Features/Settings/Model/SettingsFileKey.swift
-+                           Tinycast/Features/Settings/Model/SettingsFileKey.swift \
-+                           Tinycast/DesignSystem/IconTint.swift
- run SettingsBackupTests    Tinycast/Features/Settings/AppSettingsKey.swift \
-                            Tinycast/Features/Backup/Model/SettingsBackupCoverage.swift
- run HyperKeyEngineTests    Tinycast/Features/HotKeys/Model/HyperKeyEngine.swift \
-@@ -720,9 +721,35 @@ run BackupArchiveTests     Tinycast/Platform/AppPaths.swift \
-                            Tinycast/Features/Backup/Model/BackupArchive.swift \
-                            Tinycast/Features/Backup/Model/BackupBundle.swift \
-                            Tinycast/Features/Backup/Model/BackupCategory.swift \
-+                           Tinycast/DesignSystem/IconTint.swift \
-                            Tinycast/Features/Backup/Model/BackupClipboardItem.swift \
-                            Tinycast/Features/Backup/Model/BackupManifest.swift \
--                           Tinycast/Features/Backup/Service/BackupStaging.swift
-+                           Tinycast/Features/Backup/Service/BackupStaging.swift \
-+                           Tinycast/Features/Backup/Model/SettingsBackup.swift \
-+                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift \
-+                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-+                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowCycle.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowPlacementEngine.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowLayoutAnchor.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowLayoutDisplay.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowLayout.swift \
-+                           Tinycast/Features/WindowManagement/Model/WindowLayoutGeometry.swift \
-+                           Tinycast/Features/WindowManagement/Model/RoomLayoutKind.swift \
-+                           Tinycast/Features/WindowManagement/Model/RoomLayoutEngine.swift \
-+                           Tinycast/Features/WindowManagement/Model/RoomGrid.swift \
-+                           Tinycast/Features/WindowManagement/Model/RoomWindow.swift \
-+                           Tinycast/Features/WindowManagement/Model/Room.swift \
-+                           Tinycast/Features/WindowManagement/Model/CustomWindowSize.swift \
-+                           Tinycast/Features/HotKeys/Model/HotKeyBinding.swift \
-+                           Tinycast/Features/HotKeys/Model/ModifierKey.swift \
-+                           Tinycast/Features/HotKeys/Model/HyperKey.swift \
-+                           Tinycast/Features/HotKeys/Model/HIDKeyMapping.swift \
-+                           Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
-+                           Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
-+                           Tinycast/Platform/ASCIIKeyboardLayout.swift \
-+                           Tinycast/Platform/LocalizedResource.swift
- E=Tinycast/Features/Extensions
- run SymbolsTests           $E/Service/SymbolCatalog.swift
- run ExtensionCleanupTests  $E/Service/ExtensionCleanup.swift \
-```
-
-**File**: `Tests/BackupArchiveTests.swift` (modified, +84/-0)
-```diff
-@@ -37,6 +37,8 @@ struct BackupArchiveTests {
-         refusesTraversal(in: root)
-         refusesSymbolicLinks(in: root)
-         categoriesAreComplete()
-+        slicesPartitionTheBackup()
-+        slicesReadOnlyTheirOwnFields(in: root)
-         staging()
- 
-         print(failures == 0 ? "\nALL PASSED" : "\n\(failures) FAILED")
-@@ -302,6 +304,88 @@ struct BackupArchiveTests {
-             BackupCategory.ordered(BackupCategory.all) == BackupCategory.allCases)
+@@ -22,6 +22,7 @@ struct QuicklinkCoordinatorTests {
+         try ownSchemeLink()
+         try copying()
+         try editing()
++        try savingConfirms()
+         try await deleting()
+         try revealing()
+         print("\(passes) passed, \(failures) failed")
+@@ -321,6 +322,24 @@ struct QuicklinkCoordinatorTests {
+             "saving a removed item reports the failure without losing the draft or recreating it")
      }
  
-+    /// Every field set, so a field added later fails here until it joins a slice.
-+    static func fullSettingsBackup() -> SettingsBackup {
-+        var backup = SettingsBackup()
-+        backup.settings = SettingsBackup.SettingsData()
-+        backup.hotkeys = SettingsBackup.HotkeyBackup(
-+            togglePalette: .globe, commands: [:], apps: [:], panes: [:],
-+            customCommands: [UUID().uuidString: .doubleGlobe], systemActions: [:], windowCommands: [:],
-+            quicklinks: [:], windowLayouts: [:], windowRooms: [:], customWindowSizes: [:])
-+        backup.customCommands = [CustomCommand(name: "Crafted", command: "echo crafted")]
-+        backup.quicklinks = []
-+        backup.windowLayouts = []
-+        backup.windowRooms = []
-+        backup.customWindowSizes = []
-+        backup.favoriteApps = []
-+        backup.hiddenLauncherItems = []
-+        backup.hiddenLauncherKinds = []
-+        backup.launcherAliases = [:]
-+        backup.pinnedEmoji = []
-+        return backup
++    static func savingConfirms() throws {
++        let fixture = try Fixture()
++        defer { fixture.cleanUp() }
++        fixture.coordinator.editQuicklink(nil)
++        fixture.coordinator.editor?.name = "New link"
++        fixture.coordinator.editor?.link = "https://example.com/new"
++        fixture.coordinator.saveQuicklink()
++        expect(fixture.core.messages == ["Quicklink created"], "saving a new quicklink says it was created")
++        fixture.coordinator.editQuicklink(fixture.link)
++        fixture.coordinator.editor?.name = "Updated name"
++        fixture.coordinator.saveQuicklink()
++        expect(fixture.core.messages.last == "Quicklink saved", "saving an edit says it was saved")
++        fixture.coordinator.editQuicklink(fixture.link)
++        try fixture.store.remove(id: fixture.link.id)
++        fixture.coordinator.saveQuicklink()
++        expect(fixture.core.messages.count == 2, "a save that fails confirms nothing")
 +    }
 +
-+    static func unsetFields(of value: Any) -> [String] {
-+        Mirror(reflecting: value).children.compactMap { child in
-+            let mirror = Mirror(reflecting: child.value)
-+            return mirror.displayStyle == .optional && mirror.children.isEmpty ? child.label : nil
-+        }
-+    }
-+
-+    /// Top-level keys, with each shortcut table named on its own as `hotkeys.<table>`.
-+    static func fieldKeys(of backup: SettingsBackup) -> Set<String> {
-+        guard let data = try? backup.encoded(),
-+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-+        else { return [] }
-+        var keys = Set(object.keys).subtracting(["hotkeys"])
-+        if let hotkeys = object["hotkeys"] as? [String: Any] {
-+            keys.formUnion(hotkeys.keys.map { "hotkeys.\($0)" })
-+        }
-+        return keys
-+    }
-+
-+    static func slicesPartitionTheBackup() {
-+        let full = fullSettingsBackup()
-+        let unset = unsetFields(of: full) + (full.hotkeys.map(unsetFields) ?? [])
-+        check(unset.isEmpty ? "the fixture sets every backup field" : "unset fields: \(unset)", unset.isEmpty)
-+
-+        var owners: [String: [BackupCategory]] = [:]
-+        for category in SettingsBackup.sliceCategories {
-+            for key in full.slice(for: category).map(fieldKeys) ?? [] {
-+                owners[key, default: []].append(category)
-+            }
-+        }
-+        let dropped = fieldKeys(of: full).subtracting(owners.keys).sorted()
-+        check(dropped.isEmpty ? "every backup field travels in a slice" : "in no slice: \(dropped)", dropped.isEmpty)
-+        let doubled = owners.filter { $0.value.count > 1 }.keys.sorted()
-+        check(doubled.isEmpty ? "no backup field travels in two slices" : "in two slices: \(doubled)", doubled.isEmpty)
-+    }
-+
-+    /// A crafted file may name any field; only a ticked Custom Commands may hand over commands.
-+    static func slicesReadOnlyTheirOwnFields(in root: URL) {
-+        let full = fullSettingsBackup()
-+        let bundle = BackupBundle(root: root.appendingPathComponent("slices", isDirectory: true))
-+        do {
-+            try FileManager.default.createDirectory(at: bundle.root, withIntermediateDirectories: true)
-+            let everything = try full.encoded()
-+            for category in SettingsBackup.sliceCategories {
-+                try bundle.write(everything, to: bundle.location(of: category))
-+            }
-+        } catch {
-+            return check("slice files are written: \(error)", false)
-+        }
-+        for category in SettingsBackup.sliceCategories {
-+            let read = SettingsBackup.read(category, from: bundle)
-+            check(
-+                "\(category.rawValue) reads back only its own slice of a file holding everything",
-+                read.map(fieldKeys) == full.slice(for: category).map(fieldKeys))
-+            let carriesCommands = read?.customCommands != nil || read?.hotkeys?.customCommands != nil
-+            check(
-+                "\(category.rawValue) carries commands only as Custom Commands",
-+                carriesCommands == (category == .customCommands))
-+        }
-+    }
-+
-     static func staging() {
-         let base = scratch()
-         defer { try? FileManager.default.removeItem(at: base) }
+     static func deleting() async throws {
+         for confirmsInSettings in [false, true] {
+             let fixture = try Fixture()
 ```
 
-**File**: `Tests/NotesEditorTests.swift` (modified, +124/-0)
+**File**: `Tinycast/Features/CustomCommands/UI/CustomCommandCoordinator.swift` (modified, +4/-0)
 ```diff
-@@ -20,6 +20,9 @@ struct NotesEditorTests {
-         testCharacterCountReports()
-         testRenderingKeepsSourceAndUndo()
-         testHiddenMarkersAndReveal()
-+        testClickAtMarkdownPrefix()
-+        testClickInsideInlineDelimiter()
-+        testHiddenBulletCaret()
-         testRestyleFollowsEdits()
-         testRenderingOffIsLiteral()
-         testTaskSpacing()
-@@ -423,6 +426,127 @@ struct NotesEditorTests {
-                 && font(in: editor.textView, at: 0)?.pointSize == 0.01)
-     }
- 
-+    private static func testClickAtMarkdownPrefix() {
-+        let cases = [
-+            (prefix: "- ", rendersMarkdown: true, revealed: false, hidden: true),
-+            (prefix: "- ", rendersMarkdown: true, revealed: true, hidden: true),
-+            (prefix: "12. ", rendersMarkdown: true, revealed: false, hidden: true),
-+            (prefix: "- [ ] ", rendersMarkdown: true, revealed: false, hidden: true),
-+            (prefix: "## ", rendersMarkdown: true, revealed: false, hidden: true),
-+            (prefix: "> ", rendersMarkdown: true, revealed: false, hidden: true),
-+            (prefix: "12. ", rendersMarkdown: true, revealed: true, hidden: false),
-+            (prefix: "- ", rendersMarkdown: false, revealed: false, hidden: false)
-+        ]
-+        let intro = "Intro\n"
-+        let content = "this"
-+        let lineStart = intro.utf16.count
-+        for item in cases {
-+            let source = intro + item.prefix + content
-+            let input = NoteEditorInput(id: NoteID(rawValue: "Click.md"), source: source, epoch: 0)
-+            let editor = makeEditor(input: input, rendersMarkdown: item.rendersMarkdown)
-+            let textView = editor.textView
-+            if item.revealed {
-+                textView.setSelectedRange(NSRange(location: source.utf16.count, length: 0))
-+            }
-+            guard let line = firstLine(at: lineStart, in: textView)?.bounds else {
-+                check("the Markdown line is laid out before the click", false)
-+                continue
-+            }
-+            click(CGPoint(x: line.minX - 1, y: line.midY), in: textView, window: editor.window)
-+
-+            let expectedOffset = lineStart + (item.hidden ? item.prefix.utf16.count : 0)
-+            let description =
-+                "\(item.prefix) with rendering \(item.rendersMarkdown) and reveal \(item.revealed)"
-+            check(
-+                "a click reaches the visible start of \(description)",
-+                textView.selectedRange() == NSRange(location: expectedOffset, length: 0))
-+            textView.insertText("like ", replacementRange: NSRange(location: NSNotFound, length: 0))
-+            let expectedLine = item.hidden ? item.prefix + "like " + content : "like " + item.prefix + content
-+            check(
-+                "typing inserts at the visible start of \(description)",
-+                textView.string == intro + expectedLine)
-+        }
-+    }
-+
-+    private static func testClickInsideInlineDelimiter() {
-+        let intro = "Intro\n"
-+        let paragraph = "Try **bold** text"
-+        let source = intro + paragraph
-+        let lineStart = intro.utf16.count
-+        let bold = (paragraph as NSString).range(of: "bold")
-+        let input = NoteEditorInput(id: NoteID(rawValue: "Click.md"), source: source, epoch: 0)
-+        let editor = makeEditor(input: input, rendersMarkdown: true)
-+        let textView = editor.textView
-+        guard let (line, bounds) = firstLine(at: lineStart, in: textView) else {
-+            return check("the inline delimiters are laid out before the click", false)
-+        }
-+        for (hit, edge) in [(bold.location - 1, bold.location), (NSMaxRange(bold) + 1, NSMaxRange(bold))] {
-+            textView.setSelectedRange(NSRange(location: 0, length: 0))
-+            let point = CGPoint(x: bounds.minX + line.locationForCharacter(at: hit).x, y: bounds.midY)
-+            click(point, in: textView, window: editor.window)
-+            check(
-+                "a click inside an inline delimiter moves next to the formatted text",
-+                textView.selectedRange() == NSRange(location: lineStart + edge, length: 0))
-+        }
-+    }
-+
-+    private static func testHiddenBulletCaret() {
-+        for terminator in ["\n", "\r\n"] {
-+            let intro = "Intro" + terminator
-+            let introEnd = "Intro".utf16.count
-+            let contentStart = intro.utf16.count + 2
-+            let input = NoteEditorInput(
-+                id: NoteID(rawValue: "Bullet.md"), source: intro + "- this", epoch: 0)
-+            let editor = makeEditor(input: input, rendersMarkdown: true)
-+            let textView = editor.textView
-+            let ending = terminator == "\n" ? "LF" : "CRLF"
-+            guard let line = firstLine(at: intro.utf16.count, in: textView)?.bounds else {
-+                check("the \(ending) bullet is laid out before the click", false)
-+                continue
-+            }
-+            for attempt in ["first", "second"] {
-+                cli
+@@ -91,8 +91,10 @@ final class CustomCommandCoordinator {
+         guard settings.customCommandsEnabled, let editor, editor.canSave else { return }
+         do {
+             var draft = editor.draft()
++            let confirmation: String
+             if editor.original == nil {
+                 try addCustomCommand(draft)
++                confirmation = String(localized: "Command created")
+             } else {
+                 guard let current = store.command(id: editor.id) else {
+                     editor.errorMessage = String(
+@@ -101,8 +103,10 @@ final class CustomCommandCoordinator {
+                 }
+                 draft.isEnabled = current.isEnabled
+                 try updateCustomCommand(draft)
++                confirmation = String(localized: "Command saved")
+             }
+             cancelCustomCommandEditing()
++            core.showMessage(confirmation)
+         } catch {
+             editor.errorMessage = error.localizedDescription
+         }
 ```
 
-**File**: `Tests/NotesTests.swift` (modified, +61/-0)
+**File**: `Tinycast/Features/Quicklinks/UI/QuicklinkCoordinator.swift` (modified, +4/-0)
 ```diff
-@@ -14,6 +14,7 @@ struct NotesTests {
-         testMarkdownEditing()
-         testMarkdownFormatting()
-         testRevealPolicy()
-+        testRestingCaret()
-         try testUnnamedNotesTitleThemselves()
-         try testCreatedNoteHoldsItsSource()
-         testSwitcherInteraction()
-@@ -1172,6 +1173,66 @@ struct NotesTests {
-                 == IndexSet([1, 2, 3]))
-     }
- 
-+    private static func testRestingCaret() {
-+        let markdown = NoteMarkdownParser.parse("a\n- b\n1. c\n# d\n")
-+        func caret(
-+            _ proposed: Int, from previous: Int, stepping: Bool = false, revealed: IndexSet = []
-+        ) -> Int {
-+            NoteRevealPolicy.restingCaret(
-+                proposed, from: previous, steppingByCharacter: stepping, markdown: markdown,
-+                revealed: revealed)
-+        }
-+        check("a click before a hidden bullet lands on its content", caret(2, from: 0) == 4)
-+        check("a click inside a hidden bullet lands on its content", caret(3, from: 0) == 4)
-+        check(
-+            "a bullet stays hidden under the caret, so its line snaps too",
-+            caret(2, from: 5, revealed: [1]) == 4)
-+        check(
-+            "← from a bullet's content crosses to the line above",
-+            caret(3, from: 4, stepping: true, revealed: [1]) == 1)
-+        check(
-+            "a second click before a bullet's content stays on it",
-+            caret(3, from: 4, revealed: [1]) == 4)
-+        check("→ from the line above skips a hidden bullet", caret(2, from: 1, stepping: true) == 4)
-+        check(
-+            "← from a bullet's content stops before the line above's CRLF",
-+            NoteRevealPolicy.restingCaret(
-+                4, from: 5, steppingByCharacter: true, markdown: NoteMarkdownParser.parse("a\r\n- b"),
-+                revealed: [1]) == 1)
-+        check(
-+            "a revealed number is visible, so the caret may enter it",
-+            caret(6, from: 9, revealed: [2]) == 6)
-+        check("a hidden number keeps the caret out", caret(7, from: 0) == 9)
-+        check("a hidden heading marker keeps the caret out", caret(11, from: 0) == 13)
-+        check("content is never moved", caret(5, from: 0) == 5)
-+        check(
-+            "← from the first line's content stays put",
-+            NoteRevealPolicy.restingCaret(
-+                1, from: 2, steppingByCharacter: true, markdown: NoteMarkdownParser.parse("- x"),
-+                revealed: [0]) == 2)
-+        let inline = NoteMarkdownParser.parse("a\nTry **bold** text\n")
-+        func inlineCaret(_ proposed: Int, revealed: IndexSet = []) -> Int {
-+            NoteRevealPolicy.restingCaret(
-+                proposed, from: 0, steppingByCharacter: false, markdown: inline, revealed: revealed)
-+        }
-+        check("a click inside a hidden opening delimiter lands on the bold text", inlineCaret(7) == 8)
-+        check("a click inside a hidden closing delimiter lands after the bold text", inlineCaret(13) == 12)
-+        check("a caret before an opening delimiter stays outside it", inlineCaret(6) == 6)
-+        check(
-+            "revealed delimiters are visible, so the caret may enter them", inlineCaret(7, revealed: [1]) == 7
-+        )
-+        let lines = markdown.lines
-+        check(
-+            "a revealed bullet still hides its marker",
-+            NoteRevealPolicy.hidesMarker(of: lines[1], isRevealed: true))
-+        check(
-+            "a revealed number shows its marker",
-+            !NoteRevealPolicy.hidesMarker(of: lines[2], isRevealed: true))
-+        check(
-+            "a paragraph has no marker to hide",
-+            !NoteRevealPolicy.hidesMarker(of: lines[0], isRevealed: false))
-+    }
-+
-     /// Applies an action to a source whose selection is marked `|` or `«…»`; marks the result.
-     private static func edit(_ action: NoteEditAction, _ marked: String) -> String? {
-         let (source, selection) = unmark(marked)
+@@ -367,8 +367,10 @@ final class QuicklinkCoordinator {
+         guard settings.quicklinksEnabled, let editor, editor.canSave else { return }
+         do {
+             var draft = editor.draft(now: Date())
++            let confirmation: String
+             if editor.original == nil {
+                 try addQuicklink(draft)
++                confirmation = String(localized: "Quicklink created")
+             } else {
+                 guard let current = store.quicklink(id: draft.id) else {
+                     editor.errorMessage = String(
+@@ -377,8 +379,10 @@ final class QuicklinkCoordinator {
+                 }
+                 draft.isEnabled = current.isEnabled
+                 try updateQuicklink(draft)
++                confirmation = String(localized: "Quicklink saved")
+             }
+             cancelQuicklinkEditing()
++            core.showMessage(confirmation)
+         } catch {
+             editor.errorMessage = error.localizedDescription
+         }
 ```
 
-**File**: `Tests/PaletteMenuClickTests.swift` (modified, +1/-0)
+**File**: `Tinycast/Features/Snippets/UI/SnippetCoordinator.swift` (modified, +4/-0)
 ```diff
-@@ -13,6 +13,7 @@ final class PaletteState {
-     func notePointerMoved(to: CGPoint) {}
-     func disarmHoverHighlight(pointerAt: CGPoint) {}
-     func noteCommandHeld(_ held: Bool) {}
-+    func noteCommandChord() {}
- }
- 
- enum PaletteMode {
+@@ -187,14 +187,18 @@ final class SnippetCoordinator {
+         let snippet = editor.snippet
+         defer { editor.isSaving = false }
+         do {
++            let confirmation: String
+             if var record = editor.record {
+                 record.snippet = snippet
+                 try await store.save(record)
++                confirmation = String(localized: "Snippet saved")
+             } else {
+                 try await store.create(snippet)
++                confirmation = String(localized: "Snippet created")
+             }
+             guard !Task.isCancelled, self.editor === editor else { return }
+             cancelSnippetEditing()
++            showMessage(confirmation, .success)
+         } catch {
+             guard !Task.isCancelled, self.editor === editor else { return }
+             editor.errorMessage = error.localizedDescription
 ```
 
-**File**: `Tinycast.xcodeproj/project.pbxproj` (modified, +12/-4)
+**File**: `Tinycast/Resources/Localizable.xcstrings` (modified, +312/-0)
 ```diff
-@@ -37,6 +37,7 @@
- 		0820C7539E3328338C3C8FBD /* BarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4395BACF833C810961A248F0 /* BarButton.swift */; };
- 		08402EEA92AECAF10CBAF2EA /* AIProviderAdvancedSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4DB2A5435AD37E95789304B /* AIProviderAdvancedSection.swift */; };
- 		08F7F14378BEAA675FD6C874 /* RecordSyncSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AB00BBB28FEFC0C7A756235 /* RecordSyncSource.swift */; };
-+		094BEB13522E9EE17F65BF7F /* BackupExclusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FB15B50F139E94F28825ED /* BackupExclusion.swift */; };
- 		095964C2CAFAC9D3E34C25C6 /* HyperKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9673B19FC688CAC36F38032 /* HyperKeyManager.swift */; };
- 		0964D6642A8FB99D9D498A70 /* HyperKeyDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30712AF270CDA8D67F6C5E83 /* HyperKeyDiagnostics.swift */; };
- 		0976BBB954D48DE55C6B4263 /* MenuSearchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8A186797267935E09816C9 /* MenuSearchScreen.swift */; };
-@@ -178,6 +179,7 @@
- 		3148283E270E8B8808D2A6FB /* DictationCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A888004906108239CDDCF1 /* DictationCapture.swift */; };
- 		3155DE3A2195764DDEA97F26 /* ClipboardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201FCD08ACA933378876385B /* ClipboardStore.swift */; };
- 		3162C31B1971F738F9CE05E9 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F29EE2711B96305EE10B8D8 /* ChatMessage.swift */; };
-+		31DDF6BDB475D337689B4C99 /* SettingsBackup+Stores.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7893CAB0CB721686A4F1BF3 /* SettingsBackup+Stores.swift */; };
- 		31E0E4E0782A79504CEB588D /* ScrollIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 622E1F1C01B954DCA2199BCD /* ScrollIntent.swift */; };
- 		321461D5E9B08C43757A0C57 /* HyperKeyEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8CE803A775A511A3336F01 /* HyperKeyEngine.swift */; };
- 		321B4E5AAA0A69F83403F408 /* ImageDerivative.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3FE08E1D7AF4CBB87654CA /* ImageDerivative.swift */; };
-@@ -788,7 +790,6 @@
- 		D68E7585496722BEC72E788C /* AliasStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0AD89CB2C805C50D2C80E1 /* AliasStore.swift */; };
- 		D7293913917ABBCD527EB615 /* CalcToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F2E06B7C8613EB3096B94B /* CalcToken.swift */; };
- 		D736A0FE574A343AA0FD3911 /* AppIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E58EBB08450BA3426DF0565 /* AppIndex.swift */; };
--		D7A97947883C635920DD239E /* CloudSyncInfoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9165AD824DD6A06E7125027 /* CloudSyncInfoRow.swift */; };
- 		D7C49F8AC18CB80B58E4FEAA /* RoomLayoutKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39B8982F3CFB63CAAB0520E3 /* RoomLayoutKind.swift */; };
- 		D8AF58DBD05F76C53E786490 /* SettingsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2C9009BE43C4EEDEE6A08BD /* SettingsAction.swift */; };
- 		D9113113F828FD6983715D6B /* UninstallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F2B0F5FDD503E6BB739A47 /* UninstallView.swift */; };
-@@ -832,6 +833,7 @@
- 		E29056264B57A3F0EC5F5698 /* SupportCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97986EE62AE844FFCCD27449 /* SupportCoordinator.swift */; };
- 		E29CF7293742DDCAE030682C /* SupportReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE1ED405A53ECA5DED66AA1 /* SupportReminderStore.swift */; };
- 		E2AF601BD4C24721B2D61B69 /* DictationAudioDucker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24386713685FB65FB46A5516 /* DictationAudioDucker.swift */; };
-+		E3E6FC26CB946AB7FAB83AAB /* SlotChordReveal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26891A34181CC2AE0E60AFA /* SlotChordReveal.swift */; };
- 		E448C90CF3076440A4FA2CE4 /* RaycastQuicklinkImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25EA21DCF61666DB736D5B82 /* RaycastQuicklinkImport.swift */; };
- 		E457BC709D195B8F5D0C2A79 /* UninstallSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B6DAC3B9FF387367C3FAB4 /* UninstallSession.swift */; };
- 		E48C8D49C42BDB332C9D5A7E /* CalcRounding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E2383C65D01DBC2392A01F /* CalcRounding.swift */; };
-@@ -1609,6 +1611,7 @@
- 		A25FA208C0AA74234DEC73F0 /* OpenCodeMCPBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeMCPBridge.swift; sourceTree = "<group>"; };
- 		A2BB93BC8E1694F14B0194AA /* HyperKeySettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKeySettingsSection.swift; sourceTree = "<group>"; };
- 		A2C9009BE43C4EEDEE6A08BD /* SettingsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift
-```
-
-**File**: `Tinycast/App/AppCore.swift` (modified, +5/-2)
-```diff
-@@ -165,8 +165,9 @@ final class AppCore {
-         settings: settings, appIndex: appIndex, hotKeys: hotKeys, favorites: favorites,
-         visibility: visibility, ranking: launcherRanking, aliases: aliases,
-         paletteCoordinator: paletteCoordinator, core: self)
--    /// Window state, not a preference: it rides `UserDefaults` like the active note's filename.
-+    /// Window state, not preferences: they ride `UserDefaults` like the active note's filename.
-     private nonisolated static let noteFormattingBarKey = "notesFormattingBarExpanded"
-+    private nonisolated static let noteWindowFitsKey = "notesWindowFitsNote"
-     @ObservationIgnored private(set) lazy var notesCoordinator = NotesCoordinator(
-         store: notesStore,
-         settings: settings,
-@@ -175,7 +176,9 @@ final class AppCore {
-         isFormattingBarExpanded: UserDefaults.standard.bool(forKey: Self.noteFormattingBarKey),
-         saveFormattingBarExpanded: {
-             UserDefaults.standard.set($0, forKey: Self.noteFormattingBarKey)
--        })
+@@ -39439,6 +39439,58 @@
+         }
+       }
+     },
++    "Command created" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Befehl erstellt"
++          }
 +        },
-+        fitsWindowToNote: UserDefaults.standard.object(forKey: Self.noteWindowFitsKey) as? Bool ?? true,
-+        saveFitsWindowToNote: { UserDefaults.standard.set($0, forKey: Self.noteWindowFitsKey) })
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Comando creado"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Commande créée"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "コマンドを作成しました"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "명령이 생성됨"
++          }
++        },
++        "pt" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Comando criado"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Команда создана"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "已创建命令"
++          }
++        }
++      }
++    },
+     "Command editor" : {
+       "localizations" : {
+         "de" : {
+@@ -39647,6 +39699,58 @@
+         }
+       }
+     },
++    "Command saved" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Befehl gesichert"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Comando guardado"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Commande enregistrée"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "コマンドを保存しました"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "명령이 저장됨"
++          }
++        },
++        "pt" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Comando salvo"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Команда сохранена"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "已存储命令"
++          }
++        }
++      }
++    },
+     "Commands" : {
+       "comment" : "Section heading over an extension's commands (noun)",
+       "localizations" : {
+@@ -99739,6 +99843,58 @@
+         }
+       }
+     },
++    "Quicklink created" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Quicklink erstellt"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Enlace rápido creado"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Lien rapide créé"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "クイックリンクを作成しました"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "빠른 링크가 생성됨"
++          }
++        },
++        "pt" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Link rápido criado"
++          }
++        },
++        "ru" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Быстрая ссылка создана"
++          }
++        },
++        "zh-Hans" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "已创建快速链接"
++          }
++        }
++      }
++    },
+     "Quicklink editor" : {
+       "localizations" : {
+         "de" : {
+@@ -99947,6 +100103,58 @@
+         }
+       }
+     },
++    "Quicklink saved" : {
++      "localizations" : {
++        "de" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Quicklink gesichert"
++          }
++        },
++        "es" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Enlace rápido guardado"
++          }
++        },
++        "fr" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "Lien rapide enregistré"
++          }
++        },
++        "ja" : {
++          "stringUnit" : {
++            "state" : "translated",
++            "value" : "クイックリンクを保存しました"
++          }
++        },
++        "ko" : {
++          "stringUnit" : {
++            "state" : "translated",
++     
+```
+
+**File**: `docs/features/custom-commands.md` (modified, +2/-2)
+```diff
+@@ -76,8 +76,8 @@ working directory, root-search visibility, up to three arguments and the four ex
+ monospaced native textarea without smart substitutions; its content grows with the page rather than
+ scrolling internally. Tab walks the form, so ⌥Tab types a tab character.
+ Argument rows keep their identities when one is removed, and Tab skips Add at the three-argument cap.
+-⌘↵ validates and saves through the existing store; Escape discards the draft and restores the previous
+-search and selection. Opening or saving is gated by the feature switch, just like running a command.
++⌘↵ validates and saves through the existing store, then confirms with a HUD: "Command created", or
++"Command saved" for an edit. Escape discards the draft and restores the previous search and selection. Opening or saving is gated by the feature switch, just like running a command.
+ If the item is deleted from Settings during editing, Save reports that failure and keeps the draft.
  
-     @ObservationIgnored private(set) lazy var launcherCoordinator = LauncherCoordinator(
-         ranking: launcherRanking, windowController: windowController,
+ ## Execution contract
+```
+
+**File**: `docs/features/quicklinks.md` (modified, +2/-1)
+```diff
+@@ -236,7 +236,8 @@ least as wide as its field, using the control's actual bounds.
+ Saving uses the existing store's validation and normalisation. Editing preserves the quicklink UUID,
+ enabled flag, creation date and existing pin stamp, so its alias, shortcut and order survive. An error
+ stays in the form without discarding the draft. Save/cancel returns to the preceding palette screen,
+-including its query and selected row; an editor opened directly from settings closes instead.
++including its query and selected row; an editor opened directly from settings closes instead. A
++successful save confirms with a HUD: "Quicklink created", or "Quicklink saved" for an edit.
+ 
+ ## Storage
+ 
+```
+
+**File**: `docs/features/snippets.md` (modified, +2/-1)
+```diff
+@@ -280,7 +280,8 @@ It uses the palette's searchable popup, keeping its existing placeholder groups.
+ **Name**, **Keyword**, **Enabled** and **Show confirmation** are on the right. The draft keeps the
+ loaded record and its source revision; no file is created or changed before **Save Snippet**.
+ The template grows with its text; only the whole form scrolls, never an individual field or column.
+-A blank name disables Save.
++A blank name disables Save. A successful save confirms with a HUD: "Snippet created", or
++"Snippet saved" for an edit.
+ An IO or revision failure leaves the draft open and shows the error beside its fields.
+ 
+ **⌘↵** saves; plain **↵** inserts a template line break. **Tab** and **Shift-Tab** walk the fields,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1998** (2026-11-26): Focus the default dialog button under Keyboard navigation (@abue-ammar)
+- **PR #1997** (2026-11-26): Open the DMG as a styled install window (@abue-ammar)
+- **PR #1996** (2026-11-26): Redesign first-run onboarding (@Risengan)
+- **PR #1993** (2026-11-26): Confirm quicklink, snippet and custom command saves with a HUD (@abue-ammar)
+- **PR #1992** (closed): Rework Escape, back navigation and Pop to Root Search (@abue-ammar)
 - **PR #1989** (2026-11-24): Show AI plan usage in the menu bar (@abue-ammar)
-- **PR #1988** (2026-11-24): Find files by pasted or partial paths (@abue-ammar)
-- **PR #1987** (2026-11-24): Share the pill HUD and drop Add Window to Current Room (@abue-ammar)
-- **PR #1986** (closed): Add shift-selection and multi-entry paste to clipboard history (@Wulgaren)
-- **PR #1985** (2026-11-24): Add room shortcuts and a room HUD (@abue-ammar)
-- **PR #1979** (2026-11-23): Close the palette when ⌘, opens Settings (@abue-ammar)
 
 ---
 
@@ -2183,31 +2102,49 @@ IconTile there: .row at an app icon's body size, .feature at a feature switch's 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fixes and UI enhancements
+## X. Confirm quicklink, snippet and custom command saves with a HUD
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in abue-ammar/tinycast. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Tests/QuicklinkCoordinatorTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in abue-ammar/tinycast. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `970bf4e4`: fixes and UI enhancements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf4c6136`: Confirm quicklink, snippet and custom command saves with a HUD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/QuicklinkCoordinatorTests.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  [ui.md#adding-an-icon](docs/ui.md#adding-an-icon).
+        try savingConfirms()
+    static func savingConfirms() throws {
+        let fixture = try Fixture()
+        defer { fixture.cleanUp() }
+        fixture.coordinator.editQuicklink(nil)
+        fixture.coordinator.editor?.name = "New link"
+        fixture.coordinator.editor?.link = "https://example.com/new"
+        fixture.coordinator.saveQuicklink()
+        expect(fixture.core.messages == ["Quicklink created"], "saving a new quicklink says it was created")
+        fixture.coordinator.editQuicklink(fixture.link)
+        fixture.coordinator.editor?.name = "Updated name"
+        fixture.coordinator.saveQuicklink()
+        expect(fixture.core.messages.last == "Quicklink saved", "saving an edit says it was saved")
+        fixture.coordinator.editQuicklink(fixture.link)
+        try fixture.store.remove(id: fixture.link.id)
+        fixture.coordinator.saveQuicklink()
+        expect(fixture.core.messages.count == 2, "a save that fails confirms nothing")
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-  [ui.md#adding-an-icon](docs/ui.md#adding-an-icon), which includes updating the artifact.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `970bf4e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf4c6136` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

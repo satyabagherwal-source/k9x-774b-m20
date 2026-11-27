@@ -13737,3 +13737,5 @@
 | `CYCLE-20261127-10RS` | `2026-11-27T08:58:12.136Z` | `inclusionAI/Ming-Image-0.2-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md` | Yes (`db84edd8...`) |
 | `CYCLE-20261127-12RB` | `2026-11-27T08:58:14.711Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md` | Yes (`077ecf91...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T08:58:55.783Z` | `hf-inclusionai-ming-image-0.2-design` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-B48FD193` [Domain F] | Yes (`506cdd49...`) |
+| `CYCLE-20261127-DPWY` | `2026-11-27T09:08:04.594Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`d36f86d7...`) |
+| `CYCLE-20261127-DRNJ` | `2026-11-27T09:08:06.847Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10862` | Yes (`942bddd7...`) |

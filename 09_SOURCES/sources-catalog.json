@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "a03fb243c90d4772453603189942ef067d54cb6e88b83063332b106f21fcd72b",
-    "lastHarvestedAt": "2026-11-23T23:31:24.526Z",
+    "contentHash": "d36f86d772150663ff5500253c2e926ef991436604d969c1f297bc36ca758933",
+    "lastHarvestedAt": "2026-11-27T09:08:04.598Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -13183,10 +13183,10 @@
     "repository": "abue-ammar/tinycast",
     "platform": "github",
     "sourceUrl": "https://github.com/abue-ammar/tinycast",
-    "sourceVersion": "ed7c2917",
+    "sourceVersion": "c2690533",
     "license": "NOASSERTION",
-    "contentHash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
-    "lastHarvestedAt": "2026-11-25T00:43:32.918Z",
+    "contentHash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
+    "lastHarvestedAt": "2026-11-27T09:08:06.861Z",
     "learningId": "learn-github-abue-ammar-tinycast"
   },
   "baarai-artex": {

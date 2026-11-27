@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T08:58:57.562Z",
-  "total_records": 2819,
+  "last_updated": "2026-11-27T09:08:13.704Z",
+  "total_records": 2821,
   "domains": {
     "A": {
       "total": 23,
@@ -1248,7 +1248,7 @@
       ]
     },
     "G": {
-      "total": 484,
+      "total": 486,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1733,7 +1733,9 @@
         "domain_intelligence-architecture-intelligence-apache-maka-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-maka-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-litmuschaos-litmus-core-invariants",
-        "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants",
+        "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12210,8 +12212,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "59b87c6494cafd17dadbb5d4612b0de8c41d0675a65d8a143989db9fc01178cb",
-      "created_at": "2026-11-27T07:39:30.246Z"
+      "content_hash": "5324f898ea2e179cd48bf5d99a0365bf8d06d1b18f0c46f58ea703a032de57a1",
+      "created_at": "2026-11-27T09:08:13.704Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -20249,8 +20251,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein-comfy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-research-knowledge-intelligence-bl.md",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "content_hash": "5a20e292a8b0d61e31a8eb5d20f459539435f52bf7c967739ae69cc1ee4aeccc",
-      "created_at": "2026-11-23T23:31:24.727Z"
+      "content_hash": "8a7a7e55aa71e8c176d96988e87daad695316e9832562404e90fcc407617567d",
+      "created_at": "2026-11-27T09:08:04.834Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants",
@@ -20318,8 +20320,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-comfy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-learnings-research-knowledge-intel.md",
       "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
-      "content_hash": "95b0867ea5558eb61ba725f95889f0c5fbcd1acb7bb77b7feea9b6f2436b30e9",
-      "created_at": "2026-11-23T23:31:41.452Z"
+      "content_hash": "e357b8b06d0150f57205c66bfef3795c2dd28bb78fe40c5b9bfbe8f5ab022015",
+      "created_at": "2026-11-27T09:08:12.008Z"
     },
     "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
@@ -47605,6 +47607,24 @@
       "repository": "hf-inclusionai-ming-image-0.2-design-learnings",
       "content_hash": "28254b515a83930cb4ea3e7ecffa95484894fbd347549c112f1167676cb36df8",
       "created_at": "2026-11-27T08:58:56.134Z"
+    },
+    "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: abue-ammar/tinycast Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-abue-ammar-tinycast-architecture-intelligence-abue-ammar-tinycast-core-invariant.md",
+      "repository": "abue-ammar/tinycast",
+      "content_hash": "356bd78edfa5b082ec98e1205952c758476947f8625420edc66d05d2f8a6be02",
+      "created_at": "2026-11-27T09:08:07.288Z"
+    },
+    "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: abue-ammar-tinycast-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-abue-ammar-tinycast-learnings-architecture-intelligence-abue-ammar-tinycast-lear.md",
+      "repository": "abue-ammar-tinycast-learnings",
+      "content_hash": "386923e5c9884e2d915cd39a4633b6ac126574ba203ac86f3c408a2349404bf1",
+      "created_at": "2026-11-27T09:08:12.797Z"
     }
   }
 }
