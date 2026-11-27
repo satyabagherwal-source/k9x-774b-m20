@@ -13650,3 +13650,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-27T00:50:07.989Z |
 | `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `d358ce89` | Multi-dimensional audit evidence | 2026-11-27T00:50:10.789Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `76904050` | Multi-dimensional audit evidence | 2026-11-27T00:50:22.353Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T00:58:50.046Z |
+| `learn-github-software-mansion-react-native-gesture-handler` | `https://github.com/software-mansion/react-native-gesture-handler` | `9e8effbb` | Multi-dimensional audit evidence | 2026-11-27T00:58:56.124Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `0eb63838` | Multi-dimensional audit evidence | 2026-11-27T00:59:04.963Z |

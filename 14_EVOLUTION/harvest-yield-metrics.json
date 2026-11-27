@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:50:22.373Z",
-  "total_cycles_completed": 12925,
-  "total_learnings_persisted": 12925,
-  "total_rules_promoted": 11712,
+  "last_updated": "2026-11-27T00:59:04.983Z",
+  "total_cycles_completed": 12928,
+  "total_learnings_persisted": 12928,
+  "total_rules_promoted": 11714,
   "history": [
-    {
-      "timestamp": "2026-11-26T13:55:13.997Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:55:18.981Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:55:25.129Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T13:55:27.439Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T00:50:22.373Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:58:50.060Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:58:56.135Z",
+      "repository": "software-mansion/react-native-gesture-handler",
+      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:59:04.983Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

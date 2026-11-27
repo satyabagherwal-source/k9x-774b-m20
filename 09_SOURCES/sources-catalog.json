@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
-    "lastHarvestedAt": "2026-11-23T16:02:49.921Z",
+    "contentHash": "63fa725e9a384e2b26725285c84891a1f8c1e217c517c1a5e412dd81f115642b",
+    "lastHarvestedAt": "2026-11-27T00:58:50.046Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "81531859",
+    "sourceVersion": "0eb63838",
     "license": "OSL-3.0",
-    "contentHash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
-    "lastHarvestedAt": "2026-11-26T06:18:30.445Z",
+    "contentHash": "314ffdfb420dad613902a7ae46f3ce3aae1576ad4acdd143d4c63488b448fd18",
+    "lastHarvestedAt": "2026-11-27T00:59:04.963Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -4793,10 +4793,10 @@
     "repository": "software-mansion/react-native-gesture-handler",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-gesture-handler",
-    "sourceVersion": "c09aaa6a",
+    "sourceVersion": "9e8effbb",
     "license": "MIT",
-    "contentHash": "ec37422986d7b7ccd4be18b8dc746489c0dc0cdfcc0e272dc1d1b16d2c45600e",
-    "lastHarvestedAt": "2026-11-17T19:44:54.488Z",
+    "contentHash": "4f79accb31c89d15aa005729e5c8ac17b1b5bded6c488435bbb4e3854e42ee81",
+    "lastHarvestedAt": "2026-11-27T00:58:56.124Z",
     "learningId": "learn-github-software-mansion-react-native-gesture-handler"
   },
   "aws-aws-cdk": {

@@ -13617,3 +13617,6 @@
 | `CYCLE-20261127-LCZ4` | `2026-11-27T00:50:07.984Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`d5199c68...`) |
 | `CYCLE-20261127-LF4W` | `2026-11-27T00:50:10.784Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10802` | Yes (`ef4d8990...`) |
 | `CYCLE-20261127-LO25` | `2026-11-27T00:50:22.349Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10803` | Yes (`7d745df1...`) |
+| `CYCLE-20261127-WJSQ` | `2026-11-27T00:58:50.042Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`63fa725e...`) |
+| `CYCLE-20261127-WOH8` | `2026-11-27T00:58:56.108Z` | `software-mansion/react-native-gesture-handler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10804` | Yes (`4f79accb...`) |
+| `CYCLE-20261127-WVB3` | `2026-11-27T00:59:04.959Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10805` | Yes (`314ffdfb...`) |

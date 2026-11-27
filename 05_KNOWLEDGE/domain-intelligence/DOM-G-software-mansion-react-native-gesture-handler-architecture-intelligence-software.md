@@ -4,24 +4,24 @@
 {
   "source_repository": "software-mansion/react-native-gesture-handler",
   "source_url": "https://github.com/software-mansion/react-native-gesture-handler",
-  "source_version": "c09aaa6a",
+  "source_version": "9e8effbb",
   "license": "MIT",
-  "timestamp": "2026-11-17T19:44:54.659Z",
+  "timestamp": "2026-11-27T00:58:56.412Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler) (Revision: `c09aaa6a`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T19:44:54.659Z`  
+> **Provenance**: Harvested from [software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler) (Revision: `9e8effbb`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T00:58:56.412Z`  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from software-mansion/react-native-gesture-handler:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:44:53.576Z  
+> **Harvest Timestamp**: 2026-11-27T00:58:54.789Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6807 stars
+- **Stars / Engagement**: 6808 stars
 
 ---
 
@@ -1402,205 +1402,427 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0bf533d4` (2026-11-16)
-**Commit Message**: [Jest] Fix `fireEvent.press` being dropped by detectors (#4694)
+### Incident Patch 1: `4fa37bde` (2026-11-26)
+**Commit Message**: [Docs] Add a guide on using gestures with `ScrollView` (#4690)
 
 ## Description
 
-`fireEvent.press` from `@testing-library/react-native` on an element
-inside an `InterceptingGestureDetector` did not reach the `onPress` of a
-`Touchable` above the detector. The same happened with a plain
-`GestureDetector`.
+Adds a guide to the Guides section that explains how to combine gestures
+with a `ScrollView` using the v3 API:
 
-Both detectors put the handler from `useJSResponderHandler` on their
-host view as `onStartShouldSetResponder`. The handler only marks the
-event for an enclosing `ScrollView` and always returns `false`.
-Testing-library takes the nearest host element with
-`onStartShouldSetResponder` as the touch responder, and when it returns
-`false` it treats the press as declined and skips every `onPress` above
-it. `GestureDetector` has had the prop since #4158,
-`InterceptingGestureDetector` since #4530. On a device nothing is
-affected, since `Touchable` does not go through the JS responder system.
+- choosing between the `ScrollView` exported by Gesture Handler and
+wrapping any scrollable (e.g. Reanimated's `Animated.ScrollView`) in a
+`GestureDetector` with `useNativeGesture`,
+- gestures on list items with `block` / `requireToFail`, including why
+activation criteria matter,
+- `Pinch` on list items, where `block` would stop single-finger
+scrolling: `simultaneousWith` plus a `SharedValue` passed as `enabled`
+of the `Native` gesture,
+- a `ScrollView` inside a view with a gesture, where `requireToFail` on
+the outer gesture cannot work because the `ScrollView` gesture does not
+fail during a drag, so the outer gesture decides by activation criteria,
+- `Animated.ScrollView` with `useAnimatedScrollHandler`, with a full
+example.
 
-The detectors now mark the event through
-`onStartShouldSetResponderCapture`, like `VirtualGestureDetector` and
-`Touchable` already do. Testing-library does not look at capture
-handlers. At runtime the order still holds: the `ScrollView` wrapper
-resets the flag in its own capture handler, which runs befo
+Every recipe was verified on an iOS simulator and an Android emulator.
 
-**File**: `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx` (modified, +67/-13)
+Fixes #2624
+Fixes #2616
+
+Related: #3266
+
+## Test plan
+
+- `yarn build` in `packages/docs-gesture-handler` passes with no
+warnings for the new page.
+- Prettier passes on the new files.
+
+**File**: `apps/common-app/src/new_api/index.tsx` (modified, +2/-0)
 ```diff
-@@ -5,7 +5,7 @@ import {
-   screen,
- } from '@testing-library/react-native';
- import { act } from 'react';
--import { Keyboard, TextInput, View } from 'react-native';
-+import { Keyboard, Text, TextInput, View } from 'react-native';
- 
- import GestureHandlerRootView from '../components/GestureHandlerRootView';
- import { fireGestureHandler, getByGestureTestId } from '../jestUtils';
-@@ -205,7 +205,7 @@ describe('[API v3] Components', () => {
-     views: ReturnType<typeof render>['UNSAFE_getAllByType']
-   ) => {
-     return views(View).filter(
--      ({ props }) => props.handlerTags && props.onStartShouldSetResponder
-+      ({ props }) => props.handlerTags && props.onStartShouldSetResponderCapture
-     );
-   };
- 
-@@ -512,7 +512,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-+        false
-+      );
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
-     });
- 
-@@ -605,9 +607,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
--        false
--      );
-+      expect(
-+        interceptingDetector?.props.onStartShouldSetResponderCapture()
-+      ).toBe(false);
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
-     });
- 
-@@ -631,9 +633,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
--        false
--      );
-+      expect(
-+        interceptingDetector?.props.onStartShouldSetResponderCapture()
-+      ).toBe(false);
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
-         false
-       );
-@@ -653,7 +655,9 @@ describe('[API v3] Components', () => {
- 
-       expect(scrollViewDetector).toBeDefined();
-       expect(scrollViewResponder).toBeDefined();
--      expect(scrollViewDetector?.props.onStartShouldSetResponder()).toBe(false);
-+      expect(scrollViewDetector?.props.onStartShouldSetResponderCapture()).toBe(
-+        false
-+      );
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
-         false
-       );
-@@ -678,7 +682,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-+        false
-+      );
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
-         false
-       );
-@@ -750,7 +756,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-+        false
-+      );
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(true);
-     });
- 
-@@ -773,7 +781,9 @@ describe('[API v3] Components', () => {
-       expect(
-         scrollViewResponder?.props.onStartShouldSetResponderCapture()
-       ).toBe(false);
--      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-+      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-+        false
-+      );
-       expect(scrollViewResponder?.props.onStartShouldSetResponder()).toBe(
-         false
-       );
-@@ -1100,5 +1110,49 @@ describe('[API v3] Components', () => {
-       expect(longPressFn).toHaveBeenCalledTimes(1);
-       expect(pressFn).not.toHaveBeenCalled();
-     });
-+
-+    // testing-library drops a press when the nearest host view with a
-+    // bubble-phase `onStartShouldSetResponder` returns false (#4689)
-+    test('fireEvent.press reaches onPress from inside an InterceptingGestureDetector', () => {
-+      const pressFn = jest.fn();
-+
-+      render(
-+        <GestureHandlerRootView>
-+          <Touchable onPress={pressFn}>
-+            <InterceptingGestureDetector>
-+              <Text>Press me</Text>
-+            </InterceptingGestureDetector>
-+          </Touchable>
-+        </GestureHandlerRootView>
-+      );
-+
-+      fireEvent.press(screen.getByText('Press me'));
-+
-+      expect(pressFn).toHaveBeenCalledTimes(1);
-+    });
-+
-+    test('fireEvent.press reaches onPress from inside a GestureDetector', () => {
-+      const pressFn = jest.fn();
-+
-+      const Example = () => {
-+        const pan = usePanGesture({ disableReanimated: true });
-+
-+        return (
-+          
+@@ -21,6 +21,7 @@ import MouseButtonsExample from './hover_mouse/mouse_buttons';
+ import StylusDataExample from './hover_mouse/stylus_data';
+ import AnimatedExample from './showcase/animated';
+ import BottomSheetExample from './showcase/bottom_sheet';
++import GalleryExample from './showcase/gallery';
+ import NestedTextExample from './showcase/nested_text/nested_text';
+ import OverlapExample from './showcase/overlap';
+ import SharedValueExample from './showcase/shared_value';
+@@ -76,6 +77,7 @@ export const NEW_EXAMPLES: ExamplesSection[] = [
+       { name: 'Overlap', component: OverlapExample },
+       { name: 'Animated', component: AnimatedExample },
+       { name: 'Timer', component: TimerExample },
++      { name: 'Gallery', component: GalleryExample },
+     ],
+   },
+   {
 ```
 
-**File**: `packages/react-native-gesture-handler/src/v3/detectors/NativeDetector.tsx` (modified, +3/-1)
+**File**: `apps/common-app/src/new_api/showcase/gallery/index.tsx` (added, +380/-0)
 ```diff
-@@ -74,7 +74,9 @@ export function NativeDetector<
- 
-   return (
-     <NativeDetectorComponent
--      onStartShouldSetResponder={handleStartShouldSetResponder}
-+      // Capture phase: a bubble-phase handler returning `false` makes
-+      // testing-library treat presses on the children as declined (#4689)
-+      onStartShouldSetResponderCapture={handleStartShouldSetResponder}
-       touchAction={touchAction}
-       userSelect={userSelect}
-       enableContextMenu={enableContextMenu}
+@@ -0,0 +1,380 @@
++import React, { useState } from 'react';
++import { ScrollView, StyleSheet, Text, View } from 'react-native';
++import type { NativeGesture } from 'react-native-gesture-handler';
++import {
++  GestureDetector,
++  useNativeGesture,
++  usePanGesture,
++  usePinchGesture,
++  useSimultaneousGestures,
++  useTapGesture,
++} from 'react-native-gesture-handler';
++import Animated, {
++  type SharedValue,
++  useAnimatedStyle,
++  useSharedValue,
++  withSpring,
++  withTiming,
++} from 'react-native-reanimated';
++import { scheduleOnRN } from 'react-native-worklets';
++
++// Photo gallery from the "Gestures and ScrollView" guide: pinch and double tap
++// to zoom, pan while zoomed, swipe vertically to dismiss, drag to scroll.
++
++const PHOTOS = [
++  { color: '#e76f51', label: 'Sunset' },
++  { color: '#2a9d8f', label: 'Lake' },
++  { color: '#e9c46a', label: 'Dunes' },
++  { color: '#264653', label: 'Night' },
++  { color: '#f4a261', label: 'Canyon' },
++  { color: '#8ab17d', label: 'Forest' },
++];
++
++const ZOOM = 2.5;
++const WIDTH = 200;
++const HEIGHT = 260;
++const DISMISS_DISTANCE = 120;
++
++function identity3() {
++  'worklet';
++  return [1, 0, 0, 0, 1, 0, 0, 0, 1];
++}
++
++function multiply3(a: number[], b: number[]) {
++  'worklet';
++  return [
++    a[0] * b[0] + a[1] * b[3] + a[2] * b[6],
++    a[0] * b[1] + a[1] * b[4] + a[2] * b[7],
++    a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
++    a[3] * b[0] + a[4] * b[3] + a[5] * b[6],
++    a[3] * b[1] + a[4] * b[4] + a[5] * b[7],
++    a[3] * b[2] + a[4] * b[5] + a[5] * b[8],
++    a[6] * b[0] + a[7] * b[3] + a[8] * b[6],
++    a[6] * b[1] + a[7] * b[4] + a[8] * b[7],
++    a[6] * b[2] + a[7] * b[5] + a[8] * b[8],
++  ];
++}
++
++function scale3(s: number) {
++  'worklet';
++  return [s, 0, 0, 0, s, 0, 0, 0, 1];
++}
++
++function translate3(tx: number, ty: number) {
++  'worklet';
++  return [1, 0, 0, 0, 1, 0, tx, ty, 1];
++}
++
++function matrixScale(matrix: number[]) {
++  'worklet';
++  return Math.hypot(matrix[0], matrix[1]);
++}
++
++function createMatrix(
++  translation: { x: number; y: number },
++  scale: number,
++  origin: { x: number; y: number }
++) {
++  'worklet';
++  let matrix = identity3();
++  if (scale !== 1) {
++    matrix = multiply3(matrix, translate3(origin.x, origin.y));
++    matrix = multiply3(matrix, scale3(scale));
++    matrix = multiply3(matrix, translate3(-origin.x, -origin.y));
++  }
++  if (translation.x !== 0 || translation.y !== 0) {
++    matrix = multiply3(matrix, translate3(translation.x, translation.y));
++  }
++  return matrix;
++}
++
++// Translation arrives in parent coordinates; the in-progress transform is
++// applied before the accumulated matrix, so divide it by the matrix scale.
++function applyTransformations(
++  translation: { x: number; y: number },
++  scale: number,
++  origin: { x: number; y: number },
++  matrix: number[]
++) {
++  'worklet';
++  const s = matrixScale(matrix);
++  const transform = createMatrix(
++    { x: translation.x / s, y: translation.y / s },
++    scale,
++    origin
++  );
++  return multiply3(transform, matrix);
++}
++
++type PhotoProps = {
++  color: string;
++  label: string;
++  scrollGesture: NativeGesture;
++  scrollEnabled: SharedValue<boolean>;
++};
++
++function Photo({ color, label, scrollGesture, scrollEnabled }: PhotoProps) {
++  const transform = useSharedValue(identity3());
++  const translation = useSharedValue({ x: 0, y: 0 });
++  const scale = useSharedValue(1);
++  const origin = useSharedValue({ x: 0, y: 0 });
++  const zoomed = useSharedValue(false);
++  const notZoomed = useSharedValue(true);
++  const dismissY = useSharedValue(0);
++  const opacity = useSharedValue(1);
++  // Set while a double-tap animation runs, so that a gesture ending in the
++  // meantime (a real tap always jitters a little) doesn't fold mid-animation.
++  // Each animation gets an id, so a cancelled spring's callback can't clear
++  // the flag of the animation that replaced it.
++  const animating = useSharedValue(false);
++  const animationId = useSharedValue(0);
++  // Web only: while zoomed, the browser must not scroll the list from a
++  // drag on the photo. Native platforms ignore `touchAction`.
++  const [isZoomed, setIsZoomed] = useState(false);
++
++  const setZoomed = (value: boolean) => {
++    'worklet';
++    zoomed.value = value;
++    notZoomed.value = !value;
++    scrollEnabled.value = !value;
++    scheduleOnRN(setIsZoomed, value);
++  };
++
++  const isZoomedNow = () => {
++    'worklet';
++    return matrixScale(transform.value) * scale.value > 1.01;
++  };
++
++  // The matrix currently on screen, including in-progress gesture values and
++  // whatever a running animation has reached.
++  const currentMatrix = () => {
++    'worklet';
++    return applyTransformations(
++      translation.value,
++      scale.value,
++      origin.value,
++      transform.value
++    );
++  };
++
++  // Folds the on-screen state into the matrix, cancelling any animation.
++  // The id is bumped first: assigning `scale` cancels a running spring, whose
++  // callback fires synchronously and must see that it
 ```
 
-**File**: `packages/react-native-gesture-handler/src/v3/detectors/VirtualDetector/InterceptingGestureDetector.tsx` (modified, +3/-1)
+**File**: `packages/docs-gesture-handler/docs/guides/_examples/AnimatedScrollViewExample.tsx` (added, +86/-0)
 ```diff
-@@ -306,7 +306,9 @@ export function InterceptingGestureDetector<
-             : undefined
-         }
-         handlerTags={handlerTags}
--        onStartShouldSetResponder={handleStartShouldSetResponder}
-+        // Capture phase: a bubble-phase handler returning `false` makes
-+        // testing-library treat presses on the children as declined (#4689)
-+        onStartShouldSetResponderCapture={handleStartShouldSetResponder}
-         style={nativeDetectorStyles.detector}
-         virtualChildren={strippedVirtualChildren}
-         moduleId={getModuleId()}>
+@@ -0,0 +1,86 @@
++import React from 'react';
++import { StyleSheet, Text } from 'react-native';
++import type { NativeGesture } from 'react-native-gesture-handler';
++import {
++  GestureDetector,
++  GestureHandlerRootView,
++  useNativeGesture,
++  usePanGesture,
++} from 'react-native-gesture-handler';
++import Animated, {
++  useAnimatedScrollHandler,
++  useAnimatedStyle,
++  useSharedValue,
++  withSpring,
++} from 'react-native-reanimated';
++
++const ROWS = Array.from({ length: 30 }, (_, i) => i);
++
++type RowProps = {
++  index: number;
++  scrollGesture: NativeGesture;
++};
++
++function Row({ index, scrollGesture }: RowProps) {
++  const translateX = useSharedValue(0);
++
++  const pan = usePanGesture({
++    activeOffsetX: [-20, 20],
++    failOffsetY: [-10, 10],
++    block: scrollGesture,
++    onUpdate: (e) => {
++      translateX.value = e.translationX;
++    },
++    onDeactivate: () => {
++      translateX.value = withSpring(0);
++    },
++  });
++
++  const style = useAnimatedStyle(() => ({
++    transform: [{ translateX: translateX.value }],
++  }));
++
++  return (
++    <GestureDetector gesture={pan}>
++      <Animated.View style={[styles.row, style]}>
++        <Text>Row {index}</Text>
++      </Animated.View>
++    </GestureDetector>
++  );
++}
++
++export default function App() {
++  const scrollGesture = useNativeGesture({});
++
++  const onScroll = useAnimatedScrollHandler({
++    onBeginDrag: (e) => {
++      console.log('drag started at', e.contentOffset.y);
++    },
++    onEndDrag: (e) => {
++      console.log('drag ended at', e.contentOffset.y);
++    },
++  });
++
++  return (
++    <GestureHandlerRootView>
++      <GestureDetector gesture={scrollGesture}>
++        <Animated.ScrollView onScroll={onScroll} scrollEventThrottle={16}>
++          {ROWS.map((i) => (
++            <Row key={i} index={i} scrollGesture={scrollGesture} />
++          ))}
++        </Animated.ScrollView>
++      </GestureDetector>
++    </GestureHandlerRootView>
++  );
++}
++
++const styles = StyleSheet.create({
++  row: {
++    height: 56,
++    justifyContent: 'center',
++    paddingHorizontal: 16,
++    backgroundColor: 'white',
++    borderBottomWidth: StyleSheet.hairlineWidth,
++    borderBottomColor: '#ccc',
++  },
++});
+```
+
+**File**: `packages/docs-gesture-handler/docs/guides/gestures-and-scrollview.mdx` (added, +607/-0)
+```diff
+@@ -0,0 +1,607 @@
++---
++id: gestures-and-scrollview
++title: Gestures and ScrollView
++sidebar_position: 6
++---
++
++import AnimatedScrollViewExample from '!!raw-loader!.//\_examples/AnimatedScrollViewExample';
++
++`ScrollView` handles touches on its own, outside of Gesture Handler. If there is a gesture attached to one of its children or to one of its parents, the `ScrollView` and the gesture compete for the same touch, and scrolling usually wins. To coordinate them, the `ScrollView` needs a [`Native`](/docs/gestures/use-native-gesture) gesture. Once it has one, it takes part in gesture [relations](/docs/composition/overview) like any other gesture.
++
++This guide covers the most common layouts: gestures on list items, a `ScrollView` inside a view with a gesture, and Reanimated's `Animated.ScrollView`. It ends with a [photo gallery](#example) that puts them together.
++
++## Choosing a ScrollView
++
++### ScrollView exported by Gesture Handler
++
++`ScrollView` and `FlatList` exported by `react-native-gesture-handler` are [wrapped components](/docs/components/wrapped-components) with a [`Native`](/docs/gestures/use-native-gesture) gesture pre-applied. They accept relation properties directly:
++
++```jsx
++import { ScrollView } from 'react-native-gesture-handler';
++
++function List({ pan, children }) {
++  return <ScrollView requireToFail={pan}>{children}</ScrollView>;
++}
++```
++
++To refer to the `ScrollView` gesture in relations of other gestures, for example `block` on a gesture inside the list, read it from the [`onGestureUpdate_CAN_CAUSE_INFINITE_RERENDER`](/docs/components/wrapped-components#ongestureupdate_can_cause_infinite_rerender) callback and pass it down. Store it in a ref or compare handler tags before calling `setState`, otherwise the callback triggers an infinite loop of re-renders.
++
++Callbacks of the pre-applied gesture always run on the JS thread, and the Reanimated-specific configuration is not available.
++
++### Wrapping ScrollView with GestureDetector
++
++Any other scrollable component, for example `Animated.ScrollView` from Reanimated, `FlashList` or a pager, can be wrapped in a [`GestureDetector`](/docs/core-components/gesture-detectors#gesture-detector) with [`useNativeGesture`](/docs/gestures/use-native-gesture). The scrollable component must be the direct child of the detector.
++
++If the children of the `ScrollView` use [`VirtualGestureDetector`](/docs/core-components/gesture-detectors#virtualgesturedetector), wrap it with [`InterceptingGestureDetector`](/docs/core-components/gesture-detectors#interceptinggesturedetector) instead.
++
++```jsx
++import { ScrollView } from 'react-native';
++import {
++  GestureDetector,
++  useNativeGesture,
++} from 'react-native-gesture-handler';
++
++function List({ children }) {
++  const scrollGesture = useNativeGesture({});
++
++  return (
++    <GestureDetector gesture={scrollGesture}>
++      <ScrollView>{children}</ScrollView>
++    </GestureDetector>
++  );
++}
++```
++
++The `Native` gesture does not affect scrolling. It only makes the `ScrollView` a gesture that other gestures can refer to. `scrollGesture` is available from the first render, so there is no callback to wait for.
++
++### Which one to choose
++
++- Use the exported `ScrollView` or `FlatList` when the relations are set on the `ScrollView` itself, for example a list that waits for a gesture around it.
++- Wrap with `GestureDetector` when the scrollable component comes from another library.
++
++Use one of the two, never both. Wrapping a component exported by Gesture Handler attaches a second `Native` gesture, which results in undefined behavior.
++
++:::tip
++When the list contains gestures or components from Gesture Handler, we recommend the `ScrollView` exported by the library. It takes part in gesture recognition out of the box, with no extra setup.
++:::
++
++On web, the `Native` gesture cannot block scrolling. For swipeable rows, set [`touchAction`](/docs/core-components/gesture-detectors#touchaction) on the detector, see [Custom swipeable components inside ScrollView (web)](/docs/guides/swipe-and-scroll).
++
++## Gestures inside the list
++
++A `ScrollView` with rows, where each row has its own gesture, for example a horizontal `Pan`. The row's gesture should win when it is recognized, otherwise the `ScrollView` should scroll. In other words, the `ScrollView` has to wait for the row's gesture to fail.
++
++Pass the `ScrollView` gesture to [`block`](/docs/composition/block) on the row's gesture:
++
++```jsx
++function Row({ scrollGesture }) {
++  const pan = usePanGesture({
++    activeOffsetX: [-20, 20],
++    failOffsetY: [-10, 10],
++    // highlight-next-line
++    block: scrollGesture,
++    onUpdate: (e) => {
++      // ...
++    },
++  });
++
++  return (
++    <GestureDetector gesture={pan}>
++      <Animated.View>{/* ... */}</Animated.View>
++    </GestureDetector>
++  );
++}
++```
++
++`block` is a many-to-one relation: every row points to the single `ScrollView`, and the list does not have to keep track of its rows. This makes it suitable
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4699** (2026-11-16): Bump addressable from 2.9.0 to 2.9.1 in /apps/macos-example (@dependabot[bot])
 - **PR #4695** (2026-11-16): [docs] Clarify `immediatePressOut` description (@m-bert)
 - **PR #4694** (2026-11-16): [Jest] Fix `fireEvent.press` being dropped by detectors (@m-bert)
+- **PR #4693** (2026-11-26): [Web] Keep `touch-action` and `user-select` of enabled handlers sharing a view (@m-bert)
 - **PR #4692** (2026-11-16): [Web] Keep the browser context menu when enableContextMenu is not set (@lassiecoder)
 - **PR #4691** (2026-11-13): [iOS] Fix worklet callbacks running on the JS thread when `enabled` turns off mid-gesture (@shahjahanpak)
-- **PR #4685** (2026-11-16): [Android] Dismiss the keyboard when a held press on a button is dropped (@m-bert)
 
 ---
 
@@ -1620,74 +1842,32 @@ resets the flag in its own capture handler, which runs befo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Jest] Fix `fireEvent.press` being dropped by detectors
+## X. [Docs] Add a guide on using gestures with `ScrollView`
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/common-app/src/new_api/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0bf533d4`: [Jest] Fix `fireEvent.press` being dropped by detectors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4fa37bde`: [Docs] Add a guide on using gestures with `ScrollView`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/src/__tests__/api_v3.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/src/new_api/index.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { Keyboard, Text, TextInput, View } from 'react-native';
-      ({ props }) => props.handlerTags && props.onStartShouldSetResponderCapture
-      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-        false
-      );
-      expect(
-        interceptingDetector?.props.onStartShouldSetResponderCapture()
-      ).toBe(false);
-      expect(
-        interceptingDetector?.props.onStartShouldSetResponderCapture()
-      ).toBe(false);
-      expect(scrollViewDetector?.props.onStartShouldSetResponderCapture()).toBe(
-        false
-      );
-      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-        false
-      );
-      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-        false
-      );
-      expect(nativeDetector?.props.onStartShouldSetResponderCapture()).toBe(
-        false
-      );
-
-    // testing-library drops a press when the nearest host view with a
-    // bubble-phase `onStartShouldSetResponder` returns false (#4689)
-    test('fireEvent.press reaches onPress from inside an InterceptingGestureDetector', () => {
-      const pressFn = jest.fn();
-
-      render(
-        <GestureHandlerRootView>
-          <Touchable 
+import GalleryExample from './showcase/gallery';
+      { name: 'Gallery', component: GalleryExample },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { Keyboard, TextInput, View } from 'react-native';
-      ({ props }) => props.handlerTags && props.onStartShouldSetResponder
-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
-        false
-      );
-      expect(interceptingDetector?.props.onStartShouldSetResponder()).toBe(
-        false
-      );
-      expect(scrollViewDetector?.props.onStartShouldSetResponder()).toBe(false);
-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
-      expect(nativeDetector?.props.onStartShouldSetResponder()).toBe(false);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0bf533d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4fa37bde` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

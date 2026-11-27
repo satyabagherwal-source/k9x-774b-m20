@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:50:28.364Z",
+  "last_updated": "2026-11-27T00:59:11.420Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T00:41:48.418Z",
@@ -528,7 +528,7 @@
       "staged_for_review": 1
     },
     "trailbaseio-trailbase-learnings.md": {
-      "processed_at": "2026-11-26T06:18:35.181Z",
+      "processed_at": "2026-11-27T00:59:10.301Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2538,7 +2538,7 @@
       "staged_for_review": 1
     },
     "software-mansion-react-native-gesture-handler-learnings.md": {
-      "processed_at": "2026-11-17T19:45:04.563Z",
+      "processed_at": "2026-11-27T00:59:09.264Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2583,7 +2583,7 @@
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-8b-learnings.md": {
-      "processed_at": "2026-11-23T16:03:05.933Z",
+      "processed_at": "2026-11-27T00:59:08.704Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4743,
+  "total_dossiers_evaluated": 4746,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3557
+  "total_staged_for_review": 3559
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T00:50:27.967Z",
+  "last_updated": "2026-11-27T00:59:11.009Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -15610,8 +15610,8 @@
       "title": "Architecture Intelligence: software-mansion/react-native-gesture-handler Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-architecture-intelligence-software.md",
       "repository": "software-mansion/react-native-gesture-handler",
-      "content_hash": "8d5eb935f481c43b17ef8905ee1c37a9a87b8f57dd3f4881768473a254ec814c",
-      "created_at": "2026-11-17T19:44:54.778Z"
+      "content_hash": "c46d5ac7b1391f53c5cf3c0973c1b86b3b0bb07e9ab07678f4f50bd876a5fee9",
+      "created_at": "2026-11-27T00:58:56.691Z"
     },
     "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-kumahq-kuma-core-invariants",
@@ -15688,8 +15688,8 @@
       "title": "Architecture Intelligence: software-mansion-react-native-gesture-handler-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-gesture-handler-learnings-architecture-intelligenc.md",
       "repository": "software-mansion-react-native-gesture-handler-learnings",
-      "content_hash": "3060ef0a410914b1e500ad477f85647d7d1508589a3c992b19aa1b75b8d80461",
-      "created_at": "2026-11-17T19:45:04.879Z"
+      "content_hash": "a852e9249f568e9ee368ff5b66c4956c38b463cad2212680d223cb12f99e2514",
+      "created_at": "2026-11-27T00:59:09.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-2-core-invariants",
@@ -16330,8 +16330,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants.md",
       "repository": "Qwen/Qwen3-8B",
-      "content_hash": "e86194ecdeafa3e219795d2ee99705125f62af95281e6631b3cbe72c0ff92304",
-      "created_at": "2026-11-23T16:02:50.126Z"
+      "content_hash": "4b0eb2fe9fec5a451ba3d47d2727a6babf12cbf1fb01559c812a4cd312cc8508",
+      "created_at": "2026-11-27T00:58:50.319Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
@@ -16390,8 +16390,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8b-lear.md",
       "repository": "hf-qwen-qwen3-8b-learnings",
-      "content_hash": "4291ec77ccf3479d41d080598d8570a55eea3182abd3158f5ccc43f82813b4ad",
-      "created_at": "2026-11-23T16:03:06.138Z"
+      "content_hash": "0518efb63f256a68db9896451c7657e950a682140d1596ead0ba592a2eb33fcb",
+      "created_at": "2026-11-27T00:59:09.002Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
@@ -32650,8 +32650,8 @@
       "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
       "repository": "trailbaseio/trailbase",
-      "content_hash": "5f5ecd4e1eda91f3d17e81c2d6dbb7a9318cd1a6aef717a0084012e11cfbb98d",
-      "created_at": "2026-11-26T06:18:30.840Z"
+      "content_hash": "f93e5af5203856b1add1046a5f87ba470da1af6dcbfeed2caa892074a0ca401f",
+      "created_at": "2026-11-27T00:59:05.475Z"
     },
     "DOM-H-26FD692A": {
       "record_id": "DOM-H-26FD692A",
@@ -32701,8 +32701,8 @@
       "title": "Architecture Intelligence: trailbaseio-trailbase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-learnings-architecture-intelligence-trailbaseio-trailbase-.md",
       "repository": "trailbaseio-trailbase-learnings",
-      "content_hash": "3337afbe72e532f9512c9ecb4076eb1b28355ff2624910d4689e2c6c8503d085",
-      "created_at": "2026-11-26T06:18:35.743Z"
+      "content_hash": "08ec46644c4db66595e28155a3ee74f9cdf4ae77d9dd316641ca9cc761da38d3",
+      "created_at": "2026-11-27T00:59:11.009Z"
     },
     "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",

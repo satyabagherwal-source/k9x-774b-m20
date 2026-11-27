@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T00:50:22.377Z",
+  "last_updated": "2026-11-27T00:59:04.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "58eb9dc85a4cc479b0ea74b9dc550063074bc7ab00a823e50990f2a9663ce314",
-      "verified_at": "2026-11-23T16:02:49.929Z",
+      "content_hash": "63fa725e9a384e2b26725285c84891a1f8c1e217c517c1a5e412dd81f115642b",
+      "verified_at": "2026-11-27T00:58:50.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:02:49.929Z"
+      "last_updated": "2026-11-27T00:58:50.063Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
-      "verified_at": "2026-11-26T06:18:30.460Z",
+      "content_hash": "314ffdfb420dad613902a7ae46f3ce3aae1576ad4acdd143d4c63488b448fd18",
+      "verified_at": "2026-11-27T00:59:04.986Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:18:30.460Z"
+      "last_updated": "2026-11-27T00:59:04.986Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -7311,14 +7311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
-      "content_hash": "ec37422986d7b7ccd4be18b8dc746489c0dc0cdfcc0e272dc1d1b16d2c45600e",
-      "verified_at": "2026-11-17T19:44:54.495Z",
+      "content_hash": "4f79accb31c89d15aa005729e5c8ac17b1b5bded6c488435bbb4e3854e42ee81",
+      "verified_at": "2026-11-27T00:58:56.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:44:54.495Z"
+      "last_updated": "2026-11-27T00:58:56.139Z"
     },
     "aws/aws-cdk": {
       "repository": "aws/aws-cdk",

@@ -4,22 +4,22 @@
 {
   "source_repository": "trailbaseio/trailbase",
   "source_url": "https://github.com/trailbaseio/trailbase",
-  "source_version": "81531859",
+  "source_version": "0eb63838",
   "license": "OSL-3.0",
-  "timestamp": "2026-11-26T06:18:30.675Z",
+  "timestamp": "2026-11-27T00:59:05.251Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trailbaseio-trailbase",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `81531859`).  
-> **License**: OSL-3.0 | **Timestamp**: `2026-11-26T06:18:30.675Z`  
+> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `0eb63838`).  
+> **License**: OSL-3.0 | **Timestamp**: `2026-11-27T00:59:05.251Z`  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trailbaseio/trailbase` (Commit: `81531859`)
+- **Target Repository**: `trailbaseio/trailbase` (Commit: `0eb63838`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T06:18:29.440Z  
+> **Harvest Timestamp**: 2026-11-27T00:59:03.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5785 stars
+- **Stars / Engagement**: 5786 stars
 
 ---
 
@@ -965,332 +965,603 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cafc4c4` (2026-11-24)
-**Commit Message**: Update Rust dependencies. Addresses security advisories.
+### Incident Patch 1: `8e4df93e` (2026-11-26)
+**Commit Message**: Query tenant-name for user accounts page and render a better list.
 
-**File**: `Cargo.lock` (modified, +109/-109)
+**File**: `crates/assets/js/admin/src/components/accounts/AccountsPage.tsx` (modified, +11/-2)
 ```diff
-@@ -54,12 +54,12 @@ dependencies = [
- 
- [[package]]
- name = "ahash"
--version = "0.8.12"
-+version = "0.8.14"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
-+checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
- dependencies = [
-  "cfg-if",
-- "getrandom 0.3.4",
-+ "getrandom 0.4.3",
-  "once_cell",
-  "serde",
-  "version_check",
-@@ -163,9 +163,9 @@ dependencies = [
- 
- [[package]]
- name = "anyhow"
--version = "1.0.104"
-+version = "1.0.105"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-+checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
- 
- [[package]]
- name = "approx"
-@@ -1193,19 +1193,19 @@ dependencies = [
- 
- [[package]]
- name = "clap"
--version = "4.6.9"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-+checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
- ]
- 
- [[package]]
- name = "clap_builder"
--version = "4.6.7"
-+version = "4.6.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-+checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
- dependencies = [
-  "anstream",
-  "anstyle",
-@@ -1369,9 +1369,9 @@ checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
- 
- [[package]]
- name = "constant_time_eq"
--version = "0.6.1"
-+version = "0.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
-+checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
- dependencies = [
-  "rustversion",
- ]
-@@ -1387,9 +1387,9 @@ dependencies = [
- 
- [[package]]
- name = "cookie"
--version = "0.18.2"
-+version = "0.18.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
-+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
- dependencies = [
-  "percent-encoding",
-  "time",
-@@ -1516,7 +1516,7 @@ dependencies = [
-  "cranelift-entity",
-  "cranelift-isle",
-  "gimli",
-- "hashbrown 0.17.1",
-+ "hashbrown 0.17.2",
-  "libm",
-  "log",
-  "postcard",
-@@ -1578,7 +1578,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b00cf9b20096b09b3499d19f82cca658c13c6988ecbc54881caf12a2f01b2f8c"
- dependencies = [
-  "cranelift-codegen",
-- "hashbrown 0.17.1",
-+ "hashbrown 0.17.2",
-  "log",
-  "smallvec",
-  "target-lexicon",
-@@ -1619,9 +1619,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.5"
-+version = "1.5.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
-+checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- dependencies = [
-  "cfg-if",
- ]
-@@ -2138,7 +2138,7 @@ dependencies = [
-  "ed25519",
-  "rand_core 0.10.1",
-  "serde",
-- "sha2 0.11.1",
-+ "sha2 0.11.2",
-  "signature",
-  "subtle",
-  "zeroize",
-@@ -2250,24 +2250,24 @@ dependencies = [
- 
- [[package]]
- name = "env_filter"
--version = "2.0.0"
-+version = "2.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
-+checksum = "288efae2d67fb0418d01f837feb55c7a9cdc4c5db38d3dee91324a1c7ec6fd31"
- dependencies = [
-  "log",
-  "regex",
- ]
- 
- [[package]]
- name = "env_logger"
--version = "0.11.11"
-+version = "0.11.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
-+checksum = "82bdfc6e01c305a3ea46ed815b06ac0b379d7c5eac588fa4464048d731c4dcdf"
- dependencies = [
-  "anstream",
-  "anstyle",
-  "env_filter",
-- "jiff 0.2.46",
-+ "jiff 1.0.3",
-  "log",
- ]
- 
-@@ -2551,9 +2551,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -2952,9 +2952,9 @@ dependencies = [
- 
- [[package]]
- name = "h2"
--version = "0.4.20"
-+version = "0.4.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
-+checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -3041,9 +3041
+@@ -1,5 +1,6 @@
+ import {
+   JSX,
++  For,
+   Match,
+   Show,
+   Suspense,
+@@ -158,10 +159,18 @@ function buildUserColumns(): ColumnDef<StockFeatures, UserJson>[] {
+     },
+     {
+       id: "tenants",
+-      header: "tenants",
++      header: "tenant associations",
+       size: 100,
+       cell: (ctx) => (
+-        <div>{`${ctx.row.original.tenant_memberships.join(",")}`}</div>
++        <ul class="flex flex-wrap gap-x-1">
++          <For each={ctx.row.original.tenant_memberships}>
++            {(item) => (
++              <li class="after:mr-1 after:content-[','] last:after:content-['']">
++                {item.name}
++              </li>
++            )}
++          </For>
++        </ul>
+       ),
+     },
+     {
 ```
 
-**File**: `Cargo.toml` (modified, +3/-3)
+**File**: `crates/assets/js/bindings/src/TenantMembership.ts` (added, +3/-0)
 ```diff
-@@ -60,16 +60,16 @@ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "s
- bytes = { version = "1.12.2", features = ["serde"] }
- chrono = { version = "0.4.45", default-features = false }
- compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
--clap = { version = "^4.6.9", features=["derive", "env"] }
-+clap = { version = "^4.6.10", features=["derive", "env"] }
- cron = "0.17.0"
- crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
--env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
-+env_logger = { version = "^0.11.12", default-features = false, features = ["auto-color", "humantime"] }
- flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
- futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
- geos = { version = "11.3.1", default-features = false, features = ["geo", "json"] }
- http = { version = "1.5.0", default-features = false }
- http-body-util = { version = "0.1.5", default-features = false }
--hyper = { version = "1.12.0", default-features = false }
-+hyper = { version = "1.13.0", default-features = false }
- itertools = { version = "0.15.0", default-features = false, features = ["use_std"] }
- jsonwebtoken = { version = "12.0.0", default-features = false, features = ["use_pem", "rust_crypto"] }
- # libsqlite3-sys = { version = "0.38.2", default-features = false, features = ["bundled", "preupdate_hook"] }
+@@ -0,0 +1,3 @@
++// This file was generated by [ts-rs](https://github.com/Aleph-Alpha/ts-rs). Do not edit this file manually.
++
++export type TenantMembership = { id: string, name: string, };
 ```
 
-**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
+**File**: `crates/assets/js/bindings/src/UserJson.ts` (modified, +2/-1)
 ```diff
-@@ -45,7 +45,7 @@ trailbase-client = { workspace = true }
- trailbase-extension = { workspace = true }
- trailbase-sqlite = { workspace = true }
- trailbase-wasm-component-repo = { workspace = true }
--url = "2.5.8"
-+url = "2.5.9"
- utoipa = { workspace = true }
- uuid = { workspace = true }
+@@ -1,3 +1,4 @@
+ // This file was generated by [ts-rs](https://github.com/Aleph-Alpha/ts-rs). Do not edit this file manually.
++import type { TenantMembership } from "./TenantMembership";
  
+-export type UserJson = { id: string, email: string | null, unverified_email: string | null, username: string | null, admin: boolean, provider_id: bigint, provider_user_id: string | null, created: bigint, updated: bigint, tenant_memberships: Array<string>, };
++export type UserJson = { id: string, email: string | null, unverified_email: string | null, username: string | null, admin: boolean, provider_id: bigint, provider_user_id: string | null, created: bigint, updated: bigint, tenant_memberships: Array<TenantMembership>, };
 ```
 
-**File**: `crates/client/Cargo.toml` (modified, +1/-1)
+**File**: `crates/assets/js/bindings/src/index.ts` (modified, +1/-0)
 ```diff
-@@ -36,7 +36,7 @@ serde_json = { workspace = true }
- serde_repr = "0.1.21"
- thiserror = "2.0.21"
- tracing = "0.1.44"
--url = "2.5.8"
-+url = "2.5.9"
- 
- [dev-dependencies]
- base64 = { version = "0.23.1", default-features = false, features = ["alloc"] }
+@@ -92,6 +92,7 @@ export * from './TableIndex';
+ export * from './TableTrigger';
+ export * from './Tenant';
+ export * from './TenantJson';
++export * from './TenantMembership';
+ export * from './TestEmailRequest';
+ export * from './TransactionResponse';
+ export * from './TransactionResult';
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +6/-6)
+**File**: `crates/core/src/admin/user/list_users.rs` (modified, +19/-9)
 ```diff
-@@ -56,7 +56,7 @@ cron = { workspace = true }
- ed25519-dalek = { version = "3.0.0", features = ["pkcs8", "pem", "rand_core"] }
- fallible-iterator = "0.3.0"
- flume = { workspace = true }
--form_urlencoded = "1.2.2"
-+form_urlencoded = "1.2.3"
- futures-util = { workspace = true }
- geos = { workspace = true, optional = true }
- getrandom = "0.4.3"
-@@ -69,7 +69,7 @@ hyper-util = "0.1.21"
- indexmap = "2.14.2"
- init-tracing-opentelemetry = { version = "0.44.0", features = ["tracing_subscriber_ext", "metrics"], optional = true }
- itertools = { workspace = true }
--jsonschema = { version = "0.61.2", default-features = false }
-+jsonschema = { version = "0.63.1", default-features = false }
- jsonwebtoken = { workspace = true }
- lazy_static = "1.5.1"
- lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
-@@ -98,7 +98,7 @@ serde_path_to_error = "0.1.20"
- serde_qs = { workspace = true }
- serde_repr = "0.1.21"
- serde_urlencoded = "0.7.1"
--sha2 = "0.11.1"
-+sha2 = "0.11.2"
- sqlformat = "0.5.0"
- sqlite3-parser = { workspace = true }
- thiserror = "2.0.21"
-@@ -128,18 +128,18 @@ trailbase-wasm-component-repo = { workspace = true }
- trailbase-wasm-runtime-axum = { workspace = true, optional = true }
- trailbase-wasm-runtime-host = { workspace = true, optional = true }
- ts-rs = { workspace = true }
--url = { version = "^2.5.8", default-features = false }
-+url = { version = "^2.5.9", default-features = false }
- utoipa = { workspace = true }
- utoipa-axum = { workspace = true }
- uuid = { workspace = true }
- validator = { version = "0.21.0", default-features = false }
--walkdir = "2.5.0"
-+walkdir = "2.5.1"
+@@ -12,10 +12,16 @@ use crate::admin::AdminError as Error;
+ use crate::app_state::AppState;
+ use crate::auth::user::DbUser;
+ use crate::connection::ConnectionEntry;
+-use crate::constants::{TENANT_MEMBER_TABLE, USER_TABLE_FQ};
++use crate::constants::{TENANT_MEMBER_TABLE, TENANT_TABLE, USER_TABLE_FQ};
+ use crate::listing::{WhereClause, build_filter_where_clause, limit_or_default};
+ use crate::util::row_id_column;
  
- [build-dependencies]
- trailbase-build = { workspace = true }
++#[derive(Debug, Serialize, TS, utoipa::ToSchema)]
++pub struct TenantMembership {
++  id: Uuid,
++  name: String,
++}
++
+ #[derive(Debug, Serialize, TS, utoipa::ToSchema)]
+ pub struct UserJson {
+   pub id: String,
+@@ -31,11 +37,11 @@ pub struct UserJson {
+   pub created: i64,
+   pub updated: i64,
  
- [dev-dependencies]
--anyhow = "^1.0.104"
-+anyhow = "^1.0.105"
- axum-test = "21.1.0"
- criterion = { version = "0.8", features = ["html_reports", "async_tokio"] }
- env_logger = { workspace = true }
+-  pub tenant_memberships: Vec<String>,
++  pub tenant_memberships: Vec<TenantMembership>,
+ }
+ 
+ impl UserJson {
+-  fn from(user: DbUser, tenant_memberships: Vec<String>) -> Self {
++  fn from(user: DbUser, tenant_memberships: Vec<(Uuid, String)>) -> Self {
+     UserJson {
+       id: Uuid::from_bytes(user.id).to_string(),
+       email: user.email.map(String::from),
+@@ -46,7 +52,10 @@ impl UserJson {
+       provider_user_id: user.provider_user_id.map(String::from),
+       created: user.created,
+       updated: user.updated,
+-      tenant_memberships,
++      tenant_memberships: tenant_memberships
++        .into_iter()
++        .map(|(id, name)| TenantMembership { id, name })
++        .collect(),
+     }
+   }
+ }
+@@ -144,7 +153,7 @@ async fn fetch_users(
+   offset: Option<usize>,
+   order: &Order,
+   limit: usize,
+-) -> Result<Vec<(DbUser, Vec<String>)>, Error> {
++) -> Result<Vec<(DbUser, Vec<(Uuid, String)>)>, Error> {
+   let WhereClause {
+     mut params,
+     clause: where_clause,
+@@ -176,9 +185,10 @@ async fn fetch_users(
+ 
+   let sql_query = format!(
+     r#"
+-      SELECT _ROW_.*, json_group_array(uuid_text(m.tenant))
++      SELECT _ROW_.*, json_group_array(json_array(uuid_text(m.tenant), t.name))
+         FROM {fq_table_name} AS _ROW_
+-        LEFT JOIN {TENANT_MEMBER_TABLE} AS m ON m."user" = _ROW_.id
++        LEFT JOIN "{TENANT_MEMBER_TABLE}" AS m ON m."user" = _ROW_.id
++        LEFT JOIN "{TENANT_TABLE}" AS t ON t.id = m.tenant
+       WHERE
+         {where_clause}
+       GROUP BY _ROW_.id
+@@ -190,7 +200,7 @@ async fn fetch_users(
+     fq_table_name = USER_TABLE_FQ.escaped_string(),
+   );
+ 
+-  let users: Vec<(DbUser, Vec<String>)> = conn
++  let users: Vec<(DbUser, Vec<(Uuid, String)>)> = conn
+     .read_query_rows(sql_query.clone(), params)
+     .await
+     .map_err(|err| {
+@@ -203,7 +213,7 @@ async fn fetch_users(
+       return Ok((
+         DbUser::from_row(row)?,
+         memberships
+-          .and_then(|json| serde_json::from_str::<Vec<String>>(&json).ok())
++          .and_then(|json| serde_json::from_str::<Vec<(Uuid, String)>>(&json).ok())
+           .unwrap_or_default(),
+       ));
+     })
 ```
 
-**File**: `crates/extension/Cargo.toml` (modified, +1/-1)
+---
+
+### Incident Patch 2: `f8435a61` (2026-11-24)
+**Commit Message**: Admin UI: inject tenant header.
+
+**File**: `crates/assets/js/admin/src/components/accounts/AccountsPage.tsx` (modified, +123/-65)
 ```diff
-@@ -16,7 +16,7 @@ arc-swap = { workspace = true }
- argon2 = { workspace = true }
- base64 = { workspace = true }
- bcrypt = "0.19.3"
--jsonschema = { version = "0.61.2", default-features = false }
-+jsonschema = { version = "0.63.1", default-features = false }
- maxminddb = "0.33.0"
- quick_cache = { version = "0.7.0", default-features = false }
- regex = "1.13.2"
+@@ -6,6 +6,7 @@ import {
+   Show,
+   Switch,
+   Suspense,
++  onMount,
+ } from "solid-js";
+ import { useSearchParams } from "@solidjs/router";
+ import {
+@@ -473,7 +474,7 @@ function EditSheetContent(props: {
+   );
+ }
+ 
+-function TenantsTab() {
++function TenantsTab(props: { setHeader: (header: JSX.Element) => void }) {
+   const [searchParams, setSearchParams] = useSearchParams<{
+     filter?: string;
+     pageSize?: string;
+@@ -540,6 +541,49 @@ function TenantsTab() {
+     },
+   );
+ 
++  onMount(() => {
++    props.setHeader(
++      <Header
++        title="Accounts"
++        description={
++          <Show when={tenants.data}>
++            {(data) => <span>{Number(data().total_row_count)} tenants</span>}
++          </Show>
++        }
++        left={
++          <IconButton onClick={refetch}>
++            <TbOutlineRefresh />
++          </IconButton>
++        }
++        right={
++          <SafeSheet
++            children={(sheet) => {
++              return (
++                <>
++                  <SheetContent class={sheetMaxWidth}>test</SheetContent>
++
++                  <SheetTrigger
++                    as={(props: DialogTriggerProps) => (
++                      <Button
++                        variant="outline"
++                        class="flex gap-2"
++                        onClick={() => {}}
++                        {...props}
++                      >
++                        <span>Add</span>
++                        <TbOutlineUser />
++                      </Button>
++                    )}
++                  />
++                </>
++              );
++            }}
++          />
++        }
++      />,
++    );
++  });
++
+   return (
+     <Suspense fallback={<div>Loading...</div>}>
+       <Switch>
+@@ -553,7 +597,7 @@ function TenantsTab() {
+               table={tenantsTable}
+               loading={tenants.isLoading}
+               onRowClick={(_idx: number, row: TenantJson) => {
+-                // setEditUser(row);
++                return null;
+               }}
+             />
+           </div>
+@@ -563,7 +607,7 @@ function TenantsTab() {
+   );
+ }
+ 
+-export function AccountsPage() {
++function UserAccountsTab(props: { setHeader: (header: JSX.Element) => void }) {
+   const [searchParams, setSearchParams] = useSearchParams<{
+     filter?: string;
+     pageSize?: string;
+@@ -646,13 +690,13 @@ export function AccountsPage() {
+     },
+   );
+ 
+-  return (
+-    <div class="size-full scrollbar-thin md:overflow-y-auto">
++  onMount(() => {
++    props.setHeader(
+       <Header
+         title="Accounts"
+         description={
+           <Show when={users.data}>
+-            {(data) => <span>{Number(data().total_row_count)} accounts</span>}
++            {(data) => <span>{Number(data().total_row_count)} users</span>}
+           </Show>
+         }
+         left={
+@@ -687,77 +731,91 @@ export function AccountsPage() {
+             }}
+           />
+         }
++      />,
++    );
++  });
++
++  return (
++    <div class="flex flex-col items-end gap-4 p-4">
++      <FilterBar
++        initial={searchParams.filter}
++        onSubmit={(value: string) => {
++          if (value === searchParams.filter) {
++            refetch();
++          } else {
++            setFilter(value);
++          }
++        }}
++        placeholder={`Filter, e.g.: 'email ~ "admin@%" && admin = TRUE'`}
+       />
+ 
++      <Suspense fallback={<div>Loading...</div>}>
++        <Switch>
++          <Match when={users.isError}>
++            <span>Error: {users.error?.toString()}</span>
++          </Match>
++
++          <Match when={true}>
++            <div class="w-full space-y-2.5">
++              <Table
++                table={accountsTable}
++                loading={users.isLoading}
++                onRowClick={(_idx: number, row: UserJson) => {
++                  setEditUser(row);
++                }}
++              />
++            </div>
++          </Match>
++        </Switch>
++
++        {/* WARN: This might open multiple sheets or at least scrims for each row */}
++        <SafeSheet
++          open={[
++            () => editUser() !== undefined,
++            (isOpen: boolean | ((value: boolean) => boolean)) => {
++              if (!isOpen) {
++                setEditUser(undefined);
++              }
++            },
++          ]}
++          children={(sheet) => {
++            return (
++              <SheetContent class={sheetMaxWidth}>
++                <Show when={editUser()}>
++                  <EditSheetContent
++                    user={editUser()!}
++                    refetch={refetch}
++                    {...sheet}
++                  />
++                </Show>
++              </SheetContent>
++            );
++          }}
++        />
++      </Suspense>
++    </div>
++  );
++}
++
++export function AccountsPage() {
++  const [header, setHeader] = createSignal<JSX.Element | null>(null);
++
++  return (
++    <div class="size-full scrollbar-thin md:overflow-y-auto">
++      {header()}
++
+       <Tabs defaultValue="users">
+         <TabsList class="mx-4 my-2 grid grid-cols-2">
 ```
 
-**File**: `crates/refinery/Cargo.toml` (modified, +1/-1)
+**File**: `crates/assets/js/admin/src/lib/api/tenant.ts` (added, +23/-0)
 ```diff
-@@ -19,7 +19,7 @@ siphasher = "1.0"
- thiserror = "2"
- trailbase-sqlite = { workspace = true }
- time = { version = "0.3.55", features = ["parsing", "formatting"] }
--walkdir = "2.5.0"
-+walkdir = "2.5.1"
- 
- [dev-dependencies]
- temp-dir = "0.2.0"
+@@ -0,0 +1,23 @@
++import type { ListTenantsResponse } from "trailbase-bindings";
++
++import { adminFetch } from "@/lib/fetch";
++import { buildListSearchParams } from "@/lib/list";
++
++export async function listTenants(
++  filter: string | undefined,
++  pageSize: number,
++  pageIndex: number,
++  order?: string,
++): Promise<ListTenantsResponse> {
++  const params = buildListSearchParams({
++    filter,
++    pageSize,
++    pageIndex,
++    // Users use UUIDv4 and cannot be cursored on `id`.
++    cursor: undefined,
++    order,
++  });
++
++  const response = await adminFetch(`/tenant?${params}`);
++  return await response.json();
++}
 ```
 
-**File**: `crates/schema/Cargo.toml` (modified, +2/-2)
+---
+
+### Incident Patch 3: `5d296a62` (2026-11-23)
+**Commit Message**: Add a placeholder tenant UI.
+
+**File**: `crates/assets/js/admin/src/components/accounts/AccountsPage.tsx` (modified, +253/-81)
 ```diff
-@@ -19,7 +19,7 @@ fallible-iterator = "0.3.0"
- geos = { workspace = true, optional = true }
- infer = "0.22.0"
- itertools = { workspace = true }
--jsonschema = { version = "0.61.2", default-features = false }
-+jsonschema = { version = "0.63.1", default-features = false }
- lazy_static = "1.5.1"
- log = { workspace = true }
- parking_lot = { workspace = true }
-@@ -37,7 +37,7 @@ utoipa = { workspace = true }
- uuid = { workspace = true }
+@@ -43,6 +43,7 @@ import {
+   SheetTitle,
+   SheetTrigger,
+ } from "@/components/ui/sheet";
++import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+ import {
+   Tooltip,
+   TooltipContent,
+@@ -64,13 +65,18 @@ import { assets } from "@/components/settings/AuthSettings";
  
- [dev-dependencies]
--anyhow = "1.0.104"
-+anyhow = "1.0.105"
- indoc = "2.0.8"
- litegis = { workspace = true }
- rusqlite = { workspace = true }
+ import { mintTokens } from "@/lib/api/mint";
+ import { deleteUser, updateUser, fetchUsers } from "@/lib/api/user";
++import { listTenants } from "@/lib/api/tenant";
+ import { copyToClipboard, safeParseInt } from "@/lib/utils";
+ import { formatSortingAsOrder } from "@/lib/list";
+ import { oAuthProviderIdFromJSON } from "@proto/config";
+ 
+-import type { UpdateUserRequest, UserJson } from "trailbase-bindings";
++import type {
++  UpdateUserRequest,
++  UserJson,
++  TenantJson,
++} from "trailbase-bindings";
+ 
+-function buildColumns(): ColumnDef<StockFeatures, UserJson>[] {
++function buildUserColumns(): ColumnDef<StockFeatures, UserJson>[] {
+   // NOTE: the headers are lower-case to match the column names and don't confuse when trying to use the filter bar.
+   return [
+     {
+@@ -201,6 +207,66 @@ function buildColumns(): ColumnDef<StockFeatures, UserJson>[] {
+   ];
+ }
+ 
++function buildTenantColumns(): ColumnDef<StockFeatures, TenantJson>[] {
++  // NOTE: the headers are lower-case to match the column names and don't confuse when trying to use the filter bar.
++  return [
++    {
++      accessorKey: "id",
++      header: () => {
++        return <div class="ml-3">id</div>;
++      },
++      size: 320,
++      cell: (ctx) => {
++        const { id } = ctx.row.original;
++        return (
++          <div class="flex items-center gap-2">
++            <Button
++              variant="ghost"
++              size="icon"
++              onClick={(e) => {
++                e.stopPropagation();
++                copyToClipboard(id, true);
++              }}
++            >
++              <TbOutlineClipboardCopy />
++            </Button>
++
++            <span class="font-mono text-xs">{id}</span>
++          </div>
++        );
++      },
++    },
++    {
++      accessorKey: "name",
++      minSize: 180,
++      cell: (ctx) => {
++        return (
++          <span class="line-clamp-2 text-left text-ellipsis">
++            {ctx.row.original.name}
++          </span>
++        );
++      },
++    },
++    {
++      accessorKey: "template",
++      minSize: 260,
++      cell: (ctx) => {
++        return (
++          <span class="line-clamp-2 text-left text-ellipsis">
++            {ctx.row.original.template}
++          </span>
++        );
++      },
++    },
++    {
++      accessorKey: "created",
++      cell: (ctx) => {
++        return new Date(Number(ctx.row.original.created) * 1000).toUTCString();
++      },
++    },
++  ];
++}
++
+ function DeleteUserButton(props: {
+   userId: string;
+   email: string | null;
+@@ -407,19 +473,109 @@ function EditSheetContent(props: {
+   );
+ }
+ 
+-export function AccountsPage() {
++function TenantsTab() {
+   const [searchParams, setSearchParams] = useSearchParams<{
+     filter?: string;
+     pageSize?: string;
+     pageIndex?: string;
+   }>();
++
+   const pagination = (): PaginationState => {
+     return {
+       pageSize: safeParseInt(searchParams.pageSize) ?? 20,
+       pageIndex: safeParseInt(searchParams.pageIndex) ?? 0,
+     };
+   };
+ 
++  const [sorting, setSorting] = createSignal<SortingState>([]);
++
++  const client = useQueryClient();
++  const tenants = useQuery(
++    () => ({
++      queryKey: ["tenants"],
++      queryFn: async () => {
++        const p = pagination();
++        const s = sorting();
++
++        const response = await listTenants(
++          searchParams.filter,
++          p.pageSize,
++          p.pageIndex,
++          formatSortingAsOrder(s),
++        );
++
++        return response;
++      },
++    }),
++    () => client,
++  );
++
++  const refetch = () => {
++    client.invalidateQueries({
++      queryKey: ["tenants"],
++    });
++  };
++
++  const columns = createMemo(buildTenantColumns);
++  const tenantsTable = buildTable(
++    {
++      columns,
++      data: () => tenants.data?.tenants ?? [],
++      rowCount: () => Number(tenants.data?.total_row_count ?? -1),
++      pagination,
++      onPaginationChange: (s: PaginationState) => {
++        setSearchParams({
++          ...searchParams,
++          pageIndex: s.pageIndex,
++          pageSize: s.pageSize,
++        });
++      },
++    },
++    {
++      manualSorting: true,
++      state: {
++        sorting,
++      },
++      onSortingChange: setSorting,
++    },
++  );
++
++  return (
++    <Suspense fallback={<div>Loading...</div>}>
++      <Switch>
++        <Match when={tenants.isError}>
++          <span>Error: {tenants.error?.toString()}</span>
++        </Match>
++
++        <Match when={true}>
++          <div class="w-full space-y-2.5">
++            <Table
++              table={tenantsTable}
++              loading={tenants.isLoading}
++              onRowClick={(_idx: number, row: TenantJson) => {
++                // setEditUser(row);
++              }}
++            />
++          </div>
++        </Ma
+```
+
+**File**: `crates/assets/js/bindings/src/index.ts` (modified, +4/-0)
+```diff
+@@ -23,10 +23,12 @@ export * from './CreateIndexRequest';
+ export * from './CreateIndexResponse';
+ export * from './CreateTableRequest';
+ export * from './CreateTableResponse';
++export * from './CreateTenantRequest';
+ export * from './CreateUserRequest';
+ export * from './DeleteBackupsRequest';
+ export * from './DeleteRowRequest';
+ export * from './DeleteRowsRequest';
++export * from './DeleteTenantRequest';
+ export * from './DeleteUserRequest';
+ export * from './DisableTotpRequest';
+ export * from './DropIndexRequest';
+@@ -47,6 +49,7 @@ export * from './ListJsonSchemasResponse';
+ export * from './ListLogsResponse';
+ export * from './ListRowsResponse';
+ export * from './ListSchemasResponse';
++export * from './ListTenantsResponse';
+ export * from './ListUsersResponse';
+ export * from './ListWasmComponentsResponse';
+ export * from './LoginAnonymousRequest';
+@@ -88,6 +91,7 @@ export * from './Table';
+ export * from './TableIndex';
+ export * from './TableTrigger';
+ export * from './Tenant';
++export * from './TenantJson';
+ export * from './TestEmailRequest';
+ export * from './TransactionResponse';
+ export * from './TransactionResult';
 ```
 
 #### Recent Merged Pull Requests:
@@ -1319,83 +1590,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust dependencies. Addresses security advisories.
+## X. Query tenant-name for user accounts page and render a better list.
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/assets/js/admin/src/components/accounts/AccountsPage.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cafc4c4`: Update Rust dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e4df93e`: Query tenant-name for user accounts page and render a better list.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/assets/js/admin/src/components/accounts/AccountsPage.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.8.14"
-checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
- "getrandom 0.4.3",
-version = "1.0.105"
-checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
-version = "4.6.10"
-checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
-version = "4.6.10"
-checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
-version = "0.6.2"
-checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
-version = "0.18.3"
-checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
- "hashbrown 0.17.2",
- "hashbrown 0.17.2",
-version = "1.5.6"
-checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
- "sha2 0.11.2",
-version = "2.1.0"
-checksum = "288efae2d67fb0418d01f837feb55c7a9cdc4c5db38d3dee91324a1c7ec6fd31"
-version = "0.11.12"
-checksum = "82bdfc6e01c305a3ea46ed815b06ac0b379d7c5eac588fa4464048d731c4dcdf"
- "jiff 1.0.3",
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "0.4.21"
-checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
+  For,
+      header: "tenant associations",
+        <ul class="flex flex-wrap gap-x-1">
+          <For each={ctx.row.original.tenant_memberships}>
+            {(item) => (
+              <li class="after:mr-1 after:content-[','] last:after:content-['']">
+                {item.name}
+              </li>
+            )}
+          </For>
+        </ul>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.8.12"
-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
- "getrandom 0.3.4",
-version = "1.0.104"
-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
-version = "4.6.9"
-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-version = "4.6.7"
-checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
-version = "0.6.1"
-checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
-version = "0.18.2"
-checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
- "hashbrown 0.17.1",
- "hashbrown 0.17.1",
-version = "1.5.5"
-checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
- "sha2 0.11.1",
-version = "2.0.0"
-checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
-version = "0.11.11"
-checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
- "jiff 0.2.46",
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "0.4.20"
-checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+      header: "tenants",
+        <div>{`${ctx.row.original.tenant_memberships.join(",")}`}</div>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cafc4c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e4df93e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

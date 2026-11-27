@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:50:27.760Z",
+  "last_updated": "2026-11-27T00:59:10.727Z",
   "directives": [
     {
       "id": "CD-001",
@@ -67934,6 +67934,46 @@
       "source_repo": "helixdb-helix-db",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5D2262-default-the-cli-to-docker-v0-0-19.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-WYVR",
+      "directive_title": "[Docs] Add a guide on using gestures with `ScrollView`",
+      "source_repo": "software-mansion-react-native-gesture-handler-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WYVR-docs-add-a-guide-on-using-gestures-with-scrollview.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-WZRA",
+      "directive_title": "Query tenant-name for user accounts page and render a better list.",
+      "source_repo": "trailbaseio-trailbase-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WZRA-query-tenant-name-for-user-accounts-page-and-render-a-better-list.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-A5DC02",
+      "directive_title": "[Docs] Add a guide on using gestures with `ScrollView`",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "software-mansion-react-native-gesture-handler",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A5DC02--docs-add-a-guide-on-using-gestures-with.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-512B25",
+      "directive_title": "Query tenant-name for user accounts page and render a better list.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trailbaseio-trailbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-512B25-query-tenant-name-for-user-accounts-page.md",
       "staged_date": "2026-11-27"
     }
   ]
