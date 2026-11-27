@@ -13859,3 +13859,4 @@
 | `CYCLE-20261127-40WW` | `2026-11-27T19:44:23.456Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`93a8bb33...`) |
 | `CYCLE-20261127-E0RB` | `2026-11-27T19:52:09.815Z` | `thejagstudio/tessera-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | Yes (`6a083e43...`) |
 | `CYCLE-20261127-EECF` | `2026-11-27T19:52:27.423Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10957` | Yes (`8cd086e9...`) |
+| `CYCLE-20261127-PP0Z` | `2026-11-27T20:01:14.483Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10958` | Yes (`0022859c...`) |

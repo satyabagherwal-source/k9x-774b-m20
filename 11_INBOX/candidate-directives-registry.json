@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:52:33.700Z",
+  "last_updated": "2026-11-27T20:01:20.953Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-EJ6R",
+      "id": "CD-PU0O",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-bootsplash-learnings",
+      "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EJ6R-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PU0O-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -72273,6 +72273,44 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F2641D-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-PSEF",
+      "directive_title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
+      "source_repo": "gardener-gardener-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PSEF-deploy-l7-load-balancing-related-lua-filters-to-kube-apiserver-routes-only-and-a.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-520EC0",
+      "directive_title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gardener-gardener",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-520EC0-deploy-l7-load-balancing-related-lua-fil.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-A7B20D",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A7B20D-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-8FDC8D",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FDC8D-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

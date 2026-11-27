@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:52:27.437Z",
-  "total_cycles_completed": 13152,
-  "total_learnings_persisted": 13152,
-  "total_rules_promoted": 11871,
+  "last_updated": "2026-11-27T20:01:14.509Z",
+  "total_cycles_completed": 13153,
+  "total_learnings_persisted": 13153,
+  "total_rules_promoted": 11872,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:07:35.947Z",
-      "repository": "Reson8/Rumble-2-Flash",
-      "learningId": "learn-huggingface-reson8-rumble-2-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:07:45.428Z",
       "repository": "goharbor/harbor",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T19:52:27.437Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:01:14.509Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

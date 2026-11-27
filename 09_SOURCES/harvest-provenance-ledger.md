@@ -13892,3 +13892,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3a3d137a` | Multi-dimensional audit evidence | 2026-11-27T19:44:23.471Z |
 | `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-27T19:52:09.825Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fa74d5c6` | Multi-dimensional audit evidence | 2026-11-27T19:52:27.433Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `0964b4f9` | Multi-dimensional audit evidence | 2026-11-27T20:01:14.501Z |

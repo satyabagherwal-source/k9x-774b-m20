@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T19:52:27.441Z",
+  "last_updated": "2026-11-27T20:01:14.512Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
-      "verified_at": "2026-11-27T01:55:05.295Z",
+      "content_hash": "0022859c4abd622512c8b5a3c849d400cbb61b32f0f52c2d243b5eb576931f52",
+      "verified_at": "2026-11-27T20:01:14.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T01:55:05.295Z"
+      "last_updated": "2026-11-27T20:01:14.511Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

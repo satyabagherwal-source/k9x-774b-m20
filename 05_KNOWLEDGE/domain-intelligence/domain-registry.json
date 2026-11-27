@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T19:52:33.889Z",
+  "last_updated": "2026-11-27T20:01:21.158Z",
   "total_records": 2852,
   "domains": {
     "A": {
@@ -12243,8 +12243,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "0bac350152df5d73cc1ee7d5a5395990c8987697f52ae1061a08ef65c65aae39",
-      "created_at": "2026-11-27T19:35:48.267Z"
+      "content_hash": "9e11fde844c4d2d2bcce2c7b51599c9c32aa59dc79a1cc8139e91074166c5b1a",
+      "created_at": "2026-11-27T20:01:21.158Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -12441,8 +12441,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "d886fac1ce1be85efc2e1ef0e63f02dc427511aab86123014d32d143df25dc64",
-      "created_at": "2026-11-27T01:55:05.717Z"
+      "content_hash": "7a8f71cf82d2a0d8cb5ccba450c6f27a52bebebe0715a6c4858cbf019f41ae22",
+      "created_at": "2026-11-27T20:01:14.985Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -12536,8 +12536,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "4a67ca627010ba527f4859f845d33c652a8b6d9ad60145327d839a0693f3208c",
-      "created_at": "2026-11-27T01:55:39.450Z"
+      "content_hash": "56eb26d13bd02688b418a467c0fd97c760511207973c027e876cf3ed74603598",
+      "created_at": "2026-11-27T20:01:19.067Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -15643,8 +15643,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "11fd8f2fec34a1688f788359d180172cdb57af042f59beb0e81e9db4926ca633",
-      "created_at": "2026-11-27T19:52:33.889Z"
+      "content_hash": "8c6d49052c52727e84199990147bbc22a0e3f6cb80175de6114119edf8c7d735",
+      "created_at": "2026-11-27T20:01:20.153Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",

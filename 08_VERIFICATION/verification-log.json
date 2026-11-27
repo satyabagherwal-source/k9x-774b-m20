@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HMAE",
-    "timestamp": "2026-11-26T10:19:25.334Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "50e519a20977d38a4e7b02380b56643749b61d4673ec1252fe5640df8832b315",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HPRA",
     "timestamp": "2026-11-26T10:19:29.830Z",
     "repository": "trinodb/trino",
@@ -7490,6 +7475,21 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "8cd086e9e7508d5ee260c684b2478ce9f9ec4a4341200bbf03da398fb8b141c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-PP0Z",
+    "timestamp": "2026-11-27T20:01:14.483Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "0022859c4abd622512c8b5a3c849d400cbb61b32f0f52c2d243b5eb576931f52",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

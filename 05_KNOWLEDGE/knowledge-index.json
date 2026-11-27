@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T19:52:34.077Z",
+  "last_updated": "2026-11-27T20:01:21.373Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26733,
+  "total_items": 26735,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219777,9 +219777,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bac350152df5d73cc1ee7d5a5395990c8987697f52ae1061a08ef65c65aae39",
+      "content_hash": "9e11fde844c4d2d2bcce2c7b51599c9c32aa59dc79a1cc8139e91074166c5b1a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:35:48.267Z"
+      "persisted_at": "2026-11-27T20:01:21.158Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219789,9 +219789,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a40477e60fe52eb73379b9f4e17de83bd4a7b345fcd1a012ceede02ba7674fa",
+      "content_hash": "1fdbffd09ad5ff52c28ff018e7b4f23be4143be1effb88b5f6b5e762f2606ffd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:35:48.467Z"
+      "persisted_at": "2026-11-27T20:01:21.373Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220449,8 +220449,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "9ed7804e",
-      "content_hash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
+      "source_version": "0964b4f9",
+      "content_hash": "0022859c4abd622512c8b5a3c849d400cbb61b32f0f52c2d243b5eb576931f52",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -220518,6 +220518,11 @@
           "number": 10810,
           "title": "Update release schedule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10958,
+          "title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220525,7 +220530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T01:55:05.004Z",
+      "verified_at": "2026-11-27T20:01:14.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220567,10 +220572,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "9ed7804e",
-      "content_hash": "d886fac1ce1be85efc2e1ef0e63f02dc427511aab86123014d32d143df25dc64",
+      "source_version": "0964b4f9",
+      "content_hash": "7a8f71cf82d2a0d8cb5ccba450c6f27a52bebebe0715a6c4858cbf019f41ae22",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T01:55:05.717Z"
+      "persisted_at": "2026-11-27T20:01:14.985Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -220579,10 +220584,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "9ed7804e",
-      "content_hash": "e89fadc21ced61d49dad837bcb558e8791439b326a7359142b4c0fe6d0627215",
+      "source_version": "0964b4f9",
+      "content_hash": "125e9cfb2e25140bfea2dfc5e217c6179b1ab9b9b099788fa0c33995e0910dda",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:55:05.911Z"
+      "persisted_at": "2026-11-27T20:01:15.209Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -220756,9 +220761,9 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a67ca627010ba527f4859f845d33c652a8b6d9ad60145327d839a0693f3208c",
+      "content_hash": "56eb26d13bd02688b418a467c0fd97c760511207973c027e876cf3ed74603598",
       "domain_letter": "L",
-      "persisted_at": "2026-11-27T01:55:39.450Z"
+      "persisted_at": "2026-11-27T20:01:19.067Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
@@ -220768,9 +220773,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
       "repository": "gardener-gardener-learnings",
       "source_version": "HEAD",
-      "content_hash": "a8a6ce7d588d8dfd826deb97843b585e3fc11f769a10c1c05f64b630accf0114",
+      "content_hash": "faebf235bcc8080684b9879d8dca16082ef312a4e0878dda7931aa30b359bd02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:55:39.669Z"
+      "persisted_at": "2026-11-27T20:01:19.284Z"
     },
     "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
@@ -230406,9 +230411,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "11fd8f2fec34a1688f788359d180172cdb57af042f59beb0e81e9db4926ca633",
+      "content_hash": "8c6d49052c52727e84199990147bbc22a0e3f6cb80175de6114119edf8c7d735",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:52:33.889Z"
+      "persisted_at": "2026-11-27T20:01:20.153Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230418,9 +230423,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec1e287f585ecca9c3cb96cd0382bf926824828ee07b23c40e17da730a5bbc34",
+      "content_hash": "72faa6b2fa57c4f87158a3fc8f6696e464e6310bd686b0e7c4ff246c59e5dd3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:52:34.077Z"
+      "persisted_at": "2026-11-27T20:01:20.365Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -350535,13 +350540,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EJ6R-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PU0O-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed4399c34c44a3027f3bc84f0b5923fdf5d7e591bb15806c3220c7d190c3d0bc",
+      "content_hash": "6b9024029861fbe17e9e6c9bdcfdda8d66073dfe7ecd2113b7e079f7cb7eef96",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:52:33.700Z"
+      "persisted_at": "2026-11-27T20:01:20.953Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -367112,6 +367117,32 @@
       "content_hash": "5a132e9930dd11137f43f5c74b06bf1cfc132e374843746841b54fb16924e71b",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T19:52:32.591Z"
+    },
+    "rule-10958": {
+      "learning_id": "rule-10958",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10958,
+      "title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "0964b4f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:01:14.207Z"
+    },
+    "candidate_directive-deploy-l7-load-balancing-related-lua-filters-to-kube-apiserver-routes-only-and-a": {
+      "item_id": "candidate_directive-deploy-l7-load-balancing-related-lua-filters-to-kube-apiserver-routes-only-and-a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PSEF-deploy-l7-load-balancing-related-lua-filters-to-kube-apiserver-routes-only-and-a.md",
+      "title": "Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b376d410a9dca00ba4672e6f4e020cce813c428a29007db5c306ea118e5e69ae",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T20:01:18.856Z"
     }
   },
   "ai-builder-brain": {

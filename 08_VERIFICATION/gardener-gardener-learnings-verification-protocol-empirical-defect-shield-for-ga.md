@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T01:55:39.077Z",
+  "timestamp": "2026-11-27T20:01:18.717Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gardener-gardener-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gardener-gardener-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T01:55:39.077Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T20:01:18.717Z`  
 > **Learning ID**: `LEARN-EVO-gardener-gardener-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `9ed7804e`  
+> **Source Version**: `0964b4f9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T01:55:04.030Z  
+> **Timestamp**: 2026-11-27T20:01:13.248Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T01:55:04.025Z  
+> **Harvest Timestamp**: 2026-11-27T20:01:13.122Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -775,395 +775,569 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9ed7804e` (2026-11-26)
-**Commit Message**: Update release schedule (#16432)
+### Incident Patch 1: `0964b4f9` (2026-11-27)
+**Commit Message**: Deploy L7 load-balancing related lua filters to kube-apiserver routes only and apply hardening measurements (#16343)
 
-Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+* Prefactoring: Fix missing upgrade configs for wildcard endpoint
 
-**File**: `docs/development/process.md` (modified, +2/-3)
+Before only websocket, but no SPDY upgrade was working for the wildcard endpoint.
+
+Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+
+* Prefactoring: Simplify `istio-tls-termination` envoyfilter template in `apiserverexposure`
+
+Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+
+* Add `istio-tls-termination` lua script to envoyfilter template of `apiserverexposure`
+
+Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+
+* Enhance `apiserverexposure` unit tests
+
+Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+
+* Introduce a seamless migration of lua scripts
+
+The lua scripts are idempotent, so they can run twice until all shoots have been reconciled
+
+Signed-off-by: oliver-goetz <[REDACTED_EMAIL]>
+
+* Fix exposure of seed kube-apiserver via ingress
+
+This was broken before, I just noticed it while working on `apiserverexposure` package.
+It still works for with limited scope. It supports token authentication, endpoints with TLS certificates signed by the cluster CA and streaming APIs via websocket only.
+
+Signed-off-by: o
+
+**File**: `pkg/component/kubernetes/apiserver/constants/constants.go` (modified, +4/-0)
 ```diff
-@@ -42,9 +42,8 @@ Hotfixes are usually maintained for the latest three minor releases, though, the
-  v1.153  | Week 40-41 | September 28, 2026     | October 11, 2026   | [@ScheererJ](https://github.com/ScheererJ)                   |
-  v1.154  | Week 42-43 | October 12, 2026       | October 25, 2026   | [@oliver-goetz](https://github.com/oliver-goetz)             |
-  v1.155  | Week 44-45 | October 26, 2026       | November 8, 2026   | [@LucaBernstein](https://github.com/LucaBernstein)           |
-- v1.156  | Week 46-47 | November 9, 2026       | November 22, 2026  | [@plkokanov](https://github.com/plkokanov)                   |
-- v1.157  | Week 48-49 | November 23, 2026      | December 6, 2026   | [@rfranzke](https://github.com/rfranzke)                     |
-- v1.158  | Week 50-53 | December 7, 2026       | January 3, 2027    | [@shafeeqes](https://github.com/shafeeqes)                   |
-+ v1.156  | Week 46-49 | November 9, 2026       | December 6, 2026   | [@plkokanov](https://github.com/plkokanov)                   |
-+ v1.157  | Week 50-53 | December 7, 2026       | January 3, 2027    | [@shafeeqes](https://github.com/shafeeqes)                   |
+@@ -11,6 +11,10 @@ const (
+ 	RequestHeaderGroup = "X-Remote-Group"
+ 	// RequestHeaderUserName is the header key for the username headers.
+ 	RequestHeaderUserName = "X-Remote-User"
++	// RequestHeaderUID is the header key for the UID headers.
++	RequestHeaderUID = "X-Remote-Uid"
++	// RequestHeaderPrefixExtra is the prefix headers keys for extra headers.
++	RequestHeaderPrefixExtra = "X-Remote-Extra-"
+ )
  
- <!-- TODO: Add DobromirNPeev to the end of the new release responsible schedule for 2027. -->
+ // ServiceName returns the service name with the given prefix.
+```
+
+**File**: `pkg/component/kubernetes/apiserver/deployment.go` (modified, +1/-1)
+```diff
+@@ -432,7 +432,7 @@ func (k *kubeAPIServer) computeKubeAPIServerArgs() []string {
+ 	out = append(out, fmt.Sprintf("--proxy-client-cert-file=%s/%s", volumeMountPathKubeAggregator, secrets.DataKeyCertificate))
+ 	out = append(out, fmt.Sprintf("--proxy-client-key-file=%s/%s", volumeMountPathKubeAggregator, secrets.DataKeyPrivateKey))
+ 	out = append(out, fmt.Sprintf("--requestheader-client-ca-file=%s/%s", volumeMountPathCAFrontProxy, secrets.DataKeyCertificateBundle))
+-	out = append(out, "--requestheader-extra-headers-prefix=X-Remote-Extra-")
++	out = append(out, fmt.Sprintf("--requestheader-extra-headers-prefix=%s", kubeapiserverconstants.RequestHeaderPrefixExtra))
+ 	out = append(out, fmt.Sprintf("--requestheader-group-headers=%s", kubeapiserverconstants.RequestHeaderGroup))
+ 	out = append(out, fmt.Sprintf("--requestheader-username-headers=%s", kubeapiserverconstants.RequestHeaderUserName))
  
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/ingress.go` (modified, +11/-21)
+```diff
+@@ -59,18 +59,22 @@ func (i *ingress) Deploy(ctx context.Context) error {
+ 		virtualService  = i.emptyVirtualService()
+ 	)
+ 
+-	tlsMode := istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_DISABLE}
+-	if i.values.TLSSecretName != nil {
+-		tlsMode = istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE}
+-	}
+-
+ 	serviceNamespace := i.namespace
+ 	if i.values.ServiceNamespace != "" {
+ 		serviceNamespace = i.values.ServiceNamespace
+ 	}
+ 
+ 	destinationHost := kubernetesutils.FQDNForService(i.values.ServiceName, serviceNamespace)
+ 
++	tlsMode := istioapinetworkingv1beta1.ClientTLSSettings{Mode: istioapinetworkingv1beta1.ClientTLSSettings_DISABLE}
++	if i.values.TLSSecretName != nil {
++		tlsMode = istioapinetworkingv1beta1.ClientTLSSettings{
++			Mode:           istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE,
++			Sni:            destinationHost,
++			CaCertificates: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt",
++		}
++	}
++
+ 	if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, i.client, destinationRule, istio.DestinationRuleWithLocalityPreferenceAndTLS(destinationRule, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, destinationHost, &tlsMode)); err != nil {
+ 		return err
+ 	}
+@@ -98,24 +102,10 @@ func (i *ingress) Deploy(ctx context.Context) error {
+ 		}
+ 
+ 		if _, err := controllerutils.GetAndCreateOrMergePatch(ctx, i.client, virtualService, func() error {
+-			if err := istio.VirtualServiceWithSNIMatch(virtualService, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, []string{i.values.Host}, gateway.Name, kubeapiserverconstants.Port, destinationHost)(); err != nil {
++			if err := istio.VirtualServiceForTLSTermination(virtualService, getLabels(), []string{i.values.IstioIngressGatewayNamespaceFunc()}, []string{i.values.Host}, gateway.Name, kubeapiserverconstants.Port, destinationHost, "", "")(); err != nil {
+ 				return err
+ 			}
+-			virtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{{
+-				Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
+-					Uri: &istioapinetworkingv1beta1.StringMatch{
+-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{Prefix: "/"},
+-					},
+-				}},
+-				Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
+-					Destination: &istioapinetworkingv1beta1.Destination{
+-						Host: destinationHost,
+-						Port: &istioapinetworkingv1beta1.PortSelector{
+-							Number: kubeapiserverconstants.Port,
+-						},
+-					},
+-				}},
+-			}}
++			virtualService.Spec.Http[0].Rewrite = &istioapinetworkingv1beta1.HTTPRewrite{Authority: destinationHost}
+ 			return nil
+ 		}); err != nil {
+ 			return err
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/ingress_test.go` (modified, +4/-6)
+```diff
+@@ -138,19 +138,15 @@ var _ = Describe("#Ingress", func() {
+ 		expectedPassthroughVirtualService = expectedVirtualService.DeepCopy()
+ 
+ 		expectedHTTPSBackendVirtualService = expectedVirtualService.DeepCopy()
+-		expectedHTTPSBackendVirtualService.Spec.Tls[0].Route[0].Destination.Host = "foo." + serviceNamespace + ".svc.cluster.local"
++		expectedHTTPSBackendVirtualService.Spec.Tls = nil
+ 		expectedHTTPSBackendVirtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{{
+-			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
+-				Uri: &istioapinetworkingv1beta1.StringMatch{
+-					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{Prefix: "/"},
+-				},
+-			}},
+ 			Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
+ 				Destination: &istioapinetworkingv1beta1.Destination{
+ 					Host: "foo." + serviceNamespace + ".svc.cluster.local",
+ 					Port: &istioapinetworkingv1beta1.PortSelector{Number: 443},
+ 				},
+ 			}},
++			Rewrite: &istioapinetworkingv1beta1.HTTPRewrite{Authority: "foo." + serviceNamespace + ".svc.cluster.local"},
+ 		}}
+ 
+ 		expectedDestinationRule := &istionetworkingv1beta1.DestinationRule{
+@@ -201,6 +197,8 @@ var _ = Describe("#Ingress", func() {
+ 		expectedHTTPSBackendDestinationRule.Namespace = serviceNamespace
+ 		expectedHTTPSBackendDestinationRule.Spec.Host = "foo." + serviceNamespace + ".svc.cluster.local"
+ 		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.Mode = istioapinetworkingv1beta1.ClientTLSSettings_SIMPLE
++		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.Sni = "foo." + serviceNamespace + ".svc.cluster.local"
++		expectedHTTPSBackendDestinationRule.Spec.TrafficPolicy.Tls.CaCertificates = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+ 	})
+ 
+ 	getDeployer := func(serviceNamespace string, tlsSecretName *string) component.Deployer {
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/sni.go` (modified, +56/-42)
+```diff
+@@ -176,6 +176,8 @@ type envoyFilterAPIServerProxyTemplateValues struct {
+ 	APIServerClusterIPPrefixLen               int
+ 	APIServerRequestHeaderUserName            string
+ 	APIServerRequestHeaderGroup               string
++	APIServerRequestHeaderUID                 string
++	APIServerRequestHeaderPrefixExtra         string
+ 	APIServerAuthenticationDynamicMetadataKey string
+ 	IstioTLSSecret                            string
+ 	TargetClusterAPIServerProxy               string
+@@ -187,20 +189,21 @@ type envoyFilterAPIServerProxyTemplateValues struct {
+ }
+ 
+ type envoyFilterIstioTLSTerminationTemplateValues struct {
+-	AuthenticationDynamicMetadataKey string
+-	Hosts                            []string
+-	WildcardHosts                    []string
+-	IngressGatewayLabels             map[string]string
+-	Name                             string
+-	Namespace                        string
+-	ControlPlaneNamespace            string
+-	ControlPlaneNamespaceUID         string
+-	MutualTLSHost                    string
+-	ConnectionUpgradeHost            string
+-	Port                             int
+-	RouteConfigurationName           string
+-	WildcardRouteConfigurationName   string
+-	ConnectionUpgradeRouteName       string
++	AuthenticationDynamicMetadataKey  string
++	HostsByRouteConfigurationName     map[string][]string
++	IngressGatewayLabels              map[string]string
++	Name                              string
++	Namespace                         string
++	ControlPlaneNamespace             string
++	ControlPlaneNamespaceUID          string
++	MutualTLSHost                     string
++	ConnectionUpgradeHost             string
++	Port                              int
++	ConnectionUpgradeRouteName        string
++	APIServerRequestHeaderUserName    string
++	APIServerRequestHeaderGroup       string
++	APIServerRequestHeaderUID         string
++	APIServerRequestHeaderPrefixExtra string
+ }
+ 
+ type istioGatewayConfiguration struct {
+@@ -253,20 +256,22 @@ func (s *sni) Deploy(ctx context.Context) error {
+ 		var envoyFilterAPIServerProxy bytes.Buffer
+ 
+ 		if err := envoyFilterAPIServerProxyTemplate.Execute(&envoyFilterAPIServerProxy, envoyFilterAPIServerProxyTemplateValues{
+-			APIServerProxy:                 values.APIServerProxy,
+-			IngressGatewayLabels:           values.IstioIngressGateway.Labels,
+-			Name:                           envoyFilter.Name,
+-			Namespace:                      envoyFilter.Namespace,
+-			ControlPlaneNamespace:          namespace.Name,
+-			ControlPlaneNamespaceUID:       string(namespace.UID),
+-			Host:                           hostName,
+-			MutualTLSHost:                  mTLSHostName,
+-			ConnectionUpgradeHost:          connectionUpgradeHostName,
+-			ConnectionUpgradeRegex:         istio.ConnectionUpgradeRegex,
+-			Port:                           kubeapiserverconstants.Port,
+-			APIServerClusterIPPrefixLen:    apiServerClusterIPPrefixLen,
+-			APIServerRequestHeaderUserName: kubeapiserverconstants.RequestHeaderUserName,
+-			APIServerRequestHeaderGroup:    kubeapiserverconstants.RequestHeaderGroup,
++			APIServerProxy:                    values.APIServerProxy,
++			IngressGatewayLabels:              values.IstioIngressGateway.Labels,
++			Name:                              envoyFilter.Name,
++			Namespace:                         envoyFilter.Namespace,
++			ControlPlaneNamespace:             namespace.Name,
++			ControlPlaneNamespaceUID:          string(namespace.UID),
++			Host:                              hostName,
++			MutualTLSHost:                     mTLSHostName,
++			ConnectionUpgradeHost:             connectionUpgradeHostName,
++			ConnectionUpgradeRegex:            istio.ConnectionUpgradeRegex,
++			Port:                              kubeapiserverconstants.Port,
++			APIServerClusterIPPrefixLen:       apiServerClusterIPPrefixLen,
++			APIServerRequestHeaderUserName:    kubeapiserverconstants.RequestHeaderUserName,
++			APIServerRequestHeaderGroup:       kubeapiserverconstants.RequestHeaderGroup,
++			APIServerRequestHeaderUID:         kubeapiserverconstants.RequestHeaderUID,
++			APIServerRequestHeaderPrefixExtra: kubeapiserverconstants.RequestHeaderPrefixExtra,
+ 			APIServerAuthenticationDynamicMetadataKey: authenticationDynamicMetadataKeyAPIServerProxy,
+ 			IstioTLSSecret:                   s.emptyIstioTLSSecret().Name,
+ 			TargetClusterAPIServerProxy:      targetClusterAPIServerProxy,
+@@ -303,21 +308,30 @@ func (s *sni) Deploy(ctx context.Context) error {
+ 				wildcardHosts = configuration.wildcardConfiguration.Hosts
+ 			}
+ 
++			hostsByRouteConfigurationName := map[string][]string{}
++			if len(configuration.hosts) > 0 {
++				hostsByRouteConfigurationName[routeConfigurationName] = configuration.hosts
++			}
++			if len(wildcardHosts) > 0 {
++				hostsByRouteConfigurationName[wildcardRouteConfigurationName] = wildcardHosts
++			}
++
+ 			if err := envoyFilterIstioTLSTerminationTemplate.Execute(&envoyFilterIstioTLSTermination, envoyFilterIstioTLSTerminationTemplateValues{
+-				AuthenticationDynamicMetadataKey: AuthenticationD
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/sni_test.go` (modified, +80/-5)
+```diff
+@@ -21,12 +21,14 @@ import (
+ 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/yaml"
+ 
+ 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+ 	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/client/kubernetes"
+ 	"github.com/gardener/gardener/pkg/component"
++	kubeapiserverconstants "github.com/gardener/gardener/pkg/component/kubernetes/apiserver/constants"
+ 	. "github.com/gardener/gardener/pkg/component/kubernetes/apiserverexposure"
+ 	comptest "github.com/gardener/gardener/pkg/component/test"
+ 	"github.com/gardener/gardener/pkg/resourcemanager/controller/garbagecollector/references"
+@@ -385,6 +387,7 @@ var _ = Describe("#SNI", func() {
+ 				mrData := validateManagedResourceAndGetData(ctx, c, expectedManagedResourceSNI)
+ 
+ 				var envoyFilterObjectsMetas []metav1.ObjectMeta
++				envoyFilterDataByKey := map[string]string{}
+ 				for mrDataSet := range strings.SplitSeq(string(mrData), "---\n") {
+ 					if mrDataSet == "" {
+ 						continue
+@@ -394,16 +397,40 @@ var _ = Describe("#SNI", func() {
+ 					Expect(err).ToNot(HaveOccurred())
+ 					Expect(managedResourceEnvoyFilter.GetObjectKind()).To(Equal(&metav1.TypeMeta{Kind: "EnvoyFilter", APIVersion: "networking.istio.io/v1alpha3"}))
+ 					actualEnvoyFilter := managedResourceEnvoyFilter.(*istionetworkingv1alpha3.EnvoyFilter)
+-					// cannot validate the Spec as there is no meaningful way to unmarshal the data into the Golang structure
++					// cannot validate the Spec via the typed object as there is no meaningful way to unmarshal the data into the Golang structure
+ 					envoyFilterObjectsMetas = append(envoyFilterObjectsMetas, actualEnvoyFilter.ObjectMeta)
++					envoyFilterDataByKey[actualEnvoyFilter.Namespace+"/"+actualEnvoyFilter.Name] = mrDataSet
+ 				}
+ 
+-				if istioTLSTermination {
+-					Expect(envoyFilterObjectsMetas).To(ContainElement(expectedEnvoyFilterObjectMetaIstioTLSTermination))
++				Expect(envoyFilterObjectsMetas).To(ContainElement(expectedEnvoyFilterObjectMetaIstioTLSTermination))
++				if wildcardConfiguration != nil && wildcardConfiguration.IstioIngressGateway != nil {
++					Expect(envoyFilterObjectsMetas).To(ContainElement(expectedWildcardEnvoyFilterObjectMetaIstioTLSTermination))
++				}
+ 
+-					if wildcardConfiguration != nil && wildcardConfiguration.IstioIngressGateway != nil {
+-						Expect(envoyFilterObjectsMetas).To(ContainElement(expectedWildcardEnvoyFilterObjectMetaIstioTLSTermination))
++				// The Lua filter performing kube-apiserver authentication must be scoped to the kube-apiserver
++				// gateways' filter chains only. Filter chains are not named, so the HTTP_FILTER patch matches them
++				// by SNI, using one of the chain's hosts.
++				expectLuaHTTPFilters := func(envoyFilterKey string, expectedFilterChainSNIs ...string) {
++					var filterChainSNIs []string
++					for _, patch := range httpFilterPatches(envoyFilterDataByKey[envoyFilterKey]) {
++						filterChainSNIs = append(filterChainSNIs, patch.FilterChainSNI)
++						Expect(patch.InlineString).To(ContainSubstring("function envoy_on_request(request_handle)"))
++						Expect(patch.InlineString).To(ContainSubstring(kubeapiserverconstants.RequestHeaderUserName))
++						Expect(patch.InlineString).To(ContainSubstring(kubeapiserverconstants.RequestHeaderGroup))
++						Expect(patch.InlineString).To(ContainSubstring(AuthenticationDynamicMetadataKey))
+ 					}
++					Expect(filterChainSNIs).To(ConsistOf(expectedFilterChainSNIs))
++				}
++
++				mainEnvoyFilterKey := istioNamespace + "/" + namespace + "-istio-tls-termination"
++				switch {
++				case wildcardConfiguration == nil:
++					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0])
++				case wildcardConfiguration.IstioIngressGateway == nil:
++					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0], wildcardHosts[0])
++				default:
++					expectLuaHTTPFilters(mainEnvoyFilterKey, hosts[0])
++					expectLuaHTTPFilters(istioWildcardNamespace+"/"+namespace+"-istio-tls-termination", wildcardHosts[0])
+ 				}
+ 			} else {
+ 				Expect(c.Get(ctx, client.ObjectKeyFromObject(managedResource), managedResource)).To(BeNotFoundError(), "should delete EnvoyFilter for apiserver-proxy")
+@@ -1152,3 +1179,51 @@ func validateManagedResourceAndGetData(ctx context.Context, c client.Client, exp
+ 
+ 	return mrData
+ }
++
++type envoyHTTPFilterPatch struct {
++	FilterChainSNI string
++	InlineString   string
++}
++
++// httpFilterPatches parses the HTTP_FILTER config patches of an EnvoyFilter from its serialized YAML. The EnvoyFilter
++// spec cannot be validated via the typed object as there is no meaningful way to unmarshal the data into the Golang
++// structure, hence it is parsed generically.
++func httpFilterPatches(envoyFilterData string) []envoyHTTPFilterPatch {
++	var parsed struct {
++		Spec struct {
++			Conf
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/templates/envoyfilter-apiserver-proxy.yaml` (modified, +17/-3)
+```diff
+@@ -102,11 +102,23 @@ spec:
+                     inlineString: |
+                       function envoy_on_request(request_handle)
+                         -- Drop headers used by kube-apiserver authentication proxy.
+-                        local remove = {"{{ .APIServerRequestHeaderUserName }}", "{{ .APIServerRequestHeaderGroup }}"}
++                        local remove = {"{{ .APIServerRequestHeaderUserName }}", "{{ .APIServerRequestHeaderGroup }}", "{{ .APIServerRequestHeaderUID }}"}
+                         for key, value in pairs(remove) do
+                           request_handle:headers():remove(value)
+                         end
+ 
++                        -- Drop all extra headers (keys prefixed with "{{ .APIServerRequestHeaderPrefixExtra }}") used by the kube-apiserver authentication proxy.
++                        local extraPrefix = string.lower("{{ .APIServerRequestHeaderPrefixExtra }}")
++                        local removeExtra = {}
++                        for key, value in pairs(request_handle:headers()) do
++                          if string.sub(string.lower(key), 1, string.len(extraPrefix)) == extraPrefix then
++                            table.insert(removeExtra, key)
++                          end
++                        end
++                        for key, value in pairs(removeExtra) do
++                          request_handle:headers():remove(value)
++                        end
++
+                         -- Upstream request timeout, capped at 1d (see below). When a client certificate
+                         -- is present, it is reduced to the certificate's remaining lifetime further down.
+                         local upstreamTimeoutMilliseconds = 86400000
+@@ -121,6 +133,7 @@ spec:
+                           -- Kill request if CN is empty.
+                           if cn == "" then
+                             request_handle:respond({[":status"] = "400"}, "Invalid certificate subject")
++                            streamInfo:drainConnectionUponCompletion()
+                             return
+                           end
+ 
+@@ -132,6 +145,7 @@ spec:
+                           local notAfter = ssl:expirationPeerCertificate()
+                           if now >= notAfter or now < notBefore then
+                             request_handle:respond({[":status"] = "401"}, "Client certificate is expired or not yet valid")
++                            streamInfo:drainConnectionUponCompletion()
+                             return
+                           end
+ 
+@@ -165,8 +179,8 @@ spec:
+                         -- connections like forgotten kubectl port-forward or exec commands, and ensures
+                         -- requests do not outlive the client certificate.
+                         -- See https://www.envoyproxy.io/docs/envoy/latest/faq/configuration/timeouts#route-timeouts
+-                        request_handle:headers():add("x-envoy-upstream-rq-timeout-ms", tostring(upstreamTimeoutMilliseconds))
+-                        request_handle:headers():add("x-envoy-upstream-rq-per-try-timeout-ms", tostring(upstreamTimeoutMilliseconds))
++                        request_handle:headers():replace("x-envoy-upstream-rq-timeout-ms", tostring(upstreamTimeoutMilliseconds))
++                        request_handle:headers():replace("x-envoy-upstream-rq-per-try-timeout-ms", tostring(upstreamTimeoutMilliseconds))
+                       end
+ 
+                       function envoy_on_response(response_handle)
+```
+
+**File**: `pkg/component/kubernetes/apiserverexposure/templates/envoyfilter-istio-tls-termination.yaml` (modified, +120/-38)
+```diff
+@@ -1,4 +1,3 @@
+----
+ apiVersion: networking.istio.io/v1alpha3
+ kind: EnvoyFilter
+ metadata:
+@@ -18,33 +17,28 @@ spec:
+       {{ $k }}: {{ $v }}
+ {{- end }}
+   configPatches:
+-{{- range $v := .Hosts }}
+-  - applyTo: HTTP_ROUTE
++  - applyTo: CLUSTER
+     match:
+       context: GATEWAY
+-      routeConfiguration:
+-        name: "{{ $.RouteConfigurationName }}"
++      cluster:
++        name: outbound|{{ .Port }}||{{ .ConnectionUpgradeHost }}
+     patch:
+-      operation: INSERT_BEFORE
++      operation: MERGE
+       value:
+-        match:
+-          dynamic_metadata:
+-          - filter: envoy.filters.http.lua
+-            path:
+-            - key: {{ $.AuthenticationDynamicMetadataKey }}
+-            value:
+-              string_match:
+-                exact: {{ $v }}
+-          prefix: /
+-        route:
+-          cluster: outbound|{{ $.Port }}||{{ $.MutualTLSHost }}
+-{{- end }}
+-{{- range $v := .WildcardHosts }}
++        transportSocket:
++          name: envoy.transport_sockets.tls
++          typedConfig:
++            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
++            commonTlsContext:
++              alpnProtocols:
++              - "http/1.1"
++{{- range $routeConfigurationName, $hosts := .HostsByRouteConfigurationName }}
++{{- range $host := $hosts }}
+   - applyTo: HTTP_ROUTE
+     match:
+       context: GATEWAY
+       routeConfiguration:
+-        name: "{{ $.WildcardRouteConfigurationName }}"
++        name: "{{ $routeConfigurationName }}"
+     patch:
+       operation: INSERT_BEFORE
+       value:
+@@ -55,38 +49,126 @@ spec:
+             - key: {{ $.AuthenticationDynamicMetadataKey }}
+             value:
+               string_match:
+-                exact: {{ $v }}
++                exact: {{ $host }}
+           prefix: /
+         route:
+           cluster: outbound|{{ $.Port }}||{{ $.MutualTLSHost }}
+ {{- end }}
+-  - applyTo: CLUSTER
+-    match:
+-      context: GATEWAY
+-      cluster:
+-        name: outbound|{{ .Port }}||{{ .ConnectionUpgradeHost }}
+-    patch:
+-      operation: MERGE
+-      value:
+-        transportSocket:
+-          name: envoy.transport_sockets.tls
+-          typedConfig:
+-            '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+-            commonTlsContext:
+-              alpnProtocols:
+-              - "http/1.1"
+   - applyTo: HTTP_ROUTE
+     match:
+       context: GATEWAY
+       routeConfiguration:
+-        name: "{{ .RouteConfigurationName }}"
++        name: "{{ $routeConfigurationName }}"
+         vhost:
+           route:
+-            name: "{{ .ConnectionUpgradeRouteName }}"
++            name: "{{ $.ConnectionUpgradeRouteName }}"
+     patch:
+       operation: MERGE
+       value:
+         route:
+           upgrade_configs:
+           - upgrade_type: spdy/3.1
+           - upgrade_type: websocket
++  - applyTo: HTTP_FILTER
++    match:
++      context: GATEWAY
++      listener:
++        portNumber: 9443
++        filterChain:
++          sni: "{{ index $hosts 0 }}"
++          filter:
++            name: envoy.filters.network.http_connection_manager
++            subFilter:
++              name: envoy.filters.http.router
++    patch:
++      operation: INSERT_BEFORE
++      value:
++        name: envoy.filters.http.lua
++        typed_config:
++          "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
++          defaultSourceCode:
++            inlineString: |
++              function envoy_on_request(request_handle)
++                -- Drop headers used by kube-apiserver authentication proxy.
++                local remove = {"{{ $.APIServerRequestHeaderUserName }}", "{{ $.APIServerRequestHeaderGroup }}", "{{ $.APIServerRequestHeaderUID }}"}
++                for key, value in pairs(remove) do
++                  request_handle:headers():remove(value)
++                end
++
++                -- Drop all extra headers (keys prefixed with "{{ $.APIServerRequestHeaderPrefixExtra }}") used by the kube-apiserver authentication proxy.
++                local extraPrefix = string.lower("{{ $.APIServerRequestHeaderPrefixExtra }}")
++                local removeExtra = {}
++                for key, value in pairs(request_handle:headers()) do
++                  if string.sub(string.lower(key), 1, string.len(extraPrefix)) == extraPrefix then
++                    table.insert(removeExtra, key)
++                  end
++                end
++                for key, value in pairs(removeExtra) do
++                  request_handle:headers():remove(value)
++                end
++
++                -- Upstream request timeout, capped at 1d (see below). When a client certificate
++                -- is present, it is reduced to the certificate's remaining lifetime further down.
++                local upstreamTimeoutMilliseconds = 86400000
++
++                local streamInfo = request_handle:streamInfo()
++                local ssl = streamInfo:downstreamSslConnection()
++
++                -- Parse client certificate sub
 ```
 
 ---
 
-### Incident Patch 2: `fefe4e9c` (2026-11-26)
-**Commit Message**: [GEP-39] Add live control plane migration flow (#16087)
+### Incident Patch 2: `cf043b1c` (2026-11-27)
+**Commit Message**: Update golang:1.27.4 Docker digest to 5f1b98f (#16420)
 
-* [GEP-39] Treat live-migration destination as restore phase
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Add `WaitForLiveMigrationDNSCacheSync`
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Store shoot state on the go in Shoot to simplify `InitializeSecretsManagement`
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Add `DestroyVPNServer` for VPN
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Don't take snapshots in destination etcd during ongoing live CPM
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Propogate group skip ifs
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Use API reader for fetching the shoot state in destination seed gardenlet
-
-Signed-off-by: acumino <[REDACTED_EMAIL]>
-
-Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
-
-* [GEP-39] Introduce new step `ShootLiveMigrationS
-
-**File**: `pkg/apis/core/v1beta1/types_common.go` (modified, +4/-0)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -156,13 +156,17 @@ const (
- 	EventMigrationPrepared = "MigrationPrepared"
- 	// EventMigrationPreparationFailed indicates that the Migration preparation failed.
- 	EventMigrationPreparationFailed = "MigrationPreparationFailed"
-+	// EventLiveMigrated indicates that the Live Migration operation was successful.
-+	EventLiveMigrated = "LiveMigrated"
- 
- 	// EventActionReconcile describes an event action for reconciliation.
- 	EventActionReconcile = "Reconcile"
- 	// EventActionDelete describes an event action for deletion.
- 	EventActionDelete = "Delete"
- 	// EventActionMigrate describes an event action for migration.
- 	EventActionMigrate = "Migrate"
-+	// EventActionLiveMigrate describes an event action for live migration.
-+	EventActionLiveMigrate = "LiveMigrate"
- 	// EventActionHealthCheck describes an event action for health checks.
- 	EventActionHealthCheck = "HealthCheck"
- )
-```
-
-**File**: `pkg/apis/core/v1beta1/types_shoot.go` (modified, +6/-6)
-```diff
-@@ -2300,18 +2300,18 @@ const (
- 	// ShootLiveMigrationDestinationKubeAPIServerReady indicates that the destination kube-apiserver
- 	// is deployed and ready.
- 	ShootLiveMigrationDestinationKubeAPIServerReady ConditionType = "DestinationKubeAPIServerReady"
--	// ShootLiveMigrationMigrateDNSRecords indicates that DNS records have been updated
--	// to point to the destination seed.
--	ShootLiveMigrationMigrateDNSRecords ConditionType = "MigrateDNSRecords"
-+	// ShootLiveMigrationMigrateSourceSeedComponents indicates that migration of components in the
-+	// source seed has been completed.
-+	ShootLiveMigrationMigrateSourceSeedComponents ConditionType = "MigrateSourceSeedComponents"
- 	// ShootLiveMigrationEtcdMigrationComplete indicates that the etcd cluster has been
- 	// fully migrated to the destination seed.
- 	ShootLiveMigrationEtcdMigrationComplete ConditionType = "EtcdMigrationComplete"
--	// ShootLiveMigrationSourceSeedCleanup indicates that cleanup of resources in the
--	// source seed has been completed.
--	ShootLiveMigrationSourceSeedCleanup ConditionType = "SourceSeedCleanup"
- 	// ShootLiveMigrationMigrationCompleted indicates that the live control plane migration
- 	// has completed successfully.
- 	ShootLiveMigrationMigrationCompleted ConditionType = "MigrationCompleted"
-+	// ShootLiveMigrationSourceSeedFinalTeardown indicates that the final teardown of the source
-+	// seed has been completed successfully.
-+	ShootLiveMigrationSourceSeedFinalTeardown ConditionType = "SourceSeedFinalTeardown"
- )
- 
- // ShootPurpose is a type alias for string.
-```
-
-**File**: `pkg/gardenlet/controller/shoot/shoot/reconciler.go` (modified, +28/-1)
-```diff
-@@ -98,7 +98,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (
- 		return r.deleteShoot(ctx, log, shoot)
- 	}
- 
--	if liveMigrationRole != v1beta1helper.LiveMigrationRoleNone {
-+	if liveMigrationRole != v1beta1helper.LiveMigrationRoleNone || shoot.Status.LiveMigration != nil {
- 		return r.liveMigrateShoot(ctx, log, shoot, liveMigrationRole)
- 	}
- 
-@@ -209,6 +209,19 @@ func (r *Reconciler) migrateShoot(ctx context.Context, log logr.Logger, shoot *g
- func (r *Reconciler) liveMigrateShoot(ctx context.Context, log logr.Logger, shoot *gardencorev1beta1.Shoot, role v1beta1helper.LiveMigrationRole) (reconcile.Result, error) {
- 	log = log.WithValues("operation", "live-migrate", "liveMigrationRole", role)
- 
-+	if role == v1beta1helper.LiveMigrationRoleNone && shoot.Status.LiveMigration != nil {
-+		if v1beta1helper.HasLiveMigrationAnnotation(shoot.Annotations) {
-+			patch := client.MergeFrom(shoot.DeepCopy())
-+			controllerutils.RemoveAllTasks(shoot.Annotations)
-+			delete(shoot.Annotations, v1beta1constants.AnnotationMigrationLiveMigrate)
-+			if err := r.GardenClient.Patch(ctx, shoot, patch); err != nil {
-+				return reconcile.Result{}, fmt.Errorf("failed to remove stale live migration annotation: %w", err)
-+			}
-+		}
-+		log.Info("Live control plane migration completed")
-+		return reconcile.Result{}, r.patchShootStatusOperationSuccess(ctx, shoot, gardencorev1beta1.LastOperationTypeLiveMigrate)
-+	}
-+
- 	if err := r.checkGardenletVersionParity(ctx, shoot, role); err != nil {
- 		updateErr := r.patchShootStatusOperationError(ctx, shoot, err.Error(), gardencorev1beta1.LastOperationTypeLiveMigrate, false)
- 		return reconcile.Result{}, errorsutils.WithSuppressed(err, updateErr)
-@@ -224,6 +237,16 @@ func (r *Reconciler) liveMigrateShoot(ctx context.Context, log logr.Logger, shoo
- 		return reconcile.Result{}, errorsutils.WithSuppressed(errors.New(flowErr.Description), updateErr)
- 	}
- 
-+	if role == v1beta1helper.LiveMigrationRoleSource {
-+		log.Info("Live migration successful from source seed's perspective, destination seed will finalize migration")
-+		return reconcile.Result{}, nil
-+	}
-+
-+	if err := r.finalizeLiveMigration(ctx, shoot); err != nil {
-+		return reconcile.Result{}, fmt.Errorf("failed to finalize live migration: %w", err)
-+	}
-+
-+	r.Recorder.Eventf(shoot, nil, corev1.EventTypeNormal, gardencorev1beta1.EventLiveMigrated, gardencorev1beta1.EventActionLiveMigrate, "Live migrated Shoot cluster")
- 	log.Info("Live control plane migration completed")
- 	return reconcile.Result{}, r.patchShootStatusOperationSuccess(ctx, shoot, gardencorev1beta1.LastOperationTypeLiveMigrate)
- }
-@@ -910,6 +933,10 @@ func (r *Reconciler) patchShootStatusOperationSuccess(
- 		shoot.Status.SeedName = shoot.Spec.SeedName
- 	}
- 
-+	if operationType == gardencorev1beta1.LastOperationTypeLiveMigrate {
-+		shoot.Status.LiveMigration = nil
-+	}
-+
- 	shoot.Status.RetryCycleStartTime = nil
- 	shoot.Status.LastErrors = nil
- 	shoot.Status.LastOperation = &gardencorev1beta1.LastOperation{
-```
-
-**File**: `pkg/gardenlet/controller/shoot/shoot/reconciler_livemigrate.go` (modified, +561/-47)
-```diff
-@@ -5,8 +5,10 @@
- package shoot
- 
- import (
-+	"cmp"
- 	"context"
- 	"fmt"
-+	"slices"
- 	"strings"
- 	"time"
- 
-@@ -15,11 +17,13 @@ import (
- 
- 	v1beta1helper "github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
- 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-+	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
-+	"github.com/gardener/gardener/pkg/controllerutils"
- 	"github.com/gardener/gardener/pkg/gardenlet/operation"
- 	botanistpkg "github.com/gardener/gardener/pkg/gardenlet/operation/botanist"
-+	"github.com/gardener/gardener/pkg/gardenlet/operation/shoot"
- 	errorsutils "github.com/gardener/gardener/pkg/utils/errors"
- 	"github.com/gardener/gardener/pkg/utils/flow"
--	"github.com/gardener/gardener/pkg/utils/gardener/shootstate"
- 	retryutils "github.com/gardener/gardener/pkg/utils/retry"
- )
- 
-@@ -35,10 +39,24 @@ var liveMigrationStepOwners = map[gardencorev1beta1.ConditionType]v1beta1helper.
- 	gardencorev1beta1.ShootLiveMigrationDestinationEtcdPeersJoined:                 v1beta1helper.LiveMigrationRoleDestination,
- 	gardencorev1beta1.ShootLiveMigrationMigrateExtensionsNeededBeforeKubeAPIServer: v1beta1helper.LiveMigrationRoleSource,
- 	gardencorev1beta1.ShootLiveMigrationDestinationKubeAPIServerReady:              v1beta1helper.LiveMigrationRoleDestination,
--	gardencorev1beta1.ShootLiveMigrationMigrateDNSRecords:                          v1beta1helper.LiveMigrationRoleSource,
-+	gardencorev1beta1.ShootLiveMigrationMigrateSourceSeedComponents:                v1beta1helper.LiveMigrationRoleSource,
- 	gardencorev1beta1.ShootLiveMigrationEtcdMigrationComplete:                      v1beta1helper.LiveMigrationRoleDestination,
--	gardencorev1beta1.ShootLiveMigrationSourceSeedCleanup:                          v1beta1helper.LiveMigrationRoleSource,
- 	gardencorev1beta1.ShootLiveMigrationMigrationCompleted:                         v1beta1helper.LiveMigrationRoleDestination,
-+	gardencorev1beta1.ShootLiveMigrationSourceSeedFinalTeardown:                    v1beta1helper.LiveMigrationRoleSource,
-+}
-+
-+// liveMigrationConditionOrder is the canonical ordering of live migration conditions, matching the flow step sequence.
-+// Conditions are sorted by this order when written to status so they always appear in flow order regardless of which
-+// gardenlet set them first.
-+var liveMigrationConditionOrder = []gardencorev1beta1.ConditionType{
-+	gardencorev1beta1.ShootLiveMigrationSourceEtcdPreparedForPeerJoin,
-+	gardencorev1beta1.ShootLiveMigrationDestinationEtcdPeersJoined,
-+	gardencorev1beta1.ShootLiveMigrationMigrateExtensionsNeededBeforeKubeAPIServer,
-+	gardencorev1beta1.ShootLiveMigrationDestinationKubeAPIServerReady,
-+	gardencorev1beta1.ShootLiveMigrationMigrateSourceSeedComponents,
-+	gardencorev1beta1.ShootLiveMigrationEtcdMigrationComplete,
-+	gardencorev1beta1.ShootLiveMigrationMigrationCompleted,
-+	gardencorev1beta1.ShootLiveMigrationSourceSeedFinalTeardown,
- }
- 
- func (r *Reconciler) runLiveMigrateShootFlow(ctx context.Context, o *operation.Operation, role v1beta1helper.LiveMigrationRole) *v1beta1helper.WrappedLastErrors {
-@@ -75,6 +93,21 @@ func (r *Reconciler) runLiveMigrateShootFlow(ctx context.Context, o *operation.O
- 		return v1beta1helper.NewWrappedLastErrors(v1beta1helper.FormatLastErrDescription(err), err)
- 	}
- 
-+	// Set before the graph runs so IsRestorePhase() is consistent across every task.
-+	o.Shoot.LiveMigrationRole = role
-+
-+	// The live migration flow deploys the shoot control plane on the destination seed without running the
-+	// infrastructure reconciliation that normally populates o.Shoot.Networks (see WaitForInfrastructure). Compute
-+	// the networks here from the shoot's spec and status so control plane components (e.g. kube-apiserver, VPN) can
-+	// read the CIDRs. This mirrors the regular reconcile and migrate flows.
-+	if o.Shoot.GetInfo().Spec.Networking != nil && o.Shoot.GetInfo().Spec.Networking.Nodes != nil {
-+		networks, err := shoot.ToNetworks(o.Shoot.GetInfo(), o.Shoot.IsWorkerless)
-+		if err != nil {
-+			return v1beta1helper.NewWrappedLastErrors(v1beta1helper.FormatLastErrDescription(err), err)
-+		}
-+		o.Shoot.Networks = networks
-+	}
-+
- 	var (
- 		g = flow.NewGraph("Shoot control plane live migration")
- 
-@@ -89,13 +122,41 @@ func (r *Reconciler) runLiveMigrateShootFlow(ctx context.Context, o *operation.O
- 			Dependencies: flow.NewTaskIDs(sourceEtcdReadyForPeerJoin),
- 		})
- 
--		_ = g.Add(flow.Task{
-+		migrateExtensionsNeededBeforeKubeAPIServer = g.Add(flow.Task{
-+			Name:         "Migrating source extensions needed before kube-apiserver",
-+			Fn:           r.executeStepOrWait(botanist, role, gardencorev1beta1.ShootLiveMigrationMigrateExtensionsNeededBeforeKubeAPIServer, botanist.MigrateExtensionsBeforeKubeAPIServerTaskGroup(false)),
-+			Dependencies: flow.NewTaskIDs(destinationEtcdPeersJoined),
-+		})
-+
-+		destinationKubeAPIServerReady = g.Add(flow.Task{
-+			Name:         "Deploying destination control plane and temporary VPN",
-+			Fn:          
-```
-
-**File**: `pkg/gardenlet/controller/shoot/shoot/reconciler_migrate.go` (modified, +1/-1)
-```diff
-@@ -156,7 +156,7 @@ func (r *Reconciler) runMigrateShootFlow(ctx context.Context, o *operation.Opera
- 		waitForManagedResourcesDeletion     = g.AddGroup(botanist.MigrateAndDeleteManagedResourcesTaskGroup(cleanupShootResources).WithDependencies(wakeUpKubeAPIServer))
- 		_                                   = g.AddGroup(botanist.DeleteMachineControllerManagerTaskGroup())
- 		waitUntilExtensionResourcesMigrated = g.AddGroup(botanist.MigrateExtensionResourcesTaskGroup())
--		_                                   = g.AddGroup(botanist.MigrateExtensionsBeforeKubeAPIServerTaskGroup())
-+		_                                   = g.AddGroup(botanist.MigrateExtensionsBeforeKubeAPIServerTaskGroup(true))
- 		persistShootState                   = g.Add(flow.Task{
- 			Name:         "Persisting shoot state",
- 			Fn:           botanist.PersistShootState,
-```
-
-**File**: `pkg/gardenlet/controller/shoot/shoot/reconciler_reconcile.go` (modified, +2/-17)
-```diff
-@@ -528,23 +528,8 @@ func (r *Reconciler) setupShootReconciliationFlow(ctx context.Context, b *botani
- 			deployManagedResourceForGardenerNodeAgent,
- 			waitUntilKubeRootCAConfigMapsUpdated,
- 		))
--		_                                         = g.AddGroup(b.ReconcileExtensionsAfterWorkerTaskGroup(flowCtx.skipReadiness))
--		deleteStaleOperatingSystemConfigResources = g.Add(flow.Task{
--			Name: "Delete stale OperatingSystemConfig resources",
--			Fn: func(ctx context.Context) error {
--				return b.Shoot.Components.Extensions.OperatingSystemConfig.DeleteStaleResources(ctx)
--			},
--			SkipIf:       b.Shoot.IsWorkerless,
--			Dependencies: flow.NewTaskIDs(waitUntilWorkerReady),
--		})
--		_ = g.Add(flow.Task{
--			Name: "Waiting until stale OperatingSystemConfig resources are deleted",
--			Fn: func(ctx context.Context) error {
--				return b.Shoot.Components.Extensions.OperatingSystemConfig.WaitCleanupStaleResources(ctx)
--			},
--			SkipIf:       b.Shoot.IsWorkerless || b.Shoot.HibernationEnabled || flowCtx.skipReadiness,
--			Dependencies: flow.NewTaskIDs(deleteStaleOperatingSystemConfigResources),
--		})
-+		_ = g.AddGroup(b.ReconcileExtensionsAfterWorkerTaskGroup(flowCtx.skipReadiness))
-+		_ = g.AddGroup(b.DeleteStaleOperatingSystemConfigResourcesTaskGroup(flowCtx.skipReadiness))
- 
- 		_ = g.Add(flow.Task{
- 			Name:         "Checking if we have dual-stack pod CIDRs in nodes",
-```
-
-**File**: `pkg/gardenlet/operation/botanist/dnsrecord.go` (modified, +17/-0)
-```diff
-@@ -6,6 +6,7 @@ package botanist
- 
- import (
- 	"context"
-+	"time"
- 
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 
-@@ -226,6 +227,22 @@ func (b *Botanist) deployOrRestoreDNSRecord(ctx context.Context, dnsRecord compo
- 	return dnsRecord.Deploy(ctx)
- }
- 
-+// liveMigrationDNSCacheSyncWait is how long to wait after re-pointing the shoot's DNS records to give
-+// upstream DNS caches time to pick up the new targets before components that resolve those names are started.
-+const liveMigrationDNSCacheSyncWait = 2 * time.Minute
-+
-+// WaitForLiveMigrationDNSCacheSync blocks for liveMigrationDNSCacheSyncWait (or until ctx is cancelled) so DNS caches
-+// can sync to the destination targets after the internal and external DNS records have been re-pointed.
-+func (b *Botanist) WaitForLiveMigrationDNSCacheSync(ctx context.Context) error {
-+	b.Logger.Info("Waiting for DNS caches to sync to the destination", "duration", liveMigrationDNSCacheSyncWait)
-+	select {
-+	case <-ctx.Done():
-+		return ctx.Err()
-+	case <-b.Clock.After(liveMigrationDNSCacheSyncWait):
-+		return nil
-+	}
-+}
-+
- func (b *Botanist) dnsRecordTTLSeconds() *int64 {
- 	if b.Config != nil && b.Config.Controllers != nil && b.Config.Controllers.Shoot != nil {
- 		return b.Config.Controllers.Shoot.DNSEntryTTLSeconds
-```
-
-**File**: `pkg/gardenlet/operation/botanist/dnsrecord_test.go` (modified, +27/-0)
-```diff
-@@ -20,6 +20,7 @@ import (
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/version"
-+	testclock "k8s.io/utils/clock/testing"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
- 
-@@ -895,4 +896,30 @@ var _ = Describe("dnsrecord", func() {
- 			Expect(b.MigrateInternalDNSRecord(ctx)).To(MatchError(testErr))
- 		})
- 	})
-+
-+	Describe("#WaitForLiveMigrationDNSCacheSync", func() {
-+		It("should return nil once the DNS cache sync wait duration has elapsed", func() {
-+			fakeClock := testclock.NewFakeClock(time.Now())
-+			botanist := &Botanist{Operation: &operation.Operation{Clock: fakeClock, Logger: logr.Discard()}}
-+
-+			errCh := make(chan error, 1)
-+			go func() {
-+				defer GinkgoRecover()
-+				errCh <- botanist.WaitForLiveMigrationDNSCacheSync(ctx)
-+			}()
-+
-+			Eventually(fakeClock.HasWaiters).Should(BeTrue())
-+			fakeClock.Step(2 * time.Minute)
-+			Eventually(errCh).Should(Receive(BeNil()))
-+		})
-+
-+		It("should return ctx.Err() when the context is cancelled before the timer fires", func() {
-+			fakeClock := testclock.NewFakeClock(time.Now())
-+			botanist := &Botanist{Operation: &operation.Operation{Clock: fakeClock, Logger: logr.Discard()}}
-+
-+			cancelCtx, cancel := context.WithCancel(ctx)
-+			cancel()
-+			Expect(botanist.WaitForLiveMigrationDNSCacheSync(cancelCtx)).To(MatchError(context.Canceled))
-+		})
-+	})
- })
+@@ -1,5 +1,5 @@
+ # builder
+-FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:3102e2c7eeee6e16de01ca3f35c56434696f70702a30b3d564b0244560981bb0 AS builder
++FROM --platform=$BUILDPLATFORM golang:1.27.4@sha256:5f1b98fa02fe396ebce2a0227a0e08309e11792915b9dd2e1f71053d7e7e6666 AS builder
+ ARG GOPROXY=https://proxy.golang.org,direct
+ ENV GOPROXY=$GOPROXY
+ WORKDIR /go/src/github.com/gardener/gardener
 ```
 
 #### Recent Merged Pull Requests:
@@ -1171,8 +1345,8 @@ Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
 - **PR #16429** (2026-11-26): Update dependency kubernetes/kubernetes to v1.37.3 (@renovate[bot])
 - **PR #16428** (closed): Add two-phase SSH keypair rotation (@david-hass)
 - **PR #16426** (closed): Strip `X-Remote-Extra-*` and `X-Remote-Uid` headers in Istio authenticating proxy (@acumino)
+- **PR #16420** (2026-11-27): Update golang:1.27.4 Docker digest to 5f1b98f (@renovate[bot])
 - **PR #16417** (2026-11-24): Update golang:1.27.4 Docker digest to 3102e2c (@renovate[bot])
-- **PR #16415** (2026-11-24): Pin dependencies (@renovate[bot])
 
 ---
 
@@ -1192,34 +1366,34 @@ Co-authored-by: Shafeeque E S <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update release schedule
+## X. Deploy L7 load-balancing related lua filters to kube-apiserver routes only and a
 
 **RULE**:
-When implementing operations in `docs/development/process.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/component/kubernetes/apiserver/constants/constants.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9ed7804e`: Update release schedule. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0964b4f9`: Deploy L7 load-balancing related lua filters to kube-apiserver routes only and apply hardening measurements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/development/process.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/kubernetes/apiserver/constants/constants.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
- v1.156  | Week 46-49 | November 9, 2026       | December 6, 2026   | [@plkokanov](https://github.com/plkokanov)                   |
- v1.157  | Week 50-53 | December 7, 2026       | January 3, 2027    | [@shafeeqes](https://github.com/shafeeqes)                   |
+	// RequestHeaderUID is the header key for the UID headers.
+	RequestHeaderUID = "X-Remote-Uid"
+	// RequestHeaderPrefixExtra is the prefix headers keys for extra headers.
+	RequestHeaderPrefixExtra = "X-Remote-Extra-"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
- v1.156  | Week 46-47 | November 9, 2026       | November 22, 2026  | [@plkokanov](https://github.com/plkokanov)                   |
- v1.157  | Week 48-49 | November 23, 2026      | December 6, 2026   | [@rfranzke](https://github.com/rfranzke)                     |
- v1.158  | Week 50-53 | December 7, 2026       | January 3, 2027    | [@shafeeqes](https://github.com/shafeeqes)                   |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9ed7804e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0964b4f9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
