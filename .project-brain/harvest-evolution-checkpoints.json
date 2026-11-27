@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:59:50.513Z",
+  "last_updated": "2026-11-27T18:08:37.957Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T17:10:43.541Z",
@@ -248,7 +248,7 @@
       "staged_for_review": 1
     },
     "prometheus-prometheus-learnings.md": {
-      "processed_at": "2026-11-27T00:07:36.145Z",
+      "processed_at": "2026-11-27T18:08:35.617Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -373,7 +373,7 @@
       "staged_for_review": 1
     },
     "doobidoo-mcp-memory-service-learnings.md": {
-      "processed_at": "2026-11-26T23:00:08.096Z",
+      "processed_at": "2026-11-27T18:08:36.651Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -548,7 +548,7 @@
       "staged_for_review": 1
     },
     "1jehuang-jcode-learnings.md": {
-      "processed_at": "2026-11-26T17:57:10.741Z",
+      "processed_at": "2026-11-27T18:08:34.495Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4048,7 +4048,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5043,
+  "total_dossiers_evaluated": 5046,
   "total_canonical_promoted": 584,
-  "total_staged_for_review": 3796
+  "total_staged_for_review": 3799
 }

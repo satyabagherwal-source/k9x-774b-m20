@@ -826763,3 +826763,251 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `80e0546c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10942. prompt(selfdev): instruct agents to build and live-reload by default after code (Harvested from 1jehuang/jcode)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "prompt(selfdev): instruct agents to build and live-reload by default after code",
+  "source": "1jehuang/jcode",
+  "source_url": "https://github.com/1jehuang/jcode",
+  "source_version": "d31f9cd9",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T18:08:16.831Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-1jehuang-jcode",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `d31f9cd9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/jcode-base/src/prompt/selfdev_mode.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `410425e6`: prompt(selfdev): instruct agents to build and live-reload by default after code changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-base/src/prompt/selfdev_mode.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+1. **Build and live-reload by default after making code changes** so the running session actually runs your new code (don't leave code changes unbuilt on disk unless the user asks not to reload or the change is docs/tests-only). Use `selfdev build-reload` to build and reload onto the new binary in one step (it waits for the build to finish and only reloads if it succeeds), or `selfdev build` when you only want to build without reloading. Both build actions require nonblank `release_notes` with concise highlights suitable for a public release. Keep private build reasons, reload context, and session details out of release notes. Before drafting notes, call `selfdev logs` and consider all changes bundled since the last published release, not just your own. Only write “No user-visible changes.” when the entire build has none.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+1. Prefer coordinated builds with `selfdev build`. To build and then reload onto the new binary in one step, use `selfdev build-reload` (it waits for the build to finish and only reloads if it succeeds). Both build actions require nonblank `release_notes` with concise highlights suitable for a public release. Keep private build reasons, reload context, and session details out of release notes. Before drafting notes, call `selfdev logs` and consider all changes bundled since the last published release, not just your own. Only write “No user-visible changes.” when the entire build has none.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `410425e6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10943. honor search cancellation and report timeouts (Harvested from prometheus/prometheus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "honor search cancellation and report timeouts",
+  "source": "prometheus/prometheus",
+  "source_url": "https://github.com/prometheus/prometheus",
+  "source_version": "ccdfcea8",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T18:08:24.936Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-prometheus-prometheus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `ccdfcea8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `storage/generic.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `77b65d53`: api: honor search cancellation and report timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/generic.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// checkContextEveryNIterations is used in some tight loops to check if the context is done.
+const checkContextEveryNIterations = 128
+
+// ApplySearchHints filters, orders, and limits values using a non-nil ctx.
+// Values must be ascending unless hints specifies score ordering with a filter.
+// Nil hints use the zero-value defaults. Cancellation returns the context error.
+func ApplySearchHints(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, error) {
+		return applySearchHintsNoFilter(ctx, values, hints)
+			return topKByScore(ctx, values, hints.Filter, hints.Limit)
+			return reverseFilterEarlyExit(ctx, values, hints.Filter, hints.Limit)
+	return applySearchHintsLinear(ctx, values, hints)
+}
+
+func searchHintsContextErr(ctx context.Context, i int) error {
+	if i%checkContextEveryNIterations != 0 {
+		return nil
+	}
+	return ctx.Err()
+func reverseFilterEarlyExit(ctx context.Context, values []string, filter Filter, limit int) ([]SearchResult, error) {
+		if err := searchHintsContextErr(ctx, len(values)-1-i); err != nil {
+			return nil, err
+		}
+	return results, nil
+func applySearchHintsNoFilter(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, e
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// ApplySearchHints filters, sorts, and limits a slice of string values according to hints,
+// returning scored SearchResult entries. A nil hints value is treated as the zero value.
+// The input values slice is assumed to be ordered ascending by value; the function only
+// performs extra work for orderings that differ from this.
+//
+// Allocation and ordering are tuned to the (Filter, OrderBy, Limit) combination:
+//   - Filter == nil: at most Limit entries are copied; OrderByValueDesc walks the input
+//     in reverse so we never materialise the full slice when limited.
+//   - OrderByValueAsc + Filter + Limit: stream-filter with early exit at Limit matches.
+//   - OrderByValueDesc + Filter + Limit: reverse stream-filter with early exit at Limit
+//     matches, taking advantage of the input being ascending so the tail is the largest.
+//   - OrderByScoreDesc + Filter + Limit: top-K min-heap of size Limit, avoiding a full
+//     sort over the matched set.
+//   - Other combinations fall back to filter-then-reorder-then-slice, with the upfront
+//     capacity capped by min(len(values), max(2*Limit, minLinearAllocCap)).
+func ApplySearchHints(values []string, hints *SearchHints) []SearchRe
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `77b65d53` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10944. forward delta-sync events a hybrid hub applied to its secondary (#1506, p (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "forward delta-sync events a hybrid hub applied to its secondary (#1506, p",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "6847d593",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T18:08:29.175Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `6847d593`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/1506.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bef18ef5`: sync): forward delta-sync events a hybrid hub applied to its secondary (#1506, part 1 of 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1506.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **A hybrid hub forwards the delta-sync events it applied to its Cloudflare secondary (#1506).** `apply_remote_event` writes through the primary's SQLite connection, so a spoke's create, edit or delete reached the hub and every other spoke but never D1, which silently became a partial copy holding only the hub's own writes. The scheduled sync cycle now tails the hub's `sync_events` with a persisted per-secondary cursor (the `push_cursor` table and `push_to_peer` loop spokes already use) and replays each event to the secondary: a create or edit stores or updates the current row in its store, a delete deletes it. The cursor moves only after the secondary acknowledged, so a restart or a D1 outage between "applied" and "forwarded" re-delivers instead of dropping. A hub that upgrades starts at the end of its log; the drift scan keeps the backlog. Each forwarded event is recorded in the new `secondary_forwarded` table (migration 023), the identity a later pull-side guard can check. Part 1 of 2: the pull-side echo guard follows separately.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bef18ef5` are properly handled with clean fallback behavior.

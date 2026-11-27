@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T17:59:50.113Z",
+  "last_updated": "2026-11-27T18:08:37.365Z",
   "total_records": 2847,
   "domains": {
     "A": {
@@ -11593,8 +11593,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "9842dab19bd43477d65de4e55274311878a4cd0521e688f2aa8a365761fb36e8",
-      "created_at": "2026-11-27T00:07:25.243Z"
+      "content_hash": "ef6cea187f2f4f355412bd75b4aac305a326bb255735b8c9e296d1f4b65f949b",
+      "created_at": "2026-11-27T18:08:26.062Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -13797,8 +13797,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "e1f77eeeef5a30caf67a8879122238af8e522b87c8b60ceface190ac2ff33d08",
-      "created_at": "2026-11-26T23:00:03.149Z"
+      "content_hash": "820fde6dc140be3a554e40247e962bae9f576b1ae23a11e55b2a3ed81150f87b",
+      "created_at": "2026-11-27T18:08:30.336Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -15926,8 +15926,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "9e8aec33c64a5265d7da1ff681241599a8dd12cf0d082da9bcd6cbdbf5ef4739",
-      "created_at": "2026-11-27T09:44:55.446Z"
+      "content_hash": "83a584908116ff233e1586dd5e52ab4d3908a526efaff0187a5ad49f56d3560e",
+      "created_at": "2026-11-27T18:08:31.602Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -22513,8 +22513,8 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-learnings-technical-construction-intelligence-doobid.md",
       "repository": "doobidoo-mcp-memory-service-learnings",
-      "content_hash": "24a61cc7b88ab0158a674757c20aed49de7479e371671378d2d34110cc9a9d1a",
-      "created_at": "2026-11-26T23:00:08.910Z"
+      "content_hash": "b8b056d6008161f130eaf692e1a473bbeffcbb8141fd267ccdb8cd6d605ff3b0",
+      "created_at": "2026-11-27T18:08:37.365Z"
     },
     "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lottie-react-native-lottie-react-native-core",
@@ -24910,8 +24910,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "5a3176da5177d2fdf4f20c014eebb5c2dcdf8f748706bf17710c93ad1ac9261e",
-      "created_at": "2026-11-27T00:07:36.701Z"
+      "content_hash": "e5ec381687acffd6f7c519c9ae3cd0f4f7873b34b2a6fd155032e7f8ef723f59",
+      "created_at": "2026-11-27T18:08:36.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
@@ -30752,8 +30752,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "beec88b3a09eeafbc02ed6cdfde3be28fce5331f92bc2682e3c828b306f22283",
-      "created_at": "2026-11-26T17:56:56.268Z"
+      "content_hash": "43326f57f4d63da0942f61a57019dc87f9e199e282550755944932ca4d9856b9",
+      "created_at": "2026-11-27T18:08:17.968Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -30761,8 +30761,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "9ae9245acbfcdce4ac91f1b0eb323c8b706ab79073321cfe48f7450ad177ebe1",
-      "created_at": "2026-11-26T17:57:11.350Z"
+      "content_hash": "fb231da17f40a393109010fcd776c717fb3358de3d3dad7c06b47c1269d22cc7",
+      "created_at": "2026-11-27T18:08:35.005Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",

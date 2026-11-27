@@ -13838,3 +13838,7 @@
 | `CYCLE-20261127-1B8F` | `2026-11-27T17:50:18.399Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10940` | Yes (`9c76863d...`) |
 | `CYCLE-20261127-1E5T` | `2026-11-27T17:50:22.193Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10941` | Yes (`2e98a51d...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T17:50:56.613Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C23687A0` [Domain H] | Yes (`6110ab45...`) |
+| `CYCLE-20261127-OFUX` | `2026-11-27T18:08:17.481Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10942` | Yes (`8d8833fc...`) |
+| `CYCLE-20261127-OM3R` | `2026-11-27T18:08:25.575Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10943` | Yes (`fcd5bab9...`) |
+| `CYCLE-20261127-OPE7` | `2026-11-27T18:08:29.839Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10944` | Yes (`daddb870...`) |
+| `CYCLE-20261127-OQJO` | `2026-11-27T18:08:31.332Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`6057cae8...`) |

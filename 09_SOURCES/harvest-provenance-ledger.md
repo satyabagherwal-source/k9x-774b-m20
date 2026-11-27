@@ -13871,3 +13871,7 @@ Every entry in this ledger must capture:
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `b1999539` | Multi-dimensional audit evidence | 2026-11-27T17:50:18.408Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `80e0546c` | Multi-dimensional audit evidence | 2026-11-27T17:50:22.203Z |
 | `learn-dom-h-c23687a0` | `project://dathere-qsv` | `80e0546c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-27T17:50:56.613Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `d31f9cd9` | Multi-dimensional audit evidence | 2026-11-27T18:08:17.495Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ccdfcea8` | Multi-dimensional audit evidence | 2026-11-27T18:08:25.585Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `6847d593` | Multi-dimensional audit evidence | 2026-11-27T18:08:29.849Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a0377489` | Multi-dimensional audit evidence | 2026-11-27T18:08:31.346Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `91fdde93`  
+> **Source Version**: `6847d593`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:00:01.263Z  
+> **Timestamp**: 2026-11-27T18:08:28.520Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:00:01.256Z  
+> **Harvest Timestamp**: 2026-11-27T18:08:28.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2157 stars
+- **Stars / Engagement**: 2161 stars
 
 ---
 
@@ -2932,692 +2932,1490 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6b27bf8` (2026-11-26)
-**Commit Message**: docs(agents): add repository guidelines and refresh the GitNexus block (#2138)
+### Incident Patch 1: `bef18ef5` (2026-11-27)
+**Commit Message**: fix(sync): forward delta-sync events a hybrid hub applied to its secondary (#1506, part 1 of 2) (#2135)
 
-* docs(agents): add repository guidelines and refresh the GitNexus block
+* fix(sync): forward delta-sync events a hybrid hub applied to its secondary (#1506)
 
-AGENTS.md gets a "Repository Guidelines" section in front of the claim
-rules, and the generated GitNexus block is refreshed to the current
-index. The old block pointed at `.claude/skills/gitnexus/<name>/`, a
-path that never existed here; the skills live in
-`.claude/skills/gitnexus-<name>/`.
+apply_remote_event writes through the primary's SQLite connection, so a spoke's
+create, edit or delete never reached the hybrid queue and Cloudflare held only the
+hub's own writes. The scheduled sync cycle now tails sync_events with a persisted
+per-secondary cursor (push_cursor and push_to_peer, ADR-0027) and replays each event
+to the secondary; the cursor moves only after it acknowledged. Each forwarded event
+is recorded in secondary_forwarded (migration 023).
 
-The two skills the new block links to, gitnexus-cli and gitnexus-guide,
-were only in the working tree and are added with it.
+Part 1 of 2: the pull-side echo guard follows separately.
 
-Carried over unchanged from the working tree of the main checkout so it
-is not lost. The guidelines text still needs a pass against CLAUDE.md
-before it goes to main: it names bare `python`/`pytest` where this repo
-requires `.venv/bin/...`, and `node .gitnexus/run.cjs` refers to a
-gitignored directory.
+Assisted-by: Claude Code / Claude Sonnet 5.5
+Account: tonydzi
+Operator: Anton Dziatkovskii
 
-* docs(claude): add the generated GitNexus block to CLAUDE.md
+* fix(sync): retry a failed edit, filter tombstones, split the forwarder (#1506)
 
-Same generated block as in AGENTS.md, appended after the graphify
-section. Kept as its own commit because it is the part to decide on:
-it adds "MUST run impact before editing" rules for every agent next to
-the existing graphify route, and can be dropped withou
+Review follow-ups on the secondary forwarder:
+- a failed update on a row the secondary already holds fell back to a store that was
+  refused as a duplicate, and the refusal was swallowed, so the cursor passed the edit.
+  The fallback now raises on a duplicate when it stands in for an edit.
+- _row_store read 
 
-**File**: `.claude/skills/gitnexus-cli/SKILL.md` (added, +110/-0)
+**File**: `changelog.d/1506.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,110 @@
-+---
-+name: gitnexus-cli
-+description: "Use when the user needs to run GitNexus CLI commands like analyze/index a repo, check status, clean the index, generate a wiki, or list indexed repos. Examples: \"Index this repo\", \"Reanalyze the codebase\", \"Generate a wiki\""
-+---
-+
-+# GitNexus CLI Commands
-+
-+Commands below use `node .gitnexus/run.cjs <command>` — the project-local runner `gitnexus analyze` drops next to the index. It auto-selects an available runner at call time (global `gitnexus`, else `pnpm dlx`, else `bunx`, else `npx`), so no package-manager assumption and no global install is required — including on a bun-only machine, which has no npm, npx or pnpm at all.
-+
-+> **Not analyzed yet, or `node .gitnexus/run.cjs` reports `Cannot find module`** (the gitignored runner is absent — e.g. a fresh clone or `git clean`)? (Re)generate it with `npx gitnexus analyze` from the project root, or `bunx gitnexus@latest analyze` on a bun-only machine. On **npm 11.x**, if `npx` crashes during install (`node.target is null`), install once with `npm i -g gitnexus` (then `gitnexus analyze`), or use `bunx gitnexus@latest analyze`, or `pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-build=tree-sitter dlx gitnexus@latest analyze`. See [#1939](https://github.com/abhigyanpatwari/GitNexus/issues/1939).
-+
-+## Commands
-+
-+### analyze — Build or refresh the index
-+
-+```bash
-+node .gitnexus/run.cjs analyze
-+```
-+
-+Run from the project root. This parses all source files, builds the knowledge graph, writes it to `.gitnexus/`, and generates CLAUDE.md / AGENTS.md context files.
-+
-+| Flag           | Effect                                                           |
-+| -------------- | ---------------------------------------------------------------- |
-+| `--watch`      | Keep a Git repository index current with serialized refreshes    |
-+| `--debounce <ms>` | Watch quiet period before refresh (default: 300 ms)            |
-+| `--force`      | Force full re-index even if up to date                           |
-+| `--embeddings` | Enable embedding generation for semantic search (off by default) |
-+| `--drop-embeddings` | Drop existing embeddings on rebuild. By default, an `analyze` without `--embeddings` preserves them. |
-+| `--pdg` | Build the program-dependence layers used by `explain` and `pdg_query` (taint, CDG, and REACHING_DEF). |
-+| `--spring-actuator <path>` | Import opt-in Spring Boot Actuator mappings, beans, conditions, configprops, and env snapshots. Forces a full rebuild; unsupported with `--watch`. |
-+| `--asyncapi-spec <path>` | Read opt-in AsyncAPI 3.x documents (directory or single file) and mint `Destination` nodes from their operations. 2.x is refused, not mapped. Unsupported with `--watch`. |
-+
-+**When to run:** First time in a project, after major code changes, or when `gitnexus://repo/{name}/context` reports the index is stale. In Claude Code, a PostToolUse hook detects staleness after `git commit` and `git merge` and notifies the agent to run `analyze` — the hook does not run analyze itself, to avoid blocking the agent for up to 120s and risking KuzuDB corruption on timeout.
-+
-+For Spring runtime enrichment, pass a JSON bundle, one endpoint JSON file, or a directory containing endpoint files. Route evidence is authoritative only when `runtimeConfirmed === true`; `runtimeSource` records provenance and may also accompany `handler-conflict`. Env/configprops values are never persisted.
-+
-+## Index storage and retention
-+
-+Default location is `<repo>/.gitnexus/`. Override with environment variables (also documented in README):
-+
-+| Env | Effect |
-+| --- | ------ |
-+| `GITNEXUS_STORAGE_PATH` | One complete external index directory. Wins if both storage vars are set. |
-+| `GITNEXUS_STORAGE_ROOT` | Absolute root; GitNexus creates an isolated `<repo-basename>-<12-hex>/` slot per repository. |
-+| `GITNEXUS_CONTENT_RETENTION` | `full` (default) keeps file text; `symbol` keeps snippets; `none` keeps the graph only. |
-+
-+`list_repos`, `gitnexus://repo/{name}/context`, and HTTP `GET /api/repos` / `GET /api/repo` expose `storagePath`, `contentRetention`, and `sourceAvailable`. HTTP `/api/file` and `/api/grep` return 410 unless retention is `full`. MCP `include_content` may still return symbol spans when retention is `symbol`.
-+
-+Use `node .gitnexus/run.cjs analyze --watch` for a long-lived local Git repository. It performs an initial analysis, queues scanner-admitted file changes, and retries intact failed batches with bounded backoff. Watch refreshes update only the graph: they skip AGENTS.md / CLAUDE.md injection and standard skill installation, so run a one-shot `analyze` when those generated files need updating. Watch rejects one-shot or context-output flags including `--force`, embedding flags, `--skills`, `--default-branch`, `--skip-agents-md`, `--skip-skills`, `--no-stats`, `--self-commit`, `--index-only`, and `--skip-git`. It never pulls remotes. Scheduled remote clone/pull is a di
+@@ -0,0 +1 @@
++- **A hybrid hub forwards the delta-sync events it applied to its Cloudflare secondary (#1506).** `apply_remote_event` writes through the primary's SQLite connection, so a spoke's create, edit or delete reached the hub and every other spoke but never D1, which silently became a partial copy holding only the hub's own writes. The scheduled sync cycle now tails the hub's `sync_events` with a persisted per-secondary cursor (the `push_cursor` table and `push_to_peer` loop spokes already use) and replays each event to the secondary: a create or edit stores or updates the current row in its store, a delete deletes it. The cursor moves only after the secondary acknowledged, so a restart or a D1 outage between "applied" and "forwarded" re-delivers instead of dropping. A hub that upgrades starts at the end of its log; the drift scan keeps the backlog. Each forwarded event is recorded in the new `secondary_forwarded` table (migration 023), the identity a later pull-side guard can check. Part 1 of 2: the pull-side echo guard follows separately.
 ```
 
-**File**: `.claude/skills/gitnexus-guide/SKILL.md` (added, +138/-0)
+**File**: `src/mcp_memory_service/consolidation/scheduler.py` (modified, +26/-0)
 ```diff
-@@ -0,0 +1,138 @@
-+---
-+name: gitnexus-guide
-+description: "Use when the user asks about GitNexus itself — available tools, how to query the knowledge graph, MCP resources, graph schema, or workflow reference. Examples: \"What GitNexus tools are available?\", \"How do I use GitNexus?\""
-+---
-+
-+# GitNexus Guide
-+
-+Quick reference for all GitNexus MCP tools, resources, and the knowledge graph schema.
-+
-+## Always Start Here
-+
-+For any task involving code understanding, debugging, impact analysis, or refactoring:
-+
-+1. **Read `gitnexus://repo/{name}/context`** — codebase overview + check index freshness
-+2. **Match your task to a skill below** and **read that skill file**
-+3. **Follow the skill's workflow and checklist**
-+
-+> If step 1 warns the index is stale, run `node .gitnexus/run.cjs analyze` in the terminal first.
-+
-+## Skills
-+
-+| Task                                         | Skill to read       |
-+| -------------------------------------------- | ------------------- |
-+| Understand architecture / "How does X work?" | `gitnexus-exploring`         |
-+| Blast radius / "What breaks if I change X?"  | `gitnexus-impact-analysis`   |
-+| Trace bugs / "Why is X failing?"             | `gitnexus-debugging`         |
-+| Rename / extract / split / refactor          | `gitnexus-refactoring`       |
-+| Tools, resources, schema reference           | `gitnexus-guide` (this file) |
-+| Index, status, clean, wiki CLI commands      | `gitnexus-cli`               |
-+
-+## Tools Reference
-+
-+| Tool             | What it gives you                                                        |
-+| ---------------- | ------------------------------------------------------------------------ |
-+| `query`          | Process-grouped code intelligence — execution flows related to a concept |
-+| `context`        | 360-degree symbol view — categorized refs, processes it participates in  |
-+| `impact`         | Symbol blast radius — what breaks at depth 1/2/3 with confidence         |
-+| `trace`          | Shortest path between two symbols — "how does A reach B?" in one call     |
-+| `detect_changes` | Git-diff impact — what do your current changes affect                    |
-+| `rename`         | Multi-file coordinated rename with confidence-tagged edits               |
-+| `cypher`         | Raw graph queries (read `gitnexus://repo/{name}/schema` first)           |
-+| `explain`        | Persisted taint findings — source→sink data flows (needs `analyze --pdg`) |
-+| `pdg_query`      | Control/data dependence — what gates X (CDG) / where Y flows (REACHING_DEF); needs `analyze --pdg` |
-+| `check`          | Check graph invariants such as circular imports                          |
-+| `route_map`      | API route map — which components/hooks fetch which endpoints, and the handler files that serve them |
-+| `shape_check`    | Response-shape drift — keys each route returns vs keys its consumers access (flags MISMATCH) |
-+| `api_impact`     | Pre-change report for an API route — consumers, middleware, shape mismatches, risk level |
-+| `tool_map`       | MCP/RPC tool definitions and the files that handle them                  |
-+| `group_list`     | List configured multi-repo groups, or one group's config                 |
-+| `group_sync`     | Rebuild a group's Contract Registry (cross-repo HTTP contract links); run after `group.yaml` changes or member re-index |
-+| `list_repos`     | Discover indexed repos (paginated — `limit`/`offset`)                    |
-+
-+### Paginating `list_repos`
-+
-+`list_repos` is paginated so a large registry is not truncated by MCP/LLM token limits. It takes optional `limit` (default **50**, max **200**) and `offset`, and returns:
-+
-+```jsonc
-+{
-+  "repositories": [
-+    { "name": "...", "path": "...", "indexedAt": "...", "lastCommit": "...", "stats": { } }
-+  ],
-+  "pagination": {
-+    "total": 437,
-+    "limit": 50,
-+    "offset": 0,
-+    "returned": 50,
-+    "hasMore": true,
-+    "nextOffset": 50
-+  }
-+}
-+```
-+
-+To enumerate **every** repository, keep calling with `offset` set to `pagination.nextOffset` until `hasMore` is `false`:
-+
-+```text
-+list_repos {}               → repos 1–50,    nextOffset 50,  hasMore true
-+list_repos { offset: 50 }   → repos 51–100,  nextOffset 100, hasMore true
-+…
-+list_repos { offset: 400 }  → repos 401–437,                 hasMore false   (done)
-+```
-+
-+Notes: `offset` ≥ `total` returns an empty page (with `total` still reported). Out-of-range or malformed `limit`/`offset` (non-integer, `limit` outside `[1, 200]`, `offset < 0`) are rejected with a clear error — `limit` above the max is rejected, not silently capped. The order is deterministic (lower-cased name, then path), so paging never skips or duplicates an entry while the registry is unchanged.
-+
-+### Taint findings (`explain`)
-+
-+`explain` returns taint findings recorded by `gitnexus analyze --pdg` — intra-procedural `TAINTED` edges plus cross-function `TAINT_PATH` hops where the interprocedural taint phase found a function-level so
-```
-
-**File**: `AGENTS.md` (modified, +85/-51)
-```diff
-@@ -1,68 +1,102 @@
--## Issue claim automation
-+# Repository Guidelines
-+
-+## Project Structure & Module Organization
-+
-+MCP Memory Service is a Python 3.11+ package. Source lives in
-+`src/mcp_memory_service/`, including storage backends, embeddings, MCP handlers,
-+and the HTTP API. Dashboard assets live in `src/mcp_memory_service/web/static/`.
-+Tests live in `tests/`, including `unit/`, `integration/`, and `consolidation/`.
-+Use `docs/` for documentation, `scripts/` for tooling, and `changelog.d/` for
-+per-change release fragments.
-+
-+## Build, Test, and Development Commands
-+
-+The project environment is the virtualenv at `.venv` (Python 3.12). The system
-+`python` and `pytest` are not the project interpreter, so call the venv binaries
-+from the repository root:
-+
-+- `.venv/bin/python install.py`: install with platform-specific dependency selection.
-+- `.venv/bin/python -m pip install -e '.[dev]'`: install editable code and development tools.
-+  A venv made by `uv` has no pip; use `uv pip install --python .venv/bin/python -e '.[dev]'` there.
-+- `.venv/bin/python scripts/validation/check_dev_setup.py`: verify the editable installation.
-+- `.venv/bin/memory launch`: start the HTTP service and dashboard; `.venv/bin/memory server` runs MCP stdio.
-+- `.venv/bin/pytest tests/`: run tests; `.venv/bin/pytest tests/unit/<test_file>.py -q` targets a file.
-+- `.venv/bin/pytest --cov=mcp_memory_service tests/`: collect coverage.
-+- `.venv/bin/python -m build`: build distribution artifacts.
-+- `bash scripts/pr/pre_pr_check.sh`: the pre-PR gate; it picks `.venv/bin/python` itself.
-+
-+## Coding Style & Naming Conventions
-+
-+Follow PEP 8 with four-space indentation, 88-character lines, and double
-+quotes. The tree is not Black- or Ruff-clean, so do not run a formatter over
-+files you touch; keep the diff to your change. Use `snake_case` for functions/modules and `PascalCase` for classes.
-+Add type hints to function signatures and Google-style docstrings to public APIs.
-+Follow neighboring code and use specific exceptions.
-+
-+## Testing Guidelines
-+
-+Use pytest and pytest-asyncio; name files and functions `test_*`. For `src/`
-+changes, provide a regression test that fails against the base code and passes
-+with the change; pure removals are exempt. Exercise real storage and handlers;
-+mock external services. Cover changed behavior, edge cases, and error paths.
-+See [CONTRIBUTING.md](CONTRIBUTING.md) for CI proof requirements.
-+
-+## Commit & Pull Request Guidelines
-+
-+Branch before committing, using names such as `fix/issue-description`. Follow
-+semantic commits, e.g. `fix(storage): handle literal tag wildcards`. Open PRs on
-+GitHub with the problem, solution, linked issue, test commands/results, and
-+screenshots for UI changes. Changes under `src/` need
-+`changelog.d/<number>.<category>.md`; categories are `added`, `fixed`, `removed`,
-+or `internal`. Codeberg is an archive.
-+
-+## Issue Claim Automation
- 
- Issues labelled `auto-assign` accept a standalone `/claim` comment. Wait for the actual assignment and confirmation before working;
- the confirmation approves only the issue's prepared scope. Other issues retain
- manual maintainer confirmation. See CONTRIBUTING.md for the full rules.
- 
- <!-- gitnexus:start -->
--# GitNexus MCP
-+# GitNexus — Code Intelligence
-+
-+This project is indexed by GitNexus as **mcp-memory-service** (30132 symbols, 60251 relationships, 1069 execution flows).
-+
-+> Index stale? Run `node .gitnexus/run.cjs analyze --index-only` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? Bootstrap with `npx`, `bunx`, or `pnpm dlx` — e.g. `bunx gitnexus@latest analyze` (npm 11 npx crash; #1939).
- 
--This project is indexed by GitNexus as **mcp-memory-service** (6259 symbols, 18031 relationships, 300 execution flows).
-+## Always Do
- 
--GitNexus provides a knowledge graph over this codebase — call chains, blast radius, execution flows, and semantic search.
-+- **MUST run impact before editing.** Use `impact({target: "symbolName", direction: "upstream"})` or `node .gitnexus/run.cjs impact "symbolName" --direction upstream --repo .`; report callers, processes, and risk. Never substitute grep for graph analysis.
-+- **MUST analyze graph changes before committing.** Use `detect_changes({scope: "all"})` (MCP) or `node .gitnexus/run.cjs detect-changes --scope all --repo .` (CLI fallback). `partial: true` or `truncated: true` is not a clean check — a zero means unseen, not unaffected; re-run it. For regression review: `detect_changes({scope: "compare", base_ref: "main"})` or `node .gitnexus/run.cjs detect-changes --scope compare --base-ref "main" --repo .`.
-+- MUST warn on HIGH/CRITICAL `risk` pre-edit; never use `riskSharedAxes` to waive a HIGH/CRITICAL `risk` warning. Compare File/symbol: MCP File omits axes; Graph-RAG expands File.
-+- **MUST treat `risk: UNKNOWN` as unresolved, not as low.** An empty caller set is not evidence the symbol is unused — it can also mean the callers are not re
-```
-
----
-
-### Incident Patch 2: `1e692710` (2026-11-26)
-**Commit Message**: fix(milvus): count live rows from one scan (#2139)
-
-* fix(milvus): count live rows from one scan (#2136)
-
-The first attempt on this branch still made two reads, a count(*) over
-the rows that never mention deleted_at plus a scan of the ones that do.
-A metadata write between them that adds the key without tombstoning the
-row moved it from the first set into the second, and it was counted
-twice (review on #2137).
-
-_drain_live_rows() reads the rows once and the totals are counted from
-that: count_all_memories (both include_superseded branches share it
-now), count_memories_by_tag, and get_stats, whose total and this-week
-figure come from the same scan. A count costs a scan instead of a
-count(*); the include_superseded=False branch already paid that.
-
-* docs(changelog): move the count entry to this PR's fragment
-
-The fragment check wants a fragment added by the PR, and one entry for
-the whole fix reads better than two.
-
-* docs(changelog): give the one-scan change its own fragment
-
-The fragment check counts added files only and git reads the move as a
-rename. The #2136 entry goes back to what main has, which still
-describes what #2137 did.
-
-**File**: `changelog.d/2139.fixed.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+- **A Milvus live total is counted from one scan, so a concurrent metadata write cannot
-+  count a memory twice (#2139).** The fix for #2136 still made two reads: a `count(*)`
-+  over the rows whose metadata never mentions `deleted_at` and a scan of the rows that
-+  do. A write that added `"deleted_at": null` between them moved a live row from the
-+  first set into the second. `count_all_memories`, `count_memories_by_tag` and both
-+  totals in `get_stats` now read the rows once; the price is a scan where there was a
-+  `count(*)`.
-```
-
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +24/-41)
-```diff
-@@ -4016,7 +4016,7 @@ async def count_memories_by_tag(self, tags: List[str]) -> int:
- 
-         try:
-             # The paged tag listing drops tombstones, so its total does too.
--            return await self._count_live(tag_filter)
-+            return len(await self._drain_live_rows(tag_filter, ["id"]))
-         except Exception as exc:  # noqa: BLE001
-             logger.error("count_memories_by_tag failed: %s", _sanitize_log_value(exc))
-             return 0
-@@ -4241,12 +4241,14 @@ async def get_stats(self) -> Dict[str, Any]:
-         if not self._ensure_initialized():
-             return {"error": "Milvus storage not initialized"}
- 
--        recent_filter = f"created_at >= {time.time() - 7 * 24 * 60 * 60}"
-+        week_ago = time.time() - 7 * 24 * 60 * 60
- 
-         try:
-             # Live rows only, like the listings these totals are shown with.
--            total = await self._count_live("")
--            recent = await self._count_live(recent_filter)
-+            # Both figures come from the same scan, so they agree with each other.
-+            rows = await self._drain_live_rows("", ["id", "created_at"])
-+            total = len(rows)
-+            recent = sum(1 for row in rows if row.get("created_at", 0) >= week_ago)
-         except Exception as exc:  # noqa: BLE001
-             logger.warning("Milvus stats query failed: %s", _sanitize_log_value(exc))
-             total = recent = 0
-@@ -4899,59 +4901,40 @@ async def count_all_memories(
-                 filter_expr, stale_days, drop_superseded=not include_superseded,
+@@ -570,6 +570,7 @@ async def _run_sync_cycle(self):
+         if storage is None:
+             self.logger.warning("Delta-sync cycle skipped: consolidator has no storage")
+             return
++        await self._forward_to_secondary(storage)
+         peers = self._resolve_sync_peers()
+         if not peers:
+             self.logger.debug("Delta-sync cycle: no peers configured (MCP_SYNC_PEERS unset)")
+@@ -580,6 +581,31 @@ async def _run_sync_cycle(self):
+                 storage, peer_id, peer, sync_from_peer, push_to_peer
              )
  
--        if not include_superseded:
--            # superseded_by lives in the metadata JSON, which Milvus cannot
--            # filter on, so count(*) would include old versions. Scan the
--            # metadata and count the current ones instead.
--            try:
--                rows = await self._drain_rows(filter_expr, ["id", "metadata"])
--            except Exception as exc:  # noqa: BLE001
--                logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
--                if should_raise_read_error():
--                    raise
--                return 0
--            return sum(
--                1 for row in rows
--                if self._row_is_live(row) and not self._row_is_superseded(row)
--            )
--
-+        # Tombstones and superseded_by both live in the metadata JSON, which
-+        # Milvus cannot filter on, so the rows are scanned and counted here.
-         try:
--            return await self._count_live(filter_expr)
-+            rows = await self._drain_live_rows(filter_expr, ["id"])
-         except Exception as exc:  # noqa: BLE001
-             logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
-             if should_raise_read_error():
-                 raise
-             return 0
-+        if include_superseded:
-+            return len(rows)
-+        return sum(1 for row in rows if not self._row_is_superseded(row))
- 
-     @staticmethod
-     def _row_is_superseded(row: Dict[str, Any]) -> bool:
-         """True for a raw row whose metadata names a replacing version."""
-         metadata = _safe_json_loads(row.get("metadata", ""), "milvus_superseded_row")
-         return bool(metadata.get("superseded_by"))
- 
--    async def _count_live(self, filter_expr: str) -> int:
-+    async def _drain_live_rows(
-+        self, filter_expr: str, output_fields: List[str],
-+    ) -> List[Dict[str, Any]]:
-         """Rows under ``filter_expr`` that carry no soft-delete tombstone.
- 
--        ``count(*)`` cannot look inside the metadata JSON, so it counts the
--        rows whose metadata never mentions the key, and a scan adds the ones
--        that mention it and are live anyway (a stored ``"deleted_at": null``;
--        :meth:`_row_is_live` decides). Neither read counts a tombstone, so a
--        purge between the two cannot turn deleted rows into live ones, which
--        subtracting a later tombstone scan from a raw count did (#2133 review).
-+        The live totals are counted from this one scan. ``count(*)`` cannot look
-+        inside the metadata JSON, and pairing it with a second read for the
-+        tombstones lets a write between the two reads count a deleted row as
-+        live or a live row twice (#2136).
-         """
--        mentions_key = 'metadata like "%deleted_at%"'
--        counted = await self._call_client(
--            "query",
--            collection_name=self.collection_name,
--            filter=self._combine_filter(filter_expr, f"not ({mentions_key})"),
--            output_fields=["count(*)"],
--        )
--        rows = await self._drain_rows(
--            self._combine_filter(filter_expr, mentions_key), ["id", "metadata"],
--        )
--        return self._extract_count(counted) + sum(
--            1 for row in rows if self._row_is_live(row)
--        )
-+        # A full scan per count. A scalar ``deleted`` field would let count(*)
-+        # answer this again, should the scan show up on large coll
-```
-
-**File**: `tests/storage/test_milvus_low_priority.py` (modified, +5/-3)
-```diff
-@@ -133,9 +133,11 @@ class TestCountMemoriesByTag:
- 
-     @pytest.mark.asyncio
-     async def test_returns_count(self):
--        """Returns the count from Milvus query."""
-+        """Returns the number of live rows the scan yields."""
-         storage = _make_storage()
--        storage._call_client = AsyncMock(return_value=[{"count(*)": 42}])
-+        storage._drain_rows = AsyncMock(
-+            return_value=[{"id": str(i), "metadata": "{}"} for i in range(42)]
-+        )
- 
-         count = await storage.count_memories_by_tag(["python"])
- 
-@@ -153,7 +155,7 @@ async def test_empty_tags_returns_zero(self):
-     async def test_query_failure_returns_zero(self):
-         """Returns 0 on query failure."""
-         storage = _make_storage()
--        storage._call_client = AsyncMock(side_effect=Exception("network error"))
-+        storage._drain_rows = AsyncMock(side_effect=Exception("network error"))
- 
-         count = await storage.count_memories_by_tag(["python"])
- 
-```
-
-**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (modified, +19/-9)
-```diff
-@@ -363,22 +363,32 @@ async def test_timestamps_skip_tombstoned_rows(self):
-     async def test_count_leaves_tombstoned_rows_out(self):
-         """`memory_list` pairs this total with a listing that drops tombstones."""
-         storage = _make_storage()
--        # One row whose metadata never mentions the key.
--        storage._call_client = AsyncMock(return_value=[{"count(*)": 1}])
-         storage._drain_rows = AsyncMock(return_value=[
-+            {"id": "h1", "metadata": "{}"},
-             {"id": "h2", "metadata": '{"deleted_at": 1.0}'},
-             # Mentions the key without being deleted: still a live row.
-             {"id": "h3", "metadata": '{"deleted_at": null}'},
-         ])
- 
-         assert await storage.count_all_memories(store=STORE) == 2
--        counted = storage._call_client.call_args.kwargs["filter"]
--        assert 'not (metadata like "%deleted_at%")' in counted
--        assert f'store == "{STORE}"' in counted
--        narrowed = _captured_filter(storage._drain_rows.call_args)
--        assert 'metadata like "%deleted_at%"' in narrowed
--        assert "not (" not in narrowed
--        assert f'store == "{STORE}"' in narrowed
-+        assert f'store == "{STORE}"' in _captured_filter(storage._drain_rows.call_args)
++    async def _forward_to_secondary(self, storage: Any) -> None:
++        """A hybrid hub replays the events it applied to its secondary (#1506).
 +
-+    @pytest.mark.parametrize("live_total", [
-+        lambda storage: storage.count_all_memories(),
-+        lambda storage: storage.count_memories_by_tag(["t"]),
-+        lambda storage: storage.get_stats(),
-+    ], ids=["count_all_memories", "count_memories_by_tag", "get_stats"])
-+    async def test_a_live_total_is_one_read(self, live_total):
-+        """Two reads let a write between them count a row twice or revive a tombstone (#2136)."""
-+        storage = _make_storage()
-+        storage._call_client = AsyncMock(return_value=[{"count(*)": 5}])
-+        storage._drain_rows = AsyncMock(return_value=[])
-+        storage.get_all_tags = AsyncMock(return_value=[])
++        No-op for any storage without a secondary. Never raises: the cursor only moves
++        after the secondary acknowledged, so a failed cycle is retried by the next one.
++        """
++        from ..storage.hybrid import HybridMemoryStorage
++        if not isinstance(storage, HybridMemoryStorage) or storage.secondary is None:
++            return
++        try:
++            from ..storage.sync.forwarder import forward_to_secondary
++            result = await forward_to_secondary(storage)
++            if result is not None and (result.events_pushed or result.events_failed):
++                self.logger.info(
++                    "Secondary forward: %s forwarded, %s failed",
++                    _sanitize_log_value(result.events_pushed),
++                    _sanitize_log_value(result.events_failed),
++                )
++        except Exception as exc:
++            self.execution_stats['failed_jobs'] += 1
++            self.logger.error(
++                "Secondary forward failed: %s: %s",
++                _sanitize_log_value(type(exc).__name__), _sanitize_log_value(exc),
++            )
 +
-+        await live_total(storage)
+     async def _run_sync_peer_cycle(
+         self,
+         storage: Any,
+```
+
+**File**: `src/mcp_memory_service/storage/migrations/023_add_secondary_forwarded.sql` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++-- #1506: identity of every delta-sync event the hub forwarded to a hybrid secondary.
++-- A later pull from the secondary can ask "did I push this (content_hash, op)?" before
++-- it applies a row that is only the echo of the hub's own forward. One row per
++-- (secondary, agent, event). Idempotent: CREATE TABLE IF NOT EXISTS.
++CREATE TABLE IF NOT EXISTS secondary_forwarded (
++    secondary_id TEXT NOT NULL,
++    agent_id TEXT NOT NULL,
++    event_id TEXT NOT NULL,
++    content_hash TEXT NOT NULL,
++    op TEXT NOT NULL,
++    forwarded_at REAL NOT NULL,
++    PRIMARY KEY (secondary_id, agent_id, event_id)
++);
 +
-+        storage._drain_rows.assert_awaited_once()
-+        storage._call_client.assert_not_called()
- 
-     async def test_count_without_superseded_skips_tombstoned_rows(self):
-         storage = _make_storage()
++CREATE INDEX IF NOT EXISTS idx_secondary_forwarded_hash
++    ON secondary_forwarded(secondary_id, content_hash, op);
 ```
 
----
-
-### Incident Patch 3: `18adcc31` (2026-11-26)
-**Commit Message**: fix(milvus): count live rows without subtracting tombstones (#2136) (#2137)
-
-* fix(milvus): count live rows without subtracting tombstones (#2136)
-
-count_all_memories, count_memories_by_tag and the two totals in
-get_stats took a raw count(*) and subtracted a later tombstone scan.
-A purge_deleted() between the two reads left the first number with the
-tombstones and the second without them, so deleted rows were reported
-as live for that call.
-
-_count_live() replaces _count_tombstones(): count(*) over the rows whose
-metadata never mentions deleted_at, plus the rows that mention it and
-are live anyway. Neither read counts a tombstone, so no interleaving
-with a purge can inflate the total, and it stays a count(*) rather than
-a full scan.
-
-* docs(changelog): scope the #2136 entry to the purge case
-
-The count still consists of two reads; the entry claimed more than the
-change closes.
-
-**File**: `changelog.d/2136.fixed.md` (added, +6/-0)
+**File**: `src/mcp_memory_service/storage/migrations/rollback/023_add_secondary_forwarded.down.sql` (added, +3/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **A Milvus count no longer reports purged tombstones as live memories (#2136).**
-+  `count_all_memories`, `count_memories_by_tag` and the two totals in `get_stats`
-+  subtracted a later tombstone scan from an earlier raw `count(*)`, so a
-+  `purge_deleted()` landing between the two reads turned the deleted rows into live
-+  ones for that call. The count now adds up rows that carry no tombstone instead of
-+  subtracting the ones that do, so a purge between the reads has nothing to inflate.
+@@ -0,0 +1,3 @@
++-- Rollback 023: drop the secondary forwarder identity table (#1506).
++DROP INDEX IF EXISTS idx_secondary_forwarded_hash;
++DROP TABLE IF EXISTS secondary_forwarded;
 ```
 
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +23/-37)
+**File**: `src/mcp_memory_service/storage/sync/forwarder.py` (added, +193/-0)
 ```diff
-@@ -4015,14 +4015,8 @@ async def count_memories_by_tag(self, tags: List[str]) -> int:
-             return 0
- 
-         try:
--            rows = await self._call_client(
--                "query",
--                collection_name=self.collection_name,
--                filter=tag_filter,
--                output_fields=["count(*)"],
--            )
-             # The paged tag listing drops tombstones, so its total does too.
--            return self._extract_count(rows) - await self._count_tombstones(tag_filter)
-+            return await self._count_live(tag_filter)
-         except Exception as exc:  # noqa: BLE001
-             logger.error("count_memories_by_tag failed: %s", _sanitize_log_value(exc))
-             return 0
-@@ -4250,21 +4244,9 @@ async def get_stats(self) -> Dict[str, Any]:
-         recent_filter = f"created_at >= {time.time() - 7 * 24 * 60 * 60}"
- 
-         try:
--            total_rows = await self._call_client(
--                "query",
--                collection_name=self.collection_name,
--                filter="",
--                output_fields=["count(*)"],
--            )
--            recent_rows = await self._call_client(
--                "query",
--                collection_name=self.collection_name,
--                filter=recent_filter,
--                output_fields=["count(*)"],
--            )
-             # Live rows only, like the listings these totals are shown with.
--            total = self._extract_count(total_rows) - await self._count_tombstones("")
--            recent = self._extract_count(recent_rows) - await self._count_tombstones(recent_filter)
-+            total = await self._count_live("")
-+            recent = await self._count_live(recent_filter)
-         except Exception as exc:  # noqa: BLE001
-             logger.warning("Milvus stats query failed: %s", _sanitize_log_value(exc))
-             total = recent = 0
-@@ -4934,13 +4916,7 @@ async def count_all_memories(
-             )
- 
-         try:
--            rows = await self._call_client(
--                "query",
--                collection_name=self.collection_name,
--                filter=filter_expr,
--                output_fields=["count(*)"],
--            )
--            return self._extract_count(rows) - await self._count_tombstones(filter_expr)
-+            return await self._count_live(filter_expr)
-         except Exception as exc:  # noqa: BLE001
-             logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
-             if should_raise_read_error():
-@@ -4953,19 +4929,29 @@ def _row_is_superseded(row: Dict[str, Any]) -> bool:
-         metadata = _safe_json_loads(row.get("metadata", ""), "milvus_superseded_row")
-         return bool(metadata.get("superseded_by"))
- 
--    async def _count_tombstones(self, filter_expr: str) -> int:
--        """Rows under ``filter_expr`` that carry a soft-delete tombstone.
-+    async def _count_live(self, filter_expr: str) -> int:
-+        """Rows under ``filter_expr`` that carry no soft-delete tombstone.
- 
--        ``count(*)`` cannot look inside the metadata JSON, so the count read
--        subtracts these. The ``like`` only narrows the scan to rows that mention
--        the key at all; :meth:`_row_is_live` then decides, so a stored
--        ``"deleted_at": null`` is not taken for a tombstone.
-+        ``count(*)`` cannot look inside the metadata JSON, so it counts the
-+        rows whose metadata never mentions the key, and a scan adds the ones
-+        that mention it and are live anyway (a stored ``"deleted_at": null``;
-+        :meth:`_row_is_live` decides). Neither read counts a tombstone, so a
-+        purge between the two cannot turn deleted rows into live ones, which
-+        subtracting a later tombstone scan from a raw count did (#2133 review).
-         """
-+        mentions_key = 'metadata like "%deleted_at%"'
-+        counted = await self._call_client(
-+            "query",
-+            collection_name=self.collection_name,
-+            filter=self._combine_filter(filter_expr, f"not ({mentions_key})"),
-+            output_fields=["count(*)"],
-+        )
-         rows = await self._drain_rows(
--            self._combine_filter(filter_expr, 'metadata like "%deleted_at%"'),
--            ["id", "metadata"],
-+            self._combine_filter(filter_expr, mentions_key), ["id", "metadata"],
-+        )
-+        return self._extract_count(counted) + sum(
-+            1 for row in rows if self._row_is_live(row)
-         )
--        return sum(1 for row in rows if not self._row_is_live(row))
- 
-     async def _drain_stale_rows(
-         self, base_filter: str, stale_days: int, drop_superseded: bool,
-```
-
-**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (modified, +9/-4)
-```diff
-@@ -360,19 +360,24 @@ async def test_timestamps_skip_tombstoned_rows(self):
- 
-         assert await storage.get_memory_timestamps() == [2.0]
- 
--    async def test_count_subtracts_tombstoned_rows(self):
-+    async def test_count_leaves_tombstoned_rows_out(self):
-         """`memory_list` pairs this total with a listing that drops tombstones."""
-         storage = _make_storage()
--        storage._call_client = AsyncMock(return_value=[{"count(*)": 2}])
-+        # One row whose metadata never mentions the key.
-+        storage._call_client = AsyncMock(return_value=[{"count(*)": 1}])
-         storage._drain_rows = AsyncMock(return_value=[
-             {"id": "h2", "metadata": '{"deleted_at": 1.0}'},
--            # Mentions the key without being deleted: must not be subtracted.
-+            # Mentions the key without being deleted: still a live row.
-             {"id": "h3", "metadata": '{"deleted_at": null}'},
-         ])
- 
--        assert await storage.count_all_memories(store=STORE) == 1
-+        assert await storage.count_all_memories(store=STORE) == 2
-+        counted = storage._call_client.call_args.kwargs["filter"]
-+        assert 'not (metadata like "%deleted_at%")' in counted
-+        assert f'store == "{STORE}"' in counted
-         narrowed = _captured_filter(storage._drain_rows.call_args)
-         assert 'metadata like "%deleted_at%"' in narrowed
-+        assert "not (" not in narrowed
-         assert f'store == "{STORE}"' in narrowed
- 
-     async def test_count_without_superseded_skips_tombstoned_rows(self):
-```
-
-**File**: `tests/storage/test_milvus_soft_delete_e2e.py` (modified, +35/-0)
-```diff
-@@ -140,3 +140,38 @@ async def test_count_and_listing_agree_once_a_memory_is_tombstoned(storage):
-     assert await storage.count_memories_by_tag(["t"]) == 1
-     stats = await storage.get_stats()
-     assert (stats["total_memories"], stats["memories_this_week"]) == (1, 1)
+@@ -0,0 +1,193 @@
++"""Forward delta-sync events to a hybrid hub's secondary backend (#1506).
++
++``apply_remote_event`` writes through the primary's SQLite connection, so a spoke's
++create, edit or delete never reaches the hybrid queue that feeds Cloudflare. This
++module tails the hub's own ``sync_events`` log with a persisted cursor per secondary
++(the same ``push_cursor`` table and ``push_to_peer`` loop a spoke uses toward a hub,
++ADR-0027) and replays each event to the secondary.
++
++Why not enqueue from the apply path: ``BackgroundSyncService.operation_queue`` is an
++in-memory ``asyncio.Queue``. A restart, or a full queue, between "applied on the hub"
++and "pushed to D1" would lose the change with nothing left to notice it. The event
++log is durable and the cursor only moves after the secondary acknowledged.
++
++Passport
++    in:      a ``HybridMemoryStorage`` (``.primary``, ``.secondary``, ``.sync_service``)
++    out:     ``PushResult`` from ``push_to_peer``; one ``secondary_forwarded`` row per
++             forwarded event (the identity a later pull can use to recognise its echo)
++    callers: ``consolidation/scheduler.py`` ``_run_sync_cycle``
++    breaks:  forwarding stops, Cloudflare keeps only the hub's own writes (#1506)
++"""
++
++from __future__ import annotations
++
++import logging
++import time
++from typing import Any
++
++from ..mixins.base import _sanitize_log_value
++from .apply import _sqlite, _sync_lock
++from .orchestrator import PushResult, advance_push_cursor, push_to_peer
++
++logger = logging.getLogger(__name__)
++
++# Phrases a secondary answers a delete with when the row is already gone: the delete
++# has nothing left to do, so the event counts as delivered.
++_ALREADY_GONE = ("not found", "already deleted", "does not exist")
 +
 +
-+async def _stats_totals(storage):
-+    stats = await storage.get_stats()
-+    return stats["total_memories"] + stats["memories_this_week"]
++def secondary_id_for(secondary: Any) -> str:
++    """Stable cursor key for a secondary, e.g. ``secondary:cloudflarestorage``."""
++    return "secondary:" + type(secondary).__name__.lower()
++
++
++def _row_store(conn, content_hash: str) -> str | None:
++    row = conn.execute(
++        "SELECT store FROM memories WHERE content_hash = ? AND deleted_at IS NULL", (content_hash,)
++    ).fetchone()
++    return row[0] if row else None
++
++
++class SecondaryForwarder:
++    """``PushPeerAdapter`` whose peer is the hybrid hub's own secondary backend."""
++
++    ontology_sync = False  # memory events only: the secondary has no ontology overlay
++
++    def __init__(self, hybrid: Any):
++        self.hybrid = hybrid
++        self.secondary_id = secondary_id_for(hybrid.secondary)
++
++    async def push_events(self, events: list[dict[str, Any]]) -> dict[str, Any]:
++        results: list[dict[str, Any]] = []
++        failed = 0
++        for event in events:
++            try:
++                status = await self._forward_one(event)
++            except Exception as exc:  # noqa: BLE001  the cursor must stop at the first failure
++                logger.warning(
++                    "Forward to %s failed for event %s: %s: %s",
++                    _sanitize_log_value(self.secondary_id),
++                    _sanitize_log_value(event.get("event_id")),
++                    _sanitize_log_value(type(exc).__name__),
++                    _sanitize_log_value(exc),
++                )
++                results.append({"event_id": event["event_id"], "status": "failed"})
++                failed += 1
++                break
++            results.append({"event_id": event["event_id"], "status": status})
++            self._record(event)
++        return {"results": results, "failed": failed}
++
++    async def _forward_one(self, event: dict[str, Any]) -> str:
++        op = event["op"]
++        content_hash = event["content_hash"]
++        if op == "delete":
++            return await self._forward_delete(content_hash)
++
++        # create / update_metadata: replay the CURRENT primary row, not the event body.
++        # The hub already resolved conflicts when it applied the event, so the row is
++        # the winner; a later event for the same hash will replay it again, harmlessly.
++        primary = self.hybrid.primary
++        state = await primary.get_sync_state_for_hash(content_hash)
++        if state is None or state[1] is not None:
++            return "skipped_gone"  # tombstoned since: its delete event follows in the log
++        memory = await primary.get_by_hash(content_hash)
++        if memory is None:
++            raise RuntimeError("primary row unreadable")
++        if op == "update_metadata":
++            return await self._forward_edit(memory)
++        return await self._forward_create(memory)
++
++    async def _forward_delete(self, content_hash: str) -> str:
++        state = await self.hybrid.primary.get_sync_state_for_hash(content_hash)
++        if state is not None and state[1] is None:
++            # Re-created on the hub after this delete: the delete is stale, and the
++            # create event later in the log carries the live row to the secondary.
++            return "skipped_recreated"
++        ok, me
+```
+
+**File**: `tests/unit/test_secondary_forwarder_1506.py` (added, +237/-0)
+```diff
+@@ -0,0 +1,237 @@
++"""A hybrid hub forwards delta-sync events it applied to its secondary (#1506).
++
++``apply_remote_event`` writes through the primary's SQLite connection, so a spoke's
++create, edit and delete never reached the hybrid queue and Cloudflare stayed a partial
++copy. These tests run the real pieces: a SQLite-vec primary, a CloudflareStorage whose
++D1 calls run on an in-memory SQLite database, and ``forward_to_secondary`` tailing the
++hub's ``sync_events`` with a persisted cursor.
++"""
++
++import json
++import os
++import shutil
++import tempfile
++import time
++
++import pytest
++import pytest_asyncio
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.hybrid import BackgroundSyncService, HybridMemoryStorage
++from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.storage.sync.apply import apply_remote_event
++from mcp_memory_service.storage.sync.forwarder import (
++    forward_to_secondary,
++    secondary_id_for,
++)
++from mcp_memory_service.storage.sync.orchestrator import get_push_cursor
++from mcp_memory_service.utils.hashing import generate_content_hash
++from tests.unit.test_cloudflare_store_scope import _FakeD1, cloudflare_storage, d1  # noqa: F401
++
++
++@pytest.fixture(autouse=True)
++def _eventlog_on(monkeypatch):
++    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "on")
++
++
++def _build_hub(tmp, cloudflare_storage):  # noqa: F811
++    hub = HybridMemoryStorage(sqlite_db_path=os.path.join(tmp, "hub.db"))
++    hub.secondary = cloudflare_storage
++    hub.sync_service = BackgroundSyncService(hub.primary, cloudflare_storage)
++    return hub
++
++
++@pytest_asyncio.fixture
++async def hub(cloudflare_storage, d1):  # noqa: F811
++    await cloudflare_storage._initialize_d1_schema()
++    tmp = tempfile.mkdtemp(prefix="mcp-test-forwarder-")
++    hub = _build_hub(tmp, cloudflare_storage)
++    await hub.primary.initialize()
++    # First call pins the cursor at the end of the (empty) log, as it would on upgrade.
++    assert await forward_to_secondary(hub) is not None
++    yield hub
++    await hub.primary.close()
++    shutil.rmtree(tmp, ignore_errors=True)
++
++
++@pytest_asyncio.fixture
++async def spoke():
++    tmp = tempfile.mkdtemp(prefix="mcp-test-forwarder-spoke-")
++    storage = SqliteVecMemoryStorage(os.path.join(tmp, "spoke.db"))
++    await storage.initialize()
++    yield storage
++    await storage.close()
++    shutil.rmtree(tmp, ignore_errors=True)
++
++
++def _memory(content):
++    now = time.time()
++    return Memory(content=content, content_hash=generate_content_hash(content),
++                  tags=["spoke"], created_at=now, updated_at=now)
++
++
++def _events(storage):
++    cur = storage.conn.execute(
++        "SELECT seq, schema_version, event_id, op, content_hash, agent_id, hlc_physical, "
++        "hlc_logical, embedding_model, embedding_dim, payload FROM sync_events ORDER BY seq"
++    )
++    return [
++        {"seq": r[0], "schema_version": r[1] or 1, "event_id": r[2], "op": r[3],
++         "content_hash": r[4], "agent_id": r[5], "hlc_physical": r[6], "hlc_logical": r[7],
++         "embedding_model": r[8], "embedding_dim": r[9],
++         "payload": json.loads(r[10]) if r[10] else {}}
++        for r in cur.fetchall()
++    ]
++
++
++def _hub_applies_spoke_log(spoke, hub):
++    for event in _events(spoke):
++        apply_remote_event(hub, event)
++
++
++async def _spoke_writes_reach_hub(spoke, hub, memory):
++    ok, msg = await spoke.store(memory, skip_semantic_dedup=True)
++    assert ok, msg
++    _hub_applies_spoke_log(spoke, hub)
 +
 +
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize("live_total", [
-+    lambda storage: storage.count_all_memories(),
-+    lambda storage: storage.count_memories_by_tag(["t"]),
-+    _stats_totals,
-+], ids=["count_all_memories", "count_memories_by_tag", "get_stats"])
-+async def test_purge_between_the_count_reads_does_not_revive_tombstones(
-+    storage, monkeypatch, live_total,
++async def test_spoke_create_reaches_cloudflare(hub, spoke, d1):  # noqa: F811
++    memory = _memory("A spoke wrote this and the hub applied it.")
++    await _spoke_writes_reach_hub(spoke, hub, memory)
++    assert d1.row(memory.content_hash) is None  # the bug: applied on the hub only
++
++    result = await forward_to_secondary(hub)
++
++    assert result.events_failed == 0 and result.events_pushed >= 1
++    assert d1.row(memory.content_hash)["deleted_at"] is None
++
++
++@pytest.mark.asyncio
++async def test_spoke_delete_reaches_cloudflare(hub, spoke, d1):  # noqa: F811
++    memory = _memory("A spoke wrote this and then deleted it.")
++    await _spoke_writes_reach_hub(spoke, hub, memory)
++    await forward_to_secondary(hub)
++    assert d1.row(memory.content_hash) is not None
++
++    ok, msg = await spoke.delete(memory.content_hash)
++    assert ok, msg
++    _hub_applies_spoke_log(spoke, hub)
++    await forward_to_secondary(hub)
++
++    assert d1.row(memory.content_hash)["deleted_at"] is not None
++
++
++@pytest.mark.asyncio
++async def test_spoke_edit_reaches_cloudflare(hub, spoke, d1):  # noqa: F811
++    memory = _memory("A spoke wrote this and then retagged it.")
++    await _spoke_writes_reach_hub(spoke, hub, memory)
++    await forward_to_secondary(hub)
++
++    ok, msg = await spoke.update_memory_metadata(memory.content_hash, {"tags": ["spoke", "edited"]})
++    assert ok, msg
++    _hub_applies_spoke_log(
+```
+
+**File**: `tests/unit/test_secondary_forwarder_retry_1506.py` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++"""Review follow-ups for the secondary forwarder (#1506, #2135).
++
++A failed edit on a row the secondary already holds must be retried, not skipped, and the
++live-store lookup must ignore tombstoned rows.
++"""
++
++import sqlite3
++
++import pytest
++
++from mcp_memory_service.storage.sync.forwarder import (
++    _row_store,
++    forward_to_secondary,
++    secondary_id_for,
++)
++from mcp_memory_service.storage.sync.orchestrator import get_push_cursor
++from tests.unit.test_cloudflare_store_scope import cloudflare_storage, d1  # noqa: F401
++from tests.unit.test_secondary_forwarder_1506 import (  # noqa: F401
++    _eventlog_on,
++    _hub_applies_spoke_log,
++    _memory,
++    _spoke_writes_reach_hub,
++    hub,
++    spoke,
++)
++
++
++@pytest.mark.asyncio
++async def test_failed_edit_on_an_existing_row_is_retried_not_skipped(
++    hub, spoke, d1, cloudflare_storage  # noqa: F811
 +):
-+    """A purge landing between a count's two reads leaves the total at the live rows.
++    memory = _memory("The secondary has this row but the edit fails once.")
++    await _spoke_writes_reach_hub(spoke, hub, memory)
++    await forward_to_secondary(hub)
++    sid = secondary_id_for(cloudflare_storage)
 +
-+    The count used to subtract a later tombstone scan from an earlier raw
-+    ``count(*)``, so tombstones purged in between were reported as live
-+    memories (#2136).
-+    """
-+    for content in ("first tombstone", "second tombstone"):
-+        gone = await _store_live(storage, content)
-+        await storage.update_memory_metadata(gone, {"metadata": {"deleted_at": time.time()}})
-+    drain = storage._drain_rows
++    ok, msg = await spoke.update_memory_metadata(memory.content_hash, {"tags": ["spoke", "edited"]})
++    assert ok, msg
++    _hub_applies_spoke_log(spoke, hub)
++    before = get_push_cursor(hub, sid)
 +
-+    async def _purge_then_drain(filter_expr, output_fields):
-+        monkeypatch.setattr(storage, "_drain_rows", drain)
-+        assert await storage.purge_deleted(older_than_days=-1) == 2
-+        return await drain(filter_expr, output_fields)
++    async def _down(*args, **kwargs):
++        raise RuntimeError("D1 unavailable")
 +
-+    monkeypatch.setattr(storage, "_drain_rows", _purge_then_drain)
++    original = cloudflare_storage.update_memory_metadata
++    cloudflare_storage.update_memory_metadata = _down
++    try:
++        result = await forward_to_secondary(hub)
++    finally:
++        cloudflare_storage.update_memory_metadata = original
 +
-+    assert await live_total(storage) == 0
++    # The create fallback is refused as a duplicate: that must not count as delivered.
++    assert result.events_failed == 1
++    assert get_push_cursor(hub, sid) == before
++    assert (await forward_to_secondary(hub)).events_failed == 0
++    tags = {r[0] for r in d1.db.execute(
++        "SELECT t.name FROM memory_tags mt JOIN tags t ON t.id = mt.tag_id "
++        "JOIN memories m ON m.id = mt.memory_id WHERE m.content_hash = ?",
++        (memory.content_hash,),
++    ).fetchall()}
++    assert tags == {"spoke", "edited"}
++
++
++def test_row_store_lookup_ignores_a_tombstoned_row():
++    conn = sqlite3.connect(":memory:")
++    conn.execute("CREATE TABLE memories (content_hash TEXT, store TEXT, deleted_at REAL)")
++    conn.execute("INSERT INTO memories VALUES ('live', 'a', NULL), ('gone', 'b', 1.0)")
++    assert _row_store(conn, "live") == "a"
++    assert _row_store(conn, "gone") is None
++
++
++@pytest.mark.asyncio
++async def test_recreated_row_refreshes_tags_on_the_secondary(
++    hub, spoke, d1, cloudflare_storage  # noqa: F811
++):
++    """Delete + re-create with new tags before forwarding: the delete is skipped as
++    stale, the create is refused as a duplicate, and the old tags must still be replaced."""
++    memory = _memory("Recreated on the spoke with different tags.")
++    await _spoke_writes_reach_hub(spoke, hub, memory)
++    await forward_to_secondary(hub)
++
++    ok, msg = await spoke.delete(memory.content_hash)
++    assert ok, msg
++    again = _memory(memory.content)
++    again.tags = ["spoke", "recreated"]
++    ok, msg = await spoke.store(again, skip_semantic_dedup=True)
++    assert ok, msg
++    _hub_applies_spoke_log(spoke, hub)
++
++    result = await forward_to_secondary(hub)
++
++    assert result.events_failed == 0
++    tags = {r[0] for r in d1.db.execute(
++        "SELECT t.name FROM memory_tags mt JOIN tags t ON t.id = mt.tag_id "
++        "JOIN memories m ON m.id = mt.memory_id WHERE m.content_hash = ?",
++        (memory.content_hash,),
++    ).fetchall()}
++    assert tags == {"spoke", "recreated"}
+```
+
+---
+
+### Incident Patch 2: `6847d593` (2026-11-27)
+**Commit Message**: fix(auth): remove the fail-closed store guards and let per-store grants reach memory_explore and memory_detail (#2120) (#2145)
+
+* fix(auth): remove the fail-closed store guards and let per-store grants reach memory_explore and memory_detail (#2120)
+
+Every backend confines hash-addressed operations to store (sqlite_vec,
+hybrid, cloudflare, milvus; remote_http refuses a named store at the
+backend until the peer advertises store_scoped_access), so the handler
+and service branches that refused on get_by_hash_is_store_scoped are
+removed and store is handed to the storage call. store_grant_target and
+require_store_scope keep reading the flag on the live storage object.
+
+Closes #2120. Closes #1683.
+
+* fix(graph): read memory_detail chunk rows unscoped for store="all" (#2120)
+
+`all` is the tools' unscoped sentinel, but _hydrate_chunks handed it to
+get_by_hash unchanged, and SQLite filters on `store = 'all'`, so every
+chunk came back without text. Translate it to None as resolve_store does.
+
+---------
+
+Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
+Co-authored-by: x <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2120.removed.md` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++- **The fail-closed store guards are gone, and a per-store credential reaches
++  `memory_explore` and `memory_detail` (#2120, closes #1683, massimiliano1991).** Every
++  backend now confines hash-addressed operations to `store` (sqlite_vec, hybrid,
++  cloudflare and milvus always; remote_http against a peer that advertises
++  `store_scoped_access`, refusing a named store otherwise), so the branches that refused
++  a store-scoped call by reading `get_by_hash_is_store_scoped` were removed from the
++  `content_hash` lookup in `memory_search`, `memory_update`, `memory_detail`, the REST
++  delete and update routes (including the content-edit helpers from #2129: the
++  replacement lookup, the split-chunk lookup and update, and the versioned path),
++  `evolve_memory` and the harvester's evolution path. The
++  handlers now pass `store` to the storage call and let the backend answer.
++  `memory_detail` also reads each chunk row with the claimed store. The flag is still
++  read in two places, on the live storage object: `store_grant_target` and
++  `require_store_scope` accept a `read:<store>`/`write:<store>` credential only where the
++  backend confines, so remote_http against an older peer still refuses one.
++  `memory_graph` stays on the global grant, because `connected`, `path` and `subgraph`
++  walk association edges that take no `store`.
+```
+
+**File**: `src/mcp_memory_service/harvest/harvester.py` (modified, +2/-5)
+```diff
+@@ -359,13 +359,10 @@ async def _try_evolve(
+         if not hasattr(self.memory_service, "storage") or not self.memory_service.storage:
+             return False, None
+ 
+-        # A caller confined to one store may only evolve a memory of that store.
+-        # Where get_by_hash ignores ``store`` that cannot be guaranteed, so the
+-        # candidate is stored as its own memory instead (as memory_update refuses).
++        # A caller confined to one store may only evolve a memory of that store:
++        # the similarity search and the versioned update both take ``store``.
+         store_kw = {}
+         if store not in (None, "all"):
+-            if not getattr(self.memory_service.storage, "get_by_hash_is_store_scoped", False):
+-                return False, None
+             store_kw = {"store": store}
+ 
+         try:
+```
+
+**File**: `src/mcp_memory_service/server/handlers/graph.py` (modified, +11/-12)
+```diff
+@@ -912,18 +912,23 @@ async def _resolve_entity_name(graph, entity_id: str, store=None):
+     )
+ 
+ 
+-async def _hydrate_chunks(storage, memory_hashes, scoring=None, graph=None, entity_degree=0):
++async def _hydrate_chunks(
++    storage, memory_hashes, scoring=None, graph=None, entity_degree=0, store=None
++):
+     """Fetch real chunk content for an entity's linked memories.
+ 
+     Ranks by quality_score when available (simple sort, no composite scoring).
+     Returns shape: {hash, content, relevance} where relevance = quality_score or None.
++    ``store`` confines each row read to the caller's partition (``None`` or
++    ``"all"`` is unscoped).
+ 
+     When scoring="composite": enrich with composite_score + score_components,
+     re-rank by composite (opt-in, Issue #55).
+     """
+     chunks = []
+     for h in memory_hashes:
+-        mem = await storage.get_by_hash(h)
++        # ``all`` is the tools' unscoped sentinel; the storage API spells it None.
++        mem = await storage.get_by_hash(h, store=None if store == "all" else store)
+         content = (mem.content or "")[:500] if mem else None
+         quality = getattr(mem, "quality_score", None) if mem else None
+         chunks.append({
+@@ -1015,20 +1020,14 @@ async def get_entity_detail(
+ 
+     # Per-store confinement (read). The entity graph carries no store of its
+     # own, so the graph layer confines every entity lookup through the store of
+-    # the memory behind each link (#2118); the old `limit * 10` scan-then-filter
+-    # window is gone with it. A backend whose get_by_hash ignores ``store``
+-    # still cannot honour a store-restricted credential, so that case keeps
+-    # failing closed until #2120 removes the guard.
+-    if store is not None and store != "all" and not getattr(
+-        storage, "get_by_hash_is_store_scoped", False
+-    ):
+-        raise ValueError("store-scoped memory_detail is not supported on this backend")
+-
++    # the memory behind each link (#2118), and the chunk rows are read with the
++    # same ``store`` (#2120).
+     memory_hashes = await graph.find_memories_by_entity(name, limit=limit, store=store)
+ 
+     entity_degree = len(memory_hashes)  # proxy for centrality
+     chunks = await _hydrate_chunks(
+-        storage, memory_hashes, scoring=scoring, graph=graph, entity_degree=entity_degree
++        storage, memory_hashes, scoring=scoring, graph=graph,
++        entity_degree=entity_degree, store=store,
+     )
+     related_entities = (
+         await _discover_related_entities(graph, memory_hashes, max_hops, store=store)
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +9/-16)
+```diff
+@@ -1312,10 +1312,10 @@ async def _search_tag_fallback(
+ 
+ 
+ async def _retrieve_by_hash(storage, content_hash: str, store):
+-    if store is not None and not getattr(storage, "get_by_hash_is_store_scoped", False):
+-        return {
+-            "error": "store-scoped content_hash lookup is not supported on this storage backend"
+-        }, None
++    # Every backend confines get_by_hash to ``store`` (remote_http refuses a
++    # named store against a peer that does not advertise store_scoped_access,
++    # and reports the memory as missing), so a hash from another store comes
++    # back as not found (#2120).
+     memory = await storage.get_by_hash(content_hash, store=store)
+     memories = [memory.to_dict()] if memory else []
+     return {
+@@ -1862,15 +1862,13 @@ async def handle_update_memory_metadata(server, arguments: dict) -> List[types.T
+         # gate authorizes the *claimed* store, but the update resolves by
+         # content_hash and would otherwise ignore it — so a token scoped to one
+         # store could update another store's memory. When a store is claimed,
+-        # resolve the hash within it first: on backends whose get_by_hash honors
+-        # ``store`` a hash from another store comes back missing -> not found;
+-        # backends that ignore ``store`` can't prove confinement, so a
+-        # store-scoped update fails closed there (real storage-layer enforcement
+-        # is the follow-up issue, after which this pre-check can be removed).
++        # resolve the hash within it first: get_by_hash confines to ``store`` on
++        # every backend, so a hash from another store comes back missing -> not
++        # found (remote_http refuses a named store against a peer that does not
++        # advertise store_scoped_access, which reads the same way) (#2120).
+         claimed_store = arguments.get("store")
+         # Handed to the storage calls below as well, so the lookup and the write
+-        # themselves are confined (#1875). Only set after the capability check,
+-        # so a backend that would ignore ``store`` never receives it.
++        # themselves are confined (#1875).
+         scope: dict = {}
+         if claimed_store is not None and claimed_store != "all":
+             # Raise rather than return: a refused update must surface as a tool
+@@ -1879,11 +1877,6 @@ async def handle_update_memory_metadata(server, arguments: dict) -> List[types.T
+             # both map a raised exception to isError; the broad except below
+             # re-raises PermissionError so it is not flattened into a
+             # success-looking TextContent.
+-            if not getattr(storage, "get_by_hash_is_store_scoped", False):
+-                raise PermissionError(
+-                    "store-scoped updates are not supported on this storage backend; "
+-                    "omit 'store' or use a globally-scoped credential"
+-                )
+             if await storage.get_by_hash(content_hash, store=claimed_store) is None:
+                 raise PermissionError("memory not found in the requested store")
+             scope = {"store": claimed_store}
+```
+
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +10/-6)
+```diff
+@@ -1633,20 +1633,24 @@ def _rate_limit_error(
+     # on a backend whose get_by_hash honours it. A per-store grant
+     # (read:<s>/write:<s>) authorizes only these: every other tool acts on all
+     # partitions, so naming a store there must not unlock it. memory_explore
+-    # and memory_detail are left out: the entity graph is not partitioned, so
+-    # their entity names and related entities span every store (#1683).
++    # and memory_detail joined once the entity lookups were confined through
++    # the store of the memory behind each link (#2118, #2119) and the chunk
++    # rows read with ``store`` (#2120). memory_graph stays on the global grant:
++    # its connected/path/subgraph actions walk association edges that take no
++    # ``store`` on either graph backend.
+     STORE_CONFINED_TOOLS = frozenset({
+         "memory_store", "memory_store_session", "memory_search", "memory_list",
+-        "memory_delete", "memory_update",
++        "memory_delete", "memory_update", "memory_explore", "memory_detail",
+     })
+ 
+     async def store_grant_target(self, name: Optional[str], arguments: Optional[dict] = None) -> Optional[str]:
+         """Return the store a per-store grant may authorize this call for.
+ 
+         ``None`` means only the global grant will do: the call names no store
+-        (or ``all``), the tool ignores ``store``, or the backend's get_by_hash
+-        ignores ``store`` and so cannot
+-        prove confinement (storage-layer enforcement is #1683). The SDK dispatch
++        (or ``all``), the tool ignores ``store``, or the live backend does not
++        confine ``store``. Every local backend does; remote_http does only
++        against a peer that advertises ``store_scoped_access``, so its flag is
++        read here on the storage object rather than assumed. The SDK dispatch
+         gate and the /mcp shim both ask this, so the transports cannot disagree.
+         """
+         arguments = arguments or {}
+```
+
+**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +0/-6)
+```diff
+@@ -735,12 +735,6 @@ async def evolve_memory(
+ 
+         store_kw: Dict[str, Any] = {}
+         if store not in (None, "all"):
+-            if not getattr(self.storage, "get_by_hash_is_store_scoped", False):
+-                return (
+-                    False,
+-                    "Store-scoped memory evolution is not supported by the active storage backend",
+-                    None,
+-                )
+             store_kw = {"store": store}
+ 
+         # Storage inherits omitted tags/type from the old version; keep that
+```
+
+**File**: `src/mcp_memory_service/storage/base.py` (modified, +6/-7)
+```diff
+@@ -546,11 +546,12 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
+         """
+         raise NotImplementedError("Subclasses must implement get_by_exact_content")
+ 
+-    # Whether get_by_hash honors ``store`` (confines the lookup to that
+-    # partition). Backends that accept ``store`` but ignore it leave this
+-    # False, so a store-scoped hash-addressed operation must fail closed on
+-    # them until the storage layer enforces ``store`` everywhere (follow-up
+-    # issue). Overridden True on sqlite_vec and hybrid.
++    # Whether get_by_hash, delete and update_memory_metadata confine to
++    # ``store``. True on sqlite_vec, hybrid, cloudflare and milvus; remote_http
++    # sets it at runtime from the peer's ``store_scoped_access`` and refuses a
++    # named store until then. A per-store credential is accepted only where
++    # this is True (store_grant_target, require_store_scope). The default stays
++    # False so a backend that has not said it confines is not trusted to.
+     get_by_hash_is_store_scoped: bool = False
+ 
+     @abstractmethod
+@@ -914,8 +915,6 @@ async def update_memory_metadata(
+             preserve_timestamps: Whether to preserve original created_at timestamp
+             store: Confine the update to this store; a memory in another store
+                 is reported as not found. ``None`` or ``"all"`` is unscoped.
+-                Only backends with ``get_by_hash_is_store_scoped`` honor it
+-                (#1683); callers pass it only to those.
+ 
+         Returns:
+             Tuple of (success, message)
+```
+
+**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +8/-36)
+```diff
+@@ -512,14 +512,8 @@ async def delete_memory(
+         if not existing:
+             raise HTTPException(status_code=404, detail="Memory not found")
+ 
+-        # Confine the delete itself, not only the lookup before it. Backends
+-        # that cannot confine do not accept a named ``store`` yet.
+-        scope = (
+-            {"store": resolve_store(store)}
+-            if getattr(storage, "get_by_hash_is_store_scoped", False)
+-            else {}
+-        )
+-        success, message = await storage.delete(content_hash, **scope)
++        # Confine the delete itself, not only the lookup before it.
++        success, message = await storage.delete(content_hash, store=resolve_store(store))
+         
+         # Broadcast SSE event for memory deletion
+         try:
+@@ -598,11 +592,7 @@ async def _store_unversioned_replacement(
+     if not success:
+         if "Duplicate content detected (exact match)" not in message:
+             return False, message, None, False
+-        lookup_store = (
+-            resolve_store(store)
+-            if getattr(storage, "get_by_hash_is_store_scoped", False)
+-            else None
+-        )
++        lookup_store = resolve_store(store)
+         existing = await storage.get_by_hash(replacement.content_hash, store=lookup_store)
+         # A previous attempt may have stored the replacement before the
+         # original deletion failed. Resume only when every editable field matches;
+@@ -659,11 +649,7 @@ async def _store_unversioned_split_replacement(
+     max_length: int,
+ ) -> Tuple[bool, str, Optional[str], bool]:
+     """Split an oversized replacement the same way store_memory() does."""
+-    lookup_store = (
+-        resolve_store(store)
+-        if getattr(storage, "get_by_hash_is_store_scoped", False)
+-        else None
+-    )
++    lookup_store = resolve_store(store)
+     chunks = split_content(
+         replacement.content,
+         max_length=max_length,
+@@ -673,11 +659,6 @@ async def _store_unversioned_split_replacement(
+     stored_chunks = []
+     claimed_chunk_hashes = set()
+     original_reused = False
+-    scope = (
+-        {"store": resolve_store(store)}
+-        if getattr(storage, "get_by_hash_is_store_scoped", False)
+-        else {}
+-    )
+     for index, chunk in enumerate(chunks):
+         plain_chunk_hash = generate_content_hash(chunk)
+         chunk_hash = plain_chunk_hash
+@@ -718,7 +699,7 @@ async def _store_unversioned_split_replacement(
+                         "metadata": chunk_metadata,
+                     },
+                     preserve_timestamps=True,
+-                    **scope,
++                    store=resolve_store(store),
+                 )
+                 if not fields_ok:
+                     return False, (
+@@ -828,11 +809,7 @@ async def _update_memory_content(
+         if success and not new_hash:
+             new_hash = content_hash
+     elif hasattr(storage, "update_memory_versioned"):
+-        version_store = (
+-            resolve_store(store)
+-            if getattr(storage, "get_by_hash_is_store_scoped", False)
+-            else None
+-        )
++        version_store = resolve_store(store)
+         success, message, new_hash = await memory_service.evolve_memory(
+             content_hash,
+             request.content,
+@@ -890,16 +867,11 @@ async def _update_memory_metadata_fields(
+             memory=memory_to_response(existing_memory),
+         )
+ 
+-    scope = (
+-        {"store": resolve_store(store)}
+-        if getattr(storage, "get_by_hash_is_store_scoped", False)
+-        else {}
+-    )
+     success, message = await storage.update_memory_metadata(
+         content_hash=content_hash,
+         updates=updates,
+         preserve_timestamps=True,
+-        **scope,
++        store=resolve_store(store),
+     )
+     if not success:
+         return MemoryUpdateResponse(
+@@ -908,7 +880,7 @@ async def _update_memory_metadata_fields(
+             content_hash=content_hash,
+         )
+ 
+-    updated_memory = await storage.get_by_hash(content_hash)
++    updated_memory = await storage.get_by_hash(content_hash, store=resolve_store(store))
+     return MemoryUpdateResponse(
+         success=True,
+         message=message,
+```
+
+---
+
+### Incident Patch 3: `d1ead3b2` (2026-11-27)
+**Commit Message**: fix: stop dashboard edits from being rejected as duplicates of the original (#2129)
+
+* fix: stop dashboard edits from being rejected as duplicates of the original
+
+Content edits now go through PUT /memories/{hash}: backends with
+update_memory_versioned evolve the memory in place, and backends
+without it (hybrid, cloudflare) store a replacement with semantic
+dedup skipped for that store call, then delete the old hash, instead
+of the old create-then-delete flow whose dedup rejected the edit as a
+duplicate of the original memory. Oversized replacements split and
+reuse matching chunks, SSE events notify other dashboard clients, and
+the response only reports success after the replacement is stored.
+
+Also hardens sqlite-vec versioned updates for repeated or same-hash
+text: new versions get a unique hash and a monotonic family version,
+so restoring earlier text and capitalization-only edits keep their
+lineage and point-in-time visibility.
+
+Adds API, storage, sync and dashboard regression tests: 102 pytest
+tests pass with the change, 19 of them fail without it; the dashboard
+node tests pass.
+
+Fixes #2044
+
+* fix: address Greptile review on dashboard content edits
+
+- Milvus update_memory_ver
+
+**File**: `changelog.d/2044.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **Dashboard edits no longer reject a memory as a duplicate of itself (#2044, zlg-codes).** Content changes now use the original memory's versioned-update endpoint, while tag-only edits ignore outer whitespace instead of creating a new version. Oversized edits split on every backend, Milvus stores restored text as a new version within the selected store, and reused chunks must match the edited text and fields exactly. Repeated chunks keep separate rows and position indexes.
+```
+
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +50/-16)
+```diff
+@@ -3047,13 +3047,34 @@ async def update_memory(self, memory: Memory) -> bool:
+         )
+         return success
+ 
++    async def _is_current_or_versioned_ancestor(
++        self, candidate_hash: str, current_hash: str, store: str
++    ) -> bool:
++        """Return whether a row is the current version or one of its ancestors."""
++        visited = set()
++        while candidate_hash not in visited:
++            if candidate_hash == current_hash:
++                return True
++            visited.add(candidate_hash)
++            candidate = await self.get_by_hash(candidate_hash, store=store)
++            if candidate is None:
++                return False
++            successor = (candidate.metadata or {}).get("superseded_by")
++            if successor == current_hash:
++                return True
++            if not isinstance(successor, str):
++                return False
++            candidate_hash = successor
++        return False
++
+     async def update_memory_versioned(
+         self,
+         content_hash: str,
+         new_content: str,
+         new_tags: Optional[List[str]] = None,
+         new_memory_type: Optional[str] = None,
+         reason: Optional[str] = None,
++        store: Optional[str] = None,
+     ) -> Tuple[bool, str, Optional[str]]:
+         """Non-destructive versioned update: store a new revision, supersede the old.
+ 
+@@ -3079,7 +3100,7 @@ async def update_memory_versioned(
+                 except Exception as exc:  # noqa: BLE001
+                     return False, f"Failed to generate embedding: {exc}", None
+ 
+-                existing, row_store = await self._get_for_write(content_hash, None)
++                existing, row_store = await self._get_for_write(content_hash, store)
+                 if existing is None:
+                     return False, f"Memory {content_hash} not found", None
+                 if (existing.metadata or {}).get("superseded_by") is not None:
+@@ -3101,22 +3122,34 @@ async def update_memory_versioned(
+                 inherited_metadata.pop("evolution_reason", None)
+ 
+                 new_hash = generate_content_hash(new_content)
+-                new_memory = Memory(
+-                    content=new_content,
+-                    content_hash=new_hash,
+-                    tags=resolved_tags,
+-                    memory_type=resolved_type,
+-                    metadata=inherited_metadata,
+-                )
+-                with (
+-                    _exclude_versioned_parent(content_hash),
+-                    _store_with_vector(new_embedding),
+-                ):
+-                    # The new version stays in the old row's store, as on
+-                    # sqlite_vec (mixins/metadata.py).
+-                    store_ok, store_msg = await self.store(
+-                        new_memory, skip_semantic_dedup=True, store=row_store
++                salt = 0
++                while True:
++                    new_memory = Memory(
++                        content=new_content,
++                        content_hash=new_hash,
++                        tags=resolved_tags,
++                        memory_type=resolved_type,
++                        metadata=inherited_metadata,
+                     )
++                    with (
++                        _exclude_versioned_parent(content_hash),
++                        _store_with_vector(new_embedding),
++                    ):
++                        # The new version stays in the old row's store, as on
++                        # sqlite_vec (mixins/metadata.py).
++                        store_ok, store_msg = await self.store(
++                            new_memory, skip_semantic_dedup=True, store=row_store
++                        )
++                    if store_ok or store_msg != "Duplicate content detected (exact match)":
++                        break
++                    # Only an earlier row in this version chain may be bypassed.
++                    # An independent memory with the same text stays untouched.
++                    if not await self._is_current_or_versioned_ancestor(
++                        new_hash, content_hash, row_store
++                    ):
++                        break
++                    salt += 1
++                    new_hash = generate_content_hash(f"{new_content}\0{content_hash}\0{salt}")
+                 if not store_ok:
+                     return False, f"Failed to store new version: {store_msg}", None
+ 
+@@ -3126,6 +3159,7 @@ async def update_memory_versioned(
+                 try:
+                     linked, link_message = await self.update_memory_metadata(
+                         content_hash, meta_updates, preserve_timestamps=True,
++                        store=row_store,
+                     )
+                 except Exception as link_exc:  # noqa: BLE001
+                     cleaned = await self._cleanup_unlinked_version(new_hash)
+```
+
+**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +215/-137)
+```diff
+@@ -923,6 +923,210 @@ def _touch(hashes=hashes_to_touch, ts=now):
+ 
+         return enriched
+ 
++    def _version_family_members(self, content_hash: str) -> List[Tuple[str, Optional[int]]]:
++        """Return every hash and version in the bidirectional parent/supersession chain."""
++        return self.conn.execute(
++            """
++            WITH RECURSIVE version_family(content_hash) AS (
++                SELECT ?
++                UNION
++                SELECT m.parent_id FROM memories m
++                JOIN version_family f ON m.content_hash = f.content_hash
++                WHERE m.parent_id IS NOT NULL AND m.deleted_at IS NULL
++                UNION
++                SELECT m.content_hash FROM memories m
++                JOIN version_family f ON m.parent_id = f.content_hash
++                WHERE m.deleted_at IS NULL
++                UNION
++                SELECT m.superseded_by FROM memories m
++                JOIN version_family f ON m.content_hash = f.content_hash
++                WHERE m.superseded_by IS NOT NULL AND m.superseded_by <> ''
++                AND m.deleted_at IS NULL
++                UNION
++                SELECT m.content_hash FROM memories m
++                JOIN version_family f ON m.superseded_by = f.content_hash
++                WHERE m.deleted_at IS NULL
++                AND EXISTS (
++                    SELECT 1 FROM memories current
++                    WHERE current.content_hash = f.content_hash
++                    AND current.deleted_at IS NULL
++                )
++            )
++            SELECT content_hash, version FROM memories
++            WHERE content_hash IN (SELECT content_hash FROM version_family)
++            AND deleted_at IS NULL
++            """,
++            (content_hash,),
++        ).fetchall()
++
++    def _prepare_versioned_update(
++        self, old_hash: str, old_version: Optional[int], new_memory: Memory
++    ) -> int:
++        """Choose the next family version and avoid hashes already in that family."""
++        members = self._version_family_members(old_hash)
++        versions = [version or 1 for _, version in members]
++        new_version = max([old_version or 1, *versions]) + 1
++        if new_memory.content_hash in {content_hash for content_hash, _ in members}:
++            new_memory.content_hash = generate_content_hash(
++                f"{new_memory.content}\0{old_hash}\0{new_version}"
++            )
++        return new_version
++
++    async def _read_versioned_row(self, content_hash: str, store: Optional[str]):
++        """Read the current row and its inherited fields in the requested store."""
++        store_sql, store_params = _store_clause(store)
++
++        def _read():
++            return self.conn.execute(
++                "SELECT content_hash, tags, memory_type, version, metadata, store FROM memories "
++                "WHERE content_hash = ? AND deleted_at IS NULL" + store_sql,
++                (content_hash, *store_params),
++            ).fetchone()
++
++        return await self._execute_with_retry(_read)
++
++    def _build_versioned_memory(
++        self,
++        row,
++        new_content: str,
++        new_tags: Optional[List[str]],
++        new_memory_type: Optional[str],
++    ) -> Memory:
++        """Build a new version with inherited tags, type, and custom metadata."""
++        _, old_tags, old_type, _, old_metadata, _ = row
++        resolved_tags = new_tags if new_tags is not None else (
++            [tag for tag in old_tags.split(",") if tag and tag.strip() != CONFLICT_TAG]
++            if old_tags else []
++        )
++        resolved_type = (
++            coerce_memory_type(new_memory_type)
++            if new_memory_type is not None
++            else old_type
++        )
++        inherited_metadata = (
++            self._safe_json_loads(old_metadata, "update_memory_versioned")
++            if old_metadata else {}
++        )
++        inherited_metadata.pop("superseded_by", None)
++        inherited_metadata.pop("evolution_reason", None)
++        return Memory(
++            content=new_content,
++            content_hash=generate_content_hash(new_content),
++            tags=resolved_tags,
++            memory_type=resolved_type,
++            metadata=inherited_metadata,
++        )
++
++    async def _link_new_version(
++        self,
++        old_hash: str,
++        new_hash: str,
++        new_version: int,
++        reason: Optional[str],
++        store: Optional[str],
++    ) -> None:
++        """Link parent and child and supersede the old row in one transaction."""
++        store_sql, store_params = _store_clause(store)
++
++        def _link():
++            try:
++                self.conn.execute(
++                    "UPDATE memories SET parent_id = ?, version = ? WHERE content_hash = ?",
++                    (old_hash, new_version, new_hash),
++                )
++                row = self.conn.execute(
++                    "SELECT metadata FROM memories WHERE content_hash = ? AND deleted_at IS NULL"
++                    + store_sql,
++ 
+```
+
+**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +406/-54)
+```diff
+@@ -21,7 +21,7 @@
+ import logging
+ import socket
+ from collections import Counter
+-from typing import List, Optional, Dict, Any, Literal
++from typing import List, Optional, Dict, Any, Literal, Tuple
+ 
+ from fastapi import APIRouter, HTTPException, Depends, Query, Request
+ from pydantic import BaseModel, Field, field_validator
+@@ -30,10 +30,17 @@
+ from ...storage.mixins.base import deserialize_embedding
+ from ...storage.resonance_db import ResonanceDB
+ from ...models.memory import Memory
+-from ...models.ontology import get_all_types
+-from ...services.memory_service import MemoryService
++from ...models.ontology import coerce_memory_type, get_all_types
++from ...services.memory_service import MemoryService, _chunk_metadata
++from ...utils.hashing import generate_content_hash
++from ...utils.content_splitter import split_content
+ from ...compat import _sanitize_log_value
+-from ...config import INCLUDE_HOSTNAME
++from ...config import (
++    INCLUDE_HOSTNAME,
++    ENABLE_AUTO_SPLIT,
++    CONTENT_PRESERVE_BOUNDARIES,
++    CONTENT_SPLIT_OVERLAP,
++)
+ # OAuth config no longer needed - auth is always enabled
+ from ..dependencies import get_storage, get_memory_service
+ from .store_scope import resolve_store
+@@ -74,11 +81,20 @@ def _content_must_not_be_blank(cls, value: str) -> str:
+ 
+ 
+ class MemoryUpdateRequest(BaseModel):
+-    """Request model for updating memory metadata (tags, type, metadata only)."""
++    """Request model for updating memory content, tags, type, and metadata."""
++    content: Optional[str] = Field(None, description="Updated memory content, stored as a new version")
+     tags: Optional[List[str]] = Field(None, description="Updated tags to categorize the memory")
+     memory_type: Optional[str] = Field(None, description="Updated memory type (e.g., 'note', 'reminder', 'fact')")
+     metadata: Optional[Dict[str, Any]] = Field(None, description="Updated metadata for the memory")
+ 
++    @field_validator("content")
++    @classmethod
++    def _content_must_not_be_blank(cls, value: Optional[str]) -> Optional[str]:
++        """Reject blank content instead of creating a zero-vector version."""
++        if value is not None and not value.strip():
++            raise ValueError("content must not be empty or whitespace-only")
++        return value
++
+ 
+ class MemoryResponse(BaseModel):
+     """Response model for memory data."""
+@@ -526,19 +542,395 @@ async def delete_memory(
+         raise HTTPException(status_code=500, detail="Failed to delete memory. Please try again.")
+ 
+ 
++def _build_memory_replacement(
++    existing_memory: Memory, request: MemoryUpdateRequest
++) -> Memory:
++    """Build a replacement while retaining fields omitted by the caller."""
++    inherited_metadata = dict(existing_memory.metadata or {})
++    inherited_metadata.pop("superseded_by", None)
++    inherited_metadata.pop("evolution_reason", None)
++    final_metadata = inherited_metadata
++    if request.metadata:
++        final_metadata.update(request.metadata)
++    for key in ("tags", "type"):
++        final_metadata.pop(key, None)
++    content_hash = generate_content_hash(request.content)
++    if content_hash == existing_memory.content_hash:
++        content_hash = generate_content_hash(
++            f"{request.content}\0{existing_memory.content_hash}"
++        )
++    return Memory(
++        content=request.content,
++        content_hash=content_hash,
++        tags=(
++            request.tags
++            if request.tags is not None
++            else [tag for tag in existing_memory.tags if tag != "conflict:unresolved"]
++        ),
++        memory_type=(
++            coerce_memory_type(request.memory_type)
++            if request.memory_type is not None
++            else existing_memory.memory_type
++        ),
++        metadata=final_metadata,
++    )
++
++
++async def _store_unversioned_replacement(
++    storage: MemoryStorage,
++    memory_service: MemoryService,
++    content_hash: str,
++    store: str,
++    replacement: Memory,
++) -> Tuple[bool, str, Optional[str], bool]:
++    """Store a replacement and remove its original on unversioned backends."""
++    max_length = getattr(storage, "max_content_length", None)
++    if ENABLE_AUTO_SPLIT and max_length and len(replacement.content) > max_length:
++        return await _store_unversioned_split_replacement(
++            storage, memory_service, content_hash, store, replacement, max_length
++        )
++
++    success, message = await storage.store(
++        replacement,
++        skip_semantic_dedup=True,
++        store=resolve_store(store),
++    )
++    if not success:
++        if "Duplicate content detected (exact match)" not in message:
++            return False, message, None, False
++        lookup_store = (
++            resolve_store(store)
++            if getattr(storage, "get_by_hash_is_store_scoped", False)
++            else None
++        )
++        existing = await storage.get_by_hash(replacement.content_hash, store=lookup_store)
++        # A previous attempt may have stored the replacement befo
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +13/-44)
+```diff
+@@ -3519,53 +3519,22 @@ class MemoryDashboard {
+             let successMessage;
+ 
+             if (this.editingMemory) {
+-                // Smart update: check if only metadata changed vs content changes
+                 const originalContentHash = this.editingMemory.content_hash;
+-                const contentChanged = this.editingMemory.content !== payload.content;
+-
+-
+-                if (!contentChanged) {
+-                    // Only metadata (tags, type, metadata) changed - use PUT endpoint
+-                    const updatePayload = {
+-                        tags: payload.tags,
+-                        memory_type: payload.memory_type,
+-                        metadata: payload.metadata
+-                    };
+-
+-                    response = await this.apiCall(`/memories/${originalContentHash}`, 'PUT', updatePayload);
+-                    successMessage = this.t('toast.memoryUpdatedSuccess', 'Memory updated successfully');
+-                } else {
+-                    // Content changed - use create-delete approach (but with proper error handling)
++                const updatePayload = {
++                    tags: payload.tags,
++                    memory_type: payload.memory_type,
++                    metadata: payload.metadata
++                };
++                // The form trims content, so outer whitespace alone is not an edit.
++                if (this.editingMemory.content.trim() !== payload.content) {
++                    updatePayload.content = payload.content;
++                }
+ 
+-                    try {
+-                        // Step 1: Create updated memory first
+-                        response = await this.apiCall('/memories', 'POST', payload);
+-
+-                        // CRITICAL: Only proceed with deletion if creation actually succeeded
+-                        if (response.success) {
+-                            successMessage = this.t('toast.memoryUpdatedSuccess', 'Memory updated successfully');
+-
+-                            try {
+-                                // Step 2: Delete original memory (only after successful creation)
+-                                const deleteResponse = await this.apiCall(`/memories/${originalContentHash}`, 'DELETE');
+-                            } catch (deleteError) {
+-                                console.error('Failed to delete original memory after creating new version:', deleteError);
+-                                this.showToast(
+-                                    this.t('toast.duplicateMemoryWarning', 'Memory updated, but original version still exists. You may need to manually delete the duplicate.'),
+-                                    'warning'
+-                                );
+-                            }
+-                        } else {
+-                            // Creation failed - do NOT delete original memory
+-                            console.error('Creation failed:', response.message);
+-                            throw new Error(`Failed to create updated memory: ${response.message}`);
+-                        }
+-                    } catch (createError) {
+-                        // CREATE failed - original memory intact, no cleanup needed
+-                        console.error('Failed to create updated memory:', createError);
+-                        throw new Error(`Failed to update memory: ${createError.message}`);
+-                    }
++                response = await this.apiCall(`/memories/${originalContentHash}`, 'PUT', updatePayload);
++                if (!response.success) {
++                    throw new Error(response.message || 'Failed to update memory');
+                 }
++                successMessage = this.t('toast.memoryUpdatedSuccess', 'Memory updated successfully');
+             } else {
+                 // Create new memory
+                 response = await this.apiCall('/memories', 'POST', payload);
+```
+
+**File**: `tests/storage/test_backend_store_signature_conformance.py` (modified, +1/-0)
+```diff
+@@ -185,6 +185,7 @@
+                 "new_tags": ["updated"],
+                 "new_memory_type": "decision",
+                 "reason": "source changed",
++                "store": "team",
+             },
+         ),
+     ],
+```
+
+**File**: `tests/storage/test_milvus_store_scope.py` (modified, +21/-1)
+```diff
+@@ -214,12 +214,32 @@ async def test_versioned_update_keeps_the_new_version_in_the_old_store():
+     storage = _make_storage(has_store=True)
+     storage._call_client = _client([_row(store="team")])
+ 
+-    ok, msg, new_hash = await storage.update_memory_versioned(_HASH, "body, revised")
++    ok, msg, new_hash = await storage.update_memory_versioned(
++        _HASH, "body, revised", store="team"
++    )
+ 
+     assert ok, msg
+     (insert,) = _calls(storage._call_client, "insert")
+     assert insert["data"][0]["id"] == new_hash
+     assert insert["data"][0]["store"] == "team"
++    (upsert,) = _calls(storage._call_client, "upsert")
++    assert upsert["data"][0]["store"] == "team"
++
++
++@pytest.mark.asyncio
++async def test_versioned_update_in_another_store_is_refused_without_a_write():
++    storage = _make_storage(has_store=True)
++    storage._call_client = _client([_row(store="team")])
++
++    ok, msg, new_hash = await storage.update_memory_versioned(
++        _HASH, "body, revised", store="ops"
++    )
++
++    assert ok is False
++    assert "not found" in msg
++    assert new_hash is None
++    assert _calls(storage._call_client, "insert") == []
++    assert _calls(storage._call_client, "upsert") == []
+ 
+ 
+ # -- Hash-addressed calls are confined ----------------------------------------
+```
+
+**File**: `tests/storage/test_milvus_versioned_repeated_text.py` (added, +139/-0)
+```diff
+@@ -0,0 +1,139 @@
++"""Milvus versioned updates must give restored text a fresh hash (#2129).
++
++After A→B the superseded row for A is still stored, so restoring A with the
++plain content hash collides with that row and store() rejects it as an exact
++duplicate: the edit can never be undone. These tests use a mocked client, in
++the style of test_milvus_update_stored_vector.py, so they run without pymilvus.
++"""
++
++from __future__ import annotations
++
++from unittest.mock import AsyncMock, MagicMock
++
++import pytest
++
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++
++_A_TEXT = "Alice works at Acme"
++_A_HASH = generate_content_hash(_A_TEXT)
++_B_HASH = "b" * 64
++
++
++def _memory(content: str, content_hash: str, superseded_by=None) -> Memory:
++    metadata = {} if superseded_by is None else {"superseded_by": superseded_by}
++    return Memory(content=content, content_hash=content_hash, metadata=metadata)
++
++
++def _make_storage(rows: dict) -> MilvusMemoryStorage:
++    rows.setdefault(_B_HASH, _memory("Alice works at Globex", _B_HASH))
++    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
++    storage.uri = "./milvus.db"
++    storage.collection_name = "unit_test_collection"
++    storage.embedding_dimension = 4
++    storage.embedding_model_name = "test-model"
++    storage.embedding_model = MagicMock()
++    storage._initialized = True
++    storage.client = MagicMock()
++    storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
++
++    async def call_client(method: str, **kwargs):
++        if method == "get":
++            return [{"id": h} for h in kwargs.get("ids") or [] if h in rows]
++        return None
++
++    async def get_by_hash(content_hash, store=None):
++        return rows.get(content_hash)
++
++    async def get_for_write(content_hash, store, **kwargs):
++        return rows.get(content_hash), "default"
++
++    async def update_memory_metadata(content_hash, updates, **kwargs):
++        rows[content_hash].metadata.update(updates.get("metadata", {}))
++        return True, "ok"
++
++    async def store(memory, skip_semantic_dedup=False, store="default", **kwargs):
++        if memory.content_hash in rows:
++            return False, "Duplicate content detected (exact match)"
++        rows[memory.content_hash] = memory
++        return True, "Memory stored successfully"
++
++    storage._call_client = call_client
++    storage.get_by_hash = get_by_hash
++    storage._get_for_write = get_for_write
++    storage.update_memory_metadata = update_memory_metadata
++    storage.store = store
++    storage._cleanup_unlinked_version = AsyncMock(return_value=True)
++    return storage
++
++
++@pytest.mark.asyncio
++async def test_restoring_earlier_text_stores_a_new_version():
++    rows = {_A_HASH: _memory(_A_TEXT, _A_HASH, superseded_by=_B_HASH)}
++    storage = _make_storage(rows)
++
++    ok, message, new_hash = await storage.update_memory_versioned(_B_HASH, _A_TEXT)
++
++    assert ok, message
++    assert new_hash is not None
++    assert new_hash != _A_HASH
++    assert new_hash in rows
++    assert rows[new_hash].content == _A_TEXT
++
++
++@pytest.mark.asyncio
++async def test_repeated_restores_get_distinct_salted_hashes():
++    rows = {_A_HASH: _memory(_A_TEXT, _A_HASH, superseded_by=_B_HASH)}
++    storage = _make_storage(rows)
++
++    ok1, _, first = await storage.update_memory_versioned(_B_HASH, _A_TEXT)
++    assert ok1
++    ok2, _, second = await storage.update_memory_versioned(first, _A_TEXT)
++
++    assert ok2
++    assert first != second
++    assert first in rows and second in rows
++
++
++@pytest.mark.asyncio
++async def test_independent_duplicate_is_not_recreated_as_a_version():
++    rows = {_A_HASH: _memory(_A_TEXT, _A_HASH)}
++    storage = _make_storage(rows)
++
++    ok, message, new_hash = await storage.update_memory_versioned(_B_HASH, _A_TEXT)
++
++    assert not ok
++    assert "Duplicate content detected" in message
++    assert new_hash is None
++    assert len(rows) == 2
++    assert rows[_A_HASH].metadata == {}
++
++
++@pytest.mark.asyncio
++async def test_unrelated_superseded_duplicate_is_not_in_the_version_chain():
++    rows = {_A_HASH: _memory(_A_TEXT, _A_HASH, superseded_by="c" * 64)}
++    storage = _make_storage(rows)
++
++    ok, message, new_hash = await storage.update_memory_versioned(_B_HASH, _A_TEXT)
++
++    assert not ok
++    assert "Duplicate content detected" in message
++    assert new_hash is None
++    assert len(rows) == 2
++    assert rows[_A_HASH].metadata == {"superseded_by": "c" * 64}
++
++
++@pytest.mark.asyncio
++async def test_capitalization_edit_does_not_collide_with_current_row():
++    original = "hello"
++    original_hash = generate_content_hash(original)
++    rows = {original_hash: _memory(original, original_hash)}
++    storage = _make_storage(rows)
++
++    ok, message, new_hash = await storage.update_memory_versioned(original_hash, "Hello")
++
++    assert ok, message
+
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2145** (2026-11-27): fix(auth): remove the fail-closed store guards and let per-store grants reach memory_explore and memory_detail (#2120) (@massimiliano1991)
+- **PR #2144** (2026-11-27): chore(release): v13.1.0 (@doobidoo)
+- **PR #2142** (2026-11-27): fix(dashboard): move the sync actions onto the island row and retire the compact card (@rise11hx-cmyk)
 - **PR #2141** (2026-11-26): docs(claude-md): move detail into directives and cut what the rules already say (@doobidoo)
 - **PR #2140** (closed): docs: add Protodex verification badge to README (@manja316)
 - **PR #2139** (2026-11-26): fix(milvus): count live rows from one scan (@doobidoo)
-- **PR #2138** (2026-11-26): docs(agents): add repository guidelines and refresh the GitNexus block (@doobidoo)
-- **PR #2137** (2026-11-26): fix(milvus): count live rows from one scan (#2136) (@doobidoo)
-- **PR #2133** (2026-11-25): fix(milvus): confine the read paths to the claimed store (#1958) (@doobidoo)
 
 ---
 
@@ -3637,30 +4435,21 @@ change closes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(agents): add repository guidelines and refresh the GitNexus block
+## X. sync): forward delta-sync events a hybrid hub applied to its secondary (#1506, p
 
 **RULE**:
-When implementing operations in `.claude/skills/gitnexus-cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1506.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6b27bf8`: docs(agents): add repository guidelines and refresh the GitNexus block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bef18ef5`: sync): forward delta-sync events a hybrid hub applied to its secondary (#1506, part 1 of 2). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/gitnexus-cli/SKILL.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1506.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
----
-name: gitnexus-cli
-description: "Use when the user needs to run GitNexus CLI commands like analyze/index a repo, check status, clean the index, generate a wiki, or list indexed repos. Examples: \"Index this repo\", \"Reanalyze the codebase\", \"Generate a wiki\""
----
-
-# GitNexus CLI Commands
-
-Commands below use `node .gitnexus/run.cjs <command>` — the project-local runner `gitnexus analyze` drops next to the index. It auto-selects an available runner at call time (global `gitnexus`, else `pnpm dlx`, else `bunx`, else `npx`), so no package-manager assumption and no global install is required — including on a bun-only machine, which has no npm, npx or pnpm at all.
-
-> **Not analyzed yet, or `node .gitnexus/run.cjs` reports `Cannot find module`** (the gitignored runner is absent — e.g. a fresh clone or `git clean`)? (Re)generate it with `npx gitnexus analyze` from the project root, or `bunx gitnexus@latest analyze` on a bun-only machine. On **npm 11.x**, if `npx` crashes during install (`node.target is null`), install once with `npm i -g gitnexus` (then `gitnexus analyze`), or use `bunx gitnexus@latest analyze`, or `pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-
+- **A hybrid hub forwards the delta-sync events it applied to its Cloudflare secondary (#1506).** `apply_remote_event` writes through the primary's SQLite connection, so a spoke's create, edit or delete reached the hub and every other spoke but never D1, which silently became a partial copy holding only the hub's own writes. The scheduled sync cycle now tails the hub's `sync_events` with a persisted per-secondary cursor (the `push_cursor` table and `push_to_peer` loop spokes already use) and replays each event to the secondary: a create or edit stores or updates the current row in its store, a delete deletes it. The cursor moves only after the secondary acknowledged, so a restart or a D1 outage between "applied" and "forwarded" re-delivers instead of dropping. A hub that upgrades starts at the end of its log; the drift scan keeps the backlog. Each forwarded event is recorded in the new `secondary_forwarded` table (migration 023), the identity a later pull-side guard can check. Part 1 of 2: the pull-side echo guard follows separately.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3670,4 +4459,4 @@ Commands below use `node .gitnexus/run.cjs <command>` — the project-local runn
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6b27bf8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bef18ef5` are properly handled with clean fallback behavior.

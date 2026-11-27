@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `1e794b83`  
+> **Source Version**: `ccdfcea8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T00:07:23.418Z  
+> **Timestamp**: 2026-11-27T18:08:24.299Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T00:07:23.412Z  
+> **Harvest Timestamp**: 2026-11-27T18:08:24.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67925 stars
+- **Stars / Engagement**: 67923 stars
 
 ---
 
@@ -1782,11 +1782,11 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20587** (2026-11-26): **chore(deps): update Go dependencies for 3.17**
-  *Symptoms*: Update Go dependencies across the root module and all Go submodules (`compliance`, `documentation/examples/remote_storage`, `internal/tools`, `web/ui/mantine-ui/src/promql/tools`) via `make update-all-go-deps` ahead of the v3.17.0-rc.0 release cut.  Notes: - Kept `github.com/bufbuild/buf` at `v1.74.0` in `internal/tools/go.mod` because `v1.75.0` pulls a `google.golang.org/protobuf` `v1.36.13-0...` pseudo-version that caused `go work sync` to bump the workspace to pre-release `google.golang.org/protobuf v1.37.0-rc.1`; all modules remain on stable `v1.36.12`. - Bumped `github.com/prometheus/prometheus` to `v0.316.0` in `compliance/go.mod` (clearing the open Go Dependabot alerts on `compliance/go.mod`) and `web/ui/mantine-ui/src/promql/tools/go.mod`. - Supersedes open Renovate PRs #20371, #20372, #20373, #20374, #20379, #20380, #20381, #20385, #20386, and #20387.  <details><summary>Direct dependency updates</summary>  - `github.com/Azure/azure-sdk-for-go/sdk/azcore`: `v1.23.3` -> `v1.24.0` - `github.com/KimMachineGun/automemlimit`: `v1.0.0` -> `v1.0.2` - `github.com/aws/aws-sdk-go-v2` (and service modules / `smithy-go`): `v1.47.4` -> `v1.48.1` - `github.com/digitalocean/godo`: `v1.231.0` -> `v1.247.0` - `github.com/google/pprof`: `1facf8f91b50` -> `084b33a85f63` - `github.com/gophercloud/gophercloud/v2`: `v2.15.0` -> `v2.16.0` - `github.com/grafana/regexp`: `f7b3be9d1853` -> `2a302228d4e4` - `github.com/grpc-ecosystem/grpc-gateway/v2` (`internal/tools`): `v2.32.0` -> `v2.34.0` -
+- **Issue #20622** (2026-11-27): **chore: sync release-4.0 with main**
+  *Symptoms*: Automated sync of main into release-4.0 while 4.0 is still under development.  Opened by [workflow run](https://github.com/machine424/prometheus/actions/runs/45985014624).  Use Create a merge commitâ€”squashing or rebasing erases main's merge history and causes future syncs to repeat these commits and conflicts.  While this is open the sync is paused, so merging or closing it is what lets the next run continue.  ```release-notes NONE ```
 
-- **Issue #20582** (2026-11-26): **Feature request: expose per-target HTTP scrape request duration as a metric**
-  *Symptoms*: ### Proposal  Expose a per-target **`scrape_request_duration_seconds`** metric that measures the elapsed wall-clock time spent on the HTTP request/response portion of a Prometheus scrape, separately from the existing `scrape_duration_seconds`.  Specifically, the proposed metric would cover the outbound request through receipt and reading of the response body (including connection establishment, TLS handshake when applicable, server response time, and body transfer), **excluding exposition parsing, sample relabeling and appending/ingestion**.  ### Motivation  Today, `scrape_duration_seconds` reports the duration of the overall scrape operation. It is valuable for monitoring scrape health, but it does not show how much of that time is spent waiting for the target and downloading its response versus parsing and appending samples.  For high-cardinality targets, a scrape may approach its configured timeout. An HTTP-only timing metric would help operators: - See whether the target's HTTP response time is approaching the configured scrape timeout. - Distinguish slow server response/body transfer from time spent in scrape-side parsing/appending. - Make better-informed alerts and capacity decisions *before* scrapes fail. - Investigate whether optimizations are needed in the exporter/transport or in Prometheus-side processing.  For context, we have encountered a target producing roughly 80,000 time series with a scrape interval of 60 seconds and a configured timeout of approximately 58
+- **Issue #20610** (2026-11-27): **ui: escape line breaks in autocompleted label values**
+  *Symptoms*: #### Which issue(s) does the PR fix:  No issue filed.  When a label value is autocompleted inside a string (`metric{label="|"}`), the editor inserts `escapePromQLString(value)` (`web/ui/module/codemirror-promql/src/complete/hybrid.ts`). It escaped `\` and `"`, but not line breaks. PromQL doesn't allow a raw newline in a quoted string (the lexer reports `unterminated quoted string`), so picking a value that contains a line break, as some exporters put in error or description labels, leaves the query broken right away.  The function now also escapes `\n` and `\r`. Other characters are unchanged.  This is the same rule as #20602, which fixes `escapeString` in the mantine UI. Neither change depends on the other.  Test: the label value fixture (`src/test/label_env_values.json`) gets a value with a line break, and the "online autocomplete of label value corresponding to a metric and a label name" case in `hybrid.test.ts` now expects `apply: 'multi\nline'`. Without the change that case fails; with it, the full `codemirror-promql` suite passes (9 suites, 425 tests).  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] UI: Escape line breaks in label values inserted by autocompletion, so the resulting query stays valid. ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1803,1202 +1803,658 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e794b83` (2026-11-26)
-**Commit Message**: chore(deps): update Go dependencies for 3.17 (#20587)
+### Incident Patch 1: `77b65d53` (2026-11-27)
+**Commit Message**: api: honor search cancellation and report timeouts (#19991)
 
-Ran make update-all-go-deps ahead of the v3.17.0-rc.0 cut across the root module and all Go submodules.
+* api: honor cancellation during indexed search
 
-Kept github.com/bufbuild/buf at v1.74.0 in internal/tools/go.mod so go work sync does not pull pre-release google.golang.org/protobuf v1.37.0-rc.1 into root go.mod (staying on v1.36.12). Also bumped github.com/prometheus/prometheus to v0.316.0 in compliance/go.mod and web/ui/mantine-ui/src/promql/tools/go.mod.
+Stop indexed filtering on context cancellation and classify search deadlines before and during streaming. Preserve secondary storage errors as warnings.
 
-Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+---------
 
-**File**: `compliance/go.mod` (modified, +53/-60)
+Signed-off-by: Arve Knudsen <[REDACTED_EMAIL]>
+
+**File**: `storage/generic.go` (modified, +44/-31)
 ```diff
-@@ -9,106 +9,99 @@ require (
+@@ -247,58 +247,59 @@ func NewSearchResultSetFromSliceAndError(results []SearchResult, warns annotatio
+ // keeping the upfront allocation small for sparse matches against large indices.
+ const minLinearAllocCap = 256
  
- require (
- 	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
--	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
-+	cloud.google.com/go/auth/oauth2adapt v0.3.1 // indirect
- 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
--	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 // indirect
-+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
--	github.com/Microsoft/go-winio v0.6.3 // indirect
-+	github.com/Microsoft/go-winio v0.6.4 // indirect
- 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
--	github.com/aws/aws-sdk-go-v2 v1.47.4 // indirect
--	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ecs v1.102.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/lightsail v1.67.0 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
--	github.com/aws/smithy-go v1.28.6 // indirect
-+	github.com/aws/aws-sdk-go-v2 v1.48.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/config v1.33.22 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.21.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.10 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.350.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ecs v1.106.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/elasticache v1.66.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.26 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/kafka v1.66.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/lightsail v1.72.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/rds v1.134.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.14.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.53.1 // indirect
-+	github.com/aws/smithy-go v1.28.10 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
-+	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
--	github.com/digitalocean/godo v1.231.0 // indirect
--	github.com/distribution/reference v0.6.0 // indirect
--	github.com/docker/go-connections v0.8.2 // indirect
--	github.com/envoyproxy/go-control-plane/envoy v1.40.0 // indirect
-+	github.com/digitalocean/godo v1.247.0 // indirect
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
--	github.com/fsnotify/fsnotify v1.10.1 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
--	github.com/go-openapi/jsonpointer v1.0.2 // indirect
--	github.com/go-openapi/jsonreference v1.0.2 // indirect
--	github.com/go-openapi/swag v0.29.2 // indirect
- 	github.com/gogo/protobuf v1.3.2 // indirect
- 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
- 	github.com/golang/snappy v1.0.0 // indirect
- 	github.com/google/s2a-go v0.1.11 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
--	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
--	github.com/gophercloud/gophercloud/v2 v2.15.0 // indirect
--	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853 // indirect
-+	github.com/googleapis/enterprise-certificate-proxy v0.3.25 // indirect
-+	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
-+	github.com/gophercloud/gophercloud/v2 v2.16.0 // indirect
-+	github.com/grafana/regexp v0.0.0-20261125153703-2a302228d4e4 // indirect
- 	github.com/hashicorp/consul/api v1.35.0 // indirect
--	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
--	github.com/hashicorp/go-uuid v1.0.3 // indirect
--	github.com/hashicorp/nomad/a
-```
-
-**File**: `compliance/go.sum` (modified, +126/-106)
-```diff
-@@ -1,69 +1,79 @@
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
--cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
--cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1 h1:BKLDdbWS7pafd820dsyFDF6fPEzIGqr7ny6hbTzCCgE=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1/go.mod h1:B1nM4FJDxoDqAt3PXFG4IflUoQ5kvWAOOM3R+5wAszg=
- cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
- cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 h1:5H6YRLGMoC8z5aXpxqcD6FfswI8mwoVNHSecvIoazt4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0/go.mod h1:Sk63W6X/TElfcE2BknMYg0Q9JuCpebgjnHcbs5md4NM=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0/go.mod h1:mCBhUhlMjLLJKr5aqw2TNS/VqJOie8MzWq3DAMJeKso=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 h1:Terj1CMW4+NY5CpWjSRkqLoxh2DkYDdv/FH2z0897Uc=
- github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0/go.mod h1:7Ut2Qw9vcwpLW5Q4MBy43uSxXS7tK2yjs94OJ6j5thE=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v5 v5.7.0 h1:LkHbJbgF3YyvC53aqYGR+wWQDn2Rdp9AQdGndf9QvY4=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v5 v5.7.0/go.mod h1:QyiQdW4f4/BIfB8ZutZ2s+28RAgfa/pT+zS++ZHyM1I=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v4 v4.3.0 h1:bXwSugBiSbgtz7rOtbfGf+woewp4f06orW9OP5BjHLA=
--github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v4 v4.3.0/go.mod h1:Y/HgrePTmGy9HjdSGTqZNa+apUpTVIEVKXJyARP2lrk=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0 h1:2lXb1GRZXYbM0M0NBINxqTAUgs2tLOkUxbDtdIqGT80=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0/go.mod h1:/PxYsqvSyfJS5vMkAAUByxUIlFUIJ4+LgpUK/fTheZk=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v8 v8.0.0 h1:7QO7GhGat25QEYL4h607O9zNNTUlAv8PbSesW6Ol5Gg=
-+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v8 v8.0.0/go.mod h1:mCqeYzwyjn/pw0JVqHJMIzfUQJrlcV0YjTg5b0NK+F0=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1 h1:WJTmL004Abzc5wDB5VtZG2PJk5ndYDgVacGqfirKxjM=
- github.com/AzureAD/microsoft-authentication-extensions-for-go/cache v0.1.1/go.mod h1:tCcJZ0uHAmvjsVYzEFivsRTN00oz5BEsRgQHu5JZ9WE=
- github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 h1:0O6j18nQDoIff6/mtosT5LNU2WehEwp+LqfX6699oqY=
- github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdYAf5bjkOpsd3auA8riiJW4vneBubt9caavL7626jQ=
- github.com/Code-Hex/go-generics-cache v1.5.1 h1:6vhZGc5M7Y/YD8cIUcY8kcuQLB4cHR7U+0KMqAA0KcU=
- github.com/Code-Hex/go-generics-cache v1.5.1/go.mod h1:qxcC9kRVrct9rHeiYpFWSoW1vxyillCVzX13KZG8dl4=
--github.com/Microsoft/go-winio v0.6.3 h1:M/52tsoyTfwaxajLnXZm7PqkbMGRH8iSWP+8fcg9MQ4=
--github.com/Microsoft/go-winio v0.6.3/go.mod h1:ma0QpxizD4fyyzJ1C7MIblymTD2Nxz5Mho/3CepwIZg=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b h1:mimo19zliBX/vSQ6PWWSL9lK8qwHozUj03+zLoEB8O0=
- github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b/go.mod h1:fvzegU4vN3H1qMT+8wDmzjAcDONcgo2/SZ/TyfdUOFs=
- github.com/armon/go-metrics v0.4.1 h1:hR91U9KYmb6bLBYLQjyM+3j+rcd/UhE+G78SFnF8gJA=
- github.com/armon/go-metrics v0.4.1/go.mod h1:E6amYzXo6aW1tqzoZGT755KkbgrJsSdpwZ+3JqfkOG4=
--github.com/aws/aws-sdk-go-v2 v1.47.4 h1:bTvk6UdSSSvaQsfLVj1JRDEEqj/PDRwGf1KanaRzau0=
--github.com/aws/aws-sdk-go-v2 v1.47.4/go.mod h1:XkrjAZvr705Nytv6PkPUhoSB2W9+vVHBp5oAWpkh8Ak=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRD
-```
-
-**File**: `documentation/examples/remote_storage/go.mod` (modified, +47/-45)
-```diff
-@@ -10,35 +10,35 @@ require (
- 	github.com/golang/snappy v1.0.0
- 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
- 	github.com/prometheus/client_golang v1.25.0
--	github.com/prometheus/common v0.72.1
-+	github.com/prometheus/common v0.74.0
- 	github.com/prometheus/prometheus v0.0.0-00010101000000-000000000000
- 	github.com/stretchr/testify v1.12.1
- )
- 
- require (
- 	cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a // indirect
--	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
-+	cloud.google.com/go/auth/oauth2adapt v0.3.1 // indirect
- 	cloud.google.com/go/compute/metadata v0.10.0 // indirect
--	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 // indirect
-+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 // indirect
- 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.13.0 // indirect
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
- 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
--	github.com/aws/aws-sdk-go-v2 v1.47.4 // indirect
--	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
--	github.com/aws/smithy-go v1.28.6 // indirect
-+	github.com/aws/aws-sdk-go-v2 v1.48.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/config v1.33.22 // indirect
-+	github.com/aws/aws-sdk-go-v2/credentials v1.21.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.10 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.26 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.13 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.14.1 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.6 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.53.1 // indirect
-+	github.com/aws/smithy-go v1.28.10 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-@@ -52,17 +52,17 @@ require (
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/s2a-go v0.1.11 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
--	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
--	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853 // indirect
-+	github.com/googleapis/enterprise-certificate-proxy v0.3.25 // indirect
-+	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
-+	github.com/grafana/regexp v0.0.0-20261125153703-2a302228d4e4 // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
- 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
- 	github.com/jpillora/backoff v1.0.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/klauspost/compress v1.20.3 // indirect
-+	github.com/klauspost/compress v1.20.5 // indirect
- 	github.com/knadh/koanf/maps v0.1.3 // indirect
- 	github.com/knadh/koanf/providers/confmap v1.0.1 // indirect
--	github.com/knadh/koanf/v2 v2.3.8 // indirect
-+	github.com/knadh/koanf/v2 v2.4.1 // indirect
- 	github.com/kylelemons/godebug v1.1.0 // indirect
- 	github.com/mitchellh/copystructure v1.2.0 // indirect
- 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-@@ -71,29 +71,30 @@ require (
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
- 	github.com/oapi-codegen/runtime v1.7.0 // indirect
--	github.com/open-telemetry/opentelemetry-collector-contrib/internal/exp/metrics v0.163.0 // indirect
--	github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.163.0 // indirect
-+	github.com/open-telemetry/opentelemetry-collector-contrib/internal/exp/metrics v0.166.0 // indirect
-+	github.com/open-telemetry/opentelemetry-collector-cont
-```
-
-**File**: `documentation/examples/remote_storage/go.sum` (modified, +152/-152)
-```diff
-@@ -1,11 +1,11 @@
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
--cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
--cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1 h1:BKLDdbWS7pafd820dsyFDF6fPEzIGqr7ny6hbTzCCgE=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1/go.mod h1:B1nM4FJDxoDqAt3PXFG4IflUoQ5kvWAOOM3R+5wAszg=
- cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
- cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 h1:5H6YRLGMoC8z5aXpxqcD6FfswI8mwoVNHSecvIoazt4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0/go.mod h1:Sk63W6X/TElfcE2BknMYg0Q9JuCpebgjnHcbs5md4NM=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
-@@ -22,8 +22,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 h1:0O6j18nQDo
- github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdYAf5bjkOpsd3auA8riiJW4vneBubt9caavL7626jQ=
- github.com/Code-Hex/go-generics-cache v1.5.1 h1:6vhZGc5M7Y/YD8cIUcY8kcuQLB4cHR7U+0KMqAA0KcU=
- github.com/Code-Hex/go-generics-cache v1.5.1/go.mod h1:qxcC9kRVrct9rHeiYpFWSoW1vxyillCVzX13KZG8dl4=
--github.com/Microsoft/go-winio v0.6.3 h1:M/52tsoyTfwaxajLnXZm7PqkbMGRH8iSWP+8fcg9MQ4=
--github.com/Microsoft/go-winio v0.6.3/go.mod h1:ma0QpxizD4fyyzJ1C7MIblymTD2Nxz5Mho/3CepwIZg=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/RaveNoX/go-jsoncommentstrip v1.0.0/go.mod h1:78ihd09MekBnJnxpICcwzCMzGrKSKYe4AqU6PDYYpjk=
- github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
- github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
-@@ -35,48 +35,48 @@ github.com/armon/go-metrics v0.4.1 h1:hR91U9KYmb6bLBYLQjyM+3j+rcd/UhE+G78SFnF8gJ
- github.com/armon/go-metrics v0.4.1/go.mod h1:E6amYzXo6aW1tqzoZGT755KkbgrJsSdpwZ+3JqfkOG4=
- github.com/aws/aws-sdk-go v1.55.8 h1:JRmEUbU52aJQZ2AjX4q4Wu7t4uZjOu71uyNmaWlUkJQ=
- github.com/aws/aws-sdk-go v1.55.8/go.mod h1:ZkViS9AqA6otK+JBBNH2++sx1sgxrPKcSzPPvQkUtXk=
--github.com/aws/aws-sdk-go-v2 v1.47.4 h1:bTvk6UdSSSvaQsfLVj1JRDEEqj/PDRwGf1KanaRzau0=
--github.com/aws/aws-sdk-go-v2 v1.47.4/go.mod h1:XkrjAZvr705Nytv6PkPUhoSB2W9+vVHBp5oAWpkh8Ak=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 h1:fSNAt6hs4qLjb9tMZc6vj3PHlOCYGXK2JjJZ7AW2tf4=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7/go.mod h1:TMav+EuXQu5kNpZZz/6rIC8xx4mCsW+6AKHrjvOSAsE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 h1:7NS6kqBjkWIN8P/AEdmtyq6eQGAhN1oHTZdzXclpH6Y=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7/go.mod h1:1PFqtAUsIgF1nEVojzRJSf/v88zjzqrGW+w+UAtkXyQ=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0 h1:H9eDiicM7ygKBIaEINAaSPmUPNwq7dquXFICqvpbcxs=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0/go.mod h1:RttUwBa++DWLLpzTAQdcQzqI9uBF9cfRI/ek8gXzLR4=
--github.com/aws/aws-sdk-go-v2/service/ecs v1.102.0 h1:vAy42FJg9NS2pV7ok2vqdWHXV3gnmnjJw23+mMbQ4hI=
--github.com/aws/aws-sdk-go-v2/service/ecs v1.102.0/go.mod h1:6SgP8Uxeur6i0CsNeRBZQspNH5R8atwoG1+To27rkmQ=
--github.com/aws/aws-sdk-go-v2/service/elasticache v1.64.0 h1:ZUfc/ikgvNsPrkdixaTmsPTOh/Tcj+u6o5YYgALa3E8=
--github.com/aws/aws-sdk-go-v2/service/el
-```
-
-**File**: `go.mod` (modified, +82/-81)
-```diff
-@@ -3,30 +3,30 @@ module github.com/prometheus/prometheus
- go 1.26.10
- 
- require (
--	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3
-+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0
- 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v8 v8.4.0
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v8 v8.0.0
- 	github.com/Code-Hex/go-generics-cache v1.5.1
--	github.com/KimMachineGun/automemlimit v1.0.0
-+	github.com/KimMachineGun/automemlimit v1.0.2
- 	github.com/alecthomas/kingpin/v2 v2.4.0
- 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
--	github.com/aws/aws-sdk-go-v2 v1.47.4
--	github.com/aws/aws-sdk-go-v2/config v1.33.9
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
--	github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0
--	github.com/aws/aws-sdk-go-v2/service/ecs v1.102.0
--	github.com/aws/aws-sdk-go-v2/service/elasticache v1.64.0
--	github.com/aws/aws-sdk-go-v2/service/kafka v1.65.5
--	github.com/aws/aws-sdk-go-v2/service/lightsail v1.67.0
--	github.com/aws/aws-sdk-go-v2/service/mq v1.45.6
--	github.com/aws/aws-sdk-go-v2/service/rds v1.131.0
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4
--	github.com/aws/smithy-go v1.28.6
-+	github.com/aws/aws-sdk-go-v2 v1.48.1
-+	github.com/aws/aws-sdk-go-v2/config v1.33.22
-+	github.com/aws/aws-sdk-go-v2/credentials v1.21.4
-+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.350.1
-+	github.com/aws/aws-sdk-go-v2/service/ecs v1.106.1
-+	github.com/aws/aws-sdk-go-v2/service/elasticache v1.66.1
-+	github.com/aws/aws-sdk-go-v2/service/kafka v1.66.1
-+	github.com/aws/aws-sdk-go-v2/service/lightsail v1.72.1
-+	github.com/aws/aws-sdk-go-v2/service/mq v1.45.13
-+	github.com/aws/aws-sdk-go-v2/service/rds v1.134.1
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.53.1
-+	github.com/aws/smithy-go v1.28.10
- 	github.com/bboreham/go-loser v0.0.0-20230920113527-fcc2c21820a3
- 	github.com/cespare/xxhash/v2 v2.3.0
- 	github.com/dennwc/varint v1.0.0
--	github.com/digitalocean/godo v1.231.0
-+	github.com/digitalocean/godo v1.247.0
- 	github.com/edsrzf/mmap-go v1.2.1-0.20241212181136-fad1cd13edbd
- 	github.com/envoyproxy/go-control-plane/envoy v1.40.0
- 	github.com/envoyproxy/protoc-gen-validate v1.3.3
-@@ -38,49 +38,49 @@ require (
- 	github.com/gogo/protobuf v1.3.2
- 	github.com/golang/snappy v1.0.0
- 	github.com/google/go-cmp v0.7.0
--	github.com/google/pprof v0.0.0-20261016150608-1facf8f91b50
-+	github.com/google/pprof v0.0.0-20261118010117-084b33a85f63
- 	github.com/google/uuid v1.6.0
--	github.com/gophercloud/gophercloud/v2 v2.15.0
--	github.com/grafana/regexp v0.0.0-20250905093917-f7b3be9d1853
-+	github.com/gophercloud/gophercloud/v2 v2.16.0
-+	github.com/grafana/regexp v0.0.0-20261125153703-2a302228d4e4
- 	github.com/hashicorp/consul/api v1.35.0
--	github.com/hashicorp/nomad/api v0.0.0-20261021233103-cd3e55df2c8e
--	github.com/hetznercloud/hcloud-go/v2 v2.52.0
-+	github.com/hashicorp/nomad/api v0.0.0-20261126093134-4e5e3946827f
-+	github.com/hetznercloud/hcloud-go/v2 v2.53.0
- 	github.com/ionos-cloud/sdk-go/v6 v6.3.11
- 	github.com/json-iterator/go v1.1.12
--	github.com/klauspost/compress v1.20.3
-+	github.com/klauspost/compress v1.20.5
- 	github.com/kolo/xmlrpc v0.0.0-20220921171641-a4b6fa1dd06b
- 	github.com/linode/linodego v1.69.1
- 	github.com/miekg/dns v1.1.73
--	github.com/moby/moby/api v1.56.1
--	github.com/moby/moby/client v0.6.2
-+	github.com/moby/moby/api v1.57.0
-+	github.com/moby/moby/client v0.6.3
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822
- 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
- 	github.com/nsf/jsondiff v0.0.0-20260207060731-8e8d90c4c0ac
- 	github.com/oklog/run v1.2.0
- 	github.com/oklog/ulid/v2 v2.1.2
--	github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.163.0
--	github.com/outscale/osc-sdk-go/v2 v2.35.0
--	github.com/ovh/go-ovh v1.9.0
--	github.com/pb33f/go-yaml v0.1.1
--	github.com/pb33f/libopenapi v0.41.6
--	github.com/pb33f/libopenapi-validator v0.16.1
--	github.com/prometheus/alertmanager v0.34.1
-+	github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.166.0
-+	github.com/outscale/osc-sdk-go/v2 v2.36.0
-+	github.com/ovh/go-ovh v1.10.0
-+	github.com/pb33f/go-yaml v0.2.0
-+	github.com/pb33f/libopenapi v0.44.0
-+	github.com/pb33f/libopenapi-validator v0.16.5
-+	github.com/prometheus/alertmanager v0.35.1
- 	github.com/prometheus/client_golang v1.25.0
--	github.com/prometheus/client_golang/exp v0.0.0-20261028105007-0b2f01f00376
-+	github.com/prometheus/client_golang/exp v0.0.0-20261126113921-fa68a132eaca
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.72.1
-+	github.com/prometheus/common v0.74.0
- 	github.com/prometheus/common/assets v0.2.0
--	github.com/prometheus/exporter-toolkit v0.20.0
-+	github.com/prometheus/exporter-toolkit v0.21.0
- 	github.com/prometheus/sigv4 v0.5.0
--	github.com/scaleway/scaleway-sdk-go v1.39.0
-+	github.com/scaleway/scaleway
-```
-
-**File**: `go.sum` (modified, +186/-184)
-```diff
-@@ -1,11 +1,11 @@
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a h1:jW1ZLFy9oa5ai8LOI40z6s+DL1cO/L1KSm9hVGnibn8=
- cloud.google.com/go/auth v0.24.1-0.20261001053825-dbc26066f70a/go.mod h1:1dmBXa9xfBvBr39ZnDUDkaaA91ccq9CcqENDgJA4d7c=
--cloud.google.com/go/auth/oauth2adapt v0.3.0 h1:FY8oSZpCYoUNv6QxVODuMjQz4IlSOVeiQtZ08vLPz88=
--cloud.google.com/go/auth/oauth2adapt v0.3.0/go.mod h1:7+2uCm7++XFO+/lN06c2HXpDXb/NMNn2/UwyBPbTnkk=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1 h1:BKLDdbWS7pafd820dsyFDF6fPEzIGqr7ny6hbTzCCgE=
-+cloud.google.com/go/auth/oauth2adapt v0.3.1/go.mod h1:B1nM4FJDxoDqAt3PXFG4IflUoQ5kvWAOOM3R+5wAszg=
- cloud.google.com/go/compute/metadata v0.10.0 h1:pyKMUQSwchgkIBBJGdILqQbs/BNJXqwSA7Ej6LAvvtY=
- cloud.google.com/go/compute/metadata v0.10.0/go.mod h1:rGFHRrIif570kSibjFTMbt6/4/tzgJWFGI/HVol4GIk=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 h1:qgnWTiWs1G7AqcKZegFvkJD1bmXJcaDU3uC0ELSgZ5U=
--github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3/go.mod h1:XtxD48QPInqoj+GMlcRlXHEYsoOxFnP6w2JgIZ9rDS4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 h1:5H6YRLGMoC8z5aXpxqcD6FfswI8mwoVNHSecvIoazt4=
-+github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0/go.mod h1:Sk63W6X/TElfcE2BknMYg0Q9JuCpebgjnHcbs5md4NM=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0 h1:w3gDUJlJ0BfBsHH02DCBDwbkmMSXJqBj6nBOCo9iocY=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0/go.mod h1:7scl8mG/IFLVjJ9ef/ltdND2T1z0CkgVSaQoUxLvmeU=
- github.com/Azure/azure-sdk-for-go/sdk/azidentity/cache v0.4.0 h1:xFaZZ+IubdftrDHnGGwZ6QvQ3KHTtWl2MCK+GMt2vxs=
-@@ -30,10 +30,10 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdY
- github.com/Code-Hex/go-generics-cache v1.5.1 h1:6vhZGc5M7Y/YD8cIUcY8kcuQLB4cHR7U+0KMqAA0KcU=
- github.com/Code-Hex/go-generics-cache v1.5.1/go.mod h1:qxcC9kRVrct9rHeiYpFWSoW1vxyillCVzX13KZG8dl4=
- github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
--github.com/KimMachineGun/automemlimit v1.0.0 h1:+MqlvDE/pkJNjk1rU+O14QsH8k10nJAD0frB0lsxyvw=
--github.com/KimMachineGun/automemlimit v1.0.0/go.mod h1:n+BSXxQWDFS1DKh67Rqo0lgTsowsg6x65ak5uyngML0=
--github.com/Microsoft/go-winio v0.6.3 h1:M/52tsoyTfwaxajLnXZm7PqkbMGRH8iSWP+8fcg9MQ4=
--github.com/Microsoft/go-winio v0.6.3/go.mod h1:ma0QpxizD4fyyzJ1C7MIblymTD2Nxz5Mho/3CepwIZg=
-+github.com/KimMachineGun/automemlimit v1.0.2 h1:DkORkhuzrwT2/b35xz8zLd7cJ6Hu2ESRGBY8HKUFIYk=
-+github.com/KimMachineGun/automemlimit v1.0.2/go.mod h1:n+BSXxQWDFS1DKh67Rqo0lgTsowsg6x65ak5uyngML0=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
- github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
- github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
-@@ -46,48 +46,48 @@ github.com/armon/go-metrics v0.4.1 h1:hR91U9KYmb6bLBYLQjyM+3j+rcd/UhE+G78SFnF8gJ
- github.com/armon/go-metrics v0.4.1/go.mod h1:E6amYzXo6aW1tqzoZGT755KkbgrJsSdpwZ+3JqfkOG4=
- github.com/aws/aws-sdk-go v1.55.8 h1:JRmEUbU52aJQZ2AjX4q4Wu7t4uZjOu71uyNmaWlUkJQ=
- github.com/aws/aws-sdk-go v1.55.8/go.mod h1:ZkViS9AqA6otK+JBBNH2++sx1sgxrPKcSzPPvQkUtXk=
--github.com/aws/aws-sdk-go-v2 v1.47.4 h1:bTvk6UdSSSvaQsfLVj1JRDEEqj/PDRwGf1KanaRzau0=
--github.com/aws/aws-sdk-go-v2 v1.47.4/go.mod h1:XkrjAZvr705Nytv6PkPUhoSB2W9+vVHBp5oAWpkh8Ak=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 h1:fSNAt6hs4qLjb9tMZc6vj3PHlOCYGXK2JjJZ7AW2tf4=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7/go.mod h1:TMav+EuXQu5kNpZZz/6rIC8xx4mCsW+6AKHrjvOSAsE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 h1:7NS6kqBjkWIN8P/AEdmtyq6eQGAhN1oHTZdzXclpH6Y=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7/go.mod h1:1PFqtAUsIgF1nEVojzRJSf/v88zjzqrGW+w+UAtkXyQ=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0 h1:H9eDiicM7ygKBIaEINAaSPmUPNwq7dquXFICqvpbcxs=
--github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0/go.mod h1:R
-```
-
-**File**: `internal/tools/go.mod` (modified, +21/-20)
-```diff
-@@ -6,17 +6,17 @@ require (
- 	github.com/bufbuild/buf v1.74.0
- 	github.com/daixiang0/gci v0.14.0
- 	github.com/gogo/protobuf v1.3.2
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.34.0
- )
- 
- require (
- 	buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.12-20261002170247-538130002972.2 // indirect
--	buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20250109164928-1da0de137947.2 // indirect
-+	buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20261012172039-ff528c23443f.2 // indirect
- 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2 // indirect
--	buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.0-20261009230124-4d217860dade.1 // indirect
--	buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261009230124-4d217860dade.2 // indirect
-+	buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.1-20261015154428-c661e2f1fba9.1 // indirect
-+	buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261015154428-c661e2f1fba9.2 // indirect
- 	buf.build/gen/go/pluginrpc/pluginrpc/protocolbuffers/go v1.36.12-20241007202033-cf42259fcbfc.2 // indirect
--	buf.build/go/app v0.2.1-0.20260928213032-9a091f2dc726 // indirect
-+	buf.build/go/app v0.3.0 // indirect
- 	buf.build/go/bufplugin v0.11.1 // indirect
- 	buf.build/go/bufprivateusage v0.1.0 // indirect
- 	buf.build/go/interrupt v1.1.0 // indirect
-@@ -26,9 +26,9 @@ require (
- 	buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5 // indirect
- 	cel.dev/cel-go v0.32.0 // indirect
- 	cel.dev/expr v0.25.3 // indirect
--	connectrpc.com/connect/v2 v2.0.1 // indirect
-+	connectrpc.com/connect/v2 v2.0.2 // indirect
- 	connectrpc.com/otelconnect v0.11.0 // indirect
--	github.com/Microsoft/go-winio v0.6.3 // indirect
-+	github.com/Microsoft/go-winio v0.6.4 // indirect
- 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
- 	github.com/bufbuild/protocompile v0.14.2-0.20261013160345-b79bfe2f85df // indirect
- 	github.com/bufbuild/protoplugin v0.0.0-20260414125817-25d1d281b46b // indirect
-@@ -38,7 +38,7 @@ require (
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/cpuguy83/go-md2man/v2 v2.0.7 // indirect
- 	github.com/distribution/reference v0.6.0 // indirect
--	github.com/docker/cli v29.9.0+incompatible // indirect
-+	github.com/docker/cli v29.9.1+incompatible // indirect
- 	github.com/docker/docker-credential-helpers v0.9.10 // indirect
- 	github.com/docker/go-connections v0.8.2 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
-@@ -51,19 +51,19 @@ require (
- 	github.com/hexops/gotextdiff v1.0.3 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/jdx/go-netrc v1.0.0 // indirect
--	github.com/klauspost/compress v1.20.3 // indirect
--	github.com/klauspost/pgzip v1.2.7 // indirect
-+	github.com/klauspost/compress v1.20.5 // indirect
-+	github.com/klauspost/pgzip v1.3.0 // indirect
- 	github.com/mattn/go-colorable v0.1.16 // indirect
- 	github.com/mattn/go-isatty v0.0.24 // indirect
- 	github.com/moby/docker-image-spec v1.3.1 // indirect
--	github.com/moby/moby/api v1.56.1 // indirect
--	github.com/moby/moby/client v0.6.2 // indirect
-+	github.com/moby/moby/api v1.57.0 // indirect
-+	github.com/moby/moby/client v0.6.3 // indirect
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/petermattis/goid v0.0.0-20260918085751-abfca077860b // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/quic-go/qpack v0.6.0 // indirect
--	github.com/quic-go/quic-go v0.63.0 // indirect
-+	github.com/quic-go/quic-go v0.64.0 // indirect
- 	github.com/rivo/uniseg v0.4.7 // indirect
- 	github.com/rs/cors v1.11.1 // indirect
- 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-@@ -87,18 +87,19 @@ require (
- 	go.uber.org/mock v0.6.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
--	go.yaml.in/yaml/v3 v3.0.5 // indirect
-+	go.yaml.in/yaml/v3 v3.0.6 // indirect
-+	go.yaml.in/yaml/v4 v4.0.0 // indirect
- 	golang.org/x/crypto v0.59.0 // indirect
--	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
--	golang.org/x/mod v0.42.0 // indirect
--	golang.org/x/net v0.62.0 // indirect
-+	golang.org/x/exp v0.0.0-20261113113407-e3970619a1a4 // indirect
-+	golang.org/x/mod v0.43.0 // indirect
-+	golang.org/x/net v0.63.0 // indirect
- 	golang.org/x/sync v0.25.0 // indirect
- 	golang.org/x/sys v0.50.0 // indirect
- 	golang.org/x/term v0.48.0 // indirect
- 	golang.org/x/text v0.44.0 // indirect
--	google.golang.org/genproto/googleapis/api v0.0.0-20261019180522-ce908d29299b // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941 // indirect
--	google.golang.org/grpc v1.84.0 // indirect
-+	google.golang.org/genproto/googleapis/api v0.0.0-20261123191846-1e707ab9fbc2 // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-2
-```
-
-**File**: `internal/tools/go.sum` (modified, +44/-44)
-```diff
-@@ -1,17 +1,17 @@
- buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.12-20261002170247-538130002972.2 h1:nNNsSGs3l9F8q4NfHaIa8RdGfucw957dlFuNf9Z3H/w=
- buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.12-20261002170247-538130002972.2/go.mod h1:Owcuj2phVyvThVYCD74iSV8ki0dAXw/uxkdcdZScdCc=
--buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20250109164928-1da0de137947.2 h1:tE4A2RVukQOSd4K+6ndK+8s65FbjiBt2k5CiddXxCCo=
--buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20250109164928-1da0de137947.2/go.mod h1:Gjxz0o7qPHokNsmlX8D+/aKd29NRLRr9CCUkPeMAzJ0=
-+buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20261012172039-ff528c23443f.2 h1:V79UG2jSfa0l9sH7leKvETpJZZriK6t+WGm4P17l/Hw=
-+buf.build/gen/go/bufbuild/protodescriptor/protocolbuffers/go v1.36.12-20261012172039-ff528c23443f.2/go.mod h1:Gjxz0o7qPHokNsmlX8D+/aKd29NRLRr9CCUkPeMAzJ0=
- buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2 h1:NbnlmV26O7oZ1iM5tsCI+GEx+3ZSdrhvnKQ/eWSrLiY=
- buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.2/go.mod h1:TCt1lluMFnctISJXvkIQ4x3ABrPuUKCWKyjKdkJNBpw=
--buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.0-20261009230124-4d217860dade.1 h1:9utgoyULVklOqVzOG+mnd+ZQcOiWPKVP5KmKPXZaVYw=
--buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.0-20261009230124-4d217860dade.1/go.mod h1:U3WcHUGfS/L67G7R0PmcaHA7MfviJJqDqhHXiCWeOEY=
--buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261009230124-4d217860dade.2 h1:Bqu3+Hwxoh8gvRvGMtkz/Kbq4U+cOvyk37jLzE4PkC0=
--buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261009230124-4d217860dade.2/go.mod h1:v7IaNcBKy5G3G8gpG2m92P0R3HK2qtMGclWzf+1Aut4=
-+buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.1-20261015154428-c661e2f1fba9.1 h1:NQUn226CeOuk2uUP+uO2XX5D102sTvflFq/YEZP7p5U=
-+buf.build/gen/go/bufbuild/registry/connectrpc/go/v2 v2.0.1-20261015154428-c661e2f1fba9.1/go.mod h1:pVB3IEfwKJXmCm52sj5ssEM6UQ9dOGKA6locMEkWNOk=
-+buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261015154428-c661e2f1fba9.2 h1:NsoxKZ9Vr9+f/Fw0DVj95nG5EYUeMd1s6Fy1j3UUCa0=
-+buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.12-20261015154428-c661e2f1fba9.2/go.mod h1:v7IaNcBKy5G3G8gpG2m92P0R3HK2qtMGclWzf+1Aut4=
- buf.build/gen/go/pluginrpc/pluginrpc/protocolbuffers/go v1.36.12-20241007202033-cf42259fcbfc.2 h1:9xw8g8Q6zHLC7CO/jtpl2UK0kQticxIG+mI6N86f2/M=
- buf.build/gen/go/pluginrpc/pluginrpc/protocolbuffers/go v1.36.12-20241007202033-cf42259fcbfc.2/go.mod h1:+0bw+k8FY5MU3tojFh33HeA5xMfGWjAUQpr+maW5Z3o=
--buf.build/go/app v0.2.1-0.20260928213032-9a091f2dc726 h1:Xx8K9w2tN9TfQSq1g6g4vKuBbG3ZlOR2bb9A+PbgBt4=
--buf.build/go/app v0.2.1-0.20260928213032-9a091f2dc726/go.mod h1:KuUkGoXxZnxNVGN/AB7s4UCUG2/1xtk8NjxqdSCSSyM=
-+buf.build/go/app v0.3.0 h1:XGdGg3iI/465w+PPipShXqGwuT43/Omk+5EtHYYly9Q=
-+buf.build/go/app v0.3.0/go.mod h1:KuUkGoXxZnxNVGN/AB7s4UCUG2/1xtk8NjxqdSCSSyM=
- buf.build/go/bufplugin v0.11.1 h1:fegT6xiiGVwyNiLlxBz07ochKTX/DAtIKe/oPdrqrCs=
- buf.build/go/bufplugin v0.11.1/go.mod h1:0xoAhb/CPqXwS/FUup9vwIRBYxDcXYXeOhYXHca5uuc=
- buf.build/go/bufprivateusage v0.1.0 h1:SzCoCcmzS3zyXHEXHeSQhGI7OTkgtljoknLzsUz9Gg4=
-@@ -30,14 +30,14 @@ cel.dev/cel-go v0.32.0 h1:irvpFKr5EuGPyxeME03ERh0rii1TX+BDAnB9eL3IvNk=
- cel.dev/cel-go v0.32.0/go.mod h1:DnVip7tpJSsgZymwfT+m1tnEVy3ivAjSMXPx12YrMkU=
- cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
- cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
--connectrpc.com/connect/v2 v2.0.1 h1:WTAycxe87UqxSM5oxS30d1dalZ+C5xz8Ec8O6zVYkHQ=
--connectrpc.com/connect/v2 v2.0.1/go.mod h1:N32OLrstcPUzkykFynnefFro3+xzSdOrZlK2jHmS/xo=
-+connectrpc.com/connect/v2 v2.0.2 h1:PoPDmOlhc46elsuCdKCKTxjNBb3HJlKF+s/sP2oucPw=
-+connectrpc.com/connect/v2 v2.0.2/go.mod h1:N32OLrstcPUzkykFynnefFro3+xzSdOrZlK2jHmS/xo=
- connectrpc.com/grpcreflect/v2 v2.0.0 h1:Ah7U5kSd/kslH5KFNS8jh/e3u6UYVoX7lwkjcIfSq6A=
- connectrpc.com/grpcreflect/v2 v2.0.0/go.mod h1:V7Hj+ibxuZH3667Ng2zKKvxJQJIri20iG50vzG7i8GM=
- connectrpc.com/otelconnect v0.11.0 h1:n1HjvoZLzsGJ5nb2PGnFH2msXPQLf4j3EWzLDylhdWQ=
- connectrpc.com/otelconnect v0.11.0/go.mod h1:xE0w5pyAk519Nub9zP63x9oOIBwcKofv5IYKQAhzQF4=
--github.com/Microsoft/go-winio v0.6.3 h1:M/52tsoyTfwaxajLnXZm7PqkbMGRH8iSWP+8fcg9MQ4=
--github.com/Microsoft/go-winio v0.6.3/go.mod h1:ma0QpxizD4fyyzJ1C7MIblymTD2Nxz5Mho/3CepwIZg=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
- github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
- github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
- github.com/bmatcuk/doublestar/v4 v4.10.0 h1:zU9WiOla1YA122oLM6i4EXvGW62DvKZVxIe6TYWexEs=
-@@ -65,8 +65,8 @@ github.com/daixiang0/gci v0.14.0 h1:h6AcLqmjIOBgojhtzY2Cv
-```
-
----
-
-### Incident Patch 2: `2663d533` (2026-11-26)
-**Commit Message**: Merge pull request #20565 from duricanikolic/yuri/series-wal-hybrid
-
-tsdb: write series records before dependent WAL records
-
-**File**: `tsdb/db_append_v2_test.go` (modified, +1/-56)
-```diff
-@@ -168,62 +168,7 @@ func TestDataNotAvailableAfterRollback_AppendV2(t *testing.T) {
- 		require.Equal(t, map[string][]chunks.Sample{}, seriesSet)
- 	}
- 
--	sr, err := wlog.NewSegmentsReader(db.head.wal.Dir())
--	require.NoError(t, err)
--	defer func() {
--		require.NoError(t, sr.Close())
--	}()
--
--	// Read records from WAL and check for expected count of series and samples.
--	var (
--		r   = wlog.NewReader(sr)
--		dec = record.NewDecoder(labels.NewSymbolTable(), promslog.NewNopLogger())
--
--		walSeriesCount, walSamplesCount, walHistogramCount, walFloatHistogramCount, walExemplarsCount int
--	)
--	for r.Next() {
--		rec := r.Record()
--		switch dec.Type(rec) {
--		case record.Series:
--			var series []record.RefSeries
--			series, err = dec.Series(rec, series)
--			require.NoError(t, err)
--			walSeriesCount += len(series)
--
--		case record.Samples, record.SamplesV2:
--			var samples []record.RefSample
--			samples, err = dec.Samples(rec, samples)
--			require.NoError(t, err)
--			walSamplesCount += len(samples)
--
--		case record.Exemplars:
--			var exemplars []record.RefExemplar
--			exemplars, err = dec.Exemplars(rec, exemplars)
--			require.NoError(t, err)
--			walExemplarsCount += len(exemplars)
--
--		case record.HistogramSamples, record.CustomBucketsHistogramSamples, record.HistogramSamplesV2:
--			var histograms []record.RefHistogramSample
--			histograms, err = dec.HistogramSamples(rec, histograms)
--			require.NoError(t, err)
--			walHistogramCount += len(histograms)
--
--		case record.FloatHistogramSamples, record.CustomBucketsFloatHistogramSamples, record.FloatHistogramSamplesV2:
--			var floatHistograms []record.RefFloatHistogramSample
--			floatHistograms, err = dec.FloatHistogramSamples(rec, floatHistograms)
--			require.NoError(t, err)
--			walFloatHistogramCount += len(floatHistograms)
--
--		default:
--		}
--	}
--
--	// Check that only series get stored after calling Rollback.
--	require.Equal(t, 3, walSeriesCount, "series should have been written to WAL")
--	require.Equal(t, 0, walSamplesCount, "samples should not have been written to WAL")
--	require.Equal(t, 0, walExemplarsCount, "exemplars should not have been written to WAL")
--	require.Equal(t, 0, walHistogramCount, "histograms should not have been written to WAL")
--	require.Equal(t, 0, walFloatHistogramCount, "float histograms should not have been written to WAL")
-+	require.Empty(t, readTestWAL(t, db.head.wal.Dir()), "rollback must not write any WAL records")
- }
- 
- func TestDBAppenderV2_AddRef(t *testing.T) {
-```
-
-**File**: `tsdb/head.go` (modified, +25/-12)
-```diff
-@@ -96,16 +96,16 @@ type Head struct {
- 	exemplars       ExemplarStorage
- 	logger          *slog.Logger
- 	// TODO(bwplotka): Consider using record.Pools that's reused with WAL watchers.
--	refSeriesPool       zeropool.Pool[[]record.RefSeries]
--	floatsPool          zeropool.Pool[[]record.RefSample]
--	exemplarsPool       zeropool.Pool[[]exemplarWithSeries]
--	histogramsPool      zeropool.Pool[[]record.RefHistogramSample]
--	floatHistogramsPool zeropool.Pool[[]record.RefFloatHistogramSample]
--	metadataPool        zeropool.Pool[[]record.RefMetadata]
--	seriesPool          zeropool.Pool[[]*memSeries]
--	typeMapPool         zeropool.Pool[map[chunks.HeadSeriesRef]sampleType]
--	bytesPool           zeropool.Pool[[]byte]
--	memChunkPool        sync.Pool
-+	seriesRecordCandidatesPool zeropool.Pool[[]seriesRecordCandidate]
-+	floatsPool                 zeropool.Pool[[]record.RefSample]
-+	exemplarsPool              zeropool.Pool[[]exemplarWithSeries]
-+	histogramsPool             zeropool.Pool[[]record.RefHistogramSample]
-+	floatHistogramsPool        zeropool.Pool[[]record.RefFloatHistogramSample]
-+	metadataPool               zeropool.Pool[[]record.RefMetadata]
-+	seriesPool                 zeropool.Pool[[]*memSeries]
-+	typeMapPool                zeropool.Pool[map[chunks.HeadSeriesRef]sampleType]
-+	bytesPool                  zeropool.Pool[[]byte]
-+	memChunkPool               sync.Pool
- 
- 	// These pools are only used during WAL/WBL replay and are reset at the end.
- 	// NOTE: Adjust resetWLReplayResources() upon changes to the pools.
-@@ -124,6 +124,10 @@ type Head struct {
- 	walExpiriesMtx sync.Mutex
- 	walExpiries    map[chunks.HeadSeriesRef]int64 // Series no longer in the head, and what time they must be kept until.
- 
-+	// walSeriesMtx serializes selecting and logging series records with their first data record.
-+	// Lock order: walSeriesMtx, then the WAL's lock. Never take it while holding a series lock.
-+	walSeriesMtx sync.Mutex
+-// ApplySearchHints filters, sorts, and limits a slice of string values according to hints,
+-// returning scored SearchResult entries. A nil hints value is treated as the zero value.
+-// The input values slice is assumed to be ordered ascending by value; the function only
+-// performs extra work for orderings that differ from this.
+-//
+-// Allocation and ordering are tuned to the (Filter, OrderBy, Limit) combination:
+-//   - Filter == nil: at most Limit entries are copied; OrderByValueDesc walks the input
+-//     in reverse so we never materialise the full slice when limited.
+-//   - OrderByValueAsc + Filter + Limit: stream-filter with early exit at Limit matches.
+-//   - OrderByValueDesc + Filter + Limit: reverse stream-filter with early exit at Limit
+-//     matches, taking advantage of the input being ascending so the tail is the largest.
+-//   - OrderByScoreDesc + Filter + Limit: top-K min-heap of size Limit, avoiding a full
+-//     sort over the matched set.
+-//   - Other combinations fall back to filter-then-reorder-then-slice, with the upfront
+-//     capacity capped by min(len(values), max(2*Limit, minLinearAllocCap)).
+-func ApplySearchHints(values []string, hints *SearchHints) []SearchResult {
++// checkContextEveryNIterations is used in some tight loops to check if the context is done.
++const checkContextEveryNIterations = 128
 +
- 	wblPinnedSeriesRefsMtx sync.Mutex
- 	// Series references that the WBL uses. WAL replay maps each one onto a
- 	// series that the head holds under a different reference. The mapping
-@@ -167,7 +171,7 @@ type Head struct {
- 	memTruncationInProcess atomic.Bool
- 	memTruncationCallBack  func() // For testing purposes.
- 	// TODO: find a better solution than this test hook in production code.
--	// testAfterSeriesLookup is invoked after getByID in appenders, before the
-+	// testAfterSeriesLookup is invoked after a series lookup in appenders, before the
- 	// series is locked. Tests use it to race GC against a resolved pointer.
- 	testAfterSeriesLookup func(*memSeries)
- 	// TODO: find a better solution than this test hook in production code.
-@@ -2423,6 +2427,10 @@ func (h *Head) getOrCreateWithOptionalID(id chunks.HeadSeriesRef, hash uint64, l
- 		shardHash = labels.StableHash(lset)
++// ApplySearchHints filters, orders, and limits values using a non-nil ctx.
++// Values must be ascending unless hints specifies score ordering with a filter.
++// Nil hints use the zero-value defaults. Cancellation returns the context error.
++func ApplySearchHints(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, error) {
+ 	if hints == nil {
+ 		hints = &SearchHints{}
  	}
- 	optimisticallyCreatedSeries := newMemSeries(lset, id, shardHash, h.opts.IsolationDisabled, pendingCommit)
-+	// Restored series and series created without a WAL need no new WAL series record.
-+	if !pendingCommit || h.wal == nil {
-+		optimisticallyCreatedSeries.walState.Store(seriesWALLogged)
-+	}
- 
- 	assignID := id == 0
- 	for {
-@@ -3182,7 +3190,7 @@ type memSeries struct {
- 	// been explicitly enabled in TSDB.
- 	shardHash uint64
- 
--	// Everything after here should only be accessed with the lock held.
-+	// Except for atomic fields, everything after here requires the lock.
- 	sync.Mutex
- 
- 	lset labels.Labels // Locking required with -tags dedupelabels, not otherwise.
-@@ -3193,6 +3201,11 @@ type memSeries struct {
- 	lastExemplarTs int64
- 	// Whether an exemplar timestamp has been recorded, including zero or negative timestamps.
- 	hasExemplar bool
-+	// Tracks the WAL series record's status before other records reference this series.
-+	// seriesWALUnlogged: The series record still needs to be logged.
-+	// seriesWALWriting: The WAL batch containing the series record is being prepared or written.
-+	// seriesWALLogged: The series record was logged successfully or is not needed.
-+	walState stdatomic.Uint32
- 
- 	// Immutable chunks on disk that have not yet gone into a block, in order of ascending time stamps.
- 	// When compaction runs, chunks get moved into a block and all pointers are shifted like so:
-```
-
-**File**: `tsdb/head_append.go` (modified, +199/-63)
-```diff
-@@ -189,18 +189,18 @@ func (h *Head) appender() *headAppender {
- 	appendID, cleanupAppendIDsBelow := h.iso.newAppendID(minValidTime) // Every appender gets an ID that is cleared upon commit/rollback.
- 	return &headAppender{
- 		headAppenderBase: headAppenderBase{
--			head:                  h,
--			minValidTime:          minValidTime,
--			headMaxt:              h.MaxTime(),
--			oooTimeWindow:         h.opts.OutOfOrderTimeWindow.Load(),
--			seriesRefs:            h.getRefSeriesBuffer(),
--			series:                h.getSeriesBuffer(),
--			typesInBatch:          h.getTypeMap(),
--			appendID:              appendID,
--			cleanupAppendIDsBelow: cleanupAppendIDsBelow,
--			storeST:               h.opts.EnableSTStorage.Load(),
--			useXOR2:               h.opts.UseXOR2FloatEncoding(),
--			useHistogramST:        h.opts.EnableHistogramSTEncoding.Load(),
-+			head:                   h,
-+			minValidTime:           minValidTime,
-+			headMaxt:               h.MaxTime(),
-+			oooTimeWindow:          h.opts.OutOfOrderTimeWindow.Load(),
-+			seriesRecordCandidates: h.getSeriesRecordCandidateBuffer(),
-+			series:                 h.getSeriesBuffer(),
-+			typesInBatch:           h.getTypeMap(),
-+			appendID:               appendID,
-+			cleanupAppendIDsBelow:  cleanupAppendIDsBelow,
-+			storeST:                h.opts.EnableSTStorage.Load(),
-+			useXOR2:                h.opts.UseXOR2FloatEncoding(),
-+			useHistogramST:         h.opts.EnableHistogramSTEncoding.Load(),
- 		},
+ 	if hints.Filter == nil {
+-		return applySearchHintsNoFilter(values, hints)
++		return applySearchHintsNoFilter(ctx, values, hints)
  	}
- }
-@@ -229,19 +229,17 @@ func (h *Head) AppendableMinValidTime() (int64, bool) {
- 	return h.appendableMinValidTime(), true
- }
- 
--func (h *Head) getRefSeriesBuffer() []record.RefSeries {
--	b := h.refSeriesPool.Get()
-+func (h *Head) getSeriesRecordCandidateBuffer() []seriesRecordCandidate {
-+	b := h.seriesRecordCandidatesPool.Get()
- 	if b == nil {
--		return make([]record.RefSeries, 0, 512)
-+		return make([]seriesRecordCandidate, 0, 512)
- 	}
- 	return b
- }
- 
--func (h *Head) putRefSeriesBuffer(b []record.RefSeries) {
--	for i := range b { // Zero out to avoid retaining label data.
--		b[i].Labels = labels.EmptyLabels()
--	}
--	h.refSeriesPool.Put(b[:0])
-+func (h *Head) putSeriesRecordCandidateBuffer(b []seriesRecordCandidate) {
-+	clear(b)
-+	h.seriesRecordCandidatesPool.Put(b[:0])
- }
- 
- func (h *Head) getFloatBuffer() []record.RefSample {
-@@ -417,15 +415,22 @@ func (b *appendBatch) close(h *Head) {
- 	b.exemplars = nil
- }
- 
-+type seriesRecordCandidate struct {
-+	series *memSeries
-+	lset   labels.Labels
-+}
-+
- type headAppenderBase struct {
- 	head          *Head
- 	minValidTime  int64 // No samples below this timestamp are allowed.
- 	headMaxt      int64 // We track it here to not take the lock for every sample appended.
- 	oooTimeWindow int64 // Use the same for the entire append, and don't load the atomic for each sample.
- 
--	seriesRefs []record.RefSeries // New series records held by this appender.
--	series     []*memSeries       // New series held by this appender (using corresponding slices indexes from seriesRefs)
--	batches    []*appendBatch     // Holds all the other data to append. (In regular cases, there should be only one of these.)
-+	// Series whose WAL records may still need writing, with their captured labels.
-+	// Pending-commit reservations protect them while their records may be needed.
-+	seriesRecordCandidates []seriesRecordCandidate
-+	series                 []*memSeries   // Series created by this appender, with a creation reservation to release.
-+	batches                []*appendBatch // Holds all the other data to append. (In regular cases, there should be only one of these.)
- 
- 	typesInBatch map[chunks.HeadSeriesRef]sampleType // Which (one) sample type each series holds in the most recent batch.
- 
-@@ -502,6 +507,7 @@ func (a *headAppender) Append(ref storage.SeriesRef, lset labels.Labels, t int64
- 			return 0, storage.ErrOutOfOrderSample
+ 	if hints.Limit > 0 {
+ 		switch hints.OrderBy {
+ 		case OrderByScoreDesc:
+-			return topKByScore(values, hints.Filter, hints.Limit)
++			return topKByScore(ctx, values, hints.Filter, hints.Limit)
+ 		case OrderByValueDesc:
+-			return reverseFilterEarlyExit(values, hints.Filter, hints.Limit)
++			return reverseFilterEarlyExit(ctx, values, hints.Filter, hints.Limit)
  		}
- 		s.markPendingCommit()
-+		a.trackSeriesRecord(s, s.lset)
  	}
- 	if delta > 0 {
- 		a.head.metrics.oooHistogram.Observe(float64(delta) / 1000)
-@@ -560,6 +566,7 @@ func (a *headAppender) AppendSTZeroSample(ref storage.SeriesRef, lset labels.Lab
- 		return storage.SeriesRef(s.ref), storage.ErrOutOfOrderST
- 	}
- 	s.markPendingCommit()
-+	a.trackSeriesRecord(s, s.lset)
- 	s.Unlock()
+-	return applySearchHintsLinear(values, hints)
++	return applySearchHintsLinear(ctx, values, hints)
++}
++
++func searchHintsContextErr(ctx context.Context, i int) error {
++	if i%checkContextEveryNIterations != 0 {
++		return nil
++	}
++	return ctx.Err()
+ }
  
- 	b := a.getCurrentBatch(stFloat, s.ref)
-@@ -592,10 +599,7 @@ func (a *headAppenderBase) getOrCreate(lset labels.Labels) (s *memSeries, create
- 		return nil, false, err
- 	}
- 	if created {
--		a.seriesRefs = append(a.seriesRefs, record.RefSeries{
--			Ref:    s.ref,
--			Labels: lset,
--		})
-+		a.trackSeriesRecord(s, lset)
- 		a.series = append(a.series, s)
- 	}
- 	return s, created, nil
-@@ -944,6 +948,7 @@ func (a *headAppenderBase) reserveSeriesForExemplar(s *memSeries, ts int64) *mem
- 		if !s.isGCed() {
- 			s.updateExemplarTimestampLocked(ts)
- 			s.markPendingCommit()
-+			a.trackSeriesRecord(s, s.lset)
- 			s.Unlock()
- 			return s
+ // reverseFilterEarlyExit walks the input ascending-sorted slice from the tail,
+ // accepting up to limit matches. Because the input is ascending, the tail
+ // holds the lex-largest entries, so iterating in reverse yields results in
+ // descending order without an extra sort.
+-func reverseFilterEarlyExit(values []string, filter Filter, limit int) []SearchResult {
++func reverseFilterEarlyExit(ctx context.Context, values []string, filter Filter, limit int) ([]SearchResult, error) {
+ 	results := make([]SearchResult, 0, min(limit, len(values)))
+ 	for i := len(values) - 1; i >= 0 && len(results) < limit; i-- {
++		if err := searchHintsContextErr(ctx, len(values)-1-i); err != nil {
++			return nil, err
++		}
+ 		accepted, score := filter.Accept(values[i])
+ 		if !accepted {
+ 			continue
  		}
-@@ -996,6 +1001,7 @@ func (a *headAppender) AppendHistogram(ref storage.SeriesRef, lset labels.Labels
- 		_, delta, err :
-```
-
-**File**: `tsdb/head_append_test.go` (added, +636/-0)
-```diff
-@@ -0,0 +1,636 @@
-+// Copyright The Prometheus Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package tsdb
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"math"
-+	"path/filepath"
-+	"runtime"
-+	"strconv"
-+	"strings"
-+	"sync"
-+	"testing"
-+
-+	prom_testutil "github.com/prometheus/client_golang/prometheus/testutil"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/atomic"
-+
-+	"github.com/prometheus/prometheus/model/exemplar"
-+	"github.com/prometheus/prometheus/model/histogram"
-+	"github.com/prometheus/prometheus/model/labels"
-+	"github.com/prometheus/prometheus/model/metadata"
-+	"github.com/prometheus/prometheus/storage"
-+	"github.com/prometheus/prometheus/tsdb/chunks"
-+	"github.com/prometheus/prometheus/tsdb/record"
-+	"github.com/prometheus/prometheus/tsdb/tsdbutil"
-+	"github.com/prometheus/prometheus/tsdb/wlog"
-+	"github.com/prometheus/prometheus/util/compression"
-+)
-+
-+func newWALSeriesRecordTestAppender(t *testing.T, h *Head, version int) (storage.AppenderTransaction, func(storage.SeriesRef, labels.Labels, int64, float64) (storage.SeriesRef, error)) {
-+	t.Helper()
-+	if version == 1 {
-+		app := h.Appender(t.Context())
-+		return app, app.Append
-+	}
-+	app := h.AppenderV2(t.Context())
-+	return app, func(ref storage.SeriesRef, lset labels.Labels, ts int64, value float64) (storage.SeriesRef, error) {
-+		return app.Append(ref, lset, 0, ts, value, nil, nil, storage.AOptions{})
-+	}
-+}
-+
-+// TestNewSeriesRecordPrecedesSamplesInWAL verifies replay when a borrower commits
-+// before its creator or after the creator rolls back. Fixed timestamps and commit
-+// order avoid unrelated out-of-order differences between Head and replay.
-+func TestNewSeriesRecordPrecedesSamplesInWAL(t *testing.T) {
-+	for _, version := range []int{1, 2} {
-+		for _, rollback := range []bool{false, true} {
-+			t.Run(fmt.Sprintf("v%d/creator_rollback=%t", version, rollback), func(t *testing.T) {
-+				db := newTestDB(t)
-+				db.DisableCompactions()
-+				db.Head().initTime(0)
-+				creator, create := newWALSeriesRecordTestAppender(t, db.Head(), version)
-+				borrower, appendSample := newWALSeriesRecordTestAppender(t, db.Head(), version)
-+				for i := range 2 {
-+					ref, err := create(0, labels.FromStrings("series", strconv.Itoa(i)), 200, float64(i+2))
-+					require.NoError(t, err)
-+					_, err = appendSample(ref, labels.EmptyLabels(), 100, float64(i+1))
-+					require.NoError(t, err)
-+				}
-+				if rollback {
-+					require.NoError(t, creator.Rollback())
-+				}
-+				require.NoError(t, borrower.Commit())
-+				wantSamples := 1
-+				if !rollback {
-+					require.NoError(t, creator.Commit())
-+					wantSamples++
-+				}
-+				matcher := labels.MustNewMatcher(labels.MatchRegexp, "series", ".+")
-+				q, err := NewBlockQuerier(db.Head(), math.MinInt64, math.MaxInt64)
-+				require.NoError(t, err)
-+				before := query(t, q, matcher)
-+				require.Len(t, before, 2)
-+				for _, samples := range before {
-+					require.Len(t, samples, wantSamples)
-+				}
-+				require.NoError(t, db.Close())
-+				replayed := newTestDB(t, withDir(db.Dir()))
-+				q, err = NewBlockQuerier(replayed.Head(), math.MinInt64, math.MaxInt64)
-+				require.NoError(t, err)
-+				require.Equal(t, before, query(t, q, matcher))
-+			})
-+		}
-+	}
-+}
-+
-+func TestRollbackDoesNotWriteWAL(t *testing.T) {
-+	for _, version := range []int{1, 2} {
-+		for _, compress := range []compression.Type{compression.None, compression.Snappy, compression.Zstd} {
-+			t.Run(fmt.Sprintf("v%d/compress=%s", version, compress), func(t *testing.T) {
-+				h, wal := newTestHead(t, 1000, compress, false)
-+				app, appendSample := newWALSeriesRecordTestAppender(t, h, version)
-+				_, err := appendSample(0, labels.FromStrings("a", "b"), 1, 2)
-+				require.NoError(t, err)
-+				require.NoError(t, app.Rollback())
-+				require.Empty(t, readTestWAL(t, wal.Dir()))
-+				h.gc()
-+				require.Zero(t, h.NumSeries(), "rollback must release all reservations")
-+				require.Zero(t, prom_testutil.ToFloat64(h.metrics.pendingCommitUnderflow))
-+			})
-+		}
-+	}
-+}
-+
-+func TestWALSeriesRecordsBeforePayloads(t *testing.T) {
-+	for _, version := range []int{1, 2} {
-+		for _, rollback := range []bool{false, true} {
-+			for _, tc := range []struct {
-+				name            string
-+				h               *histogram.Histogram
-+				fh              *histogram.FloatHistogram
-+				zero            bool
-+				extraLabelBytes int
-+				want            any
-+			}{
-+				{name: "floats", want: []record.RefSample{}},
-+				{name: "large_series_record", extraLabelBytes: 4096, want: [
-```
-
-**File**: `tsdb/head_append_v2.go` (modified, +21/-12)
-```diff
-@@ -103,18 +103,18 @@ func (h *Head) appenderV2() *headAppenderV2 {
- 	appendID, cleanupAppendIDsBelow := h.iso.newAppendID(minValidTime) // Every appender gets an ID that is cleared upon commit/rollback.
- 	return &headAppenderV2{
- 		headAppenderBase: headAppenderBase{
--			head:                  h,
--			minValidTime:          minValidTime,
--			headMaxt:              h.MaxTime(),
--			oooTimeWindow:         h.opts.OutOfOrderTimeWindow.Load(),
--			seriesRefs:            h.getRefSeriesBuffer(),
--			series:                h.getSeriesBuffer(),
--			typesInBatch:          h.getTypeMap(),
--			appendID:              appendID,
--			cleanupAppendIDsBelow: cleanupAppendIDsBelow,
--			storeST:               h.opts.EnableSTStorage.Load(),
--			useXOR2:               h.opts.UseXOR2FloatEncoding(),
--			useHistogramST:        h.opts.EnableHistogramSTEncoding.Load(),
-+			head:                   h,
-+			minValidTime:           minValidTime,
-+			headMaxt:               h.MaxTime(),
-+			oooTimeWindow:          h.opts.OutOfOrderTimeWindow.Load(),
-+			seriesRecordCandidates: h.getSeriesRecordCandidateBuffer(),
-+			series:                 h.getSeriesBuffer(),
-+			typesInBatch:           h.getTypeMap(),
-+			appendID:               appendID,
-+			cleanupAppendIDsBelow:  cleanupAppendIDsBelow,
-+			storeST:                h.opts.EnableSTStorage.Load(),
-+			useXOR2:                h.opts.UseXOR2FloatEncoding(),
-+			useHistogramST:         h.opts.EnableHistogramSTEncoding.Load(),
- 		},
+ 		results = append(results, SearchResult{Value: values[i], Score: score})
  	}
- }
-@@ -229,6 +229,12 @@ func (a *headAppenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t i
- 	if a.head.opts.EnableMetadataWALRecords && !opts.Metadata.IsEmpty() {
- 		s.Lock()
- 		metaChanged := metadata.IsZeroHandle(s.meta) || !s.meta.Value().Equals(opts.Metadata)
-+		if metaChanged {
-+			// Keep the series until the metadata record is committed or rolled back.
-+			s.markPendingCommit()
-+			// No need to call trackSeriesRecord here; the sample append above already
-+			// tracks any required WAL series record.
-+		}
- 		s.Unlock()
- 		if metaChanged {
- 			b := a.getCurrentBatch(stNone, s.ref)
-@@ -283,6 +289,7 @@ func (a *headAppenderV2) appendFloat(s *memSeries, st, t int64, v float64, fastR
- 	}
- 	if err == nil {
- 		s.markPendingCommit()
-+		a.trackSeriesRecord(s, s.lset)
- 	}
- 	s.Unlock()
- 	if delta > 0 {
-@@ -314,6 +321,7 @@ func (a *headAppenderV2) appendHistogram(s *memSeries, st, t int64, h *histogram
- 	}
- 	if err == nil {
- 		s.markPendingCommit()
-+		a.trackSeriesRecord(s, s.lset)
- 	}
- 	s.Unlock()
- 	if delta > 0 {
-@@ -349,6 +357,7 @@ func (a *headAppenderV2) appendFloatHistogram(s *memSeries, st, t int64, fh *his
- 	}
- 	if err == nil {
- 		s.markPendingCommit()
-+		a.trackSeriesRecord(s, s.lset)
- 	}
- 	s.Unlock()
- 	if delta > 0 {
-```
-
-**File**: `tsdb/head_append_v2_test.go` (modified, +0/-24)
-```diff
-@@ -677,30 +677,6 @@ func TestHeadAppenderV2_TestRemoveSeriesAfterRollbackAndTruncate(t *testing.T) {
- 	require.Equal(t, (*memSeries)(nil), h.series.getByHash(lset.Hash(), lset))
+-	return results
++	return results, nil
  }
  
--func TestHeadAppenderV2_LogRollback(t *testing.T) {
--	for _, compress := range []compression.Type{compression.None, compression.Snappy, compression.Zstd} {
--		t.Run(fmt.Sprintf("compress=%s", compress), func(t *testing.T) {
--			h, w := newTestHead(t, 1000, compress, false)
--			defer func() {
--				require.NoError(t, h.Close())
--			}()
--
--			app := h.AppenderV2(context.Background())
--			_, err := app.Append(0, labels.FromStrings("a", "b"), 0, 1, 2, nil, nil, storage.AOptions{})
--			require.NoError(t, err)
--
--			require.NoError(t, app.Rollback())
--			recs := readTestWAL(t, w.Dir())
--
--			require.Len(t, recs, 1)
--
--			series, ok := recs[0].([]record.RefSeries)
--			require.True(t, ok, "expected series record but got %+v", recs[0])
--			require.Equal(t, []record.RefSeries{{Ref: 1, Labels: labels.FromStrings("a", "b")}}, series)
--		})
--	}
--}
--
- func TestHeadAppenderV2_ReturnsSortedLabelValues(t *testing.T) {
- 	h, _ := newTestHead(t, 1000, compression.None, false)
- 	defer func() {
-```
-
-**File**: `tsdb/head_test.go` (modified, +10/-3)
-```diff
-@@ -543,13 +543,16 @@ func BenchmarkCommitMetadata(b *testing.B) {
- 				}
- 			}
- 
-+			a := &headAppenderBase{head: &Head{}}
-+			require.LessOrEqual(b, uint64(b.N), uint64(seriesPendingCommitMask))
- 			batch := &appendBatch{
- 				metadata:       make([]record.RefMetadata, numSeries),
- 				metadataSeries: make([]*memSeries, numSeries),
- 			}
- 			for i := range numSeries {
- 				fam := i % numFamilies
--				batch.metadataSeries[i] = &memSeries{ref: chunks.HeadSeriesRef(i + 1)}
-+				// Reserve all iterations up front to time only committing metadata.
-+				batch.metadataSeries[i] = &memSeries{ref: chunks.HeadSeriesRef(i + 1), state: uint32(b.N)}
- 				batch.metadata[i] = record.RefMetadata{
- 					Ref:  chunks.HeadSeriesRef(i + 1),
- 					Type: uint8(record.Counter),
-@@ -560,8 +563,12 @@ func BenchmarkCommitMetadata(b *testing.B) {
- 
- 			b.ReportAllocs()
- 			b.ResetTimer()
--			for b.Loop() {
--				commitMetadata(batch)
-+			for range b.N {
-+				a.commitMetadata(batch)
+ // applySearchHintsNoFilter handles the unfiltered path: scores are uniformly 1.0
+ // and at most Limit entries are emitted in the requested order.
+-func applySearchHintsNoFilter(values []string, hints *SearchHints) []SearchResult {
++func applySearchHintsNoFilter(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, error) {
+ 	n := len(values)
+ 	if hints.Limit > 0 && hints.Limit < n {
+ 		n = hints.Limit
+@@ -310,25 +311,34 @@ func applySearchHintsNoFilter(values []string, hints *SearchHints) []SearchResul
+ 		// guard is defensive: n is clamped to len(values) above, so we
+ 		// should always exit on len(results) == n first.
+ 		for i := len(values) - 1; i >= 0 && len(results) < n; i-- {
++			if err := searchHintsContextErr(ctx, len(values)-1-i); err != nil {
++				return nil, err
 +			}
-+			b.StopTimer()
-+			for _, s := range batch.metadataSeries {
-+				require.Zero(b, s.pendingCommitCount())
- 			}
+ 			results = append(results, SearchResult{Value: values[i], Score: 1.0})
+ 		}
+-		return results
++		return results, nil
+ 	}
+ 	// OrderByValueAsc and OrderByScoreDesc both reduce to value-ascending here:
+ 	// uniform scores tie-break on Value asc under (Score desc, Value asc).
+ 	for i := range n {
++		if err := searchHintsContextErr(ctx, i); err != nil {
++			return nil, err
++		}
+ 		results = append(results, SearchResult{Value: values[i], Score: 1.0})
+ 	}
+-	return results
++	return results, nil
+ }
+ 
+ // applySearchHintsLinear 
+```
+
+**File**: `storage/generic_test.go` (modified, +120/-22)
+```diff
+@@ -14,6 +14,7 @@
+ package storage
+ 
+ import (
++	"context"
+ 	"errors"
+ 	"fmt"
+ 	"math"
+@@ -46,10 +47,12 @@ type constScoreFilter float64
+ func (f constScoreFilter) Accept(string) (bool, float64) { return true, float64(f) }
+ 
+ func TestApplySearchHints(t *testing.T) {
+-	values := []string{"alpha", "beta", "gamma", "delta", "epsilon"}
++	values := []string{"alpha", "beta", "delta", "epsilon", "gamma"}
++	unsortedValues := []string{"alpha", "beta", "gamma", "delta", "epsilon"}
+ 
+ 	t.Run("nil hints returns all with score 1", func(t *testing.T) {
+-		got := ApplySearchHints(values, nil)
++		got, err := ApplySearchHints(t.Context(), values, nil)
++		require.NoError(t, err)
+ 		require.Len(t, got, len(values))
+ 		for i, r := range got {
+ 			require.Equal(t, values[i], r.Value)
+@@ -58,19 +61,21 @@ func TestApplySearchHints(t *testing.T) {
+ 	})
+ 
+ 	t.Run("no filter ascending limit", func(t *testing.T) {
+-		got := ApplySearchHints(values, &SearchHints{Limit: 3})
++		got, err := ApplySearchHints(t.Context(), values, &SearchHints{Limit: 3})
++		require.NoError(t, err)
+ 		require.Equal(t, []SearchResult{
+ 			{Value: "alpha", Score: 1.0},
+ 			{Value: "beta", Score: 1.0},
+-			{Value: "gamma", Score: 1.0},
++			{Value: "delta", Score: 1.0},
+ 		}, got)
+ 	})
+ 
+ 	t.Run("no filter descending limit walks input in reverse", func(t *testing.T) {
+-		got := ApplySearchHints(values, &SearchHints{OrderBy: OrderByValueDesc, Limit: 2})
++		got, err := ApplySearchHints(t.Context(), values, &SearchHints{OrderBy: OrderByValueDesc, Limit: 2})
++		require.NoError(t, err)
+ 		require.Equal(t, []SearchResult{
++			{Value: "gamma", Score: 1.0},
+ 			{Value: "epsilon", Score: 1.0},
+-			{Value: "delta", Score: 1.0},
+ 		}, got)
+ 	})
+ 
+@@ -80,23 +85,25 @@ func TestApplySearchHints(t *testing.T) {
+ 			hits++
+ 			return true, 1.0
+ 		})
+-		got := ApplySearchHints(values, &SearchHints{Filter: filter, Limit: 2})
++		got, err := ApplySearchHints(t.Context(), values, &SearchHints{Filter: filter, Limit: 2})
++		require.NoError(t, err)
+ 		require.Len(t, got, 2)
+ 		// Early exit: the filter should not have been called for values past
+ 		// the second match.
+ 		require.Equal(t, 2, hits)
+ 	})
+ 
+ 	t.Run("filter descending reverses then limits", func(t *testing.T) {
+-		got := ApplySearchHints(values, &SearchHints{
++		got, err := ApplySearchHints(t.Context(), values, &SearchHints{
+ 			Filter:  prefixScoreFilter{prefix: ""}, // accepts everything.
+ 			OrderBy: OrderByValueDesc,
+ 			Limit:   2,
+ 		})
++		require.NoError(t, err)
+ 		require.Len(t, got, 2)
+-		// Input order is values[0..4]; reverse picks epsilon then delta.
+-		require.Equal(t, "epsilon", got[0].Value)
+-		require.Equal(t, "delta", got[1].Value)
++		// Reverse picks gamma then epsilon.
++		require.Equal(t, "gamma", got[0].Value)
++		require.Equal(t, "epsilon", got[1].Value)
+ 	})
+ 
+ 	t.Run("filter descending limit early exits without scanning all", func(t *testing.T) {
+@@ -107,14 +114,15 @@ func TestApplySearchHints(t *testing.T) {
+ 			hits++
+ 			return true, 1.0
+ 		})
+-		got := ApplySearchHints(values, &SearchHints{
++		got, err := ApplySearchHints(t.Context(), values, &SearchHints{
+ 			Filter:  filter,
+ 			OrderBy: OrderByValueDesc,
+ 			Limit:   2,
+ 		})
++		require.NoError(t, err)
+ 		require.Equal(t, []SearchResult{
++			{Value: "gamma", Score: 1.0},
+ 			{Value: "epsilon", Score: 1.0},
+-			{Value: "delta", Score: 1.0},
+ 		}, got)
+ 		require.Equal(t, 2, hits, "must early-exit at limit for OrderByValueDesc")
+ 	})
+@@ -126,11 +134,12 @@ func TestApplySearchHints(t *testing.T) {
+ 		for i := range 100 {
+ 			input = append(input, fmt.Sprintf("x%0*d", i+1, i))
+ 		}
+-		got := ApplySearchHints(input, &SearchHints{
++		got, err := ApplySearchHints(t.Context(), input, &SearchHints{
+ 			Filter:  prefixScoreFilter{prefix: "x"},
+ 			OrderBy: OrderByScoreDesc,
+ 			Limit:   3,
+ 		})
++		require.NoError(t, err)
+ 		require.Len(t, got, 3)
+ 		// Scores are non-increasing.
+ 		for i := 1; i < len(got); i++ {
+@@ -142,11 +151,12 @@ func TestApplySearchHints(t *testing.T) {
+ 
+ 	t.Run("score desc tie-break on Value asc", func(t *testing.T) {
+ 		// With a constant score, ordering tie-breaks on Value ascending.
+-		got := ApplySearchHints(values, &SearchHints{
++		got, err := ApplySearchHints(t.Context(), unsortedValues, &SearchHints{
+ 			Filter:  constScoreFilter(0.5),
+ 			OrderBy: OrderByScoreDesc,
+ 			Limit:   3,
+ 		})
++		require.NoError(t, err)
+ 		require.Equal(t, []SearchResult{
+ 			{Value: "alpha", Score: 0.5},
+ 			{Value: "beta", Score: 0.5},
+@@ -155,10 +165,11 @@ func TestApplySearchHints(t *testing.T) {
+ 	})
+ 
+ 	t.Run("score desc unlimited keeps all matches sorted", func(t *testing.T) {
+-		got := ApplySearchHints(values, &SearchHints{
++		got, err := ApplySearchHints(t.Context(), unsortedValues, &SearchHints{
+ 			Filter:  prefixScoreFilter{prefix: ""},
+ 			OrderBy: OrderByScoreDesc,
+ 		})
++		require.NoError(t, err)
+ 		require.Len(t, got, len(values))
+ 		for i := 1; i < len(got); i++ {
+ 			if got[i-1].Score == got[i].Score {
+@@ -173,20 +184,22 @@ f
+```
+
+**File**: `storage/interface.go` (modified, +2/-0)
+```diff
+@@ -417,6 +417,8 @@ type SearchResult struct {
+ //
+ // For a given Value and SearchHints.Filter, Score must be deterministic
+ // and identical across Searcher implementations.
++// Implementations must stop on context cancellation and report the context error through Err.
++// Composites may convert errors from best-effort secondary storage into warnings.
+ type Searcher interface {
+ 	// SearchLabelNames returns an iterator over label names matching the search criteria.
+ 	// Results include relevance scores based on the Filter.
+```
+
+**File**: `tsdb/querier.go` (modified, +11/-4)
+```diff
+@@ -103,7 +103,11 @@ func (q *blockBaseQuerier) SearchLabelNames(ctx context.Context, hints *storage.
+ 		return storage.ErrSearchResultSet(err)
+ 	}
+ 
+-	return storage.NewSearchResultSetFromSlice(storage.ApplySearchHints(names, hints), nil)
++	results, err := storage.ApplySearchHints(ctx, names, hints)
++	if err != nil {
++		return storage.ErrSearchResultSet(err)
++	}
++	return storage.NewSearchResultSetFromSlice(results, nil)
+ }
+ 
+ // SearchLabelValues implements storage.Searcher.
+@@ -133,8 +137,7 @@ func (q *blockBaseQuerier) SearchLabelValues(ctx context.Context, name string, h
+ 		values []string
+ 		err    error
+ 	)
+-	// ApplySearchHints needs the values ascending by value.
+-	// OrderByScore relies on the score calculated by the filter.
++	// ApplySearchHints needs ascending values except for score ordering with a filter.
+ 	if hints.OrderBy == storage.OrderByScoreDesc && hints.Filter != nil {
+ 		values, err = q.index.LabelValues(ctx, name, labelHints, matchers...)
+ 	} else {
+@@ -144,7 +147,11 @@ func (q *blockBaseQuerier) SearchLabelValues(ctx context.Context, name string, h
+ 		return storage.ErrSearchResultSet(err)
+ 	}
+ 
+-	return storage.NewSearchResultSetFromSlice(storage.ApplySearchHints(values, hints), nil)
++	results, err := storage.ApplySearchHints(ctx, values, hints)
++	if err != nil {
++		return storage.ErrSearchResultSet(err)
++	}
++	return storage.NewSearchResultSetFromSlice(results, nil)
+ }
+ 
+ func (q *blockBaseQuerier) Close() error {
+```
+
+**File**: `tsdb/querier_test.go` (modified, +2/-3)
+```diff
+@@ -4476,9 +4476,8 @@ func TestSearchLabelValuesLimitAppliedAfterOrdering(t *testing.T) {
+ 		})
+ 	})
+ 
+-	// ApplySearchHints documents that its input must be ascending by value. With
+-	// a nil filter the score ordering degenerates to value ascending, so the
+-	// index-level sort cannot be skipped.
++	// With a nil filter, score ordering degenerates to value ascending, so
++	// ApplySearchHints requires ascending input and the index-level sort cannot be skipped.
+ 	t.Run("OrderByScoreDesc without a filter", func(t *testing.T) {
+ 		forEachSearchBackend(t, unorderedInsertion, func(t *testing.T, q storage.Searcher) {
+ 			rs := q.SearchLabelValues(t.Context(), "__name__", &storage.SearchHints{
+```
+
+**File**: `util/searchexpr/compiler_test.go` (modified, +2/-1)
+```diff
+@@ -185,9 +185,10 @@ func TestCompileEquivalentExpressionsRankIdentically(t *testing.T) {
+ 	} {
+ 		t.Run(expression, func(t *testing.T) {
+ 			filter := compileContains(t, expression, map[string]float64{"a": 0.75, "b": 0.75, "c": 0.75, "d": 0.25, "other": 0.55})
+-			results := storage.ApplySearchHints([]string{"a_b_c_d", "other"}, &storage.SearchHints{
++			results, err := storage.ApplySearchHints(t.Context(), []string{"a_b_c_d", "other"}, &storage.SearchHints{
+ 				Filter: filter, Limit: 1, OrderBy: storage.OrderByScoreDesc,
+ 			})
++			require.NoError(t, err)
+ 			require.Equal(t, []storage.SearchResult{{Value: "a_b_c_d", Score: 1.75 / 3}}, results)
  		})
  	}
 ```
 
-**File**: `tsdb/record/record.go` (modified, +16/-0)
+**File**: `web/api/v1/search.go` (modified, +24/-3)
 ```diff
-@@ -938,6 +938,22 @@ func (*Encoder) Series(series []RefSeries, b []byte) []byte {
- 	return buf.Get()
+@@ -503,6 +503,9 @@ func sortOrdering(sortBy, sortDir string) storage.Ordering {
  }
  
-+// SeriesFromFunc appends a single WAL record of type Series to b and returns the
-+// resulting slice. The record contains n entries, each with a series reference
-+// and labels supplied by seriesAt(i), called once per index in order from 0 to n-1.
-+// The function and returned labels are not retained.
-+func (*Encoder) SeriesFromFunc(n int, seriesAt func(int) RefSeries, b []byte) []byte {
-+	buf := encoding.Encbuf{B: b}
-+	buf.PutByte(byte(Series))
-+
-+	for i := range n {
-+		s := seriesAt(i)
-+		buf.PutBE64(uint64(s.Ref))
-+		EncodeLabels(&buf, s.Labels)
+ func searchAPIError(err error) *apiError {
++	if errors.Is(err, context.DeadlineExceeded) {
++		return &apiError{errorTimeout, err}
 +	}
-+	return buf.Get()
+ 	result := setUnavailStatusOnTSDBNotReady(apiFuncResult{err: returnAPIError(err)})
+ 	return result.err
+ }
+@@ -520,6 +523,19 @@ func writeStreamInternalError(nw *ndjsonWriter, err error) {
+ 	_ = nw.writeLine(searchErrorResponse{Status: "error", ErrorType: errorInternal.str, Error: err.Error()})
+ }
+ 
++// streamContextDone reports whether ctx is done, ending the stream with a timeout
++// record on deadline expiry and writing nothing for a canceled request.
++func streamContextDone(ctx context.Context, nw *ndjsonWriter) bool {
++	err := ctx.Err()
++	if err == nil {
++		return false
++	}
++	if errors.Is(err, context.DeadlineExceeded) {
++		writeStreamSearchError(nw, err)
++	}
++	return true
 +}
 +
- // MinValidTime appends the encoded min valid time record to b and returns the resulting
- // slice. It is only ever written into checkpoints, never into a live WAL segment.
- func (*Encoder) MinValidTime(mint int64, b []byte) []byte {
+ func searchWarnings(rs storage.SearchResultSet) []string {
+ 	var warnings []string
+ 	for _, w := range rs.Warnings() {
+@@ -575,6 +591,10 @@ func streamSearchResults[T any](ctx context.Context, api *API, w http.ResponseWr
+ 	}
+ 
+ 	firstBatch, firstErr := streamer.nextBatch()
++	if err := ctx.Err(); errors.Is(err, context.DeadlineExceeded) {
++		api.respondPreStreamSearchError(w, err)
++		return
++	}
+ 	// A non-nil firstErr with zero results means the underlying iterator
+ 	// could not produce anything; respond with the standard JSON error so
+ 	// clients see a well-formed failure. When firstErr arrives alongside
+@@ -631,12 +651,13 @@ func streamSearchResults[T any](ctx context.Context, api *API, w http.ResponseWr
+ 		// Stop pulling from storage as soon as the client goes away.
+ 		// Without this check, an abandoned request keeps iterating the
+ 		// underlying SearchResultSet (which may itself be doing real I/O).
+-		select {
+-		case <-ctx.Done():
++		if streamContextDone(ctx, nw) {
+ 			return
+-		default:
+ 		}
+ 		batch, err := streamer.nextBatch()
++		if streamContextDone(ctx, nw) {
++			return
++		}
+ 		if len(batch) > 0 {
+ 			if writeErr := nw.writeLine(searchBatch[T]{Results: batch}); writeErr != nil {
+ 				writeStreamInternalError(nw, writeErr)
+```
+
+**File**: `web/api/v1/search_test.go` (modified, +153/-46)
+```diff
+@@ -27,6 +27,7 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
+ 	"github.com/prometheus/common/model"
+@@ -1446,21 +1447,16 @@ func TestSearchEndpointsCtxCancelled(t *testing.T) {
+ 	// Use a controlled fake searcher so the test does not depend on the
+ 	// shape of any storage fixture. With three explicit results and
+ 	// batch_size=1, firstBatch is non-empty and the streaming loop must
+-	// observe the pre-cancelled context on its first iteration and return
+-	// before writing a success trailer.
+-	q := &sequentialSearchQuerier{
+-		calls: []sequentialResp{
+-			{results: []storage.SearchResult{
+-				{Value: "alpha", Score: 1.0},
+-				{Value: "beta", Score: 1.0},
+-				{Value: "gamma", Score: 1.0},
+-			}},
+-		},
+-	}
+-	queryable := errorTestQueryable{q: q}
++	// observe the pre-cancelled context on its first iteration, returning
++	// before it pulls more results or writes a success trailer.
++	rs := &hookedSearchResultSet{SearchResultSet: storage.NewSearchResultSetFromSlice([]storage.SearchResult{
++		{Value: "alpha", Score: 1.0},
++		{Value: "beta", Score: 1.0},
++		{Value: "gamma", Score: 1.0},
++	}, nil)}
+ 
+ 	api := minimalSearchAPI()
+-	api.Queryable = queryable
++	api.Queryable = errorTestQueryable{q: fixedSearchQuerier{rs: rs}}
+ 
+ 	ctx, cancel := context.WithCancel(t.Context())
+ 	cancel()
+@@ -1477,6 +1473,8 @@ func TestSearchEndpointsCtxCancelled(t *testing.T) {
+ 	// returning. An empty body would otherwise let a regression slip
+ 	// through this test silently.
+ 	require.NotEmpty(t, lines, "expected at least the first batch line to be written before ctx-cancel takes effect")
++	// An abandoned request must not keep iterating storage past the first batch.
++	require.Equal(t, 1, rs.calls, "expected no Next call after the first batch")
+ 
+ 	// No line should decode as a success trailer. This is robust to a
+ 	// truncated body, an empty firstBatch path, or an earlier exit before
+@@ -1505,45 +1503,154 @@ func (q fixedSearchQuerier) SearchLabelValues(context.Context, string, *storage.
+ 	return q.rs
+ }
+ 
+-// TestSearchStreamFirstBatchError exercises the boundary where the first
+-// batch that streamSearchResults assembles already contains both partial
+-// results and a tail error. The handler must stream the partial results
+-// before terminating with an in-band NDJSON error line.
+-func TestSearchStreamFirstBatchError(t *testing.T) {
+-	rs := storage.NewSearchResultSetFromSliceAndError(
+-		[]storage.SearchResult{
+-			{Value: "alpha", Score: 1.0},
+-			{Value: "beta", Score: 1.0},
++// hookedSearchResultSet counts Next calls and runs onNext, if set, before each
++// one, so tests can observe how far streaming pulls or act at a given call.
++type hookedSearchResultSet struct {
++	storage.SearchResultSet
++	calls  int
++	onNext func(call int)
++}
++
++func (s *hookedSearchResultSet) Next() bool {
++	s.calls++
++	if s.onNext != nil {
++		s.onNext(s.calls)
++	}
++	return s.SearchResultSet.Next()
++}
++
++// TestAPI_SearchMetricNames_StreamErrors checks storage errors and request
++// deadlines before streaming and after partial results.
++func TestAPI_SearchMetricNames_StreamErrors(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		resultSet storage.SearchResultSet
++		// expireOnNext, when positive, lets the request deadline pass during that Next call.
++		expireOnNext      int
++		expectedNames     []string
++		expectedCode      int
++		expectedErrorType string
++		expectedError     string
++	}{
++		{
++			name: "execution error after partial results",
++			resultSet: storage.NewSearchResultSetFromSliceAndError(
++				[]storage.SearchResult{{Value: "alpha", Score: 1.0}, {Value: "beta", Score: 1.0}},
++				nil,
++				errors.New("tail failure"),
++			),
++			expectedNames:     []string{"alpha", "beta"},
++			expectedCode:      http.StatusOK,
++			expectedErrorType: errorExec.str,
++			expectedError:     "tail failure",
++		},
++		{
++			name:              "deadline error before streaming",
++			resultSet:         storage.ErrSearchResultSet(context.DeadlineExceeded),
++			expectedCode:      http.StatusServiceUnavailable,
++			expectedErrorType: errorTimeout.str,
++			expectedError:     context.DeadlineExceeded.Error(),
++		},
++		{
++			name: "deadline error after partial results",
++			resultSet: storage.NewSearchResultSetFromSliceAndError(
++				[]storage.SearchResult{{Value: "alpha", Score: 1.0}},
++				nil,
++				context.DeadlineExceeded,
++			),
++			expectedNames:     []string{"alpha"},
++			expectedCode:      http.StatusOK,
++			expectedErrorType: errorTimeout.str,
++			expectedError:     context.DeadlineExceeded.Error(),
+ 		},
+-		nil,
+-		errors.New("tail failure"),
+-	)
+-	queryable := errorTestQueryable{q: fixedSearchQuerier{rs: rs}}
++		{
++			// Composites turn secondary errors, deadlines included, into
++			// warnings, so a nil Err does not prove the results are complete.
++			// Unlike a finished ApplySearchHints scan, results pulled after
++			// the deadline are therefore rejected.
++			name: "deadline during first batch",
++			r
+```
+
+---
+
+### Incident Patch 2: `b1bbab44` (2026-11-27)
+**Commit Message**: Merge pull request #20610 from rida-ghreizy/ui-completion-escape-newlines
+
+ui: escape line breaks in autocompleted label values
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +5/-0)
+```diff
+@@ -1804,6 +1804,11 @@ describe('autocomplete promQL test', () => {
+             apply: 'quoted\\"value',
+             type: 'text',
+           },
++          {
++            label: 'multi\nline',
++            apply: 'multi\\nline',
++            type: 'text',
++          },
+         ],
+         from: 25,
+         to: 25,
+```
+
+**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +6/-2)
+```diff
+@@ -185,8 +185,12 @@ function arrayToCompletionResult(data: Completion[], from: number, to: number, i
+ function escapePromQLString(str: string): string {
+   // PromQL only evaluates escape sequences in single- and double-quoted strings.
+   // Backtick-quoted string completions are not handled separately today, so keep
+-  // the inserted value escaped unconditionally.
+-  return str.replace(/([\\"])/g, '\\$1');
++  // the inserted value escaped unconditionally. A raw line break would end the
++  // string literal with a syntax error, so line breaks are escaped as well.
++  return str
++    .replace(/([\\"])/g, '\\$1')
++    .replace(/\n/g, '\\n')
++    .replace(/\r/g, '\\r');
+ }
+ 
+ function isAfterClosedFunctionCallBody(state: EditorState, node: SyntaxNode, pos: number): boolean {
+```
+
+**File**: `web/ui/module/codemirror-promql/src/test/label_env_values.json` (modified, +2/-1)
+```diff
+@@ -3,6 +3,7 @@
+   "data": [
+     "demo",
+     "\\x2d",
+-    "quoted\"value"
++    "quoted\"value",
++    "multi\nline"
+   ]
+ }
+```
+
+---
+
+### Incident Patch 3: `b168ccab` (2026-11-27)
+**Commit Message**: Merge pull request #20607 from rida-ghreizy/ui-duration-rounding-carry
+
+ui: carry rounded milliseconds over to the next duration unit
+
+**File**: `web/ui/mantine-ui/src/lib/formatTime.test.ts` (modified, +8/-0)
+```diff
+@@ -48,6 +48,14 @@ describe("formatPrometheusDuration", () => {
+     expect(formatPrometheusDuration(3599999)).toBe("59m59s999ms");
+   });
+ 
++  test("carries over fractional milliseconds that round up to the next unit", () => {
++    expect(humanizeDuration(59999.6)).toBe("1m");
++    expect(humanizeDuration(119999.7)).toBe("2m");
++    expect(humanizeDuration(3599999.8)).toBe("1h");
++    expect(humanizeDuration(1999.9996)).toBe("2s");
++    expect(humanizeDuration(1500.4)).toBe("1.5s");
++  });
++
+   test("formats hours correctly", () => {
+     expect(formatPrometheusDuration(3600000)).toBe("1h");
+     expect(formatPrometheusDuration(7200000)).toBe("2h");
+```
+
+**File**: `web/ui/mantine-ui/src/lib/formatTime.ts` (modified, +3/-1)
+```diff
+@@ -58,7 +58,9 @@ const formatDuration = (
+   }
+ 
+   const sign = d < 0 ? "-" : "";
+-  let ms = Math.abs(d);
++  // Round to whole milliseconds first, so that e.g. 59999.6ms carries over to
++  // "1m" instead of being shown as "60s" (or "59m 60s" for one hour).
++  let ms = Math.round(Math.abs(d));
+   const r: string[] = [];
+ 
+   for (const { unit, mult, exact } of [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20587** (2026-11-26): chore(deps): update Go dependencies for 3.17 (@bwplotka)
-- **PR #20566** (2026-11-25): ci: tidy dependent Go modules in Renovate PRs (@aknuds1)
-- **PR #20565** (2026-11-26): tsdb: write series records before dependent WAL records (@duricanikolic)
-- **PR #20564** (closed): promtool: ignore unknown fields in test files with --ignore-unknown-fields (@neo0007777)
-- **PR #20553** (closed): tsdb: write series records before dependent WAL records (@duricanikolic)
-- **PR #20548** (2026-11-24): chore: Fix repos sync (@SuperQ)
+- **PR #20622** (2026-11-27): chore: sync release-4.0 with main (@machine424)
+- **PR #20610** (2026-11-27): ui: escape line breaks in autocompleted label values (@rida-ghreizy)
+- **PR #20607** (2026-11-27): ui: carry rounded milliseconds over to the next duration unit (@rida-ghreizy)
+- **PR #20606** (closed): textparse: reject NaN count in OpenMetrics 2.0 native histograms (@CJstate)
+- **PR #20605** (closed): textparse: reject duplicate label names in OpenMetrics 2.0 (@CJstate)
+- **PR #20602** (2026-11-27): ui: escape line breaks in PromQL strings built by the UI (@rida-ghreizy)
 
 ---
 
@@ -3018,64 +2474,66 @@ tsdb: write series records before dependent WAL records
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update Go dependencies for 3.17
+## X. api: honor search cancellation and report timeouts
 
 **RULE**:
-When implementing operations in `compliance/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storage/generic.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e794b83`: deps): update Go dependencies for 3.17. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77b65d53`: api: honor search cancellation and report timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `compliance/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/generic.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	cloud.google.com/go/auth/oauth2adapt v0.3.1 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.24.0 // indirect
-	github.com/Microsoft/go-winio v0.6.4 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.48.1 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.33.22 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.21.4 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.10 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.13 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.13 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.350.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.106.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/elasticache v1.66.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.26 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/kafka v1.66.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/lightsail v1.72.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/rds v1.134.1 // indirect
-	github.com/aws/aws-sdk-
+// checkContextEveryNIterations is used in some tight loops to check if the context is done.
+const checkContextEveryNIterations = 128
+
+// ApplySearchHints filters, orders, and limits values using a non-nil ctx.
+// Values must be ascending unless hints specifies score ordering with a filter.
+// Nil hints use the zero-value defaults. Cancellation returns the context error.
+func ApplySearchHints(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, error) {
+		return applySearchHintsNoFilter(ctx, values, hints)
+			return topKByScore(ctx, values, hints.Filter, hints.Limit)
+			return reverseFilterEarlyExit(ctx, values, hints.Filter, hints.Limit)
+	return applySearchHintsLinear(ctx, values, hints)
+}
+
+func searchHintsContextErr(ctx context.Context, i int) error {
+	if i%checkContextEveryNIterations != 0 {
+		return nil
+	}
+	return ctx.Err()
+func reverseFilterEarlyExit(ctx context.Context, values []string, filter Filter, limit int) ([]SearchResult, error) {
+		if err := searchHintsContextErr(ctx, len(values)-1-i); err != nil {
+			return nil, err
+		}
+	return results, nil
+func applySearchHintsNoFilter(ctx context.Context, values []string, hints *SearchHints) ([]SearchResult, e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	cloud.google.com/go/auth/oauth2adapt v0.3.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.3 // indirect
-	github.com/Microsoft/go-winio v0.6.3 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.47.4 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.33.9 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.9 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.340.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ecs v1.102.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/lightsail v1.67.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
-	github.com/aws/aws-sdk-go-v2/serv
+// ApplySearchHints filters, sorts, and limits a slice of string values according to hints,
+// returning scored SearchResult entries. A nil hints value is treated as the zero value.
+// The input values slice is assumed to be ordered ascending by value; the function only
+// performs extra work for orderings that differ from this.
+//
+// Allocation and ordering are tuned to the (Filter, OrderBy, Limit) combination:
+//   - Filter == nil: at most Limit entries are copied; OrderByValueDesc walks the input
+//     in reverse so we never materialise the full slice when limited.
+//   - OrderByValueAsc + Filter + Limit: stream-filter with early exit at Limit matches.
+//   - OrderByValueDesc + Filter + Limit: reverse stream-filter with early exit at Limit
+//     matches, taking advantage of the input being ascending so the tail is the largest.
+//   - OrderByScoreDesc + Filter + Limit: top-K min-heap of size Limit, avoiding a full
+//     sort over the matched set.
+//   - Other combinations fall back to filter-then-reorder-then-slice, with the upfront
+//     capacity capped by min(len(values), max(2*Limit, minLinearAllocCap)).
+func ApplySearchHints(values []string, hints *SearchHints) []SearchRe
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e794b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77b65d53` are properly handled with clean fallback behavior.

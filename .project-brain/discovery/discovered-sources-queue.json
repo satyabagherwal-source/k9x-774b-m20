@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T17:50:57.280Z",
+  "updated_at": "2026-11-27T18:08:35.724Z",
   "stats": {
-    "total_discovered": 10508,
-    "approved_pending_harvest": 9975,
+    "total_discovered": 10509,
+    "approved_pending_harvest": 9976,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9980,
+      "COMMUNITY_AND_EXPERT": 9981,
       "OFFICIAL_DOCUMENTATION": 290,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227472,6 +227472,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-063F0C83172D": {
+      "id": "SRC-063F0C83172D",
+      "url": "https://github.com/machine424/prometheus/actions/runs/45985014624",
+      "title": "https://github.com/machine424/prometheus/actions/runs/45985014624",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:08:35.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
       }
     }
   }

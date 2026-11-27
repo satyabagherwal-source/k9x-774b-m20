@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-KAQU",
-    "timestamp": "2026-11-26T08:57:31.494Z",
-    "repository": "flux-iac/tofu-controller",
-    "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "8eb7d11fe0b955bea03e2764b36075716374ea5cf8eb385728426a48b9816d1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-KDYI",
-    "timestamp": "2026-11-26T08:57:35.658Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3AZY",
-    "timestamp": "2026-11-26T09:12:18.286Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "4a97637284b4c00fffc1a7be418e872ccc2ac02ec523bff8b18e829bf9e60f19",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3C5G",
-    "timestamp": "2026-11-26T09:12:19.780Z",
-    "repository": "sand-ai/MAGI-2-preview",
-    "learningId": "learn-huggingface-sand-ai-magi-2-preview",
-    "contentHash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3JCW",
     "timestamp": "2026-11-26T09:12:29.120Z",
     "repository": "projectdiscovery/nuclei",
@@ -7492,6 +7432,66 @@
     "contentHash": "2e98a51dc7ff34988d28cc9023135f9d168a99c4fbc28ec199ae62ac16488be2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OFUX",
+    "timestamp": "2026-11-27T18:08:17.481Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "8d8833fca3f0333e83211de298ee084e096cd3b65aba39321b16d20f019dfdcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OM3R",
+    "timestamp": "2026-11-27T18:08:25.575Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "fcd5bab914bec93e98c05589b35022243281597d3ce25660912f39de8f3fb4c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OPE7",
+    "timestamp": "2026-11-27T18:08:29.839Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "daddb870b685f8dff89d9d2b28457a866f455ddd15098f4912001c2e40dfc1ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OQJO",
+    "timestamp": "2026-11-27T18:08:31.332Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "6057cae8724734334dd8549e70d5d9a9003b61384a00e7b9c88fba0f5b2caf2a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

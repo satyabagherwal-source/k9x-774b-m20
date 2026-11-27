@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f176c30a",
+    "sourceVersion": "a0377489",
     "license": "Apache-2.0",
-    "contentHash": "a4557fcb8e85aed15af881cfa875a7a20e1506e2ddd198c965c053e4d2fac5f9",
-    "lastHarvestedAt": "2026-11-27T09:44:54.970Z",
+    "contentHash": "6057cae8724734334dd8549e70d5d9a9003b61384a00e7b9c88fba0f5b2caf2a",
+    "lastHarvestedAt": "2026-11-27T18:08:31.346Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "91fdde93",
+    "sourceVersion": "6847d593",
     "license": "Apache-2.0",
-    "contentHash": "20c54337607ccbc4738db08046bd402cb71880387ad26b3127924e543447fe27",
-    "lastHarvestedAt": "2026-11-26T23:00:02.629Z",
+    "contentHash": "daddb870b685f8dff89d9d2b28457a866f455ddd15098f4912001c2e40dfc1ea",
+    "lastHarvestedAt": "2026-11-27T18:08:29.849Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "cfd6745d",
+    "sourceVersion": "d31f9cd9",
     "license": "MIT",
-    "contentHash": "013dd4a484de9e7da32ad1ae7a63bb9ad88ff3403968a54a46535daa7e9c18ff",
-    "lastHarvestedAt": "2026-11-26T17:56:55.725Z",
+    "contentHash": "8d8833fca3f0333e83211de298ee084e096cd3b65aba39321b16d20f019dfdcf",
+    "lastHarvestedAt": "2026-11-27T18:08:17.495Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "1e794b83",
+    "sourceVersion": "ccdfcea8",
     "license": "Apache-2.0",
-    "contentHash": "b7b0cdcb96fbd33e620f78c60eb5e1f5515a6afb0bf73d1c96b6753e09db59a7",
-    "lastHarvestedAt": "2026-11-27T00:07:24.726Z",
+    "contentHash": "fcd5bab914bec93e98c05589b35022243281597d3ce25660912f39de8f3fb4c8",
+    "lastHarvestedAt": "2026-11-27T18:08:25.585Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
