@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T19:44:23.480Z",
+  "last_updated": "2026-11-27T19:52:27.441Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "b86b44862516ec8157dd5737ce4a8b3417b560718280115bcc2ebe6f16544eb7",
-      "verified_at": "2026-11-27T00:41:43.003Z",
+      "content_hash": "8cd086e9e7508d5ee260c684b2478ce9f9ec4a4341200bbf03da398fb8b141c0",
+      "verified_at": "2026-11-27T19:52:27.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T00:41:43.003Z"
+      "last_updated": "2026-11-27T19:52:27.440Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -19566,14 +19566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-thejagstudio-tessera-small",
-      "content_hash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
-      "verified_at": "2026-11-24T11:44:20.472Z",
+      "content_hash": "6a083e43fa8a87625256ddb8c25555b209c9aba385bbd1b73f5ce8bf5b6210e4",
+      "verified_at": "2026-11-27T19:52:09.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T11:44:20.472Z"
+      "last_updated": "2026-11-27T19:52:09.833Z"
     },
     "rocketride-org/rocketride-server": {
       "repository": "rocketride-org/rocketride-server",

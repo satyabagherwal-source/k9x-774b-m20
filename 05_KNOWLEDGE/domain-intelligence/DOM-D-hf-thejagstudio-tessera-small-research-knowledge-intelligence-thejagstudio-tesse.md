@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/thejagstudio/tessera-small",
   "source_version": "hf-thejagstudio-tessera-small",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:44:20.664Z",
+  "timestamp": "2026-11-27T19:52:10.043Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-thejagstudio-tessera-small",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [thejagstudio/tessera-small](https://huggingface.co/thejagstudio/tessera-small) (Revision: `hf-thejags`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:44:20.664Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T19:52:10.043Z`  
 > **Learning ID**: `learn-huggingface-thejagstudio-tessera-small`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/thejagstudio/tessera-small](https://huggingface.co/thejagstudio/tessera-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:44:19.820Z  
+> **Harvest Timestamp**: 2026-11-27T19:52:09.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 239 likes
+- **Stars / Engagement**: 0 downloads | 254 likes
 
 ---
 

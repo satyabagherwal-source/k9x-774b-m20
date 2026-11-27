@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:44:37.127Z",
+  "timestamp": "2026-11-27T19:52:31.198Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-thejagstudio-tessera-small-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-thejagstudio-tessera-small-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:44:37.127Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T19:52:31.198Z`  
 > **Learning ID**: `LEARN-EVO-hf-thejagstudio-tessera-small-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-thejagstu`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T11:44:19.985Z  
+> **Timestamp**: 2026-11-27T19:52:09.322Z  
 > **Learning ID**: `learn-huggingface-thejagstudio-tessera-small`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/thejagstudio/tessera-small](https://huggingface.co/thejagstudio/tessera-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:44:19.820Z  
+> **Harvest Timestamp**: 2026-11-27T19:52:09.169Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 239 likes
+- **Stars / Engagement**: 0 downloads | 254 likes
 
 ---
 

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `3ec1df58`  
+> **Source Version**: `fa74d5c6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T00:41:41.775Z  
+> **Timestamp**: 2026-11-27T19:52:26.361Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T00:41:41.770Z  
+> **Harvest Timestamp**: 2026-11-27T19:52:26.357Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6415 stars
+- **Stars / Engagement**: 6417 stars
 
 ---
 
@@ -1081,11 +1081,14 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #41103** (2026-11-26): **pgwire: Flush rows when nothing else is ready to send**
-  *Symptoms*: `send_rows` flushed after every batch of rows, and the response that completes the statement was flushed again right after. For a result that ends with its last batch, which is every `SELECT` that is not a `SUBSCRIBE`, the two flushes are microseconds apart and the reply leaves as two TCP segments: `RowDescription` with the rows, then `CommandComplete` with `ReadyForQuery`.  Flush once, when nothing further is ready to be sent. Sending rows or a notice sets a flag, and a last branch in the biased `select!` flushes when the flag is set and neither a batch, the end of the stream, a notice nor the deadline is ready. A result that has already ended is therefore not flushed in the loop and leaves in one write with its completion. An open stream (`SUBSCRIBE`, `FETCH` with a timeout) is still flushed before the loop waits.  This is a rework of #40960, which was closed because the loop is already hard to reason about and the 10% gain it claimed did not reproduce. The mechanism is the same. What changed is that the loop has a single flush site, since a notice sets the same flag instead of flushing itself, and that the comments state the one rule the loop follows. The measurements below replace the 10% claim.  One protocol-visible difference: in the extended protocol, the rows of a finished result now wait for `Sync` or `Flush` together with their `CommandComplete`, which is what PostgreSQL does. Before, the rows were flushed early and only `CommandComplete` waited.  ### Reproducer  A/
+- **Issue #41115** (2026-11-27): **compute: Shrink grouped Top-K batches from 664 to 104 bytes**
+  *Symptoms*: **Grouped monotonic Top-K took 7.9% less time at two rows per group and 9.1% less at three** (196,608 rows, `LIMIT 2`, ten alternating pairs). Replica cache misses fell 42% at two rows per group.  Keep two updates inline per pending group and timestamp. This shrinks the batch from 664 to 104 bytes on x86-64. At 16 rows per group and `LIMIT 8`, query time fell 1.6%, while the isolated operator used 2.8% more cycles. 
 
-- **Issue #41101** (2026-11-26): **persist: Raise the fallback poll sleep to two seconds**
-  *Symptoms*: A waiter in `Machine::wait_for_upper_past` (a `Listen`, or a writer waiting for an upper) learns of new state through PubSub and scans consensus when nothing arrives within `persist_next_listen_batch_retryer_fixed_sleep`. The sleep is jittered by 0.9 to 1.1, so at 1.2s it can be as short as 1.08s, while table and source shards advance once per second. An append more than 80ms late can make a waiter scan, and one 320ms late makes every waiter of the shard scan.  This PR raises the default to 2s, which gives an append 800ms of slack.  ### Status  Closed after measuring. Once #41100 stops PubSub from dropping pushes, this change has nothing left to remove in the workloads I can produce, and it makes a lost push more expensive.  ### Measurements  An operator-deployed environment in kind (CockroachDB, MinIO, default system clusters), on the CI images of the merge base, of #41100 and of this PR.  Runtime A/B: the parameter alternates between 1.2s and 2s with `ALTER SYSTEM SET` on an idle environment, six 110s windows per setting, with the persist counters scraped around each window.  | | 1.2s | 2s | |---|---|---| | main: environmentd waits woken by the sleep (`mz_persist_wait_woken_via_sleep`) | 278 | 54 | | main: diffs the PubSub server dropped in the same windows | 142 | 25 | | main: consensus scans, all processes | 1,952 | 1,761 | | #41100: environmentd waits woken by the sleep | 1 | 0 | | #41100: consensus scans, all processes | 1,919 | 1,995 | | `mz_catalog_server` replica wai
+- **Issue #41113** (2026-11-27): **ci: Nightly fixes (2026-11-27)**
+  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18840  The annotation contained some terminal escape sequence noise, so cutting that down further.  The database-issues bug was closed since we already have it on Linear.  Test run: https://buildkite.com/materialize/nightly/builds/18854
+  **Post-Mortem & Fix Analysis**:
+  > ## QA LLM Review  ### 1. MEDIUM -- Log searches miss the targets of labeled links and images  `misc/python/materialize/buildkite_insights/buildkite_api/logs_api.py:53`  When a link has `content` or an image has `alt`, the downloader discards its URL before `buildkite-artifact-search --search-logs-instead-of-artifacts` sees it. A search for an exact artifact URL can now return zero matches for a job that emitted it.  <details> <summary>Details</summary>  For example, `test/parallel-benchmark/mzcompose.py:287` emits distinct plot URLs with the same label for a scenario and variant. The log search scans the downloaded text at `misc/python/materialize/buildkite_insights/artifact_search/artifact_search.py:248`. A cached copy from before this change still matches the URL, while refreshing the same job loses the match. Preserve the URL in the searchable text or apply label-only rendering in the annotation writer.  </details>  ### 2. MEDIUM -- Carriage-return cleanup can take quadratic time  `
+  > ^ Seems ok, merging.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1102,420 +1105,178 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d7919aa` (2026-11-26)
-**Commit Message**: platform-checks: Fix ItemColumns versioning (#41098)
+### Incident Patch 1: `9df56aec` (2026-11-27)
+**Commit Message**: fix(deps): update dependency org.postgresql:postgresql to v42.7.15 (#41111)
 
-Fix landed in v26.52. Made us keep running into
-[PER-130](https://linear.app/materializeinc/issue/PER-130) in upgrade
-tests
+This PR contains the following updates:
 
-Test run: https://buildkite.com/materialize/nightly/builds/18837
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [org.postgresql:postgresql](https://jdbc.postgresql.org)
+([source](https://redirect.github.com/pgjdbc/pgjdbc)) | `42.7.14` →
+`42.7.15` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.postgresql:postgresql/42.7.15?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.postgresql:postgresql/42.7.14/42.7.15?slim=true)
+|
 
-**File**: `misc/python/materialize/checks/all_checks/item_columns.py` (modified, +3/-3)
+---
+
+### Release Notes
+
+<details>
+<summary>pgjdbc/pgjdbc (org.postgresql:postgresql)</summary>
+
+###
+[`v42.7.15`](https://redirect.github.com/pgjdbc/pgjdbc/blob/HEAD/CHANGELOG.md#42715-2026-11-23)
+
+##### Security
+
+- fix: a `}` inside a string literal, quoted identifier, dollar quote or
+comment no longer ends a `{d}`, `{t}`, `{ts}`, `{oj}` or `{escape}` JDBC
+escape, or the text after the arguments of a `{fn}` escape. Before, the
+rest of the literal was parsed as SQL and `{fn}` escapes in it were
+translated, so quoted text inside such an escape could 
+
+**File**: `test/lang/java/smoketest/pom.xml` (modified, +1/-1)
 ```diff
-@@ -81,16 +81,16 @@ def manipulate(self) -> list[Testdrive]:
-                 $ postgres-execute connection=postgres://mz_system:materialize@${testdrive.materialize-internal-sql-addr}
-                 ALTER SYSTEM SET enable_alter_table_add_column = true
- 
--                # Before v26.51 (PER-130), an index on the altered table can
-+                # Before v26.52 (PER-130), an index on the altered table can
-                 # panic a replica that already reads it via
-                 # item_columns_middle_mv. Indexing the old version yields the
-                 # same index columns.
--                >[version<2605100] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
-+                >[version<2605200] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
- 
-                 > ALTER TABLE item_columns_middle_table ADD COLUMN c text
-                 > INSERT INTO item_columns_middle_table VALUES (2, LIST[2], 'c')
-                 > CREATE VIEW item_columns_final_view AS SELECT * FROM item_columns_middle_table
--                >[version>=2605100] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
-+                >[version>=2605200] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
- 
-                 > COMMENT ON COLUMN item_columns_middle_table.c IS 'middle_table c'
-                 """,
+@@ -30,7 +30,7 @@ the Business Source License, use of this software will be governed
+     <dependency>
+       <groupId>org.postgresql</groupId>
+       <artifactId>postgresql</artifactId>
+-      <version>42.7.14</version>
++      <version>42.7.15</version>
+     </dependency>
+     <dependency>
+       <groupId>org.junit.jupiter</groupId>
 ```
 
 ---
 
-### Incident Patch 2: `39ead7d1` (2026-11-26)
-**Commit Message**: ci: Nightly fixes (2026-11-26) (#41093)
+### Incident Patch 2: `af135e8e` (2026-11-27)
+**Commit Message**: ci: Nightly fixes (2026-11-27) (#41113)
 
-Based on https://buildkite.com/materialize/nightly/builds/18835
+Based on https://buildkite.com/materialize/nightly/builds/18840
 
-Test run: https://buildkite.com/materialize/nightly/builds/18836
+The annotation contained some terminal escape sequence noise, so cutting
+that down further.
 
-**File**: `Cargo.lock` (modified, +71/-40)
+The database-issues bug was closed since we already have it on Linear.
+
+Test run: https://buildkite.com/materialize/nightly/builds/18854
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `misc/python/materialize/buildkite_insights/buildkite_api/logs_api.py` (modified, +35/-11)
 ```diff
-@@ -2503,7 +2503,7 @@ checksum = "829d955a0bb380ef178a640b91779e3987da38c9aea133b20614cfed8cdea9c6"
- dependencies = [
-  "bitflags 2.13.2",
-  "crossterm_winapi",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "rustix 0.38.44",
-  "winapi",
- ]
-@@ -2517,7 +2517,7 @@ dependencies = [
-  "bitflags 2.13.2",
-  "crossterm_winapi",
-  "document-features",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "rustix 1.1.4",
-  "winapi",
- ]
-@@ -2785,9 +2785,9 @@ checksum = "978747c1d849a7d2ee5e8adc0159961c48fb7e5db2f06af6723b80123bb53856"
- dependencies = [
-  "cfg-if",
-  "hashbrown 0.14.5",
-- "lock_api",
-+ "lock_api 0.4.14",
-  "once_cell",
-- "parking_lot_core",
-+ "parking_lot_core 0.9.12",
- ]
+@@ -8,22 +8,46 @@
+ # by the Apache License, Version 2.0.
  
- [[package]]
-@@ -2799,9 +2799,9 @@ dependencies = [
-  "cfg-if",
-  "crossbeam-utils",
-  "hashbrown 0.14.5",
-- "lock_api",
-+ "lock_api 0.4.14",
-  "once_cell",
-- "parking_lot_core",
-+ "parking_lot_core 0.9.12",
- ]
+ import re
++import shlex
  
- [[package]]
-@@ -3474,7 +3474,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+ from materialize.buildkite_insights.buildkite_api import generic_api
  
- [[package]]
-@@ -4285,7 +4285,7 @@ dependencies = [
-  "getrandom 0.3.3",
-  "hashbrown 0.16.1",
-  "nonzero_ext",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "portable-atomic",
-  "quanta",
-  "rand 0.9.4",
-@@ -4535,7 +4535,7 @@ dependencies = [
-  "moka",
-  "ndk-context",
-  "once_cell",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "rand 0.10.4",
-  "resolv-conf",
-  "smallvec",
-@@ -4703,7 +4703,7 @@ dependencies = [
-  "once_cell",
-  "openssl",
-  "openssl-sys",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "pin-project",
-  "tower-layer",
-  "tower-service",
-@@ -5099,7 +5099,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
- dependencies = [
-  "hermit-abi",
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+-BUILDKITE_TIMESTAMP_PATTERN = re.compile(r"bk;t=\d+")
++# See https://buildkite.com/docs/pipelines/links-and-images-in-log-output
++_ESCAPE_SEQUENCE_RE = re.compile(
++    r"""
++    \x1b_[^\x07\x1b]*(?:\x07|\x1b\\)        # APC, Buildkite's timestamps
++    | \x1b\[[0-?]*[ -/]*[@-~]               # CSI, colors
++    | \x1b\]([^\x07\x1b]*)(?:\x07|\x1b\\)   # OSC, Buildkite's links and images
++    | \x07
++    """,
++    re.VERBOSE,
++)
  
- [[package]]
-@@ -5464,9 +5464,9 @@ dependencies = [
  
- [[package]]
- name = "kube"
--version = "5.0.0"
-+version = "5.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c73b082f549411623a4f8949bd24dcaedacb1511379c461c76d579fde301d021"
-+checksum = "f95e1a9107878bef32cfbe2e5e084584db832c9616df9981adc4673f9fb1c853"
- dependencies = [
-  "k8s-openapi",
-  "kube-client",
-@@ -5477,9 +5477,9 @@ dependencies = [
- 
- [[package]]
- name = "kube-client"
--version = "5.0.0"
-+version = "5.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae56b223bca490db1f1b115bfc606d411177511d7748d8cc019a7e3b2935430b"
-+checksum = "703ee17477c86501627e83492895c06ab6fc2c55a319bb2fbc582ccae739ba67"
- dependencies = [
-  "base64 0.23.1",
-  "bytes",
-@@ -5514,9 +5514,9 @@ dependencies = [
- 
- [[package]]
- name = "kube-core"
--version = "5.0.0"
-+version = "5.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6de84b47fc1aa35ba0ef9059ef54b47c8b47f0979afd15487e525282f2d73fb9"
-+checksum = "b5e9a9aa533b2f4106ac1ac45e168bb452325eb9e918d57335444f60bef34ffc"
- dependencies = [
-  "derive_more",
-  "form_urlencoded",
-@@ -5533,9 +5533,9 @@ dependencies = [
- 
- [[package]]
- name = "kube-derive"
--version = "5.0.0"
-+version = "5.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "de1fb46ac34371491ac0277c13e0e1bb9288000e64c86ca3d91343754818e64e"
-+checksum = "cedc991dbe7757a646098dead35e070e13ce66e2996b02162ac7f97eb97f4d6e"
- dependencies = [
-  "darling 0.24.1",
-  "proc-macro2",
-@@ -5547,9 +5547,9 @@ dependencies = [
- 
- [[package]]
- name = "kube-runtime"
--version = "5.0.0"
-+version = "5.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9dea60005024b6ec1819c426209aa29b9eaca64f6b3988ab73c55f43fa484392"
-+checksum = "ca78d9eeb4674eb75e381e6a956e8a5005942928dec87de4db9ef9701af8a637"
- dependencies = [
-  "ahash",
-  "async-broadcast",
-@@ -5562,7 +5562,7 @@ dependencies = [
-  "json-patch",
-  "k8s-openapi",
-  "kube-client",
-- "parking_lot",
-+ "parking_lot 0.13.0",
-  "pin-project",
-  "serde",
-  "serde_json",
-@@ -5611,7 +5611,7 @@ dependencies = [
-  "log",
-  "lru 0.18.5",
-  "moka",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "percent-encoding",
-  "rand 0.9.4",
-  "serde",
-@@ -5901,6 +5901,15 @@ dependencies = [
-  "scopeguard",
- ]
- 
-+[[package]]
-+name = "lock_api"
-+version = "0.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "65d91b22da179613dcf4d6ec8349563f52a363f6849e03b00dd0a185ec4a59af"
-+dependencies = [
-+ "scopeguard",
-+]
+ def download_log(pipeline_slug: str, build_number: int, job_id: str) -> str:
++    """Returns the job's log as plain text, with links and images shown as their labels."""
+     request_path = f"organizations/materialize/pipelines/{pipeline_slug}/builds/{build_number}/jobs/{job_id}/log"
+     json = generic_api.get(request_path, {}, as_json=True)
+-    json_content = json.get("content", "")
+-    return _remove_timestamps(_remove_beeps(json_content))
+-
+-
+-def _remove_timestamps(json_content: str) -> str:
+-    return BUILDKITE_TIMESTAMP_PATTERN.sub("", json_content)
+-
+-
+-def _remove_beeps(json_content: str) -> str:
+-    return json_content.replace("\a", "")
++    log = _ESCAPE_SEQUENCE_RE.sub(_render_escape_sequence, json.get("content", ""))
++    # The agent's pseudo-terminal adds "\r" before "\n". Docker's progress output
++    # puts cursor movement between them, so this has to run after the escapes.
++    return re.sub(r"\r+\n", "\n", log)
 +
- [[package]]
- name = "log"
- version = "0.4.34"
-@@ -6124,7 +6133,7 @@ dependencies = [
-  "equivalent",
-  "event-listener",
-  "futures-util",
-- "parking_lot",
-+ "parking_lot 0.12.5",
-  "portable-atomic",
-  "smallvec",
-  "tagptr",
-@@ -10365,8 +10374,18 @@ version = "0.12.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a"
- dependencies = [
-- "lock_api",
-- "parking_lot_core",
-+ "lock_api 0.4.14",
-+ "parking_lot_core 0.9.
++
++def _render_escape_sequence(match: re.Match[str]) -> str:
++    code, _, attributes = (match[1] or "").partition(";")
++    if code not in ("1338", "1339"):
++        return ""
++    # Buildkite quotes and escapes attributes like a shell, see `tokenizeString`
++    # in https://github.com/buildkite/terminal-to-html.
++    # NOTE: Unlike Buildkite, this mishandles upper-case keys, backslashes in
++    # single-quoted values, and escape sequences inside values. Our emitters,
++    # `buildkite.inline_link`, `buildkite.inline_image` and the
++    # ci/test/console scripts, write none of these.
++    lexer = shlex.shlex(attributes, posix=True)
++    lexer.whitespace, lexer.whitespace_split, lexer.commenters = ";", True, ""
++    try:
++        attribute = {k: v for k, _, v in (token.partition("=") for token in lexer)}
++    except ValueError:  # unclosed quote
++        return ""
++    return attribute.get("content") or attribute.get("alt") or attribute.get("url", "")
 ```
 
-**File**: `Cargo.toml` (modified, +1/-3)
+**File**: `misc/python/materialize/cli/ci_annotate_errors.py` (modified, +1/-7)
 ```diff
-@@ -418,9 +418,7 @@ jsonwebtoken = { version = "11.1.0", features = ["aws_lc_rs"] }
- junit-report = "0.9.1"
- k8s-controller = "0.15.0"
- k8s-openapi = { version = "0.29.0", features = ["schemars", "v1_34"] }
--# Held back: kube-runtime 5.1 requires parking_lot 0.13, while other
--# dependencies still require parking_lot 0.12.
--kube = { version = "=5.0.0", default-features = false, features = ["aws-lc-rs", "client", "derive", "runtime", "rustls-tls"] }
-+kube = { version = "5.2.0", default-features = false, features = ["aws-lc-rs", "client", "derive", "runtime", "rustls-tls"] }
- # Only the `hyper` feature on both LaunchDarkly crates. `hyper-rustls-native-roots`
- # would enable the transport crate's `hyper-rustls` dependency, which it
- # hardcodes to the `ring` provider.
+@@ -254,12 +254,6 @@
+     re.VERBOSE | re.MULTILINE,
+ )
+ 
+-# What logs_api leaves of Buildkite's timestamps, ANSI CSI and OSC escape
+-# sequences, and the "\r" that the agent's pseudo-terminal adds before "\n".
+-BUILDKITE_LOG_NOISE_RE = re.compile(
+-    r"\x1b_|\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\r+(?=\n)"
+-)
+-
+ 
+ @dataclass
+ class ErrorLog:
+@@ -1298,7 +1292,7 @@ def write_buildkite_log(until: str) -> str:
+             break
+         time.sleep(2)
+     with open("buildkite.log", "w") as f:
+-        f.write(BUILDKITE_LOG_NOISE_RE.sub("", log.rsplit(until, 1)[0]))
++        f.write(log.rsplit(until, 1)[0])
+     return "buildkite.log"
+ 
+ 
 ```
 
-**File**: `deny.toml` (modified, +6/-0)
+**File**: `src/txn-wal/src/txn_read.rs` (modified, +1/-1)
 ```diff
-@@ -26,6 +26,12 @@ skip = [
-     # (through 3.3.2), and mysql_async (through 0.37.1) still require ^0.18.2.
-     # Remove this exception once those crates release with lru 0.19.
-     { name = "lru", version = "=0.18.5" },
-+    # kube-runtime 5.1+ uses parking_lot 0.13. tokio, tokio-postgres,
-+    # prometheus, moka, and others still require 0.12. Remove these
-+    # exceptions once they move to 0.13.
-+    { name = "parking_lot", version = "=0.12.5" },
-+    { name = "parking_lot_core", version = "=0.9.12" },
-+    { name = "lock_api", version = "=0.4.14" },
+@@ -104,7 +104,7 @@ impl<T: Timestamp + Lattice + TotalOrder + Codec64 + Sync> DataSnapshot<T> {
  
-     # arrayvec had a significant API change in 0.7
-     { name = "arrayvec", version = "0.5.2" },
-```
-
-**File**: `misc/python/materialize/checks/all_checks/session.py` (modified, +1/-1)
-```diff
-@@ -83,7 +83,7 @@ class Cursors(Check):
-     collections in the queried schemas, so a table in `public` would make the
-     FETCH wait on unrelated checks' collections (e.g. REFRESH AT ... MVs
-     force the transaction timestamp up to their future refresh time).
--    TODO: Reenable when SQL-639 is fixed: move the table back to the default
-+    TODO: Reenable when CPU-354 is fixed: move the table back to the default
-     schema.
-     Manipulate only runs single retryable statements because in the parallel
-     scenarios it executes concurrently with restarts and kills, where a
-```
-
-**File**: `misc/python/materialize/checks/all_checks/subscribe.py` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
- # `public` would tie cursor transactions to every other check's collections.
- # Any object with a lagging or future frontier there (REFRESH AT ... MVs,
- # rehydrating or replica-less clusters) then blocks the FETCH.
--# TODO: Reenable when SQL-639 is fixed: move the tables back to the default
-+# TODO: Reenable when CPU-354 is fixed: move the tables back to the default
- # schema so the cursor transactions run in the same timedomain as the other
- # checks.
- #
-```
-
-**File**: `misc/python/materialize/parallel_workload/action.py` (modified, +30/-12)
-```diff
-@@ -161,15 +161,28 @@ def ws_connect(ws: websocket.WebSocket, host, port, user: str) -> tuple[int, int
- 
- 
- def untrack_objects_in_schemas(exe: Executor, schemas: set[Schema]) -> None:
--    """Remove every tracked object living in one of the given schemas.
-+    """Untrack everything a CASCADE drop of the given schemas removed.
- 
--    Called after a CASCADE drop of a schema or database. Source executor
--    connections are closed. Cross-schema dependents are cascade-dropped
--    server-side but not pruned here, they later surface as "does not exist",
--    which is why the CASCADE actions only run in DDL complexity."""
-+    That is every object living in one of them, plus the views and sinks in
-+    other schemas that (transitively) read from one. Source executor
-+    connections are closed."""
-     with exe.db.lock:
-+        dropped: set[DBObject] = {
-+            obj for obj in exe.db.db_objects() if obj.schema in schemas
-+        }
-+        # Views read views, so the dependents are a fixpoint. A view left
-+        # tracked here stays pickable for the rest of the run, and an action
-+        # landing on it every time (CREATE REPLACEMENT for the only eligible
-+        # materialized view) trips the broken-action check in print_stats.
-+        while dependents := {
-+            v
-+            for v in exe.db.views
-+            if v not in dropped
-+            and (v.base_object in dropped or v.base_object2 in dropped)
-+        }:
-+            dropped |= dependents
-         exe.db.tables[:] = [t for t in exe.db.tables if t.schema not in schemas]
--        exe.db.views[:] = [v for v in exe.db.views if v.schema not in schemas]
-+        exe.db.views[:] = [v for v in exe.db.views if v not in dropped]
-         # NOTE: Removed in place, like the lists above. DropIndexAction
-         # discards from this set holding only the index's own lock, so
-         # rebinding the attribute would resurrect an index that was dropped
-@@ -213,10 +226,14 @@ def untrack_objects_in_schemas(exe: Executor, schemas: set[Schema]) -> None:
-             s for s in exe.db.webhook_sources if s.schema not in schemas
-         ]
-         exe.db.kafka_sinks[:] = [
--            s for s in exe.db.kafka_sinks if s.schema not in schemas
-+            s
-+            for s in exe.db.kafka_sinks
-+            if s.schema not in schemas and s.base_object not in dropped
-         ]
-         exe.db.iceberg_sinks[:] = [
--            s for s in exe.db.iceberg_sinks if s.schema not in schemas
-+            s
-+            for s in exe.db.iceberg_sinks
-+            if s.schema not in schemas and s.base_object not in dropped
-         ]
-         exe.db.types[:] = [t for t in exe.db.types if t.schema not in schemas]
- 
-@@ -6058,9 +6075,9 @@ def _resize_replicas(self, cluster: Cluster, count: int) -> None:
- class DropSchemaCascadeAction(Action):
-     """DROP SCHEMA .. CASCADE, an atomic multi-object catalog mutation.
- 
--    Only enabled in DDL complexity: cross-schema dependents are cascade-dropped
--    server-side but stay tracked until they surface as "does not exist", which
--    DDL complexity ignores."""
-+    Only enabled in DDL complexity: actions that picked an object before the
-+    drop fail with "unknown catalog item" or "unknown schema", which only DDL
-+    complexity ignores."""
- 
-     def applicable(self, exe: Executor) -> bool:
-         return exe.db.complexity in (Complexity.DDL, Complexity.DDLOnly)
-@@ -6662,7 +6679,8 @@ def __init__(
-         (CreateReplacementMaterializedViewAction, 10),
-         (ApplyReplacementMaterializedViewAction, 5),
-         (DropReplacementMaterializedViewAction, 5),
--        (CreateOrReplaceReplacementMaterializedViewAction, 5),
-+        # TODO: Reenable when SQL-952 is fixed
-+        # (CreateOrReplaceReplacementMaterializedViewAction, 5),
-         (SealedCollectionCheckAction, 2),
-         (TransactionIsolationAction, 1),
-         (BoundedStalenessReadAction, 2),
-```
-
-**File**: `misc/python/materialize/parallel_workload/database.py` (modified, +1/-1)
-```diff
-@@ -319,7 +319,7 @@ def __init__(
-         # seals once its last refresh has passed.
-         refresh_options = [
-             ("ON COMMIT", False),
--            # TODO: Restore minute-scale intervals when CPU-196 is fixed
-+            # TODO: Restore minute-scale intervals when CPU-354 is fixed
-             (f"EVERY '{rng.randint(1, 15)} seconds'", False),
-             (f"EVERY '{rng.randint(1, 15)} seconds' ALIGNED TO (mz_now())", False),
-             # Always in the future of all refreshes of previously generated MVs
-```
-
-**File**: `test/mysql-cdc/subsource-resolution-duplicates.td` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ contains:catalog item 't' already exists
- $ mysql-execute name=mysql
- DROP DATABASE other;
- 
--# TODO: SS-548
-+# TODO: SQL-854
- # > SET statement_timeout = '5s'
- 
- # ! SELECT * FROM t
+         // TODO(jkosh44) We should not be writing to unregistered shards, but
+         // we haven't checked to see if this was registered at `self.empty_to`.
+-        // See https://github.com/MaterializeInc/database-issues/issues/8022.
++        // See PER-163.
+         while data_upper < self.empty_to {
+             // It would be very bad if we accidentally filled any times <=
+             // latest_write with empty updates, so defensively assert on each
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #41103** (closed): pgwire: Flush rows when nothing else is ready to send (@def-)
-- **PR #41101** (closed): persist: Raise the fallback poll sleep to two seconds (@def-)
-- **PR #41098** (2026-11-26): platform-checks: Fix ItemColumns versioning (@def-)
-- **PR #41094** (2026-11-26): Support Python 3.15 (@def-)
-- **PR #41093** (2026-11-26): ci: Nightly fixes (2026-11-26) (@def-)
-- **PR #41088** (2026-11-26): release: mark v26.51, v26.52 as released (@materialize-bot)
+- **PR #41115** (closed): compute: Shrink grouped Top-K batches from 664 to 104 bytes (@def-)
+- **PR #41113** (2026-11-27): ci: Nightly fixes (2026-11-27) (@def-)
+- **PR #41111** (2026-11-27): fix(deps): update dependency org.postgresql:postgresql to v42.7.15 (@renovate[bot])
+- **PR #41110** (2026-11-27): release: bump to version v26.54.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #41109** (closed): service: Buffer CTP reads (@def-)
+- **PR #41108** (closed): environmentd: Don't read the listeners config one byte at a time (@def-)
 
 ---
 
@@ -1535,32 +1296,28 @@ Test run: https://buildkite.com/materialize/nightly/builds/18836
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. platform-checks: Fix ItemColumns versioning
+## X. deps): update dependency org.postgresql:postgresql to v42.7.15
 
 **RULE**:
-When implementing operations in `misc/python/materialize/checks/all_checks/item_columns.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/lang/java/smoketest/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d7919aa`: platform-checks: Fix ItemColumns versioning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9df56aec`: deps): update dependency org.postgresql:postgresql to v42.7.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/python/materialize/checks/all_checks/item_columns.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/lang/java/smoketest/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                # Before v26.52 (PER-130), an index on the altered table can
-                >[version<2605200] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
-                >[version>=2605200] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
+      <version>42.7.15</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                # Before v26.51 (PER-130), an index on the altered table can
-                >[version<2605100] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
-                >[version>=2605100] CREATE INDEX item_columns_final_idx ON item_columns_middle_table (b, a)
+      <version>42.7.14</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d7919aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9df56aec` are properly handled with clean fallback behavior.

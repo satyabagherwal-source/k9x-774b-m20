@@ -13890,3 +13890,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-llamaindex-ocria-nano-1` | `https://huggingface.co/llamaindex/OCRia-nano-1` | `hf-llamain` | Multi-dimensional audit evidence | 2026-11-27T19:35:34.258Z |
 | `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `0330a6dc` | Multi-dimensional audit evidence | 2026-11-27T19:44:14.025Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3a3d137a` | Multi-dimensional audit evidence | 2026-11-27T19:44:23.471Z |
+| `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-27T19:52:09.825Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fa74d5c6` | Multi-dimensional audit evidence | 2026-11-27T19:52:27.433Z |

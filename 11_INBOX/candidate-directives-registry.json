@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:44:29.946Z",
+  "last_updated": "2026-11-27T19:52:33.700Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-SZ8B",
+      "id": "CD-EJ6R",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SZ8B-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EJ6R-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -72242,6 +72242,37 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2ECA37-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-EEIO",
+      "directive_title": "update dependency org.postgresql:postgresql to v42.7.15",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "fa74d5c6",
+      "staged_file": "11_INBOX/candidate-directives/CD-EEIO-update-dependency-org-postgresql-postgresql-to-v42-7-15.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EIBZ",
+      "directive_title": "deps): update dependency org.postgresql:postgresql to v42.7.15",
+      "source_repo": "materializeinc-materialize-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EIBZ-deps-update-dependency-org-postgresql-postgresql-to-v42-7-15.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F2641D",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F2641D-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

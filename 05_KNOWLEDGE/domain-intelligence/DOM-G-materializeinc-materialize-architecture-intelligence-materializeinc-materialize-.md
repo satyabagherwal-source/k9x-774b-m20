@@ -4,24 +4,24 @@
 {
   "source_repository": "MaterializeInc/materialize",
   "source_url": "https://github.com/MaterializeInc/materialize",
-  "source_version": "f9a1fd2d",
+  "source_version": "fa74d5c6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T04:52:10.970Z",
+  "timestamp": "2026-11-27T19:52:27.649Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `f9a1fd2d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T04:52:10.970Z`  
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `fa74d5c6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T19:52:27.649Z`  
 > **Learning ID**: `learn-github-materializeinc-materialize`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), C (Market & Business Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), C (Market & Business Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from MaterializeInc/materialize:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:52:09.162Z  
+> **Harvest Timestamp**: 2026-11-27T19:52:26.357Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6413 stars
+- **Stars / Engagement**: 6417 stars
 
 ---
 
@@ -1095,11 +1095,14 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #41066** (2026-11-24): **Language adjustment**
-  *Symptoms*: Minor change in language
+- **Issue #41115** (2026-11-27): **compute: Shrink grouped Top-K batches from 664 to 104 bytes**
+  *Symptoms*: **Grouped monotonic Top-K took 7.9% less time at two rows per group and 9.1% less at three** (196,608 rows, `LIMIT 2`, ten alternating pairs). Replica cache misses fell 42% at two rows per group.  Keep two updates inline per pending group and timestamp. This shrinks the batch from 664 to 104 bytes on x86-64. At 16 rows per group and `LIMIT 8`, query time fell 1.6%, while the isolated operator used 2.8% more cycles. 
 
-- **Issue #41061** (2026-11-24): **v26.52.0 release notes**
-  *Symptoms*: Release notes for v26.52.0.  Dates in RC snapshots are provisional until the release ships. One commit is added per snapshot; the final snapshot sets the real dates.  Snapshot drafts (with PR links) in mz-skills: - rc.1: [release_notes.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/release_notes.md) / [omitted.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md) - final: [release_notes.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/release_notes.md) / [omitted.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md)  **Borderline PRs omitted:** rc.1: 19 — [omitted.md#borderline](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md#borderline), final: 0 — [omitted.md#borderline](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md#borderline)  The `final` snapshot's increment is empty — `v26.52.0-rc.1...v26.52.0` is a single version-bump commit — and the real dates match rc.1's cadence estimate, so its commit changes no files.  **For the release owner — three open questions, all carried from rc.1:** - **2026-11-26 is US Thanksgiving**, 2026-11-27 the day after. The dates are what the cadence rule produces (first Thursday on or after the 2026-11-24 ship tag), but the rule knows nothing ab
+- **Issue #41113** (2026-11-27): **ci: Nightly fixes (2026-11-27)**
+  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18840  The annotation contained some terminal escape sequence noise, so cutting that down further.  The database-issues bug was closed since we already have it on Linear.  Test run: https://buildkite.com/materialize/nightly/builds/18854
+  **Post-Mortem & Fix Analysis**:
+  > ## QA LLM Review  ### 1. MEDIUM -- Log searches miss the targets of labeled links and images  `misc/python/materialize/buildkite_insights/buildkite_api/logs_api.py:53`  When a link has `content` or an image has `alt`, the downloader discards its URL before `buildkite-artifact-search --search-logs-instead-of-artifacts` sees it. A search for an exact artifact URL can now return zero matches for a job that emitted it.  <details> <summary>Details</summary>  For example, `test/parallel-benchmark/mzcompose.py:287` emits distinct plot URLs with the same label for a scenario and variant. The log search scans the downloaded text at `misc/python/materialize/buildkite_insights/artifact_search/artifact_search.py:248`. A cached copy from before this change still matches the URL, while refreshing the same job loses the match. Preserve the URL in the searchable text or apply label-only rendering in the annotation writer.  </details>  ### 2. MEDIUM -- Carriage-return cleanup can take quadratic time  `
+  > ^ Seems ok, merging.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1116,367 +1119,178 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35a338a1` (2026-11-24)
-**Commit Message**: ci: lint docs before deploying them, and fix the deploy build (#41030)
+### Incident Patch 1: `9df56aec` (2026-11-27)
+**Commit Message**: fix(deps): update dependency org.postgresql:postgresql to v42.7.15 (#41111)
 
-The docs deploy workflow now runs only for `main`. A `lint` job runs
-`ci/test/lint-docs.sh` in the same ci-builder image as the Buildkite
-`lint-docs` step, and `deploy` needs it to pass. The lint job has
-`contents: read` only, with no `id-token` permission or environment, and
-runs ci-builder with `--no-secrets`. It passes nothing to the deploy
-job, so a bad ci-builder image can at worst produce a wrong lint result.
-It cannot reach the website.
+This PR contains the following updates:
 
-The deploy job installs Hugo and Dart Sass from the `HUGO_AMD64` and
-`DART_SASS_AMD64` pins in `ci/builder/Dockerfile`
-(`ci/deploy_website/install-tools.sh`), with checksums verified. It does
-not run the ci-builder image. Renovate bumps reach the deploy and lint
-together, and a Dockerfile change triggers a deploy.
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [org.postgresql:postgresql](https://jdbc.postgresql.org)
+([source](https://redirect.github.com/pgjdbc/pgjdbc)) | `42.7.14` →
+`42.7.15` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/org.postgresql:postgresql/42.7.15?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/org.postgresql:postgresql/42.7.14/42.7.15?slim=true)
+|
 
-The SQL keyword table on `sql/identifiers` is mounted into Hugo's assets
-from `src/sql-lexer/src/keywords.txt`, replacing the read through
-`doc/user/sql-grammar/keywords.txt`. Hugo 0.170 renders an empty table
-through that symlink and still exits 0. With the mount, the build fails
-if the file is missing.
+---
 
-## Why
+### Release Notes
 
-- The keyword table is empty in production. The
+<details>
+<summary>pgjdbc/pgjdbc (org.postgresql:postgresql)</summary>
 
-**File**: `.github/workflows/deploy-docs.yml` (modified, +22/-11)
+###
+[`v42.7.15`](https://redirect.github.com/pgjdbc/pgjdbc/blob/HEAD/CHANGELOG.md#42715-2026-11-23)
+
+##### Security
+
+- fix: a `}` inside a string literal, quoted identifier, dollar quote or
+comment no longer ends a `{d}`, `{t}`, `{ts}`, `{oj}` or `{escape}` JDBC
+escape, or the text after the arguments of a `{fn}` escape. Before, the
+rest of the literal was parsed as SQL and `{fn}` escapes in it were
+translated, so quoted text inside such an escape could 
+
+**File**: `test/lang/java/smoketest/pom.xml` (modified, +1/-1)
 ```diff
-@@ -13,9 +13,11 @@ name: Deploy docs
- 
- on:
-   push:
--    branches: [main, "self-managed-docs/*"]
-+    branches: [main]
-     paths:
-       - doc/user/**
-+      - src/sql-lexer/src/keywords.txt
-+      - ci/builder/Dockerfile
-       - ci/deploy_website/**
-       - .github/workflows/deploy-docs.yml
-   workflow_dispatch:
-@@ -27,12 +29,25 @@ concurrency:
- permissions: {}
- 
- jobs:
-+  lint:
-+    name: Lint docs
-+    runs-on: ubuntu-26.04
-+    timeout-minutes: 30
-+    permissions:
-+      contents: read # check out the repository
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      # Same check and image as the Buildkite lint-docs step.
-+      - run: bin/ci-builder run stable --no-secrets ci/test/lint-docs.sh
-+
-   deploy:
-     name: Deploy docs
--    runs-on: ubuntu-24.04
-+    needs: lint
-+    runs-on: ubuntu-26.04
-     timeout-minutes: 30
--    # Restricted to main and self-managed-docs/*; the AWS role trusts only
--    # this environment on those refs.
-+    # Restricted to main; the AWS role trusts only this environment.
-     environment: docs-production
-     permissions:
-       contents: read # check out the docs
-@@ -42,16 +57,12 @@ jobs:
-         with:
-           persist-credentials: false
-           sparse-checkout: |
-+            ci/builder
-             ci/deploy_website
-             doc/user
-             misc/shlib
--      # Keep in sync with the Hugo version in ci/builder/Dockerfile.
--      - name: Install Hugo
--        run: |
--          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz > hugo.tar.gz
--          echo '08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a hugo.tar.gz' | sha256sum --check
--          sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
--          rm hugo.tar.gz
-+            src/sql-lexer
-+      - run: ci/deploy_website/install-tools.sh
-       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
-         with:
-           role-to-assume: arn:aws:iam::834237029485:role/GithubActionsDocsDeploy
-```
-
-**File**: `ci/deploy_website/install-tools.sh` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+#!/bin/sh
-+
-+# Copyright Materialize, Inc. and contributors. All rights reserved.
-+#
-+# Use of this software is governed by the Business Source License
-+# included in the LICENSE file at the root of this repository.
-+#
-+# As of the Change Date specified in that file, in accordance with
-+# the Business Source License, use of this software will be governed
-+# by the Apache License, Version 2.0.
-+#
-+# install-tools.sh — installs the Hugo and Dart Sass builds pinned in
-+# ci/builder/Dockerfile, so the deploy builds with the same tools as lint-docs
-+# without running the ci-builder image.
-+
-+set -eu
-+
-+dockerfile=ci/builder/Dockerfile
-+
-+pin() {
-+    sed -n "s/^ARG $1=//p" "$dockerfile"
-+}
-+
-+fetch() {
-+    curl -fsSL "$1" > "$2"
-+    echo "$3  $2" | sha256sum --check
-+}
-+
-+hugo=$(pin HUGO_AMD64)
-+hugo_version=${hugo%@*}
-+fetch "https://github.com/gohugoio/hugo/releases/download/$hugo_version/hugo_withdeploy_${hugo_version#v}_linux-amd64.tar.gz" hugo.tar.gz "${hugo#*@}"
-+sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
-+rm hugo.tar.gz
-+
-+sass=$(pin DART_SASS_AMD64)
-+sass_version=${sass%@*}
-+fetch "https://github.com/sass/dart-sass/releases/download/$sass_version/dart-sass-$sass_version-linux-x64.tar.gz" dart-sass.tar.gz "${sass#*@}"
-+sudo tar -xzf dart-sass.tar.gz -C /opt
-+sudo ln -sf /opt/dart-sass/sass /usr/local/bin/sass
-+rm dart-sass.tar.gz
-```
-
-**File**: `ci/deploy_website/website.sh` (modified, +3/-8)
-```diff
-@@ -48,14 +48,9 @@ declare -A external_redirects=(
- )
- 
- cd doc/user
--if [[ "$GITHUB_REPOSITORY" == "MaterializeInc/materialize" ]] && [[ "$GITHUB_REF_NAME" == self-managed-docs/* ]]; then
--    VERSION=${GITHUB_REF_NAME#self-managed-docs/}
--    hugo --gc --baseURL "/docs/self-managed/$VERSION" --destination "public/docs/self-managed/$VERSION"
--else
--    hugo --gc --baseURL /docs --destination public/docs
--    # Build skill docs to public/docs/markdown-docs/.
--    hugo --gc --baseURL /docs --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination public/docs/markdown-docs
--fi
-+hugo --gc --baseURL /docs --destination public/docs
-+# Build skill docs to public/docs/markdown-docs/.
-+hugo --gc --baseURL /docs --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination public/docs/markdown-docs
- hugo deploy --maxDeletes -1
- 
- touch empty
-```
-
-**File**: `doc/user/config.skill.toml` (modified, +9/-0)
-```diff
-@@ -30,6 +30,15 @@ disable = true
-   target = "static"
-   files = ["! **", "! *"]
- 
-+# This list replaces the one in config.toml, so its mounts are repeated.
-+[[module.mounts]]
-+  source = "assets"
-+  target = "assets"
-+
-+[[module.mounts]]
-+  source = "../../src/sql-lexer/src/keywords.txt"
-+  target = "assets/sql-keywords.txt"
-+
- # Skill-specific parameters
- [params]
-   # Sections to exclude from skill generation
-```
-
-**File**: `doc/user/config.toml` (modified, +11/-0)
-```diff
-@@ -148,6 +148,17 @@ unsafe = true
-     startLevel = 2
-     endLevel = 4
- 
-+# Hugo does not read files through a symlink that leaves the project, so the
-+# lexer's keyword list is mounted instead. Declaring any assets mount drops the
-+# default one, so it is restated.
-+[[module.mounts]]
-+source = "assets"
-+target = "assets"
-+
-+[[module.mounts]]
-+source = "../../src/sql-lexer/src/keywords.txt"
-+target = "assets/sql-keywords.txt"
-+
- # hugo deploy sets each file's Content-Type from the first Hugo media type with
- # its suffix, and for ".xml" that is RSS, so the sitemap was served as
- # application/rss+xml. Matchers are tried in order; the first match wins.
-```
-
-**File**: `doc/user/layouts/shortcodes/kwlist.html` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- 
- <table border="0" style="width:100%; border-collapse: collapse;">
-   <tr>
--{{range $index, $keyword := split (readFile ("sql-grammar/keywords.txt")) "\n"}}
-+{{range $index, $keyword := split (resources.Get "sql-keywords.txt").Content "\n"}}
-   {{if and (not (hasPrefix $keyword "#")) $keyword}}
-     {{ if eq (mod $index 4) 0 }}
-       </tr><tr>
-```
-
-**File**: `doc/user/layouts/shortcodes/kwlist.skill.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {{- /* Skill output: list SQL keywords from keywords.txt */ -}}
- {{- $keywords := slice -}}
--{{- range $line := split (readFile "sql-grammar/keywords.txt") "\n" -}}
-+{{- range $line := split (resources.Get "sql-keywords.txt").Content "\n" -}}
-   {{- if and (not (hasPrefix $line "#")) $line -}}
-     {{- $keywords = $keywords | append ($line | upper) -}}
-   {{- end -}}
-```
-
-**File**: `doc/user/sql-grammar/keywords.txt` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--../../../src/sql-lexer/src/keywords.txt
-\ No newline at end of file
+@@ -30,7 +30,7 @@ the Business Source License, use of this software will be governed
+     <dependency>
+       <groupId>org.postgresql</groupId>
+       <artifactId>postgresql</artifactId>
+-      <version>42.7.14</version>
++      <version>42.7.15</version>
+     </dependency>
+     <dependency>
+       <groupId>org.junit.jupiter</groupId>
 ```
 
 ---
 
-### Incident Patch 2: `5f0551b4` (2026-11-24)
-**Commit Message**: ci-builder: pass proxy settings into the container (#40973)
+### Incident Patch 2: `af135e8e` (2026-11-27)
+**Commit Message**: ci: Nightly fixes (2026-11-27) (#41113)
 
-Forwards `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` and their lowercase
-forms into the ci-builder container.
+Based on https://buildkite.com/materialize/nightly/builds/18840
 
-Agents that route egress through an HTTP proxy set these in the job
-environment. Without forwarding, commands inside ci-builder bypass the
-proxy. `docker run --env VAR` skips unset variables, so nothing changes
-on agents without a proxy or locally.
+The annotation contained some terminal escape sequence noise, so cutting
+that down further.
 
-Needed by MaterializeInc/i2#4576 and MaterializeInc/i2#4578.
+The database-issues bug was closed since we already have it on Linear.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Test run: https://buildkite.com/materialize/nightly/builds/18854
 
-Co-authored-by: Jason Hernandez <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `bin/ci-builder` (modified, +8/-0)
+**File**: `misc/python/materialize/buildkite_insights/buildkite_api/logs_api.py` (modified, +35/-11)
 ```diff
-@@ -278,6 +278,14 @@ case "$cmd" in
-             --env BUILDKITE_BRANCH
-             --env BUILDKITE_ORGANIZATION_SLUG
-             --env BUILDKITE_PULL_REQUEST
-+            # Agents that route egress through a proxy set these. Elsewhere
-+            # they are unset, and `--env VAR` skips unset variables.
-+            --env HTTP_PROXY
-+            --env HTTPS_PROXY
-+            --env NO_PROXY
-+            --env http_proxy
-+            --env https_proxy
-+            --env no_proxy
-         )
+@@ -8,22 +8,46 @@
+ # by the Apache License, Version 2.0.
  
-         if [[ $secrets == "true" ]]; then
+ import re
++import shlex
+ 
+ from materialize.buildkite_insights.buildkite_api import generic_api
+ 
+-BUILDKITE_TIMESTAMP_PATTERN = re.compile(r"bk;t=\d+")
++# See https://buildkite.com/docs/pipelines/links-and-images-in-log-output
++_ESCAPE_SEQUENCE_RE = re.compile(
++    r"""
++    \x1b_[^\x07\x1b]*(?:\x07|\x1b\\)        # APC, Buildkite's timestamps
++    | \x1b\[[0-?]*[ -/]*[@-~]               # CSI, colors
++    | \x1b\]([^\x07\x1b]*)(?:\x07|\x1b\\)   # OSC, Buildkite's links and images
++    | \x07
++    """,
++    re.VERBOSE,
++)
+ 
+ 
+ def download_log(pipeline_slug: str, build_number: int, job_id: str) -> str:
++    """Returns the job's log as plain text, with links and images shown as their labels."""
+     request_path = f"organizations/materialize/pipelines/{pipeline_slug}/builds/{build_number}/jobs/{job_id}/log"
+     json = generic_api.get(request_path, {}, as_json=True)
+-    json_content = json.get("content", "")
+-    return _remove_timestamps(_remove_beeps(json_content))
+-
+-
+-def _remove_timestamps(json_content: str) -> str:
+-    return BUILDKITE_TIMESTAMP_PATTERN.sub("", json_content)
+-
+-
+-def _remove_beeps(json_content: str) -> str:
+-    return json_content.replace("\a", "")
++    log = _ESCAPE_SEQUENCE_RE.sub(_render_escape_sequence, json.get("content", ""))
++    # The agent's pseudo-terminal adds "\r" before "\n". Docker's progress output
++    # puts cursor movement between them, so this has to run after the escapes.
++    return re.sub(r"\r+\n", "\n", log)
++
++
++def _render_escape_sequence(match: re.Match[str]) -> str:
++    code, _, attributes = (match[1] or "").partition(";")
++    if code not in ("1338", "1339"):
++        return ""
++    # Buildkite quotes and escapes attributes like a shell, see `tokenizeString`
++    # in https://github.com/buildkite/terminal-to-html.
++    # NOTE: Unlike Buildkite, this mishandles upper-case keys, backslashes in
++    # single-quoted values, and escape sequences inside values. Our emitters,
++    # `buildkite.inline_link`, `buildkite.inline_image` and the
++    # ci/test/console scripts, write none of these.
++    lexer = shlex.shlex(attributes, posix=True)
++    lexer.whitespace, lexer.whitespace_split, lexer.commenters = ";", True, ""
++    try:
++        attribute = {k: v for k, _, v in (token.partition("=") for token in lexer)}
++    except ValueError:  # unclosed quote
++        return ""
++    return attribute.get("content") or attribute.get("alt") or attribute.get("url", "")
 ```
 
----
-
-### Incident Patch 3: `085e6c72` (2026-11-24)
-**Commit Message**: storage: [SS-550] Log IDs and counts at INFO and large fields at TRACE (#41057)
-
-### Motivation
-
-Closes [SS-550](https://linear.app/materializeinc/issue/SS-550).
-Closes [SS-612](https://linear.app/materializeinc/issue/SS-612).
-
-Two INFO log calls in storage write lines longer than 240 KiB. Alloy
-cuts these lines before Loki stores them, and the
-`oversized-log-lines-tier-3` alert fires several times each day in
-production.
-
-1. `src/storage/src/storage_state.rs` logs the `Debug` form of the
-`RunIngestionCommand` with `?ingestion` in `reconcile: received
-RunIngestion command`.
-2. `src/storage-operators/src/oneshot_source.rs` logs every included and
-excluded object in `listed objects`.
-
-On 2026-11-24, Loki showed 197 cut `listed objects` lines between 07:00
-and 07:25 UTC. Loki also showed 12 and 17 cut `RunIngestion` lines
-before the alerts at 12:55 and 14:19 UTC.
-
-### Description
-
-`doc/developer/style.md` (section "Log message style") sets the standard
-for each level:
-
-* `INFO` reports normal system status changes that support or
-engineering can use in an investigation.
-* `DEBUG` is for events whose likelihood of usefulness is too low to
-emit by default. An engineer enables it for one
-
-**File**: `src/storage-operators/src/oneshot_source.rs` (modified, +7/-1)
+**File**: `misc/python/materialize/cli/ci_annotate_errors.py` (modified, +1/-7)
 ```diff
-@@ -302,7 +302,13 @@ where
-                 let (include, exclude): (Vec<_>, Vec<_>) = objects
-                     .into_iter()
-                     .partition(|(o, _checksum)| filter.filter::<S>(o));
--                tracing::info!(%worker_id, ?include, ?exclude, "listed objects");
-+                tracing::info!(
-+                    %worker_id,
-+                    include_count = include.len(),
-+                    exclude_count = exclude.len(),
-+                    "listed objects"
-+                );
-+                tracing::trace!(%worker_id, ?include, ?exclude, "listed objects");
-                 if include.is_empty() {
-                     let err = StorageErrorXKind::NoMatchingFiles.with_context("discover");
-                     start_handle.give(&start_cap, Err(err));
+@@ -254,12 +254,6 @@
+     re.VERBOSE | re.MULTILINE,
+ )
+ 
+-# What logs_api leaves of Buildkite's timestamps, ANSI CSI and OSC escape
+-# sequences, and the "\r" that the agent's pseudo-terminal adds before "\n".
+-BUILDKITE_LOG_NOISE_RE = re.compile(
+-    r"\x1b_|\x1b\[[0-9;?]*[A-Za-z]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\r+(?=\n)"
+-)
+-
+ 
+ @dataclass
+ class ErrorLog:
+@@ -1298,7 +1292,7 @@ def write_buildkite_log(until: str) -> str:
+             break
+         time.sleep(2)
+     with open("buildkite.log", "w") as f:
+-        f.write(BUILDKITE_LOG_NOISE_RE.sub("", log.rsplit(until, 1)[0]))
++        f.write(log.rsplit(until, 1)[0])
+     return "buildkite.log"
+ 
+ 
 ```
 
-**File**: `src/storage/src/storage_state.rs` (modified, +7/-2)
+**File**: `src/txn-wal/src/txn_read.rs` (modified, +1/-1)
 ```diff
-@@ -110,7 +110,7 @@ use timely::worker::Worker as TimelyWorker;
- use tokio::sync::mpsc::error::TryRecvError;
- use tokio::sync::{mpsc, watch};
- use tokio::time::Instant;
--use tracing::{debug, info, warn};
-+use tracing::{debug, info, trace, warn};
- use uuid::Uuid;
+@@ -104,7 +104,7 @@ impl<T: Timestamp + Lattice + TotalOrder + Codec64 + Sync> DataSnapshot<T> {
  
- use crate::internal_control::{
-@@ -1152,7 +1152,12 @@ impl<'w> Worker<'w> {
-                     }
-                 }
-                 StorageCommand::RunIngestion(ingestion) => {
--                    info!(%worker_id, ?ingestion, "reconcile: received RunIngestion command");
-+                    info!(
-+                        %worker_id,
-+                        id = %ingestion.id,
-+                        "reconcile: received RunIngestion command"
-+                    );
-+                    trace!(%worker_id, ?ingestion, "reconcile: received RunIngestion command");
- 
-                     // Ensure that ingestions are forward-rolling alter compatible.
-                     let prev = running_ingestion_descriptions
+         // TODO(jkosh44) We should not be writing to unregistered shards, but
+         // we haven't checked to see if this was registered at `self.empty_to`.
+-        // See https://github.com/MaterializeInc/database-issues/issues/8022.
++        // See PER-163.
+         while data_upper < self.empty_to {
+             // It would be very bad if we accidentally filled any times <=
+             // latest_write with empty updates, so defensively assert on each
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #41066** (2026-11-24): Language adjustment (@maheshwarip)
-- **PR #41061** (2026-11-24): v26.52.0 release notes (@bosconi)
-- **PR #41057** (2026-11-24): storage: [SS-550] Log IDs and counts at INFO and large fields at TRACE (@rjimeno-mz)
-- **PR #41044** (2026-11-24): testdrive: Unflake source-statistics.td (@def-)
-- **PR #41041** (2026-11-24): ore: Optimize dropping SegmentedBytes segments (@def-)
-- **PR #41037** (2026-11-24): orchestratord: Re-send skip-catchup before each forced promotion (@alex-hunt-materialize)
+- **PR #41115** (closed): compute: Shrink grouped Top-K batches from 664 to 104 bytes (@def-)
+- **PR #41113** (2026-11-27): ci: Nightly fixes (2026-11-27) (@def-)
+- **PR #41111** (2026-11-27): fix(deps): update dependency org.postgresql:postgresql to v42.7.15 (@renovate[bot])
+- **PR #41110** (2026-11-27): release: bump to version v26.54.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #41109** (closed): service: Buffer CTP reads (@def-)
+- **PR #41108** (closed): environmentd: Don't read the listeners config one byte at a time (@def-)
 
 ---
 
@@ -1496,62 +1310,31 @@ emit by default. An engineer enables it for one
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: lint docs before deploying them, and fix the deploy build
+## X. deps): update dependency org.postgresql:postgresql to v42.7.15
 
 **RULE**:
-When implementing operations in `.github/workflows/deploy-docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/lang/java/smoketest/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35a338a1`: ci: lint docs before deploying them, and fix the deploy build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9df56aec`: deps): update dependency org.postgresql:postgresql to v42.7.15. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/deploy-docs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/lang/java/smoketest/pom.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    branches: [main]
-      - src/sql-lexer/src/keywords.txt
-      - ci/builder/Dockerfile
-  lint:
-    name: Lint docs
-    runs-on: ubuntu-26.04
-    timeout-minutes: 30
-    permissions:
-      contents: read # check out the repository
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      # Same check and image as the Buildkite lint-docs step.
-      - run: bin/ci-builder run stable --no-secrets ci/test/lint-docs.sh
-
-    needs: lint
-    runs-on: ubuntu-26.04
-    # Restricted to main; the AWS role trusts only this environment.
-            ci/builder
-            src/sql-lexer
-      - run: ci/deploy_website/install-tools.sh
+      <version>42.7.15</version>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    branches: [main, "self-managed-docs/*"]
-    runs-on: ubuntu-24.04
-    # Restricted to main and self-managed-docs/*; the AWS role trusts only
-    # this environment on those refs.
-      # Keep in sync with the Hugo version in ci/builder/Dockerfile.
-      - name: Install Hugo
-        run: |
-          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz > hugo.tar.gz
-          echo '08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a hugo.tar.gz' | sha256sum --check
-          sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
-          rm hugo.tar.gz
+      <version>42.7.14</version>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35a338a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9df56aec` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

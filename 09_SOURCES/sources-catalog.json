@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "3ec1df58",
+    "sourceVersion": "fa74d5c6",
     "license": "NOASSERTION",
-    "contentHash": "b86b44862516ec8157dd5737ce4a8b3417b560718280115bcc2ebe6f16544eb7",
-    "lastHarvestedAt": "2026-11-27T00:41:42.990Z",
+    "contentHash": "8cd086e9e7508d5ee260c684b2478ce9f9ec4a4341200bbf03da398fb8b141c0",
+    "lastHarvestedAt": "2026-11-27T19:52:27.433Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -12985,8 +12985,8 @@
     "sourceUrl": "https://huggingface.co/thejagstudio/tessera-small",
     "sourceVersion": "hf-thejagstudio-tessera-small",
     "license": "Open-Source",
-    "contentHash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
-    "lastHarvestedAt": "2026-11-24T11:44:20.458Z",
+    "contentHash": "6a083e43fa8a87625256ddb8c25555b209c9aba385bbd1b73f5ce8bf5b6210e4",
+    "lastHarvestedAt": "2026-11-27T19:52:09.825Z",
     "learningId": "learn-huggingface-thejagstudio-tessera-small"
   },
   "rocketride-org-rocketride-server": {

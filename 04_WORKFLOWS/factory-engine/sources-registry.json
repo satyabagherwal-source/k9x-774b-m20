@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T19:44:26.844Z",
-    "lastVerified": "2026-11-27T19:44:26.844Z",
+    "lastChecked": "2026-11-27T19:52:30.907Z",
+    "lastVerified": "2026-11-27T19:52:30.907Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,9 +287,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T19:18:18.389Z",
+    "lastChecked": "2026-11-27T19:52:21.478Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T19:18:18.389Z"
+    "lastVerified": "2026-11-27T19:52:21.478Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -837,8 +837,8 @@
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T01:46:35.384Z",
-    "lastVerified": "2026-11-27T01:46:35.384Z",
+    "lastChecked": "2026-11-27T19:52:14.099Z",
+    "lastVerified": "2026-11-27T19:52:14.099Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
@@ -1278,12 +1278,12 @@
     "revisionIdentifier": "549d8f57"
   },
   "freenet-freenet-core": {
-    "name": "freenet/freenet-core",
+    "name": "freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T15:36:43.804Z",
-    "lastVerified": "2026-11-27T15:36:43.804Z",
+    "lastChecked": "2026-11-27T19:52:16.693Z",
+    "lastVerified": "2026-11-27T19:52:16.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -1292,7 +1292,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "35922adf"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -3816,9 +3817,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-26T19:45:40.123Z",
+    "lastChecked": "2026-11-27T19:52:06.560Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-26T19:45:40.123Z"
+    "lastVerified": "2026-11-27T19:52:06.560Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -4516,12 +4517,12 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T00:41:41.770Z",
-    "lastVerified": "2026-11-27T00:41:41.770Z",
+    "lastChecked": "2026-11-27T19:52:26.357Z",
+    "lastVerified": "2026-11-27T19:52:26.357Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "b86b44862516ec8157dd5737ce4a8b3417b560718280115bcc2ebe6f16544eb7",
+    "contentHash": "8cd086e9e7508d5ee260c684b2478ce9f9ec4a4341200bbf03da398fb8b141c0",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -9994,9 +9995,9 @@
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
     "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
-    "lastChecked": "2026-11-25T11:11:16.557Z",
+    "lastChecked": "2026-11-27T19:52:11.559Z",
     "revisionIdentifier": "6157c77e",
-    "lastVerified": "2026-11-25T11:11:16.557Z"
+    "lastVerified": "2026-11-27T19:52:11.559Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",
@@ -10481,12 +10482,12 @@
     "officialUrl": "https://huggingface.co/thejagstudio/tessera-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-24T11:44:19.820Z",
-    "lastVerified": "2026-11-24T11:44:19.820Z",
+    "lastChecked": "2026-11-27T19:52:09.169Z",
+    "lastVerified": "2026-11-27T19:52:09.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-thejagstudio-tessera-small",
-    "contentHash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
+    "contentHash": "6a083e43fa8a87625256ddb8c25555b209c9aba385bbd1b73f5ce8bf5b6210e4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

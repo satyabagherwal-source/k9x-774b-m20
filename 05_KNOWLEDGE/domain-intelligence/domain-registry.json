@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T19:44:30.170Z",
+  "last_updated": "2026-11-27T19:52:33.889Z",
   "total_records": 2852,
   "domains": {
     "A": {
@@ -14917,8 +14917,8 @@
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "942586db25ef49d8f529f06306f35f0c426839c5661039f60002992d9c9c5cae",
-      "created_at": "2026-11-25T04:52:11.210Z"
+      "content_hash": "65825cf8799595cc1b574ea5303c0b307ca7b1463b6bff1ed2f07ea5918ed480",
+      "created_at": "2026-11-27T19:52:27.827Z"
     },
     "DOM-K-C3DCBF34": {
       "record_id": "DOM-K-C3DCBF34",
@@ -15643,8 +15643,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "3ec55fe1513ac6b2e89c34d86b3a4452ef17d8606eb7f7ff212b710222dbf8b1",
-      "created_at": "2026-11-27T19:35:47.276Z"
+      "content_hash": "11fd8f2fec34a1688f788359d180172cdb57af042f59beb0e81e9db4926ca633",
+      "created_at": "2026-11-27T19:52:33.889Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -22902,8 +22902,8 @@
       "title": "Architecture Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-learnings-architecture-intelligence-materializeinc-ma.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "834238b977162c795bc9d39ba2c78531b1a75e5d33431ff6146390d2f1a0c22a",
-      "created_at": "2026-11-15T20:42:11.534Z"
+      "content_hash": "71a24d6084cc307817b16f7c09e5b395cfbe4bfadc9e3edab3a4d98532b33ed8",
+      "created_at": "2026-11-27T19:52:32.796Z"
     },
     "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-core-invariants",
@@ -35982,8 +35982,8 @@
       "title": "Research & Knowledge Intelligence: thejagstudio/tessera-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-research-knowledge-intelligence-thejagstudio-tesse.md",
       "repository": "thejagstudio/tessera-small",
-      "content_hash": "21d90456a96494773249320d3bb90c8102cea0edb0447a929a6e15b863ed89df",
-      "created_at": "2026-11-24T11:44:20.664Z"
+      "content_hash": "2588ac9b9597eb8d4498621b2965090c95e20ec0d4a0b05475b7250929806268",
+      "created_at": "2026-11-27T19:52:10.044Z"
     },
     "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -36042,8 +36042,8 @@
       "title": "Research & Knowledge Intelligence: hf-thejagstudio-tessera-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-learnings-research-knowledge-intelligence-hf-theja.md",
       "repository": "hf-thejagstudio-tessera-small-learnings",
-      "content_hash": "f4eb424ea712610389046c2d1cc46b03c7caf20c4c3f6a6817beee011232dc4c",
-      "created_at": "2026-11-24T11:44:37.234Z"
+      "content_hash": "faa1357c705db13efa223ac667cd5ef664736614eafa0d24a3db52d79e17b662",
+      "created_at": "2026-11-27T19:52:31.305Z"
     },
     "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",

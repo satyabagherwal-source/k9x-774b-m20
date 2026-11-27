@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:44:23.476Z",
-  "total_cycles_completed": 13150,
-  "total_learnings_persisted": 13150,
-  "total_rules_promoted": 11870,
+  "last_updated": "2026-11-27T19:52:27.437Z",
+  "total_cycles_completed": 13152,
+  "total_learnings_persisted": 13152,
+  "total_rules_promoted": 11871,
   "history": [
-    {
-      "timestamp": "2026-11-27T02:49:46.949Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T02:58:15.637Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:07:35.947Z",
       "repository": "Reson8/Rumble-2-Flash",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T19:44:23.476Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T19:52:09.830Z",
+      "repository": "thejagstudio/tessera-small",
+      "learningId": "learn-huggingface-thejagstudio-tessera-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T19:52:27.437Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

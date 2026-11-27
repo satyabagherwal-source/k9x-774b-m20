@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T19:44:27.111Z",
+  "updated_at": "2026-11-27T19:52:32.285Z",
   "stats": {
-    "total_discovered": 10532,
-    "approved_pending_harvest": 9999,
+    "total_discovered": 10542,
+    "approved_pending_harvest": 10009,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10002,
+      "COMMUNITY_AND_EXPERT": 10012,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -228000,6 +228000,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/buresdv-cork-learnings.md",
         "fileName": "buresdv-cork-learnings.md"
+      }
+    },
+    "SRC-E07C1C62A429": {
+      "id": "SRC-E07C1C62A429",
+      "url": "https://buildkite.com/materialize/nightly/builds/18840",
+      "title": "https://buildkite.com/materialize/nightly/builds/18840",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:31.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-DAFD1BF3CF2C": {
+      "id": "SRC-DAFD1BF3CF2C",
+      "url": "https://buildkite.com/materialize/nightly/builds/18854",
+      "title": "https://buildkite.com/materialize/nightly/builds/18854",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:31.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-DB76C230A95A": {
+      "id": "SRC-DB76C230A95A",
+      "url": "https://jdbc.postgresql.org/",
+      "title": "https://jdbc.postgresql.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:31.839Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-70E6A34532E2": {
+      "id": "SRC-70E6A34532E2",
+      "url": "https://redirect.github.com/pgjdbc/pgjdbc",
+      "title": "https://redirect.github.com/pgjdbc/pgjdbc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:31.902Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-3D587E828425": {
+      "id": "SRC-3D587E828425",
+      "url": "https://developer.mend.io/api/mc/badges/age/maven/org.postgresql:postgresql/42.7.15?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/maven/org.postgresql:postgresql/42.7.15?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:31.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-B2710049A34D": {
+      "id": "SRC-B2710049A34D",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/maven/org.postgresql:postgresql/42.7.14/42.7.15?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/maven/org.postgresql:postgresql/42.7.14/42.7.15?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:32.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-C96930B13DE3": {
+      "id": "SRC-C96930B13DE3",
+      "url": "https://redirect.github.com/pgjdbc/pgjdbc/blob/HEAD/CHANGELOG.md",
+      "title": "https://redirect.github.com/pgjdbc/pgjdbc/blob/HEAD/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:32.095Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-CC3E83E265F4": {
+      "id": "SRC-CC3E83E265F4",
+      "url": "https://buildkite.com/docs/pipelines/links-and-images-in-log-output",
+      "title": "https://buildkite.com/docs/pipelines/links-and-images-in-log-output",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:32.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-822B846458A9": {
+      "id": "SRC-822B846458A9",
+      "url": "https://github.com/buildkite/terminal-to-html",
+      "title": "https://github.com/buildkite/terminal-to-html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:32.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-DA929D2E2B34": {
+      "id": "SRC-DA929D2E2B34",
+      "url": "https://github.com/MaterializeInc/database-issues/issues/8022",
+      "title": "https://github.com/MaterializeInc/database-issues/issues/8022",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:52:32.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HJ4B",
-    "timestamp": "2026-11-26T10:19:21.227Z",
-    "repository": "Planetable/Planet",
-    "learningId": "learn-github-planetable-planet",
-    "contentHash": "0af879bd13a74ea2b00d201918c740a18651002113d8e7f82c2afb96f9ef41b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-HKAK",
-    "timestamp": "2026-11-26T10:19:22.748Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "668b0ede6e569e02511ee0cb7efbe1c4062ce226c62b3dc87f55400eb9c2a453",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HMAE",
     "timestamp": "2026-11-26T10:19:25.334Z",
     "repository": "pola-rs/polars",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "93a8bb336269a70fd02336c25a917fcbd42a3e61ee8bd0f6f5cf9d0fd3e099ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-E0RB",
+    "timestamp": "2026-11-27T19:52:09.815Z",
+    "repository": "thejagstudio/tessera-small",
+    "learningId": "learn-huggingface-thejagstudio-tessera-small",
+    "contentHash": "6a083e43fa8a87625256ddb8c25555b209c9aba385bbd1b73f5ce8bf5b6210e4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-EECF",
+    "timestamp": "2026-11-27T19:52:27.423Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "8cd086e9e7508d5ee260c684b2478ce9f9ec4a4341200bbf03da398fb8b141c0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

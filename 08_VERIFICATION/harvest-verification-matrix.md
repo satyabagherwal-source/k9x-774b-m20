@@ -13857,3 +13857,5 @@
 | `CYCLE-20261127-SOKL` | `2026-11-27T19:35:34.245Z` | `llamaindex/OCRia-nano-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | Yes (`4bb0fa81...`) |
 | `CYCLE-20261127-3TMK` | `2026-11-27T19:44:14.012Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10956` | Yes (`1c4357e9...`) |
 | `CYCLE-20261127-40WW` | `2026-11-27T19:44:23.456Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`93a8bb33...`) |
+| `CYCLE-20261127-E0RB` | `2026-11-27T19:52:09.815Z` | `thejagstudio/tessera-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | Yes (`6a083e43...`) |
+| `CYCLE-20261127-EECF` | `2026-11-27T19:52:27.423Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10957` | Yes (`8cd086e9...`) |
