@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T05:11:29.007Z",
+  "last_updated": "2026-11-27T05:21:39.400Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
-      "verified_at": "2026-11-19T11:50:26.910Z",
+      "content_hash": "161853850f54938c410bac72d99b8a9d5a144eda5af70ef086c1841a1558d374",
+      "verified_at": "2026-11-27T05:21:23.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T11:50:26.910Z"
+      "last_updated": "2026-11-27T05:21:23.804Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
-      "verified_at": "2026-11-26T11:15:51.073Z",
+      "content_hash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
+      "verified_at": "2026-11-27T05:21:39.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T11:15:51.073Z"
+      "last_updated": "2026-11-27T05:21:39.399Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
-      "verified_at": "2026-11-26T04:30:51.594Z",
+      "content_hash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
+      "verified_at": "2026-11-27T05:21:25.194Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T04:30:51.594Z"
+      "last_updated": "2026-11-27T05:21:25.194Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",

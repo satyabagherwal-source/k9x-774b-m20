@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:12:44.196Z",
+  "last_updated": "2026-11-27T05:21:45.452Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68818,6 +68818,48 @@
       "source_repo": "kividbio-kividb",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-00EEE7-knn-5-on-a-flat-float32-cosine-index-of-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-A8QS",
+      "directive_title": "preserve STUN SOFTWARE at the UTF-8 byte cap",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "515ddfaa",
+      "staged_file": "11_INBOX/candidate-directives/CD-A8QS-preserve-stun-software-at-the-utf-8-byte-cap.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-AO6H",
+      "directive_title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+      "source_repo": "yugabyte-yugabyte-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AO6H-33147-ysql-disable-read-committed-isolation-by-default-in-release-builds.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-AMVB",
+      "directive_title": "dpi): preserve STUN SOFTWARE at the UTF-8 byte cap",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AMVB-dpi-preserve-stun-software-at-the-utf-8-byte-cap.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-CC0EBA",
+      "directive_title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CC0EBA--33147-ysql-disable-read-committed-isola.md",
       "staged_date": "2026-11-27"
     }
   ]

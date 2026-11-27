@@ -13715,3 +13715,6 @@ Every entry in this ledger must capture:
 | `learn-github-kividbio-kividb` | `https://github.com/kividbio/kividb` | `3405fdb6` | Multi-dimensional audit evidence | 2026-11-27T05:11:28.993Z |
 | `learn-dom-d-d749cb6f` | `project://hf-conwayresearch-underdog-saluki-27b-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | 2026-11-27T05:12:02.878Z |
 | `learn-dom-h-b8e42626` | `project://react-react-native` | `7a2d1d25` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-27T05:12:42.247Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T05:21:23.789Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `515ddfaa` | Multi-dimensional audit evidence | 2026-11-27T05:21:25.182Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `846c1e61` | Multi-dimensional audit evidence | 2026-11-27T05:21:39.387Z |

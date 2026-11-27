@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T05:11:32.371Z",
-    "lastVerified": "2026-11-27T05:11:32.371Z",
+    "lastChecked": "2026-11-27T05:21:42.737Z",
+    "lastVerified": "2026-11-27T05:21:42.737Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T04:45:29.561Z",
+    "lastChecked": "2026-11-27T05:21:35.585Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T04:45:29.561Z"
+    "lastVerified": "2026-11-27T05:21:35.585Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -998,8 +998,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T00:58:56.801Z",
-    "lastVerified": "2026-11-27T00:58:56.801Z",
+    "lastChecked": "2026-11-27T05:21:30.573Z",
+    "lastVerified": "2026-11-27T05:21:30.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -2705,12 +2705,12 @@
     "lastVerified": "2026-11-26T19:45:45.255Z"
   },
   "goodrain-rainbond": {
-    "name": "goodrain/rainbond",
+    "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T12:29:05.183Z",
-    "lastVerified": "2026-11-26T12:29:05.183Z",
+    "lastChecked": "2026-11-27T05:21:28.218Z",
+    "lastVerified": "2026-11-27T05:21:28.218Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goodrain-rainbond",
@@ -2719,7 +2719,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9f4fd68c"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -6350,14 +6351,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-26T11:15:49.836Z",
-    "lastVerified": "2026-11-26T11:15:49.836Z",
+    "lastChecked": "2026-11-27T05:21:38.184Z",
+    "lastVerified": "2026-11-27T05:21:38.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
+    "contentHash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6552,9 +6553,9 @@
   "brianegan-flutter_architecture_samples": {
     "name": "flutter_architecture_samples",
     "officialUrl": "https://github.com/brianegan/flutter_architecture_samples",
-    "lastChecked": "2026-11-24T20:52:59.915Z",
+    "lastChecked": "2026-11-27T05:21:25.704Z",
     "revisionIdentifier": "d898d132",
-    "lastVerified": "2026-11-24T20:52:59.915Z"
+    "lastVerified": "2026-11-27T05:21:25.704Z"
   },
   "cycloidio-terracognita": {
     "name": "terracognita",
@@ -7591,14 +7592,14 @@
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T04:30:50.531Z",
-    "lastVerified": "2026-11-26T04:30:50.531Z",
+    "lastChecked": "2026-11-27T05:21:23.943Z",
+    "lastVerified": "2026-11-27T05:21:23.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
+    "contentHash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8179,22 +8180,21 @@
     "lastVerified": "2026-11-26T05:56:57.550Z"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
-    "name": "Qwen-Image-2.1-Turbo",
+    "name": "Qwen/Qwen-Image-2.1-Turbo",
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T19:59:27.683Z",
-    "lastVerified": "2026-11-23T19:59:27.683Z",
+    "lastChecked": "2026-11-27T05:21:23.104Z",
+    "lastVerified": "2026-11-27T05:21:23.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
+    "contentHash": "161853850f54938c410bac72d99b8a9d5a144eda5af70ef086c1841a1558d374",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "hf-qwen-qwen"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "linkwarden-linkwarden": {
     "name": "linkwarden",

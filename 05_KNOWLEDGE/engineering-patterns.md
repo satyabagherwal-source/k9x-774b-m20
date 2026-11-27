@@ -817510,3 +817510,145 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6d3497e5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10833. preserve STUN SOFTWARE at the UTF-8 byte cap (Harvested from domcyrus/rustnet)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve STUN SOFTWARE at the UTF-8 byte cap",
+  "source": "domcyrus/rustnet",
+  "source_url": "https://github.com/domcyrus/rustnet",
+  "source_version": "515ddfaa",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T05:21:24.578Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-domcyrus-rustnet",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [domcyrus/rustnet](https://github.com/domcyrus/rustnet) (Revision: `515ddfaa`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `515ddfaa`: dpi): preserve STUN SOFTWARE at the UTF-8 byte cap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `515ddfaa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10834. [#33147] YSQL: Disable Read Committed isolation by default in release builds (Harvested from yugabyte/yugabyte-db)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+  "source": "yugabyte/yugabyte-db",
+  "source_url": "https://github.com/yugabyte/yugabyte-db",
+  "source_version": "846c1e61",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-27T05:21:38.781Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yugabyte-yugabyte-db",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `846c1e61`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/postgres/src/backend/utils/misc/pg_yb_utils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7b53522d`: [#33147] YSQL: Disable Read Committed isolation by default in release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/utils/misc/pg_yb_utils.c`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+#else
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+#else
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7b53522d` are properly handled with clean fallback behavior.

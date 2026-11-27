@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T05:12:44.441Z",
+  "last_updated": "2026-11-27T05:21:45.654Z",
   "total_records": 2811,
   "domains": {
     "A": {
@@ -13932,8 +13932,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "f523ed74d82f52d51a746e612bc574b06f39b0e18be5676570ae5a69c00032a2",
-      "created_at": "2026-11-23T19:26:07.209Z"
+      "content_hash": "46e2782a2e706e0700460204bae0f392bec1035f84cc95626df78164a908f173",
+      "created_at": "2026-11-27T05:21:25.657Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -13950,8 +13950,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "f04318c054178a20c02100db80e4efaa7dddd66536d613650ba8c34ffec363aa",
-      "created_at": "2026-11-23T19:26:20.815Z"
+      "content_hash": "2507b10eb8fc8b6ab0538bd62be073035f336f714ac3cb7a718e3de74af1fc63",
+      "created_at": "2026-11-27T05:21:43.979Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -27762,8 +27762,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "770a4bdd113388f6b65bf2bdbce0abebf300d5a4ba760d4c8953ccd9ab1501fc",
-      "created_at": "2026-11-23T18:41:03.458Z"
+      "content_hash": "911c759cd5c282a807d7c49055271ef6d58bc4c894252f1b7c5bcc18386adfba",
+      "created_at": "2026-11-27T05:21:39.837Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -31467,8 +31467,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "98dd33d2e5a625b4562aa235fe2386425f1b366c77e251480712403a890760f8",
-      "created_at": "2026-11-23T18:41:39.540Z"
+      "content_hash": "aed4f062f768da0c07359563a41fa86302393e343d9e1c1bd53e28c8efb3be20",
+      "created_at": "2026-11-27T05:21:45.654Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -33968,8 +33968,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1-Turbo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-turbo-research-knowledge-intelligence-qwen-qwen-image-2-1.md",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "content_hash": "2d20f9760b7c9e99882982331a7016e0c1e6c0e65d2c669a492920ed82a6826f",
-      "created_at": "2026-11-19T11:50:27.126Z"
+      "content_hash": "31069096e5d73fd14d1f5c73d910cfdad2e67e2e7eeff421fed3c50135c5b970",
+      "created_at": "2026-11-27T05:21:24.028Z"
     },
     "DOM-D-8C81E436": {
       "record_id": "DOM-D-8C81E436",
@@ -34019,8 +34019,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-turbo-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
-      "content_hash": "82477e804b424e421dc0b4c2fe825798efb53689af93f36619f78621658ec2e7",
-      "created_at": "2026-11-19T11:51:24.836Z"
+      "content_hash": "c6023c8344b2103efac67f7d5b7c30f713275252bc52eba4fe568e69fdce87bb",
+      "created_at": "2026-11-27T05:21:44.603Z"
     },
     "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant",

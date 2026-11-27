@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
-    "lastHarvestedAt": "2026-11-19T11:50:26.900Z",
+    "contentHash": "161853850f54938c410bac72d99b8a9d5a144eda5af70ef086c1841a1558d374",
+    "lastHarvestedAt": "2026-11-27T05:21:23.789Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "1b9b8270",
+    "sourceVersion": "846c1e61",
     "license": "NOASSERTION",
-    "contentHash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
-    "lastHarvestedAt": "2026-11-26T11:15:51.051Z",
+    "contentHash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
+    "lastHarvestedAt": "2026-11-27T05:21:39.387Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "71475e09",
+    "sourceVersion": "515ddfaa",
     "license": "Apache-2.0",
-    "contentHash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
-    "lastHarvestedAt": "2026-11-26T04:30:51.579Z",
+    "contentHash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
+    "lastHarvestedAt": "2026-11-27T05:21:25.182Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

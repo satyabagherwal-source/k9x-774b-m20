@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T18:41:39.212Z",
+  "timestamp": "2026-11-27T05:21:45.314Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yugabyte-yugabyte-db-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yugabyte-yugabyte-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T18:41:39.212Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:21:45.314Z`  
 > **Learning ID**: `LEARN-EVO-yugabyte-yugabyte-db-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from yugabyte-yugabyte-db-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `80c1ffc3`  
+> **Source Version**: `846c1e61`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T18:41:02.014Z  
+> **Timestamp**: 2026-11-27T05:21:38.190Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:41:02.008Z  
+> **Harvest Timestamp**: 2026-11-27T05:21:38.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10675 stars
+- **Stars / Engagement**: 10678 stars
 
 ---
 
@@ -2273,14 +2273,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39005** (2026-11-23): **[PLAT-23681] YBA: Renumber the update_time migration to V481**
-  *Symptoms*: ## Summary  #38600 (PLAT-23681) and #38118 (PLAT-23570) each added a V480 migration, and neither PR showed a conflict, so master now fails Flyway validation with "Found more than one migration with version 480". YBA doesn't start, and tests that start the app (FakeDB) fail.  #38118 merged first, so this moves the `customer_config.update_time` migration to V481. The migration uses `ADD COLUMN IF NOT EXISTS`, so it applies cleanly whichever order a DB sees it in.  ## Test plan  - [x] `V480__Health_Check_And_Scheduler_Not_Running_AlertsTest`, `CustomerConfigTest`, `StorageConfigApiTest`, `EditStorageConfigTest` (FakeDB, so Flyway validates every migration) - [x] Local YBA on a fresh DB starts and applies both migrations (V480 alerts, then V481 update_time)  
+- **Issue #39470** (2026-11-27): **[PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu**
+  *Symptoms*: ## Summary  - Show Slow Queries in a node's Actions menu did nothing: since PLAT-23458, `handleSlowQueryClick` reads `this.props`, but it was never bound, so clicking threw `TypeError: Cannot read properties of undefined (reading 'props')`. - Bind it in the `NodeAction` constructor, as `handleLiveQueryClick` already is.  ## Test plan  - [x] `NodeAction.test.jsx` (new): calls `handleLiveQueryClick` and `handleSlowQueryClick` unbound, as the Actions menu does.   - Show Slow Queries navigates to `/universes/<uuid>/monitoring/queries?tab=slow-queries`; Show Live Queries navigates there with `tab=live-queries` and the node filter.   - With the bind removed, the Show Slow Queries test fails with the reported `TypeError`. - [x] eslint and prettier pass on `NodeAction.jsx` and `NodeAction.test.jsx`. 
   **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=39005) it.</sub>
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39005) <!-- Reviewable:end --> 
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39470) <!-- Reviewable:end --> 
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
-- **Issue #38987** (2026-11-23): **[BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567)**
-  *Symptoms*: ## Summary  Notifications slots were created like any logical replication slot, with `detect_publication_changes_implicitly` set and the PG catalog tables in the stream. Every node's LISTEN/NOTIFY poller polled the sys catalog tablet on the master leader each round (~4-5 `GetChanges`/s per node when idle), so a master leader change terminated every listener (#36720).  A notifications slot streams only `pg_yb_notifications` through a fixed publication, so it needs none of what catalog polling detects. The master now creates notifications slots without `detect_publication_changes_implicitly` and without the catalog tables, so they use pub refresh (every `cdcsdk_publication_list_refresh_interval_secs`, default 15 min) instead. The poller still reads the catalog from the master once per pub refresh, and an error there is still fatal; that is tracked in #38556.  ## Upgrade/Rollback safety  Only notifications slots created after the master upgrade change; existing ones keep catalog polling until recreated. Old and new tservers both support pub refresh, so mixed versions and rollback are safe.  Original commit: 0ab1c892afbd16c325cc1b5784044e82a4a888e1 / #38567  ## Test plan  - [x] `./yb_build.sh debug --java-test org.yb.pgsql.TestPgListenNotify`: 37/37 pass (6 hit a local "insufficient disk space" setup error and passed on rerun). New tests: - `testPollerDoesNotPollMaster`: masters serve no `GetChanges` while a listener idles. - `testNotificationsAcrossPubRefreshes`: notifications k
+- **Issue #39452** (2026-11-27): **[BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)**
+  *Symptoms*: ## Summary  `TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in 813b110c31/#37959, times out in about 25-40% of release runs. It times out waiting for the stale verification task of the rolled-back ALTER to end.  That task fails only if it polls while conn2's ALTER is the transaction modifying the table. Its first poll is delayed by `ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on conn2 can set and clear the table's verifier state within that delay. In a failing CI log, conn2's state lived 66ms, entirely inside the stale task's initial delay. The task then sees no other transaction on the table and keeps polling the outer transaction, which the test keeps open on purpose, until the 30s wait times out.  The test now keeps conn2's ALTER in an open transaction until the outer transaction reaches `kDdlPostProcessingFailed`, then commits it. It waits on that state instead of on the table having no verification tasks, because conn2's own task now stays on the table until conn2 commits. Test-only change.  Original commit: bfe7a66c0cc9fbf87b6d624d6ab90dd669b00de3 / #39424  ## Test plan  - [x] `bool/PgDdlSavepointMiniClusterTest.TestRollbackToSavepointAfterStaleVerificationTaskFails/1` passes 10/10 and `/0` passes 5/5 (debug) - [x] With the `YsqlRollbackDocdbSchemaToSubTxn` fix from 813b110c31 reverted, `/1` fails 3/3 (FATAL at `ROLLBACK TO SAVEPOINT b`: the rollback was not applied to `test2`), so the test still covers #37683  Jenkins: test regex:
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2297,607 +2297,430 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c5ff0f2` (2026-11-23)
-**Commit Message**: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827)
+### Incident Patch 1: `7b53522d` (2026-11-26)
+**Commit Message**: [#33147] YSQL: Disable Read Committed isolation by default in release builds (#39340)
 
 ## Summary
 
-A K8s edit pushes the master addresses in memory (`SetFlagInMemory`) to
-every master and tserver after its non-restart helm upgrade, and
-PLAT-23585 added the same push in the middle of a master move.
-`SetFlagInMemory` made one `setFlag` RPC per flag with no retry. A pod
-can restart at any time, for example when the cluster autoscaler drains
-a node after a full move removes the old pods, so a push that hit a
-restarting pod failed with `ConnectionResetException` and failed the
-edit at its last step.
+Release builds have defaulted `yb_enable_read_committed_isolation` to
+true since 1e1e6d58262. A cluster that upgrades from a release where the
+default was false, and never set the flag, would silently move from the
+REPEATABLE READ mapping to true READ COMMITTED.
 
-On K8s universes, `SetFlagInMemory` now retries an RPC failure every 5s
-until `yb.wait_for_server_timeout` (default 5 min, the timeout
-`WaitForServer` uses). The deadline is checked between attempts, so an
-attempt that hangs can run one admin operation timeout past it. A
-restarted pod reads its flags from the gflags Secret, which the helm
-upgrade before the push already rendered, so it only has to come back
-up.
+This swaps the build-type default: false in release builds, true in
+debug builds. The 2025.2 and 2026.1 branches already ship this way
+(#31686). New clusters still get Read Committed, because YBA and
+yugabyted set the flag explicitly.
 
-- VM universes are unchanged: one attempt. A VM server that is down
-usually does not come back on its own, and master failover pushes best
-effort without `ignoreErrors` and relies on the first
+The default lives in two places that must agree, and both are changed:
+`kEnableReadCommitted` in `pggate_flags.cc`, and the fallback in
+`YBIsReadCommittedSupported()` in `pg_yb_utils.c`, which postgres uses
+when the tserver does not pass the flag.
 
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java` (modified, +45/-1)
+Tests inherit the default, so release tests now run with Read Committed
+off and debug/asan/tsan tests with it on. The first CI run with only the
+default change showed three tests that depend on the old defaults:
+
+- `yb.orig.lock_status` (`TestPgRegressProc`): the `.out` expected file
+is the release variant and `_1`/`_2` are the debug variants. The "r
+
+**File**: `src/postgres/src/backend/utils/misc/pg_yb_utils.c` (modified, +2/-2)
 ```diff
-@@ -22,6 +22,7 @@
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.Cluster;
- import com.yugabyte.yw.models.Universe;
- import com.yugabyte.yw.models.helpers.NodeDetails;
-+import java.time.Duration;
- import java.util.HashMap;
- import java.util.Map;
- import java.util.Map.Entry;
-@@ -43,6 +44,12 @@ public class SetFlagInMemory extends ServerSubTaskBase {
-   // The gflag for master addresses.
-   private static final String MASTER_MASTER_ADDR_FLAG = "master_addresses";
+@@ -847,9 +847,9 @@ YBIsReadCommittedSupported()
+ 	{
  
-+  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
-+
-+  // Whether a failed setFlag RPC is retried, and until when.
-+  private boolean retryRpcFailures;
-+  private long retryDeadlineMs;
-+
-   @Inject
-   public SetFlagInMemory(BaseTaskDependencies baseTaskDependencies) {
-     super(baseTaskDependencies);
-@@ -84,6 +91,7 @@ protected Params taskParams() {
-   @Override
-   public void run() {
-     checkParams();
-+    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
-     try {
-       setFlags();
-     } catch (RuntimeException e) {
-@@ -119,6 +127,11 @@ private void setFlags() {
-     }
-     try (YBClientApi client = getClient()) {
-       Universe universe = Universe.getOrBadRequest(taskParams().getUniverseUUID());
-+      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
-+      // back on its own; a VM server that is down usually does not. A best-effort push is often
-+      // to a server that is down for good. VM callers that push best effort without ignoreErrors
-+      // (master failover) rely on the first failure, so they must not wait either.
-+      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
- 
-       if (!taskParams().updateMasterAddrs) {
-         String ysqlPgConfCsv =
-@@ -226,10 +239,41 @@ public static String getInMemoryYsqlPgConfCsv(
-     return GFlagsUtil.overrideWithTelemetryYsqlPgConfCsv(baseYsqlPgConfCsv, telemetryYsqlPgConfCsv);
-   }
- 
-+  // Package-private so tests can stub the timeout and the wait.
-+  Duration retryTimeout() {
-+    return config.getDuration("yb.wait_for_server_timeout");
-+  }
-+
-+  void waitBeforeRetry(Duration delay) {
-+    waitFor(delay);
-+  }
-+
-   private void setFlag(YBClientApi client, String gflag, String value, HostAndPort hp)
-       throws Exception {
-     log.debug("Setting gflag {} on node {} via non-restart rpc", gflag, hp);
--    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-+    boolean setSuccess;
-+    while (true) {
-+      try {
-+        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-+        break;
-+      } catch (Exception e) {
-+        // A server that answers and refuses the flag is not retried. The deadline is checked only
-+        // between attempts, so an attempt that hangs can run one admin operation timeout past it.
-+        if (!retryRpcFailures
-+            || ExceptionUtils.indexOfType(e, InterruptedException.class) >= 0
-+            || System.currentTimeMillis() + RETRY_DELAY.toMillis() >= retryDeadlineMs) {
-+          throw e;
-+        }
-+        log.warn(
-+            "Retrying gflag {} on {} {} in {}: {}",
-+            gflag,
-+            taskParams().serverType,
-+            taskParams().nodeName,
-+            RETRY_DELAY,
-+            e.getMessage());
-+        waitBeforeRetry(RETRY_DELAY);
-+      }
-+    }
-     if (!setSuccess) {
-       throw new RuntimeException(
-           "Could not set gflag "
+ #ifdef NDEBUG
+-		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+-#else
+ 		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", false);
++#else
++		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+ #endif
+ 	}
+ 	return cached_value;
 ```
 
-**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemoryTest.java` (modified, +91/-20)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status.out` (modified, +14/-0)
 ```diff
-@@ -8,7 +8,12 @@
- import static org.mockito.ArgumentMatchers.anyBoolean;
- import static org.mockito.ArgumentMatchers.anyString;
- import static org.mockito.ArgumentMatchers.eq;
-+import static org.mockito.Mockito.doNothing;
-+import static org.mockito.Mockito.doReturn;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.spy;
-+import static org.mockito.Mockito.times;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
+@@ -144,6 +144,8 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -175,6 +177,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -195,6 +199,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -220,6 +226,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
  
-@@ -24,6 +29,8 @@
- import com.yugabyte.yw.models.helpers.exporters.audit.AuditLogConfig;
- import com.yugabyte.yw.models.helpers.exporters.audit.YCQLAuditConfig;
- import com.yugabyte.yw.models.helpers.exporters.metrics.MetricsExportConfig;
-+import java.io.IOException;
-+import java.time.Duration;
- import java.util.Map;
- import org.junit.Before;
- import org.junit.Test;
-@@ -42,35 +49,51 @@ public void setUp() throws Exception {
-     mockClient = mock(YBClientApi.class);
-     when(mockYBClient.getClient(any(), any())).thenReturn(mockClient);
-     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(true);
--    universe = createUniverse("k8s-universe", defaultCustomer.getId(), CloudType.kubernetes);
--    universe =
--        Universe.saveDetails(
--            universe.getUniverseUUID(),
--            u -> {
--              NodeDetails node = new NodeDetails();
--              node.nodeName = NODE_NAME;
--              node.isTserver = true;
--              node.isMaster = true;
--              node.state = NodeDetails.NodeState.Live;
--              node.tserverRpcPort = 9100;
--              node.masterRpcPort = 7100;
--              node.cloudInfo = new CloudSpecificInfo();
--              node.cloudInfo.private_ip = "10.0.0.1";
--              node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
--              u.getUniverseDetails().nodeDetailsSet.add(node);
--            });
-+    universe = universeWithNode("k8s-universe", CloudType.kubernetes);
-+  }
-+
-+  private Universe universeWithNode(String name, CloudType cloudType) {
-+    Universe created = createUniverse(name, defaultCustomer.getId(), cloudType);
-+    return Universe.saveDetails(
-+        created.getUniverseUUID(),
-+        u -> {
-+          NodeDetails node = new NodeDetails();
-+          node.nodeName = NODE_NAME;
-+          node.isTserver = true;
-+          node.isMaster = true;
-+          node.state = NodeDetails.NodeState.Live;
-+          node.tserverRpcPort = 9100;
-+          node.masterRpcPort = 7100;
-+          node.cloudInfo = new CloudSpecificInfo();
-+          node.cloudInfo.private_ip = "10.0.0.1";
-+          node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
-+          u.getUniverseDetails().nodeDetailsSet.add(node);
-+        });
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -247,6 +255,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -275,6 +285,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,6 +315,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_1.out` (modified, +0/-14)
+```diff
+@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ 
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+```
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_2.out` (modified, +0/-14)
+```diff
+@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ 
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+```
+
+**File**: `src/yb/yql/pggate/pggate_flags.cc` (modified, +2/-2)
+```diff
+@@ -163,9 +163,9 @@ DEFINE_NON_RUNTIME_uint32(yb_max_recursion_depth, 2000,
+     "for regex functions. ");
+ 
+ #ifdef NDEBUG
+-constexpr bool kEnableReadCommitted = true;
+-#else
+ constexpr bool kEnableReadCommitted = false;
++#else
++constexpr bool kEnableReadCommitted = true;
+ #endif
+ DEFINE_NON_RUNTIME_bool(yb_enable_read_committed_isolation, kEnableReadCommitted,
+     "Defines how READ COMMITTED (which is our default SQL-layer isolation) and READ UNCOMMITTED "
+```
+
+**File**: `src/yb/yql/pgwrapper/pg_concurrent_ddls-test.cc` (modified, +4/-0)
+```diff
+@@ -570,6 +570,10 @@ class PgConcurrentCreateOrReplaceCrashTest : public LibPqTestBase {
+     // stale-syscache race window, so it must be disabled to reproduce.
+     ToggleDDLMode(opts->extra_tserver_flags, /* use_legacy = */ true);
+     ToggleDDLMode(opts->extra_master_flags, /* use_legacy = */ true);
++    // TODO(#39366): With Read Committed on, debug builds hit an unrelated assertion in
++    // AtEOXact_RelationCache. Remove this once that is fixed.
++    opts->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=false");
++    opts->extra_master_flags.push_back("--yb_enable_read_committed_isolation=false");
    }
  
-   private void runSetFlagInMemory(ServerType serverType) {
-+    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
-+    task.initialize(params(serverType));
-+    task.run();
-+  }
-+
-+  private SetFlagInMemory.Params params(ServerType serverType) {
-     SetFlagInMemory.Params params = new SetFlagInMemory.Params();
-     params.setUniverseUUID(universe.getUniverseUUID());
-     params.nodeName = NODE_NAME;
-     params.serverType = serverType;
-     params.force = true;
-     params.gflags = Map.of(GFlagsUtil.YSQL_PG_CONF_CSV, USER_PG_CONF_CSV);
--    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
-+    return params;
-+  }
-+
-+  /** A task that does not wait between retries and retries for the given time. */
-+  private SetFlagInMemory retryingTask(SetFlagInMemory.Params params, Duration timeout) {
-+    SetFlagInMemory task = spy(app.injector().instanceOf(SetFlagInMemory.class));
-+    doReturn(timeout).when(task).retryTimeout();
-+    doNothing().when(task).waitBeforeRetry(any());
-     task.initialize(params);
--    task.run();
-+    return task;
-   }
+   static bool IsBackendCrash(const Status& status) {
+```
+
+**File**: `src/yb/yql/pgwrapper/pg_hint_table-test.cc` (modified, +12/-1)
+```diff
+@@ -166,7 +166,18 @@ TEST_F(PgHintTableTest, ForceBatchedNestedLoop) {
+   ASSERT_STR_EQ("Hash Join", ASSERT_RESULT(ExecuteExplainAndGetJoinType(&conn1, explain_query)));
+ }
  
-   private void persistTelemetryConfig(TelemetryConfig telemetryConfig) {
-@@ -132,6 +155,54 @@ public void testK8sKeepsRawValueWithMetricsOnlyRow() throws Exception {
-   @Test
-   public void testFailedRpcFailsTask() throws Exception {
-     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(false);
--    assertThrows(RuntimeException.class, () -> runSetFlagInMemory(ServerType.TSERVER));
-+    SetFlagInMemory task = retryingTask(params(ServerType.TSERVER), Duration.ofMinutes(5));
-+    assertThrows(RuntimeException.class, task::run);
-+    // The server answered, so the refusal is not retried.
-+    verify(mockClient).setFlag(any(), anyString(), anyString(), anyBoolean());
-+    verify(task, never()).waitBeforeRetry(any());
+-TEST_F(PgHintTableTest, SimpleConcurrencyTest) {
++class PgHintTableTestReadCommitted : public PgHintTableTest {
++ public:
++  void UpdateMiniClusterOptions(ExternalMiniClusterOptions* options) override {
++    PgHintTableTest::UpdateMiniClusterOptions(options);
++    // TODO(#39367): Without Read Committed isolation, concurrent updates of a hint fail with
++    // "could not serialize access due to concurrent update" when transactional DDL is on.
++    options->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=true");
++    options->extra_master_flags.push_back("--yb_enable_read_committed_isolation=true");
 +  }
++};
 +
-+  @Test
-+  public void testRetriesUntilRestartingServerIsBack() throws Exception {
-+    when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean()))
-+        .thenThrow(new IOException("Connection reset"))
-+        .thenThrow(new IOException("Connection reset"))
-+        .thenReturn(true);
-+    SetFlag
++TEST_F_EX(PgHintTableTest, SimpleConcurrencyTest, PgHintTableTestReadCommitted) {
+   auto conn_explain = ASSERT_RESULT(ConnectWithHintTable());
+   // The planner refreshes the hint cache by scanning hint_plan.hints within the statement's read
+   // snapshot, so the concurrent hint updates below can force a read restart. EXPLAIN is not query
 ```
 
 ---
 
-### Incident Patch 2: `a61295c2` (2026-11-23)
-**Commit Message**: [#38925] DocDB: Fix PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib (#38926)
+### Incident Patch 2: `815cf271` (2026-11-26)
+**Commit Message**: [#39325] DocDB: Fix TabletSplitITest.SplitOpApplyAfterLeaderChange early split parent deletion (#39326)
 
 ## Summary
 
-The writer thread's `UPDATE` in `TestSearchWithConcurrentUpdates` sometimes failed with `Restart read required` (40001). `WriteQuery::PickReadTimeIfNecessary` uses the tablet's safe time as the read time, and a pending operation can hold safe time back. As a result, the writer's next transaction can read at a time before the previous transaction's commit, so a later, non-first statement that touches a row the previous transaction wrote needs a read restart, which snapshot isolation does not allow. This is correct, retryable database behavior, so the writer now runs each transaction in a lambda that returns a `Status`, asserts that any failure is `IsRetryable`, and issues `ROLLBACK` instead of failing the test.
+While a node is a follower, its `PeerMessageQueue` tracks only the local peer, so `all_applied_op_id` holds the node's own applied op id. After the node becomes leader, that stale value stays in place until every remote peer has responded. `TabletPeer::CanBeDeleted()` trusts that value, so it deleted the split parent before the paused replica had applied the split, and the test's `StartElection` loop then kept getting `TABLET_NOT_FOUND`. The fix resets `all_applied_op_id` to `OpId::Min()` in `SetLeaderMode()` and `SetupNewTrackedPeerUnlocked()`, and makes `GetAllAppliedOpId()` return `OpId::Min()` unless the queue is in `Mode::LEADER`.
 
 ---
 _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
 ## Test plan
 
-./yb_build.sh fastdebug --gcc15 --cxx-test pg_vector_index_single_server-test --gtest-filter PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib -n 180 YB
+./yb_build.sh fastdebug --gcc15 --cxx-test tablet-split-itest --gtest-filter TabletSplitITest.SplitOpApplyAfterLeaderChange -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+Ran the above locally with no failures.
+Before the fix, this 
 
-**File**: `src/yb/yql/pgwrapper/pg_vector_index_single_server-test.cc` (modified, +17/-10)
+**File**: `src/yb/consensus/consensus_queue.cc` (modified, +5/-1)
 ```diff
-@@ -460,19 +460,26 @@ void PgVectorIndexSingleServerTest::TestSearchWithConcurrentUpdates(
-     std::iota(ids.begin(), ids.end(), 1);
-     while (!stop_flag.load(std::memory_order_acquire)) {
-       std::shuffle(ids.begin(), ids.end(), ThreadLocalRandom());
--      ASSERT_OK(write_conn.Execute("BEGIN"));
--      for (size_t i = 0; i != kRowsPerTransaction; ++i) {
--        auto id = ids[i];
--        auto vector = Vector(id);
--        if (RandomUniformBool()) {
--          for (auto& coordinate : vector) {
--            coordinate = -coordinate;
-+      auto status = [&]() -> Status {
-+        RETURN_NOT_OK(write_conn.Execute("BEGIN"));
-+        for (size_t i = 0; i != kRowsPerTransaction; ++i) {
-+          auto id = ids[i];
-+          auto vector = Vector(id);
-+          if (RandomUniformBool()) {
-+            for (auto& coordinate : vector) {
-+              coordinate = -coordinate;
-+            }
-           }
-+          RETURN_NOT_OK(write_conn.ExecuteFormat(
-+              "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
-         }
--        ASSERT_OK(write_conn.ExecuteFormat(
--            "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
-+        return write_conn.Execute("COMMIT");
-+      }();
-+      if (!status.ok()) {
-+        // A non-first statement of a snapshot isolation transaction cannot restart its read.
-+        ASSERT_TRUE(IsRetryable(status)) << status;
-+        ASSERT_OK(write_conn.Execute("ROLLBACK"));
-       }
--      ASSERT_OK(write_conn.Execute("COMMIT"));
-     }
-   });
+@@ -271,6 +271,9 @@ void PeerMessageQueue::SetLeaderMode(const OpId& committed_op_id,
+       << queue_state_.active_config->ShortDebugString();
+   queue_state_.majority_size_ = MajoritySize(CountVoters(*queue_state_.active_config));
+   queue_state_.mode = Mode::LEADER;
++  // As a follower only the local peer is tracked, so all_applied_op_id holds the local applied op
++  // id. Reset it until every remote peer has reported its applied op id.
++  queue_state_.all_applied_op_id = OpId::Min();
  
+   LOG_WITH_PREFIX_UNLOCKED(INFO) << "Queue going to LEADER mode. State: "
+       << queue_state_.ToString();
+@@ -326,6 +329,7 @@ PeerMessageQueue::TrackedPeer* PeerMessageQueue::SetupNewTrackedPeerUnlocked(
+   // We don't know how far back this peer is, so set the all replicated watermark to
+   // MinimumOpId. We'll advance it when we know how far along the peer is.
+   queue_state_.all_replicated_op_id = OpId::Min();
++  queue_state_.all_applied_op_id = OpId::Min();
+   return tracked_peer_raw_ptr;
+ }
+ 
+@@ -1806,7 +1810,7 @@ OpId PeerMessageQueue::GetAllReplicatedOpId() const {
+ 
+ OpId PeerMessageQueue::GetAllAppliedOpId() const {
+   LockGuard lock(queue_lock_);
+-  return queue_state_.all_applied_op_id;
++  return queue_state_.mode == Mode::LEADER ? queue_state_.all_applied_op_id : OpId::Min();
+ }
+ 
+ OpId PeerMessageQueue::TEST_GetCommittedIndex() const {
 ```
 
 ---
 
-### Incident Patch 3: `4010b626` (2026-11-22)
-**Commit Message**: [#38657] YSQL: Fix race between ALTER TABLE ALL IN TABLESPACE CASCADE and concurrent CREATE TABLE
+### Incident Patch 3: `bfe7a66c` (2026-11-26)
+**Commit Message**: [#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)
 
-Summary:
-`ALTER TABLE ALL IN TABLESPACE <old> [COLOCATED WITH <table>] SET TABLESPACE <new> CASCADE` moves an implicit tablegroup of a colocated database to another tablespace. It takes none of the tablegroup locks that 290d6d08a120bdf4430f868b743784fb1afa5a62/D60169 added, so it is not serialized with a concurrent `CREATE TABLE` or `CREATE INDEX`:
+## Summary
 
-- A relation created in the tablegroup while the statement runs is not moved with it. It stays in the moved tablegroup with its old tablespace in `pg_class`.
-- The first relation created in the target tablespace while the statement runs gets a tablegroup of its own. The database ends with two implicit tablegroups for one tablespace, and a clone of it fails with `Created table not found: <id>.colocation.parent.uuid`.
+`TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in
+813b110c31/#37959, times out in about 25-40% of release runs. It times
+out waiting for the stale verification task of the rolled-back ALTER to
+end.
 
-This diff makes the statement take two locks before it moves anything, and look up the tablegroups again once it holds them:
+That task fails only if it polls while conn2's ALTER is the transaction
+modifying the table. Its first poll is delayed by
+`ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on
+conn2 can set and clear the table's verifier state within that delay. In
+a failing CI log, conn2's state lived 66ms, entirely inside the stale
+task's initial delay. The task then sees no other transaction on the
+table and keeps polling the outer transaction, which the test keeps open
+on purpose, until the 30s wait times out.
 
-- `AccessExclusiveLock` on the tablegroup that moves. Creates and drops in that tablegroup wait for the statement, and the statement waits for them.
-- On the target tablespace, the lock that the first c
+The test now keeps conn2's ALTER in an open transaction until the outer
+transaction reaches `kDdlPostProcessingFailed`, then commits it. It
+waits on that state instead of on the table having no verification
+tasks, because conn2's own task now stays on the table until conn2
+commits. Test-only change.
 
-**File**: `src/postgres/src/backend/commands/tablecmds.c` (modified, +42/-3)
+## Test plan
+
+- [x]
+`bool/PgDdlSavepointMiniClusterTest.Te
+
+**File**: `src/yb/yql/pgwrapper/pg_ddl_transaction-test.cc` (modified, +10/-7)
 ```diff
-@@ -16500,10 +16500,23 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 	/* Get the orig and new tablespace OIDs */
- 	orig_tablespaceoid = get_tablespace_oid(stmt->orig_tablespacename, false);
- 	new_tablespaceoid = get_tablespace_oid(stmt->new_tablespacename, false);
--	yb_orig_tablegroup_name = get_implicit_tablegroup_name(orig_tablespaceoid);
-+
-+yb_lookup_tablegroups:
- 	yb_new_tablegroup_name = get_implicit_tablegroup_name(new_tablespaceoid);
--	yb_orig_tablegroup_oid = get_tablegroup_oid(yb_orig_tablegroup_name, true);
--	yb_new_tablegroup_oid = get_tablegroup_oid(yb_new_tablegroup_name, true);
-+	/* YB: Found by tablespace, since the name need not be colocation_<oid>. */
-+	if (MyDatabaseColocated)
-+	{
-+		/* Relations with no tablespace are in the default tablegroup. */
-+		if (orig_tablespaceoid == MyDatabaseTableSpace)
-+			yb_orig_tablegroup_oid =
-+				get_tablegroup_oid(DEFAULT_TABLEGROUP_NAME, true);
-+		else
-+			shdepFindImplicitTablegroup(orig_tablespaceoid,
-+										&yb_orig_tablegroup_oid);
-+		shdepFindImplicitTablegroup(new_tablespaceoid,
-+									&yb_new_tablegroup_oid);
-+	}
-+	yb_orig_tablegroup_name = get_tablegroup_name(yb_orig_tablegroup_oid);
- 	/*
- 	 * YB: If a relation name is passed with the ALTER TABLE ALL ... COLOCATED
- 	 * WITH ... SET TABLESPACE ... CASCADE command then we get the relation
-@@ -16532,6 +16545,22 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 						" as it contains existing colocated relation",
- 						stmt->new_tablespacename)));
+@@ -1105,8 +1105,6 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
+   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName));
+   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName2));
+   ASSERT_OK(conn.ExecuteFormat("INSERT INTO $0 VALUES (1), (2), (3)", kTableName2));
+-  auto table_info = catalog_manager.GetTableInfo(
+-      ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName)));
+   auto table2_info = catalog_manager.GetTableInfo(
+       ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName2)));
  
-+	/* YB: A move renames the tablegroup, and the default is found by name. */
-+	if (MyDatabaseColocated && yb_orig_tablegroup_name != NULL &&
-+		strcmp(yb_orig_tablegroup_name, DEFAULT_TABLEGROUP_NAME) == 0)
-+		ereport(ERROR,
-+				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-+				 errmsg("cannot move the default tablegroup"
-+						" to another tablespace")));
-+
-+	/* YB: The tablegroup would have to become or join the default one. */
-+	if (MyDatabaseColocated && OidIsValid(yb_orig_tablegroup_oid) &&
-+		new_tablespaceoid == MyDatabaseTableSpace)
-+		ereport(ERROR,
-+				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-+				 errmsg("cannot move colocated relations to the database"
-+						" default tablespace")));
-+
- 	/*
- 	 * YB: If CASCADE is not specified and the original tablespace contains
- 	 * colocated tables then we don't support moving it unless cascade is
-@@ -16583,6 +16612,16 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 						   get_tablespace_name(new_tablespaceoid));
- 	}
+@@ -1119,13 +1117,18 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
+   const auto txn_id =
+       ASSERT_RESULT(FullyDecodeTransactionId(table2_info->LockForRead()->pb_transaction_id()));
  
-+	/*
-+	 * YB: The checks passed, so lock the tablegroup that moves and the
-+	 * tablespace it moves to. If that took a lock, look up and check again.
-+	 */
-+	if (yb_cascade && MyDatabaseColocated &&
-+		OidIsValid(yb_orig_tablegroup_oid) &&
-+		YbLockImplicitTablegroupForMove(yb_orig_tablegroup_oid,
-+										new_tablespaceoid))
-+		goto yb_lookup_tablegroups;
-+
- 	/*
- 	 * Now that the checks are done, check if we should set either to
- 	 * InvalidOid because it is our database's default tablespace.
-```
-
-**File**: `src/postgres/src/backend/commands/yb_tablegroup.c` (modified, +79/-0)
-```diff
-@@ -42,6 +42,7 @@
- #include "catalog/indexing.h"
- #include "catalog/namespace.h"
- #include "catalog/objectaccess.h"
-+#include "catalog/pg_depend.h"
- #include "catalog/pg_namespace.h"
- #include "catalog/pg_tablespace.h"
- #include "catalog/pg_yb_tablegroup.h"
-@@ -443,6 +444,84 @@ YbLockImplicitTablegroupForDrop(Oid grp_oid)
- 	return !tablegroupHasDependents(grp_oid);
- }
++  // The stale task of the first ALTER fails only if it polls while conn2's ALTER owns the table's
++  // verifier state. Keep conn2's transaction open until then: an autocommit ALTER can begin and
++  // finish within the task's initial ysql_transaction_bg_task_wait_ms delay.
++  ASSERT_OK(conn2.Execute("BEGIN"));
+   ASSERT_OK(conn2.ExecuteFormat("ALTER TABLE $0 ADD COLUMN y INT", kTableName));
+   ASSERT_OK(WaitFor(
+-      [&] { return !table_info->HasTasks(server::MonitoredTaskType::TableSchemaVerification); },
+-      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to end"));
+-  ASSERT_EQ(
+-      catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id),
+-      master::YsqlDdlVerificationState::kDdlPostProcessingFailed);
++      [&] {
++        return catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id) ==
++               master::YsqlDdlVerificationState::kDdlPostProcessingFailed;
++      },
++      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to fail"));
++  ASSERT_OK(conn2.Execute("COMMIT"));
  
-+/*
-+ * Whether the current user owns a relation that is stored in the tablegroup.
-+ */
-+static bool
-+owns_relation_in_tablegroup(Oid grp_oid)
-+{
-+	Relation	depRel;
-+	ScanKeyData key[2];
-+	SysScanDesc scan;
-+	HeapTuple	tup;
-+	bool		result = false;
-+
-+	depRel = table_open(DependRelationId, AccessShareLock);
-+	ScanKeyInit(&key[0],
-+				Anum_pg_depend_refclassid,
-+				BTEqualStrategyNumber, F_OIDEQ,
-+				ObjectIdGetDatum(YbTablegroupRelationId));
-+	ScanKeyInit(&key[1],
-+				Anum_pg_depend_refobjid,
-+				BTEqualStrategyNumber, F_OIDEQ,
-+				ObjectIdGetDatum(grp_oid));
-+	scan = systable_beginscan(depRel, DependReferenceIndexId, true,
-+							  NULL, 2, key);
-+	while (HeapTupleIsValid(tup = systable_getnext(scan)))
-+	{
-+		Form_pg_depend depform = (Form_pg_depend) GETSTRUCT(tup);
-+
-+		if (depform->classid == RelationRelationId &&
-+			SearchSysCacheExists1(RELOID, ObjectIdGetDatum(depform->objid)) &&
-+			pg_class_ownercheck(depform->objid, GetUserId()))
-+		{
-+			result = true;
-+			break;
-+		}
-+	}
-+	systable_endscan(scan);
-+	table_close(depRel, AccessShareLock);
-+
-+	return result;
-+}
-+
-+/*
-+ * Lock an implicit tablegroup that is being moved to another tablespace
-+ * against creates and drops in it, and lock that tablespace against the
-+ * creation of a tablegroup for it. Return whether a lock was taken, in which
-+ * case what the caller looked up before may be stale.
-+ */
-+bool
-+YbLockImplicitTablegroupForMove(Oid grp_oid, Oid new_tablespaceoid)
-+{
-+	LOCKTAG		grp_tag;
-+	LOCKTAG		tablespace_tag;
-+
-+	Assert(OidIsValid(grp_oid) && OidIsValid(new_tablespaceoid));
-+
-+	if (!YBCUsingObjectLocksGloballyForCurrentTxn())
-+		return false;
-+
-+	SET_LOCKTAG_OBJECT(grp_tag, MyDatabaseId, YbTablegroupRelationId,
-+					   grp_oid, 0);
-+	SET_LOCKTAG_OBJECT(tablespace_tag, MyDatabaseId, TableSpaceRelationId,
-+					   new_tablespaceoid, 0);
-+	if (LockHeldByMe(&grp_tag, AccessExclusiveLock) &&
-+		LockHeldByMe(&tablespace_tag, AccessExclusiveLock))
-+		return false;
-+
-+	/* Otherwise any user could block creates and drops in the tablegroup. */
-+	if (!owns_relation_in_tablegroup(grp_oid))
-+		return false;
-+
-+	LockDatabaseObject(YbTablegroupRelationId, grp_oid, 0,
-+					   AccessExclusiveLock);
-+	LockDatabaseObject(TableSpaceRelationId, new_tablespaceoid, 0,
-+					   AccessExclusiveLock);
-+	YbInvalidateCatalogSnapshot();
-+	return true;
-+}
-+
- /*
-  * RemoveTablegroupById - remove a tablegroup by its OID.
-  * If a tablegroup does not exist with the provided oid, then an error is raised.
-```
-
-**File**: `src/postgres/src/include/commands/yb_tablegroup.h` (modified, +2/-0)
-```diff
-@@ -36,6 +36,8 @@ extern Oid	get_tablegroup_oid(const char *tablegroupname, bool missing_ok);
- extern char *get_tablegroup_name(Oid grp_oid);
- extern Oid	YbLockImplicitTablegroup(Oid tablespaceoid);
- extern bool YbLockImplicitTablegroupForDrop(Oid grp_oid);
-+extern bool YbLockImplicitTablegroupForMove(Oid grp_oid,
-+											Oid new_tablespaceoid);
- 
- extern void RemoveTablegroupById(Oid grp_oid, bool remove_implicit);
- extern char *get_implicit_tablegroup_name(Oid oidSuffix);
-```
-
-**File**: `src/yb/yql/pgwrapper/pg_object_locks-test.cc` (modified, +188/-10)
-```diff
-@@ -401,6 +401,7 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
-     PgObjectLocksTestRF1::SetUp();
-     auto conn = ASSERT_RESULT(Connect());
-     ASSERT_OK(conn.Execute("CREATE TABLESPACE ts LOCATION '/data'"));
-+    ASSERT_OK(conn.Execute("CREATE TABLESPACE ts2 LOCATION '/data'"));
-     ASSERT_OK(conn.ExecuteFormat("CREATE DATABASE $0 WITH COLOCATION = true", kDbName));
-   }
- 
-@@ -438,7 +439,32 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
-     ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(second, "t2"));
-   }
- 
-+  Result<std::string> TablegroupOf(PGConn& conn, const std::string& table) {
-+    return conn.FetchRow<std::string>(Format(
-+        "SELECT grpname FROM pg_yb_tablegroup WHERE oid = "
-+        "(SELECT tablegroup_oid FROM yb_table_properties('$0'::regclass))", table));
-+  }
-+
-+  Result<std::string> TablespaceOf(PGConn& conn, const std::string& table) {
-+    return conn.FetchRow<std::string>(Format(
-+        "SELECT COALESCE(s.spcname, 'pg_default') FROM pg_class c "
-+        "LEFT JOIN pg_tablespace s ON s.oid = c.reltablespace WHERE c.oid = '$0'::regclass",
-+        table));
-+  }
-+
-+  Status SetColocatedTablesWithTablespaces(PGConn& conn, bool enabled) {
-+    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
-+    return WaitFor([&]() -> Result<bool> {
-+      return VERIFY_RESULT(conn.FetchRow<std::string>(
-+          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
-+    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
-+  }
-+
-   static constexpr auto kDbName = "colo";
-+  static constexpr auto kMoveTablegroupStmt =
-+      "ALTER TABLE ALL IN TABLESPACE ts SET TABLESPACE ts2 CASCADE";
-+  static constexpr auto kCreateInTargetTablespaceStmt =
-+      "CREATE TABLE t2 (k INT PRIMARY KEY) TABLESPACE ts2";
- };
- 
- TEST_F(PgObjectLocksImplicitTablegroupTest, DropOfLastTableWaitsForCreate) {
-@@ -566,24 +592,176 @@ TEST_F(PgObjectLocksImplicitTablegroupTest, EmptyDefaultTablegroupIsKept) {
- 
- TEST_F(PgObjectLocksImplicitTablegroupTest, DefaultTablegroupInTablespaceIsKept) {
-   auto conn = ASSERT_RESULT(ConnectToDB(kDbName));
--  auto set_feature = [&](bool enabled) -> Status {
--    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
--    return WaitFor([&]() -> Result<bool> {
--      return VERIFY_RESULT(conn.FetchRow<std::string>(
--          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
--    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
--  };
--
-   // While the feature is off, the first table puts the default tablegroup in its tablespace.
--  ASSERT_OK(set_feature(false));
-+  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, false));
-   ASSERT_OK(conn.Execute(CreateTableStmt("t1")));
--  ASSERT_OK(set_feature(true));
-+  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, true));
-   ASSERT_OK(conn.Execute("DROP TABLE t1"));
-   ASSERT_EQ(ASSERT_RESULT(conn.FetchRow<PGUint64>(
-       "SELECT COUNT(*) FROM pg_yb_tablegroup "
-       "WHERE grpname = 'default' AND grptablespace != 0")), 1);
- }
- 
-+TEST_F(PgObjectLocksImplicitTablegroupTest, MoveOfTablegroupWaitsForCreate) {
-+  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
-+  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
-+  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
-+
-+  ASSERT_OK(creator.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
-+  ASSERT_OK(creator.Execute(CreateTableStmt("t2")));
-+  auto move_future = std::async(std::launch::async, [&]() {
-+    return mover.Execute(kMoveTablegroupStmt);
-+  });
-+  ASSERT_OK(WaitForLockWaiter());
-+  ASSERT_OK(creator.CommitTransaction());
-+  ASSERT_OK(move_future.get());
-+
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts2");
-+  ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(creator, "t2"));
-+}
-+
-+TEST_F(PgObjectLocksImplicitTablegroupTest, CreateWaitsForMoveOfTablegroup) {
-+  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
-+  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
-+  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
-+
-+  ASSERT_OK(mover.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
-+  ASSERT_OK(mover.Execute(kMoveTablegroupStmt));
-+  auto create_future = std::async(std::launch::async, [&]() {
-+    return creator.Execute(CreateTableStmt("t2"));
-+  });
-+  ASSERT_OK(WaitForLockWaiter());
-+  ASSERT_OK(mover.CommitTransaction());
-+  ASSERT_OK(create_future.get());
-+
-+  // The tablegroup of t1 left ts, so t2 is in a new one.
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t1")), "ts2");
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts");
-+  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM pg_yb_tablegroup")), 2);
-+  ASSERT_OK(creator.Execute("INSERT INTO t2 VALUES (1)"));
-+  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM t2")), 1);
-+}
-+
-+TEST_F(PgObjectLo
+   ASSERT_OK(conn.Execute("ROLLBACK TO SAVEPOINT b"));
+   ASSERT_OK(conn.Execute(GetParam() ? "COMMIT" : "ROLLBACK"));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39005** (2026-11-23): [PLAT-23681] YBA: Renumber the update_time migration to V481 (@artem-mindrov)
-- **PR #38987** (2026-11-23): [BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
-- **PR #38986** (2026-11-23): [BACKPORT 2026.2][PLAT-24001,PLAT-24003] YBA: Redact stored LDAP secrets in configure responses and the state transition delta (@asc-073-yb)
-- **PR #38984** (2026-11-23): [BACKPORT 2026.2][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
-- **PR #38965** (2026-11-23): [#38964] CDC: Wait for stream metadata in CDCSDKYsqlTest.TestStreamActiveOnNamespaceNoPKTable (@csi-fix)
-- **PR #38960** (2026-11-23): [BACKPORT 2026.1][PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827) (@kv83821-yb)
+- **PR #39470** (2026-11-27): [PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu (@100sarthak100)
+- **PR #39452** (2026-11-27): [BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39451** (2026-11-27): [BACKPORT 2026.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39450** (2026-11-27): [BACKPORT 2026.1][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39440** (2026-11-26): [BACKPORT 2024.2][PLAT-20422] YBA: Install openapi-format once before formatting in parallel (@proff4eg)
+- **PR #39433** (2026-11-26): [BACKPORT 2026.2][#39047] YSQL: Flush pending writes before registering a catalog change (#39062) (@myang2021)
 
 ---
 
@@ -2917,59 +2740,33 @@ This diff makes the statement take two locks before it moves anything, and look 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts
+## X. [#33147] YSQL: Disable Read Committed isolation by default in release builds
 
 **RULE**:
-When implementing operations in `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/src/backend/utils/misc/pg_yb_utils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c5ff0f2`: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b53522d`: [#33147] YSQL: Disable Read Committed isolation by default in release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/utils/misc/pg_yb_utils.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-import java.time.Duration;
-  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
-
-  // Whether a failed setFlag RPC is retried, and until when.
-  private boolean retryRpcFailures;
-  private long retryDeadlineMs;
-
-    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
-      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
-      // back on its own; a VM server that is down usually does not. A best-effort push is often
-      // to a server that is down for good. VM callers that push best effort without ignoreErrors
-      // (master failover) rely on the first failure, so they must not wait either.
-      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
-  // Package-private so tests can stub the timeout and the wait.
-  Duration retryTimeout() {
-    return config.getDuration("yb.wait_for_server_timeout");
-  }
-
-  void waitBeforeRetry(Duration delay) {
-    waitFor(delay);
-  }
-
-    boolean setSuccess;
-    while (true) {
-      try {
-        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-        break;
-      } catch (Exception e) {
-        // A server t
+#else
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+#else
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c5ff0f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b53522d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

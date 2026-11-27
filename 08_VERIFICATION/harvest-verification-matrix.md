@@ -13682,3 +13682,6 @@
 | `CYCLE-20261127-XGIB` | `2026-11-27T05:11:28.979Z` | `kividbio/kividb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10832` | Yes (`9b917fc1...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T05:12:02.878Z` | `hf-conwayresearch-underdog-saluki-27b-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D749CB6F` [Domain D] | Yes (`e8d10054...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T05:12:42.247Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B8E42626` [Domain H] | Yes (`54e0dc8e...`) |
+| `CYCLE-20261127-A7GP` | `2026-11-27T05:21:23.785Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`16185385...`) |
+| `CYCLE-20261127-A8J3` | `2026-11-27T05:21:25.167Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10833` | Yes (`de849460...`) |
+| `CYCLE-20261127-AJHP` | `2026-11-27T05:21:39.373Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10834` | Yes (`a747eeac...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `71475e09`  
+> **Source Version**: `515ddfaa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T04:30:50.536Z  
+> **Timestamp**: 2026-11-27T05:21:23.949Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:30:50.531Z  
+> **Harvest Timestamp**: 2026-11-27T05:21:23.943Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5264 stars
+- **Stars / Engagement**: 5268 stars
 
 ---
 
@@ -2501,736 +2501,114 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21a4d76d` (2026-11-25)
-**Commit Message**: feat(ui): add Alt+Left/Alt+Right tab history (#752)
+### Incident Patch 1: `515ddfaa` (2026-11-26)
+**Commit Message**: fix(dpi): preserve STUN SOFTWARE at the UTF-8 byte cap (#753)
 
-* feat(ui): add Alt+Left/Alt+Right tab history
-
-Keep a bounded back/forward stack of visited tabs so Alt+Left returns
-to the previous view (e.g. Details back to Overview) and Alt+Right
-undoes it. Terminals that can remap the X1/X2 mouse buttons can map
-them to these keys until crossterm reports those buttons.
-
-Refs #274
-
-* feat(ui): also bind Alt+b/Alt+f for macOS terminals and use jump_to_tab
-
-Map Alt+b / Alt+f alongside Alt+Left / Alt+Right so Option+Left / Option+Right work out of the box in macOS terminals that send Esc b / Esc f by default (Ghostty, Terminal.app, iTerm2).
-
-Route the remaining direct tab switches in Overview and Activity through jump_to_tab so record_tab_change stays private, and combine the duplicate tab-navigation guard in dispatch_key.
-
----------
-
-Co-authored-by: JROtto5 <[REDACTED_EMAIL]>
-Co-authored-by: Marco Cadetg <[REDACTED_EMAIL]>
+Validate the character crossing the 128-byte cap and retain the complete prefix.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
+@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
- ### Added
-+- Go back and forward through visited tabs with `Alt+Left` / `Alt+Right`
- - Mirror the Graph tab's RX/TX traffic waves around a shared center time horizon (RX up, TX down), with `m` to toggle back to the split view and `[view] mirrored_traffic_graph` in `config.toml`
- - Sort findings by severity while preserving the selected finding and evidence position (#734)
- - Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
+ ### Fixed
++- Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
+ - Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
+ - Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
+ - Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
 ```
 
-**File**: `USAGE.ja.md` (modified, +1/-1)
+**File**: `crates/rustnet-core/src/network/dpi/stun.rs` (modified, +62/-4)
 ```diff
-@@ -11,7 +11,7 @@
- 権限の設定は[インストールガイド（英語）](INSTALL.md)を参照してください。
- `rustnet` で起動し、必要なら `-i <interface>` でキャプチャ対象を指定します。
- 
--- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。
-+- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。`Alt+←` / `Alt+→`：表示したタブを戻る／進む。
- - `/`：接続の絞り込み。Enter：選択した接続の詳細。Esc：戻る。
- - `h`：現在の画面のヘルプ。`q`：終了。
- 
-```
-
-**File**: `USAGE.md` (modified, +3/-2)
-```diff
-@@ -527,14 +527,15 @@ rustnet --kubernetes on
- - `Tab` - Next tab
- - `Shift+Tab` - Previous tab
- - `1` / `2` / `3` / `4` / `5` - Jump directly to Overview / Details / Activity / Graph / Health & Host
-+- `Alt+Left` / `Alt+Right` - Go back / forward through the tabs you visited
- - `Enter` - View detailed information about selected connection
- - `Esc` - Go back to previous view or clear active filter
- - `h` - Toggle a help overlay containing controls for the active tab
- 
- The help overlay keeps the active tab visible underneath it and only lists
- controls and concepts that apply to that tab. Tab navigation (`Tab`,
--`Shift+Tab`, `1`-`5`) stays available while the overlay is open, and a mouse
--click anywhere dismisses it.
-+`Shift+Tab`, `1`-`5`, `Alt+Left` / `Alt+Right`) stays available while the
-+overlay is open, and a mouse click anywhere dismisses it.
- 
- ### Compact terminals
- 
-```
-
-**File**: `USAGE.zh-CN.md` (modified, +2/-1)
-```diff
-@@ -511,11 +511,12 @@ rustnet --kubernetes on
- - `Tab`：下一个标签页
- - `Shift+Tab`：上一个标签页
- - `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 健康与主机（Health & Host）
-+- `Alt+Left` / `Alt+Right`：在访问过的标签页之间后退 / 前进
- - `Enter` —— 查看所选连接的详细信息
- - `Esc` —— 返回上一个视图或清除活动过滤器
- - `h`：切换仅包含当前标签页相关操作的帮助浮层
- 
--帮助浮层会保留其下方的当前标签页，并且只列出适用于该标签页的操作和概念。浮层打开时仍可使用标签页导航键（`Tab`、`Shift+Tab`、`1`-`5`），点击鼠标任意位置即可关闭浮层。
-+帮助浮层会保留其下方的当前标签页，并且只列出适用于该标签页的操作和概念。浮层打开时仍可使用标签页导航键（`Tab`、`Shift+Tab`、`1`-`5`、`Alt+Left` / `Alt+Right`），点击鼠标任意位置即可关闭浮层。
- 
- ### 操作<a id="actions"></a>
- 
-```
-
-**File**: `src/tui.rs` (modified, +1/-1)
-```diff
-@@ -404,7 +404,7 @@ where
-                                     ui_state.clear_filter();
-                                     needs_data_refresh = true;
-                                 } else if ui_state.selected_tab != 0 {
--                                    ui_state.selected_tab = 0;
-+                                    ui_state.jump_to_tab(0);
-                                 }
-                             }
- 
-```
-
-**File**: `src/ui/mod.rs` (modified, +16/-5)
-```diff
-@@ -52,11 +52,22 @@ pub fn dispatch_key(
-     ctx: &mut HandlerContext<'_>,
- ) -> Option<Vec<Effect>> {
-     use crossterm::event::{KeyCode, KeyModifiers};
--    if (!ctx.ui_state.filter_mode || ctx.ui_state.show_help)
--        && let (KeyCode::Char(n @ '1'..='5'), KeyModifiers::NONE) = (key.code, key.modifiers)
--    {
--        ctx.ui_state.jump_to_tab(n as usize - '1' as usize);
--        return Some(Vec::new());
-+    if !ctx.ui_state.filter_mode || ctx.ui_state.show_help {
-+        match (key.code, key.modifiers) {
-+            (KeyCode::Char(n @ '1'..='5'), KeyModifiers::NONE) => {
-+                ctx.ui_state.jump_to_tab(n as usize - '1' as usize);
-+                return Some(Vec::new());
-+            }
-+            (KeyCode::Left | KeyCode::Char('b'), KeyModifiers::ALT) => {
-+                ctx.ui_state.go_back();
-+                return Some(Vec::new());
-+            }
-+            (KeyCode::Right | KeyCode::Char('f'), KeyModifiers::ALT) => {
-+                ctx.ui_state.go_forward();
-+                return Some(Vec::new());
-+            }
-+            _ => {}
-+        }
-     }
-     if ctx.ui_state.show_help {
-         return HelpOverlay.handle_key(key, ctx);
-```
-
-**File**: `src/ui/snapshot_tests.rs` (modified, +61/-0)
-```diff
-@@ -6114,3 +6114,64 @@ fn profile_details_rendering() {
-         );
-     }
- }
-+
-+#[test]
-+fn alt_arrows_walk_tab_history_from_any_tab() {
-+    use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-+    let app = test_app();
-+    let regions = ClickableRegions::default();
-+    // Overview claims plain Left/Right for group folding; Alt+arrows must
-+    // still reach the history.
-+    let mut state = UiState {
-+        grouping_enabled: true,
-+        ..Default::default()
-+    };
-+    let alt = |code, state: &mut UiState| {
-+        let tab = state.selected_tab;
-+        dispatch_key(
-+            tab,
-+            KeyEvent::new(code, KeyModifiers::ALT),
-+            &mut test_support::empty_ctx(&app, state, &regions),
-+        )
-+        .unwrap();
-+    };
-+    state.jump_to_tab(3);
-+    alt(KeyCode::Left, &mut state);
-+    assert_eq!(state.selected_tab, 0);
-+    alt(KeyCode::Right, &mut state);
-+    assert_eq!(state.selected_tab, 3);
-+
-+    // macOS terminals (Ghostty, Terminal.app, iTerm2) send Esc b / Esc f for Option+Left/Right.
-+    alt(KeyCode::Char('b'), &mut state);
-+    assert_eq!(state.selected_tab, 0);
-+    alt(KeyCode::Char('f'), &mut state);
-+    assert_eq!(state.selected_tab, 3);
-+
-+    state.show_help = true;
-+    alt(KeyCode::Left, &mut state);
-+    assert_eq!(state.selected_tab, 0);
-+    assert!(state.show_help);
-+    alt(KeyCode::Char('f'), &mut state);
-+    assert_eq!(state.selected_tab, 3);
-+    assert!(state.show_help);
-+    alt(KeyCode::Char('b'), &mut state);
-+    assert_eq!(state.selected_tab, 0);
-+    assert!(state.show_help);
-+
-+    // While typing a filter the arrows belong to the input.
-+    state.show_help = false;
-+    state.filter_mode = true;
-+    let tab = state.selected_tab;
-+    dispatch_key(
-+        tab,
-+        KeyEvent::new(KeyCode::Right, KeyModifiers::ALT),
-+        &mut test_support::empty_ctx(&app, &mut state, &regions),
-+    );
-+    assert_eq!(state.selected_tab, 0);
-+    dispatch_key(
-+        tab,
-+        KeyEvent::new(KeyCode::Char('f'), KeyModifiers::ALT),
-+        &mut test_support::empty_ctx(&app, &mut state, &regions),
-+    );
-+    assert_eq!(state.selected_tab, 0);
-+}
-```
-
-**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__help_overlay_activity.snap` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ expression: output
-     │   S                     Reverse the sort direction                                     ▐ │    
-     │   Esc                   Back one level; from applications return to Overview           ▐ │    
-     │                                                                                        ▐ │    
--    │ ▎ Activity Concepts                                                                    ▐ │    
-+    │ ▎ Activity Concepts                                                                      │    
-     │   2s Avg TX/RX     Sort and show averaged rates with s for steadier ordering             │    
-     │   Applications     Traffic grouped by process name; PIDs are inside details              │    
-     │   Scope            All captured traffic; Overview filters do not apply                   │    
-```
-
----
-
-### Incident Patch 2: `a2a1ef4a` (2026-11-25)
-**Commit Message**: feat: add shared passive diagnostic findings engine for TUI and headless JSON (#751)
-
-* feat: add shared passive diagnostic findings engine for TUI and headless JSON
-
-**File**: `benches/common/mod.rs` (modified, +1/-0)
-```diff
-@@ -39,6 +39,7 @@ pub fn make_packet(local_port: u16, seq: u32) -> ParsedPacket {
-         },
-         payload_len: 1400,
-         window_scale: None,
-+        mss: None,
-     });
-     packet
- }
-```
-
-**File**: `crates/rustnet-core/src/network/dns_attribution.rs` (modified, +2/-0)
-```diff
-@@ -756,6 +756,7 @@ mod tests {
-                     sni: Some("sni.example".into()),
-                     alpn: vec![],
-                     cipher_suite: None,
-+                    alert: None,
-                 }),
-             }),
-         });
-@@ -787,6 +788,7 @@ mod tests {
-                     sni: Some("partial[PARTIAL]".into()),
-                     alpn: vec![],
-                     cipher_suite: None,
-+                    alert: None,
-                 }),
-             }),
-         });
-```
-
-**File**: `crates/rustnet-core/src/network/dpi/http.rs` (modified, +25/-0)
-```diff
-@@ -14,6 +14,7 @@ pub(super) fn analyze_http(payload: &[u8]) -> Option<HttpInfo> {
-         status_code: None,
-         status_token: None,
-         user_agent: None,
-+        has_basic_auth: false,
-     };
- 
-     let text = String::from_utf8_lossy(payload);
-@@ -63,6 +64,14 @@ pub(super) fn analyze_http(payload: &[u8]) -> Option<HttpInfo> {
-                 info.host = Some(value.to_string());
-             } else if key.eq_ignore_ascii_case("user-agent") {
-                 info.user_agent = Some(value.to_string());
-+            } else if key.eq_ignore_ascii_case("authorization")
-+                && value
-+                    .as_bytes()
-+                    .get(..6)
-+                    .is_some_and(|prefix| prefix.eq_ignore_ascii_case(b"basic "))
-+            {
-+                // Flag cleartext HTTP Basic auth without retaining credentials.
-+                info.has_basic_auth = true;
-             }
+@@ -113,10 +113,26 @@ fn parse_software_attribute(payload: &[u8], message_length: usize) -> Option<Str
          }
+ 
+         if attr_type == ATTR_SOFTWARE {
+-            let effective_len = attr_length.min(MAX_SOFTWARE_LEN);
+-            return std::str::from_utf8(&payload[offset..offset + effective_len])
+-                .ok()
+-                .map(|s| s.trim_end_matches('\0').to_string());
++            let full = &payload[offset..offset + attr_length];
++            let value = &full[..attr_length.min(MAX_SOFTWARE_LEN)];
++            let text = match std::str::from_utf8(value) {
++                Ok(s) => s,
++                // The cap counts bytes, but SOFTWARE may hold up to 127
++                // characters (763 bytes, RFC 8489 §14.14), so the cut can
++                // split a multi-byte character: keep the complete ones, but
++                // only if the split character is valid in the full value.
++                Err(e) if attr_length > MAX_SOFTWARE_LEN && e.error_len().is_none() => {
++                    let cut = e.valid_up_to();
++                    // A UTF-8 character takes at most four bytes from its start.
++                    let end = attr_length.min(cut + 4);
++                    match full[..end].utf8_chunks().next() {
++                        Some(chunk) if chunk.valid().len() > cut => &chunk.valid()[..cut],
++                        _ => return None,
++                    }
++                }
++                Err(_) => return None,
++            };
++            return Some(text.trim_end_matches('\0').to_string());
+         }
+ 
+         // Advance to next attribute, padding to 4-byte boundary
+@@ -228,6 +244,48 @@ mod tests {
+         assert_eq!(info.software, Some("TestAgent/1.0".to_string()));
      }
-@@ -150,6 +159,22 @@ mod tests {
-         assert_eq!(info.method.as_deref(), Some("GET"));
-         assert_eq!(info.path.as_deref(), Some("/index.html"));
-         assert_eq!(info.host.as_deref(), Some("example.com"));
-+        assert!(!info.has_basic_auth);
+ 
++    #[test]
++    fn test_software_cap_splitting_a_character_keeps_the_prefix() {
++        let prefix = format!("{}é", "a".repeat(125));
++        // Only the first byte of the last character fits under the cap.
++        for last in ['é', '🙂'] {
++            let attr = build_software_attr(&format!("{prefix}{last}"));
++            let packet = build_stun_packet(2, 0x0001, &attr);
++            let info = analyze_stun(&packet).expect("should parse");
++            assert_eq!(info.software.as_deref(), Some(prefix.as_str()));
++        }
 +    }
 +
 +    #[test]
-+    fn test_http_basic_auth_flagged_without_storing_credentials() {
-+        let payload =
-+            b"GET /admin HTTP/1.1\r\nHost: intranet.local\r\nAuthorization: Basic dXNlcjpwYXNz\r\n\r\n";
-+        let info = analyze_http(payload).unwrap();
-+        assert!(info.has_basic_auth);
++    fn test_software_cap_splitting_an_invalid_character_is_rejected() {
++        // The byte after the cap is not a continuation byte, so the lead
++        // byte at the cut does not start a valid character.
++        let mut attr = build_software_attr(&format!("{}éé", "a".repeat(125)));
++        attr[4 + 128] = b'a';
++        let packet = build_stun_packet(2, 0x0001, &attr);
++        let info = analyze_stun(&packet).expect("should parse");
++        assert!(info.software.is_none());
++    }
 +
-+        let bearer =
-+            b"GET /api HTTP/1.1\r\nHost: intranet.local\r\nAuthorization: Bearer tok123\r\n\r\n";
-+        assert!(!analyze_http(bearer).unwrap().has_basic_auth);
++    #[test]
++    fn test_software_invalid_utf8_is_rejected() {
++        // Short value, and one longer than the cap: neither is a cut character.
++        for software in ["TestAgent".to_string(), "a".repeat(200)] {
++            let mut attr = build_software_attr(&software);
++            attr[4] = 0xFF;
++            let packet = build_stun_packet(2, 0x0001, &attr);
++            let info = analyze_stun(&packet).expect("should parse");
++            assert!(info.software.is_none());
++        }
 +
-+        let non_ascii = "GET / HTTP/1.1\r\nAuthorization: Basicé\r\n\r\n";
-+        assert!(!analyze_http(non_ascii.as_bytes()).unwrap().has_basic_auth);
-     }
- 
++        // A value under the cap that itself ends mid-character is not a cut.
++        let mut attr = build_software_attr("TestAgenté");
++        attr[3] = 10; // drop the last byte of 'é', leaving a lone 0xC3
++        let packet = build_stun_packet(2, 0x0001, &attr);
++        let info = analyze_stun(&packet).expect("should parse");
++        assert!(info.software.is_none());
++    }
++
      #[test]
-```
-
-**File**: `crates/rustnet-core/src/network/dpi/https.rs` (modified, +51/-3)
-```diff
-@@ -1,5 +1,5 @@
- use super::tls_common::{self, TlsParseOptions};
--use crate::network::types::{HttpsInfo, TlsInfo};
-+use crate::network::types::{HttpsInfo, TlsAlert, TlsInfo};
- use log::debug;
- 
- pub(super) fn is_tls_handshake(payload: &[u8]) -> bool {
-@@ -9,11 +9,24 @@ pub(super) fn is_tls_handshake(payload: &[u8]) -> bool {
- 
-     // TLS record header:
-     // - Content type (1 byte): 0x16 for handshake
--    // - Version (2 bytes): 0x0301-0x0304 for TLS 1.0-1.3
-+    // - Version (2 bytes): 0x0300-0x0304 for SSL 3.0 / TLS 1.0-1.3
-     // - Length (2 bytes)
-     payload[0] == 0x16 && // Handshake content type
-         payload[1] == 0x03 && // Major version 3
--        (payload[2] >= 0x01 && payload[2] <= 0x04) // Minor version 1-4
-+        payload[2] <= 0x04 // Minor version 0-4
-+}
-+
-+/// Unencrypted TLS alert record (`content_type == 0x15`, length == 2, valid
-+/// warning/fatal level byte). Encrypted alerts carry MAC/AEAD overhead so
-+/// their record length exceeds 2 bytes.
-+pub(super) fn is_tls_alert(payload: &[u8]) -> bool {
-+    payload.len() >= 7
-+        && payload[0] == 0x15
-+        && payload[1] == 0x03
-+        && payload[2] <= 0x04
-+        && payload[3] == 0x00
-+        && payload[4] == 0x02
-+        && TlsAlert::from_bytes(payload[5], payload[6]).is_some()
- }
- 
- pub(super) fn analyze_https(payload: &[u8]) -> Option<HttpsInfo> {
-@@ -27,6 +40,16 @@ pub(super) fn analyze_https(payload: &[u8]) -> Option<HttpsInfo> {
-     // Record layer version (kept even for non-handshake records)
-     info.version = tls_common::version_from_bytes(payload[1], payload[2]);
- 
-+    if payload[0] == 0x15 {
-+        let record_length = u16::from_be_bytes([payload[3], payload[4]]) as usize;
-+        if record_length == 2 && payload.len() >= 7 {
-+            info.alert = TlsAlert::from_bytes(payload[5], payload[6]);
-+        }
-+        return Some(HttpsInfo {
-+            tls_info: Some(info),
-+        });
-+    }
-+
-     if payload[0] != 0x16 {
-         // Not a handshake record - still extract version
-         return Some(HttpsInfo {
-@@ -135,5 +158,30 @@ mod tests {
-         assert_eq!(info.version, Some(TlsVersion::Tls12));
-         assert_eq!(info.sni, None);
-         assert!(info.alpn.is_empty());
-+        assert_eq!(info.alert, None);
-+    }
-+
-+    #[test]
-+    fn test_analyze_https_cleartext_tls_alert() {
-+        use crate::network::types::{TlsAlert, TlsAlertLevel};
-+
-+        // Fatal handshake_failure (level=2, desc=40) over TLS 1.2 record layer.
-+        let payload = [0x15, 0x03, 0x03, 0x00, 0x02, 0x02, 40];
-+        assert!(is_tls_alert(&payload));
-+        let info = analyze_https(&payload).unwrap().tls_info.unwrap();
-+        assert_eq!(
-+            info.alert,
-+            Some(TlsAlert {
-+                level: TlsAlertLevel::Fatal,
-+                description: 40,
-+            })
-+        );
-+        assert_eq!(info.alert.unwrap().description_name(), "handshake_failure");
-+
-+        // Encrypted alert (length > 2) must not be misread as cleartext alert.
-+        let encrypted = [0x15, 0x03, 0x03, 0x00, 0x1a, 0x02, 40];
-+        assert!(!is_tls_alert(&encrypted));
-+        let info = analyze_https(&encrypted).unwrap().tls_info.unwrap();
-+        assert_eq!(info.alert, None);
-     }
- }
-```
-
-**File**: `crates/rustnet-core/src/network/dpi/mod.rs` (modified, +5/-2)
-```diff
-@@ -114,8 +114,11 @@ pub(crate) fn analyze_tcp_packet(
-         });
-     }
- 
--    // 2. Check for TLS/HTTPS (port 443 or TLS handshake)
--    if (local_port == PORT_HTTPS || remote_port == PORT_HTTPS || https::is_tls_handshake(payload))
-+    // 2. Check for TLS/HTTPS (port 443, TLS handshake, or cleartext TLS alert)
-+    if (local_port == PORT_HTTPS
-+        || remote_port == PORT_HTTPS
-+        || https::is_tls_handshake(payload)
-+        || https::is_tls_alert(payload))
-         && let Some(tls_result) = https::analyze_https(payload)
-     {
-         return Some(DpiResult {
-```
-
-**File**: `crates/rustnet-core/src/network/dpi/tls_common.rs` (modified, +2/-0)
-```diff
-@@ -211,6 +211,7 @@ pub(in crate::network::dpi) fn parse_sni_header(data: &[u8]) -> Option<SniHeader
- 
- pub(in crate::network::dpi) fn version_from_bytes(major: u8, minor: u8) -> Option<TlsVersion> {
-     match (major, minor) {
-+        (0x03, 0x00) => Some(TlsVersion::Ssl30),
-         (0x03, 0x01) => Some(TlsVersion::Tls10),
-         (0x03, 0x02) => Some(TlsVersion::Tls11),
-         (0x03, 0x03) => Some(TlsVersion::Tls12),
-@@ -221,6 +222,7 @@ pub(in crate::network::dpi) fn version_from_bytes(major: u8, minor: u8) -> Optio
- 
- fn version_to_priority(version: TlsVersion) -> u8 {
-     match version {
-+        TlsVersion::Ssl30 => 0,
-         TlsVersion::Tls10 => 1,
-         TlsVersion::Tls11 => 2,
-         TlsVersion::Tls12 => 3,
-```
-
-**File**: `crates/rustnet-core/src/network/findings.rs` (added, +1234/-0)
-```diff
-@@ -0,0 +1,1234 @@
-+//! Shared passive diagnostic findings engine.
-+//!
-+//! Evaluates bounded, evidence-first findings from `rustnet-core` snapshots.
-+//! Findings describe observed wire behavior, never causal verdicts, and never
-+//! retain credentials or application payloads.
-+
-+use std::collections::{HashMap, HashSet};
-+use std::net::SocketAddr;
-+use std::time::SystemTime;
-+
-+use crate::network::dns_analytics::{DnsAnalyticsSnapshot, DnsHealth, DnsIssueKind};
-+use crate::network::interface_stats::InterfaceErrorCounts;
-+use crate::network::neighbors::NeighborChange;
-+use crate::network::tcp_attempts::TcpAttemptSnapshot;
-+use crate::network::time_window::TimeWindow;
-+use crate::network::types::{
-+    ApplicationProtocol, Connection, ConnectionKey, DhcpMessageType, NetworkEventKind,
-+    NetworkEventSnapshot, OpenVpnPacketType, Protocol, SnmpVersion, TlsAlertLevel, TlsInfo,
-+    TlsVersion, WireGuardPacketType,
-+};
-+
-+const MAX_OBSERVATIONS: usize = 32;
-+const LOW_MSS_THRESHOLD: u16 = 1200;
-+const RETRANSMIT_WARN_COUNT: u64 = 5;
-+const RETRANSMIT_HIGH_COUNT: u64 = 10;
-+const OUT_OF_ORDER_WARN_COUNT: u64 = 10;
-+const ZERO_WINDOW_ERROR_COUNT: u64 = 5;
-+const NXDOMAIN_BURST_MIN_COUNT: usize = 10;
-+const NXDOMAIN_BURST_HIGH_COUNT: usize = 25;
-+const NXDOMAIN_BURST_PERCENT: usize = 25;
-+const TUNNEL_UNANSWERED_PACKETS: u64 = 3;
-+const MIDSTREAM_MIN_TCP_FLOWS: usize = 5;
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-+pub enum FindingSeverity {
-+    Error,
-+    Warning,
-+    Healthy,
-+    Muted,
-+}
-+
-+impl FindingSeverity {
-+    pub const fn as_str(self) -> &'static str {
-+        match self {
-+            Self::Error => "error",
-+            Self::Warning => "warning",
-+            Self::Healthy => "healthy",
-+            Self::Muted => "muted",
-+        }
-+    }
-+
-+    pub const fn is_attention(self) -> bool {
-+        matches!(self, Self::Error | Self::Warning)
-+    }
-+
-+    pub const fn observed(error: bool, warning: bool) -> Self {
-+        if error {
-+            Self::Error
-+        } else if warning {
-+            Self::Warning
-+        } else {
-+            Self::Muted
-+        }
-+    }
-+
-+    fn escalate(&mut self, other: Self) {
-+        if other < *self {
-+            *self = other;
-+        }
-+    }
-+
-+    const fn sort_rank(self) -> u8 {
-+        match self {
-+            Self::Error => 0,
-+            Self::Warning => 1,
-+            Self::Healthy | Self::Muted => 2,
-+        }
-+    }
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+pub enum FindingCategory {
-+    Tcp,
-+    Path,
-+    NameAndAddress,
-+    Application,
-+    Tunnel,
-+    Security,
-+    HostAndCapture,
-+}
-+
-+impl FindingCategory {
-+    pub const fn as_str(self) -> &'static str {
-+        match self {
-+            Self::Tcp => "tcp",
-+            Self::Path => "path",
-+            Self::NameAndAddress => "name_and_address",
-+            Self::Application => "application",
-+            Self::Tunnel => "tunnel",
-+            Self::Security => "security",
-+            Self::HostAndCapture => "host_and_capture",
-+        }
-+    }
-+}
-+
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-+pub enum FindingId {
-+    TcpHandshakes,
-+    TcpFlowQuality,
-+    ResetsAndIcmp,
-+    InterfaceDrops,
-+    DnsReplies,
-+    DnsNxdomainBurst,
-+    TlsHealth,
-+    HttpErrors,
-+    LanAndDhcp,
-+    TunnelHealth,
-+    CleartextProtocols,
-+    CaptureQuality,
-+}
-+
-+struct FindingSpec {
-+    id: &'static str,
-+    title: &'static str,
-+    category: FindingCategory,
-+    hint: &'static str,
-+}
-+
-+impl FindingId {
-+    const fn spec(self) -> FindingSpec {
-+        use FindingCategory as Cat;
-+        match self {
-+            Self::TcpHandshakes => FindingSpec {
-+                id: "tcp_handshakes",
-+                title: "TCP handshakes",
-+                category: Cat::Tcp,
-+                hint: "Resets often come from closed ports or middleboxes; unanswered SYNs can also reflect silent drops, routing issues, or capture gaps.",
-+            },
-+            Self::TcpFlowQuality => FindingSpec {
-+                id: "tcp_flow_quality",
-+                title: "TCP flow quality",
-+                category: Cat::Tcp,
-+                hint: "Inspect affected flows in Details for receive window, RTT, and retransmits; low MSS or repeated retransmits can signal MTU clamping or congestion.",
-+            },
-+            Self::ResetsAndIcmp => FindingSpec {
-+                id: "resets_and_icmp",
-+                title: "Resets and ICMP",
-+                category: Cat::Path,
-+                hint: "ICMP Packet Too Big points to path MTU limits; Administratively Prohibited or Port Unreachable indicates peer or router rejection.",
-+            },
-+            Self::InterfaceDrops => FindingSpec {
-+                id: "interface_drops",
-+                title: "Interface drops",
-+                category: Cat::HostAndCapture,
-+                hint: "OS interface drops/errors occur below the application layer; check NIC ring buffers, li
-```
-
-**File**: `crates/rustnet-core/src/network/merge.rs` (modified, +42/-1)
-```diff
-@@ -92,6 +92,8 @@ struct TcpSegment {
-     is_rst: bool,
-     /// Window-scale verdict from this segment's options (SYN only).
-     window_scale: Option<SynWindowScale>,
-+    /// Maximum Segment Size from this segment's options (SYN only).
-+    mss: Option<u16>,
- }
- 
- /// The analytics view of one packet's TCP header.
-@@ -110,6 +112,7 @@ fn tcp_segment_from(parsed: &ParsedPacket, tcp_header: &TcpHeaderInfo) -> TcpSeg
-         is_fin: tcp_header.flags.fin,
-         is_rst: tcp_header.flags.rst,
-         window_scale: tcp_header.window_scale,
-+        mss: tcp_header.mss,
-     }
- }
- 
-@@ -131,6 +134,7 @@ fn analyze_tcp_segment(
-         is_fin,
-         is_rst,
-         window_scale,
-+        mss,
-     } = segment;
-     let mut events = TcpMergeEvents::default();
-     // Read before this segment overwrites it: RFC 5681 asks whether the
-@@ -142,7 +146,7 @@ fn analyze_tcp_segment(
-     // consume a sequence number, so a resent bare one has this same shape.
-     let one_byte_data = payload_len == 1 && !is_syn && !is_fin && !is_rst;
- 
--    // Learn each side's window-scale shift from its SYN. Only a fully
-+    // Learn each side's window-scale shift and MSS from its SYN. Only a fully
-     // examined SYN without the option turns scaling off (RFC 7323); a SYN
-     // whose options could not be examined (truncated capture, malformed
-     // options) proves nothing, and a complete retransmitted SYN may still
-@@ -159,6 +163,13 @@ fn analyze_tcp_segment(
-             Some(SynWindowScale::Absent) => analytics.window_scaling_disabled = true,
-             Some(SynWindowScale::Unknown) | None => {}
-         }
-+        if let Some(mss) = mss {
-+            if is_outgoing {
-+                analytics.mss_out.get_or_insert(mss);
-+            } else {
-+                analytics.mss_in.get_or_insert(mss);
-+            }
-+        }
-     }
- 
-     // Track the advertised window per direction, since each end advertises
-@@ -732,6 +743,26 @@ pub(crate) fn merge_tls_info(dst: &mut Option<TlsInfo>, src: &Option<TlsInfo>) -
-         dst_tls.cipher_suite = src_tls.cipher_suite;
-         updated = true;
-     }
-+    if let Some(alert) = src_tls.alert
-+        && dst_tls.alert != Some(alert)
-+    {
-+        // Keep a fatal alert over a subsequent warning, otherwise record the
-+        // latest observed unencrypted alert.
-+        let keep_existing = matches!(
-+            (dst_tls.alert, alert.level),
-+            (
-+                Some(crate::network::types::TlsAlert {
-+                    level: crate::network::types::TlsAlertLevel::Fatal,
-+                    ..
-+                }),
-+                crate::network::types::TlsAlertLevel::Warning
-+            )
-+        );
-+        if !keep_existing {
-+            dst_tls.alert = Some(alert);
-+            updated = true;
-+        }
-+    }
- 
-     updated
- }
-@@ -742,6 +773,7 @@ fn merge_http_info(old_info: &mut HttpInfo, new_info: &HttpInfo) {
-     set_if_absent(&mut old_info.path, &new_info.path);
-     set_if_absent(&mut old_info.host, &new_info.host);
-     set_if_absent(&mut old_info.user_agent, &new_info.user_agent);
-+    old_info.has_basic_auth |= new_info.has_basic_auth;
-     // Keep the numeric code and observed token from the same first response.
-     if old_info.status_code.is_none() && old_info.status_token.is_none() {
-         old_info.status_code = new_info.status_code;
-@@ -1003,6 +1035,7 @@ mod tests {
-             status_code: code,
-             status_token: token.map(str::to_string),
-             user_agent: None,
-+            has_basic_auth: false,
-         };
-         let mut request = make_http(None, None);
-         let response = make_http(Some(200), Some("+200"));
-@@ -1165,6 +1198,7 @@ mod tests {
-                 },
-                 payload_len: 60, // Simulated payload length
-                 window_scale: None,
-+                mss: None,
-             },
-         );
-         packet.is_outgoing = is_outgoing;
-@@ -1214,12 +1248,14 @@ mod tests {
-             sni: Some("exa[PARTIAL]".to_string()),
-             alpn: vec!["h3".to_string()],
-             cipher_suite: None,
-+            alert: None,
-         });
-         let src = Some(TlsInfo {
-             version: Some(TlsVersion::Tls13),
-             sni: Some("example.com".to_string()),
-             alpn: Vec::new(),
-             cipher_suite: None,
-+            alert: None,
-         });
- 
-         assert!(merge_tls_info(&mut dst, &src));
-@@ -1234,6 +1270,7 @@ mod tests {
-             sni: Some("other.example".to_string()),
-             alpn: Vec::new(),
-             cipher_suite: None,
-+            alert: None,
-         });
-         assert!(!merge_tls_info(&mut dst, &other));
-         assert_eq!(dst.unwrap().sni.as_deref(), Some("example.com"));
-@@ -1246,12 +1283,14 @@ mod tests {
-             sni: None,
-             alpn: Vec::new(),
-             cipher_suite: Some(0x1301),
-+            alert: None,
-         });
-         let src = Some(TlsInfo {
-             version: Some(TlsVersion::Tls13),
-             sni: Some(
+     fn test_wrong_magic_cookie() {
+         let mut packet = build_stun_packet(0, 0x0001, &[]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #754** (2026-11-26): chore(deps): bump anyhow from 1.0.104 to 1.0.105 in the rust-dependencies group (@dependabot[bot])
+- **PR #753** (2026-11-26): fix(dpi): keep STUN SOFTWARE when the byte cap splits a character (@JROtto5)
 - **PR #752** (2026-11-25): feat(ui): add Alt+Left/Alt+Right tab history (@JROtto5)
 - **PR #751** (2026-11-25): feat: add shared passive diagnostic findings engine for TUI and headless JSON (@domcyrus)
 - **PR #750** (2026-11-25): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 - **PR #749** (2026-11-23): ci: test-sign the Windows x64 executable (@domcyrus)
-- **PR #748** (2026-11-23): feat(ui): redesign Health & Host Findings accordion and enable t history toggle (@domcyrus)
-- **PR #747** (2026-11-23): chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (@dependabot[bot])
 
 ---
 
@@ -3250,13 +2628,13 @@ Co-authored-by: Marco Cadetg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): add Alt+Left/Alt+Right tab history
+## X. dpi): preserve STUN SOFTWARE at the UTF-8 byte cap
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21a4d76d`: ui): add Alt+Left/Alt+Right tab history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `515ddfaa`: dpi): preserve STUN SOFTWARE at the UTF-8 byte cap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3264,7 +2642,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Go back and forward through visited tabs with `Alt+Left` / `Alt+Right`
+- Keep a STUN `SOFTWARE` value longer than 128 bytes when the 128-byte cap splits a multi-byte UTF-8 character, instead of dropping it
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3274,4 +2652,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21a4d76d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `515ddfaa` are properly handled with clean fallback behavior.

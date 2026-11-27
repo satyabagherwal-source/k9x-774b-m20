@@ -4,22 +4,22 @@
 {
   "source_repository": "yugabyte/yugabyte-db",
   "source_url": "https://github.com/yugabyte/yugabyte-db",
-  "source_version": "1b9b8270",
+  "source_version": "846c1e61",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T11:15:51.302Z",
+  "timestamp": "2026-11-27T05:21:39.636Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-yugabyte-yugabyte-db",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `1b9b8270`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T11:15:51.302Z`  
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `846c1e61`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T05:21:39.636Z`  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `1b9b8270`)
+- **Target Repository**: `yugabyte/yugabyte-db` (Commit: `846c1e61`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:15:49.836Z  
+> **Harvest Timestamp**: 2026-11-27T05:21:38.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2256,13 +2256,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39378** (2026-11-26): **[DocDB] Start a new WAL segment when the data-key size changes**
-  *Symptoms*: Jira Link: [DB-27059](https://yugabyte.atlassian.net/browse/DB-27059) ## Description  Sub-task of #37096.  `yb-admin set_encryption_algorithm` can change the data-key size without a universe key rotation. When a tserver restarts, the log reopens its last WAL segment, which keeps its old data-key size, so the change reaches a tablet's WAL only when the segment rolls over. Until then the encryption key report keeps showing AES-128 WAL segments.  Don't reopen a WAL segment whose data-key size differs from the current algorithm; start a new segment instead.  ## Issue Type  kind/enhancement  ## Warning  - [x] I confirm this issue does not contain any sensitive information.   [DB-27059]: https://yugabyte.atlassian.net/browse/DB-27059?atlOrigin=eyJpIjoiNWRkNTljNzYxNjVmNDY3MDlhMDU5Y2ZhYzA5YTRkZjUiLCJwIjoiZ2l0aHViLWNvbS1KU1cifQ
+- **Issue #39470** (2026-11-27): **[PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu**
+  *Symptoms*: ## Summary  - Show Slow Queries in a node's Actions menu did nothing: since PLAT-23458, `handleSlowQueryClick` reads `this.props`, but it was never bound, so clicking threw `TypeError: Cannot read properties of undefined (reading 'props')`. - Bind it in the `NodeAction` constructor, as `handleLiveQueryClick` already is.  ## Test plan  - [x] `NodeAction.test.jsx` (new): calls `handleLiveQueryClick` and `handleSlowQueryClick` unbound, as the Actions menu does.   - Show Slow Queries navigates to `/universes/<uuid>/monitoring/queries?tab=slow-queries`; Show Live Queries navigates there with `tab=live-queries` and the node filter.   - With the bind removed, the Show Slow Queries test fails with the reported `TypeError`. - [x] eslint and prettier pass on `NodeAction.jsx` and `NodeAction.test.jsx`. 
   **Post-Mortem & Fix Analysis**:
-  > AI-generated (Claude Opus 5.5).  Dropped. A reopened WAL segment builds its cipher from its own header, so it keeps one data-key size for its whole life, and the migration's universe key rotation plus rolling restart already moves tablets to new segments. No change is needed.  AI-generated (Claude Opus 5.5).
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39470) <!-- Reviewable:end --> 
+  > AgentK has started reviewing this pull request — findings will be posted here shortly.  Pushes are not reviewed automatically. Comment `/agentk review` to ask for another pass — but please only after substantial changes, not on every small push, and not for a push that just addresses the review comments.
 
-- **Issue #39360** (2026-11-26): **[BACKPORT 2026.2][PLAT-24135] YBA: Fix the clean home directory check failing YNP on-prem universe create on SLES (#39224)**
-  *Symptoms*: ## Summary  On SLES 15 SP7, YNP on-prem universe create fails at `PreflightNodeCheck` on every node:  ``` Failed YNP preflight checks for node <node>: Yugabyte Home Directory Clean Check: Directory /home/yugabyte is not clean. ```  **Cause.** On SLES, `useradd --create-home` (YNP's yugabyte module) copies `/etc/skel/bin`, an empty directory owned by the `filesystem` package, into the new home. Two things then trip the clean home directory check that YBA runs on a manual on-prem blank node:  1. The check (`yugabyte/templates/precheck.j2`) fails on any `bin` entry in the home, empty or not, so the skel `bin/` alone fails it. 2. #36619 (PLAT-23460) installs `bin/yb-server-exec.sh` (and `bin/yb-tserver-cgroup-exec.sh` with cgroups) from YNP's systemd and rootsystemd modules whenever `<yb_home_dir>/bin` exists, using `bin/` as the sign that the node was provisioned before. On SLES, that puts the launchers into the skel `bin/` of a blank node.  **Fix.** Both are needed. With only one, the check still fails.  - The clean home directory check now passes an empty `bin/` (`-name bin ! -empty`). A `bin/` with anything in it, and `.yugabytedb`, `controller`, `master` or `tserver`, still fail it. An unreadable `bin/` counts as non-empty with GNU find, so it still fails too. - The same change goes into the two legacy copies of the check, `managed/devops/opscli/ybops/data/preflight_checks.sh` and `managed/node-agent/resources/preflight_check.sh`. `PreflightNodeCheck` and `PrecheckNodeDetach
+- **Issue #39452** (2026-11-27): **[BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)**
+  *Symptoms*: ## Summary  `TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in 813b110c31/#37959, times out in about 25-40% of release runs. It times out waiting for the stale verification task of the rolled-back ALTER to end.  That task fails only if it polls while conn2's ALTER is the transaction modifying the table. Its first poll is delayed by `ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on conn2 can set and clear the table's verifier state within that delay. In a failing CI log, conn2's state lived 66ms, entirely inside the stale task's initial delay. The task then sees no other transaction on the table and keeps polling the outer transaction, which the test keeps open on purpose, until the 30s wait times out.  The test now keeps conn2's ALTER in an open transaction until the outer transaction reaches `kDdlPostProcessingFailed`, then commits it. It waits on that state instead of on the table having no verification tasks, because conn2's own task now stays on the table until conn2 commits. Test-only change.  Original commit: bfe7a66c0cc9fbf87b6d624d6ab90dd669b00de3 / #39424  ## Test plan  - [x] `bool/PgDdlSavepointMiniClusterTest.TestRollbackToSavepointAfterStaleVerificationTaskFails/1` passes 10/10 and `/0` passes 5/5 (debug) - [x] With the `YsqlRollbackDocdbSchemaToSubTxn` fix from 813b110c31 reverted, `/1` fails 3/3 (FATAL at `ROLLBACK TO SAVEPOINT b`: the rollback was not applied to `test2`), so the test still covers #37683  Jenkins: test regex:
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2279,503 +2280,430 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd0f5120` (2026-11-25)
-**Commit Message**: [#37880] Agents: Add guides for filing core DB and YSQL issues (#37881)
+### Incident Patch 1: `7b53522d` (2026-11-26)
+**Commit Message**: [#33147] YSQL: Disable Read Committed isolation by default in release builds (#39340)
 
 ## Summary
 
-`/create-issue` routes an issue and picks its template, but says nothing
-about what a good issue body contains, and agent-filed YSQL issues vary
-widely in how reproducible and readable they are. Its routing of
-sensitive issues also assumed every filer is a Yugabyte employee.
+Release builds have defaulted `yb_enable_read_committed_isolation` to
+true since 1e1e6d58262. A cluster that upgrades from a release where the
+default was false, and never set the flag, would silently move from the
+REPEATABLE READ mapping to true READ COMMITTED.
 
-This adds two guides under `.github/issue-guides/`. They live outside
-the skill because human filers should be able to follow them too, and
-`.github/ISSUE_TEMPLATE/config.yml` links them from GitHub's new-issue
-page.
+This swaps the build-type default: false in release builds, true in
+debug builds. The 2025.2 and 2026.1 branches already ship this way
+(#31686). New clusters still get Read Committed, because YBA and
+yugabyted set the flag explicitly.
 
-- **`filing-issues.md`**, for every core DB issue:
-- **Where to file.** Not sensitive: a GitHub issue. Sensitive, Yugabyte
-employee: a JIRA `Vulnerability` ticket for a security vulnerability
-(matching the rule from #38664), otherwise a JIRA `DB` ticket marked
-sensitive. Sensitive, external: a security vulnerability goes to
-`[REDACTED_EMAIL]` per the [vulnerability disclosure
-policy](https://docs.yugabyte.com/stable/secure/vulnerability-disclosure-policy/);
-anything else is scrubbed into a GitHub issue or goes to a support
-ticket. An unfixed vulnerability is always sensitive.
-- **Duplicates.** Search first. A mat
+The default lives in two places that must agree, and both are changed:
+`kEnableReadCommitted` in `pggate_flags.cc`, and the fallback in
+`YBIsReadCommittedSupported()` in `pg_yb_utils.c`, which postgres uses
+when the tserver does not pass the flag.
 
-**File**: `.claude/skills/create-issue/SKILL.md` (modified, +32/-18)
+Tests inherit the default, so release tests now run with Read Committed
+off and debug/asan/tsan tests with it on. The first CI run with only the
+default change showed three tests that depend on the old defaults:
+
+- `yb.orig.lock_status` (`TestPgRegressProc`): the `.out` expected file
+is the release variant and `_1`/`_2` are the debug variants. The "r
+
+**File**: `src/postgres/src/backend/utils/misc/pg_yb_utils.c` (modified, +2/-2)
 ```diff
-@@ -6,7 +6,7 @@ description: >-
-   before opening a PR/diff, or to file a standalone bug/feature request — and
-   whenever the user asks to file a JIRA ticket for DB code, which must go to
-   GitHub unless it is sensitive.
--allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh auth status), Read
-+allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh issue comment *), Bash(gh issue edit *), Bash(gh search issues *), Bash(gh auth status), Read
- model: sonnet
- ---
+@@ -847,9 +847,9 @@ YBIsReadCommittedSupported()
+ 	{
  
-@@ -69,28 +69,30 @@ For JIRA tickets, the Atlassian MCP tool `createJiraIssue` must be available
- 
- ### Step 1: Decide the tracker — GitHub vs JIRA
- 
--First decide whether the issue is **sensitive**: it can't be described without
--something on the Confidentiality list above, e.g. customer data or schema, an
--unfixed security vulnerability, or unreleased internal plans. If the sensitive
--part can be scrubbed or replaced with a placeholder, it isn't sensitive. Then:
--
- - Core DB code (`src/`, `java/`, `cmake_modules/`, `build-support/`, `.github/`,
--  `.claude/`):
--  - Not sensitive → **GitHub issue** in `yugabyte/yugabyte-db`, even if the
--    user asked for a JIRA ticket. GitHub issues sync to JIRA `DB` tickets
--    automatically, so filing in GitHub gets you a JIRA key too.
--  - Sensitive → **JIRA ticket** in `DB`, with the sensitive-information field
--    set to `Yes` (Step 3b).
-+  `.claude/`): follow
-+  [filing-issues.md](../../../.github/issue-guides/filing-issues.md). It
-+  defines "sensitive" and routes the issue: a GitHub issue (Step 3a), a JIRA
-+  ticket in the `DB` (core database) project with the sensitive-information
-+  field set to `Yes` (Step 3b), a `Vulnerability` ticket (below), or a
-+  security report. For a security report, draft it in the policy's format and
-+  hand it to the user to send; file no issue. Then check for duplicates as it
-+  describes.
- - YBA / platform code (`managed/`) → **JIRA ticket**.
--- A security vulnerability, in any part of the repo → **JIRA ticket** of type
--  `Vulnerability`, never `Task` or `Bug` and never a GitHub issue. Give it the CVE
--  IDs if there are any, the affected package and its location, a severity, and
--  the Target Version. Don't set Fix Version; automation fills it in when the fix
--  lands. See `src/AGENTS.md` § Security and customer-sensitive changes.
-+- A security vulnerability found by an internal filer, in any part of the
-+  repo → **JIRA ticket** of type `Vulnerability`, never `Task` or `Bug` and
-+  never a GitHub issue. Give it the CVE IDs if there are any, the affected
-+  package and its location, a severity, and the Target Version. Don't set Fix
-+  Version; automation fills it in when the fix lands. See `src/AGENTS.md`
-+  § Security and customer-sensitive changes. An external filer sends a
-+  security report instead, as above.
-+
-+Ask the user whether they are an internal (Yugabyte) filer when the issue is
-+sensitive. Don't infer it.
- 
- If the user has already named a tracker or project, honor it, except for core
- DB code, where the routing above applies whichever tracker the user named:
--non-sensitive → GitHub, sensitive → JIRA `DB`.
-+non-sensitive → GitHub, sensitive → as above.
- 
- Why `DB` works this way: the GitHub ↔ JIRA sync never copies a JIRA
- description to GitHub. When a ticket is created in `DB` first, its summary and
-@@ -118,6 +120,8 @@ issue from being created at all.
- 
- 3. **Description** — the "what / why": what the issue is, repro steps for a bug,
-    or the motivation for a feature. Draft it and confirm with the user.
-+   **YSQL:** read [ysql.md](../../../.github/issue-guides/ysql.md) and
-+   build the description from it.
- 
- ### Step 3a: Create a GitHub issue
- 
-@@ -195,6 +199,16 @@ Output:
- - The reference in the form you'd hand to `/create-pr`
-   (a GitHub number like `#31151`, or a JIRA key like `PLAT-20518`).
- 
-+For a security report (Step 1), report that no issue was filed and that the
-+user has the draft to send; there is no tracker reference.
-+
-+If the duplicate check found an existing issue instead, report
-+its number and say that no new issue was filed. An open issue serves as the
-+tracker. A closed one can't be used as is. Read it first: if it was fixed in
-+a later version than the one the problem was found on, report that fix
-+instead. Otherwise ask the user whether to reopen it, or, if the problem is
-+different, file a new issue.
-+
- Then clean up any temp files created during this run.
- 
- ## Notes
+ #ifdef NDEBUG
+-		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+-#else
+ 		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", false);
++#else
++		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+ #endif
+ 	}
+ 	return cached_value;
 ```
 
-**File**: `.github/ISSUE_TEMPLATE/config.yml` (modified, +3/-0)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status.out` (modified, +14/-0)
 ```diff
-@@ -6,3 +6,6 @@ contact_links:
-   - name: YugabyteDB Anywhere
-     about: Create a YugabyteDB Anywhere issue.
-     url: https://support.yugabyte.com/hc/en-us/requests/new?ticket_form_id=360001955891
-+  - name: How to file a core database issue
-+    about: Where to file (including sensitive issues and security reports) and what a good issue contains.
-+    url: https://github.com/yugabyte/yugabyte-db/blob/master/.github/issue-guides/filing-issues.md
+@@ -144,6 +144,8 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -175,6 +177,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -195,6 +199,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -220,6 +226,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ 
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -247,6 +255,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -275,6 +285,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,6 +315,8 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
++WARNING:  read committed isolation is disabled
++DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
 ```
 
-**File**: `.github/issue-guides/filing-issues.md` (added, +62/-0)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_1.out` (modified, +0/-14)
 ```diff
-@@ -0,0 +1,62 @@
-+# Filing core DB issues
-+
-+These rules apply to every issue about the core database (`src/`, `java/`,
-+and the build and tooling around them). What goes in the issue body depends
-+on the component; [ysql.md](ysql.md) covers YSQL.
-+
-+Agents: confirm with the user before filing an issue or posting a comment.
-+
-+## Where to file
-+
-+GitHub issues are public and permanent. An issue is **sensitive** if it can't
-+be described without customer data or schema, personal data, credentials or
-+internal-only information. If that part can be replaced with a synthetic
-+repro or a placeholder, it isn't sensitive. An unfixed security
-+vulnerability is always sensitive, however it is described.
-+
-+- **Not sensitive:** a GitHub issue, using the component's issue template. It
-+  syncs automatically to a ticket in the JIRA `DB` (core database) project.
-+- **Sensitive, Yugabyte employee, security vulnerability:** a JIRA ticket of
-+  type `Vulnerability`, never a GitHub issue. See
-+  [`src/AGENTS.md`](../../src/AGENTS.md) § Security and customer-sensitive
-+  changes for what it holds.
-+- **Sensitive, Yugabyte employee, anything else:** a ticket in the JIRA `DB`
-+  project, marked as containing sensitive information. That keeps it off
-+  GitHub entirely.
-+- **Sensitive, external, security vulnerability:** a report to
-+  `security@yugabyte.com`, per the
-+  [vulnerability disclosure policy](https://docs.yugabyte.com/stable/secure/vulnerability-disclosure-policy/).
-+- **Sensitive, external, anything else:** that address doesn't take bug
-+  reports. Scrub it into a synthetic repro and file a GitHub issue; if it
-+  can't be scrubbed, open a support ticket.
-+
-+## Check for duplicates
-+
-+Before anything else, search existing issues (open and closed) for the same
-+symptom.
-+
-+- **Same problem, same repro:** don't file; use the existing issue.
-+- **Same problem, materially different repro** (a different trigger,
-+  setting or environment): don't file a new issue. Instead, add a comment to
-+  the existing one with the same information a new issue would carry.
-+- **Not a duplicate:** file a new issue. Link any related issues the search
-+  turned up.
-+
-+For a sensitive issue filed in JIRA, don't comment on the existing issue: file
-+the JIRA ticket anyway and mention the existing issue's number in it.
-+
-+## Links
-+
-+Internal URLs and hostnames never go in a GitHub issue; see the
-+confidentiality rules in [`src/AGENTS.md`](../../src/AGENTS.md). Internal
-+ticket keys such as `DB-1234` are fine.
-+
-+Even then, write the issue so an external reader can follow it without
-+internal references: describe what a ticket or log showed instead of only
-+pointing to it.
-+
-+## Title
-+
-+Keep the title succinct: the component prefix the template gives (for
-+example `[YSQL]`), then the symptom or what is asked for, in a few words.
-+Leave the mechanism, versions and repro details for the body.
+@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ 
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
 ```
 
-**File**: `.github/issue-guides/ysql.md` (added, +172/-0)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.lock_status_2.out` (modified, +0/-14)
 ```diff
-@@ -0,0 +1,172 @@
-+# Filing YSQL issues
+@@ -144,8 +144,6 @@ SELECT true::bool FROM yb_lock_status('yb_lock_tests'::regclass, '10000000-2000-
+ -- READ COMMITTED
+ -- Basic insert
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ INSERT INTO yb_lock_tests VALUES (1, 1, 1, 'one', 1, 1);
+ INSERT INTO yb_lock_tests VALUES (2, 2, 2, 'two', 2, 2);
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+@@ -187,8 +185,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- Basic Column Update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET v1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -209,8 +205,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- Basic primary key update
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET r1 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -239,8 +233,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ 
+ ABORT;
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ UPDATE yb_lock_tests SET k2 = 2 WHERE k1 = 1 AND k2 = 1;
+ SELECT * FROM validate_and_return_lock_status('yb_lock_tests'::regclass, null);
+  locktype |   relation    |            mode            | granted | fastpath | valid_waitstart | valid_waitend | has_node | has_tablet_id | has_transaction_id | valid_subtransaction_id | has_status_tablet_id | is_explicit | hash_cols |  range_cols   | attnum | column_id | multiple_rows_locked | num_blocking 
+@@ -273,8 +265,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ ABORT;
+ -- SELECT FOR SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -303,8 +293,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR KEY SHARE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR KEY SHARE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+@@ -333,8 +321,6 @@ SELECT * FROM validate_and_return_lock_status('yb_lock_tests_k1_k2'::regclass, n
+ COMMIT;
+ -- SELECT FOR UPDATE
+ BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-WARNING:  read committed isolation is disabled
+-DETAIL:  Set yb_enable_read_committed_isolation to enable. When disabled, read committed falls back to using repeatable read isolation.
+ SELECT * FROM yb_lock_tests FOR UPDATE;
+  k1 | k2 | r1 | r2  | v1 | v2 
+ ----+----+----+-----+----+----
+```
+
+**File**: `src/yb/yql/pggate/pggate_flags.cc` (modified, +2/-2)
+```diff
+@@ -163,9 +163,9 @@ DEFINE_NON_RUNTIME_uint32(yb_max_recursion_depth, 2000,
+     "for regex functions. ");
+ 
+ #ifdef NDEBUG
+-constexpr bool kEnableReadCommitted = true;
+-#else
+ constexpr bool kEnableReadCommitted = false;
++#else
++constexpr bool kEnableReadCommitted = true;
+ #endif
+ DEFINE_NON_RUNTIME_bool(yb_enable_read_committed_isolation, kEnableReadCommitted,
+     "Defines how READ COMMITTED (which is our default SQL-layer isolation) and READ UNCOMMITTED "
+```
+
+**File**: `src/yb/yql/pgwrapper/pg_concurrent_ddls-test.cc` (modified, +4/-0)
+```diff
+@@ -570,6 +570,10 @@ class PgConcurrentCreateOrReplaceCrashTest : public LibPqTestBase {
+     // stale-syscache race window, so it must be disabled to reproduce.
+     ToggleDDLMode(opts->extra_tserver_flags, /* use_legacy = */ true);
+     ToggleDDLMode(opts->extra_master_flags, /* use_legacy = */ true);
++    // TODO(#39366): With Read Committed on, debug builds hit an unrelated assertion in
++    // AtEOXact_RelationCache. Remove this once that is fixed.
++    opts->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=false");
++    opts->extra_master_flags.push_back("--yb_enable_read_committed_isolation=false");
+   }
+ 
+   static bool IsBackendCrash(const Status& status) {
+```
+
+**File**: `src/yb/yql/pgwrapper/pg_hint_table-test.cc` (modified, +12/-1)
+```diff
+@@ -166,7 +166,18 @@ TEST_F(PgHintTableTest, ForceBatchedNestedLoop) {
+   ASSERT_STR_EQ("Hash Join", ASSERT_RESULT(ExecuteExplainAndGetJoinType(&conn1, explain_query)));
+ }
+ 
+-TEST_F(PgHintTableTest, SimpleConcurrencyTest) {
++class PgHintTableTestReadCommitted : public PgHintTableTest {
++ public:
++  void UpdateMiniClusterOptions(ExternalMiniClusterOptions* options) override {
++    PgHintTableTest::UpdateMiniClusterOptions(options);
++    // TODO(#39367): Without Read Committed isolation, concurrent updates of a hint fail with
++    // "could not serialize access due to concurrent update" when transactional DDL is on.
++    options->extra_tserver_flags.push_back("--yb_enable_read_committed_isolation=true");
++    options->extra_master_flags.push_back("--yb_enable_read_committed_isolation=true");
++  }
++};
 +
-+The goal is a **minimal reproducer** that a YSQL developer can run and
-+understand quickly. This is a framework, not a form: include what this issue
-+needs, and write for developer readability.
-+
-+Where to file, how to handle duplicates and what to do with internal links
-+are the same for every core DB component; see
-+[filing-issues.md](filing-issues.md). When a YSQL issue turns out to
-+be a duplicate with a materially different repro, the comment on the
-+existing issue carries the summary and everything under "Always cover" below.
-+
-+## Start with a summary
-+
-+Open the issue with a short summary, as the first thing under the template's
-+Description heading, so a reader knows what kind of issue it is and how bad
-+it is before reaching the details. If something isn't known, write "unknown"
-+rather than leaving it out. Write "n/a" where a field is irrelevant, such as
-+the regression line of an enhancement, or the version and build of a lint
-+or tooling issue.
-+
-+- **Kind:** bug, enhancement, new feature, internal refactor, new tests,
-+  documentation, or whatever fits.
-+- **Impact:** for a bug, what it does. This is often one of these, from most
-+  to least severe:
-+  - a security hole: never filed as a GitHub issue; see "Where to file" in
-+    [filing-issues.md](filing-issues.md)
-+  - data corruption
-+  - wrong results
-+  - a crash: which process (the postmaster, a postgres backend, a tserver or
-+    a master), and whether it is a crash loop
-+  - a hang, a deadlock, or the cluster becoming unavailable
-+  - memory or other resource growth
-+  - an error
-+  - a performance regression or a bad plan
-+  - a test failure
-+
-+  For anything else, what it asks for and why.
-+- **Version:** the release, or the branch it was found on.
-+- **Commit or build:** the commit (already on a remote, written bare so
-+  GitHub auto-links it) or the build number.
-+- **Build:** compiler, build flavor (release, debug, fastdebug, ASAN, TSAN),
-+  architecture and OS. All four is best; if you don't have them all, list
-+  what you have.
-+- **Regression:** yes, with the last version or commit where it worked; no;
-+  or unknown. If you have evidence short of testing, such as the commit that
-+  likely introduced it from reading the code, add it and say it is inferred.
-+
-+Then say where it happens: the statement, feature or component.
-+
-+## Reduce first
-+
-+Before drafting, try to reduce the issue to its minimal form: the fewest
-+objects, rows, statements, sessions and non-default settings that still show
-+the problem. Check that it still shows the problem after each cut.
-+
-+If you can't reduce it within reason, file it anyway and say so ("not yet
-+minimized"). A bloated issue is better than an unfiled one.
-+
-+## Always cover
-+
-+- **What else was tested.** List every other branch or version you tried,
-+  with its result; if you tried only the one in the summary, say other
-+  versions are untested.
-+- **Label.** An issue gets exactly one `kind/*` label matching the summary's
-+  kind (correctness bugs and crashes are `kind/bug`), defaulting to
-+  `kind/bug` if nothing else applies. Use only existing labels. The
-+  categories below can still stack in the body, for example a correctness
-+  bug that only appears under concurrency.
-+- **Environment, only what's needed to reproduce it.** List the non-default
-+  GUCs, gflags, cluster shape (nodes, RF, colocation) and connection manager
-+  settings that the repro depends on, and the client when it matters: the
-+  driver, ORM or tool and its version (for example JDBC, psycopg or
-+  `ysqlsh`). Omit everything that doesn't change the outcome.
-+- **Repro.** SQL or steps that run as written against a fresh cluster, using
-+  generic names (`t1`, `id`, `v`). Put the schema setup (DDL and seed data) in
-+  its own code block, separate from the statements that trigger the issue.
-+  Optionally show `\d` (or equivalent) output for the objects involved.
-+- **Actual vs expected output.** Show both. For `EXPLAIN` output, leave out
-+  values that change from run to run unless they are the point, for example
-+  with `COSTS OFF, TIMING OFF, SUMMARY OFF`.
-+- **How often.** If it doesn't happen every time, give the rate and the
-+  sample: "failed 2 of 20 runs", "passed all 194 fastdebug runs on master
-+  from 2026-09-02 to 2026-10-28".
-+- **How each claim is known.** Mark anything not shown by the repro output:
-+  observed, measured, inferred from logs, or from reading the code ("inferred
-+  from the logs, not reproduced").
-+- **Related issues.** Link any you know of or found in the duplicate check,
-+  with one line on how each relates. Don't search beyond that.
-+- **Logs.** Paste short, relevant excerpts inline in a code block. Put long
-+  ones in a collapsed `<details>` block, or link to their source. Only logs
-+  from your own reproduction belong on GitHub; customer logs are sensitive.
-+
-+## Per category
-+
-+### Bugs
-+
-+**Correctness.** Ground the expected result in a reference
++TEST_F_EX(PgHintTableTest, SimpleConcurrencyTest, PgHintTableTestReadCommitted) {
+   auto conn_explain = ASSERT_RESULT(ConnectWithHintTable());
+   // The planner refreshes the hint cache by scanning hint_plan.hints within the statement's read
+   // snapshot, so the concurrent hint updates below can force a read restart. EXPLAIN is not query
 ```
 
 ---
 
-### Incident Patch 2: `9308eb54` (2026-11-26)
-**Commit Message**: [#37544] YSQL: Port small upstream Odyssey fixes to Connection Manager (#37545)
+### Incident Patch 2: `815cf271` (2026-11-26)
+**Commit Message**: [#39325] DocDB: Fix TabletSplitITest.SplitOpApplyAfterLeaderChange early split parent deletion (#39326)
 
 ## Summary
 
-Cherry-pick of small upstream Odyssey fixes that Connection Manager is
-missing. Each is low impact: a rare leak, a crash only on out-of-memory,
-or a misleading log line.
-
-- yandex/odyssey@4b18eaccccf (yandex/odyssey#1621): `od_query_do()`
-leaked the saved DataRow when the backend sent an error, or the read
-failed, after the row. This has no effect today: YB's config enables
-none of its callers (`target_session_attrs`, `auth_query`, watchdog),
-and the old OID-to-name lookup that used it is dead code. It is taken
-only to stay in line with upstream, and is harmless.
-- yandex/odyssey@c6720e211ba (yandex/odyssey#1139): `od_io_prepare()`
-set `io->io` before allocating the readahead buffer. If the allocation
-failed while opening a backend connection, `od_backend_connect_to()`
-freed the io, and `od_backend_close_connection()` then called
-`machine_connected()` on it and freed it again. `io->io` is now set only
-on success, and `od_io_read_stop()` skips a NULL io. The hunks that only
-change log text are left out.
-- yandex/odyssey@ac69f629673 (yandex/odyssey#496),
-yandex/odyssey@e9288b971dc (yandex/ody
-
-**File**: `src/odyssey/sources/config.c` (modified, +1/-0)
-```diff
-@@ -145,6 +145,7 @@ od_config_listen_t *od_config_listen_add(od_config_t *config)
- 
- 	listen->tls_opts = od_tls_opts_alloc();
- 	if (listen->tls_opts == NULL) {
-+		free(listen);
- 		return NULL;
- 	}
- 
-```
-
-**File**: `src/odyssey/sources/counter.c` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ od_bucket_t *od_bucket_create(void)
- 		return b;
- 	}
- 
-+	free(b);
- 	return NULL;
- }
- 
-```
-
-**File**: `src/odyssey/sources/io.h` (modified, +8/-2)
-```diff
-@@ -50,7 +50,6 @@ static inline char *od_io_error(od_io_t *io)
- static inline int od_io_prepare(od_io_t *io, machine_io_t *io_obj,
- 				int readahead)
- {
--	io->io = io_obj;
- 	int rc;
- 	rc = od_readahead_prepare(&io->readahead, readahead);
- 	if (rc == -1) {
-@@ -73,6 +72,9 @@ static inline int od_io_prepare(od_io_t *io, machine_io_t *io_obj,
- 	io->on_write = machine_cond_create();
- 	if (io->on_write == NULL)
- 		return -1;
-+
-+	io->io = io_obj;
-+
- 	return 0;
- }
- 
-@@ -113,7 +115,11 @@ static inline int od_io_read_start(od_io_t *io)
- 
- static inline int od_io_read_stop(od_io_t *io)
- {
--	return machine_read_stop(io->io);
-+	if (io->io != NULL) {
-+		return machine_read_stop(io->io);
-+	}
-+
-+	return 0;
- }
- 
- static inline int od_io_write_start(od_io_t *io)
-```
-
-**File**: `src/odyssey/sources/query.c` (modified, +6/-0)
-```diff
-@@ -34,6 +34,9 @@ machine_msg_t *od_query_do(od_server_t *server, char *context, char *query,
- 					 "read error: %s",
- 					 od_io_error(&server->io));
- 			}
-+			if (ret_msg) {
-+				machine_msg_free(ret_msg);
-+			}
- 			return NULL;
- 		}
- 
-@@ -78,6 +81,9 @@ machine_msg_t *od_query_do(od_server_t *server, char *context, char *query,
- 	return ret_msg;
- error:
- 	machine_msg_free(msg);
-+	if (ret_msg) {
-+		machine_msg_free(ret_msg);
-+	}
- 	return NULL;
- }
- 
-```
-
-**File**: `src/odyssey/sources/status.h` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ static inline char *od_frontend_status_to_str(od_frontend_status_t status)
- 	case OD_SKIP:
- 		return "OD_SKIP";
- 	case OD_ATTACH:
--		return "OD_UNDEF";
-+		return "OD_ATTACH";
- 	case OD_DETACH:
- 		return "OD_DETACH";
- 	case OD_WAIT_SYNC:
-```
-
-**File**: `src/odyssey/sources/thread_global.c` (modified, +3/-0)
-```diff
-@@ -6,6 +6,9 @@
- od_retcode_t od_thread_global_init(od_thread_global **gl)
- {
- 	*gl = malloc(sizeof(od_thread_global));
-+	if (*gl == NULL) {
-+		return NOT_OK_RESPONSE;
-+	}
- 
- 	od_conn_eject_info_init(&(*gl)->info);
- 
-```
-
-**File**: `src/odyssey/third_party/machinarium/sources/tls.c` (modified, +4/-0)
-```diff
-@@ -384,6 +384,10 @@ SSL_CTX *mm_tls_get_context(mm_io_t *io, int is_client)
- 	}
- cache:
- 	ctx_container = malloc(sizeof(*ctx_container));
-+	if (ctx_container == NULL) {
-+		goto error;
-+	}
-+
- 	ctx_container->key = io->tls;
- 	ctx_container->tls_ctx = ctx;
- 	ctx_container->yb_cert_hash_len = 0;
-```
-
----
-
-### Incident Patch 3: `fe7402a2` (2026-11-26)
-**Commit Message**: [#37870] DocDB: Fix CqlIndexTest.ConcurrentIndexUpdate by running the cluster check with scan concurrency 1 (#37871)
-
-## Summary
-
-At teardown, `ClusterVerifier` runs ysck, which starts 4 `Checksum` scans per tablet server by default. Each scan holds an rpc worker while it resolves intents through a local `GetTransactionStatus` call that is queued on the same pool. `CqlIndexSmallWorkersTest` limits that pool to 4 rpc workers, so the scans could take every worker. The status calls then failed with "Call waited in the queue past deadline", and ysck reported errors. The test now runs `ClusterVerifier::CheckCluster()` itself with `SetScanConcurrency(1)` and then calls `DontVerifyClusterBeforeNextTearDown()`, so the full-cluster checksum still runs and is checked.
+While a node is a follower, its `PeerMessageQueue` tracks only the local peer, so `all_applied_op_id` holds the node's own applied op id. After the node becomes leader, that stale value stays in place until every remote peer has responded. `TabletPeer::CanBeDeleted()` trusts that value, so it deleted the split parent before the paused replica had applied the split, and the test's `StartElection` loop then kept getting `TABLET_NOT_FOUND`. The fix resets `all_applied_op_id` to `OpId::Min()` in `SetLeaderMode()` and `SetupNewTrackedPeerUnlocked()`, and makes `GetAllAppliedOpId()` return `OpId::Min()` unless the queue is in `Mode::LEADER`.
 
 ---
 _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
 ## Test plan
 
-./yb_build.sh fastdebug --gcc15 --cxx-test cql-index-test --gtest-filter CqlIndexTest.ConcurrentIndexUpdate -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
+./yb_build.sh fastdebug --gcc15 --cxx-test tablet-split-itest --gtest-filter TabletSplitITest.SplitOpApplyAfterLeaderChange -n 180 YB_TEST_YB_CONTROLLER=0 YB_ENABLE_YSQL_CONN_MGR_IN_JAVA_TESTS=true --stop-at-failure -- -p 6
 Ran the above locally with no failures.
-Before the fix, this test rep
+Before the fix, this 
 
-**File**: `src/yb/integration-tests/cql-index-test.cc` (modified, +8/-0)
+**File**: `src/yb/consensus/consensus_queue.cc` (modified, +5/-1)
 ```diff
-@@ -17,6 +17,7 @@
+@@ -271,6 +271,9 @@ void PeerMessageQueue::SetLeaderMode(const OpId& committed_op_id,
+       << queue_state_.active_config->ShortDebugString();
+   queue_state_.majority_size_ = MajoritySize(CountVoters(*queue_state_.active_config));
+   queue_state_.mode = Mode::LEADER;
++  // As a follower only the local peer is tracked, so all_applied_op_id holds the local applied op
++  // id. Reset it until every remote peer has reported its applied op id.
++  queue_state_.all_applied_op_id = OpId::Min();
  
- #include "yb/docdb/deadline_info.h"
- 
-+#include "yb/integration-tests/cluster_verifier.h"
- #include "yb/integration-tests/external_mini_cluster.h"
- #include "yb/integration-tests/external_mini_cluster_validator.h"
- #include "yb/integration-tests/mini_cluster_utils.h"
-@@ -404,6 +405,13 @@ TEST_F_EX(CqlIndexTest, ConcurrentIndexUpdate, CqlIndexSmallWorkersTest) {
-   thread_holder.Stop();
- 
-   ANNOTATE_UNPROTECTED_WRITE(FLAGS_TEST_inject_txn_get_status_delay_ms) = 0;
-+
-+  // ysck Checksum RPCs block an rpc worker while resolving intents via a local
-+  // GetTransactionStatus queued on the same pool, so they must not take all 4 rpc workers.
-+  ClusterVerifier verifier(cluster_.get());
-+  verifier.SetScanConcurrency(1);
-+  ASSERT_NO_FATALS(verifier.CheckCluster());
-+  DontVerifyClusterBeforeNextTearDown();
+   LOG_WITH_PREFIX_UNLOCKED(INFO) << "Queue going to LEADER mode. State: "
+       << queue_state_.ToString();
+@@ -326,6 +329,7 @@ PeerMessageQueue::TrackedPeer* PeerMessageQueue::SetupNewTrackedPeerUnlocked(
+   // We don't know how far back this peer is, so set the all replicated watermark to
+   // MinimumOpId. We'll advance it when we know how far along the peer is.
+   queue_state_.all_replicated_op_id = OpId::Min();
++  queue_state_.all_applied_op_id = OpId::Min();
+   return tracked_peer_raw_ptr;
  }
  
- int64_t GetFailedBatchLockNum(MiniCluster* cluster)  {
+@@ -1806,7 +1810,7 @@ OpId PeerMessageQueue::GetAllReplicatedOpId() const {
+ 
+ OpId PeerMessageQueue::GetAllAppliedOpId() const {
+   LockGuard lock(queue_lock_);
+-  return queue_state_.all_applied_op_id;
++  return queue_state_.mode == Mode::LEADER ? queue_state_.all_applied_op_id : OpId::Min();
+ }
+ 
+ OpId PeerMessageQueue::TEST_GetCommittedIndex() const {
+```
+
+---
+
+### Incident Patch 3: `bfe7a66c` (2026-11-26)
+**Commit Message**: [#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424)
+
+## Summary
+
+`TestRollbackToSavepointAfterStaleVerificationTaskFails`, added in
+813b110c31/#37959, times out in about 25-40% of release runs. It times
+out waiting for the stale verification task of the rolled-back ALTER to
+end.
+
+That task fails only if it polls while conn2's ALTER is the transaction
+modifying the table. Its first poll is delayed by
+`ysql_transaction_bg_task_wait_ms` (200ms), and an autocommit ALTER on
+conn2 can set and clear the table's verifier state within that delay. In
+a failing CI log, conn2's state lived 66ms, entirely inside the stale
+task's initial delay. The task then sees no other transaction on the
+table and keeps polling the outer transaction, which the test keeps open
+on purpose, until the 30s wait times out.
+
+The test now keeps conn2's ALTER in an open transaction until the outer
+transaction reaches `kDdlPostProcessingFailed`, then commits it. It
+waits on that state instead of on the table having no verification
+tasks, because conn2's own task now stays on the table until conn2
+commits. Test-only change.
+
+## Test plan
+
+- [x]
+`bool/PgDdlSavepointMiniClusterTest.Te
+
+**File**: `src/yb/yql/pgwrapper/pg_ddl_transaction-test.cc` (modified, +10/-7)
+```diff
+@@ -1105,8 +1105,6 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
+   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName));
+   ASSERT_OK(conn.ExecuteFormat("CREATE TABLE $0 (k INT PRIMARY KEY)", kTableName2));
+   ASSERT_OK(conn.ExecuteFormat("INSERT INTO $0 VALUES (1), (2), (3)", kTableName2));
+-  auto table_info = catalog_manager.GetTableInfo(
+-      ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName)));
+   auto table2_info = catalog_manager.GetTableInfo(
+       ASSERT_RESULT(GetTableIdByTableName(client.get(), kDatabase, kTableName2)));
+ 
+@@ -1119,13 +1117,18 @@ TEST_P(PgDdlSavepointMiniClusterTest, TestRollbackToSavepointAfterStaleVerificat
+   const auto txn_id =
+       ASSERT_RESULT(FullyDecodeTransactionId(table2_info->LockForRead()->pb_transaction_id()));
+ 
++  // The stale task of the first ALTER fails only if it polls while conn2's ALTER owns the table's
++  // verifier state. Keep conn2's transaction open until then: an autocommit ALTER can begin and
++  // finish within the task's initial ysql_transaction_bg_task_wait_ms delay.
++  ASSERT_OK(conn2.Execute("BEGIN"));
+   ASSERT_OK(conn2.ExecuteFormat("ALTER TABLE $0 ADD COLUMN y INT", kTableName));
+   ASSERT_OK(WaitFor(
+-      [&] { return !table_info->HasTasks(server::MonitoredTaskType::TableSchemaVerification); },
+-      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to end"));
+-  ASSERT_EQ(
+-      catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id),
+-      master::YsqlDdlVerificationState::kDdlPostProcessingFailed);
++      [&] {
++        return catalog_manager.TEST_GetYsqlDdlVerificationState(txn_id) ==
++               master::YsqlDdlVerificationState::kDdlPostProcessingFailed;
++      },
++      MonoDelta::FromSeconds(30), "Wait for the verification task of the first ALTER to fail"));
++  ASSERT_OK(conn2.Execute("COMMIT"));
+ 
+   ASSERT_OK(conn.Execute("ROLLBACK TO SAVEPOINT b"));
+   ASSERT_OK(conn.Execute(GetParam() ? "COMMIT" : "ROLLBACK"));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39360** (2026-11-26): [BACKPORT 2026.2][PLAT-24135] YBA: Fix the clean home directory check failing YNP on-prem universe create on SLES (#39224) (@shashwat-yb)
-- **PR #39302** (2026-11-26): [2025.2][PLAT-24159] YBA: Update paramiko to 5.0.0 (@proff4eg)
-- **PR #39301** (2026-11-26): [2024.2][PLAT-24158] YBA: Use the prebuilt psycopg2 wheel in the devops pex (@proff4eg)
-- **PR #39300** (2026-11-26): [2024.2][PLAT-24158] YBA: Update PyJWT, cryptography, oauthlib and deepdiff in the devops pex (@proff4eg)
-- **PR #39299** (2026-11-26): [2024.2][PLAT-24157] YBA: Update BouncyCastle to 1.87 (@proff4eg)
-- **PR #39298** (2026-11-26): [2024.2][PLAT-24125] YBA: Update the PostgreSQL JDBC driver to 42.7.15 (@proff4eg)
+- **PR #39470** (2026-11-27): [PLAT-24179] YBA: Fix Show Slow Queries in the node Actions menu (@100sarthak100)
+- **PR #39452** (2026-11-27): [BACKPORT 2025.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39451** (2026-11-27): [BACKPORT 2026.2][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39450** (2026-11-27): [BACKPORT 2026.1][#38853] DocDB: Fix flaky TestRollbackToSavepointAfterStaleVerificationTaskFails (#39424) (@dr0pdb)
+- **PR #39440** (2026-11-26): [BACKPORT 2024.2][PLAT-20422] YBA: Install openapi-format once before formatting in parallel (@proff4eg)
+- **PR #39433** (2026-11-26): [BACKPORT 2026.2][#39047] YSQL: Flush pending writes before registering a catalog change (#39062) (@myang2021)
 
 ---
 
@@ -2795,65 +2723,33 @@ Before the fix, this test rep
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#37880] Agents: Add guides for filing core DB and YSQL issues
+## X. [#33147] YSQL: Disable Read Committed isolation by default in release builds
 
 **RULE**:
-When implementing operations in `.claude/skills/create-issue/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/postgres/src/backend/utils/misc/pg_yb_utils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd0f5120`: [#37880] Agents: Add guides for filing core DB and YSQL issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b53522d`: [#33147] YSQL: Disable Read Committed isolation by default in release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/create-issue/SKILL.md`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/utils/misc/pg_yb_utils.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh issue comment *), Bash(gh issue edit *), Bash(gh search issues *), Bash(gh auth status), Read
-  `.claude/`): follow
-  [filing-issues.md](../../../.github/issue-guides/filing-issues.md). It
-  defines "sensitive" and routes the issue: a GitHub issue (Step 3a), a JIRA
-  ticket in the `DB` (core database) project with the sensitive-information
-  field set to `Yes` (Step 3b), a `Vulnerability` ticket (below), or a
-  security report. For a security report, draft it in the policy's format and
-  hand it to the user to send; file no issue. Then check for duplicates as it
-  describes.
-- A security vulnerability found by an internal filer, in any part of the
-  repo → **JIRA ticket** of type `Vulnerability`, never `Task` or `Bug` and
-  never a GitHub issue. Give it the CVE IDs if there are any, the affected
-  package and its location, a severity, and the Target Version. Don't set Fix
-  Version; automation fills it in when the fix lands. See `src/AGENTS.md`
-  § Security and customer-sensitive changes. An external filer sends a
-  security report instead, as above.
-
-Ask the user whether they are an internal (Yugabyte) filer wh
+#else
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh auth status), Read
-First decide whether the issue is **sensitive**: it can't be described without
-something on the Confidentiality list above, e.g. customer data or schema, an
-unfixed security vulnerability, or unreleased internal plans. If the sensitive
-part can be scrubbed or replaced with a placeholder, it isn't sensitive. Then:
-
-  `.claude/`):
-  - Not sensitive → **GitHub issue** in `yugabyte/yugabyte-db`, even if the
-    user asked for a JIRA ticket. GitHub issues sync to JIRA `DB` tickets
-    automatically, so filing in GitHub gets you a JIRA key too.
-  - Sensitive → **JIRA ticket** in `DB`, with the sensitive-information field
-    set to `Yes` (Step 3b).
-- A security vulnerability, in any part of the repo → **JIRA ticket** of type
-  `Vulnerability`, never `Task` or `Bug` and never a GitHub issue. Give it the CVE
-  IDs if there are any, the affected package and its location, a severity, and
-  the Target Version. Don't set Fix Version; automation fills it in when the fix
-  lands. See `src/AGENTS.md` § Security and customer-sensitive changes.
-non-sensitive → GitHub, sensitive → JIRA `DB`.
+		cached_value = YBCIsEnvVarTrueWithDefault("FLAGS_yb_enable_read_committed_isolation", true);
+#else
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd0f5120` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b53522d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T05:12:44.684Z",
+  "last_updated": "2026-11-27T05:21:45.859Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26378,
+  "total_items": 26383,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -225525,8 +225525,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "71475e09",
-      "content_hash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
+      "source_version": "515ddfaa",
+      "content_hash": "de849460e7f2189da2d3b08990f342850259a663af2640a0ade1c284fff3b862",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -225569,6 +225569,11 @@
           "number": 10596,
           "title": "add Alt+Left/Alt+Right tab history",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10833,
+          "title": "preserve STUN SOFTWARE at the UTF-8 byte cap",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225576,7 +225581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:30:51.324Z",
+      "verified_at": "2026-11-27T05:21:24.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225618,10 +225623,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "83404419",
-      "content_hash": "f523ed74d82f52d51a746e612bc574b06f39b0e18be5676570ae5a69c00032a2",
+      "source_version": "515ddfaa",
+      "content_hash": "46e2782a2e706e0700460204bae0f392bec1035f84cc95626df78164a908f173",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T19:26:07.209Z"
+      "persisted_at": "2026-11-27T05:21:25.657Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -225630,10 +225635,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "71475e09",
-      "content_hash": "d4ee4258dc8453ed1aa410233dba65f5e0d28827465f036244b87cf1f750d251",
+      "source_version": "515ddfaa",
+      "content_hash": "cec84ed73646873f57282fe0a41f069ce162dde03793634632b1c54ea9469b55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:30:52.142Z"
+      "persisted_at": "2026-11-27T05:21:25.864Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -225736,9 +225741,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "f04318c054178a20c02100db80e4efaa7dddd66536d613650ba8c34ffec363aa",
+      "content_hash": "2507b10eb8fc8b6ab0538bd62be073035f336f714ac3cb7a718e3de74af1fc63",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T19:26:20.815Z"
+      "persisted_at": "2026-11-27T05:21:43.979Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -225748,9 +225753,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bb1bbee004b96c8ee309deabcfd08c64c88194feea6d2923e41ce4562fdc06b",
+      "content_hash": "528865414edf860135a564152526dc6d00ab0ce9cce48bfdf74ed341a126ba9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:31:02.796Z"
+      "persisted_at": "2026-11-27T05:21:44.183Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -237005,8 +237010,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "1b9b8270",
-      "content_hash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
+      "source_version": "846c1e61",
+      "content_hash": "a747eeacd997623d4cafbb48bdde1130e956062c0d0d2148a0f7ee6d332e7e90",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -237064,6 +237069,11 @@
           "number": 10661,
           "title": "[#37880] Agents: Add guides for filing core DB and YSQL issues",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10834,
+          "title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237071,7 +237081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:15:50.789Z",
+      "verified_at": "2026-11-27T05:21:39.122Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237137,10 +237147,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "1b9b8270",
-      "content_hash": "3d35e4ede209e83f57a7da32267f92fa57776997b01419e8eb8414bc8515db97",
+      "source_version": "846c1e61",
+      "content_hash": "9b017e5e0f37f7b827dafccfdbdfca64ff5257a846ab493de0664ec276a76fa9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:15:51.726Z"
+      "persisted_at": "2026-11-27T05:21:40.031Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -237210,9 +237220,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte-yugabyte-db-learnings",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "828af8c5e01a37cbaf18c83a7d0dccfec8f27cbdab17938d558af3917fa2c628",
+      "content_hash": "71a5bbf7a28303ea9d270e53fb0b7e7643e3d6b893976d0d309139a5a521684c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:41:16.304Z"
+      "persisted_at": "2026-11-27T05:21:45.859Z"
     },
     "learn-huggingface-unsloth-embeddinggemma-2-gguf": {
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
@@ -239930,7 +239940,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "4d53aa79da16969337cc8bdd141bb981259cff24fada91966776413bf0d86106",
+      "content_hash": "161853850f54938c410bac72d99b8a9d5a144eda5af70ef086c1841a1558d374",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -239950,7 +239960,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T11:50:26.590Z",
+      "verified_at": "2026-11-27T05:21:23.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277228,10 +277238,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "80c1ffc3",
-      "content_hash": "770a4bdd113388f6b65bf2bdbce0abebf300d5a4ba760d4c8953ccd9ab1501fc",
+      "source_version": "846c1e61",
+      "content_hash": "911c759cd5c282a807d7c49055271ef6d58bc4c894252f1b7c5bcc18386adfba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:41:03.458Z"
+      "persisted_at": "2026-11-27T05:21:39.837Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -292063,9 +292073,9 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "98dd33d2e5a625b4562aa235fe2386425f1b366c77e251480712403a890760f8",
+      "content_hash": "aed4f062f768da0c07359563a41fa86302393e343d9e1c1bd53e28c8efb3be20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:41:39.540Z"
+      "persisted_at": "2026-11-27T05:21:45.654Z"
     },
     "rule-9183": {
       "learning_id": "rule-9183",
@@ -300838,9 +300848,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1-Turbo Core Invariants",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "2d20f9760b7c9e99882982331a7016e0c1e6c0e65d2c669a492920ed82a6826f",
+      "content_hash": "31069096e5d73fd14d1f5c73d910cfdad2e67e2e7eeff421fed3c50135c5b970",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T11:50:27.126Z"
+      "persisted_at": "2026-11-27T05:21:24.028Z"
     },
     "rule-9373": {
       "learning_id": "rule-9373",
@@ -300902,9 +300912,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-turbo-learnings Core Invariants",
       "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "82477e804b424e421dc0b4c2fe825798efb53689af93f36619f78621658ec2e7",
+      "content_hash": "c6023c8344b2103efac67f7d5b7c30f713275252bc52eba4fe568e69fdce87bb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T11:51:24.836Z"
+      "persisted_at": "2026-11-27T05:21:44.603Z"
     },
     "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant",
@@ -361882,6 +361892,70 @@
       "content_hash": "e46eb90a8e9551c381f161288bb5bc632b54db61d90fecdf9e75a188e826567a",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T05:12:44.441Z"
+    },
+    "rule-10833": {
+      "learning_id": "rule-10833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10833,
+      "title": "preserve STUN SOFTWARE at the UTF-8 byte cap",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "515ddfaa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:21:24.917Z"
+    },
+    "candidate_directive-preserve-stun-software-at-the-utf-8-byte-cap": {
+      "item_id": "candidate_directive-preserve-stun-software-at-the-utf-8-byte-cap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A8QS-preserve-stun-software-at-the-utf-8-byte-cap.md",
+      "title": "preserve STUN SOFTWARE at the UTF-8 byte cap",
+      "repository": "domcyrus/rustnet",
+      "source_version": "515ddfaa",
+      "content_hash": "0266775ea2546d62031ff486b43c8a1fa8146bbe6f3adb4e92511d9b85a6a2f8",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T05:21:25.448Z"
+    },
+    "rule-10834": {
+      "learning_id": "rule-10834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10834,
+      "title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "846c1e61",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T05:21:39.122Z"
+    },
+    "candidate_directive-33147-ysql-disable-read-committed-isolation-by-default-in-release-builds": {
+      "item_id": "candidate_directive-33147-ysql-disable-read-committed-isolation-by-default-in-release-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AO6H-33147-ysql-disable-read-committed-isolation-by-default-in-release-builds.md",
+      "title": "[#33147] YSQL: Disable Read Committed isolation by default in release builds",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d14abf90d52ffe40e82000272236cd2419586603cd46dc16db5ad7a75d57a5a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T05:21:45.452Z"
+    },
+    "candidate_directive-dpi-preserve-stun-software-at-the-utf-8-byte-cap": {
+      "item_id": "candidate_directive-dpi-preserve-stun-software-at-the-utf-8-byte-cap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AMVB-dpi-preserve-stun-software-at-the-utf-8-byte-cap.md",
+      "title": "dpi): preserve STUN SOFTWARE at the UTF-8 byte cap",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c57b723ff1cbcd8fe265a2bf3fc1d5d3350046c3a9b26d3633af2f6c56e25f67",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-27T05:21:43.755Z"
     }
   },
   "ai-builder-brain": {
