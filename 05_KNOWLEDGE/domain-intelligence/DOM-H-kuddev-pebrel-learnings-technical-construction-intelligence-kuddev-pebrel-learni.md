@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T02:15:12.297Z",
+  "timestamp": "2026-11-27T17:19:36.215Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kuddev-pebrel-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kuddev-pebrel-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T02:15:12.297Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:19:36.215Z`  
 > **Learning ID**: `LEARN-EVO-kuddev-pebrel-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), C (Market & Business Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kuddev-pebrel-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `e7405725`  
+> **Source Version**: `078e9839`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:14:53.553Z  
+> **Timestamp**: 2026-11-27T17:19:18.792Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:14:53.363Z  
+> **Harvest Timestamp**: 2026-11-27T17:19:18.640Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3852 stars
+- **Stars / Engagement**: 3934 stars
 
 ---
 
@@ -700,7 +700,7 @@ async function supportsSettled(): Promise<boolean> {
   return false;
 }
 
-// Only provider IDs and the first JSONL metadata line are recovery identities.
+// Only provider IDs and the native session header are recovery identities.
 // A timestamped basename or a process ID cannot be handed to pi --session.
 function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
   let direct: string | undefined;
@@ -713,9 +713,15 @@ function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
       fd = openSync(file, "r");
       const buffer = Buffer.alloc(16384);
       const length = readSync(fd, buffer, 0, buffer.length, 0);
-      const end = buffer.indexOf(10, 0);
-      if (end >= 0 && end < length) {
-        const header = JSON.parse(buffer.subarray(0, end).toString("utf8"));
+      const prefix = buffer.subarray(0, length);
+      const end = prefix.indexOf(10);
+      if (end >= 0) {
+        let header = JSON.parse(prefix.subarray(0, end).toString("utf8"));
+        // OMP 18 writes a fixed-width title record before its session header.
+        if (SOURCE === "omp" && end === 255 && header.type === "title" && header.v === 1) {
+          const next = prefix.indexOf(10, end + 1);
+          if (next > end) header = JSON.parse(prefix.subarray(end + 1, next).toString("utf8"));
+        }
         if (header.type === "session" && typeof header.id === "string" && header.id
             && (!direct || direct === header.id)) {
           return { session_id: header.id, session_file: file };
@@ -926,6 +932,22 @@ def stream_state(token, identity):
             yield state
 
 
+def completion_field(source, native, payload):
+    if (source == "claude" or native) and payload.get("hook_event_name") == "Stop":
+        return "last_assistant_message"
+    if source == "codex" and not native and payload.get("type") == "agent-turn-complete":
+        return "last-assistant-message"
+    if source in ("opencode", "pi") and payload.get("kind") == "done":
+        return "message"
+    return None
+
+
+def encode_envelope(header, payload):
+    return header.encode() + b"\n" + json.dumps(
+        payload, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+
+
 def send(source, native, mode, payload, token, owner=None, route=None, deadline=None):
     owner = owner or process_identity(source)
     with stream_state(token, owner or source) as state:
@@ -946,18 +968,22 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
             header += " tmux=" + route["context"]
         if native:
             header += " codex_hooks=" + mode.split("=", 1)[1]
-        encoded = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-        envelope = header.encode() + b"\n" + encoded
+        envelope = encode_envelope(header, payload)
         if len(envelope) > MAX_ENVELOPE:
-            # Lifecycle must still arrive when a tool or answer is huge. Keep
-            # protocol identities and drop content, without inventing a result.
             keep = ("hook_event_name", "type", "kind", "session_id", "session_file", "transcript_path", "thread-id", "turn_id", "turn-id", "source", "bridge_instance", "bridge_sequence", "event_id", "notification_type", "permission_mode", "stop_reason", "error", "background_tasks", "agent_id", "agent_type")
-            question_input = payload.get("tool_input") if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") else None
-            tool_name = payload.get("tool_name")
-            payload = {key: payload[key] for key in keep if key in payload}
-            if question_input is not None:
-                payload.update(tool_name=tool_name, tool_input=question_input)
-            envelope = header.encode() + b"\n" + json.dumps(payload, separators=(",", ":")).encode()
+            compact = {key: payload[key] for key in keep if key in payload}
+            if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") and payload.get("tool_input") is not None:
+                compact.update(tool_name=payload["tool_name"], tool_input=payload["tool_input"])
+            if source == "opencode" and payload.get("outcome") in ("succeeded", "failed", "cancelled"):
+                compact["outcome"] = payload["outcome"]
+            envelope = encode_envelope(header, compact)
+            field = completion_field(source, native, payload)
+            answer = payload.get(field)
+            if field and isinstance(answer, str) and len(answer) <= MAX_ENVELOPE - len(envelope):
+                compact[field] = answer
+                with_answer = encode_envelope(header, compact)
+                if len(with_answer) <= MAX_ENVELOPE:
+                    envelope = with_answer
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
@@ -1013,28 +1039,7 @@ def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=No
         if route:
             info = os.fstat(fd)
             if not stat.S_ISCHR(info.st_mode) or info.st_rdev != route["device"]:
-                raise ValueError("SSH terminal identity changed")
-        while offset < len(osc):
-            remaining = deadline - time.monotonic()
-            if remaining <= 0 or not select.select([], [fd], [], remaining)[1]:
-                raise TimeoutError("terminal output is full")
-            try:
-                offset += os.write(fd, osc[offset:])
-            except BlockingIOError:
-                continue
-    finally:
-        if 0 < offset < len(osc):
-            # Cancel a partial OSC so a failed hook cannot swallow future output.
-            try:
-                if select.select([], [fd], [], 0.1)[1]:
-                    os.write(fd, b"\x18")
-            except OSError:
-                pass
-        os.close(fd)
-
-
-def run(args):
-    if not args or args[0] 
+                raise V
 ```
 
 ### Core Architecture Module: `pebrel_app/res/hooks/remote_files.py`
@@ -1522,11 +1527,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1028** (2026-11-19): **[Bug] 无法启用"登录时自启动"选项**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2, 150%, 1 monitor  ### Pebrel version / 版本号  2.5.9  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Perbel，打开设置页 2. 尝试启用"登录时自启动"选项  ### Expected behavior / 期望结果  选项被正常启用  ### Actual behavior / 实际结果  选项没有启用，并报错“”  ### Logs / screenshots / 日志或截图  <img width="1967" height="1075" alt="图片" src="https://github.com/user-attachments/assets/536de216-602a-47f7-94b9-9c4c89c7eda6" />  ### Non-default settings / 改过的设置  还尝试了使用管理员权限启动，没有解决此问题  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1078** (2026-11-21): **[Bug] JumpServer（KoKo）直连 SSH 登录仍卡住，无法进入远端 shell（#856 后续）**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 10 Pro 22H2（19045）  ### Pebrel version / 版本号  2.6.1（本机当前运行版本）  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  ssh client / remote shell — 远程 shell  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 在 `~/.ssh/config` 中配置 JumpServer（KoKo）直连目标资产的主机别名，例如：     ```sshconfig    Host my-hpc        HostName <JumpServer 地址>        Port 2222        User <JumpServer 用户>@<资产账号>@<资产 IP>        IdentityFile ~/.ssh/<密钥文件名>    ```  2. 启动 Pebrel，在 SSH 窗格中打开 `my-hpc`。 3. 等待目标主机的 shell 提示符出现。  ### Expected behavior / 期望结果  登录完成后，SSH 窗格应显示目标主机的 shell 提示符，并能执行 `pwd` 等命令。  ### Actual behavior / 实际结果  和 #856 相同的直连配置下，#858 修复后已经看不到 `PEBREL_PTY_…=not a tty:<pid>` 这行输出，但 SSH 窗格仍然卡住，没有出现可用的远端 shell，无法登录服务器。  目前无法从窗格输出判断连接卡在哪一步。希望能用实际的 KoKo 直连会话验证，直到可以在目标主机执行命令。  ### Logs / screenshots / 日志或截图  #856 中记录的旧输出（标识和进程号已省略）：  ```text PEBREL_PTY_<token>=not a tty:<pid> ```  本次卡住时，窗格已不再显示这行输出。暂无本次连接的调试日志。  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 
 
-- **Issue #1016** (2026-11-19): **[Bug] 无法粘贴图片：unsupported clipboard image format: Tiff**
-  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos26.0  ### Pebrel version / 版本号  2.5.8  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  Codex CLI  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  截图后粘贴出现 tiff 格式无法粘贴的情况  ### Expected behavior / 期望结果  希望支持下截图 tiff 粘贴  ### Actual behavior / 实际结果  <img width="404" height="59" alt="image" src="https://github.com/user-attachments/assets/ed7abd98-861f-49f8-90a4-40f17a793362" />  ### Logs / screenshots / 日志或截图  如上  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1063** (2026-11-20): **[Bug] 在win11 powershell 7 下执行`ls env:`查看环境变量报错**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 Pro 23H2（build 22631）  ### Pebrel version / 版本号  2.6.0 (5ff71de)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Pebrel，新开 PowerShell 7 标签页 2. 执行 `ls env:` 3. 每个环境变量报一条 `InvalidOperation`  ❯ ls env: InvalidOperation: ...\pebrel-shell\2.6.0-9b9c4248...\pebrel_prompt.ps1:363  363 |          $date = '{0,12}' -f $i.LastWriteTime.ToString('MMM d HH:mm',  …      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      | 不能对值为 Null 的表达式调用方法。 -rw-r--r--       1    all_proxy ...  ## 改过的设置  `follow_system_theme=0`、`shell=pwsh`、`refresh_environment=1`；`builtin_ls` 未设置，保持默认 `1`。  ## 补充观察：先执行一次 `pwsh` 就不报错  报错来自 Pebrel 启动时注入的脚本（启动参数 `-Command ". '<temp>\pebrel_prompt.ps1'"`），预先手敲执行的 `pwsh` 子会话不加载它，`ls` 退回原生别名：  | 场景                            | `(Get-Command ls).Definition` | `ls env:` 错误数 | | ------------------------------- | ----------------------------- | ---------------- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1543,125 +1548,131 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7405725` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1004 with the verified merge queue
+### Incident Patch 1: `078e9839` (2026-11-27)
+**Commit Message**: Merge pull request #1109 from Kuddev/docs/wechat-qr-dec03
 
-**File**: `CHANGELOG.md` (modified, +4/-4)
+Refresh the Pebrel WeChat group invitation
+
+**File**: `README.ja.md` (modified, +2/-2)
 ```diff
-@@ -2049,7 +2049,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包；Linux x64 包以及 macOS App
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
-@@ -2300,7 +2300,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
+@@ -69,11 +69,11 @@
+ </p>
  
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 11 月 24 日以降は無効）" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 12 月 3 日以降は無効）" width="300" /></a>
+ </p>
  
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
+ <p align="center">
+-  2026 年 11 月 24 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
++  2026 年 12 月 3 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
+ </p>
  
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
- 
-@@ -2497,7 +2497,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
- - **Panes and live managed Agents support bounded bracketed paste from literal text, stdin, or a file.** Prompt, paste, control-key, argv, and multiline validation prevent arbitrary terminal bytes from bypassing the public API, and generation-aware targeting keeps delayed input from reaching a restarted Agent with the same display name.
- - **Quick Jump searches tabs, panes, frequent directories, configured SSH hosts, and recoverable AI sessions in one palette.** Results retain tab and pane location, cwd, remote destination, provider, and session metadata, then expose direct focus, open, launch, or resume actions. File and Recipe scopes remain hidden because those backends are not yet end-to-end.
- - **Selected terminal or document text can be sent to an explicitly chosen live Agent.** The searchable Send to Chat dialog previews the selection as a quote, preserves blank lines, accepts an optional comment, can copy the composed message, labels remote SSH targets, and reports the destination after sending. If no live Agent exists, the action is disabled instead of guessing a pane.
--- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
-+- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
- - **Windows taskbar progress reflects OSC 9;4 emitted by terminal applications.** Normal, indeterminate, error, paused, and cleared states map to the native taskbar indicator; unsupported or unknown states clear stale progress instead of leaving the task
+ ## ひとつのワークスペース
 ```
 
-**File**: `docs/release-notes/v1.6.0.md` (modified, +1/-1)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -82,7 +82,7 @@
+@@ -69,11 +69,11 @@ For business cooperation or sponsorship, contact: [fickleheartedkeys@163.com](ma
+ </p>
  
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="QR code for the Pebrel WeChat group, valid before November 24, 2026" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="QR code for the Pebrel WeChat group, valid before December 3, 2026" width="300" /></a>
+ </p>
  
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
+ <p align="center">
+-  Scan with WeChat to join. Valid before November 24, 2026. Click the image to view full size.
++  Scan with WeChat to join. Valid before December 3, 2026. Click the image to view full size.
+ </p>
  
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
- 
+ ## One Workspace
 ```
 
-**File**: `docs/release-notes/v1.8.0.md` (modified, +1/-1)
+**File**: `README.zh-CN.md` (modified, +2/-2)
 ```diff
-@@ -22,7 +22,7 @@
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
+@@ -69,11 +69,11 @@
+ </p>
+ 
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="Pebrel 微信交流群二维码，2026 年 11 月 24 日前有效" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="Pebrel 微信交流群二维码，2026 年 12 月 3 日前有效" width="300" /></a>
+ </p>
+ 
+ <p align="center">
+-  微信扫码加入，2026 年 11 月 24 日前有效。点击图片可查看原图。
++  微信扫码加入，2026 年 12 月 3 日前有效。点击图片可查看原图。
+ </p>
+ 
+ ## 一个工作区
 ```
 
 ---
 
-### Incident Patch 2: `a2243319` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1033 with the verified merge queue
+### Incident Patch 2: `93f0cb9e` (2026-11-26)
+**Commit Message**: Refresh the Pebrel WeChat group invitation
 
-**File**: `pebrel_app/Cargo.toml` (modified, +1/-1)
+**File**: `README.ja.md` (modified, +2/-2)
 ```diff
-@@ -162,7 +162,7 @@ regex = "1.13.1"
- # `image` 被 GPUI 壳的壁纸、文档 tab、行内图片、数学视图无条件使用，必须是
- # 无条件依赖；此前按 `cfg(not(target_os = "macos"))` 排除会让 macOS 目标在
- # 编译期找不到 crate（2026-09-02 交叉 check 首个暴露的问题）。
--image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "webp"] }
-+image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "tiff", "webp"] }
- rusqlite = { version = "0.40.2", features = ["bundled"] }
- sha1 = "0.11.0"
+@@ -69,11 +69,11 @@
+ </p>
  
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 11 月 24 日以降は無効）" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 12 月 3 日以降は無効）" width="300" /></a>
+ </p>
+ 
+ <p align="center">
+-  2026 年 11 月 24 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
++  2026 年 12 月 3 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
+ </p>
+ 
+ ## ひとつのワークスペース
 ```
 
-**File**: `pebrel_app/src/gpui_shell/terminal/inline_image.rs` (modified, +9/-9)
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -523,6 +523,7 @@ pub(super) fn clipboard_png(data: &[u8]) -> Result<Vec<u8>, String> {
-             | ImageFormat::Jpeg
-             | ImageFormat::Gif
-             | ImageFormat::Bmp
-+            | ImageFormat::Tiff
-             | ImageFormat::WebP
-     ) {
-         return Err(format!("unsupported clipboard image format: {format:?}"));
-@@ -982,15 +983,14 @@ mod tests {
-     #[test]
-     fn clipboard_bitmaps_become_png_without_extending_terminal_protocol_formats() {
-         let pixels = image::RgbaImage::from_pixel(2, 1, image::Rgba([10, 20, 30, 255]));
--        let mut output = std::io::Cursor::new(Vec::new());
--        image::DynamicImage::ImageRgba8(pixels.clone())
--            .write_to(&mut output, ImageFormat::Bmp)
--            .unwrap();
--        let bmp = output.into_inner();
--        assert!(decode_bytes(&bmp).is_err());
--        let png = clipboard_png(&bmp).unwrap();
--        assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
--        assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        for format in [ImageFormat::Bmp, ImageFormat::Tiff] {
-+            let mut bitmap = std::io::Cursor::new(Vec::new());
-+            pixels.write_to(&mut bitmap, format).unwrap();
-+            assert!(decode_bytes(bitmap.get_ref()).is_err());
-+            let png = clipboard_png(bitmap.get_ref()).unwrap();
-+            assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
-+            assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        }
-     }
+@@ -69,11 +69,11 @@ For business cooperation or sponsorship, contact: [fickleheartedkeys@163.com](ma
+ </p>
  
-     #[test]
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="QR code for the Pebrel WeChat group, valid before November 24, 2026" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="QR code for the Pebrel WeChat group, valid before December 3, 2026" width="300" /></a>
+ </p>
+ 
+ <p align="center">
+-  Scan with WeChat to join. Valid before November 24, 2026. Click the image to view full size.
++  Scan with WeChat to join. Valid before December 3, 2026. Click the image to view full size.
+ </p>
+ 
+ ## One Workspace
+```
+
+**File**: `README.zh-CN.md` (modified, +2/-2)
+```diff
+@@ -69,11 +69,11 @@
+ </p>
+ 
+ <p align="center">
+-  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="Pebrel 微信交流群二维码，2026 年 11 月 24 日前有效" width="300" /></a>
++  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="Pebrel 微信交流群二维码，2026 年 12 月 3 日前有效" width="300" /></a>
+ </p>
+ 
+ <p align="center">
+-  微信扫码加入，2026 年 11 月 24 日前有效。点击图片可查看原图。
++  微信扫码加入，2026 年 12 月 3 日前有效。点击图片可查看原图。
+ </p>
+ 
+ ## 一个工作区
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1035** (2026-11-19): Reset terminal mouse reporting after a killed Bash foreground command (@Kuddev)
-- **PR #1034** (2026-11-19): Create a missing Windows Startup directory when enabling login launch (@Kuddev)
-- **PR #1033** (2026-11-19): Accept TIFF screenshots in terminal clipboard pastes (@Kuddev)
-- **PR #1023** (2026-11-19): Collect host resource metrics with comparable CPU samples and a fixed Docker target (@Kuddev)
-- **PR #1021** (2026-11-17): Establish confirmed foreground ownership before exercising transcript scan limits (@Kuddev)
-- **PR #1020** (2026-11-17): Import Niu installations as independent terminal profiles (@Kuddev)
+- **PR #1109** (2026-11-27): Refresh the Pebrel WeChat group invitation (@Kuddev)
+- **PR #1107** (2026-11-26): feat(agents): support DSH TUI launch and DeepSeek branding (@Kuddev)
+- **PR #1097** (2026-11-26): Unify light workspace wallpaper composition (@Kuddev)
+- **PR #1085** (2026-11-21): Add cached wallpaper glass and collapsible appearance settings (@Kuddev)
+- **PR #1079** (2026-11-21): Use the interactive SSH shell when the gateway gives exec commands no terminal (@Kuddev)
+- **PR #1076** (2026-11-21): Use the configured imported shell for splits from host panes (@Kuddev)
 
 ---
 
@@ -1681,35 +1692,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate reviewed changes from #1004 with the verified merge queue
+## X. Empirical Invariant Guard in README.ja.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.ja.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7405725`: Integrate reviewed changes from #1004 with the verified merge queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `078e9839`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.ja.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+  <a href="extra/community/wechat-group-2026-12-03.jpg"><img src="extra/community/wechat-group-2026-12-03.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 12 月 3 日以降は無効）" width="300" /></a>
+  2026 年 12 月 3 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+  <a href="extra/community/wechat-group-2026-11-24.jpg"><img src="extra/community/wechat-group-2026-11-24.jpg" alt="Pebrel の WeChat グループの QR コード（2026 年 11 月 24 日以降は無効）" width="300" /></a>
+  2026 年 11 月 24 日より前に WeChat でスキャンして参加してください。画像をクリックすると原寸で表示されます。
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7405725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `078e9839` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

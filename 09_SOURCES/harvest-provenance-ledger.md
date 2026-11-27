@@ -13859,3 +13859,5 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `704cfbcb` | Multi-dimensional audit evidence | 2026-11-27T17:01:41.304Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `58d46831` | Multi-dimensional audit evidence | 2026-11-27T17:01:47.947Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `699ed4b3` | Multi-dimensional audit evidence | 2026-11-27T17:01:53.920Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `078e9839` | Multi-dimensional audit evidence | 2026-11-27T17:19:20.153Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `ea2cdc13` | Multi-dimensional audit evidence | 2026-11-27T17:19:32.227Z |

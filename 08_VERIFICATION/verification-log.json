@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-VN93",
-    "timestamp": "2026-11-26T08:10:21.687Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "aca6b17c7c01f3bf204b96766f3e5accf0c5c67a6ebbcc179044e05de99fc50a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-AXKW",
-    "timestamp": "2026-11-26T08:22:14.912Z",
-    "repository": "tencent/Hy4-flash",
-    "learningId": "learn-huggingface-tencent-hy4-flash",
-    "contentHash": "4eef8ac1cd302be31cb22c0a1bbfae6dec4b0a38e49161ac57bfb4e812dc9a63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-BKL1",
     "timestamp": "2026-11-26T08:22:44.725Z",
     "repository": "sfu-db/connector-x",
@@ -7490,6 +7460,36 @@
     "repository": "lioensky/VCPToolBox",
     "learningId": "learn-github-lioensky-vcptoolbox",
     "contentHash": "076087547e61c0881f241b5f3f87db46b51e7d6fdff4492e200759da70fc30c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XHE1",
+    "timestamp": "2026-11-27T17:19:20.137Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "376637165d26a52c99b579fb98ebcabab0274708c8c9c2ca3969cdb86c80410a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XQPK",
+    "timestamp": "2026-11-27T17:19:32.216Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

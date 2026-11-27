@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T17:10:42.437Z",
-    "lastVerified": "2026-11-27T17:10:42.437Z",
+    "lastChecked": "2026-11-27T17:19:35.833Z",
+    "lastVerified": "2026-11-27T17:19:35.833Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T16:41:41.940Z",
+    "lastChecked": "2026-11-27T17:19:29.892Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T16:41:41.940Z"
+    "lastVerified": "2026-11-27T17:19:29.892Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2270,8 +2270,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T12:32:38.281Z",
-    "lastVerified": "2026-11-27T12:32:38.281Z",
+    "lastChecked": "2026-11-27T17:19:24.905Z",
+    "lastVerified": "2026-11-27T17:19:24.905Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2683,14 +2683,14 @@
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:14:51.911Z",
-    "lastVerified": "2026-11-26T17:14:51.911Z",
+    "lastChecked": "2026-11-27T17:19:18.640Z",
+    "lastVerified": "2026-11-27T17:19:18.640Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
+    "contentHash": "376637165d26a52c99b579fb98ebcabab0274708c8c9c2ca3969cdb86c80410a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3430,9 +3430,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-26T22:10:48.593Z",
+    "lastChecked": "2026-11-27T17:19:27.401Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-26T22:10:48.593Z"
+    "lastVerified": "2026-11-27T17:19:27.401Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -7159,14 +7159,14 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T23:24:09.617Z",
-    "lastVerified": "2026-11-26T23:24:09.617Z",
+    "lastChecked": "2026-11-27T17:19:30.836Z",
+    "lastVerified": "2026-11-27T17:19:30.836Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
+    "contentHash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9696,9 +9696,9 @@
   "react-native-maps-react-native-maps": {
     "name": "react-native-maps",
     "officialUrl": "https://github.com/react-native-maps/react-native-maps",
-    "lastChecked": "2026-11-25T07:39:20.456Z",
+    "lastChecked": "2026-11-27T17:19:19.919Z",
     "revisionIdentifier": "39c6fd17",
-    "lastVerified": "2026-11-25T07:39:20.456Z"
+    "lastVerified": "2026-11-27T17:19:19.919Z"
   },
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
@@ -10163,9 +10163,9 @@
   "alfa546-crawler": {
     "name": "Crawler",
     "officialUrl": "https://github.com/alfa546/Crawler",
-    "lastChecked": "2026-11-24T08:05:29.976Z",
+    "lastChecked": "2026-11-27T17:19:17.401Z",
     "revisionIdentifier": "8d10a017",
-    "lastVerified": "2026-11-24T08:05:29.976Z"
+    "lastVerified": "2026-11-27T17:19:17.401Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",

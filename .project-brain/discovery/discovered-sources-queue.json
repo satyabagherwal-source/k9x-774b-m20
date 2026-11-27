@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T16:41:42.996Z",
+  "updated_at": "2026-11-27T17:19:37.582Z",
   "stats": {
-    "total_discovered": 10495,
-    "approved_pending_harvest": 9963,
+    "total_discovered": 10498,
+    "approved_pending_harvest": 9966,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9969,
+      "COMMUNITY_AND_EXPERT": 9972,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227193,6 +227193,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
         "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-E33634F682C2": {
+      "id": "SRC-E33634F682C2",
+      "url": "https://github.com/hyperium/http-body",
+      "title": "https://github.com/hyperium/http-body",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:19:37.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-03D026977AC9": {
+      "id": "SRC-03D026977AC9",
+      "url": "https://github.com/hyperium/http-body/releases",
+      "title": "https://github.com/hyperium/http-body/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:19:37.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-D14F37A6CF7B": {
+      "id": "SRC-D14F37A6CF7B",
+      "url": "https://github.com/hyperium/http-body/compare/http-body-util-v0.1.4...http-body-util-v0.1.5",
+      "title": "https://github.com/hyperium/http-body/compare/http-body-util-v0.1.4...http-body-util-v0.1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:19:37.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
       }
     }
   }

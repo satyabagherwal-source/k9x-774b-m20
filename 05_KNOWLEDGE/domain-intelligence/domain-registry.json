@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T17:10:45.356Z",
+  "last_updated": "2026-11-27T17:19:39.608Z",
   "total_records": 2843,
   "domains": {
     "A": {
@@ -11007,8 +11007,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "f4273ee2a10bab9be917d8bb415511192adc5e0a9a17d7b6e584cbac23b35854",
-      "created_at": "2026-11-26T05:29:13.571Z"
+      "content_hash": "90793f08515fc0720199de21498cf9f7616ea6b9380266152af7f076abfaaffd",
+      "created_at": "2026-11-27T17:19:32.800Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -11067,8 +11067,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "c37acdaefac307c629ade33a21e3fd35b08ac626bf1a57d7938f28311550989b",
-      "created_at": "2026-11-26T05:30:03.827Z"
+      "content_hash": "270e0988f0d66b5f0871214023f2e3fd522584272244e5521735807a8d5c4daf",
+      "created_at": "2026-11-27T17:19:38.218Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -33973,8 +33973,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2d0da4c50c0c6585cc19638398992fa28baf183533be4c2a048c5f42d56cd9bc",
-      "created_at": "2026-11-27T17:10:45.356Z"
+      "content_hash": "682b78099af6f1bdeff369266b84bb68053f793c5739bdb208c5248317eeb9c8",
+      "created_at": "2026-11-27T17:19:39.608Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -35385,8 +35385,8 @@
       "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
       "repository": "Kuddev/pebrel",
-      "content_hash": "57da6cd55693f8b0c65e08dd1dd344b4acfd24990d4ddf72f1284c62dd4f6824",
-      "created_at": "2026-11-26T17:14:53.548Z"
+      "content_hash": "6730681ed899ba14b2ce6eb5c81b9354ded4f6eca119318dbba019ca92a6d463",
+      "created_at": "2026-11-27T17:19:20.684Z"
     },
     "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -35394,8 +35394,8 @@
       "title": "Technical Construction Intelligence: kuddev-pebrel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-learnings-technical-construction-intelligence-kuddev-pebrel-learni.md",
       "repository": "kuddev-pebrel-learnings",
-      "content_hash": "1d9c1f62f1da67f01c68d8d9a189373061757fe9d3e4532ad69f5b51bad4c34a",
-      "created_at": "2026-11-20T02:15:12.642Z"
+      "content_hash": "9dcbfca1a5ac313b10eef73e699d0104d0349adf948a74142817eed81c1f845d",
+      "created_at": "2026-11-27T17:19:36.609Z"
     },
     "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-jellyfin-swiftfin-core-invariants",

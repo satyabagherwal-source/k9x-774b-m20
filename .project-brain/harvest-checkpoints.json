@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T17:01:53.929Z",
+  "last_updated": "2026-11-27T17:19:32.237Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
-      "verified_at": "2026-11-26T17:14:53.124Z",
+      "content_hash": "376637165d26a52c99b579fb98ebcabab0274708c8c9c2ca3969cdb86c80410a",
+      "verified_at": "2026-11-27T17:19:20.168Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:14:53.124Z"
+      "last_updated": "2026-11-27T17:19:20.168Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
-      "verified_at": "2026-11-26T23:24:11.243Z",
+      "content_hash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
+      "verified_at": "2026-11-27T17:19:32.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T23:24:11.243Z"
+      "last_updated": "2026-11-27T17:19:32.236Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

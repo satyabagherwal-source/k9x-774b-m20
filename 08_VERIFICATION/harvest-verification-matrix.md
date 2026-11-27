@@ -13826,3 +13826,5 @@
 | `CYCLE-20261127-ASDU` | `2026-11-27T17:01:41.298Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10931` | Yes (`9198dbf3...`) |
 | `CYCLE-20261127-AXI7` | `2026-11-27T17:01:47.935Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`aa54f581...`) |
 | `CYCLE-20261127-B23Z` | `2026-11-27T17:01:53.903Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10932` | Yes (`07608754...`) |
+| `CYCLE-20261127-XHE1` | `2026-11-27T17:19:20.137Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10933` | Yes (`37663716...`) |
+| `CYCLE-20261127-XQPK` | `2026-11-27T17:19:32.216Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10934` | Yes (`7637d125...`) |

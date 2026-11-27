@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `55f7ecc2`  
+> **Source Version**: `ea2cdc13`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:24:09.624Z  
+> **Timestamp**: 2026-11-27T17:19:30.841Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:24:09.617Z  
+> **Harvest Timestamp**: 2026-11-27T17:19:30.836Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1632,386 +1632,237 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55f7ecc2` (2026-11-26)
-**Commit Message**: fix(viz): stat test (#15823)
+### Incident Patch 1: `c386ba32` (2026-11-26)
+**Commit Message**: fix(destination): Handle Server delete tombstones (#15790)
 
-Run tests outside of the data-plane + workload scope.  They only require
-viz install to have completed in order to complete.
+Problem
 
-Separate the client (slow cooker) and server (bb) manifests.  This
-allows the server to be started, and deployed before starting the
-client.  It results in not needing to insert artificial wait times in
-the client startup and fewer errors in the analyzed results.
+EndpointsWatcher.deleteServer casts its argument straight to
+*v1beta3.Server. When the Server informer misses a delete, for example
+while its watch is disconnected, client-go delivers the delete on
+relist as a cache.DeletedFinalStateUnknown, and the cast panics.
+client-go re-panics handler panics by default, so in a cluster this
+would restart the destination container. The other delete handlers in
+this file already unwrap the tombstone.
 
-By separating out the wait for client traffic and then prometheus
-samples, we shorten the wait time to only what is needed.
+Solution
 
-**File**: `test/integration/viz/install_test.go` (modified, +4/-0)
+Unwrap the tombstone the same way deleteService does, and log and
+return for anything that is not a Server.
+
+Validation
+
+Added TestEndpointsWatcherDeleteServer, which covers a direct delete, a
+delete wrapped in a DeletedFinalStateUnknown, and a tombstone holding
+another type. The tombstone case panics without this change.
+
+  go test -race ./controller/api/destination/watcher/...
+
+Fixes #15789
+
+Signed-off-by: Donald Anyamba <[REDACTED_EMAIL]>
+Co-authored-by: Raymond Kroeker <[REDACTED_EMAIL]>
+
+**File**: `controller/api/destination/watcher/endpoints_watcher.go` (modified, +14/-1)
 ```diff
-@@ -108,10 +108,14 @@ func TestInstallVizHA(t *testing.T) {
- // TestInstallViz will install the viz extension to be used by the rest of the
- // tests in the viz suite
- func TestInstallViz(t *testing.T) {
-+	// drop the prometheus scrape interval; some of the test cases wait for
-+	// multiple scrapes; and this will drop testing time
- 	cmd := []string{
- 		"viz",
- 		"install",
- 		"--set", fmt.Sprintf("namespace=%s", TestHelper.GetVizNamespace()),
-+		"--set", "prometheus.globalConfig.scrape_interval=2s",
-+		"--set", "prometheus.globalConfig.scrape_timeout=2s",
- 	}
- 
- 	out, err := TestHelper.LinkerdRun(cmd...)
-```
-
-**File**: `test/integration/viz/stat/stat_test.go` (modified, +152/-75)
-```diff
-@@ -2,13 +2,15 @@ package get
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 	"os"
- 	"strings"
- 	"testing"
- 	"time"
- 
- 	"github.com/linkerd/linkerd2/testutil"
-+	"github.com/linkerd/linkerd2/testutil/prommatch"
- )
- 
- //////////////////////
-@@ -24,16 +26,34 @@ func TestMain(m *testing.M) {
- 	os.Exit(m.Run())
+@@ -471,9 +471,22 @@ func (ew *EndpointsWatcher) updateServer(oldObj interface{}, newObj interface{})
  }
  
-+// statWindow is the time window passed to every "linkerd viz stat" call. It is
-+// short so that transient errors at startup fall out of the window.
-+const statWindow = "30s"
-+
-+// clientTrafficTimeout is a maximum wait for the client application to start
-+// sending traffic.
-+const clientTrafficTimeout = 2 * time.Minute
-+
-+type statTestCase struct {
-+	args         []string
-+	expectedRows map[string]string
-+	status       string
-+}
-+
-+// clientSuccessMatcher matches successful responses recorded by slow-cooker's
-+// proxy for the requests slow-cooker sends to backend-svc.
-+var clientSuccessMatcher = prommatch.NewMatcher("response_total",
-+	prommatch.Labels{
-+		"direction":      prommatch.Equals("outbound"),
-+		"classification": prommatch.Equals("success"),
-+	},
-+	prommatch.HasPositiveValue(),
-+)
-+
- //////////////////////
- /// TEST EXECUTION ///
- //////////////////////
- 
--// These tests retry for up to 20 seconds, since each call to "linkerd stat"
--// generates traffic to the components in the linkerd namespace, and we're
--// testing that those components are properly reporting stats. It's ok if the
--// first few attempts fail due to missing stats, since the requests from those
--// failed attempts will eventually be recorded in the stats that we're
--// requesting, and the test will pass.
- func TestCliStatForLinkerdNamespace(t *testing.T) {
- 	ctx := context.Background()
- 	var prometheusPod, prometheusNamespace, prometheusDeployment, metricsPod string
-@@ -62,11 +82,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
- 	}
- 	prometheusPod = pods[0]
- 
--	testCases := []struct {
--		args         []string
--		expectedRows map[string]string
--		status       string
--	}{
-+	testCases := []statTestCase{
- 		{
- 			args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetLinkerdNamespace()},
- 			expectedRows: map[string]string{
-@@ -103,11 +119,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
- 	}
- 
- 	if !TestHelper.ExternalPrometheus() {
--		testCases = append(testCases, []struct {
--			args         []string
--			expectedRows map[string]string
--			status       string
--		}{
-+		testCases = append(testCases, []statTestCase{
- 			{
- 				args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetVizNamespace()},
- 				expectedRows: map[string]string{
-@@ -133,11 +145,7 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
- 		}...,
- 		)
- 	} else {
--		testCases = append(testCases, []struct {
--			args         []string
--			expectedRows map[string]string
--			status       string
--		}{
-+		testCases = append(testCases, []statTestCase{
- 			{
- 				args: []string{"viz", "stat", "deploy", "-n", TestHelper.GetVizNamespace()},
- 				expectedRows: map[string]string{
-@@ -157,36 +165,39 @@ func TestCliStatForLinkerdNamespace(t *testing.T) {
- 		)
- 	}
- 
-+	// preceding test cases do not require sample apps they only check for
-+	// formatted viz stat output that result from the install test
-+	runStatCases(t, testCases, 20*time.Second)
-+
- 	// Apply a sample application
- 	TestHelper.WithDataPlaneNamespace(ctx, "stat-test", map[string]string{}, t, func(t *testing.T, prefixedNs string) {
--		out, err := TestHelper.LinkerdRun("inject", "--manual", "../trafficsplit/testdata/application.yaml")
--		if err != nil {
--			testutil.AnnotatedFatal(t, "'linkerd inject' command failed", err)
-+		// separate the sample apps into server + client applications and only
-+		// start the client after the server is deployed
-+		if err := deploySampleApp(ctx, t, prefixedNs, "testdata/servers.yaml", "backend", "failing"); err != nil {
-+			testutil.AnnotatedError(t, "failed to deploy the sample application's servers", err)
-+			return
- 		}
--
--		out, err = TestHelper.KubectlApply(out, prefixedNs)
--		if err != nil {
--			testutil.AnnotatedFatalf(t, "'kubectl apply' command failed",
--				"'kubectl apply' command failed\n%s", out)
-+		if err := deploySampleApp(ctx, t, prefixedNs, "testdata/client.yaml", "slow-cooker"); err != nil {
-+			testutil.AnnotatedError(t, "failed to deploy the sample application's client", err)
-+			return
- 		}
- 
--		// wait for deployments to start
--		for _, deploy := range []string{"backend", "failing", "slow-cooker"} {
--			if err := TestHelper.CheckPods(ctx, prefixedNs, deploy, 1); err != nil {
--				//nolint:errorlint
--				if rce, ok := err.(*testutil.RestartCountError); ok {
--					testutil.AnnotatedWarn(t, "CheckPods timed-out", rce)
--				} else {
--					testutil.AnnotatedError(t, "CheckPods timed-out", err)
--				}
--			}
-+		// wait for client traffic (using linkerd diagnostics to inspect proxy metrics)
-+		if err := waitForClientTraffic(prefixedNs); err != nil {
-+			testutil.AnnotatedError(t, "slow-cooker did not receive successful responses", err)
-+		
-```
-
-**File**: `test/integration/viz/stat/testdata/client.yaml` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+# Client side of the stat test's sample application: slow-cooker sends a
-+# steady stream of requests to backend-svc. The test applies this file only
-+# after the deployments in servers.yaml are ready, so slow-cooker starts
-+# sending immediately instead of sleeping first.
-+---
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: slow-cooker
-+spec:
-+  replicas: 1
-+  selector:
-+    matchLabels:
-+      app: slow-cooker
-+  template:
-+    metadata:
-+      labels:
-+        app: slow-cooker
-+    spec:
-+      containers:
-+      - name: slow-cooker
-+        image: buoyantio/slow_cooker:1.3.0
-+        args:
-+        - http://backend-svc:8080
-+        ports:
-+        - containerPort: 9999
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: slow-cooker
-+spec:
-+  selector:
-+    app: slow-cooker
-+  ports:
-+  - name: metrics
-+    port: 9999
-+    targetPort: 9999
-```
-
-**File**: `test/integration/viz/stat/testdata/servers.yaml` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+# Server side of the stat test's sample application: a backend that always
-+# succeeds and one that always fails. The test applies this file first and
-+# waits for both deployments to be ready before applying client.yaml, so the
-+# client never sends a request before the backend can answer it.
-+#
-+# Based on ../../trafficsplit/testdata/application.yaml, which is shared with
-+# the trafficsplit test and still starts every workload at once.
-+---
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: backend
-+spec:
-+  replicas: 1
-+  selector:
-+    matchLabels:
-+      app: backend
-+  template:
-+    metadata:
-+      labels:
-+        app: backend
-+    spec:
-+      containers:
-+      - name: backend
-+        image: buoyantio/bb:v0.0.6
-+        args:
-+        - terminus
-+        - "--h1-server-port=8080"
-+        - "--response-text=backend1"
-+        ports:
-+        - containerPort: 8080
-+        # Ready means the server answers HTTP, not just that the container
-+        # started. A TCP probe would not prove this: the proxy accepts the
-+        # connection even when the server is not listening yet.
-+        readinessProbe:
-+          httpGet:
-+            path: /
-+            port: 8080
-+          periodSeconds: 1
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: backend-svc
-+spec:
-+  selector:
-+    app: backend
-+  ports:
-+  - name: http
-+    port: 8080
-+    targetPort: 8080
-+---
-+apiVersion: apps/v1
-+kind: Deployment
-+metadata:
-+  name: failing
-+spec:
-+  replicas: 1
-+  selector:
-+    matchLabels:
-+      app: failing
-+  template:
-+    metadata:
-+      labels:
-+        app: failing
-+    spec:
-+      containers:
-+      - name: failing
-+        image: buoyantio/bb:v0.0.6
-+        args:
-+        - terminus
-+        - "--h1-server-port=8080"
-+        - "--response-text=failing"
-+        - "--percent-failure=100"
-+        ports:
-+        - containerPort: 8080
-+        # No HTTP readiness probe: every response is an error, so it would
-+        # never pass. Nothing sends traffic to this backend in the stat test.
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: failing-svc
-+spec:
-+  selector:
-+    app: failing
-+  ports:
-+  - name: http
-+    port: 8080
-+    targetPort: 8080
-```
-
-**File**: `testutil/prometheus.go` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+package testutil
-+
-+import (
-+	"context"
-+	"fmt"
-+	"time"
-+
-+	promapi "github.com/prometheus/client_golang/api"
-+	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
-+	"github.com/prometheus/common/model"
-+)
-+
-+const prometheusPort = 9090
-+
-+// WaitForPrometheusQuery blocks until query, evaluated by the Prometheus
-+// deployment promDeploy in promNamespace, returns at least one series.
-+//
-+// Use it to wait until Prometheus has ingested the samples an assertion depends
-+// on, instead of retrying the assertion itself. The wait ends as soon as the
-+// data is present; timeout only guards against a hang and should be well above
-+// the time a healthy cluster needs.
-+//
-+// Prometheus is reached through a port-forward, which connects over the pod's
-+// loopback interface and so is not subject to the proxy's inbound policy.
-+func (h *TestHelper) WaitForPrometheusQuery(ctx context.Context, promNamespace, promDeploy, query string, timeout time.Duration) error {
-+	addr, err := h.URLFor(ctx, promNamespace, promDeploy, prometheusPort)
-+	if err != nil {
-+		return fmt.Errorf("failed to port-forward to Prometheus %s/%s: %w", promNamespace, promDeploy, err)
-+	}
-+
-+	client, err := promapi.NewClient(promapi.Config{Address: addr})
-+	if err != nil {
-+		return fmt.Errorf("failed to create Prometheus client for %s: %w", addr, err)
-+	}
-+	api := promv1.NewAPI(client)
-+
-+	return RetryFor(timeout, func() error {
-+		queryCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
-+		defer cancel()
-+
-+		result, _, err := api.Query(queryCtx, query, time.Now())
-+		if err != nil {
-+			return fmt.Errorf("query %q to Prometheus failed: %w", query, err)
-+		}
-+		vector, ok := result.(model.Vector)
+ func (ew *EndpointsWatcher) deleteServer(obj interface{}) {
++	server, ok := obj.(*v1beta3.Server)
++	if !ok {
++		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
 +		if !ok {
-+			return fmt.Errorf("query %q to Prometheus returned a %s, expected a vector", query, result.Type())
++			ew.log.Errorf("couldn't get object from DeletedFinalStateUnknown %#v", obj)
++			return
 +		}
-+		if len(vector) == 0 {
-+			return fmt.Errorf("query %q to Prometheus returned no series", query)
++		server, ok = tombstone.Obj.(*v1beta3.Server)
++		if !ok {
++			ew.log.Errorf("DeletedFinalStateUnknown contained object that is not a Server %#v", obj)
++			return
 +		}
-+		return nil
-+	})
++	}
++
+ 	ew.Lock()
+ 	defer ew.Unlock()
+-	server := obj.(*v1beta3.Server)
+ 	for _, sp := range ew.publishers {
+ 		sp.updateServer(server, nil)
+ 	}
+```
+
+**File**: `controller/api/destination/watcher/endpoints_watcher_test.go` (modified, +111/-0)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	kerrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/util/intstr"
++	"k8s.io/client-go/tools/cache"
+ )
+ 
+ type bufferingEndpointListener struct {
+@@ -756,6 +757,116 @@ status:
+ 	listener.ExpectRemoved([]string{}, t)
+ }
+ 
++func TestEndpointsWatcherDeleteServer(t *testing.T) {
++	k8sConfigs := []string{`
++apiVersion: v1
++kind: Service
++metadata:
++  name: name1
++  namespace: ns
++spec:
++  type: LoadBalancer
++  ports:
++  - port: 8989`, `
++apiVersion: v1
++kind: Endpoints
++metadata:
++  name: name1
++  namespace: ns
++subsets:
++- addresses:
++  - ip: 172.17.0.12
++    targetRef:
++      kind: Pod
++      name: name1-1
++      namespace: ns
++  ports:
++  - port: 8989`, `
++apiVersion: v1
++kind: Pod
++metadata:
++  name: name1-1
++  namespace: ns
++  labels:
++    app: name1
++status:
++  phase: Running
++  podIP: 172.17.0.12`}
++
++	server := &v1beta3.Server{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:      "srv",
++			Namespace: "ns",
++		},
++		Spec: v1beta3.ServerSpec{
++			PodSelector: &metav1.LabelSelector{
++				MatchLabels: map[string]string{
++					"app": "name1",
++				},
++			},
++			Port:          intstr.FromInt(8989),
++			ProxyProtocol: opaqueProtocol,
++		},
++	}
++
++	for _, tt := range []struct {
++		name           string
++		objectToDelete interface{}
++		expected       []string
++	}{
++		{
++			name:           "deletes a Server",
++			objectToDelete: server,
++			expected:       []string{"172.17.0.12:8989:false", "172.17.0.12:8989:false", "172.17.0.12:8989:true"},
++		},
++		{
++			name:           "deletes a Server wrapped in a DeletedFinalStateUnknown",
++			objectToDelete: cache.DeletedFinalStateUnknown{Key: "ns/srv", Obj: server},
++			expected:       []string{"172.17.0.12:8989:false", "172.17.0.12:8989:false", "172.17.0.12:8989:true"},
++		},
++		{
++			name: "ignores a DeletedFinalStateUnknown that does not contain a Server",
++			objectToDelete: cache.DeletedFinalStateUnknown{
++				Key: "ns/name1",
++				Obj: &corev1.Service{ObjectMeta: metav1.ObjectMeta{Name: "name1", Namespace: "ns"}},
++			},
++			expected: []string{"172.17.0.12:8989:false", "172.17.0.12:8989:true"},
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			k8sAPI, err := k8s.NewFakeAPI(k8sConfigs...)
++			if err != nil {
++				t.Fatalf("NewFakeAPI returned an error: %s", err)
++			}
++
++			metadataAPI, err := k8s.NewFakeMetadataAPI(nil)
++			if err != nil {
++				t.Fatalf("NewFakeMetadataAPI returned an error: %s", err)
++			}
++
++			watcher, err := NewEndpointsWatcher(k8sAPI, metadataAPI, logging.WithField("test", t.Name()), false, false, "local")
++			if err != nil {
++				t.Fatalf("can't create Endpoints watcher: %s", err)
++			}
++
++			k8sAPI.Sync(nil)
++			metadataAPI.Sync(nil)
++
++			listener := newBufferingEndpointListener()
++			err = watcher.Subscribe(ServiceID{Name: "name1", Namespace: "ns"}, 8989, testFilterKey(""), listener)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			watcher.addServer(server)
++			listener.ExpectAddedWithOpaqueProtocol([]string{"172.17.0.12:8989:false", "172.17.0.12:8989:true"}, t)
++
++			watcher.deleteServer(tt.objectToDelete)
++			listener.ExpectAddedWithOpaqueProtocol(tt.expected, t)
++		})
++	}
 +}
++
+ func TestEndpointsWatcherWithEndpointSlices(t *testing.T) {
+ 	for _, tt := range []struct {
+ 		serviceType                string
+```
+
+---
+
+### Incident Patch 2: `ea2cdc13` (2026-11-27)
+**Commit Message**: build(deps): bump http-body-util from 0.1.4 to 0.1.5 (#15688)
+
+Bumps [http-body-util](https://github.com/hyperium/http-body) from 0.1.4 to 0.1.5.
+- [Release notes](https://github.com/hyperium/http-body/releases)
+- [Commits](https://github.com/hyperium/http-body/compare/http-body-util-v0.1.4...http-body-util-v0.1.5)
+
+---
+updated-dependencies:
+- dependency-name: http-body-util
+  dependency-version: 0.1.5
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -797,9 +797,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "http-body-util"
+-version = "0.1.4"
++version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e9f41fd6a08e4d4ec69df65976da761afd5ad5e58a9d4acb46bd1c953a9e3ff2"
++checksum = "23169fe34a5fbcdd3f3862e78fb9b6fccd5f02a6dc6f732547005d45631ce71c"
+ dependencies = [
+  "bytes",
+  "futures-core",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #15823** (2026-11-26): fix(viz): stat test (@raykroeker)
 - **PR #15821** (2026-11-24): chore(deps): bump golang.org/x/crypto to 0.59.0 (@arichardet)
 - **PR #15815** (2026-11-23): chore(build): update golang to 1.26.11 (@arichardet)
+- **PR #15790** (2026-11-26): fix(destination): Handle Server delete tombstones (@donaldraph)
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
 - **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
-- **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 
 ---
 
@@ -2031,31 +1882,41 @@ samples, we shorten the wait time to only what is needed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. viz): stat test
+## X. destination): Handle Server delete tombstones
 
 **RULE**:
-When implementing operations in `test/integration/viz/install_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controller/api/destination/watcher/endpoints_watcher.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55f7ecc2`: viz): stat test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c386ba32`: destination): Handle Server delete tombstones. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/viz/install_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controller/api/destination/watcher/endpoints_watcher.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// drop the prometheus scrape interval; some of the test cases wait for
-	// multiple scrapes; and this will drop testing time
-		"--set", "prometheus.globalConfig.scrape_interval=2s",
-		"--set", "prometheus.globalConfig.scrape_timeout=2s",
+	server, ok := obj.(*v1beta3.Server)
+	if !ok {
+		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
+		if !ok {
+			ew.log.Errorf("couldn't get object from DeletedFinalStateUnknown %#v", obj)
+			return
+		}
+		server, ok = tombstone.Obj.(*v1beta3.Server)
+		if !ok {
+			ew.log.Errorf("DeletedFinalStateUnknown contained object that is not a Server %#v", obj)
+			return
+		}
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	server := obj.(*v1beta3.Server)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55f7ecc2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c386ba32` are properly handled with clean fallback behavior.

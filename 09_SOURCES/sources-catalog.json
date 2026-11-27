@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "cda74a88",
+    "sourceVersion": "078e9839",
     "license": "GPL-3.0",
-    "contentHash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
-    "lastHarvestedAt": "2026-11-26T17:14:53.104Z",
+    "contentHash": "376637165d26a52c99b579fb98ebcabab0274708c8c9c2ca3969cdb86c80410a",
+    "lastHarvestedAt": "2026-11-27T17:19:20.153Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "55f7ecc2",
+    "sourceVersion": "ea2cdc13",
     "license": "Apache-2.0",
-    "contentHash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
-    "lastHarvestedAt": "2026-11-26T23:24:11.217Z",
+    "contentHash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
+    "lastHarvestedAt": "2026-11-27T17:19:32.227Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {

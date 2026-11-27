@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:01:53.926Z",
-  "total_cycles_completed": 13122,
-  "total_learnings_persisted": 13122,
-  "total_rules_promoted": 11845,
+  "last_updated": "2026-11-27T17:19:32.233Z",
+  "total_cycles_completed": 13124,
+  "total_learnings_persisted": 13124,
+  "total_rules_promoted": 11847,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:50:08.002Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:50:10.808Z",
-      "repository": "indexable-inc/blaze",
-      "learningId": "learn-github-indexable-inc-blaze",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:50:22.373Z",
       "repository": "HelixDB/helix-db",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T17:01:53.926Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:19:20.165Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:19:32.233Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

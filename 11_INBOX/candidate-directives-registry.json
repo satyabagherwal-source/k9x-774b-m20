@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:10:45.157Z",
+  "last_updated": "2026-11-27T17:19:39.364Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69127,11 +69127,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-MG10",
+      "id": "CD-XW83",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-MG10-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-XW83-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -71551,6 +71551,57 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CBAA7B-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-XTWD",
+      "directive_title": "Empirical Invariant Guard in README.ja.md",
+      "source_repo": "kuddev-pebrel-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XTWD-empirical-invariant-guard-in-readme-ja-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-XQXW",
+      "directive_title": "Handle Server delete tombstones",
+      "source_repo": "linkerd/linkerd2",
+      "source_commit": "ea2cdc13",
+      "staged_file": "11_INBOX/candidate-directives/CD-XQXW-handle-server-delete-tombstones.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5C59F8",
+      "directive_title": "Empirical Invariant Guard in README.ja.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kuddev-pebrel",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5C59F8-empirical-invariant-guard-in-readme-ja-m.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-XV3Z",
+      "directive_title": "destination): Handle Server delete tombstones",
+      "source_repo": "linkerd-linkerd2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XV3Z-destination-handle-server-delete-tombstones.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-6B55F4",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6B55F4-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
       "staged_date": "2026-11-27"
     }
   ]

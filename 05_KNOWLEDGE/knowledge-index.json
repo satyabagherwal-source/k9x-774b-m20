@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T17:10:45.747Z",
+  "last_updated": "2026-11-27T17:19:40.064Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26664,
+  "total_items": 26669,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "928f9542d5b7919b6d99650ca2dbb1ab7762394887aaeb62b5e9dda79da3e374",
+      "content_hash": "d66a2ef9cf0e75bc53c64f36c04f698d5c6e7a73bad0342743a5a2d374659d34",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T17:10:45.564Z"
+      "persisted_at": "2026-11-27T17:19:39.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "00e7cbb1107508dbc8a4fef950cc9223a942f973e236af6f8916922439947ed6",
+      "content_hash": "535b9dfdbd6de0c8422b3668838929878816be70d8289f852d3199bf208884c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:10:45.747Z"
+      "persisted_at": "2026-11-27T17:19:40.064Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -215121,8 +215121,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "55f7ecc2",
-      "content_hash": "11e09881a75c1274d969cf44a33b4c0cdea6addbefd9dbe02122373fe4e82fbf",
+      "source_version": "ea2cdc13",
+      "content_hash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -215165,6 +215165,11 @@
           "number": 10792,
           "title": "stat test",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10934,
+          "title": "Handle Server delete tombstones",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215172,7 +215177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T23:24:10.873Z",
+      "verified_at": "2026-11-27T17:19:31.865Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215214,10 +215219,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "repository": "linkerd/linkerd2",
-      "source_version": "63911ea6",
-      "content_hash": "f4273ee2a10bab9be917d8bb415511192adc5e0a9a17d7b6e584cbac23b35854",
+      "source_version": "ea2cdc13",
+      "content_hash": "90793f08515fc0720199de21498cf9f7616ea6b9380266152af7f076abfaaffd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:29:13.571Z"
+      "persisted_at": "2026-11-27T17:19:32.800Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2",
@@ -215226,10 +215231,10 @@
       "relative_path": "08_VERIFICATION/linkerd-linkerd2-verification-protocol-empirical-defect-shield-for-linkerd-linke.md",
       "title": "Verification Protocol: Empirical Defect Shield for linkerd/linkerd2",
       "repository": "linkerd/linkerd2",
-      "source_version": "55f7ecc2",
-      "content_hash": "fd27a194f112215500d89b3a81c9e0b349cc08f901a08978dd441bf3f6e538c5",
+      "source_version": "ea2cdc13",
+      "content_hash": "a40acd2e21fe64bed392e0ad880c4a7e508af9d26427ddcb61dd4f3b2ad6bf96",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:24:12.186Z"
+      "persisted_at": "2026-11-27T17:19:33.035Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-learnings-core-invariants",
@@ -215263,9 +215268,9 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "repository": "linkerd-linkerd2-learnings",
       "source_version": "HEAD",
-      "content_hash": "c37acdaefac307c629ade33a21e3fd35b08ac626bf1a57d7938f28311550989b",
+      "content_hash": "270e0988f0d66b5f0871214023f2e3fd522584272244e5521735807a8d5c4daf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:30:03.827Z"
+      "persisted_at": "2026-11-27T17:19:38.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-linkerd-linkerd2-learnings",
@@ -215275,9 +215280,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for linkerd-linkerd2-learnings",
       "repository": "linkerd-linkerd2-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f48cb6aaa1c734e9c7dc201c3c989c200519aac9ec4b3cfc2d4b745bd3fa82f",
+      "content_hash": "eca28c62f18c4c2498a9219b4eeded36a2374e6b17f9e162705fe874f94abb64",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:24:17.217Z"
+      "persisted_at": "2026-11-27T17:19:38.445Z"
     },
     "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug": {
       "item_id": "candidate_directive-clean-up-stdin-source-logging-for-per-source-debug",
@@ -246416,8 +246421,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "cda74a88",
-      "content_hash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
+      "source_version": "078e9839",
+      "content_hash": "376637165d26a52c99b579fb98ebcabab0274708c8c9c2ca3969cdb86c80410a",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -246445,6 +246450,11 @@
           "number": 10733,
           "title": "Empirical Invariant Guard in LICENSE-deepseek-harness",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10933,
+          "title": "Empirical Invariant Guard in README.ja.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246452,7 +246462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T17:14:52.855Z",
+      "verified_at": "2026-11-27T17:19:19.814Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246492,10 +246502,10 @@
       "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
       "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
       "repository": "Kuddev/pebrel",
-      "source_version": "cda74a88",
-      "content_hash": "4d9c95b448bc620b9caeba7d94dd11b5d1ddcd513b33e8c0b51a9b3e73a399ea",
+      "source_version": "078e9839",
+      "content_hash": "f1ba1a7243d62f3e36212af3ade6c4e6f022d48b7abf296eaf68bb618990845c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:14:53.763Z"
+      "persisted_at": "2026-11-27T17:19:20.915Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -246517,9 +246527,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "fde646f2a42cbd76aa964093b01d5e90af8a5ed3cf13c35811c736a5dedbe63e",
+      "content_hash": "5f0b7d7019eaff56317f5ac559d9c822111392f743730e9c3a766010bb20841d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:15:09.857Z"
+      "persisted_at": "2026-11-27T17:19:36.838Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
@@ -301151,9 +301161,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d0da4c50c0c6585cc19638398992fa28baf183533be4c2a048c5f42d56cd9bc",
+      "content_hash": "682b78099af6f1bdeff369266b84bb68053f793c5739bdb208c5248317eeb9c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T17:10:45.356Z"
+      "persisted_at": "2026-11-27T17:19:39.608Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -306279,10 +306289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
       "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
       "repository": "Kuddev/pebrel",
-      "source_version": "cda74a88",
-      "content_hash": "57da6cd55693f8b0c65e08dd1dd344b4acfd24990d4ddf72f1284c62dd4f6824",
+      "source_version": "078e9839",
+      "content_hash": "6730681ed899ba14b2ce6eb5c81b9354ded4f6eca119318dbba019ca92a6d463",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:14:53.548Z"
+      "persisted_at": "2026-11-27T17:19:20.684Z"
     },
     "rule-9494": {
       "learning_id": "rule-9494",
@@ -306344,9 +306354,9 @@
       "title": "Technical Construction Intelligence: kuddev-pebrel-learnings Core Invariants",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d9c1f62f1da67f01c68d8d9a189373061757fe9d3e4532ad69f5b51bad4c34a",
+      "content_hash": "9dcbfca1a5ac313b10eef73e699d0104d0349adf948a74142817eed81c1f845d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:15:12.642Z"
+      "persisted_at": "2026-11-27T17:19:36.609Z"
     },
     "candidate_directive-image-export-by-full-image-id-with-the-containerd-image-store": {
       "item_id": "candidate_directive-image-export-by-full-image-id-with-the-containerd-image-store",
@@ -362902,13 +362912,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MG10-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XW83-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e9b8bed16267b8b7d0434eb8e9fac7cd29ecfd16721b4b9f50220e91cf95fdf",
+      "content_hash": "9d74eba33439876e528beb38fff7e1595c0f5836354f243260aa6e8a2b55663f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T17:10:45.157Z"
+      "persisted_at": "2026-11-27T17:19:39.364Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -366094,6 +366104,70 @@
       "content_hash": "05118df071853d209e3b6c0c65e3e6dac893b01091a9098e5913510ea92ec443",
       "domain_letter": "I",
       "persisted_at": "2026-11-27T17:01:59.832Z"
+    },
+    "rule-10933": {
+      "learning_id": "rule-10933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10933,
+      "title": "Empirical Invariant Guard in README.ja.md",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "078e9839",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:19:19.814Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-readme-ja-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-readme-ja-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XTWD-empirical-invariant-guard-in-readme-ja-md.md",
+      "title": "Empirical Invariant Guard in README.ja.md",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ec98eb20dd69a03a48995f13ec8a2067aa2b2d9a30c75198ab6a5a32f84f74e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T17:19:36.356Z"
+    },
+    "rule-10934": {
+      "learning_id": "rule-10934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10934,
+      "title": "Handle Server delete tombstones",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "ea2cdc13",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T17:19:31.865Z"
+    },
+    "candidate_directive-handle-server-delete-tombstones": {
+      "item_id": "candidate_directive-handle-server-delete-tombstones",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XQXW-handle-server-delete-tombstones.md",
+      "title": "Handle Server delete tombstones",
+      "repository": "linkerd/linkerd2",
+      "source_version": "ea2cdc13",
+      "content_hash": "cee0bf4e62bed05c8e259f4fb3c8ded1af885097d9ed932fdf5e4fde5f413e91",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T17:19:32.518Z"
+    },
+    "candidate_directive-destination-handle-server-delete-tombstones": {
+      "item_id": "candidate_directive-destination-handle-server-delete-tombstones",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XV3Z-destination-handle-server-delete-tombstones.md",
+      "title": "destination): Handle Server delete tombstones",
+      "repository": "linkerd-linkerd2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68b370c4f4b3802e4188b2c0b23073908f1078cd95737ca7f7661bef3adce7d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T17:19:37.920Z"
     }
   },
   "ai-builder-brain": {
