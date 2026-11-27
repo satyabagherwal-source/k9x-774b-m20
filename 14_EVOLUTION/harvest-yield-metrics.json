@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:03:07.706Z",
-  "total_cycles_completed": 13112,
-  "total_learnings_persisted": 13112,
-  "total_rules_promoted": 11838,
+  "last_updated": "2026-11-27T16:21:39.315Z",
+  "total_cycles_completed": 13114,
+  "total_learnings_persisted": 13114,
+  "total_rules_promoted": 11840,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:58:33.189Z",
-      "repository": "TenStrip/10Eros-Max",
-      "learningId": "learn-huggingface-tenstrip-10eros-max",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:07:15.659Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:07:24.747Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T16:03:07.706Z",
       "repository": "TableProApp/TablePro",
       "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:21:30.681Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T16:21:39.315Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

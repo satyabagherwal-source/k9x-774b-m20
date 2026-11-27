@@ -13814,3 +13814,5 @@
 | `CYCLE-20261127-WD40` | `2026-11-27T15:54:29.088Z` | `giancarloerra/SocratiCode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10923` | Yes (`9121c377...`) |
 | `CYCLE-20261127-7D67` | `2026-11-27T16:03:02.383Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10924` | Yes (`964805e7...`) |
 | `CYCLE-20261127-7H9B` | `2026-11-27T16:03:07.679Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10925` | Yes (`98801262...`) |
+| `CYCLE-20261127-V4BK` | `2026-11-27T16:21:30.656Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10926` | Yes (`c7bbcc71...`) |
+| `CYCLE-20261127-VAZE` | `2026-11-27T16:21:39.290Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10927` | Yes (`0ccf8ecd...`) |

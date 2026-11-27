@@ -13847,3 +13847,5 @@ Every entry in this ledger must capture:
 | `learn-github-giancarloerra-socraticode` | `https://github.com/giancarloerra/SocratiCode` | `0afa01aa` | Multi-dimensional audit evidence | 2026-11-27T15:54:29.102Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `3bba59f2` | Multi-dimensional audit evidence | 2026-11-27T16:03:02.396Z |
 | `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `806d4c96` | Multi-dimensional audit evidence | 2026-11-27T16:03:07.695Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `83596f55` | Multi-dimensional audit evidence | 2026-11-27T16:21:30.671Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `df109532` | Multi-dimensional audit evidence | 2026-11-27T16:21:39.304Z |

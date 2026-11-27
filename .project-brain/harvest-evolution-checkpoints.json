@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:13:04.024Z",
+  "last_updated": "2026-11-27T16:21:47.483Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T16:13:00.585Z",
+      "processed_at": "2026-11-27T16:21:46.347Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -98,7 +98,7 @@
       "staged_for_review": 1
     },
     "argoproj-argo-workflows-learnings.md": {
-      "processed_at": "2026-11-26T22:21:53.338Z",
+      "processed_at": "2026-11-27T16:21:44.076Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-26T16:21:31.144Z",
+      "processed_at": "2026-11-27T16:21:42.899Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5010,
+  "total_dossiers_evaluated": 5013,
   "total_canonical_promoted": 580,
-  "total_staged_for_review": 3767
+  "total_staged_for_review": 3770
 }

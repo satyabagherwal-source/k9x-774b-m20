@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T16:21:31.738Z",
+  "timestamp": "2026-11-27T16:21:43.269Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-metalbear-co-mirrord-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [metalbear-co-mirrord-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T16:21:31.738Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T16:21:43.269Z`  
 > **Learning ID**: `LEARN-EVO-metalbear-co-mirrord-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `8f225c1f`  
+> **Source Version**: `83596f55`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T16:21:12.144Z  
+> **Timestamp**: 2026-11-27T16:21:29.400Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T16:21:12.137Z  
+> **Harvest Timestamp**: 2026-11-27T16:21:29.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5433 stars
+- **Stars / Engagement**: 5432 stars
 
 ---
 
@@ -1276,6 +1276,15 @@ mod test {
 //! the whole path in one syscall, so a concurrent rename or symlink swap in the target can't
 //! redirect it. `openat2(2)` needs Linux 5.6, and on older kernels we use [`userspace`] instead.
 //!
+//! The kernel resolver also falls back to [`userspace`] when it fails with `EACCES`. With
+//! `fs.protected_symlinks` set, which is the default on most nodes, the kernel refuses to follow a
+//! symlink in a sticky world-writable directory unless the symlink belongs to the follower or to
+//! the directory's owner. No capability lifts that. The kubelet makes such symlinks: a
+//! projected volume is a sticky world-writable directory of root, and the symlink of a service
+//! account token belongs to the user of the pod. The target can follow it, and the agent, which
+//! runs as root, can't. [`userspace`] reads symlinks instead of following them, so the
+//! restriction doesn't apply to it, and its walk stays inside the root all the same.
+//!
 //! Callers act on the returned descriptors with `f*` syscalls, with `*at` syscalls on the single
 //! final component that [`TargetRoot::open_parent`] returns, or through [`proc_fd_path`] for APIs
 //! that only take a path. They never pass the path itself to a path-based syscall.
@@ -1358,6 +1367,7 @@ pub(crate) enum Resolver {
     /// `openat2(2)`.
     Kernel,
     /// [`userspace`], for kernels without `openat2(2)`, or where a seccomp profile blocks it.
+    /// [`Self::Kernel`] also falls back to it when `openat2(2)` fails with `EACCES`.
     Userspace,
 }
 
@@ -1424,6 +1434,9 @@ impl Resolver {
         loop {
             match fcntl::openat2(dirfd, path, how) {
                 Err(Errno::EAGAIN) if retries > 0 => retries -= 1,
+                // Possibly `fs.protected_symlinks`, see the module docs. Any other cause fails
+                // the userspace walk the same way.
+                Err(Errno::EACCES) => return userspace::open(dirfd, path, flags, mode, scope),
                 result => return result.map_err(io::Error::from),
             }
         }
@@ -1474,40 +1487,7 @@ impl TargetRoot {
             Err(error) => warn!(
                 %error,
                 ?path,
-                "Failed to open the target's root, opens in it will try again"
-            ),
-        }
-
-        Self(Arc::new(Inner { path, fd, resolver }))
-    }
-
-    fn open_root(path: &Path) -> io::Result<OwnedFd> {
-        // The agent picks this path, and `/proc/<pid>/root` is a magic link that has to be
-        // followed.
-        Ok(fcntl::open(
-            path,
-            OFlag::O_PATH | OFlag::O_DIRECTORY | OFlag::O_CLOEXEC,
-            Mode::empty(),
-        )?)
-    }
-
-    fn fd(&self) -> io::Result<BorrowedFd<'_>> {
-        if let Some(fd) = self.0.fd.get() {
-            return Ok(fd.as_fd());
-        }
-
-        let fd = Self::open_root(&self.0.path)?;
-
-        // A concurrent open may have won, and then `fd` is closed.
-        Ok(self.0.fd.get_or_init(|| fd).as_fd())
-    }
-
-    /// Opens `path` inside the root, with `flags` and `mode` as `openat(2)` takes them.
-    ///
-    /// A relative `path` resolves from `base`. An absolute `path` always resolves from the
-    /// root, the way `openat(2)` ignores its `dirfd` for one.
-    ///
-    /// A relative `path` without
+                "
 ```
 
 
@@ -1516,11 +1496,11 @@ impl TargetRoot {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5357** (2026-11-26): **Projected Kubernetes service account token fails to open through mirrord 3.291.2**
+  *Symptoms*: ### Bug Description  A local process running under mirrord 3.291.2 cannot open the standard Kubernetes projected service account token at `/var/run/secrets/kubernetes.io/serviceaccount/token`. The same workload can open it inside its container. On Windows, the local process reports `DirectoryNotFoundException`, while the Linux agent reports `PermissionDenied` (`EACCES`, errno 13). Azure Workload Identity also fails to authenticate when its projected token encounters the same error.  ### Steps to Reproduce  1. Target a Linux pod running as a non-root user with the default projected Kubernetes service account volume mounted. In our test, the node had `fs.protected_symlinks=1` and the token symlink was owned by the workload user. 2. Confirm that the workload can open the token in the container. Through mirrord, run a local .NET process that calls `File.OpenHandle("/var/run/secrets/kubernetes.io/serviceaccount/token", FileMode.Open, FileAccess.Read)` and disposes the handle immediately. The probe performs no content reads. 3. Repeat against the same pod with matching CLI and agent versions 3.291.0 and 3.291.2, using the same mirrord configuration.  | Path | 3.291.0 | 3.291.2 | | --- | --- | --- | | Kubernetes service account token | Opens | Agent returns EACCES | | Azure projected workload identity token | Opens | Agent returns EACCES | | `ca.crt` and `namespace` in the service account volume | Open | Open |  We reproduced the version-dependent failure on two Windows machines. On
+
 - **Issue #5277** (2026-11-25): **Target paths with extra segments after the container name are accepted and the extras dropped**
   *Symptoms*: ### Bug Description  A target path with extra segments after the container name is accepted, and the extra segments are silently dropped. For example, `pod/foo/container/bar/baz` parses as pod `foo` with container `bar`.  This happens for every target type that goes through `FromSplit` (pod, deployment/deploy, rollout, job, cronjob, statefulset, service, replicaset, serverless): each `from_split` reads the name and an optional `container/{name}` pair and never checks that the path ends there.  Other inputs are already rejected, so the behaviour is inconsistent:  - `label/app=x/container/c/extra` is rejected with "must use `label/key=value[,key=value...][/container/name]`". - `pod/foo/` is rejected.  ### Steps to Reproduce  At `a300913`, in `mirrord/config`:  ```rust let target: Target = "pod/foo/container/bar/baz".parse().unwrap(); // Ok assert_eq!(target.to_string(), "pod/foo/container/bar"); ```  Same with `mirrord exec --target pod/foo/container/bar/baz -- ...` or `"target": "deployment/foo/container/bar/baz"` in the config file.  ### mirrord CLI version  `main` at `a300913`  ### Your operating system and version  macOS 26.6.2 (arm64); the parsing code is platform-independent.  ### Local process  Not relevant; this is target path parsing in `mirrord-config`.  ### Expected  An `InvalidTargetPath` error, like the other malformed paths, so a mistyped target isn't used silently.  I'd like to fix this; I have a small change in `Target::from_str` with a test ready. 
-
-- **Issue #5092** (2026-10-18): **mirrord crashes Go programs on Linux ARM64**
-  *Symptoms*: ### Bug Description  Under mirrord 3.274.0 on Linux ARM64, a Go program can crash with SIGSEGV when a system call returns a 64-bit value, such as a pointer. The kernel call succeeds, but the program receives a corrupted result.  Example: an anonymous `mmap` returns `0xffff83298000`. The Go program receives `0xffffffff83298000` with no error, and its first write to that address faults. `mmap` is only one example. Any hooked syscall with a result wider than 32 bits is affected.  Cause: mirrord intercepts Go syscalls in the [ARM64 hook](https://github.com/metalbear-co/mirrord/blob/747cc39839876068bbd031cf1d31cdf3ced70f34/mirrord/layer-go/src/linux_aarch64.rs#L24-L81). The hook uses Go's `runtime.asmcgocall` to run mirrord's Rust handler, which returns a 64-bit `i64`. Go declares `asmcgocall` as returning `int32`, so its [assembly implementation](https://github.com/golang/go/blob/6885bad7dd86880be6929c02085e5c7a67ff2887/src/runtime/asm_arm64.s#L1012) stores the result with `MOVW`, keeping only the low 32 bits (sign-extended). The hook then treats this truncated value as the full syscall result.  ```mermaid sequenceDiagram     participant G as Go caller (Syscall6)     participant D as mirrord hook (asm)     participant A as runtime.asmcgocall     participant H as Rust handler     participant K as Linux kernel      G->>D: Syscall6(SYS_MMAP, ...)     D->>A: asmcgocall(handler)     A->>H: call     H->>K: mmap(...)     K-->>H: 0xffff83298000     H-->>A: i64 result     Note over A: Dec
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1537,349 +1517,476 @@ impl TargetRoot {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d64f3d8a` (2026-11-25)
-**Commit Message**: ci: build the remaining test jobs with line-table debug info (#5318)
+### Incident Patch 1: `47930839` (2026-11-26)
+**Commit Message**: ci: publish docs, guides and skills from main on every merge (#5327)
 
-The integration tests already build with `CARGO_PROFILE_DEV_DEBUG=line-tables-only`. This change sets
-it in every other workflow that compiles code in the dev profile: the e2e tests, the unit tests in
-`ci.yaml`, the macOS and Windows tests, the doctests, and the Linux CLI build. Line tables keep the
-file and line numbers in panics and backtraces, but they make the builds smaller and faster to link,
-and they make the rust-cache entries smaller under the 10 GB limit.
+* ci: publish docs and guides from main through GitBook Git Sync
 
-rust-cache hashes every `CARGO*` variable into its key, so each workflow sets the variable at the
-top level, where every job that shares a cache key sees the same value.
+GitBook's Documentation and Guides spaces synced the `docs-published`
+and `guides-published` branches, which only `publish-docs.yaml` wrote
+to: on every release, on a merge with the `publish-docs` label, or on a
+manual dispatch. So a merged page waited for one of those, and pull
+requests into `main` got no GitBook preview, because GitBook previews
+only pull requests into the branch that it syncs.
 
-Claude-Session: https://claude.ai/code/session_016Xj2Au87tqTQPFbLUHbBMW
+The spaces sync `main` instead, with the project directories `docs` and
+`guides`, as they synced `main` of `metalbear-co/docs`. That switch is
+a GitBook setting, made before this merges. A merged page then reaches
+the site once GitBook imports the merge commit, and a pull request from
+a branch of this repository gets a preview. The `.gitbook.yaml` files
+stay as they are, because GitBook reads `root` relative to the project
+directory, so it finds the layout that it read from the published
+branches.
 
-**File**: `.github/workflows/build-mirrord-cli.yaml` (modified, +5/-0)
+With no space reading the published branches, `publish-docs.yaml`,
+`publish-docs-on-merge.yaml` and the `publish_docs` job of the Release
+workflow go away, and
+
+**File**: `.github/workflows/ci.yaml` (modified, +40/-0)
 ```diff
-@@ -6,6 +6,11 @@ on:
- permissions:
-   contents: read
+@@ -206,6 +206,16 @@ jobs:
+         with:
+           files: |
+             mirrord/protocol/Cargo.toml
++      # Claude Code installs the plugin from all of `skills/`, because the marketplace entry's `source`
++      # is `./`, but only the skills and `.claude-plugin/` change what its users get. The READMEs, the
++      # ports and the Codex and Cursor manifests there don't.
++      - name: get Claude Code plugin changes
++        id: changed-claude-plugin
++        uses: metalbear-co/changed-files@db1aaf2ad42e3c3035f04afd76630172ef6743eb
++        with:
++          files: |
++            skills/skills/**
++            skills/.claude-plugin/**
+       - name: get dockerfile changes
+         id: changed-dockerfile
+         uses: metalbear-co/changed-files@db1aaf2ad42e3c3035f04afd76630172ef6743eb
+@@ -240,6 +250,35 @@ jobs:
+             echo "Error: Protocol has changed but Cargo.toml has not. Please update Cargo.toml."
+             exit 1
+           fi
++      # Claude Code caches an installed plugin by its version and updates it only when the version
++      # changes, so a change to the plugin's files that keeps the version never reaches Claude Code
++      # users. Only pull requests and the merge queue have a base commit to compare the version with.
++      - name: verify Claude Code plugin version bump
++        env:
++          PLUGIN_CHANGED: ${{ steps.changed-claude-plugin.outputs.any_changed }}
++          BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
++        shell: bash
++        run: |
++          if [ "$PLUGIN_CHANGED" != "true" ] || [ -z "$BASE" ]; then
++            exit 0
++          fi
++          plugin=skills/.claude-plugin/plugin.json
++          old=$(git show "$BASE:$plugin" | jq -r '.version // "no version"')
++          new=$(jq -r '.version // "no version"' "$plugin")
++          semver='^[0-9]+\.[0-9]+\.[0-9]+$'
++          if ! [[ "$new" =~ $semver ]]; then
++            echo "::error file=$plugin::The version in $plugin is '$new', which isn't of the form major.minor.patch."
++            exit 1
++          fi
++          if ! [[ "$old" =~ $semver ]]; then
++            echo "::error::The version in $plugin at the base commit $BASE is '$old', which isn't of the form major.minor.patch."
++            exit 1
++          fi
++          if [ "$new" = "$old" ] || [ "$(printf '%s\n%s\n' "$old" "$new" | sort -V | tail -n 1)" != "$new" ]; then
++            echo "::error file=$plugin::The Claude Code plugin's files in skills/skills/ or skills/.claude-plugin/ changed, but the version in $plugin is $new, and the base commit $BASE already has $old. Raise it above $old, or Claude Code users don't get the change."
++            exit 1
++          fi
++          echo "$plugin: version $old -> $new"
+       - name: get docs, guides and skills changes
+         id: changed-content
+         uses: metalbear-co/changed-files@db1aaf2ad42e3c3035f04afd76630172ef6743eb
+@@ -290,6 +329,7 @@ jobs:
+           echo ${{ steps.changed-ci.outputs.all_changed_files }};
+           echo ${{ steps.changed-protocol.outputs.any_changed }};
+           echo ${{ steps.changed-protocol-toml.outputs.any_changed }};
++          echo ${{ steps.changed-claude-plugin.outputs.any_changed }};
+           echo ${{ steps.changed-windows.outputs.any_changed }};
+           echo ${{ steps.changed-dockerfile.outputs.any_changed }};
+           echo ${{ steps.changed-config-schema.outputs.any_changed }};
+```
+
+**File**: `.github/workflows/publish-docs-on-merge.yaml` (removed, +0/-37)
+```diff
+@@ -1,37 +0,0 @@
+-name: Publish docs and guides on labeled merge
+-
+-# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
+-# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
+-# trees, so it also ships anything merged earlier that hasn't been released yet.
+-#
+-# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
+-# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
+-# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
+-# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
+-# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
+-# can publish, and creating such a branch takes write access.
+-
+-on:
+-  pull_request:
+-    types: [closed]
+-    branches: [main]
+-
+-permissions: {}
+-
+-jobs:
+-  # Publishes `main` rather than the merge commit, so that the last of several close merges publishes all of them. A
+-  # release that publishes afterwards puts the site back on the released commit, as docs/AGENTS.md describes.
+-  publish_docs:
+-    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') }}
+-    concurrency:
+-      group: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') && 'publish docs on merge' || github.run_id }}
+-      cancel-in-progress: false
+-    permissions:
+-      contents: write
+-      statuses: read
+-    uses: ./.github/workflows/publish-docs.yaml
+-    with:
+-      ref: main
+-      dry_run: false
+-    secrets:
+-      SLACK_CI_ALERTS_WEBHOOK_URL: ${{ secrets.SLACK_CI_ALERTS_WEBHOOK_URL }}
+```
+
+**File**: `.github/workflows/publish-docs.yaml` (removed, +0/-322)
+```diff
+@@ -1,322 +0,0 @@
+-name: Publish docs and guides
+-
+-# GitBook's Documentation and Guides spaces sync the `docs-published` and `guides-published` branches, not `main`, so
+-# a page merged to `docs/` or `guides/` reaches the site only when this workflow publishes it. The release calls it for
+-# the released commit, so the site describes what users can install. publish-docs-on-merge.yaml calls it for `main`
+-# when a pull request with the `publish-docs` label merges. A dispatch publishes a fix between releases: run it with
+-# `dry_run` first to list the files that differ from the published branches.
+-#
+-# Each publish appends one commit whose tree is exactly `<ref>:docs` or `<ref>:guides`, on top of the branch tip. The
+-# branch is never force-pushed, because GitBook also pushes to it when a change request merges, and so can another run
+-# of this workflow. A push that races one of them fails as non-fast-forward, and the job then fetches the new tip and
+-# builds on top of it. That build replaces the other commit's content too, but the commit stays in the branch history,
+-# so a change merged in GitBook can still be found and ported to `main`.
+-
+-on:
+-  workflow_dispatch:
+-    inputs:
+-      ref:
+-        description: 'Commit, branch or tag to publish. Empty selects the latest published release tag.'
+-        required: false
+-        type: string
+-        default: ''
+-      dry_run:
+-        description: 'Build the publish commits and list the files they change, without pushing.'
+-        required: false
+-        type: boolean
+-        default: true
+-  workflow_call:
+-    inputs:
+-      ref:
+-        description: 'Commit, branch or tag to publish. Empty selects the latest published release tag.'
+-        required: false
+-        type: string
+-        default: ''
+-      dry_run:
+-        description: 'Build the publish commits and list the files they change, without pushing.'
+-        required: false
+-        type: boolean
+-        default: true
+-    secrets:
+-      SLACK_CI_ALERTS_WEBHOOK_URL:
+-        required: false
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  # No concurrency group: GitHub cancels a pending run when another one joins its group, which could drop a release's
+-  # publish without an alert. Without one, runs can overlap: each push only fast-forwards, so no run drops another's
+-  # commit, and the run that pushes last decides what the site shows.
+-  publish:
+-    runs-on: blacksmith-4vcpu-ubuntu-2404
+-    permissions:
+-      contents: write
+-      # Reads GitBook's commit statuses on the published branches.
+-      statuses: read
+-    env:
+-      GH_TOKEN: ${{ github.token }}
+-      GIT_AUTHOR_NAME: github-actions[bot]
+-      GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+-      GIT_COMMITTER_NAME: github-actions[bot]
+-      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+-    # Each step has its own timeout, because a stalled API call or git transfer would otherwise hold the runner for the
+-    # job's default 6 hours. The timeouts are on the steps, because a step timeout fails the step, so the notify step
+-    # still runs, while a job timeout would cancel the job and skip the notify step.
+-    steps:
+-      - name: Resolve the ref to publish
+-        id: resolve
+-        timeout-minutes: 5
+-        env:
+-          INPUT_REF: ${{ inputs.ref }}
+-        shell: bash
+-        run: |
+-          set -euo pipefail
+-          latest_tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+-          echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+-          echo "ref=${INPUT_REF:-$latest_tag}" >> "$GITHUB_OUTPUT"
+-
+-      # Most of the repository's size is the images under docs/ and guides/, and the job mostly reads trees, so the
+-      # checkout fetches no blobs up front (`filter`). Git fetches a blob when a command needs it, such as the Publish
+-      # step's `git diff` of `.github/workflows`. Writing the full working tree would fetch every blob, so the checkout
+-      # is sparse. The `sparse-checkout` input needs at least one path to turn sparse checkout on, so it names
+-      # .github/workflows, a small directory that no step reads, and cone mode adds the root files. actions/checkout
+-      # v6.0.2 already fetches with blob:none when `sparse-checkout` is set; `filter` states it so that the job doesn't
+-      # depend on that default. The checkout still fetches `ref` and sets up the credentials that the push uses.
+-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+-        timeout-minutes: 10
+-        with:
+-          ref: ${{ steps.resolve.outputs.ref }}
+-          filter: blob:none
+-          sparse-checkout: .github/workflows
+-
+-      - name: Publish
+-        id: publish
+-        timeout-minutes: 10
+-        env:
+-          REF: ${{ steps.resolve.outputs.ref }}
+-          LATEST_TAG: ${{ steps.resolve.outputs.latest_tag }}
+-          DRY_RUN: ${{ inputs.dry_run }}
+-        shell: bas
+```
+
+**File**: `.github/workflows/publish-skills.yaml` (added, +205/-0)
+```diff
+@@ -0,0 +1,205 @@
++name: Publish skills
++
++# Users install the mirrord skills from metalbear-co/skills, not from this repository: the Claude Code and Codex
++# marketplaces, `npx skills add` and that repository's install.sh all read it, and expect the plugin at its root. This
++# workflow copies `skills/` there on every merge to `main` that changes it, so those installs get a skill change without
++# waiting for a release. `npx skills add` and install.sh clone the repository, so they get every merge. Claude Code
++# updates an installed plugin only when the plugin's `version` changes, so the `plan` job of ci.yaml requires a
++# version bump with every change to the files that Claude Code installs. `mirrord mcp` still embeds `skills/skills`
++# when it's built, so it gets the change with the next release. The docs and guides need no such workflow, because
++# GitBook syncs `docs/` and `guides/` on `main` itself.
++#
++# Each publish appends one commit on top of the tip of metalbear-co/skills `main`, whose tree is exactly `skills/` at
++# the tip of the run's ref when the run starts. That is the tip, not the commit that started the run, so a re-run of an
++# earlier run never puts older skills back. The branch is never force-pushed: its `default` ruleset refuses that for
++# everyone, Cubby included, and appending keeps the history that the skills had before they moved into this repository.
++# Nothing but this workflow should push to that branch, so the push isn't retried: a push that loses a race fails the
++# run, and a re-run, or a dispatch from `main` with `dry_run` off, publishes on top of the new tip. A dispatch is a dry
++# run by default, which lists the files that differ. CONTRIBUTING.md ("Publishing docs, guides and skills") has the
++# setup in metalbear-co/skills that this workflow relies on, and what to check when a run fails.
++
++on:
++  push:
++    branches: [main]
++    paths:
++      - 'skills/**'
++  workflow_dispatch:
++    inputs:
++      dry_run:
++        description: 'Build the publish commit and list the files it changes, without pushing.'
++        required: false
++        type: boolean
++        default: true
++
++# The job only reads this repository. It pushes to metalbear-co/skills with a token of the Cubby GitHub App.
++permissions:
++  contents: read
++
++# Only the runs that can push share the group, so that two of them never push at the same time. GitHub keeps one
++# pending run per group and cancels the older one when another run joins. Each run publishes the tip of `main` when it
++# starts, so the run that replaces a pending one publishes everything that the pending one would have. A dry run, or a
++# run from another branch, pushes nothing, so it gets a group of its own and can't replace a pending publish. A run in
++# progress is never cancelled, so it isn't stopped between its push and its summary.
++concurrency:
++  group: ${{ (inputs.dry_run == true || github.ref != 'refs/heads/main') && format('publish-skills-no-push-{0}', github.run_id) || 'publish-skills' }}
++  cancel-in-progress: false
++
++jobs:
++  publish:
++    runs-on: blacksmith-4vcpu-ubuntu-2404
++    env:
++      SKILLS_URL: https://github.com/metalbear-co/skills.git
++      GIT_AUTHOR_NAME: cubby-mb[bot]
++      GIT_AUTHOR_EMAIL: 273354325+cubby-mb[bot]@users.noreply.github.com
++      GIT_COMMITTER_NAME: cubby-mb[bot]
++      GIT_COMMITTER_EMAIL: 273354325+cubby-mb[bot]@users.noreply.github.com
++    # Each step that calls the network has its own timeout, so that a stalled API call or git transfer fails that step
++    # instead of holding the runner for the job's default 6 hours. A job timeout would cancel the job instead, which
++    # skips the notify step.
++    steps:
++      # Only a merged `main` is reviewed, so a dispatch from another branch may only dry-run.
++      - name: Check the ref to publish
++        if: ${{ github.ref != 'refs/heads/main' && inputs.dry_run != true }}
++        shell: bash
++        run: |
++          echo "::error::This run is for $GITHUB_REF, and only refs/heads/main is published. Run the workflow from main, or turn on dry_run."
++          exit 1
++
++      # GITHUB_TOKEN can only write to this repository, so the push to metalbear-co/skills uses Cubby, which is
++      # installed there with write access to its contents. The token has no Workflows permission, so it can't change
++      # `.github/workflows` there, which the Publish step checks before it pushes.
++      - name: Create GitHub App token (skills repo)
++        id: app-token
++        timeout-minutes: 5
++        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
++        with:
++          app-id: ${{ secrets.CUBBY_CLIENT_ID }}
++          private-key: ${{ secrets.CUBBY_PRIVATE_KEY }}
++          owner: metalbear-co
++          repositories: skills
++          permission-contents: write
++
++      # `ref` makes the checkout fetch the current tip of the run's ref. Without it, the checkout takes `github.sha`,
++      # which a re-run keeps from 
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +0/-14)
+```diff
+@@ -1134,20 +1134,6 @@ jobs:
+       CUBBY_CLIENT_ID: ${{ secrets.CUBBY_CLIENT_ID }}
+       CUBBY_PRIVATE_KEY: ${{ secrets.CUBBY_PRIVATE_KEY }}
  
-+env:
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
-+
- jobs:
-   build-mirrord-cli:
-     runs-on: blacksmith-8vcpu-ubuntu-2404
+-  publish_docs:
+-    needs: [validate_release_request, release_gh]
+-    if: needs.validate_release_request.outputs.should_release == 'true'
+-    permissions:
+-      contents: write
+-      statuses: read
+-    uses: ./.github/workflows/publish-docs.yaml
+-    with:
+-      # The tag that release_gh created at the released commit, so the publish commits name the version.
+-      ref: ${{ needs.validate_release_request.outputs.version }}
+-      dry_run: false
+-    secrets:
+-      SLACK_CI_ALERTS_WEBHOOK_URL: ${{ secrets.SLACK_CI_ALERTS_WEBHOOK_URL }}
+-
+   release_homebrew:
+     needs: [validate_release_request, release_gh]
+     runs-on: blacksmith-4vcpu-ubuntu-2404
 ```
 
-**File**: `.github/workflows/check-rust-docs.yaml` (modified, +3/-0)
+**File**: `.vale/styles/config/vocabularies/Metalbear/accept.txt` (modified, +1/-0)
 ```diff
-@@ -9,6 +9,9 @@ permissions:
- env:
-   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-   RUSTDOCFLAGS: "-Dwarnings"
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+@@ -225,6 +225,7 @@ README
+ READMEs
+ RSTs
+ rollout
++ruleset
+ backoff
+ subtask
+ stderr
+```
+
+**File**: `AGENTS.md` (modified, +9/-9)
+```diff
+@@ -151,15 +151,15 @@ schedule. What's only on `main` hasn't shipped and needs no compatibility; what'
+ - `docs/` and `guides/` came from `metalbear-co/docs`, which keeps their earlier history. They document user-visible
+   behavior, so a change users notice usually updates them in the same pull request. The configuration reference is the
+   exception: it isn't in `docs/`, but is generated from `mirrord-config`'s doc comments (`mirrord/config/AGENTS.md`), so
+-  a config change updates those instead. GitBook builds the site from the `docs-published` and `guides-published`
+-  branches, which every mirrord release updates from the released commit (`publish-docs.yaml`), so an edit reaches the
+-  site with the next release. A pull request from this repository with the `publish-docs` label publishes sooner: when
+-  it merges, `publish-docs-on-merge.yaml` publishes all of `docs/` and `guides/` from `main`. `mirrord mcp` embeds
+-  `docs/docs` when it's built, so an edit there reaches it only with the next release, whatever the label.
+-  `docs/AGENTS.md` says how to publish a fix between releases.
+-- `skills/` came from `metalbear-co/skills`, which keeps its earlier history. `mirrord mcp` embeds `skills/skills` when
+-  it's built (`mirrord/mcp/AGENTS.md`), so an edit reaches it with the next mirrord release. Nothing copies `skills/` to
+-  `metalbear-co/skills` yet, so an edit doesn't reach that repository.
++  a config change updates those instead. GitBook's Documentation and Guides spaces sync `docs/` and `guides/` on
++  `main`, so an edit reaches the site once GitBook imports its merge commit, even when the change it documents isn't
++  released yet. A pull request into `main` from a branch of this repository gets a GitBook preview. `mirrord mcp`
++  embeds `docs/docs` when it's built, so an edit there reaches it only with the next release. `docs/AGENTS.md` says how
++  to check that GitBook imported a merge, and what to do when an import fails.
++- `skills/` came from `metalbear-co/skills`, which keeps its earlier history. Users install the skills from that
++  repository, so `publish-skills.yaml` copies `skills/` there on every merge to `main` that changes it, and the next
++  copy replaces a change made in that repository directly. `mirrord mcp` embeds `skills/skills` when it's built
++  (`mirrord/mcp/AGENTS.md`), so an edit reaches it with the next mirrord release.
+ - `metalbear-co/mirrord-vscode` and `metalbear-co/mirrord-intellij` drive the CLI; `ci.yaml` runs their end-to-end
+   tests on release branches.
+ - `metalbear-co/test-images` builds the app images the end-to-end tests deploy.
+```
+
+**File**: `CONTRIBUTING.md` (modified, +55/-3)
+```diff
+@@ -900,7 +900,6 @@ Releases are fully automated. Under normal circumstances no manual steps are req
+    - Creates the GitHub release (with tag and release notes from `CHANGELOG.md`).
+    - Publishes to Homebrew and Chocolatey.
+    - Starts the [Release WinGet workflow](/.github/workflows/release-winget.yaml), which submits the release to WinGet.
+-   - Publishes `docs/` and `guides/` to the `docs-published` and `guides-published` branches, which GitBook builds the docs site from.
+    - Updates the `latest` git tag and notifies the infra repository.
  
- jobs:
-   rust-docs:
-```
-
-**File**: `.github/workflows/ci.yaml` (modified, +3/-0)
-```diff
-@@ -53,6 +53,9 @@ env:
-   NEXTEST_NO_TESTS: warn
-   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-   MIRRORD_TELEMETRY: false
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ ## Triggering a release PR manually
+@@ -990,6 +989,59 @@ When a submission warns or fails:
+     --skip-pr-check --submit
+   ```
  
- jobs:
-   # ── plan ────────────────────────────────────────────────────────────
-```
-
-**File**: `.github/workflows/test-e2e.yaml` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ permissions:
- env:
-   MIRRORD_TELEMETRY: false
-   KIND_CLUSTER_NAME: mirrord-e2e
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+-## Publishing docs between releases
++## Publishing docs, guides and skills
  
- jobs:
-   e2e:
-```
-
-**File**: `.github/workflows/test-macos.yaml` (modified, +3/-0)
-```diff
-@@ -11,6 +11,9 @@ env:
-   NEXTEST_NO_TESTS: warn
-   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-   MIRRORD_TELEMETRY: false
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
- 
- jobs:
-   macos-tests:
-```
-
-**File**: `.github/workflows/test-windows.yaml` (modified, +3/-0)
-```diff
-@@ -11,6 +11,9 @@ env:
-   NEXTEST_NO_TESTS: warn
-   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-   MIRRORD_TELEMETRY: false
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
- 
- jobs:
-   windows-tests:
-```
-
-**File**: `.github/workflows/windows-tests.yaml` (modified, +3/-0)
-```diff
-@@ -17,6 +17,9 @@ env:
-   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
-   MIRRORD_TELEMETRY: "false"
-   LIBCLANG_PATH: "C:\\Program Files\\LLVM\\bin"
-+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-+  # debug info.
-+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
- 
- jobs:
-   windows_e2e:
-```
-
-**File**: `changelog.d/+ci-line-tables-debuginfo.internal.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+CI builds the tests and test binaries with line-table debug info instead of full debug info, which makes the builds and their caches smaller and faster.
-```
-
----
-
-### Incident Patch 2: `ebb055e8` (2026-11-26)
-**Commit Message**: Add the docs diagram style guide and redraw the general diagrams (#5319)
-
-* Add the docs diagram style guide and redraw the general diagrams
-
-Refs GTM-1891.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Fix the diagram guide references and examples
-
-Point the mirrord symbol and cloud sources at files in this PR, give the
-smaller logo sizes, write the laptop example with real numbers, add the
-server symbol for CI runners, and say where to run the render command.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Keep the original dev loop PNG
-
-Restore devloop.png and its link on the local development page.
-Point the cloud icon in the guide to ecs-sample-app.svg.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Color the shared cluster messages and developers
-
-Give each developer a laptop color and match the queue messages to it.
-Remove the Kubernetes logo and name, because the diagram applies to ECS too.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/DIAGRAMS.md` (added, +197/-0)
-```diff
-@@ -0,0 +1,197 @@
-+# Diagram style
+-A merged pull request from this repository with the `publish-docs` label publishes `docs/` and `guides/` from `main`, including pages for changes that aren't released yet. [`docs/AGENTS.md`](/docs/AGENTS.md#publishing-a-fix-between-releases) says how to publish without those pages.
++GitBook's Documentation and Guides spaces sync `docs/` and `guides/` on `main`, so every merge publishes them, including
++pages for changes that aren't released yet. [`docs/AGENTS.md`](/docs/AGENTS.md#publishing) says how to check that
++GitBook imported a merge, and what to do when an import fails.
 +
-+Paths in this file are relative to the `docs` directory of the mirrord repository.
++The [Publish skills workflow](/.github/workflows/publish-skills.yaml) copies `skills/` to
++[metalbear-co/skills](https://github.com/metalbear-co/skills) on every merge to `main` that changes it, because the
++Claude Code and Codex marketplaces, `npx skills add` and `install.sh` install the skills from that repository. Each
++publish adds one commit to `main` of `metalbear-co/skills`, whose content is exactly `skills/` at the tip of `main` when
++the run starts, so the next publish replaces a change made in that repository directly, and the change stays only in
++its history. A failed run posts to `#ci-alerts`.
 +
-+All diagrams in the docs use one style. Write each diagram as a hand-written SVG file in `docs/.gitbook/assets/`. Do not export diagrams from Excalidraw, D2, draw.io, or Figma, and do not add PNG diagrams. Screenshots of the product are not diagrams, and this guide does not apply to them.
++`npx skills add` and `install.sh` clone `metalbear-co/skills`, so they get every merge, but Claude Code updates an
++installed plugin only when the plugin's `version` changes. A pull request that changes `skills/skills/` or
++`skills/.claude-plugin/`, the files that Claude Code installs, must raise `version` in
++`skills/.claude-plugin/plugin.json`, and the `plan` job of `ci.yaml` fails one that doesn't.
++[`skills/CONTRIBUTING.md`](/skills/CONTRIBUTING.md#plugin-version) says what to do when that check fails in the merge
++queue.
 +
-+Two diagrams show the style well. Copy from them when you start a new one:
++To publish again, for example after a failed run, re-run that run, or run the workflow from `main` with `dry_run` off.
++Either one publishes the current tip of `main`, not the commit that started the failed run. The first command below is
++a dry run: it lists the files that would change in the run's summary, and pushes nothing. The second command
++publishes:
 +
-+- `docs/.gitbook/assets/api-gateway-traffic.svg`
-+- `docs/.gitbook/assets/header-propagation.svg`
++```bash
++gh workflow run publish-skills.yaml --repo metalbear-co/mirrord --ref main
++gh workflow run publish-skills.yaml --repo metalbear-co/mirrord --ref main --field dry_run=false
++```
 +
-+## File
++The setup that the Publish skills workflow relies on:
 +
-+- Root element: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 W H" width="W" height="H" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">`.
-+- Width: 960 to 1200. GitBook scales the image down to the page width, so a wider image makes the text too small. Use the same width in the `viewBox` and the `width` attribute. When the content needs more than 1200, keep the wider `viewBox` and set `width="1200"`, as in `redis-pubsub-splitting.svg`.
-+- Put a `<title id="t">` and a `<desc id="d">` first. The `desc` tells the full flow in words, for screen readers.
-+- Put a white background as the first shape: `<rect x="0" y="0" width="W" height="H" fill="#ffffff"/>`. GitBook dark mode needs it.
-+- Keep the file small and readable. Use plain `rect`, `line`, `path`, `polyline`, `circle`, `ellipse`, and `text`. Do not embed fonts, raster images, or base64 data. Add a short comment before each group of shapes.
++- The Cubby GitHub App is installed on `metalbear-co/skills` with write access to its contents. The workflow creates its
++  token from the `CUBBY_CLIENT_ID` and `CUBBY_PRIVATE_KEY` secrets, as the other workflows that use Cubby do.
++- The `main-pr-required` ruleset of `metalbear-co/skills` holds only the rule that requires a pull request for the
++  default branch, and Cubby is its bypass actor, with the bypass mode **Always**, so that its push doesn't need a pull
++  request. The mode **For pull requests only** doesn't exempt a direct push. The `default` ruleset refuses force pushes
++  and deletion of `main` and has no bypass actor. The workflow needs none there, because it only fast-forwards `main`.
++- `metalbear-co/skills` has no `.github/workflows`, because the Cubby token has no Workflows permission, so a publish
++  that would delete them fails. That means removing all three old workflows: `check-fence-tags.yml`, which the
++  `content_check` job of mirrord replaces, and `docs-sync.yml` and `update-references.yml`, which open weekly pull
++  requests that the next publish would replace. Without `update-references.yml`, nothing refreshes the reference
++  snapshots under `skills/*/references/`.
 +
-+## Colors
++When a run fails:
 +
-+| Use | Fill | Text |
-+|-----|------|------|
-+| Neutral component (client, service, queue, database) | `#ffffff` | `#232141` |
-+| mirrord component (agent, operator, layer, CLI, forwarder) | `#756DF3` | `#ffffff` |
-+| Your local process or your machine | `#756DF3` | `#ffffff` |
-+| The deployed workload or the original target | `#E4E3FD` | `#232141` |
-+| Gateway, broker, or other infrastructure to highlight | `#FFCB7D` | `#232141` |
-+| Temporary resource that mirrord creates | `#ffffff`, dashed `#756DF3` stroke, `stroke-dasharray="8 6"` | `#232141` |
-+| Boundary (cluster, machine, namespace) | `#F5F4FE` (`#ffffff` for a boundary inside a boundary), solid `#756DF3` stroke | label `#4a44b8` |
-+| Inactive or dropped path | none | `#8a8a99` |
++- If the error names `.github/workflows`, the workflows in `metalbear-co/skills` differ from `skills/.github/workflows`,
++  which mirrord doesn't have. Delete (or change) the files that the error lists with a pull request in
++  `metalbear-co/skills`, then re-run the failed run.
++- If git rejected the push as non-fast-forward, someone pushed to `metalbear-co/skills` during the run. Re-run the
++  failed run.
++- If a ruleset rejected the push, check that Cubby is still a bypass actor of the `main-pr-required` ruleset, with
++  the bypass mode **Always**. The `default` ruleset rejects only a force push or a deletion, which the workflow never
 +
-+- Outline every box with `stroke="#232141" stroke-width="2"`, except boundaries and temporary resources, which use the purple stroke above.
-+- Only temporary resources use a dashed outline. A boundary has a solid outline, so the two never look the same.
-+- Secondary text inside boxes uses `#333344` (or `#ffffff` on a purple box).
-+- Do not use other colors. Do not use red, green, or blue to show "match" and "no match". Use the purple path for the mirrord route and the dark path for the normal route.
-+
-+## Shapes
-+
-+- Box: `rx="12"`. A box inside a box: `rx="8"` to `rx="10"`.
-+- Database: a cylinder (an `ellipse` top on a `path` body), same stroke and colors as a box.
-+- Queue or topic: a box with three thin vertical lines at the right end, or a plain box with the type in the secondary text.
-+- Do not draw hand-drawn or sketchy shapes. Use the symbols in [Symbols](#symbols) to show what a thing is.
-+
-+## Logos
-+
-+### Kubernetes logo
-+
-+The Kubernetes logo shows what runs in the cluster. Use it in two places:
-+
-+- **On a Kubernetes cluster.** On a cluster drawn as a cloud, center the logo on the top-right corner bump, 24px in from the top of the bump, as in `api-gateway-traffic.svg`. The boundary rule that follows does not apply to a cloud. On a cluster drawn as a boundary, center a 36px logo on the top-right corner, at `x + width - 18`, `y - 18`. Do not put it on a broker boundary, such as "Kafka cluster". A broker boundary gets the broker logo (see below).
-+- **On a box that runs in the cluster, when the diagram has no Kubernetes cluster boundary.** Center a 36px logo on the bottom-right corner of the box, at `x + width - 18`, `y + height - 18`. On a box less than 60 high, use a 26px logo, at `x + width - 13`, `y + height - 13`. Examples: the mirrord operator, a forwarder, the deployed app, a preview pod. Do not put it on brokers or managed services.
-+
-+Define the symbol once in `<defs>`, and place it with `<use href="#k8s" x="..." y="..." width="36" height="36"/>`. The logo half covers the corner, so make sure it does not cover an arrow or text, and grow the canvas when it goes past the edge:
-+
-+```xml
-+<symbol id="k8s" viewBox="0 0 32 32">
-+  <polygon points="16.00,1.60 27.73,7.25 30.62,19.94 22.51,30.11 9.49,30.11 1.38,19.94 4.27,7.25" fill="#326CE5" stroke="#326CE5" stroke-width="2" stroke-linejoin="round"/>
-+  <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round">
-+  <circle cx="16" cy="16" r="7"/>
-+  <line x1="16.00" y1="13.40" x2="16.00" y2="5.80"/><line x1="18.03" y1="14.38" x2="23.97" y2="9.64"/><line x1="18.53" y1="16.58" x2="25.94" y2="18.27"/><line x1="17.13" y1="18.34" x2="20.43" y2="25.19"/><line x
-```
-
-**File**: `docs/README.md` (modified, +4/-0)
-```diff
-@@ -20,6 +20,10 @@ When **changing the structure** of the docs, like creating a new page, you must
- 
- **Every feature page needs a plan tag.** Pages under `docs/using-mirrord`, `docs/sharing-the-cluster` and `docs/use-cases` must list at least one of `oss`, `team` or `enterprise` in their `tags` frontmatter, alongside `alpha` or `beta` where relevant. `mirrord mcp` reads these tags to tell users which plan a feature needs. The `content_check` job of the mirrord repository's CI runs `.github/scripts/check_plan_tags.py` on every PR that changes the docs and fails on any page in those directories without one, so a new page cannot ship untagged.
- 
-+### Diagrams
-+
-+All diagrams use one style. Read [DIAGRAMS.md](DIAGRAMS.md) before you add or change a diagram.
-+
- ### GitBook
- 
- Each tab on the docs site corresponds to a GitBook "space". Adding a space is done through GitBook, and GitHub sync must be set up to sync changes between the space's repo and the website. Note that changes made in GitBook may be live. The next publish replaces the content of the `docs-published` branch, so a page edited and merged in GitBook is lost unless the same change is also made here.
-```
-
-**File**: `docs/docs/.gitbook/assets/api-gateway-traffic.svg` (modified, +42/-10)
-```diff
-@@ -1,15 +1,42 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -25 960 445" width="960" height="445" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
-   <title id="t">How a request reaches your local process through an API gateway</title>
-   <desc id="d">A caller outside the cluster sends a request to the API gateway. The gateway authenticates and routes it to the service pod. At the pod, the mirrord agent sends requests that match your filter to your local process, and all other requests to the deployed container.</desc>
-   <defs>
-     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-       <path d="M0 0 L10 5 L0 10 z" fill="#232141"/>
-     </marker>
-+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-+      <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
-+    </marker>
-+    <symbol id="k8s" viewBox="0 0 32 32">
-+      <polygon points="16.00,1.60 27.73,7.25 30.62,19.94 22.51,30.11 9.49,30.11 1.38,19.94 4.27,7.25" fill="#326CE5" stroke="#326CE5" stroke-width="2" stroke-linejoin="round"/>
-+      <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round">
-+        <circle cx="16" cy="16" r="7"/>
-+        <line x1="16.00" y1="13.40" x2="16.00" y2="5.80"/><line x1="18.03" y1="14.38" x2="23.97" y2="9.64"/><line x1="18.53" y1="16.58" x2="25.94" y2="18.27"/><line x1="17.13" y1="18.34" x2="20.43" y2="25.19"/><line x1="14.87" y1="18.34" x2="11.57" y2="25.19"/><line x1="13.47" y1="16.58" x2="6.06" y2="18.27"/><line x1="13.97" y1="14.38" x2="8.03" y2="9.64"/>
-+      </g>
-+      <circle cx="16" cy="16" r="2.4" fill="#ffffff"/>
-+    </symbol>
-+    <symbol id="mirrord" viewBox="97 61 391 696">
-+<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
-+<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
-+<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6
-```
-
-**File**: `docs/docs/.gitbook/assets/ecs-sample-app-requests.svg` (modified, +27/-7)
-```diff
-@@ -8,6 +8,22 @@
-     <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-       <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
-     </marker>
-+    <symbol id="mirrord" viewBox="97 61 391 696">
-+<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
-+<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
-+<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
-+<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,21
-```
-
-**File**: `docs/docs/.gitbook/assets/ecs-sample-app.svg` (modified, +32/-8)
-```diff
-@@ -8,6 +8,25 @@
-     <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-       <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
-     </marker>
-+    <symbol id="mirrord" viewBox="97 61 391 696">
-+<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
-+<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
-+<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
-+<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,21
-```
-
-**File**: `docs/docs/.gitbook/assets/header-propagation.svg` (modified, +27/-5)
-```diff
-@@ -8,6 +8,22 @@
-     <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-       <path d="M0 0 L10 5 L0 10 z" fill="#ACACAC"/>
-     </marker>
-+    <symbol id="mirrord" viewBox="97 61 391 696">
-+<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
-+<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
-+<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
-+<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,212.
-```
-
-**File**: `docs/docs/.gitbook/assets/preview-sync-flow.svg` (modified, +59/-4)
-```diff
-@@ -1,4 +1,59 @@
--<?xml version="1.0" standalone="no"?>
--<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
--<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 640" width="2040" height="1280"><!-- svg-source:excalidraw --><metadata></metadata><defs><style class="style-fonts">
--      @font-face { font-family: "Comic Shanns"; src: url(data:font/woff2;base64,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
-```
-
-**File**: `docs/docs/.gitbook/assets/shared-cluster.svg` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -47 1200 767" width="1200" height="767" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
-+  <title id="t">How several developers use one cluster at the same time</title>
-+  <desc id="d">Four developers run local processes with mirrord on their laptops, against one shared cluster. One: an upstream service sends requests to a shared service, and HTTP filters on the x-header header send yellow requests to developer A, whose laptop is yellow, and green requests to developer B, whose laptop is green. Two: SQS or Kafka splitting sends the green queue messages to developer B and the blue queue messages to developer C, whose laptop is blue. The white messages stay with the deployed service. Three: developer D targets the upstream service, and a mirrord policy blocks writes to the main database. Four: DB branching gives developer D a personal database branch, which receives the writes.</desc>
-+  <defs>
-+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-+      <path d="M0 0 L10 5 L0 10 z" fill="#232141"/>
-+    </marker>
-+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-+      <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
-+    </marker>
-+    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-+      <path d="M0 0 L10 5 L0 10 z" fill="#ACACAC"/>
-+    </marker>
-+    <symbol id="mirrord" viewBox="97 61 391 696">
-+<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
-+<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
-+<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5325** (2026-11-26): Redraw the env vars and mirrord for CI diagrams (@eyalb181)
-- **PR #5324** (2026-11-26): Redraw the preview environment create and modify diagrams (@eyalb181)
-- **PR #5323** (2026-11-26): Redraw the preview H2, multi-cluster, and GCP Pub/Sub diagrams (@eyalb181)
-- **PR #5322** (2026-11-26): Redraw the Kafka, RabbitMQ, and SQS splitting diagrams (@eyalb181)
-- **PR #5321** (2026-11-26): Redraw the operator architecture, BullMQ, and Redis diagrams (@eyalb181)
-- **PR #5320** (2026-11-26): Redraw the Azure Service Bus, Temporal, NATS, and ConfigMap diagrams (@eyalb181)
+- **PR #5373** (2026-11-27): Add queue and workflow tutorials (@eyalb181)
+- **PR #5369** (2026-11-27): Add E2E tests that talk mirrord-protocol to the agent directly (@Razz4780)
+- **PR #5362** (2026-11-26): Release 3.292.0 (@cubby-mb[bot])
+- **PR #5361** (2026-11-26): Fix the agent failing to open files behind symlinks restricted by fs.protected_symlinks (@Razz4780)
+- **PR #5359** (2026-11-26): Redraw the architecture diagram in the docs style (@eyalb181)
+- **PR #5327** (2026-11-26): ci: publish docs, guides and skills from main on every merge (@meowjesty)
 
 ---
 
@@ -1899,25 +2006,42 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: build the remaining test jobs with line-table debug info
+## X. ci: publish docs, guides and skills from main on every merge
 
 **RULE**:
-When implementing operations in `.github/workflows/build-mirrord-cli.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d64f3d8a`: ci: build the remaining test jobs with line-table debug info. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47930839`: ci: publish docs, guides and skills from main on every merge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-mirrord-cli.yaml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-env:
-  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
-  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
-  CARGO_PROFILE_DEV_DEBUG: line-tables-only
-
+      # Claude Code installs the plugin from all of `skills/`, because the marketplace entry's `source`
+      # is `./`, but only the skills and `.claude-plugin/` change what its users get. The READMEs, the
+      # ports and the Codex and Cursor manifests there don't.
+      - name: get Claude Code plugin changes
+        id: changed-claude-plugin
+        uses: metalbear-co/changed-files@db1aaf2ad42e3c3035f04afd76630172ef6743eb
+        with:
+          files: |
+            skills/skills/**
+            skills/.claude-plugin/**
+      # Claude Code caches an installed plugin by its version and updates it only when the version
+      # changes, so a change to the plugin's files that keeps the version never reaches Claude Code
+      # users. Only pull requests and the merge queue have a base commit to compare the version with.
+      - name: verify Claude Code plugin version bump
+        env:
+          PLUGIN_CHANGED: ${{ steps.changed-claude-plugin.outputs.any_changed }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+        shell: bash
+        run: |
+          if [ "$PLUGIN_CHANGED" != "true" ] || [ -z "$BASE" ]; then
+            exit 0
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1927,7 +2051,7 @@ env:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d64f3d8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47930839` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

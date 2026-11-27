@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T16:13:03.210Z",
+  "last_updated": "2026-11-27T16:21:47.075Z",
   "total_records": 2839,
   "domains": {
     "A": {
@@ -10511,8 +10511,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "2b5079fada5419848ab799ee2e57bcd92c85c98e0fd41eb39ba7deb542e36230",
-      "created_at": "2026-11-26T22:21:49.824Z"
+      "content_hash": "d1bd9280827d7e096a83fb4fc58f41877b3188514bf447779eaf9e5fa7008fb2",
+      "created_at": "2026-11-27T16:21:39.777Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -10571,8 +10571,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "3a8da38feed1937fe92d5961d95f7d59f4e1bb5269f2a8911255a38882574c6b",
-      "created_at": "2026-11-26T22:21:55.014Z"
+      "content_hash": "aaedb264482ad3a8ecec84b21746e156e7ece79fdeeda47310231b0fe09567e4",
+      "created_at": "2026-11-27T16:21:45.918Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -19828,8 +19828,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "ab0fe2097805233ca6a9e5a1cbc7c5e86b8ae203aebca861341bdb79803442cb",
-      "created_at": "2026-11-26T16:21:14.311Z"
+      "content_hash": "c51d8d366bf16005975f3ac8dc46a9062f634db378c35c78cc127047d4f09644",
+      "created_at": "2026-11-27T16:21:31.142Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19855,8 +19855,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "0dfa960eb23cae57e119da26f1a82cf8cc44679df8da64944a007845fde8b931",
-      "created_at": "2026-11-26T16:21:32.196Z"
+      "content_hash": "ea24acfbfa7f68454a8c2bad8f68e8ed194e8ac63a67b4a1c6fa307b2542f36d",
+      "created_at": "2026-11-27T16:21:43.630Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -46786,8 +46786,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "963088f55c614ca71cbf83fad3edc0b8b0b5fd4687b535212d43165305b673b6",
-      "created_at": "2026-11-27T16:13:01.587Z"
+      "content_hash": "a81f7ec095b693d324aede73bd975676e505d9bae802902be0ffa5eb73274adb",
+      "created_at": "2026-11-27T16:21:47.075Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

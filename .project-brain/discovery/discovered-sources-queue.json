@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T16:03:11.781Z",
+  "updated_at": "2026-11-27T16:21:45.403Z",
   "stats": {
-    "total_discovered": 10474,
-    "approved_pending_harvest": 9942,
+    "total_discovered": 10493,
+    "approved_pending_harvest": 9961,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9948,
+      "COMMUNITY_AND_EXPERT": 9967,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226731,6 +226731,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
         "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-6987CC73AE79": {
+      "id": "SRC-6987CC73AE79",
+      "url": "https://github.com/metalbear-co/skills.git",
+      "title": "https://github.com/metalbear-co/skills.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:43.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-957793B3DAE1": {
+      "id": "SRC-957793B3DAE1",
+      "url": "https://github.com/metalbear-co/skills",
+      "title": "https://github.com/metalbear-co/skills",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:43.135Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-F9362C823145": {
+      "id": "SRC-F9362C823145",
+      "url": "https://redirect.github.com/kubernetes/kubectl",
+      "title": "https://redirect.github.com/kubernetes/kubectl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-46B94EA3BAD4": {
+      "id": "SRC-46B94EA3BAD4",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fkubectl/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fkubectl/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-168342A5ABA4": {
+      "id": "SRC-168342A5ABA4",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fkubectl/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fkubectl/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-22B62925904B": {
+      "id": "SRC-22B62925904B",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-598C827B1DAC": {
+      "id": "SRC-598C827B1DAC",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-0EBA64859E9C": {
+      "id": "SRC-0EBA64859E9C",
+      "url": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.2...v0.37.3",
+      "title": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.2...v0.37.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-6DD22230D686": {
+      "id": "SRC-6DD22230D686",
+      "url": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.1...v0.37.2",
+      "title": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.1...v0.37.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-2BA81E138767": {
+      "id": "SRC-2BA81E138767",
+      "url": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.0...v0.37.1",
+      "title": "https://redirect.github.com/kubernetes/kubectl/compare/v0.37.0...v0.37.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-E88880792B08": {
+      "id": "SRC-E88880792B08",
+      "url": "https://redirect.github.com/kubernetes/client-go",
+      "title": "https://redirect.github.com/kubernetes/client-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-34D7FEBA8914": {
+      "id": "SRC-34D7FEBA8914",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fclient-go/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fclient-go/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-A886C13FB9EA": {
+      "id": "SRC-A886C13FB9EA",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fclient-go/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fclient-go/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:44.936Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-9A8DAA5C1D8F": {
+      "id": "SRC-9A8DAA5C1D8F",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-577F865B6D6E": {
+      "id": "SRC-577F865B6D6E",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.085Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-92DC69C6E625": {
+      "id": "SRC-92DC69C6E625",
+      "url": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.2...v0.37.3",
+      "title": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.2...v0.37.3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-282CDC780F9B": {
+      "id": "SRC-282CDC780F9B",
+      "url": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2",
+      "title": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-16D57B26F3D2": {
+      "id": "SRC-16D57B26F3D2",
+      "url": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.0...v0.37.1",
+      "title": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.0...v0.37.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-E3ECA8681E16": {
+      "id": "SRC-E3ECA8681E16",
+      "url": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.0",
+      "title": "https://redirect.github.com/kubernetes/client-go/compare/v0.37.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T16:21:45.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
       }
     }
   }

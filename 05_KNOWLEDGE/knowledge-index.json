@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T16:13:03.751Z",
+  "last_updated": "2026-11-27T16:21:47.284Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26639,
+  "total_items": 26645,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdd9686bd2f61843b85de79b52e91b6ae0b644740017dcd93fb96f4f91151b24",
+      "content_hash": "a6f8db399564ea3a322d9f1cb42689762c585969b4a711c49aae13944254125a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:13:01.895Z"
+      "persisted_at": "2026-11-27T16:21:47.284Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "b5eaaaa9",
-      "content_hash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
+      "source_version": "df109532",
+      "content_hash": "0ccf8ecdde166909b3065e6ecedd4bc20795ed437b7b5c168db52503428a12db",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212448,6 +212448,11 @@
           "number": 10783,
           "title": "update dependency buildx to v0.39.1 (main)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10927,
+          "title": "avoid retry backoff for normal pod cleanup events",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212455,7 +212460,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T22:21:48.918Z",
+      "verified_at": "2026-11-27T16:21:39.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212497,10 +212502,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "b5eaaaa9",
-      "content_hash": "2b5079fada5419848ab799ee2e57bcd92c85c98e0fd41eb39ba7deb542e36230",
+      "source_version": "df109532",
+      "content_hash": "d1bd9280827d7e096a83fb4fc58f41877b3188514bf447779eaf9e5fa7008fb2",
       "domain_letter": "A",
-      "persisted_at": "2026-11-26T22:21:49.824Z"
+      "persisted_at": "2026-11-27T16:21:39.777Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212509,10 +212514,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "b5eaaaa9",
-      "content_hash": "4e32e68eab6641fdaa93d7e81a6dcc97aca89e8d71975bedc326abcc30b218ab",
+      "source_version": "df109532",
+      "content_hash": "3b989e4e8265ba5be5b751c4509f8c085f6334b0c002d7366319a00c2eec03cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:21:50.014Z"
+      "persisted_at": "2026-11-27T16:21:40.009Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212546,9 +212551,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a8da38feed1937fe92d5961d95f7d59f4e1bb5269f2a8911255a38882574c6b",
+      "content_hash": "aaedb264482ad3a8ecec84b21746e156e7ece79fdeeda47310231b0fe09567e4",
       "domain_letter": "A",
-      "persisted_at": "2026-11-26T22:21:55.014Z"
+      "persisted_at": "2026-11-27T16:21:45.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212558,9 +212563,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1e2ba8f5a48e9855e6e07f109a81367af962727526aca2f14bb2fedc028c7a1",
+      "content_hash": "2efc6d3986f49fa14640abf0130ac6482492fbf443fae39505c6914a7e88d34d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:21:55.205Z"
+      "persisted_at": "2026-11-27T16:21:46.133Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -244726,8 +244731,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "8f225c1f",
-      "content_hash": "7a13154c9229aa27dd80be98b8d9f1bf8c77f6c6ebc7a2137ba31d3bbe56f991",
+      "source_version": "83596f55",
+      "content_hash": "c7bbcc71ac697ec15ef60fc176aa61cb1ddbc592db0149a5b43dd15d55186de3",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -244780,6 +244785,11 @@
           "number": 10722,
           "title": "build the remaining test jobs with line-table debug info",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10926,
+          "title": "publish docs, guides and skills from main on every merge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244787,7 +244797,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:21:13.342Z",
+      "verified_at": "2026-11-27T16:21:30.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244829,10 +244839,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "8f225c1f",
-      "content_hash": "ab0fe2097805233ca6a9e5a1cbc7c5e86b8ae203aebca861341bdb79803442cb",
+      "source_version": "83596f55",
+      "content_hash": "c51d8d366bf16005975f3ac8dc46a9062f634db378c35c78cc127047d4f09644",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:21:14.311Z"
+      "persisted_at": "2026-11-27T16:21:31.142Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -244841,10 +244851,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "8f225c1f",
-      "content_hash": "4841a9d429803976a815d4653d19389fc0cfdb03f699519bf2392007f17d4b75",
+      "source_version": "83596f55",
+      "content_hash": "87b7427a5bfa36affd2af6d49a36c359af04b5d91ad61e9dee47fcbf0aeaa4c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:21:14.626Z"
+      "persisted_at": "2026-11-27T16:21:31.347Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -245005,9 +245015,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "0dfa960eb23cae57e119da26f1a82cf8cc44679df8da64944a007845fde8b931",
+      "content_hash": "ea24acfbfa7f68454a8c2bad8f68e8ed194e8ac63a67b4a1c6fa307b2542f36d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T16:21:32.196Z"
+      "persisted_at": "2026-11-27T16:21:43.630Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -245017,9 +245027,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "77382476852f23a275d0746b8ff3ddc66dccd2f01b16d8fbb22330cf99018d44",
+      "content_hash": "d4d1607207ca0c30593d670ab2b17ae22ad19ece419adac1b83a321be414717c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:21:32.464Z"
+      "persisted_at": "2026-11-27T16:21:43.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -358381,13 +358391,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K79H-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VGTQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "21550cba7b4604ddd2336a38503df460b2435d38d818e97043c3be7038e712a7",
+      "content_hash": "e7044ee4d32c43e4a2f44b629a67181e833199cdcb3029c30b9bb30b6bb9c91a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T16:13:01.257Z"
+      "persisted_at": "2026-11-27T16:21:46.865Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358397,9 +358407,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "963088f55c614ca71cbf83fad3edc0b8b0b5fd4687b535212d43165305b673b6",
+      "content_hash": "a81f7ec095b693d324aede73bd975676e505d9bae802902be0ffa5eb73274adb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T16:13:01.587Z"
+      "persisted_at": "2026-11-27T16:21:47.075Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -365745,6 +365755,82 @@
       "content_hash": "d64d4e5f4124ee28b5071a1fdb394b6924bde1f44a66789bd042477e6db7b330",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T16:03:13.062Z"
+    },
+    "rule-10926": {
+      "learning_id": "rule-10926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10926,
+      "title": "publish docs, guides and skills from main on every merge",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "83596f55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:21:30.398Z"
+    },
+    "candidate_directive-publish-docs-guides-and-skills-from-main-on-every-merge": {
+      "item_id": "candidate_directive-publish-docs-guides-and-skills-from-main-on-every-merge",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V4J2-publish-docs-guides-and-skills-from-main-on-every-merge.md",
+      "title": "publish docs, guides and skills from main on every merge",
+      "repository": "metalbear-co/mirrord",
+      "source_version": "83596f55",
+      "content_hash": "2b7c541a396bd9e9e19e70187790595ced31675289b792d4ed64af6ffa4a63f9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:21:30.930Z"
+    },
+    "rule-10927": {
+      "learning_id": "rule-10927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10927,
+      "title": "avoid retry backoff for normal pod cleanup events",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "df109532",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:21:39.028Z"
+    },
+    "candidate_directive-avoid-retry-backoff-for-normal-pod-cleanup-events": {
+      "item_id": "candidate_directive-avoid-retry-backoff-for-normal-pod-cleanup-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VB6Q-avoid-retry-backoff-for-normal-pod-cleanup-events.md",
+      "title": "avoid retry backoff for normal pod cleanup events",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "df109532",
+      "content_hash": "96d6a53e79cce411bdfde2513c437dd46de5a887e8e703a95ac482d9e0a97aba",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T16:21:39.555Z"
+    },
+    "candidate_directive-ci-publish-docs-guides-and-skills-from-main-on-every-merge": {
+      "item_id": "candidate_directive-ci-publish-docs-guides-and-skills-from-main-on-every-merge",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VE5X-ci-publish-docs-guides-and-skills-from-main-on-every-merge.md",
+      "title": "ci: publish docs, guides and skills from main on every merge",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e81a61fe6397d05d0f57b693f2a5d71aba8676b11877d72c157fdb79e8a998d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T16:21:43.417Z"
+    },
+    "candidate_directive-controller-avoid-retry-backoff-for-normal-pod-cleanup-events": {
+      "item_id": "candidate_directive-controller-avoid-retry-backoff-for-normal-pod-cleanup-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VFXH-controller-avoid-retry-backoff-for-normal-pod-cleanup-events.md",
+      "title": "controller): avoid retry backoff for normal pod cleanup events",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a33fe8ecc395ed7b97f2af6d37b95f23f0cbdfe42212e211e09866ced7f9eee",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T16:21:45.701Z"
     }
   },
   "ai-builder-brain": {

@@ -4,22 +4,22 @@
 {
   "source_repository": "argoproj/argo-workflows",
   "source_url": "https://github.com/argoproj/argo-workflows",
-  "source_version": "b5eaaaa9",
+  "source_version": "df109532",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T22:21:49.635Z",
+  "timestamp": "2026-11-27T16:21:39.554Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-argoproj-argo-workflows",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `b5eaaaa9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:21:49.635Z`  
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `df109532`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T16:21:39.554Z`  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `argoproj/argo-workflows` (Commit: `b5eaaaa9`)
+- **Target Repository**: `argoproj/argo-workflows` (Commit: `df109532`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T22:21:48.081Z  
+> **Harvest Timestamp**: 2026-11-27T16:21:38.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17123 stars
+- **Stars / Engagement**: 17126 stars
 
 ---
 
@@ -778,11 +778,17 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17636** (2026-11-26): **chore(deps): update dependency webpack to v5.113.0 (main)**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [webpack](https://redirect.github.com/webpack/webpack) | [`5.111.1` → `5.113.0`](https://renovatebot.com/diffs/npm/webpack/5.111.1/5.113.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/webpack/5.113.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/webpack/5.113.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/webpack/5.111.1/5.113.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/webpack/5.111.1/5.113.0?slim=true) |  ---  ### Release Notes  <details> <summary>webpack/webpack (webpack)</summary>  ### [`v5.113.0`](https://redirect.github.com/webpack/webpack/blob/HEAD/CHANGELOG.md#51130)  [Compare Source](https://redirect.github.com/webpack/webpack/compare/v5.112.2...v5.113.0)  ##### Minor Changes  - Treat pure CommonJS exports and `require()` of pure modules as side-effect free. (by [@&#8203;hai-x](https://redirect.github.com/hai-x) in [#&#8203;21937](https://redirect.github.com/webpack/webpack/pull/21937))  - Add `compilation.hooks.chunkHashDependencies` for chunks naming other ch
+- **Issue #17664** (2026-11-27): **chore(deps): update module k8s.io/kubectl to v0.37.3 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [k8s.io/kubectl](https://redirect.github.com/kubernetes/kubectl) | `v0.35.4` → `v0.37.3` | ![age](https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fkubectl/v0.37.3?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fkubectl/v0.37.3?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fkubectl/v0.35.4/v0.37.3?slim=true) |  ---  ### Release Notes  <details> <summary>kubernetes/kubectl (k8s.io/kubectl)</summary>  ### [`v0.37.3`](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.2...v0.37.3)  [Compare Source](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.2...v0.37.3)  ### [`v0.37.2`](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.1...v0.37.2)  [Compare Source](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.1...v0.37.2)  ### [`v0.37.1`](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.0...v0.37.1)  [Compare Source](https://redirect.github.com/kubernetes/kubectl/compare/v0.37.0...v0.37.1)  ### [`v0.37.0`](h
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 13 additional dependencies were updated   Details:   | **Package**                            | **Change**                                         | | :------------------------------------- | :------------------------------------------------- | | `k8s.io/api`                           | `v0.35.4` -> `v0.37.3`                             | | `k8s.io/apimachinery`                  | `v0.35.4` -> `v0.37.3`                             | | `k8s.io/cli-runtime`                   | `v0.35.4` -> `v0.37.3`                             | | `k8s.io/client-go`                     | `v0.35.4` -> `v0.37.3`                             | | `github.com/fxamacker/cbor/v2`         | `v2.9.0` -> `v2.9.1`                               | | `github.com/sergi/go-diff`             | `v1.3.2-0.202308022
+  > ### Renovate Ignore Notification  Because you closed this PR without merging, Renovate will ignore this update (`v0.37.3`). You will get a PR once a newer version is released. To ignore this dependency forever, add it to the `ignoreDeps` array of your Renovate config.  If you accidentally closed this PR, or if you changed your mind: rename this PR to get a fresh replacement PR.
 
-- **Issue #17635** (2026-11-26): **chore(deps): update dependency sass to v1.108.2 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [sass](https://redirect.github.com/sass/dart-sass) | [`1.107.0` → `1.108.2`](https://renovatebot.com/diffs/npm/sass/1.107.0/1.108.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/sass/1.108.2?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/sass/1.108.2?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/sass/1.107.0/1.108.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/sass/1.107.0/1.108.2?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>sass/dart-sass (sass)</summary>  ### [`v1.108.2`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11082)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.108.1...1.108.2)  - No user-visible changes.  ### [`v1.108.1`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11081)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.108.0...1.108.1)  ##### Node.js Embedded Host  - Fix an issue in the release 
+- **Issue #17663** (2026-11-27): **chore(deps): update module k8s.io/client-go to v0.37.3 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [k8s.io/client-go](https://redirect.github.com/kubernetes/client-go) | `v0.35.4` → `v0.37.3` | ![age](https://developer.mend.io/api/mc/badges/age/go/k8s.io%2fclient-go/v0.37.3?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/k8s.io%2fclient-go/v0.37.3?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/k8s.io%2fclient-go/v0.35.4/v0.37.3?slim=true) |  ---  ### Release Notes  <details> <summary>kubernetes/client-go (k8s.io/client-go)</summary>  ### [`v0.37.3`](https://redirect.github.com/kubernetes/client-go/compare/v0.37.2...v0.37.3)  [Compare Source](https://redirect.github.com/kubernetes/client-go/compare/v0.37.2...v0.37.3)  ### [`v0.37.2`](https://redirect.github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2)  [Compare Source](https://redirect.github.com/kubernetes/client-go/compare/v0.37.1...v0.37.2)  ### [`v0.37.1`](https://redirect.github.com/kubernetes/client-go/compare/v0.37.0...v0.37.1)  [Compare Source](https://redirect.github.com/kubernetes/client-go/compare/v0.37.0..
+  **Post-Mortem & Fix Analysis**:
+  > ### ⚠️ Artifact update problem  Renovate failed to update an artifact related to this branch. You probably do not want to merge this PR as-is.  ♻ Renovate will retry this branch, including artifacts, only when one of the following happens:   - any of the package files in this branch needs updating, or   - the branch becomes conflicted, or  - you click the rebase/retry checkbox if found above, or  - you rename this PR's title to start with "rebase!" to trigger it manually  The artifact failure details are included below:  ##### File name: go.sum  ``` go: downloading github.com/stretchr/testify v1.12.1 go: downloading k8s.io/client-go v0.37.3 go: downloading github.com/argoproj/argo-events v1.9.11 go: downloading github.com/argoproj/pkg v0.13.7-0.20250123033407-65f2d4777bfd go: downloading github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c go: downloading github.com/spf13/cobra v1.10.2 go: downloading github.com/spf13/pflag v1.1.0 go: downloading github.com/spf13/viper v1.21.0 go:
+  > ### Renovate Ignore Notification  Because you closed this PR without merging, Renovate will ignore this update (`v0.37.3`). You will get a PR once a newer version is released. To ignore this dependency forever, add it to the `ignoreDeps` array of your Renovate config.  If you accidentally closed this PR, or if you changed your mind: rename this PR to get a fresh replacement PR.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -799,581 +805,540 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db785a62` (2026-11-26)
-**Commit Message**: chore(deps): update dependency buildx to v0.39.1 (main) (#17631)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/release.yaml` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ jobs:
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-         with:
--          version: v0.38.2
-+          version: v0.39.1
- 
-       - name: Cache Docker layers
-         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-```
-
----
-
-### Incident Patch 2: `ffcf8313` (2026-11-26)
-**Commit Message**: fix(controller): preserve template identity in artifact GC (#17502)
+### Incident Patch 1: `23272afe` (2026-11-27)
+**Commit Message**: fix(controller): avoid retry backoff for normal pod cleanup events (#17552)
 
 Signed-off-by: hairuiyang <[REDACTED_EMAIL]>
 
-**File**: `pkg/apis/workflow/v1alpha1/workflow_types.go` (modified, +62/-26)
+**File**: `workflow/controller/pod/controller.go` (modified, +6/-0)
 ```diff
-@@ -1923,6 +1923,14 @@ type TemplateRef struct {
- 	ClusterScope bool `json:"clusterScope,omitempty" protobuf:"varint,4,opt,name=clusterScope"`
+@@ -5,6 +5,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"strings"
++	"sync"
+ 	"time"
+ 
+ 	apiv1 "k8s.io/api/core/v1"
+@@ -55,6 +56,11 @@ type Controller struct {
+ 	callBack      podEventCallback
+ 	log           logging.Logger
+ 	restConfig    *rest.Config
++
++	// cleanupMu protects cleanup requests and their workqueue entries.
++	cleanupMu       sync.Mutex
++	cleanupRequests map[string]*podCleanupRequest
++	cleanupSequence uint64
  }
  
-+// GetResourceScope returns the scope of the referenced WorkflowTemplate.
-+func (ref *TemplateRef) GetResourceScope() ResourceScope {
-+	if ref.ClusterScope {
-+		return ResourceScopeCluster
-+	}
-+	return ResourceScopeNamespaced
-+}
-+
- // Synchronization holds synchronization lock configuration
- type Synchronization struct {
- 	// Semaphores holds the list of Semaphores configuration
-@@ -3939,14 +3947,53 @@ func (w *Workflow) NodeID64(name string) string {
- 	return fmt.Sprintf("%s-%v", w.Name, h.Sum64())
+ // NewController creates a pod controller
+```
+
+**File**: `workflow/controller/pod/queue.go` (modified, +96/-12)
+```diff
+@@ -3,8 +3,10 @@ package pod
+ 
+ import (
+ 	"context"
++	"fmt"
+ 	"os"
+ 	"slices"
++	"strings"
+ 	"syscall"
+ 	"time"
+ 
+@@ -98,17 +100,100 @@ func (c *Controller) patchPodForCleanup(ctx context.Context, pods typedv1.PodInt
+ 	return nil
  }
  
-+// GetNodeTemplateKey returns the scoped key for a node's template, or an empty
-+// string if the template is unnamed.
-+func (w *Workflow) GetNodeTemplateKey(node *NodeStatus) string {
-+	scope, resourceName := node.GetTemplateScope()
-+	key, stored := resolveTemplateReference(scope, resourceName, node)
-+	if !stored {
-+		key = w.localTemplateKeyPrefix() + node.TemplateName
-+	}
-+	if strings.HasSuffix(key, "/") {
-+		return ""
-+	}
-+	return key
++// podCleanupRequest tracks one logical cleanup key across ready, running, and delayed entries.
++type podCleanupRequest struct {
++	entry      string
++	readyAt    time.Time
++	pendingAt  time.Time
++	processing bool
++	retrying   bool
 +}
 +
-+func (w *Workflow) localTemplateKeyPrefix() string {
-+	return string(ResourceScopeLocal) + "/" + w.Name + "/"
-+}
++func (c *Controller) addPodCleanup(key string, delay time.Duration) {
++	c.cleanupMu.Lock()
++	defer c.cleanupMu.Unlock()
 +
-+// GetTemplateFromSnapshot looks up a key from GetNodeTemplateKey in the execution
-+// spec or stored templates, without fetching any live references.
-+func (w *Workflow) GetTemplateFromSnapshot(key string) *Template {
-+	if key == "" {
-+		return nil
-+	}
-+	name, local := strings.CutPrefix(key, w.localTemplateKeyPrefix())
-+	if !local {
-+		return w.getStoredTemplate(key)
-+	}
-+	for _, tmpl := range w.GetExecSpec().Templates {
-+		if tmpl.Name == name {
-+			return &tmpl
++	readyAt := time.Now().Add(max(delay, 0))
++	if request := c.cleanupRequests[key]; request != nil {
++		switch {
++		case request.retrying:
++			return
++		case request.processing:
++			if request.pendingAt.IsZero() || readyAt.Before(request.pendingAt) {
++				request.pendingAt = readyAt
++			}
++			return
++		case !readyAt.Before(request.readyAt):
++			return
++		case delay > 0:
++			request.readyAt = readyAt
++			c.workqueue.AddAfter(request.entry, time.Until(readyAt))
++			return
 +		}
 +	}
-+	return nil
++	c.schedulePodCleanup(key, readyAt, false)
 +}
 +
- // GetStoredTemplate retrieves a template from stored templates of the workflow.
- func (w *Workflow) GetStoredTemplate(scope ResourceScope, resourceName string, caller TemplateReferenceHolder) *Template {
--	tmplID, storageNeeded := resolveTemplateReference(scope, resourceName, caller)
--	if !storageNeeded {
--		// Local templates aren't stored
-+	key, stored := resolveTemplateReference(scope, resourceName, caller)
-+	if !stored {
- 		return nil
- 	}
--	if tmpl, ok := w.Status.StoredTemplates[tmplID]; ok {
-+	return w.getStoredTemplate(key)
++// schedulePodCleanup must hold cleanupMu. A new entry lets workers ignore timers
++// left behind when immediate work supersedes a delay or a failure starts a retry.
++func (c *Controller) schedulePodCleanup(key string, readyAt time.Time, retry bool) {
++	if c.cleanupRequests == nil {
++		c.cleanupRequests = make(map[string]*podCleanupRequest)
++	}
++	c.cleanupSequence++
++	entry := fmt.Sprintf("%d:%s", c.cleanupSequence, key)
++	c.cleanupRequests[key] = &podCleanupRequest{entry: entry, readyAt: readyAt, retrying: retry}
++	delay := time.Until(readyAt)
++	switch {
++	case retry:
++		c.workqueue.AddRateLimited(entry)
++		// Preserve the cleanup queue's existing per-attempt limiter reset.
++		c.workqueue.Forget(entry)
++	case delay > 0:
++		c.workqueue.AddAfter(entry, delay)
++	default:
++		c.workqueue.Add(entry)
++	}
 +}
 +
-+func (w *Workflow) getStoredTemplate(key string) *Template {
-+	if tmpl, ok := w.Status.StoredTemplates[key]; ok {
- 		return tmpl.DeepCopy()
++func (c *Controller) startPodCleanup(key, entry string) bool {
++	c.cleanupMu.Lock()
++	defer c.cleanupMu.Unlock()
++
++	request := c.cleanupRequests[key]
++	if request == nil || request.entry != entry {
++		return false
++	}
++	request.processing = true
++	request.retrying = false
++	return true
++}
++
++func (c *Controller) finishPodCleanup(key string, retry bool) {
++	c.cleanupMu.Lock()
++	defer c.cleanupMu.Unlock()
++
++	pendingAt := c.cleanupRequests[key].pendingAt
++	delete(c.cleanupRequests, key)
++	if retry || !pendingAt.IsZero() {
++		c.schedulePodCleanup(key, pendingAt, retry)
++	}
++}
++
+ // all pods will ultimately be cleaned up by either deleting them, or labelling them
+ func (c *Controller) processNextPodCleanupItem(ctx context.Context) bool {
+-	key, quit := c.workqueue.Get()
++	entry, quit := c.workqueue.Get()
+ 	if quit {
+ 		return false
  	}
- 	return nil
-@@ -3997,30 +4044,19 @@ func (w *Workflow) SetStoredInlineTemplate(scope ResourceScope, resourceName str
- 	return nil
++	defer c.workqueue.Done(entry)
+ 
+-	defer func() {
+-		c.workqueue.Forget(key)
+-		c.workqueue.Done(key)
+-	}()
++	_, key, _ := strings.Cut(entry, ":")
++	if !c.startPodCleanup(key, entry) {
++		return true
++	}
++	retry := false
++	defer func() { c.finishPodCleanup(key, retry) }()
+ 
+ 	namespace, podName, action, uid := parsePodCleanupKey(key)
+ 	ctx, log := c.log.WithFields(logging.Fields{"key": key, "action": action, "namespace": namespace, "podName": podName}).InContext(ctx)
+@@ -171,30 +256,29 @@ func (c *Controller) processNextPodCleanupItem(ctx context.Context) bool {
+ 	}()
+ 	if err != nil {
+ 		log.WithError(err).Warn(ctx, "failed to clean-up pod")
+-		if errorsutil.IsTransientErr(ctx, err) || apierr.IsConflict(err) {
+-			c.workqueue.AddRateLimited(key)
+-		}
++		retry = errorsutil.IsTransientErr(ctx, err) || apierr.IsConflict(err)
+ 	}
+ 	return true
  }
  
--// resolveTemplateReference resolves the stored template name of a given template holder on the template scope and determines
--// if it should be stored
--func resolveTemplateReference(callerScope ResourceScope, resourceName string, caller TemplateReferenceHolder) (string, bool) {
--	tmplRef := caller.GetTemplateRef()
--	switch {
--	case tmplRef != nil:
--		// We are calling an external WorkflowTemplate or ClusterWorkflowTemplate. Template storage is needed
--		// We need to determine if we're calling a WorkflowTemplate or a ClusterWorkflowTemplate
--		referenceScope := ResourceScopeNamespaced
--		if tmplRef.ClusterScope {
--			referenceScope = ResourceScopeCluster
--		}
--		return fmt.Sprintf("%s/%s/%s", referenceScope, tmplRef.Name, tmplRef.Template), true
--	case callerScope != ResourceScopeLocal:
--		// Either a WorkflowTemplate or a ClusterWorkflowTemplate is calling a template inside itself. Template storage is needed
--		if caller.GetTemplate() != nil {
--			// If we have an inlined template here, use the inlined name
--			return fmt.Sprintf("%s/%s/inline/%s", callerScope, resourceName, caller.GetName()), true
--		}
--		return fmt.Sprintf("%s/%s/%s", callerScope, resourceName, caller.GetTemplateName()), true
--	default:
--		// A Workflow is calling a template inside itself. Template storage is not needed
-+// resolveTemplateReference returns the key used in Status.StoredTemplates.
-+// A local template does not need a stored copy.
-+func resolveTemplateReference(scope ResourceScope, resourceName string, caller TemplateReferenceHolder) (string, bool) {
-+	if ref := caller.GetTemplateRef(); ref != nil {
-+		return fmt.Sprintf("%s/%s/%s", ref.GetResourceScope(), ref.Name, ref.Template), true
-+	}
-+	if scope == ResourceScopeLocal {
- 		return "", false
- 	}
-+	if caller.GetTemplate() != nil {
-+		return fmt.Sprintf("%s/%s/inline/%s", scope, resourceName, caller.GetName()), true
-+	}
-+	return fmt.Sprintf("%s/%s/%s", scope, resourceName, caller.GetTemplateName()), true
+ func (c *Controller) queuePodForCleanup(ctx context.Context, namespace string, podName string, action podCleanupAction) {
+ 	c.log.WithFields(logging.Fields{"namespace": namespace, "podName": podName, "action": action}).Debug(ctx, "queueing pod for cleanup")
+-	c.workqueue.AddRateLimited(newPodCleanupKey(namespace, podName, action))
++	// AddRateLimited reserves retry tokens before the queue deduplicates pod events.
++	c.addPodCleanup(newPodCleanupKey(namespace, podName, action), 0)
  }
  
- // ContinueOn defines if a workflow should continue even if a task or step fails/errors.
+ func (c *Controller) queuePodForCleanupAfter(ctx context.Context, namespace string, podName string, action podCleanupAction, duration time.Duration) {
+ 	logCtx := c.log.WithFields(logging.Fields{"namespace": namespace, "podName": podName, "action": action, "after": duration})
+ 	if duration > 0 {
+ 		logCtx.Debug(ctx, "queueing pod for cleanup after")
+-		c.workqueue.AddAfter(newPodCleanupKey(namespace, podName, action), duration)
++		c.addPodCleanup(newPodCleanupKey(namespace, podName, action), duration)
+ 	} else {
+ 		logCtx.Warn(ctx, "queueing pod for cleanup now, rather than delayed")
+-		c.workqueue.AddRateLimited(newPodCleanupKey(namespace, podName, action))
++		c.addPodCleanup(newPodCleanupKey(namespace, podName, action), 0)
+ 	}
+ }
+ 
+ func (c *Controller) queuePodForCleanupByUID(ctx context.Context, namespace string, podName string, uid string) {
+ 	
 ```
 
-**File**: `workflow/controller/artifact_gc.go` (modified, +17/-22)
+**File**: `workflow/controller/pod/queue_test.go` (modified, +194/-0)
 ```diff
-@@ -143,8 +143,8 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
- 		return nil
- 	}
+@@ -1,16 +1,210 @@
+ package pod
  
--	// cache the templates by name so we can find them easily
--	templatesByName := make(map[string]*wfv1.Template)
-+	// Cache templates by their complete identity so same-named templates stay separate.
-+	templatesByKey := make(map[string]*wfv1.Template)
+ import (
++	"strings"
+ 	"testing"
++	"testing/synctest"
++	"time"
  
- 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 	// We need to create a separate Pod for each set of Artifacts that require special permissions
-@@ -179,32 +179,27 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
- 			woc.log.WithField("nodeID", artifactSearchResult.NodeID).Error(ctx, "Was unable to obtain node")
- 			return fmt.Errorf("can't process Artifact GC Strategy %s: node ID %q not found in Status", strategy, artifactSearchResult.NodeID)
- 		}
--		templateName := util.GetTemplateFromNode(*node)
--		if templateName == "" {
--			return fmt.Errorf("can't process Artifact GC Strategy %s: node %+v has an unnamed template", strategy, node)
-+		templateKey := woc.wf.GetNodeTemplateKey(node)
-+		if templateKey == "" {
-+			return fmt.Errorf("can't process Artifact GC Strategy %s: node %q has an unnamed template", strategy, node.ID)
- 		}
--		template, found := templatesByName[templateName]
--		if !found {
--			template = woc.wf.GetTemplateByName(templateName)
-+		if _, found := templatesByKey[templateKey]; !found {
-+			template := woc.wf.GetTemplateFromSnapshot(templateKey)
- 			if template == nil {
--				return fmt.Errorf("can't process Artifact GC Strategy %s: template name %q belonging to node %+v not found", strategy, templateName, node)
-+				return fmt.Errorf("can't process Artifact GC Strategy %s: template %q for node %q not found", strategy, templateKey, node.ID)
- 			}
--			templatesByName[templateName] = template
--		}
--
--		if _, found := groupedByPod[podName][template.Name]; !found {
--			groupedByPod[podName][template.Name] = make(wfv1.ArtifactSearchResults, 0)
-+			templatesByKey[templateKey] = template
- 		}
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"golang.org/x/time/rate"
+ 	apiv1 "k8s.io/api/core/v1"
++	apierr "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
++	"k8s.io/client-go/util/workqueue"
  
--		groupedByPod[podName][template.Name] = append(groupedByPod[podName][template.Name], artifactSearchResult)
-+		groupedByPod[podName][templateKey] = append(groupedByPod[podName][templateKey], artifactSearchResult)
- 	}
- 
- 	// start up a separate Pod with a separate set of ArtifactGCTasks for it to use for each unique Service Account/metadata
- 	for podName, templatesToArtList := range groupedByPod {
- 		tasks := make([]*wfv1.WorkflowArtifactGCTask, 0)
- 
--		for templateName, artifacts := range templatesToArtList {
--			template := templatesByName[templateName]
-+		for templateKey, artifacts := range templatesToArtList {
-+			template := templatesByKey[templateKey]
- 			woc.addTemplateArtifactsToTasks(ctx, podName, &tasks, template, artifacts)
- 		}
- 
-@@ -222,7 +217,7 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
- 				return fmt.Errorf("can't find podInfo for podName %q", podName)
- 			}
- 
--			_, err := woc.createArtifactGCPod(ctx, strategy, tasks, podAccessInfo, podName, templatesToArtList, templatesByName)
-+			_, err := woc.createArtifactGCPod(ctx, strategy, tasks, podAccessInfo, podName, templatesToArtList, templatesByKey)
- 			if err != nil {
- 				return err
- 			}
-@@ -462,7 +457,7 @@ func (woc *wfOperationCtx) createWorkflowArtifactGCTask(ctx context.Context, tas
- 
- // create the Pod which will do the deletions
- func (woc *wfOperationCtx) createArtifactGCPod(ctx context.Context, strategy wfv1.ArtifactGCStrategy, tasks []*wfv1.WorkflowArtifactGCTask,
--	info podInfo, podName string, templatesToArtList templatesToArtifacts, templatesByName map[string]*wfv1.Template) (*corev1.Pod, error) {
-+	info podInfo, podName string, templatesToArtList templatesToArtifacts, templatesByKey map[string]*wfv1.Template) (*corev1.Pod, error) {
- 	woc.log.WithFields(logging.Fields{"strategy": strategy, "podName": podName}).Info(ctx, "creating pod to delete artifacts")
- 
- 	// Pod is owned by WorkflowArtifactGCTasks, so it will die automatically when all of them have died
-@@ -474,10 +469,10 @@ func (woc *wfOperationCtx) createArtifactGCPod(ctx context.Context, strategy wfv
- 
- 	artifactLocations := make([]*wfv1.ArtifactLocation, 0)
- 
--	for templateName, artifacts := range templatesToArtList {
--		template, found := templatesByName[templateName]
-+	for templateKey, artifacts := range templatesToArtList {
-+		template, found := templatesByKey[templateKey]
- 		if !found {
--			return nil, fmt.Errorf("can't find template with name %q", templateName)
-+			return nil, fmt.Errorf("can't find template %q", templateKey)
- 		}
- 
- 		if template.ArchiveLocation.HasLocation() {
-```
-
-**File**: `workflow/controller/artifact_gc_identity_test.go` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+package controller
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+
-+	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
++	"github.com/argoproj/argo-workflows/v4/config"
 +	"github.com/argoproj/argo-workflows/v4/util/logging"
-+)
+ 	"github.com/argoproj/argo-workflows/v4/workflow/common"
+ )
+ 
++func TestPodCleanupQueueNormalEvents(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		ctx := logging.TestContext(t.Context())
++		// A fresh event for each pod would fit in the burst. Repeated events for
++		// the first pod must leave the other pods' cleanup immediately runnable.
++		const burst = 5
++		bucket := rate.NewLimiter(rate.Every(time.Minute), burst)
++		queue := workqueue.NewTypedRateLimitingQueue(&workqueue.TypedBucketRateLimiter[string]{Limiter: bucket})
++		defer queue.ShutDown()
++		c := &Controller{workqueue: queue, log: logging.RequireLoggerFromContext(ctx)}
 +
-+func TestArtifactGCSeparatesSameNamedTemplates(t *testing.T) {
-+	archiveLocation := func(bucket, secret string) *wfv1.ArtifactLocation {
-+		return &wfv1.ArtifactLocation{S3: &wfv1.S3Artifact{
-+			S3Bucket: wfv1.S3Bucket{
-+				Endpoint: "minio:9000",
-+				Bucket:   bucket,
-+				AccessKeySecret: &corev1.SecretKeySelector{
-+					LocalObjectReference: corev1.LocalObjectReference{Name: secret},
-+					Key:                  "accesskey",
-+				},
-+				SecretKeySecret: &corev1.SecretKeySelector{
-+					LocalObjectReference: corev1.LocalObjectReference{Name: secret},
-+					Key:                  "secretkey",
-+				},
-+			},
-+			Key: "archive",
-+		}}
-+	}
-+	first := wfv1.Template{Name: "main", ArchiveLocation: archiveLocation("first-bucket", "first-secret")}
-+	second := wfv1.Template{Name: "main", ArchiveLocation: archiveLocation("second-bucket", "second-secret")}
-+	node := func(id, resource string) wfv1.NodeStatus {
-+		return wfv1.NodeStatus{
-+			ID:          id,
-+			Name:        "template-identity." + id,
-+			Type:        wfv1.NodeTypePod,
-+			Phase:       wfv1.NodeSucceeded,
-+			TemplateRef: &wfv1.TemplateRef{Name: resource, Template: "main"},
-+			Outputs: &wfv1.Outputs{Artifacts: wfv1.Artifacts{{
-+				Name:             "result",
-+				ArtifactLocation: wfv1.ArtifactLocation{S3: &wfv1.S3Artifact{Key: id + "/result"}},
-+			}}},
++		for range burst + 1 {
++			c.queuePodForCleanup(ctx, "ns", "completed", labelPodCompleted)
 +		}
-+	}
-+	useLocalTemplate := func(wf *wfv1.Workflow) {
-+		localNode := wf.Status.Nodes["first"]
-+		localNode.TemplateName = "main"
-+		localNode.TemplateRef = nil
-+		localNode.TemplateScope = "local/" + wf.Name
-+		wf.Status.Nodes["first"] = localNode
-+		delete(wf.Status.StoredTemplates, "namespaced/first/main")
-+	}
++		c.queuePodForCleanup(ctx, "ns", "running", terminateContainers)
++		c.queuePodForCleanupAfter(ctx, "ns", "zero", deletePod, 0)
++		c.queuePodForCleanupAfter(ctx, "ns", "expired", deletePod, -time.Second)
++		c.queuePodForCleanupByUID(ctx, "ns", "replacement", "pod-uid")
++		c.queuePodForCleanupAfter(ctx, "ns", "delayed", deletePod, time.Minute)
++		synctest.Wait()
++		assert.True(t, bucket.AllowN(time.Now(), burst), "normal events must leave all retry tokens available")
 +
-+	for _, tt := range []struct {
-+		name            string
-+		setup           func(*wfv1.Workflow) *wfv1.WorkflowTemplate
-+		missingTemplate string
-+	}{
-+		{name: "two WorkflowTemplates"},
-+		{
-+			name: "local and referenced",
-+			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
-+				useLocalTemplate(wf)
-+				wf.Spec.Templates = []wfv1.Template{first}
-+				return nil
-+			},
-+		},
-+		{
-+			name: "namespaced and cluster",
-+			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
-+				clusterNode := wf.Status.Nodes["second"]
-+				clusterNode.TemplateRef = &wfv1.TemplateRef{Name: "first", Template: "main", ClusterScope: true}
-+				wf.Status.Nodes["second"] = clusterNode
-+				delete(wf.Status.StoredTemplates, "namespaced/second/main")
-+				wf.Status.StoredTemplates["cluster/first/main"] = second
-+				return nil
-+			},
-+		},
-+		{
-+			name: "inherited template scopes",
-+			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
-+				for id, n := range wf.Status.Nodes {
-+					n.TemplateName = "main"
-+					n.TemplateRef = nil
-+					n.TemplateScope = "namespaced/" + id
-+					wf.Status.Nodes[id] = n
-+				}
-+				return nil
-+			},
-+		},
-+		{
-+			name: "workflowTemplateRef and referenced",
-+			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
-+				useLocalTemplate(wf)
-+				wf.Spec.WorkflowTemplateRef = &wfv1.WorkflowTemplateRef{Name: "source"}
-+				wf.Status.Phase = wfv1.WorkflowSucceeded
-+				return &wfv1.WorkflowTemplate{
-+					ObjectMeta: metav1.ObjectMeta{Name: "source", Namespace: wf.Namespace},
-+					Spec: wfv1.WorkflowSpec{
-+						Entrypoint: "main",
-+						Templates:  []wfv1.Template{first},
-+					},
-+				}
-+			},
-+		},
-+		{
-+			name: "missing referenced template",
-+			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
-+				wf.Spec.Templates = []wfv1.Template{second}
-+				delete(wf.Status.StoredTemplates, "namespaced/second/main")
-+				return nil
-+			},
-+			missingTemplate: "namespaced/second/main",
-+		},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ctx := logging.TestContext(t.Context())
-+			wf := &wfv1.Workflow{
-+				ObjectMeta: metav1.ObjectMeta{Name: "template-identity", Namespace: "default", UID: "workflow-uid"},
-+				Spec: wfv1.WorkflowSpec{
-+					ArtifactGC: &wfv1.WorkflowLevelArtifactGC{ArtifactGC: wfv1.ArtifactGC{Strategy: wfv1.ArtifactGCOnWorkflowCompletion}},
-+				},
-+				Status: wfv1.WorkflowStatus{
-+					StoredTemplates: map[string]wfv1.Template{
-+						"namespaced/first/main":  first,
-+						"namespaced/second/main": second,
-+					},
-+					Nodes: wfv1.Nodes{
-+						"first":  node("first", "first"),
-+						"second": node("second", "second"),
-+					},
-+				},
-+			}
-+			options := []any{wf}
-+			var source *wfv1.WorkflowTemplate
-+			if tt.setup != nil {
-+				source = tt.setup(wf)
-+				if source != nil {
-+					options = append(options, source)
-+				}
-+			}
-+			cancel, controller := newController(ctx, options...)
-+			defer cancel()
-+			assignTaskUIDs(controller)
-+			woc := newWorkflowOperationCtx(ctx, wf, co
-```
-
-**File**: `workflow/controller/operator.go` (modified, +18/-20)
-```diff
-@@ -1544,8 +1544,8 @@ func (woc *wfOperationCtx) assessNodeStatus(ctx context.Context, pod *apiv1.Pod,
- 		return nil
- 	}
- 	if tmpl == nil {
--		woc.log.WithFields(logging.Fields{"nodeName": old.Name, "templateName": old.TemplateName}).
--			Debug(ctx, "no template resolved for node (expected for inline templates); daemon teardown detection is disabled for it")
-+		woc.log.WithFields(logging.Fields{"nodeName": old.Name, "templateName": old.TemplateName, "templateScope": old.TemplateScope}).
-+			Debug(ctx, "could not resolve node template; skipping daemon teardown detection")
- 	}
- 	// The only way a daemon node becomes Succeeded while its pod is still alive is
- 	// killDaemonedChildren, which marks the node and then requests pod termination.
-@@ -2820,26 +2820,24 @@ func (woc *wfOperationCtx) childrenFulfilled(node *wfv1.NodeStatus) bool {
- }
- 
- func (woc *wfOperationCtx) GetNodeTemplate(ctx context.Context, node *wfv1.NodeStatus) (*wfv1.Template, error) {
--	if node.TemplateRef != nil {
--		// Check storedTemplates first so that modifications to the CWT after the workflow
--		// started do not cause assessNodeStatus to spuriously mark the node as Error.
--		scope, name := node.GetTemplateScope()
--		if tmpl := woc.wf.GetStoredTemplate(scope, name, node); tmpl != nil {
--			return tmpl, nil
--		}
--		tmplCtx, err := woc.createTemplateContext(ctx, scope, name)
--		if err != nil {
--			woc.markNodeError(ctx, node.Name, err)
--			return nil, err
--		}
--		tmpl, err := tmplCtx.GetTemplateFromRef(ctx, node.TemplateRef)
--		if err != nil {
--			woc.markNodeError(ctx, node.Name, err)
--			return tmpl, err
--		}
-+	if tmpl := woc.wf.GetTemplateFromSnapshot(woc.wf.GetNodeTemplateKey(node)); tmpl != nil {
- 		return tmpl, nil
- 	}
--	return woc.wf.GetTemplateByName(node.TemplateName), nil
-+	if node.TemplateRef == nil {
-+		return nil, nil
-+	}
-+	// Keep the live lookup for explicit references that have no stored snapshot.
-+	scope, name := node.GetTemplateScope()
-+	tmplCtx, err := woc.createTemplateContext(ctx, scope, name)
-+	if err != nil {
-+		woc.markNodeError(ctx, node.Name, err)
-+		return nil, err
-+	}
-+	tmpl, err := tmplCtx.GetTemplateFromRef(ctx, node.TemplateRef)
-+	if err != nil {
-+		woc.markNodeError(ctx, node.Name, err)
-+	}
-+	return tmpl, err
- }
- 
- func (woc *wfOperationCtx) markWorkflowRunning(ctx context.Context) context.Context {
-```
-
-**File**: `workflow/controller/operator_test.go` (modified, +24/-0)
-```diff
-@@ -2051,6 +2051,30 @@ spec:
- 	assert.Equal(t, "say-hello", tmpl.Name)
- }
- 
-+func TestGetNodeTemplateUsesInheritedScope(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	local := wfv1.Template{Name: "main", Daemon: new(true)}
-+	stored := wfv1.Template{Name: "main", Daemon: new(false)}
-+	wf := &wfv1.Workflow{
-+		ObjectMeta: metav1.ObjectMeta{Name: "inherited-scope", Namespace: "default"},
-+		Spec:       wfv1.WorkflowSpec{Templates: []wfv1.Template{local}},
-+		Status:     wfv1.WorkflowStatus{StoredTemplates: map[string]wfv1.Template{"namespaced/source/main": stored}},
-+	}
-+	cancel, controller := newController(ctx, wf)
-+	defer cancel()
-+	woc := newWorkflowOperationCtx(ctx, wf, controller)
-+	node := &wfv1.NodeStatus{TemplateName: "main", TemplateScope: "namespaced/source"}
++		ready := []string{
++			"ns/completed/labelPodCompleted",
++			"ns/running/terminateContainers",
++			"ns/zero/deletePod",
++			"ns/expired/deletePod",
++			"ns/replacement/deletePodByUID/pod-uid",
++		}
++		require.Equal(t, len(ready), queue.Len())
++		for _, want := range ready {
++			key, shutdown := queue.Get()
++			require.False(t, shutdown)
++			_, cleanupKey, _ := strings.Cut(key, ":")
++			assert.Equal(t, want, cleanupKey)
++			queue.Done(key)
++		}
 +
-+	tmpl, err := woc.GetNodeTemplate(ctx, node)
-+	require.NoError(t, err)
-+	require.Equal(t, &stored, tmpl)
-+
-+	delete(woc.wf.Status.StoredTemplates, "namespaced/source/main")
-+	tmpl, err = woc.GetNodeTemplate(ctx, node)
-+	require.NoError(t, err)
-+	require.Nil(t, tmpl)
++		time.Sleep(time.Minute - time.Second)
++		synctest.Wait()
++		require.Zero(t, queue.Len())
++		time.Sleep(time.Second)
++		synctest.Wait()
++		require.Equal(t, 1, queue.Len())
++		key, _ := queue.Get()
++		_, cleanupKey, _ := strings.Cut(key, ":")
++		assert.Equal(t, "ns/delayed/deletePod", cleanupKey)
++		queue.Done(key)
++	})
 +}
 +
- // TestAssessNodeStatusWithTemplateRefUsesStoredTemplates verifies that assessNodeStatus
- // correctly resolves the phase from the pod when a cross-CWT templateRef node's template
- // has been removed from the CWT after pod creation. The node must not be marked Error.
-```
-
-**File**: `workflow/templateresolution/context.go` (modified, +1/-4)
-```diff
-@@ -228,10 +228,7 @@ func (tplCtx *TemplateContext) resolveTemplateImpl(ctx context.Context, tmplHold
- 			inlineScope := scope
- 			inlineResourceName := resourceName
- 			if tmplRef := tmplHolder.GetTemplateRef(); tmplRef != nil {
--				inlineScope = wfv1.ResourceScopeNamespaced
--				if tmplRef.ClusterScope {
--					inlineScope = wfv1.ResourceScopeCluster
--				}
-+				inlineScope = tmplRef.GetResourceScope()
- 				inlineResourceName = tmplRef.Name
- 			}
- 			err = tplCtx.workflow.SetStoredInlineTemplate(inlineScope, inlineResourceName, newTmpl)
++func TestPodCleanupQueueRetriesTransientError(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		ctx := logging.TestContext(t.Context())
++		queue := workqueue.NewTypedRateLimitingQueue(workqueue.NewTypedItemExponentialFailureRateLimiter[string](time.Minute, time.Hour))
++		defer queue.ShutDown()
++		client := fake.NewClientset()
++		c := &Controller{
++			config:        &config.Config{},
++			kubeclientset: client,
++			podInformer:   newInformer(client, new(""), new("ns")),
++			workqueue:     queue,
++			log:           logging.RequireLoggerFromContext(ctx),
++		}
++		attempts := 0
++		client.PrependReactor("delete", "pods", func(action k8stesting.Action) (bool, runtime.Object, error) {
++			opts := action.(k8stesting.DeleteAction).GetDeleteOptions()
++			require.NotNil(t, opts.Preconditions)
++			require.Equal(t, new(types.UID("pod-uid")), opts.Preconditions.UID)
++			attempts++
++			if attempts == 1 {
++				return true, nil, apierr.NewTimeoutError("try again", 1)
++			}
++			return false, nil, nil // the fake client returns NotFound on retry
++		})
++
++		c.queuePodForCleanupByUID(ctx, "ns", "pod", "pod-uid")
++		require.True(t, c.processNextPodCleanupItem(ctx))
++		synctest.Wait()
++		require.Zero(t, queue.Len())
++		time.Sleep(time.Minute)
++		synctest.Wait()
++		require.Equal(t, 1, queue.Len())
++		require.True(t, c.processNextPodCleanupItem(ctx))
++		time.Sleep(time.Minute)
++		synctest.Wait()
++		assert.Zero(t, queue.Len())
++		assert.Equal(t, 2, attempts)
++	})
++}
++
++func TestPodCleanupQueueCoalescesRetries(t *testing.T) {
++	for _, duringRequest := range []bool{true, false} {
++		name := "during backoff"
++		if duringRequest {
++			name = "during first attempt"
++		}
++		t.Run(name, func(t *testing.T) {
++			synctest.Test(t, func(t *testing.T) {
++				ctx := logging.TestContext(t.Context())
++				const retryDelay = time.Second
++				bucket := rate.NewLimiter(rate.Every(retryDelay), 1)
++				require.True(t, bucket.Allow(), "deplete the shared retry bucket")
++				queue := workqueue.NewTypedRateLimitingQueue(&workqueue.TypedBucketRateLimiter[string]{Limiter: bucket})
++				defer queue.ShutDown()
++				client := fake.NewClientset()
++				informer := newInformer(client, new(""), new("ns"))
++				for _, name := range []string{"a", "b"} {
++					pod := &apiv1.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: "ns", Name: name}}
++					require.NoError(t, informer.GetStore().Add(po
 ```
 
 ---
 
-### Incident Patch 3: `3e7a4273` (2026-11-26)
-**Commit Message**: docs: fix leftovers from the docs style pass (#17600)
+### Incident Patch 2: `a60926e6` (2026-11-27)
+**Commit Message**: fix: stop requeueing unchanged semaphore waiters. Fixes #17542 (#17543)
 
-Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
+Signed-off-by: Lorenzo Fossati <[REDACTED_EMAIL]>
 
-**File**: `docs/events.md` (modified, +9/-1)
+**File**: `pkg/apis/workflow/v1alpha1/workflow_types.go` (modified, +23/-3)
 ```diff
-@@ -33,11 +33,19 @@ curl https://localhost:2746/api/v1/events/argo/my-discriminator \
-   -d '{"message": "hello"}'
- ```
+@@ -4335,13 +4335,33 @@ func (ss *SemaphoreStatus) LockWaiting(holderKey, lockKey string, currentHolders
+ 	i, semaphoreWaiting := ss.GetWaiting(lockKey)
+ 	if i < 0 {
+ 		ss.Waiting = append(ss.Waiting, SemaphoreHolding{Semaphore: lockKey, Holders: currentHolders})
+-	} else {
+-		semaphoreWaiting.Holders = currentHolders
+-		ss.Waiting[i] = semaphoreWaiting
++		return true
++	}
++	// Holders is a set of workflow keys. Lock backends do not return holders in a
++	// stable order; only a change in membership should be treated as a
++	// synchronization status change, or the controller persists and requeues the
++	// workflow while it keeps waiting.
++	if sameHolders(semaphoreWaiting.Holders, currentHolders) {
++		return false
+ 	}
++	semaphoreWaiting.Holders = currentHolders
++	ss.Waiting[i] = semaphoreWaiting
+ 	return true
+ }
  
--By default, the Event endpoint processes the Event before it returns, and can report failures to you.
-+By default, the Event endpoint processes the Event before it returns.
-+If dispatching the Event fails, the endpoint returns HTTP 500.
- If you enable `--event-async-dispatch`, the endpoint queues the Event and returns without waiting for Argo to process it.
- This means that Argo does not notify you of failures synchronously.
- With async dispatch, the endpoint returns a failure (503) if the Event processing queue is full.
- 
-+In both modes, when dispatching fails for a WorkflowEventBinding, Argo records a `WorkflowEventBindingError` Warning event on that WorkflowEventBinding and logs an error in the Argo Server log.
-+To see these events, run:
++// sameHolders reports whether a and b contain the same holder keys.
++// Order does not matter. A nil slice and an empty slice are the same.
++func sameHolders(a, b []string) bool {
++	if len(a) != len(b) {
++		return false
++	}
++	left := slices.Clone(a)
++	right := slices.Clone(b)
++	slices.Sort(left)
++	slices.Sort(right)
++	return slices.Equal(left, right)
++}
 +
-+```bash
-+kubectl get events --field-selector reason=WorkflowEventBindingError -n argo
-+```
-+
- !!! Warning "Processing Order"
-     Argo does not always process Events in the order it receives them.
- 
+ func (ss *SemaphoreStatus) LockAcquired(holderKey, lockKey string, currentHolders []string) bool {
+ 	i, semaphoreHolding := ss.GetHolding(lockKey)
+ 	holdingName := holderKey
 ```
 
-**File**: `docs/offloading-large-workflows.md` (modified, +2/-2)
+**File**: `pkg/apis/workflow/v1alpha1/workflow_types_test.go` (modified, +62/-0)
 ```diff
-@@ -137,5 +137,5 @@ Options:
+@@ -1681,6 +1681,68 @@ func TestInlineStore(t *testing.T) {
+ 	}
+ }
  
- - ConfigMap offloading triggers at 128KB total args (131,072 bytes, JSON marshaled)
- - Individual arg file offloading triggers at 128KB per argument (131,072 bytes)
--- Check controller logs for "Offloaded container args to ConfigMap" message
--- Check emissary logs for "Offloaded large argument to file" message
-+- Check controller logs for the `Offloaded container args to configmap` message
-+- Check emissary logs for the `Offloaded large argument to file` message
++func TestSemaphoreStatus_LockWaiting_UnchangedHolders(t *testing.T) {
++	const lockKey = "default/ConfigMap/semaphore-config/workflow"
++
++	t.Run("creates the waiting entry", func(t *testing.T) {
++		ss := &SemaphoreStatus{}
++		assert.True(t, ss.LockWaiting("default/waiter", lockKey, []string{"default/holder"}))
++		_, waiting := ss.GetWaiting(lockKey)
++		assert.Equal(t, []string{"default/holder"}, waiting.Holders)
++	})
++
++	t.Run("unchanged holders are not a status change", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey, Holders: []string{"default/holder"}}},
++		}
++		assert.False(t, ss.LockWaiting("default/waiter", lockKey, []string{"default/holder"}))
++		_, waiting := ss.GetWaiting(lockKey)
++		assert.Equal(t, []string{"default/holder"}, waiting.Holders)
++	})
++
++	t.Run("holder order is not a status change", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey, Holders: []string{"default/b", "default/a"}}},
++		}
++		assert.False(t, ss.LockWaiting("default/waiter", lockKey, []string{"default/a", "default/b"}))
++		_, waiting := ss.GetWaiting(lockKey)
++		assert.Equal(t, []string{"default/b", "default/a"}, waiting.Holders)
++	})
++
++	t.Run("nil and empty holders are the same", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey}},
++		}
++		assert.False(t, ss.LockWaiting("default/waiter", lockKey, []string{}))
++	})
++
++	t.Run("a changed holder set is a status change", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey, Holders: []string{"default/holder"}}},
++		}
++		assert.True(t, ss.LockWaiting("default/waiter", lockKey, []string{"default/other"}))
++		_, waiting := ss.GetWaiting(lockKey)
++		assert.Equal(t, []string{"default/other"}, waiting.Holders)
++	})
++
++	t.Run("a changed multi-holder set is a status change", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey, Holders: []string{"default/a", "default/b"}}},
++		}
++		assert.True(t, ss.LockWaiting("default/waiter", lockKey, []string{"default/a", "default/c"}))
++		_, waiting := ss.GetWaiting(lockKey)
++		assert.Equal(t, []string{"default/a", "default/c"}, waiting.Holders)
++	})
++
++	t.Run("a different lock is a new waiting entry", func(t *testing.T) {
++		ss := &SemaphoreStatus{
++			Waiting: []SemaphoreHolding{{Semaphore: lockKey, Holders: []string{"default/holder"}}},
++		}
++		assert.True(t, ss.LockWaiting("default/waiter", "other-lock", []string{"default/holder"}))
++		assert.Len(t, ss.Waiting, 2)
++	})
++}
++
+ func TestSemaphoreStatus_LockAcquired_RemovesFromWaiting(t *testing.T) {
+ 	t.Run("Remove holder from waiting when acquiring lock", func(t *testing.T) {
+ 		ss := &SemaphoreStatus{
 ```
 
-**File**: `docs/service-accounts.md` (modified, +6/-4)
+**File**: `workflow/sync/multiple_test.go` (modified, +71/-0)
 ```diff
-@@ -4,17 +4,19 @@
+@@ -187,6 +187,77 @@ func TestMultipleMutexLock(t *testing.T) {
+ 	})
+ }
  
- ### Roles, Role-Bindings, and Service Accounts
- 
--To support features such as artifacts, outputs, and access to secrets, Argo needs to communicate with Kubernetes resources using the Kubernetes API.
--To communicate with the Kubernetes API, Argo uses a `ServiceAccount` to authenticate itself to the Kubernetes API.
-+Workflow pods use a `ServiceAccount` to authenticate to the Kubernetes API.
-+The executor in each pod uses it to report outputs, so at minimum the `ServiceAccount` needs `create` and `patch` on `workflowtaskresults`.
-+The executor reads artifact repository credentials from secrets mounted into the pod, so it does not need API access to those secrets.
-+Your own containers may need further permissions, for example to create Kubernetes resources.
- You give a `ServiceAccount` its permissions by binding a `Role` to it with a `RoleBinding`.
- 
--Then, when submitting Workflows, you can specify which `ServiceAccount` Workflow pods use:
-+You set the `ServiceAccount` that Workflow pods use with the `spec.serviceAccountName` field, or with the `--serviceaccount` flag when submitting:
- 
- ```bash
- argo submit --serviceaccount <name>
- ```
- 
--If you don't specify a `ServiceAccount`, Workflow pods use the `default` `ServiceAccount` from the namespace the workflow runs in, which almost always has insufficient privileges by default.
-+If none of the template, the Workflow or the [workflow defaults](default-workflow-specs.md) set `serviceAccountName`, Workflow pods use the `default` `ServiceAccount` from the namespace the Workflow runs in, which almost always has insufficient privileges by default.
- 
- For more information about granting Argo the necessary permissions for your use case, see [Workflow RBAC](workflow-rbac.md).
- 
++const tripleSemaphoreConfigMap = `
++apiVersion: v1
++kind: ConfigMap
++metadata:
++ name: my-config
++data:
++ workflow: "3"
++`
++
++func TestMultipleSemaphoreWaitingUpdate(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++	kube := fake.NewClientset()
++	var cm v1.ConfigMap
++	wfv1.MustUnmarshal([]byte(tripleSemaphoreConfigMap), &cm)
++
++	_, err := kube.CoreV1().ConfigMaps("default").Create(ctx, &cm, metav1.CreateOptions{})
++	require.NoError(t, err)
++
++	syncLimitFunc := GetSyncLimitFunc(kube)
++	syncManager, err := NewLockManager(ctx, kube, "", nil, syncLimitFunc, func(key string) {},
++		WorkflowExistenceFunc, false)
++	require.NoError(t, err)
++
++	const semaphoreSync = `    semaphores:
++      - configMapKeyRef:
++          key: workflow
++          name: my-config
++`
++
++	wfHold1 := templatedWorkflow("hold-one", semaphoreSync)
++	wfHold2 := templatedWorkflow("hold-two", semaphoreSync)
++	wfHold3 := templatedWorkflow("hold-three", semaphoreSync)
++	wfWaiter := templatedWorkflow("waiter", semaphoreSync)
++
++	var status bool
++	var wfUpdate bool
++	var msg, failedLockName string
++
++	for _, wf := range []*wfv1.Workflow{wfHold1, wfHold2, wfHold3} {
++		status, wfUpdate, msg, failedLockName, err = syncManager.TryAcquire(ctx, wf, "", wf.Spec.Synchronization)
++		require.NoError(t, err)
++		assert.Empty(t, msg)
++		assert.Empty(t, failedLockName)
++		assert.True(t, status)
++		assert.True(t, wfUpdate)
++	}
++
++	status, wfUpdate, msg, failedLockName, err = syncManager.TryAcquire(ctx, wfWaiter, "", wfWaiter.Spec.Synchronization)
++	require.NoError(t, err)
++	assert.NotEmpty(t, msg)
++	assert.Equal(t, "default/ConfigMap/my-config/workflow", failedLockName)
++	assert.False(t, status)
++	assert.True(t, wfUpdate)
++
++	status, wfUpdate, msg, failedLockName, err = syncManager.TryAcquire(ctx, wfWaiter, "", wfWaiter.Spec.Synchronization)
++	require.NoError(t, err)
++	assert.NotEmpty(t, msg)
++	assert.Equal(t, "default/ConfigMap/my-config/workflow", failedLockName)
++	assert.False(t, status)
++	assert.False(t, wfUpdate)
++
++	syncManager.ReleaseAll(ctx, wfHold1)
++
++	status, wfUpdate, msg, failedLockName, err = syncManager.TryAcquire(ctx, wfWaiter, "", wfWaiter.Spec.Synchronization)
++	require.NoError(t, err)
++	assert.Empty(t, msg)
++	assert.Empty(t, failedLockName)
++	assert.True(t, status)
++	assert.True(t, wfUpdate)
++}
++
+ const multipleConfigMap = `
+ apiVersion: v1
+ kind: ConfigMap
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17636** (2026-11-26): chore(deps): update dependency webpack to v5.113.0 (main) (@renovate[bot])
-- **PR #17635** (2026-11-26): chore(deps): update dependency sass to v1.108.2 (main) (@renovate[bot])
-- **PR #17634** (2026-11-26): fix(controller): preserve template identity in artifact GC (cherry-pick #17502 for 4.0) (@Joibel)
-- **PR #17632** (2026-11-26): chore(deps): update dependency prettier to v3.10.1 (main) (@renovate[bot])
-- **PR #17631** (2026-11-26): chore(deps): update dependency buildx to v0.39.1 (main) (@renovate[bot])
-- **PR #17628** (2026-11-26): chore(deps): update sigstore/cosign-installer action to v4.1.4 (main) (@renovate[bot])
+- **PR #17664** (closed): chore(deps): update module k8s.io/kubectl to v0.37.3 (main) (@renovate[bot])
+- **PR #17663** (closed): chore(deps): update module k8s.io/client-go to v0.37.3 (main) (@renovate[bot])
+- **PR #17662** (closed): chore(deps): update module k8s.io/cli-runtime to v0.37.3 (main) (@renovate[bot])
+- **PR #17661** (closed): chore(deps): update module k8s.io/apiextensions-apiserver to v0.37.3 (main) (@renovate[bot])
+- **PR #17660** (2026-11-27): chore(deps): update module github.com/go-sql-driver/mysql to v1.11.0 (main) (@renovate[bot])
+- **PR #17659** (2026-11-27): chore(deps): update module google.golang.org/grpc/cmd/protoc-gen-go-grpc to v1.6.2 (main) (@renovate[bot])
 
 ---
 
@@ -1393,31 +1358,36 @@ Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency buildx to v0.39.1 (main)
+## X. controller): avoid retry backoff for normal pod cleanup events
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `workflow/controller/pod/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db785a62`: deps): update dependency buildx to v0.39.1 (main). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23272afe`: controller): avoid retry backoff for normal pod cleanup events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `workflow/controller/pod/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          version: v0.39.1
+	"sync"
+
+	// cleanupMu protects cleanup requests and their workqueue entries.
+	cleanupMu       sync.Mutex
+	cleanupRequests map[string]*podCleanupRequest
+	cleanupSequence uint64
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          version: v0.38.2
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db785a62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23272afe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
