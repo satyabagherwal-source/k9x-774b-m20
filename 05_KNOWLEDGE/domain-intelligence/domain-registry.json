@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T18:08:37.365Z",
+  "last_updated": "2026-11-27T18:17:32.300Z",
   "total_records": 2847,
   "domains": {
     "A": {
@@ -18497,8 +18497,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "718d0127e376944a9a01fa11488f6f3569d3bd4ac8ddb5466918acdf2a795249",
-      "created_at": "2026-11-27T17:42:08.668Z"
+      "content_hash": "5feeea5fb8ccc82371d26f7b5981ffa5f951480a58e641025b4ba38c21ba9427",
+      "created_at": "2026-11-27T18:17:32.300Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -33977,8 +33977,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "682b78099af6f1bdeff369266b84bb68053f793c5739bdb208c5248317eeb9c8",
-      "created_at": "2026-11-27T17:19:39.608Z"
+      "content_hash": "5955c0b7cc94d8914c57594e269ddcc69be654e6d62b472e7d520f58b3fadacf",
+      "created_at": "2026-11-27T18:17:30.331Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46794,8 +46794,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2d63767ffff4d52af6c89a09627178b5dcdead3c56f2de150d012c56ca550706",
-      "created_at": "2026-11-27T17:10:44.240Z"
+      "content_hash": "98cc0c00732dc7a892e50288e78ef983262e47997331ffb28b5201dd6ae37af2",
+      "created_at": "2026-11-27T18:17:28.897Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
