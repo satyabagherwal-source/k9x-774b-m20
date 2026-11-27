@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:13:04.062Z",
+  "last_updated": "2026-11-27T23:22:02.837Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-94NC",
+      "id": "CD-VXLG",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-94NC-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-VXLG-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -73127,6 +73127,57 @@
       "source_repo": "nats-io-nats.go",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A77506--fixed-micro-queuegroupdisabled-on-confi.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-VR3C",
+      "directive_title": "release 1.15.0",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "7df21566",
+      "staged_file": "11_INBOX/candidate-directives/CD-VR3C-release-1-15-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VU70",
+      "directive_title": "Add regressions test",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VU70-add-regressions-test.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-84040B",
+      "directive_title": "Add regressions test",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-84040B-add-regressions-test.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-VWK3",
+      "directive_title": "main): release 1.15.0",
+      "source_repo": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VWK3-main-release-1-15-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-738316",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-738316-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

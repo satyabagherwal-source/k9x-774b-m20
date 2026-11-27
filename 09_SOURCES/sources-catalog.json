@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "5aaaf150",
+    "sourceVersion": "7df21566",
     "license": "MIT",
-    "contentHash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
-    "lastHarvestedAt": "2026-11-27T22:45:56.505Z",
+    "contentHash": "d0392915ce2d2023731838cade3f19390413bc97e74cd93e40b252ebad261273",
+    "lastHarvestedAt": "2026-11-27T23:21:54.053Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "6c6dd593",
+    "sourceVersion": "186d3ea3",
     "license": "NOASSERTION",
-    "contentHash": "8f11f089f20f6b602081f920433d2729ae64a5b5788392b490c22a162700128c",
-    "lastHarvestedAt": "2026-11-27T04:18:31.804Z",
+    "contentHash": "fc0ca59ab6b3a75978c7c216f4182edfe4ea66bd52774c88b6ff6c4adabe5a45",
+    "lastHarvestedAt": "2026-11-27T23:21:53.606Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {

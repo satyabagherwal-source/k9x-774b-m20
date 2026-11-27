@@ -13898,3 +13898,5 @@
 | `CYCLE-20261127-K3B4` | `2026-11-27T23:12:50.368Z` | `microsoft/Aion-1.0-Instruct-2.3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md` | Yes (`95e1047f...`) |
 | `CYCLE-20261127-K40O` | `2026-11-27T23:12:51.288Z` | `EL4CTEO/fast-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10984` | Yes (`2b9ad466...`) |
 | `CYCLE-20261127-K9P9` | `2026-11-27T23:12:58.653Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10985` | Yes (`f5c2a3f1...`) |
+| `CYCLE-20261127-VQGK` | `2026-11-27T23:21:53.588Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10986` | Yes (`fc0ca59a...`) |
+| `CYCLE-20261127-VQT2` | `2026-11-27T23:21:54.038Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`d0392915...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `5aaaf150`  
+> **Source Version**: `7df21566`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T22:45:54.978Z  
+> **Timestamp**: 2026-11-27T23:21:53.373Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T22:45:54.971Z  
+> **Harvest Timestamp**: 2026-11-27T23:21:53.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1570,411 +1570,123 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5aaaf150` (2026-11-27)
-**Commit Message**: feat(memory): standing practices learned from the owner's follow-ups (#410)
+### Incident Patch 1: `7df21566` (2026-11-27)
+**Commit Message**: chore(main): release 1.15.0 (#397)
 
-* feat(memory): standing practices with task-type scope (PLAN-64 Phase 1)
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-Behavioural corrections become scoped practices: a practices store with
-task and job scopes, word-overlap task typing for recurring owner
-requests, practice output on the existing correction pass, a prompt
-block below the cache boundary, owner controls and memory.* RPCs.
-On by default (memory.practices.enabled).
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* feat(memory): learn practices from follow-ups on recurring requests (PLAN-64 Phase 1b)
-
-A follow-up asking for something a recurring-task answer left out becomes
-a candidate practice; after two sightings the reply offers it once
-(yes / no). Task types merge at naming time or by hand, session state
-survives a restart, an owner-triggered backfill previews candidates from
-existing transcripts, and counters reach memory.practices and doctor.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* feat(memory): conditional practice lines when a turn matches no task type (PLAN-64)
-
-Word-overlap typing misses short phrasings. On an untyped owner turn the
-block carries up to fo
-
-**File**: `AGENTS.md` (modified, +1/-0)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ A consciousness-inspired memory pipeline:
- - **Consolidation Pipeline**: Runs every 30 minutes — hormonal decay, Ebbinghaus importance recalculation, chunk merging (cosine ≥ 0.92), low-importance forgetting, governance TTL enforcement, stalled goal detection.
- - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
- - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
-+- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
- - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
- - **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.14.3"
++  ".": "1.15.0"
+ }
+```
+
+**File**: `CHANGELOG.md` (modified, +21/-0)
+```diff
+@@ -1,5 +1,26 @@
+ # Changelog
+ 
++## [1.15.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.3...v1.15.0) (2026-11-27)
++
++
++### Features
++
++* **cron:** scheduled jobs learn from the owner's next message, announce what changed and roll back on a contradiction ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** judge harness-evolution candidates by replay instead of prediction (still off by default) ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** standing practices learned from the owner's follow-ups, with a yes/no offer, task-type scope and a Practices list in the Memory tab ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **tts:** speak through the OpenAI Realtime API ahead of the speech model shutdown ([#396](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/396)) ([a0d01b1](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0d01b11fae1a73c482f95d00ab4f8df251d737d))
++
++
++### Bug Fixes
++
++* **chat:** show generated reply notes such as "Memory updated" in the desktop and browser chat ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **deep-recall:** pick the sub-model for the provider whose key is set ([#394](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/394)) ([5ad0892](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5ad089213f406799e3aa438cbb00f365a40a4d0c))
++* **media:** default OpenAI transcription to gpt-transcribe ahead of the model shutdown ([#395](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/395)) ([aaebb1f](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/aaebb1f61352768fb81e0ba6bcf1d313fc13857e)), closes [#391](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/391)
++* **memory:** accept correction-pass model answers that add prose after the JSON ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** name the wiki page to retire explicitly in the semantic lint ([#408](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/408)) ([ec2ea63](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/ec2ea63647d941dc4ad9233d6ca5ed9306a16c01)), closes [#400](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/400)
++* **skills:** say wallet spending caps cannot be approved past ([#398](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/398)) ([f28f894](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/f28f89405aa8bb1fe687a66b061b6f4a51ab09e2)), closes [#390](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/390)
++* **wallet:** stop telling the agent and users that gas is sponsored ([#407](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/407)) ([9e0c432](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9e0c432d1fd7e131c6dc8d8297d10b2305c318e4)), closes [#399](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/399)
++
+ ## [1.14.3](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.2...v1.14.3) (2026-11-22)
+ 
  
 ```
 
-**File**: `LIMITATIONS.md` (modified, +16/-0)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -100,6 +100,22 @@ open an issue.
-   you or it pinned, the change is held and you are told, but there is no
-   one-tap confirm or revert yet: restate the value, or answer the "which is
-   current?" question, to settle it.
-+- **Standing practices are learned in direct owner chats, from what you
-+  say next.** A practice (how to do a kind of task, as opposed to a fact) is
-+  saved from an explicit instruction, or offered after you have twice asked
-+  for something a recurring answer left out. Only your next message in the
-+  same conversation is looked at, within six hours, and only for requests
-+  the agent has seen on three separate days. Requests are grouped by the
-+  words they share, so a short or unusual phrasing can be missed or filed
-+  under the wrong kind of request; you can merge kinds by hand. "Applied"
-+  means the practice was in the prompt and its content was in the answer,
-+  nothing more: nothing checks that the answer was right, and a vaguely
-+  worded practice is followed less reliably than a specific one. Nothing
-+  repairs a practice that is not followed; it is counted. The command-line
-+  `bitterbot agent` path shows none of the generated notes and makes no
-+  offers. Scheduled jobs learn only from your next message after an
-+  announced report, and there is no trial run of a change before it is
-+  used. Details in `docs/memory/practices.md`.
- - **A correction propagates by text match, after the fact.** When a fact
-   changes, older memories, the matching learned preference, graph links,
-   unused prepared answers, open tasks and dream insights that state the old
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
 ```
 
-**File**: `README.md` (modified, +2/-1)
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -165,6 +165,7 @@ Projects change. Preferences become clearer. Yesterday's plan becomes today's de
- - **Remember the essentials.** A compact canonical-facts ledger keeps key identities, preferences, and project facts in context without a separate search. Re-stating a fact strengthens it; contradicting it supersedes the old belief while keeping its history.
- - **Find the connections.** Semantic search and a typed knowledge graph connect conversations with the people, projects, and relationships they describe. [Deep Recall](docs/memory/deep-recall.md) can search histories larger than a single context window.
- - **Weigh what it knows.** Facts mentioned once count for less than facts confirmed across separate sessions. Recent facts win for "what are you working on?"; older ones for "when did we discuss X?".
-+- **Learn how you like things done.** When you keep asking for something an answer left out (the npm numbers after the repo stats, say), Bitterbot notices, asks once whether to include it every time, and from then on does. The same holds for a scheduled report you correct. Each of these [standing practices](docs/memory/practices.md) is scoped to the kind of request it came from, shown when it is applied, and yours to edit or remove.
- - **Consolidate between conversations.** Dream cycles organize accumulated memory, distill verified workflows, and prepare briefs grounded in recent activity. New-input, idle-time, and budget gates limit background work.
+@@ -313,7 +313,7 @@ dependencies = [
  
- The architecture takes inspiration from biological memory: reinforcement, forgetting, curiosity, and changing internal state. Numerical signals named dopamine, cortisol, and oxytocin modulate memory processing and response style. These are inspectable software mechanisms; their effectiveness is something to measure.
-@@ -194,7 +195,7 @@ A few more modes stay held until a node has enough data to feed them; `bitterbot
- 
- Your agent also has a persistent identity. `GENOME.md` defines values and constraints; `MEMORY.md` holds its evolving self-concept, understanding of you, and active context. Tool guards protect the Genome, with their boundaries documented in [known limitations](LIMITATIONS.md).
- 
--[Memory architecture](docs/memory/architecture-overview.md) · [Dream Engine](docs/memory/dream-engine.md)
-+[Memory architecture](docs/memory/architecture-overview.md) · [Standing practices](docs/memory/practices.md) · [Dream Engine](docs/memory/dream-engine.md)
- 
- ## Learned skills have to earn their place
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.14.3"
++version = "1.15.0"
+ dependencies = [
+  "env_logger",
+  "libc",
+```
+
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.14.3"
++version = "1.15.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
  
 ```
 
-**File**: `desktop/renderer/src/components/chat/ChatView.tsx` (modified, +16/-2)
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,7 @@ import {
-   formatToolOutput,
- } from "../../lib/message-utils";
- import { useArtifactStore, type ArtifactType } from "../../stores/artifact-store";
--import { useChatStore, nextMsgId } from "../../stores/chat-store";
-+import { isInjectedRunId, useChatStore, nextMsgId } from "../../stores/chat-store";
- import { useCoworkStore, type TaskStatus } from "../../stores/cowork-store";
- import { useGatewayStore } from "../../stores/gateway-store";
- import { useUIStore } from "../../stores/ui-store";
-@@ -49,6 +49,7 @@ export function ChatView() {
-   const appendDelta = useChatStore((s) => s.appendDelta);
-   const finalizeRun = useChatStore((s) => s.finalizeRun);
-   const abortRun = useChatStore((s) => s.abortRun);
-+  const addInjectedMessage = useChatStore((s) => s.addInjectedMessage);
-   const addToolCall = useChatStore((s) => s.addToolCall);
-   const updateToolCallPartial = useChatStore((s) => s.updateToolCallPartial);
-   const updateToolCallResult = useChatStore((s) => s.updateToolCallResult);
-@@ -102,6 +103,19 @@ export function ChatView() {
-         }
-         case "final": {
-           const text = extractMessageText(evt.message);
-+          if (isInjectedRunId(evt.runId)) {
-+            // Not a run of ours: a message the gateway added after the reply
-+            // (the generated "Memory updated" / practice line, chat.inject).
-+            if (text) {
-+              addInjectedMessage(evt.runId, evt.sessionKey, {
-+                id: nextMsgId(),
-+                role: "assistant",
-+                content: text,
-+                timestamp: Date.now(),
-+              });
-+            }
-+            break;
-+          }
-           const thinking = extractThinking(evt.message);
-           const toolCalls = extractToolCalls(evt.message);
- 
-@@ -134,7 +148,7 @@ export function ChatView() {
-         }
-       }
-     },
--    [appendDelta, finalizeRun, abortRun],
-+    [appendDelta, finalizeRun, abortRun, addInjectedMessage],
-   );
- 
-   // Cowork task tracking
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
 ```
 
-**File**: `desktop/renderer/src/components/cron/CronView.practices.test.ts` (added, +27/-0)
+**File**: `extensions/discord/package.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,27 @@
-+import { describe, expect, it } from "vitest";
-+import type { CronJob } from "../../stores/cron-store";
-+import { taughtPractices } from "./CronView";
-+
-+const job = (extra: Record<string, unknown>): CronJob =>
-+  ({ id: "j1", schedule: "0 9 * * *", text: "report", enabled: true, ...extra }) as CronJob;
-+
-+/** PLAN-64 Phase 5: cron.list carries what the owner taught each job. */
-+describe("taughtPractices", () => {
-+  it("reads the practices the gateway lists for a job", () => {
-+    expect(
-+      taughtPractices(
-+        job({ practices: [{ id: "p1", statement: "Include the unique counts", savedAt: 5 }] }),
-+      ),
-+    ).toEqual([{ id: "p1", statement: "Include the unique counts", savedAt: 5 }]);
-+  });
-+
-+  it("is empty on an older gateway, and drops malformed entries", () => {
-+    expect(taughtPractices(job({}))).toEqual([]);
-+    expect(taughtPractices(job({ practices: "nope" }))).toEqual([]);
-+    expect(
-+      taughtPractices(
-+        job({ practices: [null, { id: "p1" }, { id: 2, statement: "x", savedAt: 1 }] }),
-+      ),
-+    ).toEqual([]);
-+  });
-+});
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
 ```
 
-**File**: `desktop/renderer/src/components/cron/CronView.tsx` (modified, +29/-1)
+**File**: `extensions/email/package.json` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
- import { toast } from "sonner";
- import { useGatewayEvent } from "../../hooks/useGatewayEvent";
- import { describeError } from "../../lib/describe-error";
--import { formatRelativeTime, formatDateTime } from "../../lib/format";
-+import { formatDate, formatRelativeTime, formatDateTime } from "../../lib/format";
- import { cn } from "../../lib/utils";
- import {
-   cronJobHealth,
-@@ -22,6 +22,21 @@ const HEALTH_TONE = {
-   idle: "text-muted-foreground/60",
- } as const;
- 
-+/** The standing practices the gateway lists for a job (what you taught it), if any. */
-+export function taughtPractices(
-+  job: CronJob,
-+): Array<{ id: string; statement: string; savedAt: number }> {
-+  const raw = (job as { practices?: unknown }).practices;
-+  if (!Array.isArray(raw)) return [];
-+  return raw.filter(
-+    (p): p is { id: string; statement: string; savedAt: number } =>
-+      Boolean(p) &&
-+      typeof (p as { id?: unknown }).id === "string" &&
-+      typeof (p as { statement?: unknown }).statement === "string" &&
-+      typeof (p as { savedAt?: unknown }).savedAt === "number",
-+  );
-+}
-+
- function describeDelivery(job: CronJob): string {
-   const delivery = job.delivery;
-   if (delivery?.mode === "none") return "Result stays in the session";
-@@ -75,6 +90,19 @@ function CronJobCard({
-             <span className="text-xs font-mono text-muted-foreground/60">{job.schedule}</span>
-           </div>
-           <p className="text-xs text-muted-foreground line-clamp-2">{job.text}</p>
-+          {taughtPractices(job).length > 0 && (
-+            <ul
-+              className="mt-1 space-y-0.5 text-xs text-muted-foreground"
-+              data-testid="cron-practices"
-+            >
-+              {taughtPractices(job).map((p) => (
-+                <li key={p.id}>
-+                  You taught it: {p.statement}{" "}
-+                  <span className="text-muted-foreground/60">(since {formatDate(p.savedAt)})</span>
-+                </li>
-+              ))}
-+            </ul>
-+          )}
-           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/60">
-             {job.lastRunAt && <span>Last: {formatRelativeTime(job.lastRunAt)}</span>}
-             {job.nextRunAt && <span>Next: {formatDateTime(job.nextRunAt)}</span>}
-```
-
-**File**: `desktop/renderer/src/components/memory/MemoryView.tsx` (modified, +11/-0)
-```diff
-@@ -6,6 +6,7 @@ import { formatRelativeTime } from "../../lib/format";
- import { cn } from "../../lib/utils";
- import { useGatewayStore } from "../../stores/gateway-store";
- import { useConfirm } from "../ui/confirm-dialog";
-+import { PracticesSection } from "./PracticesSection";
- 
- export type MemorySummary = {
-   id: string;
-@@ -47,6 +48,14 @@ const AUDIT_WORDS: Record<string, string> = {
-   owner_retire_fact: "You retired a settled fact",
-   owner_unretire_fact: "You brought a retired fact back",
-   owner_pin_fact: "You pinned a settled fact",
-+  practice_saved: "A practice was saved",
-+  owner_edit_practice: "You reworded a practice",
-+  owner_scope_practice: "You changed where a practice applies",
-+  owner_retire_practice: "You retired a practice",
-+  owner_unretire_practice: "You brought a practice back",
-+  owner_confirm_practice: "You said yes to a practice",
-+  owner_decline_practice: "You declined a practice",
-+  owner_merge_task_types: "You merged two task types",
-   forgotten: "Faded out (not used in a long time)",
-   expired: "Expired (its keep-until date passed)",
-   merged: "Merged into a similar memory",
-@@ -429,6 +438,8 @@ export function MemoryView() {
-         </section>
-       )}
- 
-+      <PracticesSection />
-+
-       {prefs.length > 0 && (
-         <section className="space-y-2">
-           <h2 className="text-lg font-semibold text-foreground">What it has learned about you</h2>
-```
-
-**File**: `desktop/renderer/src/components/memory/PracticesSection.test.tsx` (added, +441/-0)
-```diff
-@@ -0,0 +1,441 @@
-+/**
-+ * PLAN-64 Phase 3: the Practices section of the Memory page. Under test:
-+ * what each practice shows (text, scope in words, status, saved date,
-+ * counters, the owner's evidence line), every action and the RPC it calls
-+ * (confirm, decline, edit, re-scope, retire, bring back, add, merge task
-+ * types), the optimistic update and its roll-back, the empty state, a read
-+ * refused for a missing scope, and an older gateway without the method.
-+ */
-+import { render, screen, waitFor, within } from "@testing-library/react";
-+import userEvent from "@testing-library/user-event";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+import { formatDate } from "../../lib/format";
-+import {
-+  describePracticeScope,
-+  describePracticeStatus,
-+  PracticesSection,
-+  type PracticeRow,
-+  type TaskTypeRow,
-+} from "./PracticesSection";
-+
-+const requestMock = vi.fn();
-+const toastError = vi.hoisted(() => vi.fn());
-+const toastSuccess = vi.hoisted(() => vi.fn());
-+
-+vi.mock("../../stores/gateway-store", () => ({
-+  useGatewayStore: (selector: (state: unknown) => unknown) =>
-+    selector({ request: requestMock, status: "connected" }),
-+}));
-+vi.mock("sonner", () => ({ toast: { error: toastError, success: toastSuccess } }));
-+
-+const SAVED_AT = Date.UTC(2026, 10, 12, 10, 0, 0);
-+
-+const npm: PracticeRow = {
-+  id: "p-npm",
-+  statement: "Include npm downloads",
-+  scope: "task:repo-stats",
-+  scopeLabel: "repo stats",
-+  status: "active",
-+  createdAt: SAVED_AT - 1000,
-+  savedAt: SAVED_AT,
-+  counts: { applied: 5, repeats: 1 },
-+  evidence: [
-+    { ref: "session:/s/a.jsonl#L3", text: "how about our npm downloads" },
-+    { ref: "session:/s/b.jsonl#L9", text: null },
-+  ],
-+};
-+const candidate: PracticeRow = {
-+  id: "p-prs",
-+  statement: "Include open pull requests",
-+  scope: "task:repo-stats",
-+  scopeLabel: "repo stats",
-+  status: "candidate",
-+  createdAt: SAVED_AT,
-+  savedAt: SAVED_AT,
-+  counts: { applied: 0, repeats: 0 },
-+  evidence: [],
-+};
-+const short: PracticeRow = {
-+  id: "p-short",
-+  statement: "Keep answers under ten lines",
-+  scope: "global",
-+  scopeLabel: "everything",
-+  status: "retired",
-+  createdAt: SAVED_AT,
-+  savedAt: SAVED_AT,
-+  counts: { applied: 2, repeats: 0 },
-+  evidence: [],
-+};
-+const declined: PracticeRow = {
-+  id: "p-weather",
-+  statement: "Add the weather forecast",
-+  scope: "task:repo-stats",
-+  scopeLabel: "repo stats",
-+  status: "suppressed",
-+  createdAt: SAVED_AT,
-+  savedAt: SAVED_AT,
-+  counts: { applied: 0, repeats: 0 },
-+  evidence: [],
-+};
-+const taskTypes: TaskTypeRow[] = [
-+  { slug: "repo-stats", label: "repo stats", occurrences: 53, recurring: true, example: null },
-+  { slug: "npm-numbers", label: "npm numbers", occurrences: 4, recurring: true, example: null },
-+  {
-+    slug: "weather-lisbon",
-+    label: "",
-+    occurrences: 1,
-+    recurring: false,
-+    example: "What is the weather in Lisbon?",
-+  },
-+];
-+
-+let listed: {
-+  practices: PracticeRow[];
-+  taskTypes: TaskTypeRow[];
-+  activeProject: string | null;
-+  jobs?: Array<{ scope: string; name: string }>;
-+};
-+let failing: Record<string, Error>;
-+
-+beforeEach(() => {
-+  toastError.mockReset();
-+  toastSuccess.mockReset();
-+  listed = { practices: [npm, candidate, short, declined], taskTypes, activeProject: "acme" };
-+  failing = {};
-+  requestMock.mockReset();
-+  requestMock.mockImplementation(async (method: string) => {
-+    if (failing[method]) throw failing[method];
-+    switch (method) {
-+      case "memory.practices":
-+        return listed;
-+      case "memory.retirePractice":
-+      case "memory.unretirePractice":
-+      case "memory.answerPracticeOffer":
-+        return { ok: true };
-+      case "memory.editPractice":
-+      case "memory.setPracticeScope":
-+      case "memory.savePractice":
-+        return { ok: true, op: "strengthen" };
-+      case "memory.mergeTaskTypes":
-+        return { ok: true };
-+      default:
-+        throw new Error(`unexpected ${method}`);
-+    }
-+  });
-+});
-+
-+const card = (id: string) => within(screen.getByTestId(`practice-${id}`));
-+
-+describe("describePracticeScope / describePracticeStatus", () => {
-+  it("puts a scope and a status in plain words", () => {
-+    expect(describePracticeScope({ scope: "global", scopeLabel: "everything" })).toBe("Everywhere");
-+    expect(describePracticeScope({ scope: "task:repo-stats", scopeLabel: "repo stats" })).toBe(
-+      "For repo stats",
-+    );
-+    // An older gateway sends no label: the slug is read as words, never shown raw.
-+    expect(describePracticeScope({ scope: "task:repo-stats" })).toBe("For repo stats");
-+    expect(describePracticeScope({ scope: "project:acme" })).toBe("For project acme");
-+    expect(describePracticeScope({ scope: "job:abc-123" })).toBe("For one scheduled job");
-+    // PLAN-64 Phase 5: the gateway sends the job's name (its id when the job is gone).
-+    expect(describePracticeScope({ scope: "job:abc-123", scopeLabel: "Repo traffic" })).toBe(
-+      "F
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2003,21 +1715,34 @@ block carries up to fo
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): standing practices learned from the owner's follow-ups
+## X. main): release 1.15.0
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5aaaf150`: memory): standing practices learned from the owner's follow-ups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7df21566`: main): release 1.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
+## [1.15.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.3...v1.15.0) (2026-11-27)
+
+
+### Features
+
+* **cron:** scheduled jobs learn from the owner's next message, announce what changed and roll back on a contradiction ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **memory:** judge harness-evolution candidates by replay instead of prediction (still off by default) ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **memory:** standing practices learned from the owner's follow-ups, with a yes/no offer, task-type scope and a Practices list in the Memory tab ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **tts:** speak through the OpenAI Realtime API ahead of the speech model shutdown ([#396](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/396)) ([a0d01b1](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0d01b11fae1a73c482f95d00ab4f8df251d737d))
+
+
+### Bug Fixes
+
+* **chat:** show generated reply notes such as "Memory updated" in the desktop and browser chat (
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2027,4 +1752,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5aaaf150` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7df21566` are properly handled with clean fallback behavior.

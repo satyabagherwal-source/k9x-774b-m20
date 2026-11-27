@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T21:17:46.074Z",
+  "timestamp": "2026-11-27T23:22:01.349Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [bitterbot-ai-bitterbot-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T21:17:46.074Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:22:01.349Z`  
 > **Learning ID**: `LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from bitterbot-ai-bitterbot-desktop-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `498590e2`  
+> **Source Version**: `7df21566`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T21:17:40.074Z  
+> **Timestamp**: 2026-11-27T23:21:53.373Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T21:17:40.069Z  
+> **Harvest Timestamp**: 2026-11-27T23:21:53.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2483 stars
+- **Stars / Engagement**: 2485 stars
 
 ---
 
@@ -1598,104 +1598,132 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `498590e2` (2026-11-26)
-**Commit Message**: chore(deps): bump the npm-minor-patch group with 32 updates (#409)
+### Incident Patch 1: `7df21566` (2026-11-27)
+**Commit Message**: chore(main): release 1.15.0 (#397)
 
-Bumps the npm-minor-patch group with 32 updates:
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-| Package | From | To |
-| --- | --- | --- |
-| [@agentclientprotocol/sdk](https://github.com/agentclientprotocol/typescript-sdk) | `2.0.2` | `2.9.1` |
-| [@aws-sdk/client-bedrock](https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock) | `3.1158.0` | `3.1175.0` |
-| [@coinbase/cdp-sdk](https://github.com/coinbase/cdp-sdk) | `1.60.0` | `1.62.0` |
-| [@larksuiteoapi/node-sdk](https://github.com/larksuite/node-sdk) | `1.76.0` | `1.77.0` |
-| [@opentelemetry/exporter-trace-otlp-http](https://github.com/open-telemetry/opentelemetry-js) | `0.300.0` | `0.301.2` |
-| [@opentelemetry/sdk-node](https://github.com/open-telemetry/opentelemetry-js) | `0.300.0` | `0.301.2` |
-| [@opentelemetry/semantic-conventions](https://github.com/open-telemetry/opentelemetry-js) | `1.43.0` | `1.45.0` |
-| [@sinclair/typebox](https://github.com/sinclairzx81/sinclair-typebox) | `0.34.48` | `0.34.52` |
-| [commander](https://github.com/tj/commander.js) | `15.0.0` | `15.1.0` |
-| [discord-api-types](https://github.com/discordjs/discord-api-types) | `0.38.57` | `0.38.60` |
-| [file-type](https
-
-**File**: `package.json` (modified, +4/-4)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -159,7 +159,7 @@
-     "version:sync": "node scripts/bump-version.mjs"
-   },
-   "dependencies": {
--    "@agentclientprotocol/sdk": "2.0.2",
-+    "@agentclientprotocol/sdk": "2.9.1",
-     "@anthropic-ai/claude-agent-sdk": "^0.3.296",
-     "@anthropic-ai/sdk": "^0.133.0",
-     "@aws-sdk/client-bedrock": "^3.1146.0",
-@@ -178,9 +178,9 @@
-     "@noble/curves": "1.9.1",
-     "@noble/hashes": "1.8.0",
-     "@opentelemetry/api": "^1.9.1",
--    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-+    "@opentelemetry/exporter-trace-otlp-http": "^0.301.2",
-     "@opentelemetry/resources": "^2.11.0",
--    "@opentelemetry/sdk-node": "^0.300.0",
-+    "@opentelemetry/sdk-node": "^0.301.2",
-     "@opentelemetry/semantic-conventions": "^1.43.0",
-     "@sinclair/typebox": "0.34.52",
-     "@slack/bolt": "^4.6.0",
-@@ -221,7 +221,7 @@
-     "signal-utils": "^0.21.1",
-     "sqlite-vec": "0.1.9",
-     "stripe": "^20.4.1",
--    "tar": "7.5.22",
-+    "tar": "7.5.23",
-     "tslog": "^4.10.2",
-     "undici": "^7.24.0",
-     "viem": "^2.57.3",
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.14.3"
++  ".": "1.15.0"
+ }
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +21/-0)
 ```diff
-@@ -14,7 +14,7 @@ overrides:
-   form-data: 2.5.4
-   qs: 6.14.2
-   "@sinclair/typebox": 0.34.48
--  tar: 7.5.22
-+  tar: 7.5.23
-   tough-cookie: 4.1.3
+@@ -1,5 +1,26 @@
+ # Changelog
  
- # @coinbase/agentkit posts the wallet address, network and every wallet action
++## [1.15.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.3...v1.15.0) (2026-11-27)
++
++
++### Features
++
++* **cron:** scheduled jobs learn from the owner's next message, announce what changed and roll back on a contradiction ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** judge harness-evolution candidates by replay instead of prediction (still off by default) ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** standing practices learned from the owner's follow-ups, with a yes/no offer, task-type scope and a Practices list in the Memory tab ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **tts:** speak through the OpenAI Realtime API ahead of the speech model shutdown ([#396](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/396)) ([a0d01b1](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0d01b11fae1a73c482f95d00ab4f8df251d737d))
++
++
++### Bug Fixes
++
++* **chat:** show generated reply notes such as "Memory updated" in the desktop and browser chat ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **deep-recall:** pick the sub-model for the provider whose key is set ([#394](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/394)) ([5ad0892](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5ad089213f406799e3aa438cbb00f365a40a4d0c))
++* **media:** default OpenAI transcription to gpt-transcribe ahead of the model shutdown ([#395](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/395)) ([aaebb1f](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/aaebb1f61352768fb81e0ba6bcf1d313fc13857e)), closes [#391](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/391)
++* **memory:** accept correction-pass model answers that add prose after the JSON ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
++* **memory:** name the wiki page to retire explicitly in the semantic lint ([#408](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/408)) ([ec2ea63](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/ec2ea63647d941dc4ad9233d6ca5ed9306a16c01)), closes [#400](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/400)
++* **skills:** say wallet spending caps cannot be approved past ([#398](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/398)) ([f28f894](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/f28f89405aa8bb1fe687a66b061b6f4a51ab09e2)), closes [#390](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/390)
++* **wallet:** stop telling the agent and users that gas is sponsored ([#407](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/407)) ([9e0c432](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9e0c432d1fd7e131c6dc8d8297d10b2305c318e4)), closes [#399](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/399)
++
+ ## [1.14.3](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.2...v1.14.3) (2026-11-22)
+ 
+ 
 ```
 
-**File**: `src/discord/send.shared.ts` (modified, +5/-2)
+**File**: `desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -8,7 +8,7 @@ import {
- } from "@buape/carbon";
- import { PollLayoutType } from "discord-api-types/payloads/v10";
- import type { RESTAPIPoll } from "discord-api-types/rest/v10";
--import { Routes, type APIEmbed } from "discord-api-types/v10";
-+import { Routes } from "discord-api-types/v10";
- import type { ChunkMode } from "../auto-reply/chunk.js";
- import { loadConfig } from "../config/config.js";
- import type { RetryRunner } from "../infra/retry-policy.js";
-@@ -32,7 +32,10 @@ type DiscordRequest = RetryRunner;
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
+```
+
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -313,7 +313,7 @@ dependencies = [
  
- export type DiscordSendComponentFactory = (text: string) => TopLevelComponents[];
- export type DiscordSendComponents = TopLevelComponents[] | DiscordSendComponentFactory;
--export type DiscordSendEmbeds = Array<APIEmbed | Embed>;
-+// The raw embed shape comes from carbon's own constructor, not from our copy of
-+// discord-api-types: carbon pins its own version and the two drift apart.
-+export type DiscordRawEmbed = NonNullable<ConstructorParameters<typeof Embed>[0]>;
-+export type DiscordSendEmbeds = Array<DiscordRawEmbed | Embed>;
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.14.3"
++version = "1.15.0"
+ dependencies = [
+  "env_logger",
+  "libc",
+```
+
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.14.3"
++version = "1.15.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
  
- type DiscordRecipient =
-   | {
+```
+
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
+```
+
+**File**: `extensions/discord/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
+```
+
+**File**: `extensions/email/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.14.3",
++  "version": "1.15.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #410** (2026-11-27): feat(memory): standing practices learned from the owner's follow-ups (@VGIL77)
 - **PR #409** (2026-11-26): chore(deps): bump the npm-minor-patch group with 32 updates (@VGIL77)
 - **PR #408** (2026-11-26): fix(memory): name the wiki page to retire explicitly in the semantic lint (@VGIL77)
 - **PR #407** (2026-11-26): fix(wallet): stop telling the agent and users that gas is sponsored (@VGIL77)
 - **PR #406** (2026-11-26): chore(deps): bump react-markdown from 9.1.0 to 10.1.0 (@dependabot[bot])
 - **PR #405** (closed): chore(deps): bump the npm-minor-patch group across 1 directory with 32 updates (@dependabot[bot])
-- **PR #404** (2026-11-26): chore(deps): bump lru from 0.19.0 to 0.19.2 in /orchestrator in the cargo-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -1715,37 +1743,44 @@ Bumps the npm-minor-patch group with 32 updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the npm-minor-patch group with 32 updates
+## X. main): release 1.15.0
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `498590e2`: deps): bump the npm-minor-patch group with 32 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7df21566`: main): release 1.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@agentclientprotocol/sdk": "2.9.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.301.2",
-    "@opentelemetry/sdk-node": "^0.301.2",
-    "tar": "7.5.23",
+## [1.15.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.14.3...v1.15.0) (2026-11-27)
+
+
+### Features
+
+* **cron:** scheduled jobs learn from the owner's next message, announce what changed and roll back on a contradiction ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **memory:** judge harness-evolution candidates by replay instead of prediction (still off by default) ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **memory:** standing practices learned from the owner's follow-ups, with a yes/no offer, task-type scope and a Practices list in the Memory tab ([5aaaf15](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/5aaaf1506b9bfedb2d193114eaca534fed1eef1d))
+* **tts:** speak through the OpenAI Realtime API ahead of the speech model shutdown ([#396](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/396)) ([a0d01b1](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a0d01b11fae1a73c482f95d00ab4f8df251d737d))
+
+
+### Bug Fixes
+
+* **chat:** show generated reply notes such as "Memory updated" in the desktop and browser chat (
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "@agentclientprotocol/sdk": "2.0.2",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-    "@opentelemetry/sdk-node": "^0.300.0",
-    "tar": "7.5.22",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `498590e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7df21566` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

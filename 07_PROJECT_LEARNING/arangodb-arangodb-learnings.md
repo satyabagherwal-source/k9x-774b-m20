@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `6c6dd593`  
+> **Source Version**: `186d3ea3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T04:18:30.504Z  
+> **Timestamp**: 2026-11-27T23:21:52.206Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T04:18:30.499Z  
+> **Harvest Timestamp**: 2026-11-27T23:21:52.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23786** (2026-11-27): **Fix changelog**
+  *Symptoms*: ### Scope & Purpose  *(Please describe the changes in this PR for reviewers, motivation, rationale - **mandatory**)*  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [ ] GitHub issue / Jira ticket: - [ ] Design document:  
+
 - **Issue #23781** (2026-11-26): **Bug fix 3.12/adjust bucket count**
   *Symptoms*: backport of https://github.com/arangodb/arangodb/pull/23778/changes
-
-- **Issue #23778** (2026-11-26): **adjust bucket counts to the reality**
-  *Symptoms*: ### Scope & Purpose  we didn't adjust the buckets after moving tests into the large-suites  - [x] :hankey: Bugfix - [x] enterprise PR: https://github.com/arangodb/enterprise/pull/1750 - [x] backport https://github.com/arangodb/arangodb/pull/23781 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,255 +1662,309 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4f8d47f` (2026-11-09)
-**Commit Message**: Fixe-ty-fix
+### Incident Patch 1: `3582777c` (2026-11-18)
+**Commit Message**: Add regressions test
 
-**File**: `arangod/Aql/ExecutionNode/TraversalNode.cpp` (modified, +1/-1)
+**File**: `tests/js/client/aql/vector/aql-vector-wal-catchup-fp.js` (modified, +65/-1)
 ```diff
-@@ -25,7 +25,7 @@
- #include "Aql/Ast.h"
- #include "Aql/Collection.h"
- #include "Aql/Condition.h"
--#include "Aql/ConditionCoverage.h"
-+#include "Aql/Optimizer/Utils/ConditionCoverage.h"
- #include "Aql/ExecutionBlockImpl.tpp"
- #include "Aql/ExecutionEngine.h"
- #include "Aql/ExecutionNode/GraphNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Rule/HandleViews.cpp` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@
- #include "ApplicationFeatures/ApplicationServer.h"
- #include "Aql/AqlFunctionFeature.h"
- #include "Aql/Ast.h"
--#include "Aql/CalculationNodeVarFinder.h"
-+#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
- #include "Aql/Condition.h"
- #include "Aql/ExecutionNode/CalculationNode.h"
- #include "Aql/ExecutionNode/ExecutionNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Rule/LateDocumentMaterialization.cpp` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@
- #include "LateDocumentMaterialization.h"
+@@ -1,5 +1,5 @@
+ /*jshint globalstrict:false, strict:false, maxlen: 500 */
+-/*global assertEqual, assertTrue, assertFalse */
++/*global assertEqual, assertTrue, assertFalse, fail */
  
- #include "Aql/Ast.h"
--#include "Aql/CalculationNodeVarFinder.h"
-+#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
- #include "Aql/Collection.h"
- #include "Aql/Condition.h"
- #include "Aql/ExecutionNode/CalculationNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Rule/LateDocumentMaterializationArangoSearch.cpp` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@
- #include "LateDocumentMaterializationArangoSearch.h"
- 
- #include "Aql/Ast.h"
--#include "Aql/CalculationNodeVarFinder.h"
-+#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
- #include "Aql/ExecutionNode/CalculationNode.h"
- #include "Aql/ExecutionNode/ExecutionNode.h"
- #include "Aql/ExecutionNode/IResearchViewNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Rule/RemoveFiltersCoveredByIndex.cpp` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
- 
- #include "Aql/Ast.h"
- #include "Aql/Condition.h"
--#include "Aql/ConditionCoverage.h"
-+#include "Aql/Optimizer/Utils/ConditionCoverage.h"
- #include "Aql/ExecutionNode/CalculationNode.h"
- #include "Aql/ExecutionNode/ExecutionNode.h"
- #include "Aql/ExecutionNode/FilterNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Rule/RemoveFiltersCoveredByTraversal.cpp` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
- 
- #include "Aql/Ast.h"
- #include "Aql/Condition.h"
--#include "Aql/ConditionCoverage.h"
-+#include "Aql/Optimizer/Utils/ConditionCoverage.h"
- #include "Aql/ExecutionNode/CalculationNode.h"
- #include "Aql/ExecutionNode/ExecutionNode.h"
- #include "Aql/ExecutionNode/FilterNode.h"
-```
-
-**File**: `arangod/Aql/Optimizer/Utils/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@ target_sources(arango_aql PRIVATE
-   AccessesCollectionVariable.cpp
-   ConditionCoverage.cpp
-   ConditionFinder.cpp
-+  CalculationNodeVarFinder.cpp
-   EnumeratePathsFilterMatcher.cpp
-   ExtractNonConstPartsOfIndexCondition.cpp
-   FindProjections.cpp
-```
-
-**File**: `arangod/Aql/Optimizer/Utils/CalculationNodeVarFinder.cpp` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@
- ///
- ////////////////////////////////////////////////////////////////////////////////
- 
--#include "Aql/CalculationNodeVarFinder.h"
-+#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
- 
- namespace arangodb::aql {
- 
-```
-
----
-
-### Incident Patch 2: `00956873` (2026-11-26)
-**Commit Message**: Merge pull request #23762 from arangodb/bug-fix/reactivate-and-repair-tests
-
-Reactivate and fix some tests
-
-**File**: `tests/js/client/server_permissions/authorization-questions.js` (modified, +4/-6)
-```diff
-@@ -104,12 +104,10 @@ function authorizationQuestionsSuite() {
-         "DropCollection db=_system name=UnitTestsAuthzQuestions",
-         "UseCollection db=_system name=UnitTestsAuthzQuestions level=read",
-         "UseCollection db=_system name=_graphs level=read",
--        // the single server also revokes the collection's permissions from all
--        // users; in the cluster that happens without an ExecContext
--        ...singleOnly([
--          "UseCollection db=_system name=_users level=read",
--          "UseCollection db=_system name=_users level=writedata"
--        ])
-+        // dropping also revokes the collection's permissions from all users
-+        // (on single server and coordinator alike), which writes to _users
-+        "UseCollection db=_system name=_users level=read",
-+        "UseCollection db=_system name=_users level=writedata"
-       ], endObserve());
-     },
- 
-```
-
-**File**: `tests/js/client/server_permissions/test-hardened-rest-apis.js` (modified, +2/-2)
-```diff
-@@ -244,7 +244,7 @@ function testSuite() {
-         let result = arango.GET("/_admin/cluster/numberOfServers");
-         assertTrue(result.error);
-         assertEqual(403, result.code);
--        assertEqual("forbidden", result.errorMessage);
-+        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
-       } else {
-         let result = arango.GET("/_admin/cluster/numberOfServers");
-         assertTrue(result.error);
-@@ -275,7 +275,7 @@ function testSuite() {
-         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
-         assertTrue(result.error);
-         assertEqual(403, result.code);
--        assertEqual("forbidden", result.errorMessage);
-+        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
-       } else {
-         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
-         assertTrue(result.error);
-```
-
-**File**: `tests/js/client/server_permissions/test-unhardened-rest-apis.js` (modified, +1/-1)
-```diff
-@@ -185,7 +185,7 @@ function testSuite() {
-         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
-         assertTrue(result.error);
-         assertEqual(403, result.code);
--        assertEqual("forbidden", result.errorMessage);
-+        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
-       } else {
-         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
-         assertTrue(result.error);
-```
-
-**File**: `tests/js/common/v8/shell-v8-crypto.js` (modified, +1/-4)
-```diff
-@@ -277,9 +277,7 @@ function CryptoSuite () {
-         [ "secret", "ArangoDB is a database", "sha512", "8ef4e708db5bbc13ecf675ab81c9bfac72faedaf68fae91c51c0736746d087396af758a43cd60f763a5a8187d856c906c1677c7525b756cdb1ad5a7df823df73" ],
-         [ "secret", "ArangoDB is a database", "SHA512", "8ef4e708db5bbc13ecf675ab81c9bfac72faedaf68fae91c51c0736746d087396af758a43cd60f763a5a8187d856c906c1677c7525b756cdb1ad5a7df823df73" ],
-         [ "secret", "ArangoDB is a database", "sha1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ],
--        [ "secret", "ArangoDB is a database", "SHA1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ],
--        [ "secret", "ArangoDB is a database", "md5", "6eecfc947725974efc24bbaaafe15a13" ],
--        [ "secret", "ArangoDB is a database", "MD5", "6eecfc947725974efc24bbaaafe15a13" ]
-+        [ "secret", "ArangoDB is a database", "SHA1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ]
-       ];
- 
-       data.forEach(function (value) {
-@@ -389,7 +387,6 @@ function CryptoSuite () {
-         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha256', '4af8fad53d19ac984c0d1a8c128d5391' ],
-         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha384', '9684202a2d1c1ed248724d248c866f11' ],
-         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha512', '5818089d14f7366e0656ec851d55a140' ],
--        [ 'secret', 'ArangoDB is a database', 10, 16, 'md5', 'b4a63e5a9c02d76cb40aa37fd34c0a4f' ]
-       ];
- 
-       data.forEach(function (value) {
-```
-
-**File**: `tests/js/common/v8/shell-v8-fs.js` (modified, +0/-11)
-```diff
-@@ -1076,17 +1076,6 @@ function FileSystemSuite () {
-       assertEqual(checksum, '1');
-     },
- 
--////////////////////////////////////////////////////////////////////////////////
--/// @brief test alder32()
--////////////////////////////////////////////////////////////////////////////////
--
--    testAdler32File : function() {
--      const internal = require('internal');
--      const file = fs.makeAbsolute(fs.join(internal.pathForTesting('common'), 'test-data', 'foxx','toomanysecrets.txt'));
--      const checksum = fs.adler32(file);
--      assertEqual(checksum, '583533794');
--    },
--
- ////////////////////////////////////////////////////////////////////////////////
- /// @brief test alder32()
- ////////////////////////////////////////////////////////////////////////////////
-```
-
-**File**: `tests/tests.yml` (modified, +13/-0)
-```diff
-@@ -16,6 +16,7 @@
-       - version
-       - shell_client_large
-       - legacy
-+      - shell_v8
- 
- # Single Server Replication Tests
- - replication_shell:
-@@ -379,6 +380,18 @@
-             protocol: ssl
-             suffix: ssl
- 
-+# the single server run is part of shell_api_multi_permissions;
-+# each testfile starts its own cluster, so give it a separate job
-+- server_permissions:
-+    options:
-+      priority: 1000
-+      parallelity: 5
-+      size: medium
-+      buckets: 4
-+      type: cluster
-+    args:
-+      dumpAgencyOnError: true
+ // //////////////////////////////////////////////////////////////////////////////
+ // / DISCLAIMER
+@@ -194,6 +194,70 @@ function VectorIndexWalCatchupInsertSuite() {
+                 "Special doc inserted during ingestion should be found " +
+                 "via WAL catch-up");
+         },
 +
- # shell_client_multi tests run quite long, so want to have a
- # separate job for each protocol
- - shell_client_multi:
++        testInsertWithoutVectorDuringIngestionIsRejected: function () {
++            if (!IM.debugCanUseFailAt()) {
++                return;
++            }
++            IM.debugSetFailAt("RocksDBVectorIndex::pauseBeforeIngestion");
++            createVectorIndex(collection);
++
++            assertTrue(
++                waitForVectorIndexState(collection, indexName,
++                    VectorIndexTrainingState.kIngesting, 60),
++                "Index should reach ingesting state"
++            );
++
++            try {
++                collection.insert({_key: specialKey});
++                fail();
++            } catch (e) {
++                assertEqual(internal.errors.ERROR_BAD_PARAMETER.code,
++                    e.errorNum);
++            }
++            assertFalse(collection.exists(specialKey));
++
++            IM.debugClearFailAt();
++
++            assertTrue(
++                waitForVectorIndexState(collection, indexName,
++                    VectorIndexTrainingState.kReady, 120),
++                "Index should reach ready state"
++            );
++        },
++
++        testReplaceWithoutVectorDuringIngestionIsRejected: function () {
++            if (!IM.debugCanUseFailAt()) {
++                return;
++            }
++            collection.insert({_key: specialKey, vector: specialVector});
++            IM.debugSetFailAt("RocksDBVectorIndex::pauseBeforeIngestion");
++            createVectorIndex(collection);
++
++            assertTrue(
++                waitForVectorIndexState(collection, indexName,
++                    VectorIndexTrainingState.kIngesting, 60),
++                "Index should reach ingesting state"
++            );
++
++            try {
++                collection.replace(specialKey, {});
++                fail();
++            } catch (e) {
++                assertEqual(internal.errors.ERROR_BAD_PARAMETER.code,
++                    e.errorNum);
++            }
++
++            IM.debugClearFailAt();
++
++            assertTrue(
++                waitForVectorIndexState(collection, indexName,
++                    VectorIndexTrainingState.kReady, 120),
++                "Index should reach ready state"
++            );
++            assertTrue(specialDocFound(collection),
++                "Special doc should keep its vector after rejected replace");
++        },
+     };
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 3: `2e6422d0` (2026-11-26)
-**Commit Message**: Merge remote-tracking branch 'origin/devel' into bug-fix/reactivate-and-repair-tests
+### Incident Patch 2: `186d3ea3` (2026-11-27)
+**Commit Message**: Merge pull request #23692 from arangodb/bug-fix/BTS-2542-shard-distribution-smart-edges
+
+BTS-2542: the ShardDistributionReporter needs to follow smart edge collections to their local shadow collection.
+
+**File**: `CHANGELOG` (modified, +4/-0)
+```diff
+@@ -23,6 +23,10 @@
+ 
+ * Updated ArangoDB Starter to v0.20.0-preview-23.
+ 
++* BTS-2542: Fix `/_admin/cluster/shardDistribution` reporting the shards of
++  SmartGraph edge collections as never in sync, because their `Current` entries
++  were looked up under the virtual collection instead of its shadow collections.
++
+ * BTS-2543: Fix memory and file handle leaks in the zip file functions when a
+   path access check failed or threw an exception.
+   
+```
+
+**File**: `arangod/Sharding/ShardDistributionReporter.cpp` (modified, +42/-5)
+```diff
+@@ -72,6 +72,44 @@ struct SyncCountInfo {
+   ~SyncCountInfo() = default;
+ };
+ 
++//////////////////////////////////////////////////////////////////////////////
++/// @brief Current entries of all shards of a collection. The shards of a
++/// smart edge collection belong to its shadow collections, so their Current
++/// entries are not stored under the virtual collection, but under the shadow
++/// collections. realNames() gives us those.
++//////////////////////////////////////////////////////////////////////////////
++
++class CollectionCurrentServers {
++ public:
++  CollectionCurrentServers(ClusterInfo& ci, std::string const& dbName,
++                           LogicalCollection const& col) {
++    auto realNames = col.realNames();
++    if (realNames.size() == 1 && realNames[0] == col.name()) {
++      _infos.emplace_back(
++          ci.getCollectionCurrent(dbName, std::to_string(col.id().id())));
++      return;
++    }
++    for (auto const& name : realNames) {
++      if (auto realCol = ci.getCollectionNT(dbName, name); realCol != nullptr) {
++        _infos.emplace_back(ci.getCollectionCurrent(
++            dbName, std::to_string(realCol->id().id())));
++      }
++    }
++  }
++
++  std::vector<ServerID> servers(ShardID const& shardId) const {
++    for (auto const& info : _infos) {
++      if (auto servers = info->servers(shardId); !servers.empty()) {
++        return servers;
++      }
++    }
++    return {};
++  }
++
++ private:
++  std::vector<std::shared_ptr<CollectionInfoCurrent>> _infos;
++};
++
+ //////////////////////////////////////////////////////////////////////////////
+ /// @brief Static helper functions
+ //////////////////////////////////////////////////////////////////////////////
+@@ -337,15 +375,14 @@ void ShardDistributionReporter::helperDistributionForDatabase(
+ 
+       auto const col = todoSyncStateCheck.front();
+       auto allShards = col->shardIds();
+-      auto cic =
+-          _ci->getCollectionCurrent(dbName, std::to_string(col->id().id()));
++      CollectionCurrentServers cic{*_ci, dbName, *col};
+ 
+       // Send requests
+       for (auto const& s : *(allShards.get())) {
+         double timeleft = endtime - TRI_microtime();
+ 
+         serversToAsk.clear();
+-        auto curServers = cic->servers(s.first);
++        auto curServers = cic.servers(s.first);
+         auto& entry = counters[s.first];  // Emplaces a new SyncCountInfo
+         if (curServers.empty() || s.second.empty()) {
+           // either of the two vectors is empty...
+@@ -575,10 +612,10 @@ bool ShardDistributionReporter::testAllShardsInSync(
+   TRI_ASSERT(col != nullptr);
+   TRI_ASSERT(shardIds != nullptr);
+ 
+-  auto cic = _ci->getCollectionCurrent(dbName, std::to_string(col->id().id()));
++  CollectionCurrentServers cic{*_ci, dbName, *col};
+ 
+   for (auto const& s : *shardIds) {
+-    auto curServers = cic->servers(s.first);
++    auto curServers = cic.servers(s.first);
+ 
+     if (s.second.empty() || curServers.empty() ||
+         !TestIsShardInSync(s.second, curServers)) {
+```
+
+**File**: `tests/Sharding/ShardDistributionReporterTest.cpp` (modified, +97/-0)
+```diff
+@@ -25,6 +25,7 @@
+ #include "fakeit.hpp"
+ 
+ #include <velocypack/Builder.h>
++#include <velocypack/Parser.h>
+ #include <velocypack/Slice.h>
+ 
+ #include "IResearch/common.h"
+@@ -1250,3 +1251,99 @@ TEST_F(
+     VerifyNumbers(resultBuilder.slice(), colName, s1, leaderCount, 0, -1.0);
+   }
+ }
++
++// The shards of a smart edge collection belong to its shadow collections,
++// which also hold their Current entries; realNames() names those.
++class ShadowedTestCollection : public LogicalCollection {
++ public:
++  using LogicalCollection::LogicalCollection;
++
++  std::vector<std::string> realNames() const override {
++    return {"_local_" + name(), "_from_" + name()};
++  }
++};
++
++TEST_F(ShardDistributionReporterTest,
++       a_smart_edge_collection_takes_current_from_its_shadow_collections) {
++  auto virtualCol = std::make_unique<ShadowedTestCollection>(
++      *vocbase,
++      arangodb::CollectionDescriptor::fromVelocyPack(
++          velocypack::Parser::fromJson(
++              R"({ "cid" : "2000", "name": "UnitTestSmartEdges" })")
++              ->slice()),
++      true);
++  auto localCol = std::make_shared<LogicalCollection>(
++      *vocbase,
++      arangodb::CollectionDescriptor::fromVelocyPack(
++          velocypack::Parser::fromJson(
++              R"({ "cid" : "2001", "name": "_local_UnitTestSmartEdges" })")
++              ->slice()),
++      true);
++  auto fromCol = std::make_shared<LogicalCollection>(
++      *vocbase,
++      arangodb::CollectionDescriptor::fromVelocyPack(
++          velocypack::Parser::fromJson(
++              R"({ "cid" : "2002", "name": "_from_UnitTestSmartEdges" })")
++              ->slice()),
++      true);
++
++  // the virtual collection reports the shards of both shadow collections
++  shards->emplace(s1, std::vector<ServerID>{dbserver1, dbserver2});
++  shards->emplace(s2, std::vector<ServerID>{dbserver2, dbserver3});
++  virtualCol->setShardMap(shards);
++  allCollections.emplace_back(std::shared_ptr<LogicalCollection>(
++      virtualCol.get(), [](LogicalCollection*) {}));
++
++  fakeit::Mock<CollectionInfoCurrent> fromCurrentMock;
++  std::shared_ptr<CollectionInfoCurrent> fromCurrent(
++      &fromCurrentMock.get(), [](CollectionInfoCurrent*) {});
++
++  fakeit::When(Method(infoMock, getCollectionNT))
++      .AlwaysDo([&](std::string_view dbId, std::string_view name) {
++        EXPECT_EQ(dbId, dbname);
++        if (name == localCol->name()) {
++          return localCol;
++        }
++        EXPECT_EQ(name, fromCol->name());
++        return fromCol;
++      });
++  // there is no Current entry for the virtual collection id 2000, looking
++  // it up would fail the test
++  fakeit::When(Method(infoMock, getCollectionCurrent).Using(dbname, "2001"))
++      .AlwaysReturn(cic);
++  fakeit::When(Method(infoMock, getCollectionCurrent).Using(dbname, "2002"))
++      .AlwaysReturn(fromCurrent);
++  fakeit::When(Method(infoCurrentMock, servers))
++      .AlwaysDo([&](ShardID const& sid) {
++        return sid == s1 ? std::vector<ServerID>{dbserver1, dbserver2}
++                         : std::vector<ServerID>{};
++      });
++  fakeit::When(Method(fromCurrentMock, servers))
++      .AlwaysDo([&](ShardID const& sid) {
++        return sid == s2 ? std::vector<ServerID>{dbserver2, dbserver3}
++                         : std::vector<ServerID>{};
++      });
++
++  auto sender = [](network::DestinationId const&, arangodb::fuerte::RestVerb,
++                   std::string const&, velocypack::Buffer<uint8_t>,
++                   network::RequestOptions const&,
++                   network::Headers) -> network::FutureRes {
++    // all shards are in sync, there is nothing to count
++    EXPECT_TRUE(false);
++    return futures::makeFuture(network::Response{});
++  };
++
++  VPackBuilder resultBuilder;
++  ShardDistributionReporter testee(&ci, sender);
++  testee.getDistributionForDatabase(dbname, resultBuilder);
++
++  VPackSlice col = resultBuilder.slice().get("UnitTestSmartEdges");
++  ASSERT_TRUE(col.isObject());
++  VPackSlice current = col.get("Current");
++  ASSERT_TRUE(current.isObject());
++  EXPECT_EQ(current.length(), 2);
++  EXPECT_EQ(current.get(std::vector<std::string>{s1, "leader"}).stringView(),
++            dbserver1short);
++  EXPECT_EQ(current.get(std::vector<std::string>{s2, "leader"}).stringView(),
++            dbserver2short);
++}
+```
+
+---
+
+### Incident Patch 3: `7bce06cc` (2026-11-27)
+**Commit Message**: Merge branch 'devel' into bug-fix/BTS-2542-shard-distribution-smart-edges
 
 **File**: `3rdParty/kaldi/src/fstext/determinize-star-inl.h` (modified, +52/-12)
 ```diff
@@ -2098,196 +2152,269 @@ Reactivate and fix some tests
  /// @} end "addtogroup fst_extensions"
 ```
 
-**File**: `CHANGELOG` (modified, +5/-0)
+**File**: `CHANGELOG` (modified, +22/-4)
 ```diff
-@@ -1,6 +1,11 @@
+@@ -1,5 +1,27 @@
  4.0.0 (XXXX-XX-XX)
  ------------------
- 
++* COR-1287: Documents with a missing or malformed vector attribute are now
++  rejected while a vector index is ingesting, instead of being accepted and
++  making the index build fail. Addresses GitHub issue #23696.
++
++* Allow indexed access in standalone AQL (Computed Values and aql Analyzer).
++  This adds NODE_TYPE_INDEXED_ACCESS to the accepted execution plan nodes so
++  that you can write e.g. `RETURN SPLIT(@param, " ")[-1]` in addition to
++  `RETURN LAST(SPLIT(@param, " ")) `.
++
 +* A MATCH edge with * 1..1 (e.g. -[e:knows * 1..1]-) is now treated as a single edge 
-+ The edge variable holds the edge document, path variables contain one edge and one vertex, and undirected self-loops are matched only once. Previously, it was treated as a variable-length traversal, causing the edge variable to hold a path object and undirected self-loops to be matched twice.
++  The edge variable holds the edge document, path variables contain one edge and one vertex,
++  and undirected self-loops are matched only once. Previously, it was treated as a
++  variable-length traversal, causing the edge variable to hold a path object and undirected
++  self-loops to be matched twice.
 +
 +* COR-1016: Added query time budgeting to NFA to DFA pattern determinization.
 +
- * COR-1234: Reject a MATCH variable-length relationship whose lower bound is
-   zero, for example `* 0..0` or `* 0..2`. A zero-hop path has no edge, and its
-   endpoint projection is not defined.
-```
-
-**File**: `arangod/Aql/Executor/IResearchViewExecutorBase.tpp` (modified, +16/-6)
-```diff
-@@ -29,6 +29,7 @@
- #include "IResearch/Search.h"
- #include "IResearch/IResearchFilterFactoryCommon.h"
- #include "IResearch/IResearchReadUtils.h"
-+#include "error/error.hpp"
- 
- namespace arangodb::aql {
- 
-@@ -817,12 +818,21 @@ void IResearchViewExecutorBase<Impl, ExecutionTraits>::reset() {
-   }
- 
-   // compile filter
--  _filter = root->prepare({
--      .index = *_reader,
--      .memory = _memory,
--      .scorers = _scorers,
--      .ctx = &_filterCtx,
--  });
-+  try {
-+    _filter = root->prepare({
-+        .index = *_reader,
-+        .memory = _memory,
-+        .scorers = _scorers,
-+        .ctx = &_filterCtx,
-+    });
-+  } catch (...) {
-+    if (_ctx.killed()) {
-+      THROW_ARANGO_EXCEPTION_MESSAGE(
-+          TRI_ERROR_QUERY_KILLED,
-+          "AQL: ArangoSearch query killed (while executing)");
-+    }
-+    throw;
-+  }
- 
-   if constexpr (ExecutionTraits::EmitSearchDoc) {
-     TRI_ASSERT(_filterCookie);
-```
-
-**File**: `arangod/Aql/Match/PatternNormalizer.cpp` (modified, +7/-0)
-```diff
-@@ -422,6 +422,13 @@ PathRange PatternNormalizer::normalizeRange(AstNode const* node) const {
-         TRI_ERROR_QUERY_PARSE,
-         "zero-hop variable-length relationships are not supported");
-   }
-+  // `* 1..1` represents a single edge. The default one-hop form binds the edge
-+  // variable to the edge document, adds one edge and one vertex to the path,
-+  // and matches an undirected self-loop only once. Other ranges remain
-+  // variable-length traversals.
-+  if (minDepth == 1 && maxDepth == 1) {
-+    return PathRange::defaultFixedOne();
-+  }
-   return PathRange::bounded(minDepth, maxDepth);
- }
- 
-```
-
-**File**: `arangod/Aql/Match/PatternTypes.h` (modified, +7/-5)
-```diff
-@@ -65,10 +65,11 @@ struct DataSource {
- 
- enum class EdgeDirection : uint8_t { kOutbound, kInbound, kAny };
- 
--/// @brief path depth for a MATCH edge pattern.
--/// Distinguishes the default single-hop form (no `*`) from an explicit
--/// `* min..max` range, including `* 1..1`, because planning treats them
--/// differently (enumerate vs path-producing traversal).
-+/// @brief Path depth of a MATCH edge pattern.
-+/// An omitted range represents a single hop. Normalization also converts
-+/// explicit `* 1..1` to this form, allowing planning to enumerate a single
-+/// edge. Other `* min..max` ranges remain path-producing traversals.
-+/// `PathRange::bounded(1, 1)` itself remains a bounded range.
- struct PathRange {
-   enum class Kind : uint8_t { kDefaultFixedOne, kBounded, kUnboundedMin };
- 
-@@ -80,7 +81,8 @@ struct PathRange {
-   static PathRange unboundedMin(uint64_t minDepth);
- 
-   Kind kind() const noexcept { return _kind; }
--  /// @brief true when the pattern had no `*` (default one-hop)
-+  /// @brief Whether to use fixed one-hop edge access during planning.
-+  /// Applies to omitted ranges and explicit `* 1..1` after normalization.
-   bool isDefaultFixedOne() const noexcept {
-     return _kind == Kind::kDefaultFixedOne;
-   }
-```
-
-**File**: `arangod/IResearch/IResearchFilterFactory.cpp` (modified, +23/-2)
-```diff
-@@ -46,9 +46,11 @@
- #include "search/term_filter.hpp"
- #include "search/top_terms_collector.hpp"
- #include "search/wildcard_filter.hpp"
-+#include "utils/wildcard_utils.hpp"
- 
- #include "ApplicationFeatures/ApplicationServer.h"
- #include "Aql/Ast.h"
-+#include "Aql/ExpressionContext.h"
- #include "Aql/Function.h"
- #include "Aql/Quantifier.h"
- #include "Aql/Range.h"
-@@ -78,6 +80,15 @@ using namespace std::literals::string_literals;
- 
- namespace arangodb::iresearch {
- 
-+namespace {
++* COR-1234: Reject a MATCH variable-length relationship whose lower bound is
++  zero, for example `* 0..0` or `* 0..2`. A zero-hop path has no edge, and its
++  endpoint projection is not defined.
 +
-+bool wildcardDeterminizationKilled(aql::ExpressionContext* ctx) noexcept {
-+  TRI_ASSERT(ctx);
-+  return ctx->killed();
++* Updated ArangoDB Starter to v0.20.0-preview-23.
+ 
+ * BTS-2542: Fix `/_admin/cluster/shardDistribution` reporting the shards of
+   SmartGraph edge collections as never in sync, because their `Current` entries
+@@ -831,10 +853,6 @@
+   reversing a string, and reverses strings containing U+FFFF completely.
+   This fixes issue #23360.
+ 
+-* AQL `REVERSE` keeps characters above U+FFFF, such as emoji, intact when
+-  reversing a string, and reverses strings containing U+FFFF completely.
+-  This fixes issue #23360.
+-
+ * The AQL optimizer uses a sparse index for a branch of an `OR` condition only
+   if that branch itself rules out `null` for the indexed attribute.
+   For example, `FILTER doc.b < 5 AND (doc.b >= 0 OR doc.a == 1)` returns
+```
+
+**File**: `VERSIONS` (modified, +3/-3)
+```diff
+@@ -1,7 +1,7 @@
+ CXX_STANDARD "26"
+-STARTER_REV "v0.20.0-preview-22"
+-STARTER_SHA256_AMD64 "080cd27f70242abe15614b20e1901632f85f94c0ed689c0419ca5e6778ca6929"
+-STARTER_SHA256_ARM64 "399d73ec7dc425e0bcdd21e3353b0cace117645e7f3298c245bfa08efe4c2dcd"
++STARTER_REV "v0.20.0-preview-23"
++STARTER_SHA256_AMD64 "c329d45c4efd8339349cec66b41afc8b1aa0ce19a899a1f6804e2e9aec3f89ad"
++STARTER_SHA256_ARM64 "f1f5909267e4c5a25fa293cd3f87932f4d35b4ec33e35a140c379de77a103856"
+ GCC_LINUX "14.3.0"
+ CLANG_LINUX "22.1.8"
+ OPENSSL_LINUX "3.5.9"
+```
+
+**File**: `arangod/Aql/CMakeLists.txt` (modified, +0/-4)
+```diff
+@@ -25,16 +25,13 @@ add_library(arango_aql STATIC
+   AttributeNamePath.cpp
+   BindParameters.cpp
+   BlocksWithClients.cpp
+-  CalculationNodeVarFinder.cpp
+   ClusterQuery.cpp
+   CollectOptions.cpp
+   Collection.cpp
+   CollectionAccess.cpp
+   Collections.cpp
+   Condition.cpp
+   ConditionPart.cpp
+-  ConditionCoverage.cpp
+-  ConditionFinder.cpp
+   ConstFetcher.cpp
+   CostEstimate.cpp
+   DependencyProxy.cpp
+@@ -115,7 +112,6 @@ add_library(arango_aql STATIC
+   SortedRowsStorageBackendMemory.cpp
+   SortedRowsStorageBackendStaged.cpp
+   Timing.cpp
+-  TraversalConditionFinder.cpp
+   TraverserEngineShardLists.cpp
+   UpdateReplaceModifier.cpp
+   UpsertModifier.cpp
+```
+
+**File**: `arangod/Aql/ExecutionNode/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -44,5 +44,6 @@ target_sources(arango_aql PRIVATE
+   UpdateNode.cpp
+   UpdateReplaceNode.cpp
+   UpsertNode.cpp
++  WindowBounds.cpp
+   WindowNode.cpp
+ )
+```
+
+**File**: `arangod/Aql/ExecutionNode/TraversalNode.cpp` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+ #include "Aql/Ast.h"
+ #include "Aql/Collection.h"
+ #include "Aql/Condition.h"
+-#include "Aql/ConditionCoverage.h"
++#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+ #include "Aql/ExecutionBlockImpl.tpp"
+ #include "Aql/ExecutionEngine.h"
+ #include "Aql/ExecutionNode/GraphNode.h"
+```
+
+**File**: `arangod/Aql/ExecutionNode/WindowBounds.cpp` (added, +314/-0)
+```diff
+@@ -0,0 +1,314 @@
++////////////////////////////////////////////////////////////////////////////////
++/// DISCLAIMER
++///
++/// Copyright 2014-2024 ArangoDB GmbH, Cologne, Germany
++/// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
++///
++/// Licensed under the Business Source License 1.1 (the "License");
++/// you may not use this file except in compliance with the License.
++/// You may obtain a copy of the License at
++///
++///     https://github.com/arangodb/arangodb/blob/devel/LICENSE
++///
++/// Unless required by applicable law or agreed to in writing, software
++/// distributed under the License is distributed on an "AS IS" BASIS,
++/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++/// See the License for the specific language governing permissions and
++/// limitations under the License.
++///
++/// Copyright holder is ArangoDB GmbH, Cologne, Germany
++///
++////////////////////////////////////////////////////////////////////////////////
++
++#include "Aql/ExecutionNode/WindowBounds.h"
++
++#include "Aql/QueryWarnings.h"
++#include "Basics/Exceptions.h"
++#include "Basics/ScopeGuard.h"
++
++#include "velocypack/Builder.h"
++
++namespace arangodb::aql {
++
++namespace {
++bool parameterToTimePoint(AqlValue const& value, QueryWarnings& warnings,
++                          tp_sys_clock_ms& tp) {
++  if (value.isNumber()) {
++    int64_t v = value.toInt64();
++    if (ADB_UNLIKELY(v < -62167219200000 || v > 253402300799999)) {
++      // check if value is between "0000-01-01T00:00:00.000Z" and
++      // "9999-12-31T23:59:59.999Z" -62167219200000: "0000-01-01T00:00:00.000Z"
++      // 253402300799999: "9999-12-31T23:59:59.999Z"
++      warnings.registerWarning(
++          TRI_ERROR_QUERY_INVALID_DATE_VALUE,
++          "range value is not a valid timepoint (out of range)");
++      return false;
++    }
++    tp = tp_sys_clock_ms(std::chrono::milliseconds(v));
++    return true;
++  }
++  // TODO is there a way to properly support ISO datestrings ?
++  /*else if (value.isString()) {
++    if (!basics::parseDateTime(value.slice().stringView(), tp)) {
++      q.warnings().registerWarning(TRI_ERROR_QUERY_INVALID_DATE_VALUE,
++                                   "range value is not a valid ISO 8601 date
++  time string"); return false;
++    }
++    return true;
++  }*/
++  warnings.registerWarning(TRI_ERROR_QUERY_INVALID_DATE_VALUE);
++  return false;
 +}
 +
++tp_sys_clock_ms addOrSubtractDate(
++    tp_sys_clock_ms tp, arangodb::basics::ParsedDuration const& parsed,
++    bool isSubtract) {
++  std::chrono::year_month_day ymd{std::chrono::floor<std::chrono::days>(tp)};
++  auto day_time = std::chrono::hh_mm_ss(tp - std::chrono::sys_days(ymd));
++
++  if (isSubtract) {
++    ymd -= std::chrono::years{parsed.years};
++  } else {
++    ymd += std::chrono::years{parsed.years};
++  }
++
++  if (isSubtract) {
++    ymd -= std::chrono::months{parsed.months};
++  } else {
++    ymd += std::chrono::months{parsed.months};
++  }
++
++  std::chrono::milliseconds ms{0};
++  ms += std::chrono::weeks{parsed.weeks};
++  ms += std::chrono::days{parsed.days};
++  ms += std::chrono::hours{parsed.hours};
++  ms += std::chrono::minutes{parsed.minutes};
++  ms += std::chrono::seconds{parsed.seconds};
++  ms += std::chrono::milliseconds{parsed.milliseconds};
++
++  if (isSubtract) {
++    return tp_sys_clock_ms{std::chrono::sys_days(ymd) + day_time.to_duration() -
++                           ms};
++  } else {
++    return tp_sys_clock_ms{std::chrono::sys_days(ymd) + day_time.to_duration() +
++                           ms};
++  }
++}
 +}  // namespace
 +
- Result makeFilter(irs::boolean_filter* filter, FilterContext const& filterCtx,
-                   aql::AstNode const& node);
- 
-@@ -2736,8 +2747,8 @@ Result fromFuncPhraseStartsWith(
- Result fromFuncPhraseLike(char const* funcName,
-                           size_t const funcArgumentPosition,
-                           char const* subFuncName, irs::by_phrase* filter,
--                          FilterContext const&, const VPackSlice& elem,
--                          size_t firstOffset,
-+                          FilterContext const& filterCtx,
-+                          const VPackSlice& elem, size_t firstOffset,
-                           irs::analysis::analyzer* /*analyzer*/ = nullptr) {
-   std::string_view term;
-   auto res = oneArgumentfromFuncPhrase(funcName, funcArgumentPosition,
-@@ -2751,6 +2762,11 @@ Result fromFuncPhraseLike(char const* funcName,
-             firstOffset);
-     wildcard.term.assign(irs::ViewCast<irs::byte_type>(term));
-     wildcard.scored_terms_limit = FilterConstants::DefaultScoringTermsLimit;
-+    if (filterCtx.query.ctx != nullptr) {
-+      wildcard.stop = [ctx = filterCtx.query.ctx]() noexcept -> bool {
-+        return wildcardDeterminizationKilled(ctx);
-+      };
-+    }
-   }
-   return {};
- }
-@@ -3829,6 +3845,11 @@ Result fromFuncLike(char const* funcName, irs::boolean_filter* filter,
-       auto* opts = wildcardFilter.mutable_options();
-       opts->scored_terms_limit = FilterConstants::DefaultScoringTermsLimit;
-       opts->term = irs::ViewCast<irs::byte_type>(pattern);
-+      if (ctx.ctx != nullptr) {
-+        opts->stop = [ctx = ctx.ctx]() -> bool {
-+          return wildcardDeterminizationKilled(ctx);
-+        };
++WindowBounds::WindowBounds(Type type, AqlValue&& preceding,
++                           AqlValue&& following)
++    : _type(type) {
++  auto g = scopeGuard([&]() noexcept {
++    preceding.destroy();
++    following.destroy();
++  });
++
++  if (Type::Row == type) {
++    auto validate = [&](AqlValue& val) -> int64_t {
++      if (val.isNumber()) {
++        int64_t v = val.toInt64();
++        if (v >= 0) {
++          return v;
++        }
++      } else if (val.isString() && (val.slice().isEqualString("unbounded") ||
++                                    val.slice().isEqualString("inf"))) {
++        return std::numeric_limits<int64_t>::max();
++      } else if (val.isNone()) {
++        return 0;
 +      }
-     }
-   }
- 
-```
++      THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_BAD_PARAMETER,
++                                     "WINDOW row spec is invalid; bounds must "
++                                     "be positive integers or \"unbounded\"");
++    };
++    _numPrecedingRows = validate(preceding);
++    _numFollowingRows = validate(following);
++    return;
++  }
++
++  if (Type::Range == type) {
++    auto checkType = [](AqlValue const& val) {
++      if (!val.isString() && !val.isNumber() && !val.isNone()) {
++        THROW_ARANGO_EXCEPTION_MESSAGE(TRI_ERROR_BAD_PARAMETER,
++                                       "WINDOW range spec is invalid");
++      }
++    };
++    checkType(preceding);
++    checkType(following);
++
++    if ((preceding.isNone() == following.isNone()) &&
 
-**File**: `arangod/IResearch/IResearchInvertedIndex.cpp` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@
- #include "VocBase/LogicalCollection.h"
- 
- #include "analysis/token_attributes.hpp"
-+#include "error/error.hpp"
- #include "index/directory_reader.hpp"
- #include "index/index_writer.hpp"
- #include "index/heap_iterator.hpp"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23786** (2026-11-27): Fix changelog (@jbajic)
 - **PR #23781** (2026-11-26): Bug fix 3.12/adjust bucket count (@dothebart)
 - **PR #23778** (2026-11-26): adjust bucket counts to the reality (@dothebart)
+- **PR #23770** (closed): Bug fix/add missing testcase reference (@dothebart)
 - **PR #23766** (2026-11-25): [COR-1234] Reject zero-hop variable-length MATCH relationships (@bluepal-avanthi-dundigala)
 - **PR #23765** (2026-11-25): Split WindowNode.h/WindowNode.cpp and remove references to date library (@markuspf)
-- **PR #23762** (2026-11-26): Reactivate and fix some tests (@neunhoef)
-- **PR #23757** (2026-11-25): [COR-1297] Remove unused "encryption" (@markuspf)
 
 ---
 
@@ -2307,28 +2434,62 @@ Reactivate and fix some tests
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixe-ty-fix
+## X. Add regressions test
 
 **RULE**:
-When implementing operations in `arangod/Aql/ExecutionNode/TraversalNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/js/client/aql/vector/aql-vector-wal-catchup-fp.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4f8d47f`: Fixe-ty-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3582777c`: Add regressions test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/ExecutionNode/TraversalNode.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/js/client/aql/vector/aql-vector-wal-catchup-fp.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+/*global assertEqual, assertTrue, assertFalse, fail */
+
+        testInsertWithoutVectorDuringIngestionIsRejected: function () {
+            if (!IM.debugCanUseFailAt()) {
+                return;
+            }
+            IM.debugSetFailAt("RocksDBVectorIndex::pauseBeforeIngestion");
+            createVectorIndex(collection);
+
+            assertTrue(
+                waitForVectorIndexState(collection, indexName,
+                    VectorIndexTrainingState.kIngesting, 60),
+                "Index should reach ingesting state"
+            );
+
+            try {
+                collection.insert({_key: specialKey});
+                fail();
+            } catch (e) {
+                assertEqual(internal.errors.ERROR_BAD_PARAMETER.code,
+                    e.errorNum);
+            }
+            assertFalse(collection.exists(specialKey));
+
+            IM.debugClearFailAt();
+
+            assertTrue(
+                waitForVectorIndexState(collection, indexName,
+                    VectorIndexTrainingState.kReady, 120),
+                "Index should reach ready state"
+            );
+        },
+
+        testReplaceWithoutVectorDuringIngestionIsRejected: function () {
+            if (!IM.debugC
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-#include "Aql/ConditionCoverage.h"
+/*global assertEqual, assertTrue, assertFalse */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4f8d47f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3582777c` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T23:12:58.674Z",
+  "last_updated": "2026-11-27T23:21:54.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
-      "verified_at": "2026-11-27T22:45:56.515Z",
+      "content_hash": "d0392915ce2d2023731838cade3f19390413bc97e74cd93e40b252ebad261273",
+      "verified_at": "2026-11-27T23:21:54.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T22:45:56.515Z"
+      "last_updated": "2026-11-27T23:21:54.110Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "8f11f089f20f6b602081f920433d2729ae64a5b5788392b490c22a162700128c",
-      "verified_at": "2026-11-27T04:18:31.821Z",
+      "content_hash": "fc0ca59ab6b3a75978c7c216f4182edfe4ea66bd52774c88b6ff6c4adabe5a45",
+      "verified_at": "2026-11-27T23:21:53.615Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T04:18:31.821Z"
+      "last_updated": "2026-11-27T23:21:53.615Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",

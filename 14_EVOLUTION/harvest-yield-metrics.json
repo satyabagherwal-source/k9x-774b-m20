@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:12:58.671Z",
-  "total_cycles_completed": 13189,
-  "total_learnings_persisted": 13189,
-  "total_rules_promoted": 11900,
+  "last_updated": "2026-11-27T23:21:54.107Z",
+  "total_cycles_completed": 13191,
+  "total_learnings_persisted": 13191,
+  "total_rules_promoted": 11901,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:30:04.029Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:30:06.442Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:30:20.481Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1403,6 +1389,20 @@
       "repository": "nats-io/nats.go",
       "learningId": "learn-github-nats-io-nats-go",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:21:53.612Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:21:54.107Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

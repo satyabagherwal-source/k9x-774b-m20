@@ -13931,3 +13931,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-aion-1-0-instruct-2-3b` | `https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-27T23:12:50.382Z |
 | `learn-github-el4cteo-fast-anything` | `https://github.com/EL4CTEO/fast-anything` | `e3d8635b` | Multi-dimensional audit evidence | 2026-11-27T23:12:51.300Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `0360c971` | Multi-dimensional audit evidence | 2026-11-27T23:12:58.666Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `186d3ea3` | Multi-dimensional audit evidence | 2026-11-27T23:21:53.606Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `7df21566` | Multi-dimensional audit evidence | 2026-11-27T23:21:54.053Z |
