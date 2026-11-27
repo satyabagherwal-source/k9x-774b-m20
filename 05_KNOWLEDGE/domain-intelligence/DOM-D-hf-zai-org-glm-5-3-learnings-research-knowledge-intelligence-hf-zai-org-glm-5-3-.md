@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:20:55.672Z",
+  "timestamp": "2026-11-27T02:27:08.401Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-zai-org-glm-5.3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-zai-org-glm-5.3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:20:55.672Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T02:27:08.401Z`  
 > **Learning ID**: `LEARN-EVO-hf-zai-org-glm-5.3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-zai-org-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:20:34.813Z  
+> **Timestamp**: 2026-11-27T02:26:55.843Z  
 > **Learning ID**: `learn-huggingface-zai-org-glm-5-3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/zai-org/GLM-5.3](https://huggingface.co/zai-org/GLM-5.3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:20:34.697Z  
+> **Harvest Timestamp**: 2026-11-27T02:26:55.657Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1262104 downloads | 2534 likes
+- **Stars / Engagement**: 1081011 downloads | 2570 likes
 
 ---
 

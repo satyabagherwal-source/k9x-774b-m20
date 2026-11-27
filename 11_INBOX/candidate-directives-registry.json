@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:18:25.212Z",
+  "last_updated": "2026-11-27T02:27:10.683Z",
   "directives": [
     {
       "id": "CD-001",
@@ -63405,11 +63405,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-M6Q3",
+      "id": "CD-25SR",
       "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-M6Q3-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-25SR-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-M5KY",
+      "id": "CD-24SD",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-M5KY-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-24SD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -68205,6 +68205,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6510D6-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-52315F",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-52315F-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-F06F18",
+      "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F06F18-daemon-drain-buffered-watcher-changes-be.md",
       "staged_date": "2026-11-27"
     }
   ]

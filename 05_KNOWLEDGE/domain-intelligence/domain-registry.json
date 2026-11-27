@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T02:18:25.491Z",
+  "last_updated": "2026-11-27T02:27:10.915Z",
   "total_records": 2795,
   "domains": {
     "A": {
@@ -8565,8 +8565,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "f62c0d79fd3cfc0d2b7c1c663f09167a47951866d389fb5b414cf240126742d5",
-      "created_at": "2026-11-27T01:46:46.040Z"
+      "content_hash": "c57b4cee77a037f7a8ba5e0c50a0ce6a5369e25edc76c563d00aa2f9908d7134",
+      "created_at": "2026-11-27T02:27:10.915Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -17026,8 +17026,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-research-knowledge-intelligence-zai-org-glm-5-3-core-invarian.md",
       "repository": "zai-org/GLM-5.3",
-      "content_hash": "4d657381c1c4de1a5913bff3ca4a3a72792272e7045b7ef7901651519563ce77",
-      "created_at": "2026-11-23T17:20:35.696Z"
+      "content_hash": "c9f1851c2a6e93a9e596a19f8c0a8db9ca5a8126b2ba4a2128c9f2862b3a88db",
+      "created_at": "2026-11-27T02:26:56.808Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
@@ -17113,8 +17113,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-3-.md",
       "repository": "hf-zai-org-glm-5.3-learnings",
-      "content_hash": "75c668a2964e24b3a712acc9db6b6e7401d4dba99a25b46d60a4bfc57f7eb500",
-      "created_at": "2026-11-23T17:20:55.788Z"
+      "content_hash": "8889e891446fdad2c34ed8952e0ed18e7c10e93fad4d9d7ac4cf33af611b830a",
+      "created_at": "2026-11-27T02:27:08.537Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
@@ -46742,8 +46742,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "3d5c81d8bb578a133465eb691d772097d88593e75e65783d606c1fa9adbc5cde",
-      "created_at": "2026-11-27T01:46:44.567Z"
+      "content_hash": "998f95f5dd0d3b7d276536cea990b6964e30aa827b0bc87851dc1d75bac19f31",
+      "created_at": "2026-11-27T02:27:09.634Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

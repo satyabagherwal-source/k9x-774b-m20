@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-F3DX",
-    "timestamp": "2026-11-25T14:41:43.653Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "f23cd9bb58f88998c6337f89a6580d5feb8a98bc696dc7e2f3fccad7b7f26234",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-PZWU",
     "timestamp": "2026-11-25T14:50:12.366Z",
     "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
@@ -7492,6 +7477,21 @@
     "contentHash": "36fe242bd778f2e3e518ceb7bea6fec4ee7baf9e3585e6701608d6dd6e0dc189",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-1UVI",
+    "timestamp": "2026-11-27T02:26:56.526Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "0cfd6450a865607bc463c0850532545bf7b725c7fc32cc83a08814503154baa6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
