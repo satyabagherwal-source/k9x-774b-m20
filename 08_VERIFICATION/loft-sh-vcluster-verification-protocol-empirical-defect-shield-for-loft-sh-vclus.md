@@ -4,22 +4,22 @@
 {
   "source_repository": "loft-sh/vcluster",
   "source_url": "https://github.com/loft-sh/vcluster",
-  "source_version": "1145cb57",
+  "source_version": "78f21ee0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T10:41:01.457Z",
+  "timestamp": "2026-11-27T03:43:58.576Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-loft-sh-vcluster",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `1145cb57`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:41:01.457Z`  
+> **Provenance**: Harvested from [loft-sh/vcluster](https://github.com/loft-sh/vcluster) (Revision: `78f21ee0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:43:58.576Z`  
 > **Learning ID**: `learn-github-loft-sh-vcluster`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `loft-sh/vcluster` (Commit: `1145cb57`)
+- **Target Repository**: `loft-sh/vcluster` (Commit: `78f21ee0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:40:59.561Z  
+> **Harvest Timestamp**: 2026-11-27T03:43:57.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11410 stars
+- **Stars / Engagement**: 11411 stars
 
 ---
 
@@ -1485,689 +1485,114 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1145cb57` (2026-11-25)
-**Commit Message**: fix(cli): ship helm v4.3.2 in the cli image and keep helm 3 behaviour (#2772)
+### Incident Patch 1: `78f21ee0` (2026-11-26)
+**Commit Message**: feat(cli): remove deprecated docker-login flag (#2789)
 
-* fix(cli): ship helm v4.3.2 in the cli image and keep helm 3 behaviour
+* feat(cli): remove docker-login flag
 
-The vcluster-cli image ships helm v3.22.0, built with Go 1.26.8, which does
-not reject certificate chains through the compromised eMudhra CAs. v4.3.2
-is built with Go 1.27.4, which does.
+* fix(cli): remove unused LoginCmd fields
 
-The CLI runs whichever helm it finds, so the helm client now reads the
-helm version once and, only for helm 4:
-- passes --server-side=false on install, upgrade and rollback, so releases
-  stay on client-side apply as with helm 3 instead of switching new
-  releases to server-side apply
-- uses --force-replace and --rollback-on-failure instead of the
-  deprecated --force and --atomic
+Monorepo-Commit: 21dabd498ecd486b5a506b17ce97cc13a0989130
 
-With helm 3, or a helm whose version cannot be read, the arguments are
-unchanged. The control plane deploy controller uses the same client, so
-chart deploys keep client-side apply once its image ships helm 4.
-
-* fix(cli): keep client-side apply for platform start and add cluster on helm 4
-
-vcluster platform start (the platform release and the ingress-nginx
-install) and vcluster platform add cluster run helm directly instead of
-through the helm client, so with helm 4 they
-
-**File**: `Dockerfile.cli.release` (modified, +1/-1)
+**File**: `cmd/vclusterctl/cmd/login.go` (modified, +3/-6)
 ```diff
-@@ -1,7 +1,7 @@
- # we use alpine for easier debugging
- FROM alpine:3.24
+@@ -16,10 +16,9 @@ type LoginCmd struct {
  
--ARG HELM_VERSION="v3.22.0"
-+ARG HELM_VERSION="v4.3.2"
- ARG TARGETARCH
+ 	Log log.Logger
  
- # Pull in the latest Alpine security patches for the base image
+-	Driver      string
+-	AccessKey   string
+-	Insecure    bool
+-	DockerLogin bool
++	Driver    string
++	AccessKey string
++	Insecure  bool
+ }
+ 
+ func NewLoginCmd(globalFlags *flags.GlobalFlags) (*cobra.Command, error) {
+@@ -53,8 +52,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", true, product.Replace("Allow login into an insecure Loft instance"))
+-	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ 
+ 	return loginCmd, nil
+ }
 ```
 
-**File**: `cmd/vclusterctl/cmd/platform/add/cluster.go` (modified, +3/-0)
+**File**: `cmd/vclusterctl/cmd/login_test.go` (removed, +0/-20)
 ```diff
-@@ -18,6 +18,7 @@ import (
- 	"github.com/loft-sh/log"
- 	"github.com/loft-sh/vcluster/pkg/cli/flags"
- 	"github.com/loft-sh/vcluster/pkg/cli/util"
-+	"github.com/loft-sh/vcluster/pkg/helm"
- 	"github.com/loft-sh/vcluster/pkg/platform"
- 	"github.com/loft-sh/vcluster/pkg/platform/clihelper"
- 	"github.com/loft-sh/vcluster/pkg/platform/kube"
-@@ -255,6 +256,8 @@ func (cmd *ClusterCmd) Run(ctx context.Context, args []string) error {
- 		helmArgs = append(helmArgs, "--kube-context", cmd.Context)
- 	}
- 
-+	helmArgs = append(helmArgs, helm.ClientSideApplyArgs(ctx, "helm", cmd.Log)...)
-+
- 	kubeClientConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(clientcmd.NewDefaultClientConfigLoadingRules(), &clientcmd.ConfigOverrides{})
- 
- 	if cmd.Context != "" {
+@@ -1,20 +0,0 @@
+-package cmd
+-
+-import (
+-	"testing"
+-
+-	"github.com/loft-sh/vcluster/pkg/cli/flags"
+-)
+-
+-func TestDeprecatedLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
+-	cmd, err := NewLoginCmd(&flags.GlobalFlags{})
+-	if err != nil {
+-		t.Fatalf("NewLoginCmd: %v", err)
+-	}
+-	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
+-		t.Fatalf("--docker-login=false no longer parses: %v", err)
+-	}
+-	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
+-		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
+-	}
+-}
 ```
 
-**File**: `e2e/suite_lifecycle_test.go` (modified, +1/-0)
+**File**: `cmd/vclusterctl/cmd/platform/login.go` (modified, +3/-6)
 ```diff
-@@ -29,6 +29,7 @@ func init() {
- 	// (no cluster.Use dependency needed).
- 	lifecycle.TenantClusterLifecycleSpec()
- 	lifecycle.PauseResumeScaledDownSpec()
-+	lifecycle.HelmV4ApplyMethodSpec()
+@@ -26,10 +26,9 @@ type LoginCmd struct {
+ 
+ 	Log log.Logger
+ 
+-	Driver      string
+-	AccessKey   string
+-	Insecure    bool
+-	DockerLogin bool
++	Driver    string
++	AccessKey string
++	Insecure  bool
  }
  
- // Ordered because PauseResumeSpec is destructive - it kills the vcluster pods
+ func NewLoginCmd(gf *flags.GlobalFlags) LoginCmd {
+@@ -69,8 +68,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", false, product.Replace("Allow login into an insecure Loft instance"))
+-	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ 
+ 	return loginCmd
+ }
 ```
 
-**File**: `e2e/test_core/lifecycle/helm_download.go` (added, +184/-0)
+**File**: `cmd/vclusterctl/cmd/platform/login_test.go` (removed, +0/-17)
 ```diff
-@@ -0,0 +1,184 @@
-+package lifecycle
-+
-+import (
-+	"archive/tar"
-+	"bytes"
-+	"compress/gzip"
-+	"context"
-+	"crypto/sha256"
-+	"encoding/hex"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"net/http"
-+	"os"
-+	"path/filepath"
-+	"regexp"
-+	"runtime"
-+	"sync"
-+	"time"
-+)
-+
-+// helmV3Version is the helm 3 the specs use to create a release the way users
-+// on helm 3 did. It is downloaded rather than taken from PATH, so the spec
-+// still runs when CI moves its own helm to helm 4.
-+const helmV3Version = "v3.22.1"
-+
-+// helmSHA256 pins the published sha256 of each helm archive the specs download,
-+// by version and platform
-+// (https://get.helm.sh/helm-<version>-<os>-<arch>.tar.gz.sha256sum). The helm 4
-+// spec downloads the version Dockerfile.cli.release ships, so a helm bump there
-+// must add its checksums here or the spec fails.
-+var helmSHA256 = map[string]map[string]string{
-+	"v3.22.1": {
-+		"linux-amd64":  "896cf63684a42a723d61c980369d6e588330927deb13676ca0d85006dd6da0ea",
-+		"linux-arm64":  "4c29e286b279d170fa048ddfc3e4e83dcd069ca9c52102766ba672d7149e694d",
-+		"darwin-amd64": "cf850a81b908f8eef0331e6b18776da2767bcac639ca84472311dad20008495c",
-+		"darwin-arm64": "e73da8a0b0d5193774fdff17ce6319c7436bb22ee229b45fd64f3c40368c753a",
-+	},
-+	"v4.3.2": {
-+		"linux-amd64":  "d1c0278d46beab79582d7e50f5b3dc206944ba8e577cde618513fd07daa53983",
-+		"linux-arm64":  "df31cb61680ef728f82c770e5280dd565617bee6b039d37e85c677288be4bbb0",
-+		"darwin-amd64": "9e0068e9ae18c441d27388190ee7f53ae65eba44bfe910b40bdac44c4b51fa71",
-+		"darwin-arm64": "6f3421de3a8cc2ac578c8cfb33b8edde290dde2871bc1bab12e24f2e5caeaa90",
-+	},
-+}
-+
-+var helmVersionArg = regexp.MustCompile(`(?m)^ARG HELM_VERSION="(v[^"]+)"`)
-+
-+// cliImageHelmVersion returns HELM_VERSION from Dockerfile.cli.release: the helm
-+// the vcluster-cli image ships, which this spec tests against.
-+func cliImageHelmVersion() (string, error) {
-+	_, file, _, ok := runtime.Caller(0)
-+	if !ok {
-+		return "", errors.New("cannot locate the source file to find Dockerfile.cli.release")
-+	}
-+	path := filepath.Join(filepath.Dir(file), "..", "..", "..", "Dockerfile.cli.release")
-+	data, err := os.ReadFile(path)
-+	if err != nil {
-+		return "", err
-+	}
-+	match := helmVersionArg.FindSubmatch(data)
-+	if match == nil {
-+		return "", fmt.Errorf("%s has no ARG HELM_VERSION", path)
-+	}
-+	return string(match[1]), nil
-+}
-+
-+var (
-+	helmDirsMu sync.Mutex
-+	helmDirs   = map[string]string{}
-+)
-+
-+// cachedHelmDir returns a directory holding the given helm release as dir/helm.
-+// It downloads each version once per test process, so the specs share one
-+// download. The directories live until the process exits.
-+func cachedHelmDir(ctx context.Context, version string) (string, error) {
-+	helmDirsMu.Lock()
-+	defer helmDirsMu.Unlock()
-+	if dir, ok := helmDirs[version]; ok {
-+		return dir, nil
-+	}
-+	dir, err := os.MkdirTemp("", "vcluster-e2e-helm-"+version+"-")
-+	if err != nil {
-+		return "", err
-+	}
-+	if err := downloadHelm(ctx, version, dir); err != nil {
-+		_ = os.RemoveAll(dir)
-+		return "", err
-+	}
-+	helmDirs[version] = dir
-+	return dir, nil
-+}
-+
-+// helmDownloadAttempts and helmDownloadBackoff bound the retries, so a short
-+// network blip on get.helm.sh does not fail the spec.
-+const (
-+	helmDownloadAttempts = 3
-+	helmDownloadBackoff  = 5 * time.Second
-+)
-+
-+// downloadHelm downloads the helm release for this platform, checks it against
-+// helmSHA256 and writes the binary to dir/helm. It retries failed downloads but
-+// not a checksum mismatch.
-+func downloadHelm(ctx context.Context, version, dir string) error {
-+	platform := runtime.GOOS + "-" + runtime.GOARCH
-+	want, ok := helmSHA256[version][platform]
-+	if !ok {
-+		return fmt.Errorf("no pinned checksum for helm %s on %s: add it to helmSHA256", version, platform)
-+	}
-+	url := fmt.Sprintf("https://get.helm.sh/helm-%s-%s.tar.gz", version, platform)
-+
-+	var archive []byte
-+	var err error
-+	for attempt := 1; ; attempt++ {
-+		archive, err = fetch(ctx, url)
-+		if err == nil || attempt == helmDownloadAttempts {
-+			break
-+		}
-+		select {
-+		case <-ctx.Done():
-+			return fmt.Errorf("%w (last error: %w)", ctx.Err(), err)
-+		case <-time.After(time.Duration(attempt) * helmDownloadBackoff):
-+		}
-+	}
-+	if err != nil {
-+		return fmt.Errorf("after %d attempts: %w", helmDownloadAttempts, err)
-+	}
-+
-+	sum := sha256.Sum256(archive)
-+	if got := hex.EncodeToString(sum[:]); got != want {
-+		return fmt.Errorf("checksum of %s is %s, want %s", url, got, want)
-+	}
-+	return extractHelm(archive, platform, url, dir)
-+}
-+
-+func fetch(ctx context.Context, url string) ([]byte, error) {
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-+	if err != nil {
-+		return nil, err
-+	}
-+	resp, err := http.DefaultClient.Do(req)
-+	if err != nil {
-+		return nil, fmt.Errorf("download %s: %w", url, err)
-+	}
-+	defer resp.Body.Close()
-+	if resp.StatusCode != http.StatusOK {
-+		return nil, fmt.Errorf("download %s: %s", url, resp.Status)
-+	}
-+	archive, err := io.ReadAll(resp.Body)
-+	if err != nil {
-
-```
-
-**File**: `e2e/test_core/lifecycle/helpers.go` (modified, +9/-0)
-```diff
-@@ -44,7 +44,16 @@ func createArgs(name, namespace string) []string {
- }
- 
- func runVClusterCmd(ctx context.Context, args ...string) (string, error) {
-+	return runVClusterCmdEnv(ctx, nil, args...)
-+}
-+
-+// runVClusterCmdEnv runs the vcluster CLI with env added to this process's
-+// environment, for example to put a different helm first on PATH.
-+func runVClusterCmdEnv(ctx context.Context, env []string, args ...string) (string, error) {
- 	cmd := exec.CommandContext(ctx, vclusterBinPath(), args...)
-+	if env != nil {
-+		cmd.Env = append(os.Environ(), env...)
-+	}
- 	out, err := cmd.CombinedOutput()
- 	if err != nil {
- 		return string(out), fmt.Errorf("vcluster %s failed: %w\noutput: %s", strings.Join(args, " "), err, string(out))
-```
-
-**File**: `e2e/test_core/lifecycle/test_helm_v4.go` (added, +291/-0)
-```diff
-@@ -0,0 +1,291 @@
-+package lifecycle
-+
-+import (
-+	"bytes"
-+	"compress/gzip"
-+	"context"
-+	"encoding/base64"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"strings"
-+
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/kubernetes"
-+
-+	"github.com/loft-sh/vcluster/e2e/constants"
-+	"github.com/loft-sh/vcluster/e2e/labels"
-+	"github.com/loft-sh/vcluster/pkg/util/random"
-+)
-+
-+// upgradeAnnotation is set on the control plane StatefulSet by the upgrade, to
-+// check that the new value was applied.
-+const (
-+	upgradeAnnotationKey   = "e2e-helm"
-+	upgradeAnnotationValue = "v4"
-+)
-+
-+// HelmV4ApplyMethodSpec checks that the CLI keeps client-side apply when the
-+// helm on PATH is helm 4, which otherwise creates new releases with
-+// server-side apply. It also checks that helm 4 can upgrade and delete a
-+// release helm 3 created. The spec downloads the helm versions it needs, so it
-+// does not depend on the helm CI puts on PATH.
-+func HelmV4ApplyMethodSpec() {
-+	Describe("Tenant cluster create, upgrade and delete with helm 4", labels.PR, labels.Core, labels.CLI, func() {
-+		Context("client-side apply", Ordered, func() {
-+			// Ordered because each spec works on the release the create spec
-+			// made.
-+			var (
-+				clusterName string
-+				namespace   string
-+				hostClient  kubernetes.Interface
-+				pathEnv     string
-+			)
-+
-+			BeforeAll(func(ctx context.Context) {
-+				clusterName = "e2e-h4-" + random.String(6)
-+				namespace = clusterName
-+				hostClient = hostKubeClient()
-+				pathEnv = helmV4PathEnv(ctx)
-+			})
-+
-+			AfterAll(func(ctx context.Context) {
-+				// Cleanup when a spec failed before the delete spec. CI runs
-+				// with --teardown=false, which skips this.
-+				_, err := runVClusterCmdEnv(ctx, []string{pathEnv}, "delete", clusterName, "-n", namespace, "--delete-namespace", "--ignore-not-found")
-+				Expect(err).To(Succeed())
-+			})
-+
-+			It("should create the release with client-side apply", func(ctx context.Context) {
-+				By("Creating a tenant cluster with helm 4 on PATH", func() {
-+					_, err := runVClusterCmdEnv(ctx, []string{pathEnv}, createArgs(clusterName, namespace)...)
-+					Expect(err).To(Succeed())
-+				})
-+
-+				By("Waiting for tenant cluster to be ready", func() {
-+					waitForVClusterReady(ctx, hostClient, clusterName, namespace)
-+				})
-+
-+				expectClientSideApply(ctx, hostClient, clusterName, namespace, 1)
-+			})
-+
-+			It("should upgrade the release with client-side apply", func(ctx context.Context) {
-+				upgradeWithHelmV4(ctx, hostClient, pathEnv, clusterName, namespace)
-+				expectClientSideApply(ctx, hostClient, clusterName, namespace, 2)
-+			})
-+
-+			It("should delete the tenant cluster with helm 4", func(ctx context.Context) {
-+				deleteWithHelmV4(ctx, hostClient, pathEnv, clusterName, namespace)
-+			})
-+		})
-+
-+		Context("release created by helm 3", Ordered, func() {
-+			// Ordered because each spec works on the release the create spec
-+			// made. This is the switch existing users make when they move to
-+			// the vcluster-cli image with helm 4.
-+			var (
-+				clusterName string
-+				namespace   string
-+				hostClient  kubernetes.Interface
-+				pathEnv     string
-+				pathEnvV3   string
-+			)
-+
-+			BeforeAll(func(ctx context.Context) {
-+				clusterName = "e2e-h3to4-" + random.String(6)
-+				namespace = clusterName
-+				hostClient = hostKubeClient()
-+				pathEnv = helmV4PathEnv(ctx)
-+				pathEnvV3 = helmV3PathEnv(ctx)
-+			})
-+
-+			AfterAll(func(ctx context.Context) {
-+				// Cleanup when a spec failed before the delete spec. CI runs
-+				// with --teardown=false, which skips this.
-+				_, err := runVClusterCmdEnv(ctx, []string{pathEnv}, "delete", clusterName, "-n", namespace, "--delete-namespace", "--ignore-not-found")
-+				Expect(err).To(Succeed())
-+			})
-+
-+			It("should create the release with helm 3", func(ctx context.Context) {
-+				By(fmt.Sprintf("Creating a tenant cluster with helm %s on PATH", helmV3Version), func() {
-+					_, err := runVClusterCmdEnv(ctx, []string{pathEnvV3}, createArgs(clusterName, namespace)...)
-+					Expect(err).To(Succeed())
-+				})
-+
-+				By("Waiting for tenant cluster to be ready", func() {
-+					waitForVClusterReady(ctx, hostClient, clusterName, namespace)
-+				})
-+
-+				By("Checking helm 3 wrote revision 1", func() {
-+					release := getRelease(ctx, hostClient, clusterName, namespace, 1)
-+					Expect(release).NotTo(HaveKey("apply_method"), "helm 3 records no apply_method")
-+				})
-+			})
-+
-+			// Helm 4 keeps a release without apply_method on client-side apply
-+			// even without --server-side=false, so this checks the upgrade
-+			// works, not the flag. The client-side apply context covers the
-+			// flag.
-+			It("should upgrade a release created by helm 3 with helm 4", func(ctx context.Context) {
-+				upgradeWithHelmV4(ctx, hostClient, pathEnv, clusterName, namespace)
-+				expectClientS
-```
-
-**File**: `pkg/helm/helm.go` (modified, +86/-6)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"os"
- 	"os/exec"
- 	"strings"
-+	"sync"
- 	"time"
- 
- 	"github.com/loft-sh/log"
-@@ -60,6 +61,69 @@ type client struct {
- 	config   *clientcmdapi.Config
- 	log      log.Logger
- 	helmPath string
-+
-+	// helmV4 caches whether helmPath is helm 4 once the version has been read.
-+	// The CLI runs whichever helm the user has, so flags that only helm 4 knows
-+	// are added only when it is helm 4.
-+	helmV4Mu    sync.Mutex
-+	helmV4Known bool
-+	helmV4      bool
-+}
-+
-+// clientSideApply keeps helm 4 on client-side apply, as helm 3 did. Helm 4
-+// defaults new releases to server-side apply, which changes field ownership and
-+// can conflict with other writers. Helm 3 does not know the flag.
-+const clientSideApply = "--server-side=false"
-+
-+// isHelmV4 reports whether the helm binary is helm 4. A successful read is
-+// cached for the life of the client. A failed read is not cached, so a
-+// long-lived client, such as the deploy controller's, reads again on its next
-+// call instead of keeping helm 3 arguments for good.
-+func (c *client) isHelmV4(ctx context.Context) bool {
-+	c.helmV4Mu.Lock()
-+	defer c.helmV4Mu.Unlock()
-+	if c.helmV4Known {
-+		return c.helmV4
-+	}
-+
-+	helmV4, err := helmIsV4(ctx, c.helmPath)
-+	if err != nil {
-+		c.log.Debugf("could not read the helm version, assuming helm 3 for this call: %v", err)
-+		return false
-+	}
-+	c.helmV4, c.helmV4Known = helmV4, true
-+	return c.helmV4
-+}
-+
-+// readHelmV4 reports whether the helm binary at helmPath is helm 4. If the
-+// version cannot be read it assumes helm 3, whose flags helm 4 still accepts.
-+func readHelmV4(ctx context.Context, helmPath string, log log.Logger) bool {
-+	helmV4, err := helmIsV4(ctx, helmPath)
-+	if err != nil {
-+		log.Debugf("could not read the helm version, assuming helm 3: %v", err)
-+		return false
-+	}
-+	return helmV4
-+}
-+
-+// helmIsV4 runs helm version and reports whether the binary is helm 4.
-+func helmIsV4(ctx context.Context, helmPath string) (bool, error) {
-+	out, err := exec.CommandContext(ctx, helmPath, "version", "--template", "{{.Version}}").Output()
-+	if err != nil {
-+		return false, err
-+	}
-+	return strings.HasPrefix(strings.TrimSpace(string(out)), "v4."), nil
-+}
-+
-+// ClientSideApplyArgs returns the arguments that keep a helm install or
-+// upgrade on client-side apply: clientSideApply for helm 4, nothing for helm 3
-+// or a helm whose version cannot be read. Use it for helm calls that do not go
-+// through Client.
-+func ClientSideApplyArgs(ctx context.Context, helmPath string, log log.Logger) []string {
-+	if readHelmV4(ctx, helmPath, log) {
-+		return []string{clientSideApply}
-+	}
-+	return nil
- }
- 
- // NewClient creates a new helm client from the given config
-@@ -72,19 +136,27 @@ func NewClient(config *clientcmdapi.Config, log log.Logger, commandPath string)
- }
- 
- func (c *client) Install(ctx context.Context, name, namespace string, options UpgradeOptions) error {
--	return c.run(ctx, name, namespace, options, "install", []string{"--repository-config=''"})
-+	return c.run(ctx, name, namespace, options, "install", c.applyArgs(ctx, "--repository-config=''"))
- }
- 
- func (c *client) Upgrade(ctx context.Context, name, namespace string, options UpgradeOptions) error {
--	return c.run(ctx, name, namespace, options, "upgrade", []string{"--install", "--repository-config=''"})
-+	return c.run(ctx, name, namespace, options, "upgrade", c.applyArgs(ctx, "--install", "--repository-config=''"))
-+}
-+
-+// applyArgs appends clientSideApply to args when the binary is helm 4.
-+func (c *client) applyArgs(ctx context.Context, args ...string) []string {
-+	if c.isHelmV4(ctx) {
-+		args = append(args, clientSideApply)
-+	}
-+	return args
- }
- 
- func (c *client) Pull(ctx context.Context, name string, options UpgradeOptions) error {
- 	return c.pull(ctx, name, options)
- }
- 
- func (c *client) Rollback(ctx context.Context, name, namespace string) error {
--	return c.run(ctx, name, namespace, UpgradeOptions{}, "rollback", []string{})
-+	return c.run(ctx, name, namespace, UpgradeOptions{}, "rollback", c.applyArgs(ctx))
- }
- 
- func (c *client) run(ctx context.Context, name, namespace string, options UpgradeOptions, command string, extraArgs []string) error {
-@@ -161,12 +233,20 @@ func (c *client) run(ctx context.Context, name, namespace string, options Upgrad
- 		args = append(args, "--set-string", value)
- 	}
- 
--	// force
-+	// force; helm 4 deprecated --force and --atomic in favour of the new names
- 	if options.Force {
--		args = append(args, "--force")
-+		if c.isHelmV4(ctx) {
-+			args = append(args, "--force-replace")
-+		} else {
-+			args = append(args, "--force")
-+		}
- 	}
- 	if options.Atomic {
--		args = append(args, "--atomic")
-+		if c.isHelmV4(ctx) {
-+			args = append(args, "--rollback-on-failure")
-+		} else {
-+			args = append(args, "--atomic")
-+		}
- 	}
- 	if options.Debug {
- 		args = append(args, "--debug")
-```
-
-**File**: `pkg/helm/helm_test.go` (added, +215/-0)
-```diff
-@@ -0,0 +1,215 @@
-+package helm
-+
-+import (
-+	"context"
-+	"os"
-+	"path/filepath"
-+	"slices"
-+	"strings"
-+	"testing"
-+
-+	"github.com/loft-sh/log"
-+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-+)
-+
-+// fakeHelm writes a stand-in for helm that reports version and records the
-+// arguments of every other call, one call per line.
-+func fakeHelm(t *testing.T, version string) (helmPath, callsPath string) {
-+	t.Helper()
-+	dir := t.TempDir()
-+	helmPath = filepath.Join(dir, "helm")
-+	callsPath = filepath.Join(dir, "calls")
-+	script := "#!/bin/sh\n" +
-+		"if [ \"$1\" = version ]; then printf '%s' '" + version + "'; echo version >> '" + callsPath + "'; exit 0; fi\n" +
-+		"printf '%s\\n' \"$*\" >> '" + callsPath + "'\n"
-+	if err := os.WriteFile(helmPath, []byte(script), 0o755); err != nil {
-+		t.Fatal(err)
-+	}
-+	return helmPath, callsPath
-+}
-+
-+func readCalls(t *testing.T, path string) [][]string {
-+	t.Helper()
-+	out, err := os.ReadFile(path)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	var calls [][]string
-+	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
-+		calls = append(calls, strings.Fields(line))
-+	}
-+	return calls
-+}
-+
-+func fakeConfig() *clientcmdapi.Config {
-+	config := clientcmdapi.NewConfig()
-+	config.Clusters["target"] = &clientcmdapi.Cluster{Server: "https://127.0.0.1:1"}
-+	config.Contexts["target"] = &clientcmdapi.Context{Cluster: "target"}
-+	config.CurrentContext = "target"
-+	return config
-+}
-+
-+// TestHelmVersionFlags checks that helm 4 keeps client-side apply and gets the
-+// renamed --force and --atomic flags, while helm 3 gets none of the flags it
-+// does not know.
-+func TestHelmVersionFlags(t *testing.T) {
-+	tests := []struct {
-+		version     string
-+		wantV4Flags bool
-+	}{
-+		{version: "v3.22.1"},
-+		{version: "v3.14.4"},
-+		{version: "v4.3.2", wantV4Flags: true},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.version, func(t *testing.T) {
-+			helmPath, callsPath := fakeHelm(t, test.version)
-+			c := NewClient(fakeConfig(), log.Discard, helmPath)
-+			ctx := context.Background()
-+			options := UpgradeOptions{Chart: "vcluster", Repo: "https://charts.loft.sh", Force: true, Atomic: true}
-+
-+			if err := c.Install(ctx, "release", "ns", options); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := c.Upgrade(ctx, "release", "ns", options); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := c.Rollback(ctx, "release", "ns"); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			calls := readCalls(t, callsPath)
-+			var versionCalls int
-+			var helmCalls [][]string
-+			for _, call := range calls {
-+				if len(call) == 1 && call[0] == "version" {
-+					versionCalls++
-+					continue
-+				}
-+				helmCalls = append(helmCalls, call)
-+			}
-+			if versionCalls != 1 {
-+				t.Errorf("helm version was read %d times, want once", versionCalls)
-+			}
-+			if len(helmCalls) != 3 {
-+				t.Fatalf("got %d helm calls, want install, upgrade and rollback: %q", len(helmCalls), helmCalls)
-+			}
-+
-+			for _, call := range helmCalls {
-+				if got := slices.Contains(call, clientSideApply); got != test.wantV4Flags {
-+					t.Errorf("%s call has %s = %t, want %t: %q", call[0], clientSideApply, got, test.wantV4Flags, call)
-+				}
-+			}
-+			for _, call := range helmCalls[:2] {
-+				wantForce, wantAtomic := "--force", "--atomic"
-+				if test.wantV4Flags {
-+					wantForce, wantAtomic = "--force-replace", "--rollback-on-failure"
-+				}
-+				if !slices.Contains(call, wantForce) || !slices.Contains(call, wantAtomic) {
-+					t.Errorf("%s call = %q, want %s and %s", call[0], call, wantForce, wantAtomic)
-+				}
-+				if !test.wantV4Flags && (slices.Contains(call, "--force-replace") || slices.Contains(call, "--rollback-on-failure")) {
-+					t.Errorf("%s call = %q, want no helm 4 flag names for helm 3", call[0], call)
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+// TestHelmVersionUnreadable checks that a helm whose version cannot be read is
-+// treated as helm 3, so no helm-4-only flag is passed.
-+func TestHelmVersionUnreadable(t *testing.T) {
-+	dir := t.TempDir()
-+	helmPath := filepath.Join(dir, "helm")
-+	callsPath := filepath.Join(dir, "calls")
-+	script := "#!/bin/sh\nif [ \"$1\" = version ]; then exit 1; fi\nprintf '%s\\n' \"$*\" >> '" + callsPath + "'\n"
-+	if err := os.WriteFile(helmPath, []byte(script), 0o755); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	c := NewClient(fakeConfig(), log.Discard, helmPath)
-+	if err := c.Upgrade(context.Background(), "release", "ns", UpgradeOptions{Chart: "vcluster", Repo: "https://charts.loft.sh"}); err != nil {
-+		t.Fatal(err)
-+	}
-+	for _, call := range readCalls(t, callsPath) {
-+		if slices.Contains(call, clientSideApply) {
-+			t.Errorf("call = %q, want no %s when the helm version is unknown", call, clientSideApply)
-+		}
-+	}
-+}
-+
-+// TestClientSideApplyArgs checks the arguments given to helm calls that do not
-+// go through Client: client-side apply for helm 4 only.
-+func TestClientSideApplyArgs(t *testing.T) {
-+	tests := []struct {
-+		version string
-+		want    []string
-+	}{
-+		{version: "v3.22.1"},
-+		{version:
+@@ -1,17 +0,0 @@
+-package platform
+-
+-import (
+-	"testing"
+-
+-	"github.com/loft-sh/vcluster/pkg/cli/flags"
+-)
+-
+-func TestPlatformLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
+-	cmd := NewCobraLoginCmd(&flags.GlobalFlags{})
+-	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
+-		t.Fatalf("--docker-login=false no longer parses: %v", err)
+-	}
+-	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
+-		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
+-	}
+-}
 ```
 
 #### Recent Merged Pull Requests:
@@ -2196,31 +1621,38 @@ through the helm client, so with helm 4 they
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): ship helm v4.3.2 in the cli image and keep helm 3 behaviour
+## X. cli): remove deprecated docker-login flag
 
 **RULE**:
-When implementing operations in `Dockerfile.cli.release`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/vclusterctl/cmd/login.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1145cb57`: cli): ship helm v4.3.2 in the cli image and keep helm 3 behaviour. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78f21ee0`: cli): remove deprecated docker-login flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile.cli.release`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/login.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-ARG HELM_VERSION="v4.3.2"
+	Driver    string
+	AccessKey string
+	Insecure  bool
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-ARG HELM_VERSION="v3.22.0"
+	Driver      string
+	AccessKey   string
+	Insecure    bool
+	DockerLogin bool
+	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1145cb57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78f21ee0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

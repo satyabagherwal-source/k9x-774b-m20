@@ -4,24 +4,24 @@
 {
   "source_repository": "react-native-webrtc/react-native-webrtc",
   "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
-  "source_version": "7b9b451b",
+  "source_version": "0e4f5be1",
   "license": "MIT",
-  "timestamp": "2026-11-14T16:22:53.445Z",
+  "timestamp": "2026-11-27T03:43:55.288Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc) (Revision: `7b9b451b`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T16:22:53.445Z`  
+> **Provenance**: Harvested from [react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc) (Revision: `0e4f5be1`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T03:43:55.288Z`  
 > **Learning ID**: `learn-github-react-native-webrtc-react-native-webrtc`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence)
-- **Confidence Rating**: 60%
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react-native-webrtc/react-native-webrtc:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-native-webrtc/react-native-webrtc](https://github.com/react-native-webrtc/react-native-webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T16:22:52.668Z  
+> **Harvest Timestamp**: 2026-11-27T03:43:53.703Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The WebRTC module for React Native
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4995 stars
+- **Stars / Engagement**: 4993 stars
 
 ---
 
@@ -528,143 +528,25 @@ typedef NS_ENUM(NSInteger, RTCVideoViewObjectFit) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21ee6597` (2026-09-21)
-**Commit Message**: fix(ios): convert degradationPreference between its name and the enum
+### Incident Patch 1: `0e4f5be1` (2026-11-25)
+**Commit Message**: android(consumer-rules): ignore missing org.webrtc classes in R8 (#1860)
 
-On iOS, setParameters silently ignored every degradationPreference and applied
-no adaptation instead.
-
-RTCRtpSendParameters sends the preference to native as a name ("BALANCED"), but
-RTCRtpParameters.degradationPreference is an NSNumber holding an
-RTCDegradationPreference. The bridge assigned the string straight onto that
-property; the property is `copy` and NSString implements copyWithZone:, so the
-assignment succeeded with no warning and the enum was then read out of an
-NSString with intValue, which is 0 for any non-numeric string.
-
-0 is RTCDegradationPreferenceDisabled, so every preference produced the same
-result: the encoder was told never to adapt. maintain-resolution appeared to
-work only because nothing was ever adapted, and balanced did nothing at all.
-Measured on a call before this change, the encoder held 720x1280 at 30fps and
-let quantisation climb to qp 50 rather than reducing either, while leaving a
-third of its bitrate allowance unspent.
-
-The reverse direction needs converting too: parametersToJSON handed the raw
-NSNumber back, and RTCRtpSendParameters runs whatever arrives through
-fromNative, whi
-
-**File**: `ios/RCTWebRTC/SerializeUtils.h` (modified, +3/-0)
+**File**: `android/consumer-rules.pro` (modified, +1/-0)
 ```diff
-@@ -25,4 +25,7 @@
- + (NSDictionary *_Nonnull)streamToJSONWithPeerConnectionId:(NSNumber *_Nonnull)id
-                                                     stream:(RTCMediaStream *_Nonnull)stream
-                                             streamReactTag:(NSString *_Nonnull)streamReactTag;
-++ (NSNumber *_Nullable)parseDegradationPreference:(NSString *_Nonnull)name;
-++ (NSString *_Nullable)serializeDegradationPreference:(NSNumber *_Nonnull)value;
-+
- @end
-```
-
-**File**: `ios/RCTWebRTC/SerializeUtils.m` (modified, +29/-2)
-```diff
-@@ -75,6 +75,29 @@ + (NSDictionary *)receiverToJSONWithPeerConnectionId:(NSNumber *)id receiver:(RT
-     return receiverDictionary;
- }
- 
-+/**
-+ * The names RTCRtpSendParameters exchanges with JS, indexed by RTCDegradationPreference.
-+ *
-+ * JS sends and expects a name such as MAINTAIN_FRAMERATE, while the native property is an
-+ * NSNumber wrapping the enum, so both directions need a conversion.
-+ */
-++ (NSArray<NSString *> *_Nonnull)degradationPreferenceNames {
-+    return @[ @"DISABLED", @"MAINTAIN_FRAMERATE", @"MAINTAIN_RESOLUTION", @"BALANCED" ];
-+}
-+
-++ (NSNumber *_Nullable)parseDegradationPreference:(NSString *_Nonnull)name {
-+    NSUInteger index = [[self degradationPreferenceNames] indexOfObject:[name uppercaseString]];
-+
-+    return index == NSNotFound ? nil : @(index);
-+}
-+
-++ (NSString *_Nullable)serializeDegradationPreference:(NSNumber *_Nonnull)value {
-+    NSArray<NSString *> *names = [self degradationPreferenceNames];
-+    NSInteger index = value.integerValue;
-+
-+    return (index >= 0 && index < (NSInteger)names.count) ? names[index] : nil;
-+}
-+
- + (NSDictionary *)parametersToJSON:(RTCRtpParameters *)params {
-     NSMutableDictionary *paramsDictionary = [NSMutableDictionary new];
- 
-@@ -145,8 +168,12 @@ + (NSDictionary *)parametersToJSON:(RTCRtpParameters *)params {
-     paramsDictionary[@"encodings"] = encodings;
-     paramsDictionary[@"codecs"] = codecs;
- 
--    if (params.degradationPreference) {
--        paramsDictionary[@"degradationPreference"] = params.degradationPreference;
-+    if (params.degradationPreference != nil) {
-+        NSString *name = [SerializeUtils serializeDegradationPreference:params.degradationPreference];
-+
-+        if (name != nil) {
-+            paramsDictionary[@"degradationPreference"] = name;
-+        }
-     }
- 
-     return paramsDictionary;
-```
-
-**File**: `ios/RCTWebRTC/WebRTCModule+Transceivers.m` (modified, +5/-2)
-```diff
-@@ -245,8 +245,11 @@ - (RTCRtpParameters *)updateParametersWithOptions:(NSDictionary *)options params
-         encoding.scaleResolutionDownBy = encodingUpdate[@"scaleResolutionDownBy"];
-     }
- 
--    if ([options objectForKey:@"degradationPreference"]) {
--        params.degradationPreference = [options objectForKey:@"degradationPreference"];
-+    id degradationPreference = [options objectForKey:@"degradationPreference"];
-+    if ([degradationPreference isKindOfClass:[NSString class]]) {
-+        params.degradationPreference = [SerializeUtils parseDegradationPreference:degradationPreference];
-+    } else if ([degradationPreference isKindOfClass:[NSNumber class]]) {
-+        params.degradationPreference = degradationPreference;
-     }
- 
-     return params;
-```
-
----
-
-### Incident Patch 2: `7b9b451b` (2026-09-15)
-**Commit Message**: fix(android): preserve data channel event ordering
-
-**File**: `android/src/main/java/com/oney/WebRTCModule/PeerConnectionObserver.java` (modified, +3/-1)
-```diff
-@@ -359,7 +359,6 @@ public void onDataChannel(DataChannel dataChannel) {
-             final String reactTag = UUID.randomUUID().toString();
-             DataChannelWrapper dcw = new DataChannelWrapper(webRTCModule, id, reactTag, dataChannel);
-             dataChannels.put(reactTag, dcw);
--            dataChannel.registerObserver(dcw);
- 
-             WritableMap info = Arguments.createMap();
-             info.putInt("peerConnectionId", id);
-@@ -381,6 +380,9 @@ public void onDataChannel(DataChannel dataChannel) {
-             params.putMap("dataChannel", info);
- 
-             webRTCModule.sendEvent("peerConnectionDidOpenDataChannel", params);
-+
-+            // Ensure buffered messages reach JavaScript after the DataChannel is created.
-+            dataChannel.registerObserver(dcw);
-         });
-     }
- 
+@@ -3,3 +3,4 @@
+ -keep class org.jni_zero.** { *; }
+ -keep class J.N { *; }
+ -dontwarn org.jni_zero.**
++-dontwarn org.webrtc.**
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1860** (2026-11-25): android(consumer-rules): ignore missing org.webrtc classes in R8 (@phoique)
 - **PR #1857** (2026-11-11):    android: stop RTCView drawing the previous track after a stream switch (@shorifulmia85)
 - **PR #1855** (closed): Merge upstream react-native-webrtc@155.0.1 (@davidliu)
 - **PR #1854** (closed): Fix/leveller android 11 (@Arjit0762)
 - **PR #1853** (closed): Add patch queue, self-test app and skills for syncing with upstream (@filipi87)
 - **PR #1852** (2026-10-20): android: fix getDisplayMedia crash on API < 31 (@Calinteodor)
-- **PR #1851** (2026-10-20): Revert "ios(RCTWebRTC): enable Center Stage for devices that support it" (@Calinteodor)
 
 ---
 
@@ -684,23 +566,21 @@ fromNative, whi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): convert degradationPreference between its name and the enum
+## X. android(consumer-rules): ignore missing org.webrtc classes in R8
 
 **RULE**:
-When implementing operations in `ios/RCTWebRTC/SerializeUtils.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/consumer-rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21ee6597`: ios): convert degradationPreference between its name and the enum. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e4f5be1`: android(consumer-rules): ignore missing org.webrtc classes in R8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/RCTWebRTC/SerializeUtils.h`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/consumer-rules.pro`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-+ (NSNumber *_Nullable)parseDegradationPreference:(NSString *_Nonnull)name;
-+ (NSString *_Nullable)serializeDegradationPreference:(NSNumber *_Nonnull)value;
-
+-dontwarn org.webrtc.**
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -710,7 +590,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21ee6597` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e4f5be1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

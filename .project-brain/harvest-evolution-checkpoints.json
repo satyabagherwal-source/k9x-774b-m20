@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T03:35:29.236Z",
+  "last_updated": "2026-11-27T03:44:41.444Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T02:27:08.788Z",
@@ -473,7 +473,7 @@
       "staged_for_review": 1
     },
     "loft-sh-vcluster-learnings.md": {
-      "processed_at": "2026-11-25T10:26:16.412Z",
+      "processed_at": "2026-11-27T03:44:40.199Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2653,7 +2653,7 @@
       "staged_for_review": 0
     },
     "react-native-webrtc-react-native-webrtc-learnings.md": {
-      "processed_at": "2026-11-14T16:23:47.626Z",
+      "processed_at": "2026-11-27T03:44:38.941Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -2683,7 +2683,7 @@
       "staged_for_review": 0
     },
     "hf-unsloth-embeddinggemma-2-gguf-learnings.md": {
-      "processed_at": "2026-11-23T18:32:32.506Z",
+      "processed_at": "2026-11-27T03:44:06.296Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4018,7 +4018,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4794,
-  "total_canonical_promoted": 571,
-  "total_staged_for_review": 3591
+  "total_dossiers_evaluated": 4797,
+  "total_canonical_promoted": 572,
+  "total_staged_for_review": 3592
 }

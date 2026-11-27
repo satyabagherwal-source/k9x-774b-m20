@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T03:35:28.449Z",
+  "last_updated": "2026-11-27T03:44:40.754Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68433,6 +68433,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DC7F2D-renderer-refuse-last-error-reads-off-the.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-TSU1",
+      "directive_title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
+      "source_repo": "react-native-webrtc-react-native-webrtc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TSU1-android-consumer-rules-ignore-missing-org-webrtc-classes-in-r8.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-SX9S",
+      "directive_title": "remove deprecated docker-login flag",
+      "source_repo": "loft-sh/vcluster",
+      "source_commit": "78f21ee0",
+      "staged_file": "11_INBOX/candidate-directives/CD-SX9S-remove-deprecated-docker-login-flag.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-T0NV",
+      "directive_title": "Allow requested recommended skill availability warnings",
+      "source_repo": "apache/shardingsphere",
+      "source_commit": "ace4d4f2",
+      "staged_file": "11_INBOX/candidate-directives/CD-T0NV-allow-requested-recommended-skill-availability-warnings.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-TTTD",
+      "directive_title": "cli): remove deprecated docker-login flag",
+      "source_repo": "loft-sh-vcluster-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TTTD-cli-remove-deprecated-docker-login-flag.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "L"
     }
   ]
 }

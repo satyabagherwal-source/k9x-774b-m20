@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-5G5J",
-    "timestamp": "2026-11-25T15:30:12.871Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a0960af7ab4a0ae2524039605fe29e134f3931fc5b4b0f5d8b0a3a46240792dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-GQSV",
-    "timestamp": "2026-11-25T15:38:59.887Z",
-    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-    "contentHash": "3a98c189c310e6c515a855c464e40618265df174a301873bca93846cd1ae13f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-RMJ9",
-    "timestamp": "2026-11-25T15:47:27.573Z",
-    "repository": "withcoral/coral",
-    "learningId": "learn-github-withcoral-coral",
-    "contentHash": "bbd76e6c484e87a01c0a770e3180a314b1741a80a3b6f27e7f10b7823717f232",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-RNY2",
-    "timestamp": "2026-11-25T15:47:29.402Z",
-    "repository": "unsloth/DeepSeek-V4.1-Flash-1017-GGUF",
-    "learningId": "learn-huggingface-unsloth-deepseek-v4-1-flash-1017-gguf",
-    "contentHash": "f0b8cf41022b75ec1ab276c24cc7f29e325d60ab5bce1e967f9f1ef4319738a0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-RYNG",
     "timestamp": "2026-11-25T15:47:43.276Z",
     "repository": "weaviate/weaviate",
@@ -7492,6 +7432,66 @@
     "contentHash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-SPA4",
+    "timestamp": "2026-11-27T03:43:48.220Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "501d5554a13523c3df52aa443b637a5adc6ab5c049dd367fdc243770e3d8b181",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-SUJ2",
+    "timestamp": "2026-11-27T03:43:55.022Z",
+    "repository": "react-native-webrtc/react-native-webrtc",
+    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
+    "contentHash": "dfa149b6104373b9a68ef9397c0bfccf9025250673f099c9e414c4d5e75b660d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-SX2A",
+    "timestamp": "2026-11-27T03:43:58.306Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-T0F2",
+    "timestamp": "2026-11-27T03:44:02.654Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

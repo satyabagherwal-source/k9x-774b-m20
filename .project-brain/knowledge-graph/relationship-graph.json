@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T01:55:37.082Z",
+  "updated_at": "2026-11-27T03:44:38.938Z",
   "statistics": {
-    "total_nodes": 571,
+    "total_nodes": 572,
     "total_edges": 235,
     "domain_distribution": {
       "D": 343,
       "M": 1,
-      "H": 107,
+      "H": 108,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12743,6 +12743,28 @@
       ],
       "created_at": "2026-11-27T01:55:37.082Z",
       "updated_at": "2026-11-27T01:55:37.082Z"
+    },
+    "DOM-H-A566253F": {
+      "id": "DOM-H-A566253F",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
+      "summary": "Prevents defects observed in production commit `0e4f5be1`: android(consumer-rules): ignore missing org.webrtc classes in R8. Unvalidated exe -> When implementing operations in `android/consumer-rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, a",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "0e4f5be1",
+        "observed_at": "2026-11-27T03:43:53.708Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-27T03:44:38.938Z",
+      "updated_at": "2026-11-27T03:44:38.938Z"
     }
   },
   "edges": [

@@ -13653,3 +13653,8 @@
 | `CYCLE-20261127-4GU3` | `2026-11-27T03:24:57.531Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10817` | Yes (`1bccdef6...`) |
 | `CYCLE-20261127-HJO4` | `2026-11-27T03:35:07.732Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`26a0968c...`) |
 | `CYCLE-20261127-HU1D` | `2026-11-27T03:35:21.169Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10818` | Yes (`5d3832c8...`) |
+| `CYCLE-20261127-SPA4` | `2026-11-27T03:43:48.220Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`501d5554...`) |
+| `CYCLE-20261127-SUJ2` | `2026-11-27T03:43:55.022Z` | `react-native-webrtc/react-native-webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10819` | Yes (`dfa149b6...`) |
+| `CYCLE-20261127-SX2A` | `2026-11-27T03:43:58.306Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10820` | Yes (`a607c532...`) |
+| `CYCLE-20261127-T0F2` | `2026-11-27T03:44:02.654Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | Yes (`08fc35df...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T03:44:38.941Z` | `react-native-webrtc-react-native-webrtc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A566253F` [Domain H] | Yes (`e0adec49...`) |

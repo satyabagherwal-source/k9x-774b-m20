@@ -675,8 +675,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "8834d8093e5fdd4d3c81cacce058191b0922d23b224cb1850c0fe244dda6ef83",
-    "lastHarvestedAt": "2026-11-23T18:32:11.718Z",
+    "contentHash": "501d5554a13523c3df52aa443b637a5adc6ab5c049dd367fdc243770e3d8b181",
+    "lastHarvestedAt": "2026-11-27T03:43:48.225Z",
     "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf"
   },
   "hf-cloudflare-clef": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "03aa12d5",
+    "sourceVersion": "ace4d4f2",
     "license": "Apache-2.0",
-    "contentHash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
-    "lastHarvestedAt": "2026-11-25T07:39:33.080Z",
+    "contentHash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
+    "lastHarvestedAt": "2026-11-27T03:44:02.659Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -5953,10 +5953,10 @@
     "repository": "react-native-webrtc/react-native-webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "sourceVersion": "7b9b451b",
+    "sourceVersion": "0e4f5be1",
     "license": "MIT",
-    "contentHash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
-    "lastHarvestedAt": "2026-11-14T16:22:53.319Z",
+    "contentHash": "dfa149b6104373b9a68ef9397c0bfccf9025250673f099c9e414c4d5e75b660d",
+    "lastHarvestedAt": "2026-11-27T03:43:55.038Z",
     "learningId": "learn-github-react-native-webrtc-react-native-webrtc"
   },
   "rook-rook": {
@@ -7333,10 +7333,10 @@
     "repository": "loft-sh/vcluster",
     "platform": "github",
     "sourceUrl": "https://github.com/loft-sh/vcluster",
-    "sourceVersion": "1145cb57",
+    "sourceVersion": "78f21ee0",
     "license": "Apache-2.0",
-    "contentHash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
-    "lastHarvestedAt": "2026-11-26T10:41:01.140Z",
+    "contentHash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
+    "lastHarvestedAt": "2026-11-27T03:43:58.311Z",
     "learningId": "learn-github-loft-sh-vcluster"
   },
   "arkivanov-decompose": {

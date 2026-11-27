@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T03:35:29.005Z",
+  "last_updated": "2026-11-27T03:44:41.247Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26329,
+  "total_items": 26335,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223362,8 +223362,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "1145cb57",
-      "content_hash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
+      "source_version": "78f21ee0",
+      "content_hash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -223391,6 +223391,11 @@
           "number": 10651,
           "title": "ship helm v4.3.2 in the cli image and keep helm 3 behaviour",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10820,
+          "title": "remove deprecated docker-login flag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223398,7 +223403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T10:41:00.789Z",
+      "verified_at": "2026-11-27T03:43:58.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223440,10 +223445,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "repository": "loft-sh/vcluster",
-      "source_version": "1145cb57",
-      "content_hash": "1213fddaf25beb43825c28f59d0b96141f6044ade9ba13dae7a9eccdf64e21f2",
+      "source_version": "78f21ee0",
+      "content_hash": "d900782029dccf67a3ee9c1a95f1faaf82e28e4577f4f58aa2a75ee18b17ea13",
       "domain_letter": "L",
-      "persisted_at": "2026-11-26T10:41:01.773Z"
+      "persisted_at": "2026-11-27T03:43:58.794Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster",
@@ -223452,10 +223457,10 @@
       "relative_path": "08_VERIFICATION/loft-sh-vcluster-verification-protocol-empirical-defect-shield-for-loft-sh-vclus.md",
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh/vcluster",
       "repository": "loft-sh/vcluster",
-      "source_version": "1145cb57",
-      "content_hash": "584ee0df4ce27ac76c34e08bdb7b0aad3469cbb5d0474aae1eb3e871908dc64e",
+      "source_version": "78f21ee0",
+      "content_hash": "b4c2f151834ea74be652bbcfc7e7382bc1c13e33636aae943bafe72b5fa27ad1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T10:41:02.117Z"
+      "persisted_at": "2026-11-27T03:43:59.009Z"
     },
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
@@ -223592,9 +223597,9 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "2619c79af647c248ae9e7b9a9bfc00c82c967686a1c7f2a47999f4fe37c6c472",
+      "content_hash": "726ce3f325c3aed6d91deb466e9adf61160e677235ecfd5886b8669007896c0c",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T21:05:02.128Z"
+      "persisted_at": "2026-11-27T03:44:41.012Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster-learnings",
@@ -223604,9 +223609,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh-vcluster-learnings",
       "repository": "loft-sh-vcluster-learnings",
       "source_version": "HEAD",
-      "content_hash": "064f0168a67d7ea4652d386dfe4878e3b35b66cb73f44761dfa3cb442fd37ed0",
+      "content_hash": "3a1bd8b08273dbd2b211ee088fa00a10276818b8e7f520689897ec377c9859c6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:05:02.318Z"
+      "persisted_at": "2026-11-27T03:44:41.247Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -235611,14 +235616,19 @@
       "slug": "react-native-webrtc-react-native-webrtc",
       "platform": "github",
       "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
-      "source_version": "7b9b451b",
-      "content_hash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
+      "source_version": "0e4f5be1",
+      "content_hash": "dfa149b6104373b9a68ef9397c0bfccf9025250673f099c9e414c4d5e75b660d",
       "dossier_path": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md",
       "promoted_rules": [
         {
           "number": 8506,
           "title": "convert degradationPreference between its name and the enum",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10819,
+          "title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235627,7 +235637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T16:22:53.198Z",
+      "verified_at": "2026-11-27T03:43:54.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235669,10 +235679,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-native-webrtc-react-native-webrtc-technical-construction-intelligence-reac.md",
       "title": "Technical Construction Intelligence: react-native-webrtc/react-native-webrtc Core Invariants",
       "repository": "react-native-webrtc/react-native-webrtc",
-      "source_version": "7b9b451b",
-      "content_hash": "e91351535b91262740ab4208f26255f6d9808bacee9a9611dd79b7ca39bd18f4",
+      "source_version": "0e4f5be1",
+      "content_hash": "b7ed51318a74f7f164ea787c8e7c551731f2ebb451f5013bcdd1f9e1356a3f0f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T16:22:53.532Z"
+      "persisted_at": "2026-11-27T03:43:55.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-native-webrtc-react-nati": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-native-webrtc-react-nati",
@@ -235682,9 +235692,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-native-webrtc-react-native-webrtc-learnings",
       "repository": "react-native-webrtc-react-native-webrtc-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a1067b827fd3f7baa2d5f5cd7a773bdbe0b24d1f1b06a211e76ef8ad1b1fc72",
+      "content_hash": "e8b18828fa2aae476fce2e7ca78194b67f174fab3fb12030873ff073c546ccb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T16:23:48.147Z"
+      "persisted_at": "2026-11-27T03:44:39.968Z"
     },
     "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -235742,9 +235752,9 @@
       "title": "Technical Construction Intelligence: react-native-webrtc-react-native-webrtc-learnings Core Invariants",
       "repository": "react-native-webrtc-react-native-webrtc-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cbda9ae453d3e640c6efc35ae2462aaca3cc6e63762a22c6a20f2c4544887f9",
+      "content_hash": "a0d1a00ddf672dd875747a5c3b7f1222c73e801de15fb52c915e6affc333d1a9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T16:23:48.023Z"
+      "persisted_at": "2026-11-27T03:44:39.731Z"
     },
     "learn-github-tokio-rs-tokio": {
       "learning_id": "learn-github-tokio-rs-tokio",
@@ -237178,7 +237188,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "8834d8093e5fdd4d3c81cacce058191b0922d23b224cb1850c0fe244dda6ef83",
+      "content_hash": "501d5554a13523c3df52aa443b637a5adc6ab5c049dd367fdc243770e3d8b181",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [],
@@ -237187,7 +237197,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:32:11.491Z",
+      "verified_at": "2026-11-27T03:43:47.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237204,9 +237214,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "d6aecaeeba5e704557db6975a1f5ff12f74cab35a3958b3f76c39e108fe5da07",
+      "content_hash": "d871cc4caf00d60e6afac56b859f2171369679936148426798c3d776da648e56",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:32:11.933Z"
+      "persisted_at": "2026-11-27T03:43:48.486Z"
     },
     "learn-github-apache-arrow": {
       "learning_id": "learn-github-apache-arrow",
@@ -237498,9 +237508,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3c4925b9600918dba9ecca2c413922fce6586962066e0ccd018935e4da06af1",
+      "content_hash": "f32af9639c62ea962a941f670b01e6c2bca2c94db3eed99d7b46df2a312522be",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T18:32:32.733Z"
+      "persisted_at": "2026-11-27T03:44:06.567Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
@@ -256067,8 +256077,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "03aa12d5",
-      "content_hash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
+      "source_version": "ace4d4f2",
+      "content_hash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -256128,7 +256138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:39:32.857Z",
+      "verified_at": "2026-11-27T03:44:02.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256170,10 +256180,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "03aa12d5",
-      "content_hash": "4615603d145febd25e8c84ace3e520f0b7808f5769c3d0e01dfcfc1302fb4995",
+      "source_version": "ace4d4f2",
+      "content_hash": "00d1435cc0549679b9e2be2e5445f14a80b78215e7b16476770272918fff5f29",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T07:39:33.502Z"
+      "persisted_at": "2026-11-27T03:44:03.193Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere",
@@ -256182,10 +256192,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "03aa12d5",
-      "content_hash": "d13d3a7df2999dc642f7c28ce3a3267820cda32642da55a0625b7a679ca2a6b2",
+      "source_version": "ace4d4f2",
+      "content_hash": "9ca07223a4659c29e456f99e753f2ff9be88ebe6cf66de0780a43b29dd47aa86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:39:33.831Z"
+      "persisted_at": "2026-11-27T03:44:03.422Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -361196,6 +361206,82 @@
       "content_hash": "9fd8f19445f581857fb4fb8411e9af54b50a945b3d5701c6edcd4da92e096e92",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T03:35:26.959Z"
+    },
+    "rule-10819": {
+      "learning_id": "rule-10819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10819,
+      "title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
+      "source_url": "https://github.com/react-native-webrtc/react-native-webrtc",
+      "source_version": "0e4f5be1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T03:43:54.726Z"
+    },
+    "candidate_directive-android-consumer-rules-ignore-missing-org-webrtc-classes-in-r8": {
+      "item_id": "candidate_directive-android-consumer-rules-ignore-missing-org-webrtc-classes-in-r8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TSU1-android-consumer-rules-ignore-missing-org-webrtc-classes-in-r8.md",
+      "title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
+      "repository": "react-native-webrtc-react-native-webrtc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9eace273f2fb9648a69808e11aefa9fa001d171807fa256e9ca5575bb1e9269e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T03:44:39.481Z"
+    },
+    "rule-10820": {
+      "learning_id": "rule-10820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10820,
+      "title": "remove deprecated docker-login flag",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "78f21ee0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T03:43:58.032Z"
+    },
+    "candidate_directive-remove-deprecated-docker-login-flag": {
+      "item_id": "candidate_directive-remove-deprecated-docker-login-flag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SX9S-remove-deprecated-docker-login-flag.md",
+      "title": "remove deprecated docker-login flag",
+      "repository": "loft-sh/vcluster",
+      "source_version": "78f21ee0",
+      "content_hash": "a0fb796c69d867037c4345f0f05e7f88ca4d1cf047a947b96e711c0c76087ef5",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T03:43:58.577Z"
+    },
+    "candidate_directive-allow-requested-recommended-skill-availability-warnings": {
+      "item_id": "candidate_directive-allow-requested-recommended-skill-availability-warnings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-T0NV-allow-requested-recommended-skill-availability-warnings.md",
+      "title": "Allow requested recommended skill availability warnings",
+      "repository": "apache/shardingsphere",
+      "source_version": "ace4d4f2",
+      "content_hash": "4e7a7eb39cdc7032062a9149bf212642b6a6891df9341b683b409fb5b184a684",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T03:44:02.975Z"
+    },
+    "candidate_directive-cli-remove-deprecated-docker-login-flag": {
+      "item_id": "candidate_directive-cli-remove-deprecated-docker-login-flag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TTTD-cli-remove-deprecated-docker-login-flag.md",
+      "title": "cli): remove deprecated docker-login flag",
+      "repository": "loft-sh-vcluster-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1a7466e0eb28ebdf3216903bfd64c523057eee68228f8a27852006758d22019e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-27T03:44:40.754Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T03:35:21.206Z",
+  "last_updated": "2026-11-27T03:44:02.720Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "8834d8093e5fdd4d3c81cacce058191b0922d23b224cb1850c0fe244dda6ef83",
-      "verified_at": "2026-11-23T18:32:11.726Z",
+      "content_hash": "501d5554a13523c3df52aa443b637a5adc6ab5c049dd367fdc243770e3d8b181",
+      "verified_at": "2026-11-27T03:43:48.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:32:11.726Z"
+      "last_updated": "2026-11-27T03:43:48.243Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "62972d7d61ae10d39dbe50c6e80b9749ccde34b2288843168aa7f68941583ce6",
-      "verified_at": "2026-11-25T07:39:33.096Z",
+      "content_hash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
+      "verified_at": "2026-11-27T03:44:02.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:39:33.096Z"
+      "last_updated": "2026-11-27T03:44:02.719Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -9051,14 +9051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
-      "content_hash": "9355cea507c6edd4fca6e1eae4e0cc0f0c56864b7acdcf1ebb2f7f9817c150bb",
-      "verified_at": "2026-11-14T16:22:53.325Z",
+      "content_hash": "dfa149b6104373b9a68ef9397c0bfccf9025250673f099c9e414c4d5e75b660d",
+      "verified_at": "2026-11-27T03:43:55.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T16:22:53.325Z"
+      "last_updated": "2026-11-27T03:43:55.052Z"
     },
     "rook/rook": {
       "repository": "rook/rook",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
-      "verified_at": "2026-11-26T10:41:01.166Z",
+      "content_hash": "a607c532fcba0a186ededef85319656e1fee9cce0a656863d2c9f9cc5a2ef932",
+      "verified_at": "2026-11-27T03:43:58.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:41:01.166Z"
+      "last_updated": "2026-11-27T03:43:58.335Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",

@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/shardingsphere",
   "source_url": "https://github.com/apache/shardingsphere",
-  "source_version": "03aa12d5",
+  "source_version": "ace4d4f2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T07:39:33.322Z",
+  "timestamp": "2026-11-27T03:44:02.971Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-shardingsphere",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `03aa12d5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T07:39:33.322Z`  
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `ace4d4f2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:44:02.971Z`  
 > **Learning ID**: `learn-github-apache-shardingsphere`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/shardingsphere:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:39:31.949Z  
+> **Harvest Timestamp**: 2026-11-27T03:44:02.029Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20837 stars
+- **Stars / Engagement**: 20839 stars
 
 ---
 
@@ -1448,13 +1448,13 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40551** (2026-11-24): **Clarify standard capability reuse before adding mechanisms**
-  *Symptoms*: 
-
-- **Issue #40545** (2026-11-24): **Fix prepared statement parameter index validation**
+- **Issue #40553** (2026-11-26): **Allow requested recommended skill availability warnings**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR fixes PreparedStatement accepting out-of-range parameter indexes. The concrete statement class reuses the parsed parameter count and throws a standard SQLException before modifying the parameter list, preserving valid bindings and batching behavior.  ### Result  Review Result: Mergeable  No blocking issues or required changes found. This assessment covers code correctness only.  ### Evidence  - All 59 relevant tests passed at the reviewed head, with 4/4 branches covered in the new validation method. - All 4 changed Java files passed Spotless and Checkstyle. - Adding throws SQLException may require exception handling updates in external source code that calls setters through concrete implementation types. External downstream compilation was not verified.  ### Coverage  [PR #40545](https://github.com/apache/shardingsphere/pull/40545), head `f6ee5a8a8ded`: all 4 changed files and related call paths reviewed. Two independent reviews and coordinator verification complet
+  > ### Summary This PR centralizes availability checks for eight recommended skills in the repository and requires using Ponytail when available through the existing implementation entry point. Missing skills produce one aggregated warning without blocking work; the existing seven skill triggers and required verification remain unchanged.  ### Result Review Result: Mergeable No blocking issues or recommended changes were found within the code-review scope.  ### Evidence  - Verified the preflight entry in `.codex/skills/code-implementation/SKILL.md:14` and Ponytail’s coding trigger in `.codex/context/cross-cutting-skills.md:40`. - Policy validation passed; 174 successful source-read traces were reused after confirming their inputs were unchanged. - Checkstyle and Spotless do not apply to these Markdown/TOML changes.  ### Coverage PR #40553, head 92dc560ce82e; all three changed files were reviewed. CI was not queried. Source-read traces do not prove future model compliance.
+
+- **Issue #40551** (2026-11-24): **Clarify standard capability reuse before adding mechanisms**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1471,58 +1471,96 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03aa12d5` (2026-11-24)
-**Commit Message**: Clarify standard capability reuse before adding mechanisms (#40551)
+### Incident Patch 1: `ace4d4f2` (2026-11-26)
+**Commit Message**: Allow requested recommended skill availability warnings (#40553)
 
-**File**: `.codex/harness/agents/cases.toml` (modified, +59/-4)
+* docs: allow requested recommended skill availability warnings
+
+* docs: share recommended skill checks and Ponytail usage
+
+**File**: `.codex/context/cross-cutting-skills.md` (modified, +20/-1)
 ```diff
-@@ -59,7 +59,7 @@ forbidden_actions = ["edit_non_code", "add_abstraction", "change_public_contract
- required_reasons = ["local_code_authorized", "existing_owner_sufficient", "pre_handoff_review_required"]
- required_summary_terms = ["ColumnMetaReader", "readColumns"]
- policy_binding_profile = "code-write"
--policy_assertions = [{source = "implementation-rules", statements = ["Before choosing an implementation, inspect the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change.", "Prefer direct reuse, then composition or delegation, then an existing extension point."]}]
-+policy_assertions = [{source = "implementation-rules", statements = ["Before choosing an implementation, inspect applicable standard language and platform capabilities as well as the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change.", "Prefer direct reuse, then composition or delegation, then an existing extension point."]}]
- critical = true
+@@ -17,10 +17,29 @@
  
- [[cases]]
-@@ -4177,7 +4177,7 @@ required_summary_term_groups = [["getSimpleName", "VendorPool"]]
- forbidden_summary_terms = ["A.status=keep", "B.status=change"]
- critical = true
- policy_binding_profile = "review-pr"
--policy_assertions = [{source = "review-pr", statements = ["`Full path`: trace the relevant production or test entry path end to end; inspect setup, wrappers, earlier calls, generators, and consuming runtime.", "`Counter-evidence`: check the strongest evidence that could disprove the finding, especially author or maintainer replies and version-specific facts.", "`Necessity`: the requested change is required for safety, correctness, or an applicable repository design or contract rule in the selected focus, not merely cleaner or preferable."]}, {source = "implementation-rules", statements = ["Before choosing an implementation, inspect the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition."]}]
-+policy_assertions = [{source = "review-pr", statements = ["`Full path`: trace the relevant production or test entry path end to end; inspect setup, wrappers, earlier calls, generators, and consuming runtime.", "`Counter-evidence`: check the strongest evidence that could disprove the finding, especially author or maintainer replies and version-specific facts.", "`Necessity`: the requested change is required for safety, correctness, or an applicable repository design or contract rule in the selected focus, not merely cleaner or preferable."]}, {source = "implementation-rules", statements = ["Before choosing an implementation, inspect applicable standard language and platform capabilities as well as the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Before adding an interface, SPI, public method, registration mechanism, or bridge, identify why existing capabilities cannot express the confirmed requirement, why the proposed owner owns it, and which confirmed acceptance criterion fails without the addition."]}]
+ # Optional Cross-Cutting Skills
  
- [[cases]]
- id = "discovery_02"
-@@ -4243,7 +4243,7 @@ required_summary_term_groups = [["TYPE", "gauge"]]
- forbidden_summary_terms = ["A.status=keep", "B.status=change", "shared.status=change", "A.owners=[]", "B.owners=[SampleProvider,GenericCollector]"]
- critical = true
- policy_binding_profile = "review-pr"
--policy_assertions = [{source = "review-pr", statements = ["`Full path`: trace the relevant production or test entry path end to end; inspect setup, wrappers, earlier calls, generators, and consuming runtime.", "`Counter-evidence`: check the strongest evidence that could disprove the finding, especially author or maintainer replies and version-specific facts.", "`Necessity`: the requested change is required for safety, correctness, or an applicable repository design or contract rule in the 
+-The Skills in this file are optional workflow accelerators, not prerequisites. Availability alone is not a trigger. When an optional Skill is available and its trigger below applies, prefer it and use only the smallest matching Skill set. If it is unavailable, skip the Skill itself and continue with the applicable repository gates and ordinary workflow. Do not install, create, reconstruct, or treat the absence of an optional Skill as a blocker. Mention the absence only when the user explicitly requested the Skill or it leaves a material residual risk.
++The Skills in this file are optional workflow accelerators, not prerequisites. Availability alone is not a trigger. When an optional Skill is available and its trigger below applies, prefer it and use only the smallest matching Skill set. If it is unavailable, skip the Skill itself and continue with the applicable repository gates and ordinary workflow. Do not install, create, reconstruct, or treat the absence of an optional Skill as a blocker.
++For read-only tasks, mention the absence only when the user explicitly requested the Skill or it leaves a material residual risk.
+ 
+ Skipping a Skill never waives compatibility, correctness, security, scope, verification, or completion requirements. Using a Skill never expands the frozen task scope, allowed modules or files, acceptance checklist, write or remote authority, Git authority, or tool permissions. `AGENTS.md` prevails when a Skill conflicts with it.
+ 
++## Recommended Skill Availability
++
++Before the first code-affecting write of each task, check every Skill listed under Task-Specific Use, including those whose triggers do not apply to the task.
++Use the active Skill catalog's path first.
++If the entry is omitted or unusable, check `<CODEX_HOME>/skills/<name>/SKILL.md` (default Codex home: `~/.codex`) and `~/.agents/skills/<name>/SKILL.md`.
++Probe only these known paths without recursive scans or network access, and confirm each candidate file exists, is nonempty, and is readable.
++
++Read the full instructions only for available Skills whose triggers apply, and follow the task-specific rules below.
++Combine all missing, unreadable, empty, or otherwise unloadable recommended Skills and their reasons into one warning per coding task, then continue with the existing workflow without claiming those Skills were used.
++Do not automatically install missing Skills during this check.
++Reuse availability and reading results within the same task unless the relevant files or installation state change.
++This warning-and-continue fallback never downgrades a required repository policy, validation, verification, or review gate.
++
++## Task-Specific Use
++
++- Every coding task: read and apply `$ponytail` when available before the first code-affecting write.
++  [Ponytail](https://github.com/DietrichGebert/ponytail/tree/main/skills/ponytail) is installed independently; its absence follows the availability check above.
++  Limit its guidance to the current task even if the Skill requests session-wide persistence, and preserve the repository's architecture, compatibility, validation, verification, review, and reporting requirements.
+ - Implementation or review whose correctness depends on the current version of an external framework or library: use `$source-driven-development` when available. Identify the applicable version from repository dependency metadata, verify the relevant decision against authoritative primary documentation, record the source, and mark anything that cannot be verified as unverified. This verification remains required without the Skill. Do not invoke it for version-independent local logic.
+ - Designing, adding, or changing a public API, SPI, extension, loading or registration contract, module boundary, externally visible interface, or cross-module type contract: use `$api-and-interface-design` when available before implementation. Apply the Architecture Change Gate in `AGENTS.md` and the contract rules in `.codex/skills/code-implementation/references/rules/artifact-removal-and-contract-impact.md` whether or not the Skill is available; using it does not authorize the change or expand the confirmed scope.
+ - An unexpected test, build, runtime, or behavior failure: use `$debugging-and-error-recovery` when available. Stop unrelated implementation, preserve evidence, reproduce, localize, reduce, identify the root cause, and verify the result. Add focused regression protection only when the root cause is an in-scope production defect and the test protects meaningful owned behavior; do not add a test for an environment, infrastructure, or unrelated failure. A failure never authorizes an out-of-boundary fix or a Git write.
 ```
 
-**File**: `.codex/skills/code-implementation/references/rules/implementation.md` (modified, +3/-1)
+**File**: `.codex/harness/agents/policy-sources.toml` (modified, +4/-4)
 ```diff
-@@ -22,7 +22,9 @@ Apply this file to every production, test, script, or other implementation artif
- ## Design and Ownership
+@@ -18,8 +18,8 @@ root_max_bytes = 13000
  
- - Treat semantic and contract correctness, correct behavior and module ownership, verified compatibility and real boundaries, and every applicable authority, safety, scope, and architecture gate as prerequisites for each design choice. No design preference may compromise them.
--- Before choosing an implementation, inspect the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.
-+- Before choosing an implementation, inspect applicable standard language and platform capabilities as well as the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.
-+  Before introducing a new mechanism, identify the confirmed requirement or maintained contract that existing capabilities cannot satisfy.
-+  When direct reuse can meet the required behavior and maintained contracts with fewer mechanisms than a requested implementation, explain the simpler alternative and its tradeoffs before coding; preserve explicit user constraints unless the user changes them.
- - Before designing state-dependent output, establish the expected result for each supported state from confirmed requirements and consumers, distinguishing an unloaded module, a loaded module without instances, and instances with a zero count when applicable.
-   Check details, counts, and empty results against those requirements and consumers; the same Java return type does not establish the same data contract.
- - Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change. Prefer direct reuse, then composition or delegation, then an existing extension point. Do not invent a boundary when no maintained precedent exists. If the existing architecture cannot express the required behavior, apply the architecture-change gate before changing it.
+ [profiles]
+ root = ["agents"]
+-code-write = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
+-test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
++code-write = ["agents", "code-of-conduct", "code-implementation", "cross-cutting-skills", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
++test-write = ["agents", "token-efficiency", "code-of-conduct", "code-implementation", "cross-cutting-skills", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "change-completion"]
+ code-review = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification"]
+ code-analysis = ["agents", "implementation-rules"]
+ code-design = ["agents", "implementation-rules", "java-collections", "testing-rules", "contracts-and-removal", "cross-cutting-skills"]
+@@ -29,7 +29,7 @@ command-execution = ["agents", "token-efficiency", "docker-resources", "code-ver
+ cross-cutting = ["agents", "cross-cutting-skills"]
+ documentation = ["agents", "documentation-wording", "change-completion", "review-pr", "review-pr-coordination"]
+ analyze-issue = ["agents", "analyze-issue", "analyze-issue-output"]
+-gen-ut = ["agents", "code-of-conduct", "code-implementation", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
++gen-ut = ["agents", "code-of-conduct", "code-implementation", "cross-cutting-skills", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "gen-ut", "gen-ut-verification", "change-completion"]
+ review-pr = ["agents", "code-of-conduct", "coding-standards", "maven-dependencies", "java-naming", "java-types", "java-annotation-order", "java-constructors", "java-javadoc", "java-preconditions", "java-exceptions", "java-collections", "java-expressions", "java-line-wrapping", "java-testing", "defensive-code", "implementation-rules", "testing-rules", "contracts-and-removal", "non-regression", "code-verification", "review-pr", "review-pr-coordination", "review-pr-evidence", "review-pr-high-risk", "review-pr-sql-parser", "review-pr-corrections"]
+ policy-maintenance = ["agents", "policy-maintenance", "semantic-verification", "policy-source-manifest"]
+ 
+@@ -178,7 +178,7 @@ id = "code-implementation"
+ path = ".codex/skills/code-implementation/SKILL.md"
+ kind = "skill"
+ semantic = true
+-references = ["AGENTS.md", ".codex/context/change-completion.md", ".codex/skills/coding-standards/SKILL.md", ".codex/skills/code-implementation/references/rules/implementation.md", ".codex/skills/code-implementation/references/rules/testing.md"
+```
+
+**File**: `.codex/skills/code-implementation/SKILL.md` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ description: "Implement, fix, refactor, or remove repository code under required
+ 
+ Read every selected reference through EOF before relying on it. Do not substitute catalog metadata, a summary, another Skill, or ordinary coding judgment for a required repository source.
+ 
++- Before the first code-affecting write, read `.codex/context/cross-cutting-skills.md` through EOF and complete its recommended Skill availability check.
+ - For every code-affecting write, read `.codex/skills/code-implementation/references/rules/implementation.md`.
+ - Before loading the testing rules, use these routing facts: for Maven source trees only `src/main/**` may be the subject of added or updated tests; a change confined to `src/test/**` requires no additional coverage; and a script, configuration, policy, or harness change needs tests only when an existing focused test mechanism protects its behavior. Read `.codex/skills/code-implementation/references/rules/testing.md` before assessing test scenarios for changed `src/main/**` behavior, satisfying requested test or coverage work, or creating or changing a test.
+ - Read `.codex/skills/code-implementation/references/rules/artifact-removal-and-contract-impact.md` before removing or replacing an owner, classifying an artifact as unused or removable, changing a public or externally visible contract, or modifying an affected snapshot, golden file, registration, loading path, or workflow filter.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40553** (2026-11-26): Allow requested recommended skill availability warnings (@terrymanu)
 - **PR #40551** (2026-11-24): Clarify standard capability reuse before adding mechanisms (@terrymanu)
 - **PR #40545** (2026-11-24): Fix prepared statement parameter index validation (@terrymanu)
 - **PR #40543** (2026-11-23): Use AST and dialect options for PostgreSQL SQL handling (@strongduanmu)
 - **PR #40539** (2026-11-22): Fix Oracle unparenthesized function binding for dummy table queries (@terrymanu)
 - **PR #40538** (2026-11-21): Fix PostgreSQL keyword identifier compatibility (@terrymanu)
-- **PR #40537** (2026-11-21): Add regression coverage for unsupported Javadoc parameter nullability (@terrymanu)
 
 ---
 
@@ -1542,33 +1580,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clarify standard capability reuse before adding mechanisms
+## X. Allow requested recommended skill availability warnings
 
 **RULE**:
-When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.codex/context/cross-cutting-skills.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03aa12d5`: Clarify standard capability reuse before adding mechanisms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ace4d4f2`: Allow requested recommended skill availability warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/context/cross-cutting-skills.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-policy_assertions = [{source = "implementation-rules", statements = ["Before choosing an implementation, inspect applicable standard language and platform capabilities as well as the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change.", "Prefer direct reuse, then composition or delegation, then an existing extension point."]}]
-policy_assertions = [{source = "review-pr", statements = ["`Full path`: trace the relevant production or test entry path end to end; inspect setup, wrappers, earlier calls, generators, and consuming runtime.", "`Counter-evidence`: check the strongest evidence that could disprove the finding, especially author or maintainer replies and version-specific facts.", "`Necessity`: the requested change is required for safety, correctness, or an applicable repository design 
+The Skills in this file are optional workflow accelerators, not prerequisites. Availability alone is not a trigger. When an optional Skill is available and its trigger below applies, prefer it and use only the smallest matching Skill set. If it is unavailable, skip the Skill itself and continue with the applicable repository gates and ordinary workflow. Do not install, create, reconstruct, or treat the absence of an optional Skill as a blocker.
+For read-only tasks, mention the absence only when the user explicitly requested the Skill or it leaves a material residual risk.
+## Recommended Skill Availability
+
+Before the first code-affecting write of each task, check every Skill listed under Task-Specific Use, including those whose triggers do not apply to the task.
+Use the active Skill catalog's path first.
+If the entry is omitted or unusable, check `<CODEX_HOME>/skills/<name>/SKILL.md` (default Codex home: `~/.codex`) and `~/.agents/skills/<name>/SKILL.md`.
+Probe only these known paths without recursive scans or network access, and confirm each candidate file exists, is nonempty, and is readable.
+
+Read the full instructions only for available Skills whose triggers apply, and follow t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-policy_assertions = [{source = "implementation-rules", statements = ["Before choosing an implementation, inspect the current behavior owner, relevant architecture and sibling modules for existing capabilities and patterns that fit the required responsibilities, contracts and dependency boundaries.", "Among designs that satisfy these prerequisites, first preserve the maintained architecture already present in the repository, including its behavior owners, module boundaries, and design patterns, unless the user explicitly requires an authorized architecture change.", "Prefer direct reuse, then composition or delegation, then an existing extension point."]}]
-policy_assertions = [{source = "review-pr", statements = ["`Full path`: trace the relevant production or test entry path end to end; inspect setup, wrappers, earlier calls, generators, and consuming runtime.", "`Counter-evidence`: check the strongest evidence that could disprove the finding, especially author or maintainer replies and version-specific facts.", "`Necessity`: the requested change is required for safety, correctness, or an applicable repository design or contract rule in the selected focus, not merely cleaner or pref
+The Skills in this file are optional workflow accelerators, not prerequisites. Availability alone is not a trigger. When an optional Skill is available and its trigger below applies, prefer it and use only the smallest matching Skill set. If it is unavailable, skip the Skill itself and continue with the applicable repository gates and ordinary workflow. Do not install, create, reconstruct, or treat the absence of an optional Skill as a blocker. Mention the absence only when the user explicitly requested the Skill or it leaves a material residual risk.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03aa12d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ace4d4f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

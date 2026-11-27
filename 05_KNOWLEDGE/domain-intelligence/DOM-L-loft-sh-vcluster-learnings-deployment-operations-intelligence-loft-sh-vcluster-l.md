@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:05:01.822Z",
+  "timestamp": "2026-11-27T03:44:40.610Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-loft-sh-vcluster-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [loft-sh-vcluster-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:05:01.822Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T03:44:40.610Z`  
 > **Learning ID**: `LEARN-EVO-loft-sh-vcluster-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from loft-sh-vcluster-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source**: github ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
-> **Source Version**: `1671d54b`  
+> **Source Version**: `78f21ee0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T21:04:48.568Z  
+> **Timestamp**: 2026-11-27T03:43:57.025Z  
 > **Learning ID**: `learn-github-loft-sh-vcluster`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/loft-sh/vcluster](https://github.com/loft-sh/vcluster))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:04:48.563Z  
+> **Harvest Timestamp**: 2026-11-27T03:43:57.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: vCluster creates tenant clusters: fully isolated environments delivered as managed Kubernetes, or as the foundation for Slurm, Ray, Run:ai and inference clusters. Each gets its own API server, CRDs and RBAC, and runs on an existing cluster or standalone on bare metal. CNCF Certified Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11397 stars
+- **Stars / Engagement**: 11411 stars
 
 ---
 
@@ -1502,1579 +1502,114 @@ func ResumeVCluster(ctx context.Context, kubeClient *kubernetes.Clientset, name,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1671d54b` (2026-11-23)
-**Commit Message**: fix(syncer): skip host objects that belong to another virtual object (#2754)
+### Incident Patch 1: `78f21ee0` (2026-11-26)
+**Commit Message**: feat(cli): remove deprecated docker-login flag (#2789)
 
-* fix(syncer): skip host objects that belong to another virtual object
+* feat(cli): remove docker-login flag
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(cli): remove unused LoginCmd fields
 
-* fix(syncer): check the host object owner before endpoint deletes
+Monorepo-Commit: 21dabd498ecd486b5a506b17ce97cc13a0989130
 
-The endpoints and endpointslices ReconcileStart hooks run before
-getObjects and delete the host object under the computed name. When two
-virtual objects map to the same host name, that deleted the host object
-of the other virtual object. Run the same owner check there.
-
-Move the check to translate.BelongsToOtherVirtualObject so the syncer
-and the hooks share it, and keep the host name out of the SyncError
-event, which is visible inside the virtual cluster.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(syncer): cover host name collisions in reconcile and e2e
-
-Assert the SyncError event, the different-kind branch, and that the
-owning virtual object still syncs or replaces a stale host copy. Add a
-service collision test through Reconcile and an e2e spec that applies a
-colliding service with server-side apply, which skips the service
-create filter.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(
-
-**File**: `e2e/suite_e2e_test.go` (modified, +1/-0)
+**File**: `cmd/vclusterctl/cmd/login.go` (modified, +3/-6)
 ```diff
-@@ -37,6 +37,7 @@ func suiteCommonVCluster() {
+@@ -16,10 +16,9 @@ type LoginCmd struct {
  
- 			test_core.PodSyncSpec()
- 			test_core.SyncErrorSanitisationSpec()
-+			test_core.HostNameCollisionSpec()
- 			test_core.NetworkPolicySyncSpec()
- 			test_core.PVCSyncSpec()
- 			test_core.K8sDefaultEndpointSpec()
-```
-
-**File**: `e2e/test_core/sync/test_host_name_collision.go` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+package test_core
-+
-+import (
-+	"context"
-+
-+	"github.com/loft-sh/e2e-framework/pkg/setup/cluster"
-+	"github.com/loft-sh/vcluster/e2e/constants"
-+	"github.com/loft-sh/vcluster/e2e/labels"
-+	"github.com/loft-sh/vcluster/pkg/util/random"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+	. "github.com/onsi/ginkgo/v2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
-+	"k8s.io/client-go/kubernetes"
-+)
-+
-+// HostNameCollisionSpec verifies that two virtual services whose names translate to the same
-+// host name can't touch each other's host service. prod-x-<team>/web and <team>/web-x-prod both
-+// translate to web-x-prod-x-<team>-x-<vcluster>, so the second service, created with server-side
-+// apply, must stay unsynced with a SyncError event instead of taking over or deleting the host
-+// service of the first, and must not change the type of that host service.
-+func HostNameCollisionSpec() {
-+	Describe("Host name collision between virtual objects",
-+		labels.Core, labels.Sync, labels.Events,
-+		func() {
-+			var (
-+				hostClient     kubernetes.Interface
-+				vClusterClient kubernetes.Interface
-+				vClusterName   string
-+			)
-+
-+			BeforeEach(func(ctx context.Context) {
-+				hostClient = cluster.KubeClientFrom(ctx, constants.GetHostClusterName())
-+				Expect(hostClient).NotTo(BeNil())
-+				vClusterClient = cluster.CurrentKubeClientFrom(ctx)
-+				Expect(vClusterClient).NotTo(BeNil())
-+				vClusterName = cluster.CurrentClusterNameFrom(ctx)
-+			})
-+
-+			It("should not let a colliding service take over or delete another namespace's host service", labels.PR, func(ctx context.Context) {
-+				team := "team-" + random.String(6)
-+				victimNS, victimName := "prod-x-"+team, "web"
-+				attackerNS, attackerName := team, "web-x-prod"
-+				hostNS := vClusterHostNamespace(vClusterName)
-+				hostName := translate.SingleNamespaceHostName(victimName, victimNS, vClusterName)
-+				Expect(translate.SingleNamespaceHostName(attackerName, attackerNS, vClusterName)).To(Equal(hostName),
-+					"test names must translate to the same host name")
-+
-+				for _, ns := range []string{victimNS, attackerNS} {
-+					By("creating namespace "+ns+" in the virtual cluster", func() {
-+						_, err := vClusterClient.CoreV1().Namespaces().Create(ctx, &corev1.Namespace{
-+							ObjectMeta: metav1.ObjectMeta{Name: ns},
-+						}, metav1.CreateOptions{})
-+						Expect(err).To(Succeed())
-+						DeferCleanup(func(ctx context.Context) {
-+							err := vClusterClient.CoreV1().Namespaces().Delete(ctx, ns, metav1.DeleteOptions{})
-+							if !kerrors.IsNotFound(err) {
-+								Expect(err).To(Succeed())
-+							}
-+						})
-+					})
-+				}
-+
-+				expectHostServiceOfVictim := func(g Gomega, ctx context.Context) {
-+					hostSvc, err := hostClient.CoreV1().Services(hostNS).Get(ctx, hostName, metav1.GetOptions{})
-+					g.Expect(err).NotTo(HaveOccurred(), "host service %s/%s of %s/%s should exist", hostNS, hostName, victimNS, victimName)
-+					g.Expect(hostSvc.Annotations).To(HaveKeyWithValue(translate.NamespaceAnnotation, victimNS))
-+					g.Expect(hostSvc.Annotations).To(HaveKeyWithValue(translate.NameAnnotation, victimName))
-+					g.Expect(hostSvc.Spec.Ports).To(HaveLen(1))
-+					g.Expect(hostSvc.Spec.Ports[0].Port).To(Equal(int32(80)))
-+				}
-+
-+				By("creating the first service and waiting for its host service", func() {
-+					_, err := vClusterClient.CoreV1().Services(victimNS).Create(ctx, collisionService(victimName, 80), metav1.CreateOptions{})
-+					Expect(err).To(Succeed())
-+
-+					Eventually(expectHostServiceOfVictim).WithContext(ctx).
-+						WithPolling(constants.PollingInterval).
-+						WithTimeout(constants.PollingTimeout).
-+						Should(Succeed())
-+				})
-+
-+				By("verifying a plain create of the colliding service is rejected", func() {
-+					// the service create filter (pkg/server/filters/service.go) creates the host service first
-+					_, err := vClusterClient.CoreV1().Services(attackerNS).Create(ctx, collisionService(attackerName, 9999), metav1.CreateOptions{})
-+					Expect(kerrors.IsAlreadyExists(err)).To(BeTrue(), "expected AlreadyExists, got %v", err)
-+				})
-+
-+				By("creating the colliding service with server-side apply", func() {
-+					// server-side apply is a patch, so it bypasses the service create filter and leaves the collision to the syncer
-+					_, err := vClusterClient.CoreV1().Services(attackerNS).Apply(ctx,
-+						corev1apply.Service(attackerName, attackerNS).WithSpec(corev1apply.ServiceSpec().
-+							WithType(corev1.ServiceTypeExternalName).
-+							WithExternalName("example.com").
-+							WithPorts(corev1apply.ServicePort().WithName("http").WithPort(9999).WithProtocol(corev1.ProtocolTCP)),
-+						),
-+						metav1.ApplyOptions{FieldManager: "e2e-host-name-collision"},
-+					)
-+					Expect(err).To(Succeed())
-+				})
-+
-+				By("waiting for a SyncError
-```
-
-**File**: `pkg/controllers/resources/endpoints/syncer.go` (modified, +14/-0)
-```diff
-@@ -178,6 +178,11 @@ func (s *endpointsSyncer) ReconcileStart(ctx *synccontext.SyncContext, req ctrl.
- 			return true, nil
- 		}
+ 	Log log.Logger
  
-+		// another virtual object might map to the same host name, so don't delete its endpoints
-+		if translate.BelongsToOtherVirtualObject(endpoints, req.NamespacedName, s.GroupVersionKind().String()) {
-+			return true, nil
-+		}
-+
- 		// check if endpoints were created by us
- 		if endpoints.Annotations != nil && endpoints.Annotations[translate.NameAnnotation] != "" {
- 			// Deleting the endpoints is necessary here as some clusters would not correctly maintain
-@@ -196,6 +201,15 @@ func (s *endpointsSyncer) ReconcileStart(ctx *synccontext.SyncContext, req ctrl.
- 		return true, nil
- 	}
- 
-+	// another virtual service might map to the same host name, so don't touch the endpoints of its host service
-+	hostService := &corev1.Service{}
-+	err = ctx.HostClient.Get(ctx, mappings.VirtualToHost(ctx, req.Name, req.Namespace, mappings.Services()), hostService)
-+	if err != nil && !kerrors.IsNotFound(err) {
-+		return true, err
-+	} else if err == nil && translate.BelongsToOtherVirtualObject(hostService, req.NamespacedName, corev1.SchemeGroupVersion.WithKind("Service").String()) {
-+		return true, nil
-+	}
-+
- 	// check if it was a Kubernetes managed endpoints object before and delete it
- 	endpoints := &corev1.Endpoints{}
- 	err = ctx.HostClient.Get(ctx, s.VirtualToHost(ctx, req.NamespacedName, nil), endpoints)
-```
-
-**File**: `pkg/controllers/resources/endpoints/syncer_collision_test.go` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+package endpoints
-+
-+import (
-+	"testing"
-+
-+	"gotest.tools/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+
-+	"github.com/loft-sh/vcluster/pkg/syncer"
-+	syncertesting "github.com/loft-sh/vcluster/pkg/syncer/testing"
-+	testingutil "github.com/loft-sh/vcluster/pkg/util/testing"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+)
-+
-+// prod-x-team/web and team/web-x-prod translate to the same host name. Reconciling the endpoints of
-+// team/web-x-prod, a service with a selector, must not delete the host endpoints of prod-x-team/web.
-+//
-+//nolint:staticcheck // SA1019: corev1.Endpoints is deprecated, but still required for compatibility
-+func TestReconcileDoesNotDeleteCollidingHostEndpoints(t *testing.T) {
-+	translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+
-+	victim := types.NamespacedName{Namespace: "prod-x-team", Name: "web"}
-+	attacker := types.NamespacedName{Namespace: "team", Name: "web-x-prod"}
-+	hostName := translate.Default.HostName(nil, victim.Name, victim.Namespace)
-+	assert.Equal(t, hostName, translate.Default.HostName(nil, attacker.Name, attacker.Namespace), "test names don't collide")
-+
-+	test := syncertesting.SyncTest{
-+		InitialVirtualState: []runtime.Object{
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: victim.Namespace}},
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: attacker.Namespace}},
-+			&corev1.Service{ObjectMeta: metav1.ObjectMeta{Namespace: victim.Namespace, Name: victim.Name}},
-+			&corev1.Endpoints{
-+				ObjectMeta: metav1.ObjectMeta{Namespace: victim.Namespace, Name: victim.Name},
-+				Subsets:    []corev1.EndpointSubset{{Addresses: []corev1.EndpointAddress{{IP: "1.1.1.1"}}}},
-+			},
-+			&corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{Namespace: attacker.Namespace, Name: attacker.Name},
-+				Spec:       corev1.ServiceSpec{Selector: map[string]string{"app": "web"}},
-+			},
-+		},
-+	}
-+	pClient, vClient, vConfig := test.Setup()
-+	registerContext := syncertesting.NewFakeRegisterContext(vConfig, pClient, vClient)
-+	_, s := newFakeSyncer(t, registerContext)
-+	controller, err := syncer.NewSyncController(registerContext, s)
-+	assert.NilError(t, err)
-+
-+	reconcile := func(req types.NamespacedName) {
-+		_, err := controller.Reconcile(t.Context(), ctrl.Request{NamespacedName: req})
-+		assert.NilError(t, err)
-+	}
-+	hostOwner := func() types.NamespacedName {
-+		pEndpoints := &corev1.Endpoints{}
-+		assert.NilError(t, pClient.Get(t.Context(), hostName, pEndpoints), "host endpoints of %s were deleted", victim)
-+		return types.NamespacedName{Namespace: pEndpoints.Annotations[translate.NamespaceAnnotation], Name: pEndpoints.Annotations[translate.NameAnnotation]}
-+	}
-+
-+	reconcile(victim)
-+	assert.Equal(t, hostOwner(), victim)
-+
-+	reconcile(attacker)
-+	assert.Equal(t, hostOwner(), victim)
-+}
-+
-+// prod-x-team/web, a service with a selector, has host endpoints that the host cluster maintains.
-+// Reconciling the endpoints of team/web-x-prod, a service without a selector, must neither delete
-+// nor take over these host endpoints.
-+//
-+//nolint:staticcheck // SA1019: corev1.Endpoints is deprecated, but still required for compatibility
-+func TestReconcileDoesNotDeleteHostManagedEndpointsOfCollidingService(t *testing.T) {
-+	translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+
-+	victim := types.NamespacedName{Namespace: "prod-x-team", Name: "web"}
-+	attacker := types.NamespacedName{Namespace: "team", Name: "web-x-prod"}
-+	hostName := translate.Default.HostName(nil, victim.Name, victim.Namespace)
-+	assert.Equal(t, hostName, translate.Default.HostName(nil, attacker.Name, attacker.Namespace), "test names don't collide")
-+
-+	test := syncertesting.SyncTest{
-+		InitialVirtualState: []runtime.Object{
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: victim.Namespace}},
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: attacker.Namespace}},
-+			&corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{Namespace: victim.Namespace, Name: victim.Name},
-+				Spec:       corev1.ServiceSpec{Selector: map[string]string{"app": "web"}},
-+			},
-+			&corev1.Service{ObjectMeta: metav1.ObjectMeta{Namespace: attacker.Namespace, Name: attacker.Name}},
-+			&corev1.Endpoints{
-+				ObjectMeta: metav1.ObjectMeta{Namespace: attacker.Namespace, Name: attacker.Name},
-+				Subsets:    []corev1.EndpointSubset{{Addresses: []corev1.EndpointAddress{{IP: "2.2.2.2"}}}},
-+			},
-+		},
-+		InitialPhysicalState: []runtime.Object{
-+			&corev1.Service{
-+				ObjectMeta: metav1.ObjectMeta{
-+					Namespace: hostName.Namespace,
-+					Name:      hostName.Name,
-+					Annotations: map[string]string{
-+						translate.NameAnnotation:      victim.Name,
-+						translate.NamespaceAnnotation: victim.Namespace,
-+						translate.KindAnnotation:      corev1.Schem
-```
-
-**File**: `pkg/controllers/resources/endpointslices/syncer.go` (modified, +18/-0)
-```diff
-@@ -139,6 +139,10 @@ func (s *endpointSliceSyncer) ReconcileStart(ctx *synccontext.SyncContext, req c
- 				}
- 				return true, nil
- 			}
-+			// another virtual object might map to the same host name, so don't delete its endpointSlice
-+			if translate.BelongsToOtherVirtualObject(hostEps, req.NamespacedName, s.GroupVersionKind().String()) {
-+				return true, nil
-+			}
- 			err = ctx.HostClient.Delete(ctx, hostEps)
- 			if err != nil {
- 				return true, fmt.Errorf("error deleting endpointSlice from host %s: %w", eps.Name, err)
-@@ -177,6 +181,11 @@ func (s *endpointSliceSyncer) ReconcileStart(ctx *synccontext.SyncContext, req c
- 			return true, nil
- 		}
- 
-+		// another virtual object might map to the same host name, so don't delete its endpointSlice
-+		if translate.BelongsToOtherVirtualObject(endpointSlice, req.NamespacedName, s.GroupVersionKind().String()) {
-+			return true, nil
-+		}
-+
- 		// check if endpoints were created by us
- 		if endpointSlice.Annotations != nil && endpointSlice.Annotations[translate.NameAnnotation] != "" {
- 			// Deleting the endpointSlice is necessary here as some clusters would not correctly maintain
-@@ -194,6 +203,15 @@ func (s *endpointSliceSyncer) ReconcileStart(ctx *synccontext.SyncContext, req c
- 		return true, nil
- 	}
- 
-+	// another virtual service might map to the same host name, so don't touch the endpointSlices of its host service
-+	hostService := &corev1.Service{}
-+	err = ctx.HostClient.Get(ctx, mappings.VirtualToHost(ctx, svcName, req.Namespace, mappings.Services()), hostService)
-+	if err != nil && !kerrors.IsNotFound(err) {
-+		return true, fmt.Errorf("error retrieving host service: %w", err)
-+	} else if err == nil && translate.BelongsToOtherVirtualObject(hostService, types.NamespacedName{Namespace: req.Namespace, Name: svcName}, corev1.SchemeGroupVersion.WithKind("Service").String()) {
-+		return true, nil
-+	}
-+
- 	// check if it was a Kubernetes managed endpointSlice object before and delete it
- 	endpointSlice := &discoveryv1.EndpointSlice{}
- 	err = ctx.HostClient.Get(ctx, s.VirtualToHost(ctx, req.NamespacedName, nil), endpointSlice)
-```
-
-**File**: `pkg/controllers/resources/endpointslices/syncer_collision_test.go` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+package endpointslices
-+
-+import (
-+	"testing"
-+
-+	"gotest.tools/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	discoveryv1 "k8s.io/api/discovery/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+
-+	"github.com/loft-sh/vcluster/pkg/syncer"
-+	syncertesting "github.com/loft-sh/vcluster/pkg/syncer/testing"
-+	testingutil "github.com/loft-sh/vcluster/pkg/util/testing"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+)
-+
-+// prod-x-team/web-1 and team/web-1-x-prod translate to the same host name. Reconciling
-+// team/web-1-x-prod must not delete the host endpoint slice of prod-x-team/web-1.
-+func TestReconcileDoesNotDeleteCollidingHostEndpointSlice(t *testing.T) {
-+	victim := types.NamespacedName{Namespace: "prod-x-team", Name: "web-1"}
-+	attacker := types.NamespacedName{Namespace: "team", Name: "web-1-x-prod"}
-+
-+	testCases := []struct {
-+		name         string
-+		virtualState []runtime.Object
-+	}{
-+		{
-+			name: "attacker endpoint slice is missing",
-+		},
-+		{
-+			name: "attacker service has a selector",
-+			virtualState: []runtime.Object{
-+				endpointSlice(attacker, "svc"),
-+				&corev1.Service{
-+					ObjectMeta: metav1.ObjectMeta{Namespace: attacker.Namespace, Name: "svc"},
-+					Spec:       corev1.ServiceSpec{Selector: map[string]string{"app": "web"}},
-+				},
-+			},
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+			hostName := translate.Default.HostName(nil, victim.Name, victim.Namespace)
-+			assert.Equal(t, hostName, translate.Default.HostName(nil, attacker.Name, attacker.Namespace), "test names don't collide")
-+
-+			test := syncertesting.SyncTest{
-+				InitialVirtualState: append([]runtime.Object{
-+					&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: victim.Namespace}},
-+					&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: attacker.Namespace}},
-+					&corev1.Service{ObjectMeta: metav1.ObjectMeta{Namespace: victim.Namespace, Name: "web"}},
-+					endpointSlice(victim, "web"),
-+				}, tc.virtualState...),
-+			}
-+			pClient, vClient, vConfig := test.Setup()
-+			registerContext := syncertesting.NewFakeRegisterContext(vConfig, pClient, vClient)
-+			_, s := newFakeSyncer(t, registerContext)
-+			controller, err := syncer.NewSyncController(registerContext, s)
-+			assert.NilError(t, err)
-+
-+			reconcile := func(req types.NamespacedName) {
-+				_, err := controller.Reconcile(t.Context(), ctrl.Request{NamespacedName: req})
-+				assert.NilError(t, err)
-+			}
-+			hostOwner := func() types.NamespacedName {
-+				pEndpointSlice := &discoveryv1.EndpointSlice{}
-+				assert.NilError(t, pClient.Get(t.Context(), hostName, pEndpointSlice), "host endpoint slice of %s was deleted", victim)
-+				return types.NamespacedName{Namespace: pEndpointSlice.Annotations[translate.NamespaceAnnotation], Name: pEndpointSlice.Annotations[translate.NameAnnotation]}
-+			}
-+
-+			reconcile(victim)
-+			assert.Equal(t, hostOwner(), victim)
-+
-+			reconcile(attacker)
-+			assert.Equal(t, hostOwner(), victim)
-+		})
-+	}
-+}
-+
-+// prod-x-team/web, a service with a selector, and team/web-x-prod, a service without a selector,
-+// translate to the same host service name. Reconciling an endpoint slice of team/web-x-prod must
-+// neither delete a host endpoint slice nor sync a host endpoint slice that would add endpoints to
-+// the host service of prod-x-team/web.
-+func TestReconcileDoesNotSyncEndpointSliceOfCollidingService(t *testing.T) {
-+	victimService := types.NamespacedName{Namespace: "prod-x-team", Name: "web"}
-+	attackerService := types.NamespacedName{Namespace: "team", Name: "web-x-prod"}
-+	attacker := types.NamespacedName{Namespace: attackerService.Namespace, Name: "web-x-prod-abcde"}
-+
-+	testCases := []struct {
-+		name          string
-+		physicalState []runtime.Object
-+	}{
-+		{
-+			name: "host endpoint slice is missing",
-+		},
-+		{
-+			name: "host endpoint slice is maintained by the host cluster",
-+			physicalState: []runtime.Object{
-+				&discoveryv1.EndpointSlice{
-+					ObjectMeta: metav1.ObjectMeta{
-+						Namespace: testingutil.DefaultTestTargetNamespace,
-+						Name:      translate.SingleNamespaceHostName(attacker.Name, attacker.Namespace, translate.VClusterName),
-+						Labels:    map[string]string{translate.K8sServiceNameLabel: "other"},
-+					},
-+					AddressType: discoveryv1.AddressTypeIPv4,
-+				},
-+			},
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+			hostServiceName := translate.Default.HostName(nil, victimService.Name, victimService.Namespace)
-+			assert.Equal(t, hostServiceName, translate.Default.HostName(nil, attackerService.Name, attackerService.Namespace), "test names don't collide")
-+
-+			test := syncertesting.SyncTes
-```
-
-**File**: `pkg/controllers/resources/pods/syncer_collision_test.go` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+package pods
-+
-+import (
-+	"testing"
-+
-+	"gotest.tools/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+
-+	"github.com/loft-sh/vcluster/pkg/specialservices"
-+	"github.com/loft-sh/vcluster/pkg/syncer"
-+	syncertesting "github.com/loft-sh/vcluster/pkg/syncer/testing"
-+	syncertypes "github.com/loft-sh/vcluster/pkg/syncer/types"
-+	testingutil "github.com/loft-sh/vcluster/pkg/util/testing"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+)
-+
-+// prod-x-team/creds and team/creds-x-prod translate to the same host name. A pod in team that
-+// mounts creds-x-prod must not get the host secret of prod-x-team/creds.
-+func TestSecretReferenceDoesNotResolveToCollidingHostSecret(t *testing.T) {
-+	translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+	specialservices.Default = specialservices.NewDefaultServiceSyncer()
-+
-+	victimSecret := types.NamespacedName{Namespace: "prod-x-team", Name: "creds"}
-+	attackerSecret := types.NamespacedName{Namespace: "team", Name: "creds-x-prod"}
-+	victimHostSecret := translate.Default.HostName(nil, victimSecret.Name, victimSecret.Namespace).Name
-+	assert.Equal(t, victimHostSecret, translate.Default.HostName(nil, attackerSecret.Name, attackerSecret.Namespace).Name, "test names don't collide")
-+
-+	victimPod := podWithSecretVolume(types.NamespacedName{Namespace: victimSecret.Namespace, Name: "web"}, victimSecret.Name)
-+	attackerPod := podWithSecretVolume(types.NamespacedName{Namespace: attackerSecret.Namespace, Name: "app"}, attackerSecret.Name)
-+	test := syncertesting.SyncTest{
-+		InitialVirtualState: []runtime.Object{
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: victimSecret.Namespace}},
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: attackerSecret.Namespace}},
-+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Namespace: victimSecret.Namespace, Name: victimSecret.Name}},
-+			&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Namespace: attackerSecret.Namespace, Name: attackerSecret.Name}},
-+			victimPod,
-+			attackerPod,
-+		},
-+		InitialPhysicalState: []runtime.Object{pVclusterService.DeepCopy(), pDNSService.DeepCopy()},
-+	}
-+	pClient, vClient, vConfig := test.Setup()
-+	registerContext := syncertesting.NewFakeRegisterContext(vConfig, pClient, vClient)
-+	_, s := syncertesting.FakeStartSyncer(t, registerContext, New)
-+	controller, err := syncer.NewSyncController(registerContext, s.(syncertypes.Syncer))
-+	assert.NilError(t, err)
-+
-+	hostSecretName := func(vPod *corev1.Pod) string {
-+		_, err := controller.Reconcile(t.Context(), ctrl.Request{NamespacedName: types.NamespacedName{Namespace: vPod.Namespace, Name: vPod.Name}})
-+		assert.NilError(t, err)
-+
-+		pPod := &corev1.Pod{}
-+		assert.NilError(t, pClient.Get(t.Context(), translate.Default.HostName(nil, vPod.Name, vPod.Namespace), pPod))
-+		return pPod.Spec.Volumes[0].Secret.SecretName
-+	}
-+
-+	assert.Equal(t, hostSecretName(victimPod), victimHostSecret)
-+	assert.Equal(t, hostSecretName(attackerPod), "", "attacker pod got the host secret of another namespace")
-+}
-+
-+func podWithSecretVolume(name types.NamespacedName, secretName string) *corev1.Pod {
-+	return &corev1.Pod{
-+		ObjectMeta: metav1.ObjectMeta{Namespace: name.Namespace, Name: name.Name, UID: types.UID(name.String())},
-+		Spec: corev1.PodSpec{
-+			Containers: []corev1.Container{{Name: "c1", Image: "nginx"}},
-+			Volumes: []corev1.Volume{{
-+				Name:         "creds",
-+				VolumeSource: corev1.VolumeSource{Secret: &corev1.SecretVolumeSource{SecretName: secretName}},
-+			}},
-+		},
-+	}
-+}
-```
-
-**File**: `pkg/controllers/resources/services/syncer_collision_test.go` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+package services
-+
-+import (
-+	"testing"
-+
-+	"gotest.tools/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	ctrl "sigs.k8s.io/controller-runtime"
-+
-+	"github.com/loft-sh/vcluster/pkg/specialservices"
-+	"github.com/loft-sh/vcluster/pkg/syncer"
-+	syncertesting "github.com/loft-sh/vcluster/pkg/syncer/testing"
-+	syncertypes "github.com/loft-sh/vcluster/pkg/syncer/types"
-+	testingutil "github.com/loft-sh/vcluster/pkg/util/testing"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+)
-+
-+// a-x-b/svc and b/svc-x-a translate to the same host name. Services skip the UID check, so
-+// reconciling or deleting b/svc-x-a must neither take over nor delete the host service of a-x-b/svc.
-+func TestReconcileDoesNotTouchCollidingHostService(t *testing.T) {
-+	translate.Default = translate.NewSingleNamespaceTranslator(testingutil.DefaultTestTargetNamespace)
-+	specialservices.Default = specialservices.NewDefaultServiceSyncer()
-+
-+	victim := types.NamespacedName{Namespace: "a-x-b", Name: "svc"}
-+	attacker := types.NamespacedName{Namespace: "b", Name: "svc-x-a"}
-+	hostName := translate.Default.HostName(nil, victim.Name, victim.Namespace)
-+	assert.Equal(t, hostName, translate.Default.HostName(nil, attacker.Name, attacker.Namespace), "test names don't collide")
-+
-+	attackerService := serviceWithPort(attacker, 9999)
-+	test := syncertesting.SyncTest{
-+		InitialVirtualState: []runtime.Object{
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: victim.Namespace}},
-+			&corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: attacker.Namespace}},
-+			serviceWithPort(victim, 80),
-+			attackerService,
-+		},
-+	}
-+	pClient, vClient, vConfig := test.Setup()
-+	registerContext := syncertesting.NewFakeRegisterContext(vConfig, pClient, vClient)
-+	_, s := syncertesting.FakeStartSyncer(t, registerContext, New)
-+	controller, err := syncer.NewSyncController(registerContext, s.(syncertypes.Syncer))
-+	assert.NilError(t, err)
-+
-+	reconcile := func(req types.NamespacedName) {
-+		_, err := controller.Reconcile(t.Context(), ctrl.Request{NamespacedName: req})
-+		assert.NilError(t, err)
-+	}
-+	assertHostServiceOfVictim := func() {
-+		pService := &corev1.Service{}
-+		assert.NilError(t, pClient.Get(t.Context(), hostName, pService), "host service of %s was deleted", victim)
-+		assert.Equal(t, pService.Annotations[translate.NamespaceAnnotation], victim.Namespace)
-+		assert.Equal(t, pService.Annotations[translate.NameAnnotation], victim.Name)
-+		assert.Equal(t, pService.Spec.Ports[0].Port, int32(80))
-+	}
-+
-+	reconcile(victim)
-+	assertHostServiceOfVictim()
-+
-+	reconcile(attacker)
-+	assertHostServiceOfVictim()
-+
-+	assert.NilError(t, vClient.Delete(t.Context(), attackerService))
-+	reconcile(attacker)
-+	assertHostServiceOfVictim()
-+}
-+
-+func serviceWithPort(name types.NamespacedName, port int32) *corev1.Service {
-+	return &corev1.Service{
-+		ObjectMeta: metav1.ObjectMeta{Namespace: name.Namespace, Name: name.Name, UID: types.UID(name.String())},
-+		Spec: corev1.ServiceSpec{
-+			Ports: []corev1.ServicePort{{Name: "http", Port: port, Protocol: corev1.ProtocolTCP}},
-+		},
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `6ba83b53` (2026-11-23)
-**Commit Message**: fix(telemetry): send a config summary and an error category from the control plane (#2764)
-
-* fix(telemetry): send a config summary and an error category from the control plane
-
-Build vcluster_start and vcluster_error from a summary of the config and
-an error category instead of the raw config and error text. The summary
-keeps the vcluster.yaml keys, booleans, numbers, list and map sizes and a
-few checked values. Kubernetes versions are trimmed to their release form,
-and panics carry function names and lines.
-
-* fix(telemetry): send the vcluster version with control plane errors
-
-* refactor(telemetry): use plain keys for the control plane properties
-
-Monorepo-Commit: e35fb25dbe0063b115173c8692a3f4fc6f57daf0
-
-**File**: `pkg/leaderelection/leaderelection.go` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@ func StartLeaderElection(ctx *synccontext.ControllerContext, scheme *runtime.Sch
- 				klog.Info("leader election lost")
- 
- 				// vcluster_error
--				telemetry.CollectorControlPlane.RecordError(ctx, ctx.Config, telemetry.WarningSeverity, fmt.Errorf("leader election lost"))
-+				telemetry.CollectorControlPlane.RecordError(ctx, ctx.Config, telemetry.WarningSeverity, telemetry.ErrLeaderElectionLost)
- 				telemetry.CollectorControlPlane.Flush()
- 
- 				osutil.Exit(1)
-```
-
-**File**: `pkg/telemetry/cli_event.go` (modified, +2/-0)
-```diff
-@@ -97,6 +97,8 @@ func errorCategory(err error) string {
- 	)
- 
- 	switch {
-+	case errors.Is(err, ErrLeaderElectionLost):
-+		return "leader_election_lost"
- 	case errors.Is(err, context.Canceled):
- 		return "canceled"
- 	case errors.Is(err, context.DeadlineExceeded):
-```
-
-**File**: `pkg/telemetry/cli_event_test.go` (modified, +2/-0)
-```diff
-@@ -395,6 +395,8 @@ func TestErrorCategory(t *testing.T) {
- 		expected string
- 	}{
- 		{name: "plain error", err: errors.New(commandLineValue), expected: "other"},
-+		{name: "leader election lost", err: wrap(ErrLeaderElectionLost), expected: "leader_election_lost"},
-+		{name: "text of the leader election error without its value", err: errors.New(ErrLeaderElectionLost.Error()), expected: "other"},
- 		{name: "vcluster not found", err: wrap(&find.VClusterNotFoundError{Name: commandLineValue}), expected: "vcluster_not_found"},
- 		{name: "kubernetes unauthorized", err: wrap(kerrors.NewUnauthorized(commandLineValue)), expected: "kubernetes_unauthorized"},
- 		{name: "kubernetes forbidden", err: wrap(kerrors.NewForbidden(secretsResource, commandLineValue, errors.New(commandLineValue))), expected: "kubernetes_forbidden"},
-```
-
-**File**: `pkg/telemetry/collect_controlplane.go` (modified, +45/-22)
-```diff
-@@ -3,7 +3,9 @@ package telemetry
- import (
- 	"context"
- 	"encoding/json"
-+	"errors"
- 	"runtime"
-+	"strconv"
- 	"time"
- 
- 	"github.com/loft-sh/analytics-client/client"
-@@ -20,8 +22,20 @@ import (
- 
- var CollectorControlPlane ControlPlaneCollector = &noopCollector{}
- 
-+// ErrLeaderElectionLost is what RecordError is given when the control plane
-+// stops because it lost the leader election.
-+var ErrLeaderElectionLost = errors.New("leader election lost")
-+
-+// isInstanceCreator accepts what the CLI and the platform write to
-+// telemetry.instanceCreator.
-+var isInstanceCreator = oneOf("vclusterctl", "loft")
-+
- type ControlPlaneCollector interface {
- 	RecordStart(ctx context.Context, config *config.VirtualClusterConfig)
-+
-+	// RecordError records the kind of err, never its text. With PanicSeverity
-+	// it has to be called from the deferred function that recovered the panic,
-+	// because it records the functions on the stack of its caller.
- 	RecordError(ctx context.Context, config *config.VirtualClusterConfig, severity ErrorSeverityType, err error)
- 
- 	// Flush makes sure all events are sent to the backend
-@@ -117,18 +131,19 @@ func (d *controlPlaneCollector) RecordStart(ctx context.Context, config *config.
- 		return
- 	}
- 
--	chartInfo := d.getChartInfo(config)
-+	creationMethod := config.Telemetry.InstanceCreator
-+	if creationMethod != "" && !isInstanceCreator(creationMethod) {
-+		creationMethod = "other"
-+	}
- 	properties := map[string]interface{}{
- 		"vcluster_version":            SyncerVersion,
- 		"vcluster_k8s_distro_version": d.getVirtualClusterVersion(),
- 		"host_cluster_k8s_version":    d.getHostClusterVersion(),
- 		"os_arch":                     runtime.GOOS + "/" + runtime.GOARCH,
--		"creation_method":             config.Telemetry.InstanceCreator,
-+		"creation_method":             creationMethod,
- 		"creation_timestamp":          d.getVClusterCreationTimestamp(ctx),
--	}
--	if chartInfo != nil {
--		properties["vcluster_k8s_distro"] = chartInfo.Name
--		properties["helm_values"] = chartInfo.Values
-+		"vcluster_k8s_distro":         translate.VClusterName,
-+		"helm_values":                 configSummary(&config.Config),
- 	}
- 
- 	// build the event and record
-@@ -157,16 +172,15 @@ func (d *controlPlaneCollector) RecordError(ctx context.Context, config *config.
- 	}
- 
- 	properties := map[string]interface{}{
--		"severity": string(severity),
--		"message":  err.Error(),
-+		"vcluster_version": SyncerVersion,
-+		"severity":         string(severity),
-+		"message":          errorCategory(err),
- 	}
--
--	// if panic or fatal we add the helm values
- 	if severity == PanicSeverity || severity == FatalSeverity {
--		chartInfo := d.getChartInfo(config)
--		if chartInfo != nil {
--			properties["helm_values"] = chartInfo.Values
--		}
-+		properties["helm_values"] = configSummary(&config.Config)
-+	}
-+	if severity == PanicSeverity {
-+		properties["stack"] = callerFunctions()
- 	}
- 
- 	// build the event and record
-@@ -210,14 +224,6 @@ func (d *controlPlaneCollector) getHostClusterVersion() *KubernetesVersion {
- 	return hostVersion
+-	Driver      string
+-	AccessKey   string
+-	Insecure    bool
+-	DockerLogin bool
++	Driver    string
++	AccessKey string
++	Insecure  bool
  }
  
--func (d *controlPlaneCollector) getChartInfo(config *config.VirtualClusterConfig) *ChartInfo {
--	return &ChartInfo{
--		Name:    translate.VClusterName,
--		Version: SyncerVersion,
--		Values:  config,
+ func NewLoginCmd(globalFlags *flags.GlobalFlags) (*cobra.Command, error) {
+@@ -53,8 +52,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", true, product.Replace("Allow login into an insecure Loft instance"))
+-	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ 
+ 	return loginCmd, nil
+ }
+```
+
+**File**: `cmd/vclusterctl/cmd/login_test.go` (removed, +0/-20)
+```diff
+@@ -1,20 +0,0 @@
+-package cmd
+-
+-import (
+-	"testing"
+-
+-	"github.com/loft-sh/vcluster/pkg/cli/flags"
+-)
+-
+-func TestDeprecatedLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
+-	cmd, err := NewLoginCmd(&flags.GlobalFlags{})
+-	if err != nil {
+-		t.Fatalf("NewLoginCmd: %v", err)
+-	}
+-	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
+-		t.Fatalf("--docker-login=false no longer parses: %v", err)
+-	}
+-	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
+-		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
 -	}
 -}
--
- func (d *controlPlaneCollector) getVClusterID(ctx context.Context) string {
- 	if d.hostClient == nil {
- 		return ""
-@@ -281,3 +287,20 @@ func (d *controlPlaneCollector) getMetrics(ctx context.Context) map[string]inter
- 
- 	return retMap
- }
-+
-+// callerFunctions names the functions on the stack of the goroutine, starting
-+// at the caller of the function that calls it, each with its line. Unlike a
-+// stack trace it has no argument values and no panic message.
-+func callerFunctions() []string {
-+	programCounters := make([]uintptr, 64)
-+	frames := runtime.CallersFrames(programCounters[:runtime.Callers(3, programCounters)])
-+
-+	functions := []string{}
-+	for {
-+		frame, more := frames.Next()
-+		functions = append(functions, frame.Function+":"+strconv.Itoa(frame.Line))
-+		if !more {
-+			return functions
-+		}
-+	}
-+}
 ```
 
-**File**: `pkg/telemetry/collect_controlplane_test.go` (added, +334/-0)
+**File**: `cmd/vclusterctl/cmd/platform/login.go` (modified, +3/-6)
 ```diff
-@@ -0,0 +1,334 @@
-+package telemetry
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	goruntime "runtime"
-+	"runtime/debug"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/loft-sh/analytics-client/client"
-+	vclusterconfig "github.com/loft-sh/vcluster/config"
-+	"github.com/loft-sh/vcluster/pkg/config"
-+	"github.com/loft-sh/vcluster/pkg/strvals"
-+	"github.com/loft-sh/vcluster/pkg/util/loghelper"
-+	"github.com/loft-sh/vcluster/pkg/util/translate"
-+	"gotest.tools/v3/assert"
-+	corev1 "k8s.io/api/core/v1"
-+	kerrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/version"
-+	fakediscovery "k8s.io/client-go/discovery/fake"
-+	"k8s.io/client-go/kubernetes/fake"
-+	"sigs.k8s.io/yaml"
-+)
-+
-+// Plain alphanumeric on purpose, see commandLineValue.
-+const configValue = "c0nf1gvalue"
-+
-+// userValues is what a user passes to helm install, with configValue in free
-+// text of every kind the config has: secrets, hostnames, map keys, manifests
-+// and env values.
-+const userValues = `
-+controlPlane:
-+  backingStore:
-+    database:
-+      external:
-+        enabled: true
-+        dataSource: mysql://admin:c0nf1gvalue@tcp(db.internal:3306)/vcluster
-+  statefulSet:
-+    highAvailability:
-+      replicas: 3
-+    labels:
-+      team-c0nf1gvalue: payments
-+    env:
-+      - name: HTTPS_PROXY
-+        value: http://proxy:c0nf1gvalue@proxy.internal:3128
-+  ingress:
-+    enabled: true
-+    host: c0nf1gvalue.example.com
-+sync:
-+  toHost:
-+    ingresses:
-+      enabled: true
-+    customResources:
-+      certificates.c0nf1gvalue.io:
-+        enabled: true
-+  fromHost:
-+    nodes:
-+      enabled: true
-+      selector:
-+        labels:
-+          pool: c0nf1gvalue
-+privateNodes:
-+  joinNode:
-+    containerd:
-+      registry:
-+        auth:
-+          registry.c0nf1gvalue.internal:
-+            username: puller
-+            password: c0nf1gvalue
-+            identityToken: c0nf1gvalue
-+policies:
-+  podSecurityStandard: baseline
-+  resourceQuota:
-+    enabled: true
-+logging:
-+  encoding: c0nf1gvalue
-+experimental:
-+  deploy:
-+    vcluster:
-+      manifests: |
-+        apiVersion: v1
-+        kind: Secret
-+        metadata:
-+          name: registry-creds
-+        stringData:
-+          password: c0nf1gvalue
-+      helm:
-+        - chart:
-+            name: internal-app
-+            repo: https://charts.internal
-+            username: deploy
-+            password: c0nf1gvalue
-+telemetry:
-+  instanceCreator: vclusterctl
-+`
-+
-+// parseChartConfig returns the config the control plane loads after a helm
-+// install with values: the chart writes its defaults merged with the values
-+// to the config secret, and the control plane parses that.
-+func parseChartConfig(t *testing.T, values string) *config.VirtualClusterConfig {
-+	t.Helper()
-+
-+	chartValues, overrides := map[string]interface{}{}, map[string]interface{}{}
-+	assert.NilError(t, yaml.Unmarshal([]byte(vclusterconfig.Values), &chartValues))
-+	assert.NilError(t, yaml.Unmarshal([]byte(values), &overrides))
-+
-+	rawConfig, err := yaml.Marshal(strvals.MergeMaps(chartValues, overrides))
-+	assert.NilError(t, err)
-+
-+	vConfig, err := config.ParseConfigBytes(rawConfig, "my-vcluster", nil)
-+	assert.NilError(t, err)
-+	vConfig.HostNamespace = "namespace-" + configValue
-+	vConfig.Path = "/" + configValue + "/config.yaml"
-+
-+	return vConfig
-+}
-+
-+// lookup returns the value at a dotted path of nested maps, nil if there is
-+// none.
-+func lookup(values map[string]interface{}, path string) interface{} {
-+	var current interface{} = values
-+	for _, key := range strings.Split(path, ".") {
-+		object, _ := current.(map[string]interface{})
-+		current = object[key]
-+	}
-+
-+	return current
-+}
-+
-+func toJSONObject(t *testing.T, value interface{}) map[string]interface{} {
-+	t.Helper()
-+
-+	raw, err := json.Marshal(value)
-+	assert.NilError(t, err)
-+	object := map[string]interface{}{}
-+	assert.NilError(t, json.Unmarshal(raw, &object))
-+
-+	return object
-+}
-+
-+func TestKubernetesVersion(t *testing.T) {
-+	testCases := []struct {
-+		name     string
-+		reported version.Info
-+		expected KubernetesVersion
-+	}{
-+		{name: "upstream", reported: version.Info{Major: "1", Minor: "36", GitVersion: "v1.36.6"}, expected: KubernetesVersion{Major: "1", Minor: "36", GitVersion: "v1.36.6"}},
-+		{name: "release candidate", reported: version.Info{Major: "1", Minor: "37", GitVersion: "v1.37.0-rc.1"}, expected: KubernetesVersion{Major: "1", Minor: "37", GitVersion: "v1.37.0-rc.1"}},
-+		{name: "eks", reported: version.Info{Major: "1", Minor: "33+", GitVersion: "v1.33.5-eks-113cf36"}, expected: KubernetesVersion{Major: "1", Minor: "33+", GitVersion: "v1.33.5-eks"}},
-+		{name: "gke", reported: version.Info{Major: "1", Minor: "33", GitVersion: "v1.33.5-gke.1162000"}, expected: KubernetesVersion{Major: "1", Minor: "33", GitVersion: "v1.33.5-gke"}},
-+		{name: "k3s", reported: version.Info{Major: "1", Minor: "3
-```
-
-**File**: `pkg/telemetry/config_summary.go` (added, +150/-0)
-```diff
-@@ -0,0 +1,150 @@
-+package telemetry
-+
-+import (
-+	"maps"
-+	"reflect"
-+	"strings"
-+
-+	"github.com/loft-sh/vcluster/config"
-+)
-+
-+// sentConfigTypes lists the string types of the config whose value is sent,
-+// and the check a value has to pass.
-+var sentConfigTypes = map[reflect.Type]func(string) bool{
-+	reflect.TypeOf(config.StrBool("")): oneOf("true", "false", "auto"),
-+	reflect.TypeOf(config.DNSPolicy("")): oneOf(string(config.DNSClusterFirstWithHostNet), string(config.DNSClusterFirst),
-+		string(config.DNSDefault), string(config.DNSNone)),
-+}
-+
-+// sentConfigValues lists, by config path, the plain string fields whose value
-+// is sent, and the check a value has to pass. A path belongs here only if
-+// every value its check accepts is safe to send. Paths below a list or a map
-+// cannot be listed: those are sent as a count.
-+var sentConfigValues = map[string]func(string) bool{
-+	"controlPlane.distro.k8s.version":                                  releaseVersion.MatchString,
-+	"controlPlane.distro.k8s.image.tag":                                releaseVersion.MatchString,
-+	"controlPlane.statefulSet.scheduling.podManagementPolicy":          oneOf("Parallel", "OrderedReady"),
-+	"controlPlane.statefulSet.persistence.volumeClaim.retentionPolicy": oneOf("Retain", "Delete"),
-+	"policies.podSecurityStandard":                                     oneOf("privileged", "baseline", "restricted"),
-+	"logging.encoding":                                                 oneOf("console", "json"),
-+}
-+
-+// configSummary describes what is configured without any free-form value. It
-+// follows the config types, so the result has the keys of vcluster.yaml and
-+// nothing a user wrote:
-+//   - booleans and numbers are sent as they are
-+//   - a string is sent as true, meaning it is set, unless its type is in
-+//     sentConfigTypes or its path in sentConfigValues and the value passes
-+//     the check
-+//   - lists and maps are sent as their number of entries, so the keys of a
-+//     map are never sent
-+//
-+// Values that are empty, false or zero are left out, except behind a pointer
-+// or in an untyped field, where false and zero were set on purpose.
-+func configSummary(vConfig *config.Config) map[string]interface{} {
-+	summary, _ := summarizeConfigValue(reflect.ValueOf(vConfig), "").(map[string]interface{})
-+	return summary
-+}
-+
-+// summarizeConfigValue returns nil for a value that is left out.
-+func summarizeConfigValue(value reflect.Value, path string) interface{} {
-+	switch value.Kind() {
-+	case reflect.Pointer, reflect.Interface:
-+		if value.IsNil() {
-+			return nil
-+		}
-+
-+		elem := value.Elem()
-+		switch {
-+		case elem.Kind() == reflect.Bool:
-+			return elem.Bool()
-+		case elem.CanInt():
-+			return elem.Int()
-+		case elem.CanUint():
-+			return elem.Uint()
-+		case elem.CanFloat():
-+			return elem.Float()
-+		case value.Kind() == reflect.Pointer:
-+			return summarizeConfigValue(elem, path)
-+		case elem.Kind() == reflect.Map || elem.Kind() == reflect.Slice:
-+			return nonZero(elem.Len())
-+		default:
-+			return true
-+		}
-+	case reflect.Struct:
-+		summary := map[string]interface{}{}
-+		for i := range value.NumField() {
-+			field := value.Type().Field(i)
-+			name, _, _ := strings.Cut(field.Tag.Get("json"), ",")
-+			if !field.IsExported() || name == "-" {
-+				continue
-+			}
-+
-+			// an embedded struct has its fields at the level of the struct
-+			// holding it, as in vcluster.yaml
-+			if field.Anonymous && name == "" {
-+				embedded, _ := summarizeConfigValue(value.Field(i), path).(map[string]interface{})
-+				maps.Copy(summary, embedded)
-+				continue
-+			}
-+
-+			if name == "" {
-+				name = field.Name
-+			}
-+			if fieldSummary := summarizeConfigValue(value.Field(i), strings.TrimPrefix(path+"."+name, ".")); fieldSummary != nil {
-+				summary[name] = fieldSummary
-+			}
-+		}
-+		if len(summary) == 0 {
-+			return nil
-+		}
-+		return summary
-+	case reflect.Map, reflect.Slice, reflect.Array:
-+		return nonZero(value.Len())
-+	case reflect.Bool:
-+		if !value.Bool() {
-+			return nil
-+		}
-+		return true
-+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-+		return nonZero(value.Int())
-+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-+		return nonZero(value.Uint())
-+	case reflect.Float32, reflect.Float64:
-+		return nonZero(value.Float())
-+	case reflect.String:
-+		text := value.String()
-+		if text == "" {
-+			return nil
-+		}
-+
-+		isValid := sentConfigTypes[value.Type()]
-+		if isValid == nil {
-+			isValid = sentConfigValues[path]
-+		}
-+		isStrBool := value.Type() == reflect.TypeOf(config.StrBool(""))
-+		if isValid != nil && isValid(text) {
-+			// config.StrBool.MarshalJSON writes these two as booleans
-+			if isStrBool && (text == "true" || text == "false") {
-+				return text == "true"
-+			}
-+			return text
-+		}
-+		// true would read as enabled, which the control plane only does for
-+		// "true"
-+		if isStrBool {
-+			return "other"
-+		}
-+		return true
-+	default:
-+		return nil
-+	}
-+
-```
-
-**File**: `pkg/telemetry/config_summary_test.go` (added, +346/-0)
-```diff
-@@ -0,0 +1,346 @@
-+package telemetry
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"reflect"
-+	"strings"
-+	"testing"
-+
-+	vclusterconfig "github.com/loft-sh/vcluster/config"
-+	"gotest.tools/v3/assert"
-+)
-+
-+// fillWithText sets every string, map key and untyped value below value to
-+// text, with one entry in every map and list, every boolean true and every
-+// number 1.
-+func fillWithText(value reflect.Value, text string, depth int) {
-+	// the config types that contain themselves do so through lists and maps
-+	if depth > 30 || !value.CanSet() {
-+		return
-+	}
-+
-+	switch value.Kind() {
-+	case reflect.Pointer:
-+		value.Set(reflect.New(value.Type().Elem()))
-+		fillWithText(value.Elem(), text, depth+1)
-+	case reflect.Interface:
-+		if value.NumMethod() == 0 {
-+			value.Set(reflect.ValueOf(map[string]interface{}{text: []interface{}{text}}))
-+		}
-+	case reflect.Struct:
-+		for i := range value.NumField() {
-+			fillWithText(value.Field(i), text, depth+1)
-+		}
-+	case reflect.Map:
-+		key := reflect.New(value.Type().Key()).Elem()
-+		fillWithText(key, text, depth+1)
-+		elem := reflect.New(value.Type().Elem()).Elem()
-+		fillWithText(elem, text, depth+1)
-+		value.Set(reflect.MakeMap(value.Type()))
-+		value.SetMapIndex(key, elem)
-+	case reflect.Slice:
-+		value.Set(reflect.MakeSlice(value.Type(), 1, 1))
-+		fillWithText(value.Index(0), text, depth+1)
-+	case reflect.Bool:
-+		value.SetBool(true)
-+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-+		value.SetInt(1)
-+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-+		value.SetUint(1)
-+	case reflect.Float32, reflect.Float64:
-+		value.SetFloat(1)
-+	case reflect.String:
-+		value.SetString(text)
-+	default:
-+	}
-+}
-+
-+func TestConfigSummaryOfChartConfig(t *testing.T) {
-+	vConfig := parseChartConfig(t, userValues)
-+
-+	// the whole config holds the text, so the fixture can show it is not sent
-+	full, err := json.Marshal(vConfig)
-+	assert.NilError(t, err)
-+	assert.Assert(t, strings.Count(string(full), configValue) >= 12, "config holds %d values", strings.Count(string(full), configValue))
-+
-+	summary := toJSONObject(t, configSummary(&vConfig.Config))
-+	raw, err := json.Marshal(summary)
-+	assert.NilError(t, err)
-+	assert.Assert(t, !strings.Contains(string(raw), configValue), "summary carries a config value: %s", raw)
-+
-+	expected := map[string]interface{}{
-+		// from the values
-+		"controlPlane.backingStore.database.external.enabled":    true,
-+		"controlPlane.backingStore.database.external.dataSource": true,
-+		"controlPlane.statefulSet.highAvailability.replicas":     3.0,
-+		"controlPlane.statefulSet.labels":                        1.0,
-+		"controlPlane.statefulSet.env":                           1.0,
-+		"controlPlane.ingress.enabled":                           true,
-+		"controlPlane.ingress.host":                              true,
-+		"sync.toHost.ingresses.enabled":                          true,
-+		"sync.toHost.customResources":                            1.0,
-+		"sync.fromHost.nodes.enabled":                            true,
-+		"sync.fromHost.nodes.selector.labels":                    1.0,
-+		"privateNodes.joinNode.containerd.registry.auth":         1.0,
-+		"policies.podSecurityStandard":                           "baseline",
-+		"policies.resourceQuota.enabled":                         true,
-+		"experimental.deploy.vcluster.manifests":                 true,
-+		"experimental.deploy.vcluster.helm":                      1.0,
-+		"telemetry.instanceCreator":                              true,
-+		// a listed path with a value outside its set
-+		"logging.encoding": true,
-+		// from the chart defaults
-+		"controlPlane.statefulSet.scheduling.podManagementPolicy":          "Parallel",
-+		"controlPlane.statefulSet.persistence.volumeClaim.retentionPolicy": "Retain",
-+		"controlPlane.statefulSet.persistence.volumeClaim.enabled":         "auto",
-+		"sync.toHost.pods.enabled":                                         true,
-+		"telemetry.enabled":                                                true,
-+		"controlPlane.statefulSet.enableServiceLinks":                      true,
-+		// false, empty and zero are left out
-+		"privateNodes.enabled":                            nil,
-+		"controlPlane.backingStore.etcd.embedded.enabled": nil,
-+		"controlPlane.distro.k8s.version":                 nil,
-+		"experimental.deploy.host":                        nil,
-+		"sync.toHost.networkPolicies":                     nil,
-+		"controlPlane.statefulSet.scheduling.affinity":    nil,
-+	}
-+	for path, value := range expected {
-+		assert.DeepEqual(t, lookup(summary, path), value)
-+	}
-+
-+	tag, isText := lookup(summary, "controlPlane.distro.k8s.image.tag").(string)
-+	assert.Assert(t, isText && releaseVersion.MatchString(tag), "kubernetes image tag is %v", lookup(summary, "controlPlane.distro.k8s.image.tag"))
-+}
-+
-+func TestConfigSummaryHasNoText(t *testing.T) {
-+	vConfig := &vclusterconfig.Config{}
-+	fillWithText(reflect.ValueOf(vConfig).Elem(), configValue, 0)
-+
-+	// the
-```
-
-**File**: `pkg/telemetry/helpers.go` (modified, +13/-3)
-```diff
-@@ -5,6 +5,7 @@ import (
- 	"crypto/hmac"
- 	"crypto/sha256"
- 	"fmt"
-+	"regexp"
+@@ -26,10 +26,9 @@ type LoginCmd struct {
  
- 	"github.com/denisbrodbeck/machineid"
- 	managementv1 "github.com/loft-sh/api/v5/pkg/apis/management/v1"
-@@ -18,6 +19,15 @@ import (
+ 	Log log.Logger
  
- var SyncerVersion = "dev"
- 
-+// What a Kubernetes server reports as its version is text its operator can
-+// set, so only the part with a fixed form is sent. For the git version that is
-+// the start, up to the name of the distribution if it is one of these.
-+var (
-+	kubernetesMajorVersion = regexp.MustCompile(`^\d{1,3}$`)
-+	kubernetesMinorVersion = regexp.MustCompile(`^\d{1,3}\+?$`)
-+	kubernetesGitVersion   = regexp.MustCompile(`^v\d{1,3}\.\d{1,3}\.\d{1,5}(-(alpha|beta|rc)\.\d{1,4})?([-+](eks|gke|k3s|rke2|k0s))?`)
-+)
-+
- // getVClusterID provides instance ID based on the UID of the service
- func getVClusterID(ctx context.Context, hostClient kubernetes.Interface, vClusterNamespace, vClusterService string) (string, error) {
- 	if hostClient == nil || vClusterService == "" {
-@@ -79,9 +89,9 @@ func toKubernetesVersion(vi *version.Info) *KubernetesVersion {
- 		return nil
- 	}
- 	return &KubernetesVersion{
--		Major:      vi.Major,
--		Minor:      vi.Minor,
--		GitVersion: vi.GitVersion,
-+		Major:      kubernetesMajorVersion.FindString(vi.Major),
-+		Minor:      kubernetesMinorVersion.FindString(vi.Minor),
-+		GitVersion: kubernetesGitVersion.FindString(vi.GitVersion),
- 	}
+-	Driver      string
+-	AccessKey   string
+-	Insecure    bool
+-	DockerLogin bool
++	Driver    string
++	AccessKey string
++	Insecure  bool
  }
  
+ func NewLoginCmd(gf *flags.GlobalFlags) LoginCmd {
+@@ -69,8 +68,6 @@ vcluster platform login https://my-vcluster-platform.com --access-key myaccesske
+ 	loginCmd.Flags().StringVar(&cmd.Driver, "use-driver", "", "Switch vCluster driver between platform, helm, and docker")
+ 	loginCmd.Flags().StringVar(&cmd.AccessKey, "access-key", "", "The access key to use")
+ 	loginCmd.Flags().BoolVar(&cmd.Insecure, "insecure", false, product.Replace("Allow login into an insecure Loft instance"))
+-	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+-	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
+ 
+ 	return loginCmd
+ }
 ```
 
----
-
-### Incident Patch 3: `2b3e0a3d` (2026-11-20)
-**Commit Message**: fix: Only warn when a browser is not available on login (#2769)
-
-Monorepo-Commit: 858be09158c43a4ef541352130ea47c4dcbb80e5
-
-**File**: `pkg/cli/start/login.go` (modified, +24/-30)
+**File**: `cmd/vclusterctl/cmd/platform/login_test.go` (removed, +0/-17)
 ```diff
-@@ -4,12 +4,10 @@ import (
- 	"bytes"
- 	"crypto/tls"
- 	"encoding/json"
--	"errors"
- 	"fmt"
- 	"io"
- 	"net/http"
- 	netUrl "net/url"
--	"os/exec"
- 	"strings"
- 
- 	types "github.com/loft-sh/api/v5/pkg/auth"
-@@ -21,6 +19,15 @@ import (
- )
- 
- const defaultUser = "admin"
-+const retryCount = 3
-+
-+// Variables for testing purposes. They are set to the default implementations, but can be overridden in tests.
-+var (
-+	// openURL opens a URL in the default browser.
-+	openURL = open.Run
-+	// cliLogin logs the CLI into the platform.
-+	cliLogin = (*LoftStarter).loginViaCLI
-+)
- 
- func (l *LoftStarter) login(url string) error {
- 	if !strings.HasPrefix(url, "https://") {
-@@ -29,30 +36,18 @@ func (l *LoftStarter) login(url string) error {
- 
- 	// check if we are already logged in
- 	if l.isLoggedIn(url) {
--		// still open the UI
--		err := open.Run(url)
--		if errors.Is(err, exec.ErrNotFound) {
--			l.Log.Warnf("Couldn't open the login page in a browser. No browser found: %v", err)
--		} else if err != nil {
--			return fmt.Errorf("couldn't open the login page in a browser: %w", err)
--		}
+@@ -1,17 +0,0 @@
+-package platform
 -
--		l.Log.Infof("If the browser does not open automatically, please navigate to %s", url)
+-import (
+-	"testing"
 -
-+		// still open the browser
-+		l.openBrowser(url, url)
- 		return nil
- 	}
- 
- 	// log into the CLI
--	err := l.loginViaCLI(url)
--	if err != nil {
-+	if err := cliLogin(l, url); err != nil {
- 		return err
- 	}
- 
- 	// log into the UI
--	err = l.loginUI(url)
--	if err != nil {
--		return err
+-	"github.com/loft-sh/vcluster/pkg/cli/flags"
+-)
+-
+-func TestPlatformLoginKeepsDeprecatedDockerLoginFlag(t *testing.T) {
+-	cmd := NewCobraLoginCmd(&flags.GlobalFlags{})
+-	if err := cmd.ParseFlags([]string{"--docker-login=false"}); err != nil {
+-		t.Fatalf("--docker-login=false no longer parses: %v", err)
 -	}
-+	l.loginUI(url)
- 
- 	return nil
- }
-@@ -71,9 +66,8 @@ func (l *LoftStarter) loginViaCLI(url string) error {
- 		TLSClientConfig: &tls.Config{InsecureSkipVerify: config.Platform.Insecure},
- 	}}
- 
--	// try a couple of times to login
- 	accessKey := &types.AccessKey{}
--	for i := 0; i < 3; i++ {
-+	for range retryCount {
- 		resp, err := httpClient.Post(url+"/auth/password/login", "application/json", bytes.NewBuffer(loginRequestBytes))
- 		if err != nil {
- 			return err
-@@ -113,18 +107,18 @@ func (l *LoftStarter) loginViaCLI(url string) error {
- 	return nil
- }
- 
--func (l *LoftStarter) loginUI(url string) error {
-+func (l *LoftStarter) loginUI(url string) {
- 	queryString := fmt.Sprintf("username=%s&password=%s", defaultUser, netUrl.QueryEscape(l.Password))
- 	loginURL := fmt.Sprintf("%s/login#%s", url, queryString)
- 
--	err := open.Run(loginURL)
--	if errors.Is(err, exec.ErrNotFound) {
--		l.Log.Warnf("Couldn't open the login page in a browser. No browser found: %v", err)
--	} else if err != nil {
--		return fmt.Errorf("couldn't open the login page in a browser: %w", err)
+-	if f := cmd.Flags().Lookup("docker-login"); f.Deprecated == "" || !f.Hidden {
+-		t.Errorf("--docker-login: deprecated %q, hidden %v; want deprecated and hidden", f.Deprecated, f.Hidden)
 -	}
--
--	l.Log.Infof("If the browser does not open automatically, please navigate to %s", url)
-+	l.openBrowser(loginURL, url)
-+}
- 
--	return nil
-+// openBrowser tries to open target in the default browser. Failures are logged, not returned.
-+// displayURL is what gets logged, and it differs from target when target holds secrets such as a password.
-+func (l *LoftStarter) openBrowser(target, displayURL string) {
-+	if err := openURL(target); err != nil {
-+		l.Log.Warnf("Couldn't open %s in a browser: %v", displayURL, err)
-+	}
-+	l.Log.Infof("If the browser does not open automatically, please navigate to %s", displayURL)
- }
-```
-
-**File**: `pkg/cli/start/login_test.go` (added, +175/-0)
-```diff
-@@ -0,0 +1,175 @@
-+package start
-+
-+import (
-+	"bytes"
-+	"errors"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/loft-sh/log"
-+	"github.com/loft-sh/vcluster/pkg/cli/flags"
-+	"github.com/sirupsen/logrus"
-+	"gotest.tools/v3/assert"
-+)
-+
-+// stubOpenURL replaces openURL for the duration of the test and records the URL it was called with.
-+func stubOpenURL(t *testing.T, err error) *string {
-+	t.Helper()
-+
-+	var opened string
-+	original := openURL
-+	openURL = func(input string) error {
-+		opened = input
-+		return err
-+	}
-+	t.Cleanup(func() { openURL = original })
-+
-+	return &opened
-+}
-+
-+func newTestStarter(password string) (*LoftStarter, *bytes.Buffer) {
-+	out := &bytes.Buffer{}
-+	l := &LoftStarter{}
-+	l.Log = log.NewStreamLogger(out, out, logrus.InfoLevel)
-+	l.Password = password
-+	return l, out
-+}
-+
-+func TestOpenBrowser(t *testing.T) {
-+	const (
-+		url        = "https://localhost:9898"
-+		infoLog    = "If the browser does not open automatically, please navigate to " + url
-+		warningLog = "Couldn't open " + url + " in a browser: open failed"
-+	)
-+
-+	testCases := []struct {
-+		name        string
-+		openErr     error
-+		wantWarning bool
-+	}{
-+		{
-+			name:        "browser opens",
-+			openErr:     nil,
-+			wantWarning: false,
-+		},
-+		{
-+			name:        "browser fails to open",
-+			openErr:     errors.New("open failed"),
-+			wantWarning: true,
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			opened := stubOpenURL(t, tc.openErr)
-+			l, out := newTestStarter("")
-+
-+			l.openBrowser(url, url)
-+
-+			assert.Equal(t, *opened, url)
-+			assert.Assert(t, bytes.Contains(out.Bytes(), []byte(infoLog)), "log output: %q", out.String())
-+			assert.Equal(t, bytes.Contains(out.Bytes(), []byte(warningLog)), tc.wantWarning, "log output: %q", out.String())
-+		})
-+	}
-+}
-+
-+// stubCLILogin replaces cliLogin with a no-op for the duration of the test and reports whether it was called.
-+func stubCLILogin(t *testing.T) *bool {
-+	t.Helper()
-+
-+	called := false
-+	original := cliLogin
-+	cliLogin = func(*LoftStarter, string) error {
-+		called = true
-+		return nil
-+	}
-+	t.Cleanup(func() { cliLogin = original })
-+
-+	return &called
-+}
-+
-+// setLoggedInHost sets the platform host in the CLI config, which is what isLoggedIn compares against.
-+// config.Read caches a single config for the whole process, so this edits the loaded config instead of writing a file.
-+func setLoggedInHost(t *testing.T, l *LoftStarter, host string) {
-+	t.Helper()
-+
-+	l.GlobalFlags = &flags.GlobalFlags{Config: filepath.Join(t.TempDir(), "config.json")}
-+	cfg := l.LoadedConfig(l.Log)
-+	original := cfg.Platform.Host
-+	cfg.Platform.Host = host
-+	t.Cleanup(func() { cfg.Platform.Host = original })
-+}
-+
-+func TestLoginSucceedsWhenBrowserFailsToOpen(t *testing.T) {
-+	const url = "https://localhost:9898"
-+
-+	testCases := []struct {
-+		name         string
-+		loggedInHost string
-+		wantCLILogin bool
-+		wantOpened   string
-+	}{
-+		{
-+			name:         "not logged in yet",
-+			loggedInHost: "",
-+			wantCLILogin: true,
-+			wantOpened:   url + "/login#username=admin&password=password",
-+		},
-+		{
-+			name:         "already logged in",
-+			loggedInHost: url,
-+			wantCLILogin: false,
-+			wantOpened:   url,
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			opened := stubOpenURL(t, errors.New("open failed"))
-+			cliLoginCalled := stubCLILogin(t)
-+			l, out := newTestStarter("password")
-+			setLoggedInHost(t, l, tc.loggedInHost)
-+
-+			err := l.login(url)
-+
-+			assert.NilError(t, err)
-+			assert.Equal(t, *cliLoginCalled, tc.wantCLILogin)
-+			assert.Equal(t, *opened, tc.wantOpened)
-+			assert.Assert(t, bytes.Contains(out.Bytes(), []byte("Couldn't open "+url+" in a browser")), "log output: %q", out.String())
-+		})
-+	}
-+}
-+
-+func TestLoginUIDoesNotLogPassword(t *testing.T) {
-+	const (
-+		url      = "https://localhost:9898"
-+		password = "s3cr&t pass"
-+	)
-+
-+	testCases := []struct {
-+		name    string
-+		openErr error
-+	}{
-+		{
-+			name:    "browser opens",
-+			openErr: nil,
-+		},
-+		{
-+			name:    "browser fails to open",
-+			openErr: errors.New("open failed"),
-+		},
-+	}
-+
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			opened := stubOpenURL(t, tc.openErr)
-+			l, out := newTestStarter(password)
-+
-+			l.loginUI(url)
-+
-+			assert.Equal(t, *opened, url+"/login#username=admin&password=s3cr%26t+pass")
-+			assert.Assert(t, bytes.Contains(out.Bytes(), []byte(url)), "log output: %q", out.String())
-+			assert.Assert(t, !bytes.Contains(out.Bytes(), []byte("s3cr")), "password leaked into log output: %q", out.String())
-+		})
-+	}
-+}
+-}
 ```
 
 #### Recent Merged Pull Requests:
@@ -3103,31 +1638,38 @@ Monorepo-Commit: 858be09158c43a4ef541352130ea47c4dcbb80e5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. syncer): skip host objects that belong to another virtual object
+## X. cli): remove deprecated docker-login flag
 
 **RULE**:
-When implementing operations in `e2e/suite_e2e_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/vclusterctl/cmd/login.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in loft-sh/vcluster. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1671d54b`: syncer): skip host objects that belong to another virtual object. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78f21ee0`: cli): remove deprecated docker-login flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/suite_e2e_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/vclusterctl/cmd/login.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			test_core.HostNameCollisionSpec()
+	Driver    string
+	AccessKey string
+	Insecure  bool
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	Driver      string
+	AccessKey   string
+	Insecure    bool
+	DockerLogin bool
+	loginCmd.Flags().BoolVar(&cmd.DockerLogin, "docker-login", true, "If true, will log into the docker image registries the user has image pull secrets for")
+	_ = loginCmd.Flags().MarkDeprecated("docker-login", "it only works with shared secrets, which were removed in vCluster CLI v0.38")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1671d54b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78f21ee0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

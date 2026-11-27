@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T03:35:28.720Z",
-  "total_records": 2799,
+  "last_updated": "2026-11-27T03:44:41.012Z",
+  "total_records": 2800,
   "domains": {
     "A": {
       "total": 23,
@@ -1728,7 +1728,7 @@
       ]
     },
     "H": {
-      "total": 681,
+      "total": 682,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2410,7 +2410,8 @@
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-core-invariants",
         "domain_intelligence-technical-construction-intelligence-margelo-react-native-mmkv-learnings-core-inv",
         "DOM-H-E3FDDFF0",
-        "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-"
+        "domain_intelligence-technical-construction-intelligence-dicklesworthstone-destructive_command_guard-",
+        "DOM-H-A566253F"
       ]
     },
     "I": {
@@ -13408,8 +13409,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "1213fddaf25beb43825c28f59d0b96141f6044ade9ba13dae7a9eccdf64e21f2",
-      "created_at": "2026-11-26T10:41:01.773Z"
+      "content_hash": "d900782029dccf67a3ee9c1a95f1faaf82e28e4577f4f58aa2a75ee18b17ea13",
+      "created_at": "2026-11-27T03:43:58.794Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -13477,8 +13478,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh-vcluster-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-learnings-deployment-operations-intelligence-loft-sh-vcluster-l.md",
       "repository": "loft-sh-vcluster-learnings",
-      "content_hash": "2619c79af647c248ae9e7b9a9bfc00c82c967686a1c7f2a47999f4fe37c6c472",
-      "created_at": "2026-11-23T21:05:02.128Z"
+      "content_hash": "726ce3f325c3aed6d91deb466e9adf61160e677235ecfd5886b8669007896c0c",
+      "created_at": "2026-11-27T03:44:41.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-learnings-core-invaria",
@@ -17231,8 +17232,8 @@
       "title": "Technical Construction Intelligence: react-native-webrtc/react-native-webrtc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-native-webrtc-react-native-webrtc-technical-construction-intelligence-reac.md",
       "repository": "react-native-webrtc/react-native-webrtc",
-      "content_hash": "e91351535b91262740ab4208f26255f6d9808bacee9a9611dd79b7ca39bd18f4",
-      "created_at": "2026-11-14T16:22:53.532Z"
+      "content_hash": "b7ed51318a74f7f164ea787c8e7c551731f2ebb451f5013bcdd1f9e1356a3f0f",
+      "created_at": "2026-11-27T03:43:55.507Z"
     },
     "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -17342,8 +17343,8 @@
       "title": "Technical Construction Intelligence: react-native-webrtc-react-native-webrtc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-native-webrtc-react-native-webrtc-learnings-technical-construction-intelli.md",
       "repository": "react-native-webrtc-react-native-webrtc-learnings",
-      "content_hash": "1cbda9ae453d3e640c6efc35ae2462aaca3cc6e63762a22c6a20f2c4544887f9",
-      "created_at": "2026-11-14T16:23:48.023Z"
+      "content_hash": "a0d1a00ddf672dd875747a5c3b7f1222c73e801de15fb52c915e6affc333d1a9",
+      "created_at": "2026-11-27T03:44:39.731Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants",
@@ -17768,8 +17769,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-research-knowledge-intelligence-unsloth-embeddi.md",
       "repository": "unsloth/embeddinggemma-2-GGUF",
-      "content_hash": "d6aecaeeba5e704557db6975a1f5ff12f74cab35a3958b3f76c39e108fe5da07",
-      "created_at": "2026-11-23T18:32:11.933Z"
+      "content_hash": "d871cc4caf00d60e6afac56b859f2171369679936148426798c3d776da648e56",
+      "created_at": "2026-11-27T03:43:48.486Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
@@ -17846,8 +17847,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-learnings-research-knowledge-intelligence-hf-un.md",
       "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
-      "content_hash": "e3c4925b9600918dba9ecca2c413922fce6586962066e0ccd018935e4da06af1",
-      "created_at": "2026-11-23T18:32:32.733Z"
+      "content_hash": "f32af9639c62ea962a941f670b01e6c2bca2c94db3eed99d7b46df2a312522be",
+      "created_at": "2026-11-27T03:44:06.567Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
@@ -23562,8 +23563,8 @@
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "4615603d145febd25e8c84ace3e520f0b7808f5769c3d0e01dfcfc1302fb4995",
-      "created_at": "2026-11-25T07:39:33.502Z"
+      "content_hash": "00d1435cc0549679b9e2be2e5445f14a80b78215e7b16476770272918fff5f29",
+      "created_at": "2026-11-27T03:44:03.193Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
@@ -47234,6 +47235,48 @@
       "repository": "sfu-db-connector-x-learnings",
       "content_hash": "3b180cb661406c620367bd7d83f1e8c4978fcc0012847f22b411fa95e70a2172",
       "created_at": "2026-11-27T03:07:57.615Z"
+    },
+    "DOM-H-A566253F": {
+      "record_id": "DOM-H-A566253F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "android(consumer-rules): ignore missing org.webrtc classes in R8",
+      "content": "When implementing operations in `android/consumer-rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-native-webrtc/react-native-webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "e0adec49e21966e1c9cbc73812302eeae3377e5bc7d6d50427cf317bb1f55ba3",
+      "summary": "Prevents defects observed in production commit `0e4f5be1`: android(consumer-rules): ignore missing org.webrtc classes in R8. Unvalidated exe -> When implementing operations in `android/consumer-rules.pro`, engineers MUST enforce rigorous boundary validation, safe state transitions, a",
+      "provenance": {
+        "source_uri": "project://react-native-webrtc-react-native-webrtc/react-native-webrtc-react-native-webrtc-learnings.md",
+        "source_version": "0e4f5be1",
+        "observed_at": "2026-11-27T03:43:53.708Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-native-webrtc-react-native-webrtc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-native-webrtc-react-native-webrtc"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T03:44:38.898Z"
     }
   }
 }

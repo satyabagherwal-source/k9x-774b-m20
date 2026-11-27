@@ -13686,3 +13686,8 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `4d459637` | Multi-dimensional audit evidence | 2026-11-27T03:24:57.546Z |
 | `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-27T03:35:07.737Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `27da81ce` | Multi-dimensional audit evidence | 2026-11-27T03:35:21.187Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-27T03:43:48.225Z |
+| `learn-github-react-native-webrtc-react-native-webrtc` | `https://github.com/react-native-webrtc/react-native-webrtc` | `0e4f5be1` | Multi-dimensional audit evidence | 2026-11-27T03:43:55.038Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `78f21ee0` | Multi-dimensional audit evidence | 2026-11-27T03:43:58.311Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ace4d4f2` | Multi-dimensional audit evidence | 2026-11-27T03:44:02.659Z |
+| `learn-dom-h-a566253f` | `project://react-native-webrtc-react-native-webrtc` | `0e4f5be1` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-native-webrtc-react-native-webrtc-learnings.md` | 2026-11-27T03:44:38.941Z |
