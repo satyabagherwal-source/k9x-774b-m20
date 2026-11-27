@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:09:23.857Z",
+  "last_updated": "2026-11-27T15:18:38.774Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T15:00:14.100Z",
+      "processed_at": "2026-11-27T15:18:36.661Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-27T14:25:50.065Z",
+      "processed_at": "2026-11-27T15:18:37.637Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -353,7 +353,7 @@
       "staged_for_review": 1
     },
     "hmbown-codewhale-learnings.md": {
-      "processed_at": "2026-11-26T14:53:33.609Z",
+      "processed_at": "2026-11-27T15:18:28.848Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4989,
+  "total_dossiers_evaluated": 4992,
   "total_canonical_promoted": 579,
-  "total_staged_for_review": 3747
+  "total_staged_for_review": 3750
 }

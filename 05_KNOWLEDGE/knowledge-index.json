@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:09:23.684Z",
+  "last_updated": "2026-11-27T15:18:38.622Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26617,
+  "total_items": 26620,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9299e803305b4c2230aba898af3cdf4b8c715b0ff31e91889e07c71b333588f7",
+      "content_hash": "41ba1e7e117b5b510670b3bcb13c51453481326c6bdff7ccf7405e28b9ecb478",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T14:25:51.019Z"
+      "persisted_at": "2026-11-27T15:18:38.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d9347c49163375a787cc6109393760e5b864291ce1e1a6cd7e99f23a2ad32aa",
+      "content_hash": "a51e643a2cd1477486e7862a2ac9bb1aef327d46f082e0fee563bb4bfab2d14b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:25:51.204Z"
+      "persisted_at": "2026-11-27T15:18:38.622Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7a4dbb53dbb8feb73c9ce8266688dc9ca816d530cdfa5b34430c4fd4a141947",
+      "content_hash": "d04ab9a6263da3ba7419147c51caebcd075f65bcc645feabbef3a9e4b3532bdd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:00:15.331Z"
+      "persisted_at": "2026-11-27T15:18:37.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -233528,13 +233528,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "8838e415",
-      "content_hash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "02e1c520",
+      "content_hash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -233620,6 +233620,11 @@
           "number": 10863,
           "title": "expand prompt-bound user commands on the Runtime turn path (CW-8421)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10917,
+          "title": "compaction summaries reuse the turn's cached prefix on DeepSeek",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233627,7 +233632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T09:17:32.656Z",
+      "verified_at": "2026-11-27T15:18:19.869Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233666,37 +233671,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "8838e415",
-      "content_hash": "c0b23c1da6a6a68fae5645f82a4a2d1243d8724262b0f752928a3153da9267ab",
+      "source_version": "02e1c520",
+      "content_hash": "a23e691a7881b115b3b22cbeb9e6f8cbaa5ceaa0a0d46fc27d4dc3037dfd071c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T09:17:33.405Z"
+      "persisted_at": "2026-11-27T15:18:20.545Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "8838e415",
-      "content_hash": "75b8117aa81783b6e12c64e0cc7e42e3b003cfb03d1b782963256ea20b3f4833",
+      "source_version": "02e1c520",
+      "content_hash": "77d63f377c9484b1ac61b1c21fcb2215a29b28108d5c9d69fa7b91f35bdcef2b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T09:17:33.611Z"
+      "persisted_at": "2026-11-27T15:18:20.730Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "8838e415",
-      "content_hash": "f72844ca7ad18d5cdfaa546d6f431a4954c068c9edda5567a0b49de7154eaa7d",
+      "source_version": "02e1c520",
+      "content_hash": "74b92c7f99cace389b9ad0bea5ff65b2a30a0ebd78a157286c568228bf749485",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:17:33.810Z"
+      "persisted_at": "2026-11-27T15:18:20.905Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -242796,9 +242801,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "175b5c2da24545d12b63eb913724a553a4aad724aa94e9c8c5858e1820ad06e8",
+      "content_hash": "6267cd38d0253ba7c792065b8cf8b3c0d4debdb4fedbaf7ee7509d68e7d696fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:53:34.506Z"
+      "persisted_at": "2026-11-27T15:18:36.144Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -242820,9 +242825,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd216c7da2a3b68728f17f1c64e6decd1020cf7489c8a9b86c9f4787b6e94cfe",
+      "content_hash": "3bf2959a64f53b84d3ab0ed32d85c422c875251004192f1d3653c94e7b432289",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:53:34.931Z"
+      "persisted_at": "2026-11-27T15:18:36.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -242832,9 +242837,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ef862d7a808a4a54d01a8b659eeaaef162555d2028c59d1012b0a8e8bf42f06",
+      "content_hash": "6ed374c9b4980fa9013039ad7dfa3c4b4bd63499194ac5107714f4fad8778408",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:53:35.121Z"
+      "persisted_at": "2026-11-27T15:18:36.482Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -301076,9 +301081,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae4d1d6228dfecbe098e3e0f3d0dfa53d8c815c892941c9ae3dae620a8eb1a3d",
+      "content_hash": "fc369a7b772922fb369dfa473938d2293c2168a92a683820055227944df580a5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T14:25:50.795Z"
+      "persisted_at": "2026-11-27T15:18:38.283Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358336,13 +358341,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YM2L-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M8MD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7643c69af010d9a1308ff24a839aed2d68c8db19c26ed8fda243a71e6a4b2df6",
+      "content_hash": "4cf46f75ca0d48fbea63312521d91d4c61be6aef591a84d597d6ce887d90a7cb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:00:14.785Z"
+      "persisted_at": "2026-11-27T15:18:37.096Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358352,9 +358357,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c79512f2223c9f6be6d132a0b9140b7e49c53dab1f85e40f44921a9e9b64d8fd",
+      "content_hash": "24a9e5feeebe7bdf083dfab08f85ddfe14ea46cfb57a78b544c3a72bf6b67949",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:00:15.055Z"
+      "persisted_at": "2026-11-27T15:18:37.274Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362822,13 +362827,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QDBR-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M9E1-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f1490c75cc88f67013aa6339df825309247c53fb90e66203a5530459e653152",
+      "content_hash": "180f936b2662a62e867b3ede1c48615271b41f09229468a665c11cb0e2731d49",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T14:25:50.584Z"
+      "persisted_at": "2026-11-27T15:18:38.090Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -365418,6 +365423,44 @@
       "content_hash": "a1ae87ccc04a9ae5277ee6ba88459fe4e389557a6fd05c2eccd8004a40cddd93",
       "domain_letter": "F",
       "persisted_at": "2026-11-27T15:00:11.977Z"
+    },
+    "rule-10917": {
+      "learning_id": "rule-10917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10917,
+      "title": "compaction summaries reuse the turn's cached prefix on DeepSeek",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "02e1c520",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:18:19.869Z"
+    },
+    "candidate_directive-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek": {
+      "item_id": "candidate_directive-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LVPG-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek.md",
+      "title": "compaction summaries reuse the turn's cached prefix on DeepSeek",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "02e1c520",
+      "content_hash": "0bab4e370ba77d6a206caf3f7ccc591338546e2cfc8e986ec762eea42dbf7dd6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:18:20.359Z"
+    },
+    "candidate_directive-engine-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek": {
+      "item_id": "candidate_directive-engine-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M7QX-engine-compaction-summaries-reuse-the-turn-s-cached-prefix-on-deepseek.md",
+      "title": "engine): compaction summaries reuse the turn's cached prefix on DeepSeek",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97df9c821ceac0d17339a2c49e109da2f13f0218a34267158cea87f3e5afe4e9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:18:35.965Z"
     }
   },
   "ai-builder-brain": {

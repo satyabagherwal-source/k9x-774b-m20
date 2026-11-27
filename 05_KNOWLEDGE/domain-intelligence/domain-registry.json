@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T15:09:23.479Z",
+  "last_updated": "2026-11-27T15:18:38.283Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -16677,10 +16677,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "c0b23c1da6a6a68fae5645f82a4a2d1243d8724262b0f752928a3153da9267ab",
-      "created_at": "2026-11-27T09:17:33.405Z"
+      "content_hash": "a23e691a7881b115b3b22cbeb9e6f8cbaa5ceaa0a0d46fc27d4dc3037dfd071c",
+      "created_at": "2026-11-27T15:18:20.545Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -19170,8 +19170,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "175b5c2da24545d12b63eb913724a553a4aad724aa94e9c8c5858e1820ad06e8",
-      "created_at": "2026-11-26T14:53:34.506Z"
+      "content_hash": "6267cd38d0253ba7c792065b8cf8b3c0d4debdb4fedbaf7ee7509d68e7d696fa",
+      "created_at": "2026-11-27T15:18:36.144Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -33968,8 +33968,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ae4d1d6228dfecbe098e3e0f3d0dfa53d8c815c892941c9ae3dae620a8eb1a3d",
-      "created_at": "2026-11-27T14:25:50.795Z"
+      "content_hash": "fc369a7b772922fb369dfa473938d2293c2168a92a683820055227944df580a5",
+      "created_at": "2026-11-27T15:18:38.283Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46785,8 +46785,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c79512f2223c9f6be6d132a0b9140b7e49c53dab1f85e40f44921a9e9b64d8fd",
-      "created_at": "2026-11-27T15:00:15.055Z"
+      "content_hash": "24a9e5feeebe7bdf083dfab08f85ddfe14ea46cfb57a78b544c3a72bf6b67949",
+      "created_at": "2026-11-27T15:18:37.274Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:00:03.464Z",
-  "total_cycles_completed": 13102,
-  "total_learnings_persisted": 13102,
-  "total_rules_promoted": 11829,
+  "last_updated": "2026-11-27T15:18:20.133Z",
+  "total_cycles_completed": 13103,
+  "total_learnings_persisted": 13103,
+  "total_rules_promoted": 11830,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:24:11.240Z",
-      "repository": "linkerd/linkerd2",
-      "learningId": "learn-github-linkerd-linkerd2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:32:15.293Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T15:00:03.464Z",
       "repository": "sharkdp/bat",
       "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:18:20.133Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

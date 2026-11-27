@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T14:53:34.090Z",
+  "timestamp": "2026-11-27T15:18:35.838Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T14:53:34.090Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T15:18:35.838Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `8838e415`  
+> **Source Version**: `02e1c520`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T14:53:24.733Z  
+> **Timestamp**: 2026-11-27T15:18:18.973Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:53:24.726Z  
+> **Harvest Timestamp**: 2026-11-27T15:18:18.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1992,14 +1992,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7561** (2026-11-25): **fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects**
-  *Symptoms*: ## What and why  Resolves the remaining unaddressed R5 audit gaps from #7461 (on top of `1fa6548ce` and `7e003749f` already landed on `main`) and adds missing behavioral regression tests:  - **R5-L10-01** (`crates/util/src/{utils,fs_confined}.rs`, `crates/engine/src/tools/workflow/journal.rs`): Exported shared best-effort `codewhale_util::utils::sync_directory`, added `codewhale_util::fs_confined::append_durable` (data `sync_all` + best-effort parent directory sync on create), and routed `WorkflowRunJournal::append_record` through it. - **R5-L10-02** (`crates/engine/src/session_manager.rs`, `test_cases_04.rs`): Replaced hard-failing `File::open(...)?.sync_all()?` calls left by `1fa6548ce` (which break on network/FUSE mounts) with shared best-effort `sync_directory` across all session/sidecar/checkpoint/archive unlink paths, with regression test `delete_session_removes_sidecars_and_preserves_shared_runtime_store`. - **R5-L7-01** (`crates/engine/src/tools/search.rs`, `tests.rs`): Derived a child `worker_cancel_token` with `drop_guard` in `run_blocking_grep` (matching `run_blocking_file_search`) so timeouts cancel the worker without cancelling the caller's parent token, with regression test `test_grep_blocking_wrapper_cancels_worker_on_timeout`. - **R5-L9-02** (`crates/engine/src/tools/review.rs`): Passed caller `max_chars` into `resolve_review_source` / `resolve_file_target`, pre-checked size against `max_chars * 4`, read boundedly via `File::take(max_bytes + 1)` inside `spawn_
+- **Issue #7565** (2026-11-27): **fix(engine): preserve pasted summary headers during compaction**
+  *Symptoms*: ## What and why  Compaction could replace a real user message that began with the exact legacy summary header. This change uses checkpoint structure and provenance to choose what it can replace. A bare header follows the normal user-text retention budget. When a pasted header shares a message with a tool result, the result stays only if its matching call survives.  The next compaction replaces the previous verified checkpoint. A legacy checkpoint can be identified during restore when the saved system summary matches it. An older save with only a bare history row keeps that row as conversation text. Under pressure this can make compaction preserve the original history and report that it could not shrink it. The published era-based retention API keeps its existing behavior.  ## Where this came from  Closes #7562. Thanks for tracing the compaction-time deletion and separating it from the restore case.  ## How I tested it  - The baseline compaction path dropped the pasted text. The isolated harness used the production selection, replacement, and shrink checks and reported `test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s`. With a fixed summary response, two consecutive passes reduced the fixture from 2,429 to 809 and from 3,068 to 809 estimated tokens. The pasted text survived exactly once, each tool result kept its matching call, and the previous checkpoint was replaced. - The same harness covered an older bare TUI snapshot and a sna
 
-- **Issue #7557** (2026-11-24): **fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder**
-  *Symptoms*: The model picker had its own catalog-token parser (`catalog_effort_value`) duplicating one the engine already owns.  - Use `ReasoningEffort::from_catalog_token` and `ReasoningEffort::catalog_effort_values_for_offering` instead, and always keep `Auto` first in the resulting list. - Add an explicit Ollama Cloud effort ladder (`Auto`, `Off`, `Low`, `Medium`, `High`, `Max`).  Rebased onto current `main`. The branch's separate skills commit was dropped: that work is already on `main` via #7544, and re-applying it would have reverted the merged version.  Net effect: `crates/tui/src/tui/model_picker.rs`, one file. <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7557" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"942707f524abff1409e2682fc600857967ae4775","has_any_findings":true,"has_unresolved_findings":true,"status":"failed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ❌ Failed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ❌ **Failed** <relative-time datetime="2026-11-24T19:35:39.042376Z">2026-11-24T19:35:39.042376Z</relative-time><br/>We couldn’t complete this review. Comment `@codex review` to try again. | `942707f` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when yo
-  > You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage). To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/settings/code-review).
+- **Issue #7563** (2026-11-27): **fix(tui): open inline skill completion after CJK text**
+  *Symptoms*: ## What and why  An inline skill mention (`/my-review` or `$my-review` inside a message) only opens the skill completion popup when the `/` or `$` follows whitespace or an ASCII bracket or quote. Chinese and Japanese text has no spaces between words, so `请用$my` or `请用/my` shows nothing, while `please use $my` lists `$my-review`.  This is the same check #7258 relaxed for `@` file mentions. `is_inline_skill_mention_start` now also accepts a CJK character before the trigger, using the same `codewhale_tui_kit::translation::is_cjk`, so `（$my` and `看看，/my` open the popup too. A `/` after ASCII text, as in `path/my`, still doesn't open it.  One side effect: in `是/否`, the popup briefly lists every skill right after the `/` is typed and closes once `否` is typed, because skill names are ASCII and the partial no longer matches. Pressing Enter right after a trailing `/` picks a skill, which is what `please use /` already does.  ## Where this came from  Bug fix, a sister of #7258.  ## How I tested it  - Added `inline_skill_popup_opens_directly_after_cjk_text`. It covers `请用/my`, `请用$my`, `（$my` and `看看，/my`, and checks that `path/my` stays closed. Without the `is_cjk` line it fails on the first input with `left: []` against `right: ["/my-review"]`. - `cargo test -p codewhale-tui --lib` filtered to `inline_skill` (6), `slash` (88), `skill` (121) and `mention` (90): all pass. - `RUST_MIN_STACK=16777216 cargo test -p codewhale-tui --lib tui::`: 3998 passed. The 1 failure is `config_panel_gol
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2016,1472 +2013,635 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84b57765` (2026-11-26)
-**Commit Message**: fix(command-contract): background facet carries a fn pointer and plain request, not a boxed future
+### Incident Patch 1: `a82afef9` (2026-11-27)
+**Commit Message**: fix(engine): compaction summaries reuse the turn's cached prefix on DeepSeek
 
-What: the background-command facet (issue 7468, /update and /init off the UI
-task) now transports `BackgroundJob = fn(BackgroundRequest, BackgroundCancel)
--> BackgroundCommandResult`. `BackgroundRequest` is plain owned data
-(workspace, language, updater path, the raw /update argument) and
-`BackgroundCancel` is an `Arc<AtomicBool>` the host owns. The contract no
-longer names `Pin<Box<dyn Future>>`.
+What: manual /compact now sends the tools the last turn's request carried
+(Session::last_request_tools, recorded where the primary and RLM requests
+are prepared), as the auto and overflow-recovery passes already did. On
+DeepSeek the summary request sends the turn's tool_choice
+(default_tool_choice(false), {"type":"auto"}) instead of "none". A summary
+reply containing a tool call now takes the existing unusable-summary path
+(one conservative retry, then failure with history kept) instead of
+failing the pass outright. docs/CACHE.md (en and zh_hans) gains a
+"Compaction summary requests" section.
 
-Why: the hosted Lint gate check-command-crate-boundaries.py failed on
-facets/background.rs:7 (rule D1: no boxed storage in the contract; transport
-is fn pointers and plain data). The gate is unchanged.
+Why (#7564, reported by LmeSzinc): on deepseek-v4-flash every summary hit
+only the system prompt (17,920 tokens on two manual passes in two
+sessions, about 20k on auto passes) and missed 169k-765k tokens. Manual
+passes sent no tools, so the prefix diverged right after the system
+prompt. Auto passes sent tool_choice "none". DeepSeek thinking turns never
+send tool_choice, because the chat client drops auto/required but forwards
+none, and non-thinking turns send auto, so the summary was the only
+request that carried "n
 
-Host (commands/background_host.rs): runs the job with spawn_blocking, keeps
-one run per command with the localized refusal, delivers through the
-existing completion drain, and cancels (Esc / Ctrl-C / `/update cancel` /
-`/init cancel` / closed mailbox) by setting the run's flag and discarding its
-result. /update's job spawns the updater with std::process::Command, drains
-stdout/stderr on reader threads, polls try_wait and the flag every 50 ms and
-kills and reaps the child on cancel; this rep
-
-**File**: `crates/command-contract/src/facets/background.rs` (modified, +16/-5)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,16 +1,27 @@
--use std::future::Future;
--use std::pin::Pin;
-+use std::path::PathBuf;
-+use std::sync::Arc;
-+use std::sync::atomic::AtomicBool;
+@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- use crate::outcome::BackgroundCommandResult;
+ ### Fixed
  
--pub type BackgroundCommandWork =
--    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
-+#[derive(Debug, Clone, Default, PartialEq, Eq)]
-+pub struct BackgroundRequest {
-+    pub workspace: PathBuf,
-+    pub language: String,
-+    pub updater: PathBuf,
-+    pub argument: String,
-+}
-+
-+pub type BackgroundCancel = Arc<AtomicBool>;
-+
-+pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
- 
- pub trait CommandBackgroundContext {
-     fn start(
-         &mut self,
-         command: &'static str,
--        work: BackgroundCommandWork,
-+        job: BackgroundJob,
-+        request: BackgroundRequest,
-     ) -> Result<String, String>;
- 
-     fn cancel(&mut self, command: &'static str) -> Result<String, String>;
++- **`/compact` and automatic compaction reuse the turn's prompt cache on DeepSeek:** the manual summary request now carries the tools the last turn sent, and on DeepSeek every summary request sends the turn's own `tool_choice` instead of `none`, so the cached system prompt, tools and history are no longer billed again as cache misses. A summary reply that calls a tool is treated as unusable and retried once with the stricter prompt; if that also fails, the conversation is kept unchanged. Thanks [@LmeSzinc](https://github.com/LmeSzinc) for the audit-log numbers that pinned this down. (#7564)
+ - **Contained processes are killed when Codewhale exits on a signal:** process groups started for `sandbox run`, verifier gates, hooks, MCP servers and other contained helpers are now killed on SIGINT, SIGTERM or SIGHUP, a crashed MCP server's leftover processes are killed as soon as its exit is seen, and a timed-out or stopped verifier gate kills its whole process tree on Windows. (#6558)
+ - **A failed or timed-out Python REPL round no longer leaves child processes behind:** the round, and REPL shutdown, now kill every process the interpreter started, not only the interpreter. (#6559)
+ - **A lane start that fails after creating its worktree no longer orphans it:** the failed lane records the worktree and branch, and the worktree TTL applies. (#6558)
 ```
 
-**File**: `crates/command-contract/src/tests.rs` (modified, +56/-32)
+**File**: `crates/engine/src/client/test_cases_01.rs` (modified, +47/-32)
 ```diff
-@@ -3945,46 +3945,68 @@ fn status_facet_is_object_safe_and_construction_never_observes_or_grants_mutatio
-     assert!(parts.workspace.is_none());
- }
- 
-+type ParkedJob = (
-+    &'static str,
-+    crate::BackgroundJob,
-+    crate::BackgroundRequest,
-+    crate::BackgroundCancel,
-+);
-+
- #[derive(Default)]
- struct BackgroundFixture {
--    running: Vec<&'static str>,
--    parked: Vec<crate::BackgroundCommandWork>,
-+    parked: Vec<ParkedJob>,
-+}
-+
-+impl BackgroundFixture {
-+    fn running(&self, command: &str) -> Option<&crate::BackgroundCancel> {
-+        self.parked
-+            .iter()
-+            .find(|(name, _, _, cancel)| {
-+                *name == command && !cancel.load(std::sync::atomic::Ordering::SeqCst)
-+            })
-+            .map(|(_, _, _, cancel)| cancel)
-+    }
- }
- 
- impl CommandBackgroundContext for BackgroundFixture {
-     fn start(
-         &mut self,
-         command: &'static str,
--        work: crate::BackgroundCommandWork,
-+        job: crate::BackgroundJob,
-+        request: crate::BackgroundRequest,
-     ) -> Result<String, String> {
--        if self.running.contains(&command) {
-+        if self.running(command).is_some() {
-             return Err(format!("/{command} is already running"));
-         }
--        self.running.push(command);
--        self.parked.push(work);
-+        self.parked
-+            .push((command, job, request, crate::BackgroundCancel::default()));
-         Ok(format!("/{command} started"))
-     }
- 
-     fn cancel(&mut self, command: &'static str) -> Result<String, String> {
--        let Some(index) = self.running.iter().position(|name| *name == command) else {
-+        let Some(cancel) = self.running(command) else {
-             return Err(format!("/{command} is not running"));
-         };
--        self.running.remove(index);
--        drop(self.parked.remove(index));
-+        cancel.store(true, std::sync::atomic::Ordering::SeqCst);
-         Ok(format!("/{command} cancelled"))
-     }
- }
- 
--struct DropFlag(std::sync::Arc<std::sync::atomic::AtomicBool>);
--
--impl Drop for DropFlag {
--    fn drop(&mut self) {
--        self.0.store(true, std::sync::atomic::Ordering::SeqCst);
-+fn echo_job(
-+    request: crate::BackgroundRequest,
-+    cancel: crate::BackgroundCancel,
-+) -> crate::outcome::BackgroundCommandResult {
-+    if cancel.load(std::sync::atomic::Ordering::SeqCst) {
-+        return crate::outcome::BackgroundCommandResult::error("cancelled");
-     }
-+    crate::outcome::BackgroundCommandResult::message(request.argument)
- }
- 
--fn background_work(message: &'static str) -> crate::BackgroundCommandWork {
--    Box::pin(async move { crate::outcome::BackgroundCommandResult::message(message) })
-+fn echo_request(argument: &str) -> crate::BackgroundRequest {
-+    crate::BackgroundRequest {
-+        argument: argument.to_string(),
-+        ..crate::BackgroundRequest::default()
-+    }
- }
- 
- #[test]
-@@ -4012,7 +4034,7 @@ fn background_slot_is_optional_and_taken_once() {
-     assert!(parts.workspace.is_none());
-     assert!(parts.presentation.is_none());
-     assert_eq!(
--        background.start("update", background_work("done")),
-+        background.start("update", echo_job, echo_request("done")),
-         Ok("/update started".to_string())
-     );
- }
-@@ -4028,32 +4050,34 @@ fn background_duplicate_slot_fails_loudly() {
- }
- 
- #[test]
--fn background_facet_refuses_a_second_run_and_cancel_drops_the_work() {
-+fn background_facet_refuses_a_second_run_and_cancel_signals_the_job() {
-     let mut fixture = BackgroundFixture::default();
-     let facet: &mut dyn CommandBackgroundContext = &mut fixture;
--    let dropped = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
--    let flag = DropFlag(dropped.clone());
--    let work: crate::BackgroundCommandWork = Box::pin(async move {
--        let _held = flag;
--        crate::outcome::BackgroundCommandResult::ok()
--    });
--    assert!(facet.start("init", work).is_ok());
-+    assert!(facet.start("init", echo_job, echo_request("first")).is_ok());
-     assert_eq!(
--        facet.start("init", background_work("second")),
-+        facet.start("init", echo_job, echo_request("second")),
-         Err("/init is already running".to_string())
-     );
--    assert!(facet.start("update", background_work("other")).is_ok());
--    assert!(!dropped.load(std::sync::atomic::Ordering::SeqCst));
--    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
-     assert!(
--        dropped.load(std::sync::atomic::Ordering::SeqCst),
--        "cancelling drops the unfinished work"
-+        facet
-+            .start("update", echo_job, echo_request("other"))
-+            .is_ok()
-     );
-+    assert_eq!(facet.cancel("init"), Ok("/init cancelled".to_string()));
-     assert_eq!(
-         facet.cancel("init"),
-         Err("/init is not running".to_string())
-     );
--    assert!(facet.start("init", background_work("again")).is_ok());
-+    assert!(facet.start("init", echo_job, echo_request("again")).is_ok());
-+
-+    let results: Vec<_> = fixtu
-```
-
-**File**: `crates/tui/src/commands/background_host.rs` (modified, +123/-80)
-```diff
-@@ -1,8 +1,11 @@
- use std::collections::HashMap;
- use std::path::PathBuf;
-+use std::sync::atomic::Ordering;
- use std::sync::{Arc, Mutex, MutexGuard, OnceLock, PoisonError};
- 
--use codewhale_command_contract::facets::{BackgroundCommandWork, CommandBackgroundContext};
-+use codewhale_command_contract::facets::{
-+    BackgroundCancel, BackgroundJob, BackgroundRequest, CommandBackgroundContext,
-+};
- use codewhale_command_contract::handler::CommandCapabilities;
- use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
- use codewhale_localization::{Locale, MessageId, tr};
-@@ -12,7 +15,7 @@ use crate::tui::app::{App, AppAction, DispatchApplyFn};
- 
- struct Running {
-     id: u64,
--    abort: tokio::task::AbortHandle,
-+    cancel: BackgroundCancel,
- }
- 
- #[derive(Default)]
-@@ -50,7 +53,7 @@ impl BackgroundCommands {
-         let running = self.lock().running.remove(command);
-         match running {
-             Some(running) => {
--                running.abort.abort();
-+                running.cancel.store(true, Ordering::SeqCst);
-                 true
-             }
-             None => false,
-@@ -63,7 +66,7 @@ impl BackgroundCommands {
-             .running
-             .drain()
-             .map(|(command, running)| {
--                running.abort.abort();
-+                running.cancel.store(true, Ordering::SeqCst);
-                 command
-             })
-             .collect();
-@@ -152,27 +155,35 @@ impl CommandBackgroundContext for BackgroundHost {
-     fn start(
-         &mut self,
-         command: &'static str,
--        work: BackgroundCommandWork,
-+        job: BackgroundJob,
-+        request: BackgroundRequest,
-     ) -> Result<String, String> {
-         let mut state = self.commands.lock();
-         if state.running.contains_key(command) {
-             return Err(self.line(MessageId::CmdBackgroundAlreadyRunning, command));
-         }
-         state.next_id += 1;
-         let id = state.next_id;
--        let task = self.runtime.spawn(work);
-+        let cancel = BackgroundCancel::default();
-         state.running.insert(
-             command,
-             Running {
-                 id,
--                abort: task.abort_handle(),
-+                cancel: cancel.clone(),
-             },
-         );
-         drop(state);
-+        let job_cancel = cancel.clone();
-+        let task = self
-+            .runtime
-+            .spawn_blocking(move || job(request, job_cancel));
-         self.runtime.spawn(supervise(
--            self.commands.clone(),
--            command,
--            id,
-+            Supervised {
-+                commands: self.commands.clone(),
-+                command,
-+                id,
-+                cancel,
-+            },
-             task,
-             self.completion.clone(),
-             Delivery {
-@@ -199,14 +210,25 @@ struct Delivery {
-     stale: String,
- }
- 
--async fn supervise(
-+struct Supervised {
-     commands: BackgroundCommands,
-     command: &'static str,
-     id: u64,
-+    cancel: BackgroundCancel,
-+}
-+
-+async fn supervise(
-+    supervised: Supervised,
-     mut task: tokio::task::JoinHandle<BackgroundCommandResult>,
-     completion: tokio::sync::mpsc::Sender<DispatchApplyFn>,
-     delivery: Delivery,
- ) {
-+    let Supervised {
-+        commands,
-+        command,
-+        id,
-+        cancel,
-+    } = supervised;
-     let Delivery {
-         workspace,
-         failed,
-@@ -216,10 +238,10 @@ async fn supervise(
-         joined = &mut task => Some(joined),
-         () = completion.closed() => None,
-     };
--    let current = commands.finish(command, id);
-+    let current = commands.finish(command, id) && !cancel.load(Ordering::SeqCst);
-     let result = match joined {
-         None => {
--            task.abort();
-+            cancel.store(true, Ordering::SeqCst);
-             return;
-         }
-         Some(Ok(result)) => result,
-@@ -245,20 +267,11 @@ async fn supervise(
- #[cfg(test)]
- mod tests {
-     use super::*;
--    use std::sync::atomic::{AtomicBool, Ordering};
--    use std::time::Duration;
-+    use std::time::{Duration, Instant};
- 
-     use codewhale_engine::core::engine::mock_engine_handle;
-     use codewhale_runtime::config::Config;
- 
--    struct DropFlag(Arc<AtomicBool>);
--
--    impl Drop for DropFlag {
--        fn drop(&mut self) {
--            self.0.store(true, Ordering::SeqCst);
--        }
--    }
--
-     type Mailbox = tokio::sync::mpsc::Receiver<DispatchApplyFn>;
- 
-     fn test_host(workspace: &std::path::Path) -> (BackgroundHost, Mailbox) {
-@@ -282,17 +295,44 @@ mod tests {
-         (app, config)
-     }
- 
--    fn held(flag: &Arc<AtomicBool>) -> BackgroundCommandWork {
--        let flag = DropFlag(flag.clone());
--        Box::pin(async move {
--            let _held = flag;
--            std::future::pending::<BackgroundCommandResult>().await
--        })
-+    fn held(_request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
-+        let deadline = Instant::now() + Duration::from_secs(10);
-+        while
-```
-
-**File**: `crates/tui/src/commands/groups/project/init.rs` (modified, +25/-20)
-```diff
-@@ -9,6 +9,7 @@
- use std::io::Read;
- use std::path::{Path, PathBuf};
- 
-+use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
- use codewhale_command_contract::handler::CommandContexts;
- use codewhale_command_contract::outcome::{BackgroundAction, BackgroundCommandResult};
- 
-@@ -887,23 +888,21 @@ fn init_contextual(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> Comm
-     background
-         .start(
-             INIT_INFO.name,
--            Box::pin(async move {
--                match codewhale_runtime::runtime_control::owner_work(move || {
--                    Ok(prepare_init(&workspace, &language))
--                })
--                .await
--                {
--                    Ok((message, prompt)) => BackgroundCommandResult::with_message_and_action(
--                        message,
--                        BackgroundAction::SendMessage(prompt),
--                    ),
--                    Err(error) => BackgroundCommandResult::error(error.to_string()),
--                }
--            }),
-+            init_job,
-+            BackgroundRequest {
-+                workspace,
-+                language,
-+                ..BackgroundRequest::default()
-+            },
-         )
-         .map_or_else(CommandResult::error, CommandResult::message)
- }
- 
-+fn init_job(request: BackgroundRequest, _cancel: BackgroundCancel) -> BackgroundCommandResult {
-+    let (message, prompt) = prepare_init(&request.workspace, &request.language);
-+    BackgroundCommandResult::with_message_and_action(message, BackgroundAction::SendMessage(prompt))
-+}
-+
- // ---------------------------------------------------------------------------
- // Tests
- // ---------------------------------------------------------------------------
-@@ -992,20 +991,24 @@ mod tests {
-     }
- 
-     struct Background {
--        started: Vec<codewhale_command_contract::facets::BackgroundCommandWork>,
-+        started: Vec<(
-+            codewhale_command_contract::facets::BackgroundJob,
-+            BackgroundRequest,
-+        )>,
-         cancelled: usize,
-     }
- 
-     impl codewhale_command_contract::facets::CommandBackgroundContext for Background {
-         fn start(
-             &mut self,
-             command: &'static str,
--            work: codewhale_command_contract::facets::BackgroundCommandWork,
-+            job: codewhale_command_contract::facets::BackgroundJob,
-+            request: BackgroundRequest,
-         ) -> Result<String, String> {
-             if !self.started.is_empty() {
-                 return Err(format!("/{command} is already running"));
-             }
--            self.started.push(work);
-+            self.started.push((job, request));
-             Ok(format!("/{command} started"))
-         }
- 
-@@ -1059,8 +1062,8 @@ mod tests {
-         }
-     }
- 
--    #[tokio::test]
--    async fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
-+    #[test]
-+    fn init_returns_at_once_and_delivers_the_prompt_as_the_background_result() {
-         let tmpdir = TempDir::new().unwrap();
-         let mut workspace = Workspace(tmpdir.path().to_path_buf());
-         let mut presentation = Presentation;
-@@ -1093,8 +1096,10 @@ mod tests {
-         assert!(refused.is_error, "{refused:?}");
-         assert!(refused.message.unwrap().contains("already running"));
- 
--        let work = background.started.pop().expect("background work");
--        let finished = work.await;
-+        let (job, request) = background.started.pop().expect("background job");
-+        assert_eq!(request.workspace, tmpdir.path());
-+        assert_eq!(request.language, "English");
-+        let finished = job(request, BackgroundCancel::default());
-         assert!(!finished.is_error, "{finished:?}");
-         assert!(finished.message.unwrap().contains("Creating AGENTS.md"));
-         assert!(matches!(
-```
-
-**File**: `crates/tui/src/commands/groups/utility/update.rs` (modified, +126/-10)
-```diff
-@@ -18,9 +18,14 @@
- //!   Telling the user to restart is the honest slice; that is also the only
- //!   possible answer on Windows, where the replaced image is the one running.
- 
-+use std::io::Read;
- use std::path::{Path, PathBuf};
--use std::process::{Command, Output};
-+use std::process::{Command, Output, Stdio};
-+use std::sync::atomic::{AtomicBool, Ordering};
-+use std::thread::JoinHandle;
-+use std::time::Duration;
- 
-+use codewhale_command_contract::facets::{BackgroundCancel, BackgroundRequest};
- use codewhale_command_contract::handler::{CommandCapabilities, CommandContexts, CommandHandler};
- use codewhale_command_contract::metadata::{CommandInfo, RegisterCommand};
- use codewhale_command_contract::outcome::BackgroundCommandResult;
-@@ -199,7 +204,12 @@ fn update(mut contexts: CommandContexts<'_>, arg: Option<&str>) -> CommandResult
-             Some(background) => background
-                 .start(
-                     COMMAND_INFO.name,
--                    Box::pin(run_updater_in_background(updater, mode)),
-+                    update_job,
-+                    BackgroundRequest {
-+                        updater,
-+                        argument: arg.unwrap_or_default().to_string(),
-+                        ..BackgroundRequest::default()
-+                    },
-                 )
-                 .map_or_else(CommandResult::error, CommandResult::message),
-             None => crate::commands::contract::run_owner_blocking(move || {
-@@ -223,10 +233,72 @@ fn run_updater(updater: &Path, mode: UpdateMode) -> CommandResult {
-     updater_result(updater, mode, updater_command(updater, mode).output())
- }
- 
--async fn run_updater_in_background(updater: PathBuf, mode: UpdateMode) -> BackgroundCommandResult {
--    let mut command = tokio::process::Command::from(updater_command(&updater, mode));
--    command.kill_on_drop(true);
--    updater_result(&updater, mode, command.output().await)
-+fn update_job(request: BackgroundRequest, cancel: BackgroundCancel) -> BackgroundCommandResult {
-+    let mode = match parse_mode(Some(&request.argument)) {
-+        Ok(mode) => mode,
-+        Err(message) => return BackgroundCommandResult::error(message),
-+    };
-+    let updater = request.updater;
-+    match run_until_cancelled(updater_command(&updater, mode), &cancel) {
-+        Some(output) => updater_result(&updater, mode, output),
-+        None => {
-+            BackgroundCommandResult::error(format!("`{} update` was cancelled.", updater.display()))
-+        }
-+    }
-+}
-+
-+const CANCEL_POLL: Duration = Duration::from_millis(50);
-+
-+fn run_until_cancelled(
-+    mut command: Command,
-+    cancel: &AtomicBool,
-+) -> Option<std::io::Result<Output>> {
-+    command
-+        .stdin(Stdio::null())
-+        .stdout(Stdio::piped())
-+        .stderr(Stdio::piped());
-+    let mut child = match command.spawn() {
-+        Ok(child) => child,
-+        Err(err) => return Some(Err(err)),
-+    };
-+    let stdout = child.stdout.take().map(drain);
-+    let stderr = child.stderr.take().map(drain);
-+    loop {
-+        if cancel.load(Ordering::SeqCst) {
-+            let _ = child.kill();
-+            let _ = child.wait();
-+            return None;
-+        }
-+        match child.try_wait() {
-+            Ok(Some(status)) => {
-+                return Some(Ok(Output {
-+                    status,
-+                    stdout: collected(stdout),
-+                    stderr: collected(stderr),
-+                }));
-+            }
-+            Ok(None) => std::thread::sleep(CANCEL_POLL),
-+            Err(err) => {
-+                let _ = child.kill();
-+                let _ = child.wait();
-+                return Some(Err(err));
-+            }
-+        }
-+    }
-+}
-+
-+fn drain(mut pipe: impl Read + Send + 'static) -> JoinHandle<Vec<u8>> {
-+    std::thread::spawn(move || {
-+        let mut bytes = Vec::new();
-+        let _ = pipe.read_to_end(&mut bytes);
-+        bytes
-+    })
-+}
-+
-+fn collected(reader: Option<JoinHandle<Vec<u8>>>) -> Vec<u8> {
-+    reader
-+        .and_then(|reader| reader.join().ok())
-+        .unwrap_or_default()
- }
- 
- fn updater_result<A>(
-@@ -456,7 +528,8 @@ mod tests {
-         fn start(
-             &mut self,
-             command: &'static str,
--            _work: codewhale_command_contract::facets::BackgroundCommandWork,
-+            _job: codewhale_command_contract::facets::BackgroundJob,
-+            _request: BackgroundRequest,
-         ) -> Result<String, String> {
-             Err(format!("/{command} must not start in this test"))
-         }
-@@ -504,10 +577,17 @@ mod tests {
-         assert!(message.contains("no such file"), "{message}");
-     }
- 
--    #[tokio::test]
--    async fn a_background_updater_run_reports_a_missing_binary_without_blocking() {
-+    #[test]
-+    fn a_background_updater_job_reports_a_missing_binary() {
-         let missing = std::env::temp_dir().join("codewhale-update-test-missing-binary");
--        let result = run_updater_in_background(missing.clone(), UpdateMode::Check).await;
-+        let result = u
-```
-
-**File**: `scripts/check-blocking-calls-budget.json` (modified, +3/-0)
-```diff
-@@ -467,6 +467,9 @@
-   "crates/tui/src/commands/groups/project/init.rs": {
-     "std_fs": 13
-   },
-+  "crates/tui/src/commands/groups/utility/update.rs": {
-+    "thread_sleep": 1
-+  },
-   "crates/tui/src/commands/session_acceptance.rs": {
-     "std_fs": 6
-   },
-```
-
----
-
-### Incident Patch 2: `c6493898` (2026-11-25)
-**Commit Message**: fix(tui): approval Enter re-arms on reveal, says when it is ignored, and keeps the command readable
-
-Review should_fix findings on the Enter-allows approval bar (decision
-292.1):
-
-- approval/view.rs:383, re-arming: ModalView gains on_became_top, which
-  ViewStack::note_top_change calls whenever the top view changes. The
-  approval card resets its arming clock there, so a card revealed again
-  after another prompt covered it is armed again.
-- approval/view.rs:384, rejected Enter: the process-wide last-Enter stamp
-  is gone. The card keeps its own last Enter and compares it with the
-  200 ms quiet gap, so a held key never commits and a human retry after
-  the 750 ms arming delay does. An ignored Enter emits a localized status
-  notice (ApprovalEnterIgnored) instead of doing nothing visibly.
-- external_agent.rs:547: external-agent cards take
-  config.approval_default_selection() like native cards.
-- widgets/mod.rs:2065, 80 columns: below 100 columns the controls drop
-  their padding, glyphs and the scope arrow
-  (`[d] Allow [Enter] [m] Deny [n]`), so the action text keeps its room.
-  A new test renders a critical rm -rf card at 80 columns and checks the
-  command and every key are on 
-
-**File**: `crates/tui/src/tui/approval/tests.rs` (modified, +93/-69)
-```diff
-@@ -1534,111 +1534,113 @@ fn is_approved(action: &ViewAction) -> bool {
-     )
- }
- 
-+fn enter_was_refused(action: &ViewAction) -> bool {
-+    matches!(
-+        action,
-+        ViewAction::Emit(ViewEvent::StatusToast { message, .. })
-+            if message == tr(Locale::En, MessageId::ApprovalEnterIgnored).as_ref()
-+    )
-+}
-+
-+fn at(base: std::time::Instant, millis: u64) -> std::time::Instant {
-+    base + std::time::Duration::from_millis(millis)
-+}
-+
- #[test]
- fn enter_does_not_allow_a_card_that_only_just_became_answerable() {
--    let _serial = ENTER_GUARD_TESTS
--        .lock()
--        .unwrap_or_else(std::sync::PoisonError::into_inner);
-     for request in one_request_per_card_shape() {
--        super::view::clear_last_approval_enter();
-         let mut untouched = guarded_view(request.clone());
--        assert!(matches!(
--            untouched.handle_key(create_key_event(KeyCode::Enter)),
--            ViewAction::None
-+        assert!(enter_was_refused(
-+            &untouched.handle_key(create_key_event(KeyCode::Enter))
-         ));
- 
--        super::view::clear_last_approval_enter();
-         let mut ticked = guarded_view(request.clone());
-         assert!(matches!(ticked.tick(), ViewAction::None));
-         assert!(ticked.answerable_since.is_some());
--        assert!(matches!(
--            ticked.handle_key(create_key_event(KeyCode::Enter)),
--            ViewAction::None
-+        assert!(enter_was_refused(
-+            &ticked.handle_key(create_key_event(KeyCode::Enter))
-         ));
- 
--        super::view::clear_last_approval_enter();
-         let mut settled = guarded_view(request);
-         settled.answerable_since = long_ago();
-         assert!(is_approved(
-             &settled.handle_key(create_key_event(KeyCode::Enter))
-         ));
-     }
--    super::view::clear_last_approval_enter();
- }
- 
- #[test]
--fn held_enter_does_not_allow_the_next_card() {
--    let _serial = ENTER_GUARD_TESTS
--        .lock()
--        .unwrap_or_else(std::sync::PoisonError::into_inner);
--    super::view::clear_last_approval_enter();
--
--    let mut first = guarded_view(shell_request());
--    first.answerable_since = long_ago();
--    assert!(is_approved(
--        &first.handle_key(create_key_event(KeyCode::Enter))
--    ));
-+fn a_refused_enter_does_not_postpone_the_next_one() {
-+    let base = std::time::Instant::now();
-+    let mut view = guarded_view(shell_request());
-+    ModalView::on_became_top(&mut view, base);
-+    assert!(!view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 400)));
-+    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
- 
--    // An older card revealed by that answer was answerable long ago.
--    let mut revealed = guarded_view(shell_request());
--    revealed.answerable_since = long_ago();
--    for _ in 0..40 {
--        assert!(matches!(
--            revealed.handle_key(create_key_event(KeyCode::Enter)),
--            ViewAction::None
--        ));
--    }
-+    let mut steady = guarded_view(shell_request());
-+    ModalView::on_became_top(&mut steady, base);
-+    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 300)));
-+    assert!(!steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 600)));
-+    assert!(steady.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 900)));
-+}
- 
--    let mut fresh = guarded_view(shell_request());
--    for _ in 0..40 {
--        assert!(matches!(
--            fresh.handle_key(create_key_event(KeyCode::Enter)),
--            ViewAction::None
--        ));
-+#[test]
-+fn held_enter_never_allows() {
-+    let base = std::time::Instant::now();
-+    let mut view = guarded_view(shell_request());
-+    ModalView::on_became_top(&mut view, base);
-+    for repeat in 0..200 {
-+        assert!(
-+            !view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, repeat * 33)),
-+            "repeat {repeat}"
-+        );
-     }
-+    assert!(view.enter_may_commit(ApprovalOption::ApproveOnce, at(base, 200 * 33 + 250)));
- 
--    // A held Enter that refused the first card does not allow the next.
--    super::view::clear_last_approval_enter();
--    let mut denied = ApprovalView::new_with_default_selection(
-+    let mut deny = ApprovalView::new_with_default_selection(
-         shell_request(),
-         Locale::En,
-         ApprovalDefaultSelection::Deny,
-     );
--    denied.enter_guard = true;
-+    deny.enter_guard = true;
-     assert!(matches!(
--        denied.handle_key(create_key_event(KeyCode::Enter)),
-+        deny.handle_key(create_key_event(KeyCode::Enter)),
-         ViewAction::EmitAndClose(ViewEvent::ApprovalDecision {
-             decision: ReviewDecision::Denied,
-             ..
-         })
-     ));
--    let mut after_denial = guarded_view(shell_request());
--    after_denial.answerable_since = long_ago();
--    assert!(matches!(
--        after_denial.handle_key(create_key_event(KeyCode::Enter)),
--        ViewAction::None
--    ));
- 
--    // The explicit key still answers at once, and so does a later Enter.
-+    let
-```
-
-**File**: `crates/tui/src/tui/approval/view.rs` (modified, +23/-30)
-```diff
-@@ -5,17 +5,16 @@
- //! authority boundaries.
- //!
- //! Enter allows the highlighted action by default, so an Enter that approves
--//! is admitted only after the card has been the answerable prompt for
--//! `ENTER_ARMING_DELAY`, that long after the previous Enter on any approval
--//! card, and `ENTER_QUIET_GAP` after the last character key. Known limits:
--//! a key-repeat delay longer than the arming delay, a repeat slower than the
--//! quiet gap, an Enter held on a non-approval prompt that closes onto an
--//! older approval card, and the letter shortcuts (`y`, `a`, `1`) are not
--//! covered by this guard. Unit tests answer a card the instant it is built,
--//! so the guard starts off under `cfg(test)` and a test turns it on.
-+//! is admitted only after the card has been the top prompt for
-+//! `ENTER_ARMING_DELAY` (the view stack re-arms it each time the card becomes
-+//! the top view again) and `ENTER_QUIET_GAP` after the previous Enter or
-+//! character key on this card. A refused Enter says so in a status notice.
-+//! Known limits: a key-repeat delay longer than the arming delay, a repeat
-+//! slower than the quiet gap, and the letter shortcuts (`y`, `a`, `1`) are
-+//! not covered by this guard. Unit tests answer a card the instant it is
-+//! built, so the guard starts off under `cfg(test)` and a test turns it on.
- 
- use std::cell::{Cell, RefCell};
--use std::sync::{Mutex, PoisonError};
- use std::time::{Duration, Instant};
- 
- use codewhale_config::ToolAskRule;
-@@ -38,22 +37,6 @@ use codewhale_engine::core::authority::RiskLevel;
- pub(super) const ENTER_ARMING_DELAY: Duration = Duration::from_millis(750);
- pub(super) const ENTER_QUIET_GAP: Duration = Duration::from_millis(200);
- 
--static LAST_APPROVAL_ENTER: Mutex<Option<Instant>> = Mutex::new(None);
--
--fn replace_last_approval_enter(at: Option<Instant>) -> Option<Instant> {
--    std::mem::replace(
--        &mut *LAST_APPROVAL_ENTER
--            .lock()
--            .unwrap_or_else(PoisonError::into_inner),
--        at,
--    )
--}
--
--#[cfg(test)]
--pub(super) fn clear_last_approval_enter() {
--    replace_last_approval_enter(None);
--}
--
- /// Indices into the option list shared by both variants.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum ApprovalOption {
-@@ -150,6 +133,7 @@ pub struct ApprovalView {
-     pub(crate) scopes_open: bool,
-     pub(crate) details_expanded: bool,
-     pub(super) answerable_since: Option<Instant>,
-+    pub(super) last_enter_at: Option<Instant>,
-     pub(super) last_char_key_at: Option<Instant>,
-     pub(super) enter_guard: bool,
- }
-@@ -196,6 +180,7 @@ impl ApprovalView {
-             scopes_open: false,
-             details_expanded: false,
-             answerable_since: None,
-+            last_enter_at: None,
-             last_char_key_at: None,
-             enter_guard: !cfg!(test),
-         }
-@@ -376,18 +361,17 @@ impl ApprovalView {
-         self.locale
-     }
- 
--    fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
-+    pub(super) fn enter_may_commit(&mut self, option: ApprovalOption, now: Instant) -> bool {
-         if !self.enter_guard {
-             return true;
-         }
-         let answerable_since = *self.answerable_since.get_or_insert(now);
--        let previous_enter = replace_last_approval_enter(Some(now));
-+        let previous_enter = self.last_enter_at.replace(now);
-         if !option.grants() {
-             return true;
-         }
-         now.saturating_duration_since(answerable_since) >= ENTER_ARMING_DELAY
--            && previous_enter
--                .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_ARMING_DELAY)
-+            && previous_enter.is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
-             && self
-                 .last_char_key_at
-                 .is_none_or(|at| now.saturating_duration_since(at) >= ENTER_QUIET_GAP)
-@@ -551,7 +535,10 @@ impl ModalView for ApprovalView {
-         if key.code == KeyCode::Enter {
-             let option = self.current_option();
-             if !self.enter_may_commit(option, now) {
--                return ViewAction::None;
-+                return ViewAction::Emit(ViewEvent::StatusToast {
-+                    message: tr(self.locale, MessageId::ApprovalEnterIgnored).into_owned(),
-+                    level: crate::tui::app::StatusToastLevel::Info,
-+                });
-             }
-             return self.commit_option(option);
-         }
-@@ -709,6 +696,12 @@ impl ModalView for ApprovalView {
-         ApprovalWidget::new(&self.request, self).docked_height(width)
-     }
- 
-+    fn on_became_top(&mut self, at: Instant) {
-+        self.answerable_since = Some(at);
-+        self.last_enter_at = None;
-+        self.last_char_key_at = None;
-+    }
-+
-     fn tick(&mut self) -> ViewAction {
-         self.answerable_since.get_or_insert_with(Instant::now);
-         if self.is_timed_out() {
-```
-
-**File**: `crates/tui/src/tui/external_agent.rs` (modified, +14/-4)
-```diff
-@@ -335,7 +335,10 @@ pub(crate) fn handle_external_approval_decision(
-     Some(true)
- }
- 
--pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
-+pub(crate) fn drain_external_agent_events(
-+    app: &mut App,
-+    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
-+) -> bool {
-     let Some(session) = app.external_agent.as_mut() else {
-         return false;
-     };
-@@ -395,7 +398,7 @@ pub(crate) fn drain_external_agent_events(app: &mut App) -> bool {
-     }
- 
-     for record in records {
--        apply_external_event(app, &agent_name, record);
-+        apply_external_event(app, &agent_name, record, default_selection);
-         changed = true;
-     }
- 
-@@ -432,7 +435,12 @@ fn finish_streaming_assistant(app: &mut App) {
-     }
- }
- 
--fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRecord) {
-+fn apply_external_event(
-+    app: &mut App,
-+    agent_name: &str,
-+    record: RuntimeEventRecord,
-+    default_selection: codewhale_runtime::config::ApprovalDefaultSelection,
-+) {
-     match record.event.as_str() {
-         "turn.started" => {
-             if let Some(turn_id) = record.turn_id
-@@ -547,7 +555,7 @@ fn apply_external_event(app: &mut App, agent_name: &str, record: RuntimeEventRec
-                 .push(ApprovalView::new_with_default_selection(
-                     request,
-                     app.ui_locale,
--                    Default::default(),
-+                    default_selection,
-                 ));
-         }
-         "turn.completed" => {
-@@ -784,6 +792,7 @@ mod tests {
-                     }
-                 }),
-             },
-+            Default::default(),
-         );
-         assert!(!app.is_loading);
-         assert!(app.history.iter().any(|cell| matches!(
-@@ -810,6 +819,7 @@ mod tests {
-                     }
-                 }),
-             },
-+            Default::default(),
-         );
-         assert!(!app.is_loading);
-         assert!(
-```
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +4/-1)
-```diff
-@@ -2814,7 +2814,10 @@ pub(crate) async fn run_event_loop(
-         if crate::tui::external_agent::poll_external_agent_discovery(app, config) {
-             app.needs_redraw = true;
-         }
--        if crate::tui::external_agent::drain_external_agent_events(app) {
-+        if crate::tui::external_agent::drain_external_agent_events(
-+            app,
-+            config.approval_default_selection(),
-+        ) {
-             app.needs_redraw = true;
-         }
- 
-```
-
-**File**: `crates/tui/src/tui/views/mod.rs` (modified, +13/-1)
-```diff
-@@ -1502,6 +1502,7 @@ pub trait ModalView: std::any::Any {
-     fn tick(&mut self) -> ViewAction {
-         ViewAction::None
-     }
-+    fn on_became_top(&mut self, _at: std::time::Instant) {}
-     /// Erased downcast hook for views that need a typed reference back from
-     /// the boxed trait object (e.g. the live transcript overlay needs `&mut`
-     /// access from outside the trait so it can refresh its snapshot of the
-@@ -1591,7 +1592,11 @@ impl ViewStack {
-     /// Restamp `top_since` when the top view changed since `before`.
-     fn note_top_change(&mut self, before: Option<(*const (), usize)>) {
-         if self.top_identity() != before {
--            self.top_since = Some(std::time::Instant::now());
-+            let now = std::time::Instant::now();
-+            self.top_since = Some(now);
-+            if let Some(view) = self.views.last_mut() {
-+                view.on_became_top(now);
-+            }
-         }
-     }
- 
-@@ -1813,6 +1818,13 @@ impl ViewStack {
-         tracing::debug!(target: "codewhale_tui::view_stack", action = "push_boxed", kind = ?kind, depth = self.views.len(), "view pushed");
-     }
- 
-+    #[cfg(test)]
-+    pub(crate) fn top_approval_for_test(
-+        &mut self,
-+    ) -> Option<&mut crate::tui::approval::ApprovalView> {
-+        self.views.last_mut()?.as_any_mut().downcast_mut()
-+    }
-+
-     pub fn pop(&mut self) -> Option<Box<dyn ModalView>> {
-         let top = self.top_identity();
-         let popped = self.views.pop();
-```
-
-**File**: `crates/tui/src/tui/widgets/mod.rs` (modified, +3/-3)
-```diff
-@@ -2062,8 +2062,8 @@ impl<'a> ApprovalWidget<'a> {
-         };
- 
-         let selected_pill = menu_style::selected_row_style().add_modifier(Modifier::REVERSED);
--        let wide = bar_area.width >= 72;
--        let padded = bar_area.width >= 56;
-+        let wide = bar_area.width >= 100;
-+        let padded = wide;
-         let allow_text = if workflow_plan {
-             "Approve"
-         } else if wide {
-@@ -2099,7 +2099,7 @@ impl<'a> ApprovalWidget<'a> {
-         );
-         let m_label = if workflow_plan {
-             String::new()
--        } else if !padded {
-+        } else if !wide {
-             "[m]".to_string()
-         } else if self.view.scopes_open {
-             if ascii { "[^ m]" } else { "[▴ m]" }.to_string()
-```
-
-**File**: `docs/CONFIGURATION.md` (modified, +4/-3)
-```diff
-@@ -2478,9 +2478,10 @@ reasoning contract, and all four membership ids omit generic sampling fields.
-   (default) or `deny`. Enter commits the highlighted control, which is tagged
-   `[Enter]`, so by default Enter allows the one action shown, once; `n` denies
-   and `Esc` refuses the action and stops the turn. An Enter that would allow
--  is ignored for the first three quarters of a second and straight after
--  another Enter or typed characters, so a key in flight, a held key or pasted
--  text does not approve. Set `deny` to make Enter refuse the call instead
-+  is ignored, with a notice saying so, for the first three quarters of a
-+  second after the bar becomes the prompt in front and straight after another
-+  Enter or typed characters, so an Enter in flight, held or pasted does not
-+  approve. The letter keys (`y`, `a`, `1`) are not delayed. Set `deny` to make Enter refuse the call instead
-   (the earlier default, #5293); `y` still allows once. It moves the
-   highlight only: which calls are prompted for is still `approval_policy`
-   plus the rules in `permissions.toml`. The sandbox elevation prompt is not
-```
-
-**File**: `docs/MODES.md` (modified, +6/-4)
-```diff
-@@ -280,10 +280,12 @@ will run, then `Details [d]`, `Allow [Enter]`, `[▾ m]` and `Deny [n]`.
-   their numbers: `[1] Allow once`, `[2] Allow in this conversation` and, where
-   it is offered, `[3] Always allow in this repo`.
- - An `Enter` that would allow is ignored for the first three quarters of a
--  second the bar is the prompt in front of you, for the same time after
--  another `Enter` on an approval, and straight after typed characters. A key
--  already in flight, a held key or text pasted into the terminal therefore
--  does not approve. Denying is never delayed, and `y` answers at once.
-+  second the bar is the prompt in front of you (again each time it comes back
-+  to the front after another prompt covered it), and straight after another
-+  `Enter` or typed characters. An `Enter` already in flight, held or pasted
-+  therefore does not approve, and a notice says the key was ignored and why;
-+  press `Enter` again to allow. Denying is never delayed, and the letter keys
-+  (`y`, `a`, `1`) answer at once.
- - To make `Enter` deny instead, set `[approval] default_selection = "deny"`
-   (see [Configuration](CONFIGURATION.md)).
- 
-```
-
----
-
-### Incident Patch 3: `2d6e57d5` (2026-11-26)
-**Commit Message**: fix(engine): expand prompt-bound user commands on the Runtime turn path (CW-8421)
-
-A plugin, project or global command such as /ship sent as a Runtime API
-turn reached the model as the literal "/ship": only the terminal's
-user_registry::try_dispatch applied the command template, so every such
-command was broken in Desktop and other Runtime clients.
-
-try_dispatch is split into lookup (registry resolution plus dispatch_error)
-and expand_template (plugin authority plus apply_template). The
-CommandCatalog trait gains expands_user_commands/expand_user_command;
-CommandTable implements them with the same registry view /v1/commands
-lists, so the terminal and the Runtime share one implementation and the
-terminal's precedence (user commands before builtins; skills never own a
-slash spelling on the Runtime path).
-
-The Runtime turn endpoint expands /name args before admission: the model
-gets the template, input_summary keeps the typed text, the command's
-allowed_tools only narrows the request's or thread's tools, a denied
-plugin command is a 422 user_command_denied (never sent raw), and the
-response's user_command names what ran. Steer expands too and refuses a
-tool-restricting command mid-tur
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
-```diff
-@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Ask asks before every command, read-only ones included:** in Ask, a shell command the Engine classes as read-only (such as `ls` or `git status -s`) ran without a card, while its description promises it asks before every edit and command. It now opens the card like any other command, and a code-mode program with no session permission gate refuses shell calls in Ask because it cannot ask. Sub-agents still run their bounded read-only commands without a card, so read-only scouts keep working when no one can answer. Accept Edits, Auto-Review, Full Access and Plan are unchanged.
- - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. A turn now waits at most one second for it, never past Stop, reuses a read of the same account for 30 seconds, and otherwise uses the last read for that account or the local constitution while a slower read finishes in the background (5 second limit).
- - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. Each turn still reads the account profile, but waits at most one second for it and never past Stop; a slower read (5 second limit) finishes in the background and the next turn uses it. Until then the turn uses the last profile loaded for that account, or the local constitution with a one-time notice that account preferences are still loading. A signed-out local constitution is read fresh every turn. Why the account service is slow for the Engine in production is still being investigated.
-+
-+- **Plugin, project and global commands such as `/ship` now run in the Desktop:** a turn sent over the Runtime API as `/name args` is expanded with the same command registry and template the terminal uses, so the model gets the command's instructions instead of the bare text. The command's tool list can only narrow the turn's tools, a plugin command whose plugin is no longer trusted is refused, the turn's response names the command that ran, and the command catalog marks these commands `runtime_expands` so clients stop showing them as terminal only.
-+
- ### Removed
- 
- - **The shared pet companion (`codewhale pet serve`)** and, in the terminal, sound, replay export, the browser appearance studio, source selection, the pixel, particle, cove, braille and whale-girl views, view cycling and avatar packs; `/pet inspect|status|appearance|style|source|export|sound|avatar|action|view` and the F6 and F8 keys. F5 still opens replies and agents. Files left in `~/.codewhale/pet-shared` are neither read nor deleted. Plugins can still register avatar packs; the terminal no longer draws them.
-```
-
-**File**: `crates/app-server/src/runtime_api.rs` (modified, +97/-2)
-```diff
-@@ -2086,6 +2086,45 @@ struct StartTurnResponse {
-     /// byte-identical — a client that never sends a key sees no change.
-     #[serde(skip_serializing_if = "replay_flag_is_absent")]
-     idempotent_replay: bool,
-+    #[serde(skip_serializing_if = "Option::is_none")]
-+    user_command: Option<UserCommandRun>,
-+}
-+
-+#[derive(Debug, Serialize)]
-+struct UserCommandRun {
-+    name: String,
-+    #[serde(skip_serializing_if = "Option::is_none")]
-+    plugin_id: Option<String>,
-+}
-+
-+async fn expand_user_command(
-+    state: &RuntimeApiState,
-+    workspace: &std::path::Path,
-+    prompt: &str,
-+) -> Result<Option<codewhale_engine::command_catalog::ExpandedUserCommand>, ApiError> {
-+    if !prompt.trim_start().starts_with('/') {
-+        return Ok(None);
-+    }
-+    let Some(catalog) = codewhale_engine::command_catalog::installed()
-+        .filter(|catalog| catalog.expands_user_commands())
-+    else {
-+        return Ok(None);
-+    };
-+    let discovery = Arc::clone(&state.plugin_discovery);
-+    let workspace = workspace.to_path_buf();
-+    let input = prompt.to_string();
-+    #[cfg(any(test, feature = "test-support"))]
-+    let env_ticket = codewhale_engine::test_support::env_scope_ticket();
-+    tokio::task::spawn_blocking(move || {
-+        #[cfg(any(test, feature = "test-support"))]
-+        let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
-+        let plugins = discovery.registry_for_workspace(&workspace);
-+        catalog.expand_user_command(&workspace, &plugins, &input)
-+    })
-+    .await
-+    .map_err(|error| ApiError::internal(error.to_string()))?
-+    .transpose()
-+    .map_err(|reason| ApiError::unprocessable(reason).with_code("user_command_denied"))
- }
- 
- fn replay_flag_is_absent(replayed: &bool) -> bool {
-@@ -6142,7 +6181,9 @@ struct CommandCatalogEntry {
-     /// `builtin` and `extension` are registered code; `user` expands a stored template.
-     kind: &'static str,
-     /// `host` runs locally, `extension` invokes the Runtime command endpoint,
--    /// and `prompt` expands into the request the model sees.
-+    /// and `prompt` is a template that expands into the request the model
-+    /// sees: in the terminal always, and through the Runtime turn endpoint
-+    /// when `runtime_expands` is set.
-     binding: &'static str,
-     /// `primary` | `advanced` | `compatibility` — builtins only; `hidden`
-     /// covers rows the product does not advertise anywhere.
-@@ -6161,6 +6202,8 @@ struct CommandCatalogEntry {
-     plugin_id: Option<String>,
-     #[serde(skip_serializing_if = "std::ops::Not::not")]
-     workspace_sourced: bool,
-+    #[serde(skip_serializing_if = "std::ops::Not::not")]
-+    runtime_expands: bool,
-     #[serde(skip_serializing_if = "Option::is_none")]
-     registration_id: Option<String>,
- }
-@@ -6173,6 +6216,7 @@ struct CommandsResponse {
- fn command_catalog(
-     builtins: &[codewhale_engine::command_catalog::BuiltinCommand],
-     users: &[codewhale_engine::command_catalog::UserCommand],
-+    runtime_expands: bool,
- ) -> Vec<CommandCatalogEntry> {
-     let mut commands = Vec::new();
-     for info in builtins {
-@@ -6222,6 +6266,7 @@ fn command_catalog(
-             origin: None,
-             plugin_id: None,
-             workspace_sourced: false,
-+            runtime_expands: false,
-             registration_id: None,
-         });
-     }
-@@ -6247,6 +6292,7 @@ fn command_catalog(
-             origin: None,
-             plugin_id: command.plugin_id.clone(),
-             workspace_sourced: command.workspace_sourced,
-+            runtime_expands,
-             registration_id: None,
-         });
-     }
-@@ -6291,6 +6337,7 @@ async fn list_commands(
-         let mut commands = command_catalog(
-             &catalog.builtins(),
-             &catalog.user_commands_with_plugins(&workspace, &plugins),
-+            catalog.expands_user_commands(),
-         );
-         let mut counts = std::collections::HashMap::new();
-         for entry in &extensions {
-@@ -6335,6 +6382,7 @@ async fn list_commands(
-                 origin: Some(reference.origin.clone()),
-                 plugin_id: Some(reference.plugin_id.clone()),
-                 workspace_sourced: false,
-+                runtime_expands: false,
-                 registration_id: query
-                     .thread_id
-                     .as_deref()
-@@ -10949,6 +10997,7 @@ async fn start_thread_watch_turn(
-             thread,
-             turn,
-             idempotent_replay: replayed,
-+            user_command: None,
-         }),
-     ))
- }
-@@ -11041,6 +11090,35 @@ async fn start_thread_turn_for_caller(
-     if scope.is_some() {
-         sanitize_remote_turn_request(&mut req)?;
-     }
-+    let target = state
-+        .runtime_threads
-+        .get_thread(&id)
-+        .await
-+        .map_err(map_thread_err)?;
-+    let expanded = expand_user_command(&state, &target.workspace, &req.prompt).await?;
-+    let user_command = expanded.map(|expanded| {
-+        if req.input_summary.is_none() {
-+            req.input_s
-```
-
-**File**: `crates/app-server/src/runtime_api/review.rs` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ pub(super) async fn start_thread_review(
-             thread,
-             turn,
-             idempotent_replay: replayed,
-+            user_command: None,
-         }),
-     ))
- }
-```
-
-**File**: `crates/app-server/src/runtime_api/tests/command_catalog.rs` (modified, +120/-1)
-```diff
-@@ -67,7 +67,7 @@ fn command_catalog_marks_user_shadowing_of_builtin_names_and_aliases() {
-         builtin("subagents", vec!["agents".to_string()]),
+@@ -1030,51 +1030,66 @@ fn compaction_summary_request_extends_the_parent_turn_prompt_bytes() {
      ];
-     let users = [user("model"), user("agents")];
--    let commands = command_catalog(&builtins, &users);
-+    let commands = command_catalog(&builtins, &users, false);
- 
-     let model = entry(&commands, "model");
-     assert_eq!(model.shadowed_by.as_deref(), Some("model"));
-@@ -976,3 +976,122 @@ async fn post_thread_builtin_command_serves_only_the_host_allowlist() -> Result<
-     handle.abort();
-     Ok(())
- }
-+
-+struct ShipCatalog;
-+impl CommandCatalog for ShipCatalog {
-+    fn answers_to(&self, _name: &str) -> bool {
-+        false
-+    }
-+    fn builtins(&self) -> Vec<BuiltinCommand> {
-+        Vec::new()
-+    }
-+    fn user_commands(&self, _workspace: &Path) -> Vec<UserCommand> {
-+        let mut ship = user("ship");
-+        ship.builtin_bindings.clear();
-+        ship.plugin_id = Some("user/fixture/release-kit".into());
-+        vec![ship]
-+    }
-+    fn expands_user_commands(&self) -> bool {
-+        true
-+    }
-+    fn expand_user_command(
-+        &self,
-+        _workspace: &Path,
-+        _plugins: &codewhale_plugins::PluginRegistry,
-+        input: &str,
-+    ) -> Option<Result<codewhale_engine::command_catalog::ExpandedUserCommand, String>> {
-+        (input.split_whitespace().next() == Some("/ship")).then(|| {
-+            Ok(codewhale_engine::command_catalog::ExpandedUserCommand {
-+                name: "ship".into(),
-+                message: "Reply with the single word shipped. Do not use tools.".into(),
-+                allowed_tools: Some(vec!["read_file".into()]),
-+                plugin_id: Some("user/fixture/release-kit".into()),
-+            })
-+        })
-+    }
-+}
-+
-+#[tokio::test]
-+async fn a_runtime_turn_sends_a_prompt_bound_user_command_as_its_expanded_template() -> Result<()> {
-+    let _env = lock_test_env();
-+    let temp = tempfile::tempdir()?;
-+    let workspace = temp.path().join("workspace");
-+    fs::create_dir_all(&workspace)?;
-+    let _catalog = codewhale_engine::command_catalog::CatalogGuard::install(Arc::new(ShipCatalog));
-+    let config = Config::default().with_legacy_root(
-+        Some("ship-fixture-key".into()),
-+        Some("http://127.0.0.1:1/v1".into()),
-+    );
-+    let Some((addr, runtime_threads, handle)) =
-+        spawn_test_server_with_root_token_mobile_workspace_and_overrides(
-+            temp.path().join("runtime"),
-+            temp.path().join("sessions"),
-+            None,
-+            false,
-+            workspace,
-+            TestServerOverrides {
-+                config: Some(config),
-+                ..TestServerOverrides::default()
+     let system = SystemPrompt::Text("pinned system prompt".to_string());
+     let tools = vec![test_tool("read"), test_tool("bash")];
+-    let effort = "high";
+-    let parent = codewhale_core::request::prepare_primary_turn_request(
+-        codewhale_core::request::PrimaryTurnRequest {
+-            model: model.to_string(),
+-            messages: history.clone(),
+-            max_tokens: 64_000,
+-            system: Some(system.clone()),
+-            tools: Some(tools.clone()),
+-            tool_choice: Some(json!({"type": "auto"})),
+-            reasoning_effort: Some(effort.to_string()),
+-        },
+-    );
+     let config = crate::compaction::CompactionConfig {
+         model: model.to_string(),
+         ..Default::default()
+     };
+-    let mut summary_history = history;
++    let mut summary_history = history.clone();
+     summary_history.push(text(Role::User, "write the handoff summary"));
+-    let summary = crate::compaction::compaction_summary_request(
+-        summary_history,
+-        &config,
+-        Some(&system),
+-        Some(&tools),
+-        Some(effort),
+-        8_192,
+-    );
++    let parent_for = |effort: &str| {
++        codewhale_core::request::prepare_primary_turn_request(
++            codewhale_core::request::PrimaryTurnRequest {
++                model: model.to_string(),
++                messages: history.clone(),
++                max_tokens: 64_000,
++                system: Some(system.clone()),
++                tools: Some(tools.clone()),
++                tool_choice: Some(json!({"type": "auto"})),
++                reasoning_effort: Some(effort.to_string()),
 +            },
 +        )
-+        .await?
-+    else {
-+        return Ok(());
 +    };
-+    let client = codewhale_release::tls::reqwest_client();
-+    let model = Arc::new(codewhale_engine::llm_client::mock::MockLlmClient::new(
-+        vec![codewhale_engine::llm_client::mock::canned::simple_text_turn("shipped")],
-+    ));
-+    runtime_threads.set_test_model_client(model.clone());
-+    let thread = runtime_threads
-+        .create_thread(CreateThreadRequest {
-+            model: Some("deepseek-v4-pro".into()),
-+            ..Default::default()
-+        })
-+        .await?;
++    let summary_for = |effort: &str, provider: ProviderKind| {
++        crate::compaction::compaction_summary_request(
++            summary_history.clone(),
++            &config,
++            Some(&system),
++            Some(&tools),
++            Some(effort),
++            8_192,
++            provider,
++        )
++    };
+ 
+     // Chat Completions: system and history share one `messages` array.
+     let client = deepseek_request_boundary_client(
+         "https://api.deepseek.com/v1",
+         "http://127.0.0.1:9".into(),
+     );
+-    let parent_body = client
+-        .prepare_outbound_request(parent.clone(), true)
+-        .expect("parent prepares")
+-        .body;
+-    let summary_body = client
+-        .prepare_outbound_request(summary.clone(), false)
+-        .expect("summary prepares")
+-        .body;
+-    assert_extends("chat", &parent_body["messages"], &summary_body["messages"]);
+-    for key in ["model", "tools", "reasoning_effort", "thinking"] {
+-        assert_eq!(parent_body.get(key), summary_body.get(key), "chat {key}");
++    for effort in ["high", "off"] {
++        let parent_body = client
++            .prepare_outbound_request(parent_for(effort), true)
++            .expect("parent prepares")
++            .body;
++        let summary_body = client
++            .prepare_outbound_request(summary_for(effort, ProviderKind::Deepseek), false)
++            .expect("summary prepares")
++            .body;
++        assert_extends("chat", &parent_body["messages"], &summary_body["messages"]);
++        for key in ["model", "tools", "tool_choice", "reasoning_effort", "thinking"] {
++            assert_eq!(
++                parent_body.get(key),
++                summary_body.get(key),
++                "chat {effort} {key}"
++            );
++        }
+     }
+ 
++    let effort = "high";
++    let parent = parent_for(effort);
++    let summary = summary_for(effort, ProviderKind::OpenaiCodex);
++    assert_eq!(summary.tool_choice, Some(json!("none")));
 +
-+    let catalog: Value = client
-+        .get(format!("http://{addr}/v1/commands?thread_id={}", thread.id))
-+        .send()
-+        .await?
-+        .error_for_status()?
-+        .json()
-+        .await?;
-+    let ship = catalog["commands"]
-+        .as_array()
-+        .and_then(|rows| rows.iter().find(|row| row["name"] == "ship"))
-+        .context("ship row")?;
-+    assert_eq!(ship["binding"], "prompt");
-+    assert_eq!(ship["runtime_expands"], true);
-+
-+    let started: Value = client
-+        .post(format!("http://{addr}/v1/threads/{}/turns", thread.id))
-+        .json(&json!({ "prompt": "/ship" }))
-+        .send()
-+        .await?
-+        .error_for_status()?
-+        .json()
-+        .await?;
-+    assert_eq!(started["user_command"]["name"], "ship");
-+    assert_eq!(
-+        started["user_command"]["plugin_id"],
-+        "user/fixture/release-kit"
-+    );
-+    assert_eq!(started["turn"]["input_summary"], "/ship");
-+    let turn_id = started["turn"]["id"].as_str().context("turn id")?;
-+    assert_eq!(
-+        wait_for_terminal_turn_status(&client, addr, &thread.id, turn_id, Duration::from_secs(20))
-+            .await?,
-+        "completed"
-+    );
-+    let requests = model.captured_requests();
-+    assert_eq!(requests.len(), 1);
-+    let sent = format!("{:?}", requests[0]);
-+    assert!(
-+        sent.contains("Reply with the single word shipped. Do not use tools."),
-+        "the model must receive the command template: {sent}"
-+    );
-+    assert!(!sent.contains("\"/ship\""), "{sent}");
-+    handle.abort();
-+    Ok(())
-+}
+     // Responses (the Codex route where the 0% hit was recorded).
+     let parent_body =
+         responses::build_responses_body_for_provider(&parent, ProviderKind::OpenaiCodex, None);
 ```
 
-**File**: `crates/engine/src/command_catalog.rs` (modified, +20/-0)
+**File**: `crates/engine/src/compaction.rs` (modified, +98/-26)
 ```diff
-@@ -34,6 +34,14 @@ pub struct UserCommand {
-     pub builtin_bindings: Vec<String>,
+@@ -101,8 +101,8 @@ pub struct PreparedCompactionEnvelope {
+     pub input_token_ratio: (usize, usize),
+     /// Durable handoff owner; set by the engine, never added to the stable prefix.
+     pub session_id: Option<String>,
+-    /// Exact tool prefix of the interrupted request. Tool execution remains
+-    /// disabled on the summary call; retaining schemas preserves cache reuse.
++    /// Exact tool prefix of the interrupted request. A summary reply that
++    /// calls a tool is never executed; retaining schemas preserves cache reuse.
+     pub tools: Option<Vec<Tool>>,
+     /// Resolved reasoning tier the parent turn sends (#6540). Reasoning
+     /// routes render the effort into the head of the prompt, so a summary
+@@ -1877,30 +1877,36 @@ fn validate_compaction_summary(summary: &str) -> Result<String> {
+ /// controls differ (output cap, streaming, tool choice), so the provider's
+ /// prefix cache covers the history the turn already paid for (#6540).
+ ///
+-/// Known limit: `tool_choice: "none"` keeps the summary from executing tools.
+-/// Anthropic Messages documents a `tool_choice` change as invalidating the
+-/// cached *message* blocks (system and tools stay cached), so on those routes
+-/// the history is still re-read uncached. The Responses builder forwards
+-/// `none` (and sends `auto` for every other choice); its cache effect on
+-/// Responses and Chat Completions routes has not been measured live.
++/// On DeepSeek the summary sends the turn's own `tool_choice` (`auto`): a
++/// `none` the turn never sends moved the cached prefix, and the reply is
++/// rejected as unusable if it calls a tool (#7564). Other routes send
++/// `tool_choice: "none"`. Anthropic Messages documents a `tool_choice` change
++/// as invalidating the cached *message* blocks (system and tools stay cached),
++/// so on those routes the history is still re-read uncached; the cache effect
++/// on Responses and other Chat Completions routes has not been measured live.
+ pub fn compaction_summary_request(
+     history: Vec<Message>,
+     config: &CompactionConfig,
+     system_prompt: Option<&SystemPrompt>,
+     tools: Option<&[Tool]>,
+     reasoning_effort: Option<&str>,
+     max_tokens: u32,
++    provider: codewhale_config::ProviderKind,
+ ) -> MessageRequest {
+     MessageRequest {
+         model: config.model.clone(),
+         messages: history,
+         max_tokens,
+         system: system_prompt.cloned(),
+         tools: tools.map(<[Tool]>::to_vec),
+-        // Tool schemas stay for prefix parity; execution stays off.
+         tool_choice: tools
+             .filter(|tools| !tools.is_empty())
+-            .map(|_| serde_json::json!("none")),
++            .map(|_| match provider {
++                codewhale_config::ProviderKind::Deepseek => {
++                    crate::core::engine::tool_catalog::default_tool_choice(false)
++                }
++                _ => serde_json::json!("none"),
++            }),
+         metadata: None,
+         thinking: None,
+         reasoning_effort: reasoning_effort.map(str::to_string),
+@@ -2021,6 +2027,7 @@ async fn create_summary(
+             tools,
+             reasoning_effort,
+             max_tokens,
++            cost_route.provider,
+         );
+ 
+         let accounting_origin = notice_sink.and_then(|sink| match sink.accounting_origin() {
+@@ -2184,27 +2191,27 @@ async fn create_summary(
+                 codewhale_models::stop_reason_detail(response.stop_reason.as_deref())
+             );
+         }
+-        if response
++        let summary = if response
+             .content
+             .iter()
+             .any(|block| matches!(block, ContentBlock::ToolUse { .. }))
+         {
+-            anyhow::bail!(
++            Err(anyhow::anyhow!(
+                 "Making room returned a tool call instead of a summary; the original conversation was preserved."
+-            );
+-        }
+-
+-        let summary = response
+-            .content
+-            .iter()
+-            .filter_map(|block| match block {
+-                ContentBlock::Text { text, .. } => Some(text.clone()),
+-                _ => None,
+-            })
+-            .collect::<Vec<_>>()
+-            .join("\n");
+-
+-        let summary = validate_compaction_summary(&summary);
++            ))
++        } else {
++            validate_compaction_summary(
++                &response
++                    .content
++                    .iter()
++                    .filter_map(|block| match block {
++                        ContentBlock::Text { text, .. } => Some(text.clone()),
++                        _ => None,
++                    })
++                    .collect::<Vec<_>>()
++                    .join("\n"),
++            )
++        };
+         if let Err(error) = summary {
+             if quality_retry_used {
+                 return Err(error.context(
+@@ -4545,6 +4552,71 @@ mod tests {
+         assert!(!blocks[0].text.contains("(no summary available)"));
+     }
+ 
++    #[tokio::test]
++    async fn tool_call_only_summary_is_unusable_and_retried_o
+```
+
+**File**: `crates/engine/src/core/engine/compaction.rs` (modified, +2/-1)
+```diff
+@@ -534,7 +534,8 @@ impl Engine {
+         let mut turn_status = TurnOutcomeStatus::Completed;
+         let mut turn_error = None;
+ 
+-        let prepared = self.prepare_compaction_envelope(self.config.compaction.clone());
++        let mut prepared = self.prepare_compaction_envelope(self.config.compaction.clone());
++        prepared.tools.clone_from(&self.session.last_request_tools);
+         let threshold_tokens = prepared.config.token_threshold;
+         let compaction_window_tokens = prepared.config.effective_context_window;
+         let pass = |path: Option<crate::compaction::CompactionPath>, usage: Usage| CompactionPass {
+```
+
+**File**: `crates/engine/src/core/engine/tests/compaction.rs` (modified, +144/-0)
+```diff
+@@ -756,3 +756,147 @@ fn a_request_that_cannot_fit_names_the_cause_and_one_next_step() {
+         "headless has no command layer: {message}"
+     );
+ }
++
++#[tokio::test]
++async fn manual_compaction_reuses_the_last_turn_request_header() {
++    use wiremock::matchers::{method, path};
++    use wiremock::{Mock, MockServer, Request, ResponseTemplate};
++
++    let _env_lock = lock_test_env();
++    let _cost_scope = crate::cost_status::test_scope();
++    let workspace = tempdir().expect("isolated compaction workspace");
++    let _home = EnvVarGuard::set("CODEWHALE_HOME", workspace.path());
++    let server = MockServer::start().await;
++    Mock::given(method("POST"))
++        .and(path("/v1/chat/completions"))
++        .respond_with(|request: &Request| {
++            let body: Value = serde_json::from_slice(&request.body).expect("request JSON");
++            if body["stream"] == json!(true) {
++                ResponseTemplate::new(200)
++                    .insert_header("content-type", "text/event-stream")
++                    .set_body_string(concat!(
++                        "data: {\"id\":\"turn\",\"choices\":[{\"index\":0,",
++                        "\"delta\":{\"content\":\"The store migration is transactional now.\"},",
++                        "\"finish_reason\":null}]}\n\n",
++                        "data: {\"id\":\"turn\",\"choices\":[{\"index\":0,",
++                        "\"delta\":{},\"finish_reason\":\"stop\"}]}\n\n",
++                        "data: [DONE]\n\n",
++                    ))
++            } else {
++                ResponseTemplate::new(200).set_body_json(json!({
++                    "id": "summary",
++                    "object": "chat.completion",
++                    "model": codewhale_config::descriptors::defaults::DEFAULT_TEXT_MODEL,
++                    "choices": [{
++                        "index": 0,
++                        "message": { "role": "assistant", "content": "Primary request: keep the session store migration transactional. Completed: the migration was made transactional. Next: run session_store::roundtrip and report the result." },
++                        "finish_reason": "stop",
++                    }],
++                    "usage": { "prompt_tokens": 41, "completion_tokens": 7, "total_tokens": 48 },
++                }))
++            }
++        })
++        .mount(&server)
++        .await;
++    let route_config = {
++        let provider = Some("deepseek".to_string());
++        let mut config: Config = Config::default();
++        config.provider = provider;
++        config
++    }
++    .with_legacy_root(
++        Some("fixture-key".to_string()),
++        Some(format!("{}/v1", server.uri())),
++    );
++    let (engine, handle) = Engine::new(
++        EngineConfig {
++            workspace: workspace.path().to_path_buf(),
++            snapshots_enabled: false,
++            subagents_enabled: false,
++            ..EngineConfig::default()
++        },
++        &route_config,
++    );
++    let run_task = tokio::spawn(engine.run());
++    let wait_for_terminal = |expect_compaction: bool| {
++        let handle = &handle;
++        async move {
++            let mut rx = handle.rx_event.write().await;
++            loop {
++                let event = tokio::time::timeout(Duration::from_secs(30), rx.recv())
++                    .await
++                    .expect("engine terminal")
++                    .expect("engine event channel");
++                if let Event::TurnComplete {
++                    compaction_id,
++                    status,
++                    error,
++                    ..
++                } = event
++                {
++                    assert_eq!(compaction_id.is_some(), expect_compaction);
++                    assert_eq!(status, TurnOutcomeStatus::Completed, "{error:?}");
++                    return;
++                }
++            }
++        }
++    };
++
++    handle
++        .send(external_user_message_op(
++            "Keep the session store migration transactional.",
++            AppMode::Agent,
++            &route_config,
++        ))
++        .await
++        .expect("send turn");
++    wait_for_terminal(false).await;
++    handle
++        .send(Op::CompactContext {
++            id: "compact-header-parity".to_string(),
++            route: resolved_route_for_test(
++                &route_config,
++                codewhale_config::descriptors::defaults::DEFAULT_TEXT_MODEL,
++            ),
++            compaction: Box::new(CompactionConfig::default()),
++        })
++        .await
++        .expect("send manual compaction");
++    wait_for_terminal(true).await;
++    run_task.abort();
++
++    let bodies = server
++        .received_requests()
++        .await
++        .expect("recorded requests")
++        .iter()
++        .map(|request| serde_json::from_slice::<Value>(&request.body).expect("request JSON"))
++        .collect::<Vec<_>>();
++    let turn = bodies
++        .iter()
++        .find(|body| body["stream"] == json!(true))
++        .expect("turn request");
++    let sum
+```
+
+**File**: `crates/engine/src/core/engine/tests/test_cases_07.rs` (modified, +2/-2)
+```diff
+@@ -714,8 +714,8 @@ fn automatic_compaction_continues_one_task_and_preserves_failed_history() {
+                             if fail_summary {
+                                 assert_eq!(status, TurnOutcomeStatus::Failed, "{error:?}");
+                                 assert!(error.as_deref().is_some_and(|message| {
+-                                    message.contains("tool call instead of a summary")
+-                                        && message.contains("original conversation was preserved")
++                                    message.contains("remained unusable after one conservative retry")
++                                        && message.contains("no replacement checkpoint was committed")
+                                 }), "{error:?}");
+                             } else {
+                                 assert_eq!(status, TurnOutcomeStatus::Completed, "{error:?}");
+```
+
+**File**: `crates/engine/src/core/engine/turn_loop/preparation.rs` (modified, +2/-0)
+```diff
+@@ -687,6 +687,7 @@ impl Engine {
+             .and_then(|limits| limits.context_tokens);
+ 
+         turn.stop_diagnostics.last_prepared_output_limit_tokens = Some(request.max_tokens);
++        self.session.last_request_tools.clone_from(&request.tools);
+ 
+         // Stream the response. Keep the request around (cloned into the
+         // first call) so we can resend it on a transparent retry below
+@@ -936,6 +937,7 @@ impl Engine {
+             );
+         turn.last_request_snapshot = Some(snapshot.clone());
+         turn.stop_diagnostics.last_prepared_output_limit_tokens = Some(request.max_tokens);
++        self.session.last_request_tools.clone_from(&request.tools);
+         let _ = self
+             .send_event(Event::ToolRequestSnapshot { snapshot })
+             .await;
+```
+
+**File**: `crates/engine/src/core/session.rs` (modified, +3/-0)
+```diff
+@@ -445,6 +445,8 @@ pub struct Session {
+     /// (#5577). Cleared when history is rewritten (compaction, restore).
+     pub latest_parent_input_tokens: Option<u32>,
+ 
++    pub last_request_tools: Option<Vec<codewhale_models::Tool>>,
++
+     pub agent_preset: Option<String>,
  }
  
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct ExpandedUserCommand {
-+    pub name: String,
-+    pub message: String,
-+    pub allowed_tools: Option<Vec<String>>,
-+    pub plugin_id: Option<String>,
-+}
-+
- /// The host’s read-only command metadata and collision checks, implemented
- /// by the commands side.
- pub trait CommandCatalog: Send + Sync {
-@@ -50,6 +58,18 @@ pub trait CommandCatalog: Send + Sync {
-     ) -> Vec<UserCommand> {
-         self.user_commands(workspace)
+@@ -521,6 +523,7 @@ impl Session {
+             tool_activation_cache: ToolActivationCache::default(),
+             messages_revision: 0,
+             latest_parent_input_tokens: None,
++            last_request_tools: None,
+             agent_preset: None,
+         }
      }
-+    fn expands_user_commands(&self) -> bool {
-+        false
-+    }
-+    fn expand_user_command(
-+        &self,
-+        workspace: &Path,
-+        plugins: &codewhale_plugins::PluginRegistry,
-+        input: &str,
-+    ) -> Option<Result<ExpandedUserCommand, String>> {
-+        let _ = (workspace, plugins, input);
-+        None
-+    }
-     /// Whether this host executes `name` remotely at all. Checked before any
-     /// thread state is assembled, so a name outside the remote surface is
-     /// refused exactly like a name no host knows. `false` is the default: a
 ```
 
-**File**: `crates/engine/src/runtime_threads/manager.rs` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ pub use permission_rules::{
- pub(super) const EVENT_CHANNEL_CAPACITY: usize = 1024;
- pub(super) const MAX_ACTIVE_THREADS_DEFAULT: usize = 8;
- pub(super) const MAX_PENDING_DYNAMIC_TOOL_CALLS: usize = 128;
--pub(super) const SUMMARY_LIMIT: usize = 280;
-+pub const SUMMARY_LIMIT: usize = 280;
- pub(super) const STREAM_DELTA_BATCH_MAX_LATENCY: Duration = Duration::from_millis(32);
- pub(super) const STREAM_DELTA_BATCH_MAX_BYTES: usize = 16 * 1024;
- /// How long `steer_turn` observes the engine's verdict before answering with
-```
+---
 
-**File**: `crates/runtime/src/config.rs` (modified, +1/-1)
-```diff
-@@ -3093,7 +3093,7 @@ pub fn approval_policy_baseline_from_permission_posture(
- impl Config {
-     #[must_use]
-     pub fn catalog_auto_refresh_enabled(&self) -> bool {
--        self.catalog.as_ref().map_or(true, |c| c.auto_refresh)
-+        self.catalog.as_ref().is_none_or(|c| c.auto_refresh)
-     }
-     /// Whether Linux shell commands prefer bubblewrap confinement.
-     ///
-```
+### Incident Patch 2: `ed8612f4` (2026-11-27)
+**Commit Message**: docs(credits): credit chuenchen309 for the CJK skill completion fix (PR 7563)
 
-**File**: `crates/tui/CHANGELOG.md` (modified, +3/-0)
+check-contributor-credit.py requires every commit author in the release
+window on docs/CONTRIBUTORS.md, the CHANGELOG Contributors block and
+web/lib/release-credits.ts. Check: all 11 contributors credited.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -69,6 +69,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Ask asks before every command, read-only ones included:** in Ask, a shell command the Engine classes as read-only (such as `ls` or `git status -s`) ran without a card, while its description promises it asks before every edit and command. It now opens the card like any other command, and a code-mode program with no session permission gate refuses shell calls in Ask because it cannot ask. Sub-agents still run their bounded read-only commands without a card, so read-only scouts keep working when no one can answer. Accept Edits, Auto-Review, Full Access and Plan are unchanged.
- - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. A turn now waits at most one second for it, never past Stop, reuses a read of the same account for 30 seconds, and otherwise uses the last read for that account or the local constitution while a slower read finishes in the background (5 second limit).
- - **A slow Codewhale account service no longer holds up the start of a turn or Stop:** a signed-in turn waited up to 10 seconds for the account profile read before it started, and Stop did nothing until that read ended. Each turn still reads the account profile, but waits at most one second for it and never past Stop; a slower read (5 second limit) finishes in the background and the next turn uses it. Until then the turn uses the last profile loaded for that account, or the local constitution with a one-time notice that account preferences are still loading. A signed-out local constitution is read fresh every turn. Why the account service is slow for the Engine in production is still being investigated.
-+
-+- **Plugin, project and global commands such as `/ship` now run in the Desktop:** a turn sent over the Runtime API as `/name args` is expanded with the same command registry and template the terminal uses, so the model gets the command's instructions instead of the bare text. The command's tool list can only narrow the turn's tools, a plugin command whose plugin is no longer trusted is refused, the turn's response names the command that ran, and the command catalog marks these commands `runtime_expands` so clients stop showing them as terminal only.
-+
- ### Removed
- 
+@@ -79,6 +79,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - **The shared pet companion (`codewhale pet serve`)** and, in the terminal, sound, replay export, the browser appearance studio, source selection, the pixel, particle, cove, braille and whale-girl views, view cycling and avatar packs; `/pet inspect|status|appearance|style|source|export|sound|avatar|action|view` and the F6 and F8 keys. F5 still opens replies and agents. Files left in `~/.codewhale/pet-shared` are neither read nor deleted. Plugins can still register avatar packs; the terminal no longer draws them.
+ - **The `SUPERFAST_ENABLED`, `SUPERFAST_PROVIDER`, `SUPERFAST_BASE_URL`, `SUPERFAST_MODEL` and `SUPERFAST_TIMEOUT_MS` variables** and the gate's separate 150 ms call. Setting any of them logs one warning naming `[auto.router] shadow_gate`. (#6603)
+ 
++### Contributors
++
++Thanks to [@chuenchen309](https://github.com/chuenchen309) and [@NieZhuZhu](https://github.com/NieZhuZhu).
++
+ ## [0.10.5] - 2026-11-24
+ 
+ Codewhale v0.10.5 simplifies the terminal and runtime, expands DeepSeek Harness 0.2.2 host compatibility (with 13/33 pinned packages passing the full local Engine lifecycle and 15/36 cold-activating in the extension host), serves the shared `codewhale-app` web build from `codewhale web`, adds external ACP agent selection in `/model`, unifies the `codewhale-design` 5.5.0 Obsidian/Porcelain Whale Dark/Light palette and Title Case permission dial across all 15 TUI locales, aligns telemetry disclosures to first-party-only collection, and lands community security and reliability fixes.
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -79,6 +79,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **The shared pet companion (`codewhale pet serve`)** and, in the terminal, sound, replay export, the browser appearance studio, source selection, the pixel, particle, cove, braille and whale-girl views, view cycling and avatar packs; `/pet inspect|status|appearance|style|source|export|sound|avatar|action|view` and the F6 and F8 keys. F5 still opens replies and agents. Files left in `~/.codewhale/pet-shared` are neither read nor deleted. Plugins can still register avatar packs; the terminal no longer draws them.
+ - **The `SUPERFAST_ENABLED`, `SUPERFAST_PROVIDER`, `SUPERFAST_BASE_URL`, `SUPERFAST_MODEL` and `SUPERFAST_TIMEOUT_MS` variables** and the gate's separate 150 ms call. Setting any of them logs one warning naming `[auto.router] shadow_gate`. (#6603)
+ 
++### Contributors
++
++Thanks to [@chuenchen309](https://github.com/chuenchen309) and [@NieZhuZhu](https://github.com/NieZhuZhu).
++
+ ## [0.10.5] - 2026-11-24
+ 
+ Codewhale v0.10.5 simplifies the terminal and runtime, expands DeepSeek Harness 0.2.2 host compatibility (with 13/33 pinned packages passing the full local Engine lifecycle and 15/36 cold-activating in the extension host), serves the shared `codewhale-app` web build from `codewhale web`, adds external ACP agent selection in `/model`, unifies the `codewhale-design` 5.5.0 Obsidian/Porcelain Whale Dark/Light palette and Title Case permission dial across all 15 TUI locales, aligns telemetry disclosures to first-party-only collection, and lands community security and reliability fixes.
+```
+
+**File**: `docs/CONTRIBUTORS.md` (modified, +2/-1)
+```diff
+@@ -18,7 +18,7 @@ and [CHANGELOG.md](../CHANGELOG.md).
+ 
+ 448 people have code, co-authored commits, carried-forward pull requests or credited reports in Codewhale. GitHub's contributor count includes only commit authors and co-authors whose email is linked to their account, so it misses many of them. If your commits are missing there, add your commit email to your GitHub account and they will link.
+ 
+-[0gl20shk0sbt36](https://github.com/0gl20shk0sbt36) · [1Git2Clone](https://github.com/1Git2Clone) · [20bytes](https://github.com/20bytes) · [47Cid](https://github.com/47Cid) · [7jrxt42BxFZo4iAnN4CX](https://github.com/7jrxt42BxFZo4iAnN4CX) · [8sero](https://github.com/8sero) · [A-Corner](https://github.com/A-Corner) · [aboimpinto](https://github.com/aboimpinto) · [Aboysky](https://github.com/Aboysky) · [adity982](https://github.com/adity982) · [AdityaVG13](https://github.com/AdityaVG13) · [AGSaturn](https://github.com/AGSaturn) · [ai-dengwsh](https://github.com/ai-dengwsh) · [aiapienthusiast](https://github.com/aiapienthusiast) · [Aitensa](https://github.com/Aitensa) · [AiurArtanis](https://github.com/AiurArtanis) · [alitvak69](https://github.com/alitvak69) · [all-lopezg](https://github.com/all-lopezg) · [alphapku-ux](https://github.com/alphapku-ux) · [alvin1](https://github.com/alvin1) · [amuthantamil](https://github.com/amuthantamil) · [AnaheimEX](https://github.com/AnaheimEX) · [Andrea-Bruno](https://github.com/Andrea-Bruno) · [Angel-Hair](https://github.com/Angel-Hair) · [angziii](https://github.com/angziii) · [AnonymousUser443](https://github.com/AnonymousUser443) · [antarikshraya](https://github.com/antarikshraya) · [Anyexyz](https://github.com/Anyexyz) · [Apeiron0w0](https://github.com/Apeiron0w0) · [aqilaziz](https://github.com/aqilaziz) · [AquaZhang](https://github.com/AquaZhang) · [AresNing](https://github.com/AresNing) · [ArronAI007](https://github.com/ArronAI007) · [Artenx](https://github.com/Artenx) · [asdfg314284230](https://github.com/asdfg314284230) · [Asteria1028](https://github.com/Asteria1028) · [asto18089](https://github.com/asto18089) · [atmosuwiryo](https://github.com/atmosuwiryo) · [axobase001](https://github.com/axobase001) · [aznikline](https://github.com/aznikline) · [b84330808](https://github.com/b84330808) · [baendlorel](https://github.com/baendlorel) · [banqii](https://github.com/banqii) · [Beltran12138](https://github.com/Beltran12138) · [bevis-wong](https://github.com/bevis-wong) · [BH8GCJ](https://github.com/BH8GCJ) · [BigBenLabs](https://github.com/BigBenLabs) · [Biilow](https://github.com/Biilow) · [bistack](https://github.com/bistack) · [BrathonBai](https://github.com/BrathonBai) · [bruce6135](https://github.com/bruce6135) · [BryonGo](https://github.com/BryonGo) · [buiducnhat](https://github.com/buiducnhat) · [buko](https://github.com/buko) · [BX166](https://github.com/BX166) · [c020627](https://github.com/c020627) · [cacdcaecawae](https://github.com/cacdcaecawae) · [caeserchen](https://github.com/caeserchen) · [caiyilian](https://github.com/caiyilian) · [CCChisato](https://github.com/CCChisato) · [ccomma](https://github.com/ccomma) · [cenab](https://github.com/cenab) · [ChaceLyee2101](https://github.com/ChaceLyee2101) · [chatman-media](https://github.com/chatman-media) · [chennest](https://github.com/chennest) · [chinaqy110](https://github.com/chinaqy110) · [chnjames](https://github.com/chnjames) · [chuntseevolving](https://github.com/chuntseevolving) · [ci4ic4](https://github.com/ci4ic4) · [cian-lien](https://github.com/cian-lien) · [cmdcorp6534](https://github.com/cmdcorp6534) · [cmyyy](https://github.com/cmyyy) · [codepgq](https://github.com/codepgq) · [Colorful-glassblock](https://github.com/Colorful-glassblock) · [ComeFromTheMars](https://github.com/ComeFromTheMars) · [CrepuscularIRIS](https://github.com/CrepuscularIRIS) · [ct-jaryn](https://github.com/ct-jaryn) · [ctxyao](https://github.com/ctxyao) · [cy2311](https://github.com/cy2311) · [cyq1017](https://github.com/cyq1017) · [czf0718](https://github.com/czf0718) · [DarrellThomas](https://github.com/DarrellThomas) · [ddlw](https://github.com/ddlw) · [demian-welt](https://github.com/demian-welt) · [deosiree](https://github.com/deosiree) · [Dev-next-gen](https://github.com/Dev-next-gen) · [dfwqdyl-ui](https://github.com/dfwqdyl-ui) · [DI-HUO-MING-YI](https://github.com/DI-HUO-MING-YI) · [diegovskytl](https://github.com/diegovskytl) · [DieMoe233](https://github.com/DieMoe233) · [DingYong4223](https://github.com/DingYong4223) · [disappear00](https://github.com/disappear00) · [djairjr](https://github.com/djairjr) · [dmitri-0](https://github.com/dmitri-0) · [dmt4](https://github.com/dmt4) · [donglovejava](https://github.com/donglovejava) · [douglarek](https://github.com/douglarek) · [Dr3259](https://github.com/Dr3259) · [DracheTek](https://github.com/DracheTek) · [drpars](https://github.com/drpars) · [dsingal0](https://github.com/dsingal0) · [dst1213](https://github.com/dst1213) · [duanchao-lab](https://github.com/duanchao
+```
+
+**File**: `web/lib/release-credits.ts` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ export const RELEASE_CONTRIBUTORS: string[] = [
+  * one. scripts/check-contributor-credit.py requires them here now; the release
+  * cut moves them into RELEASE_CONTRIBUTORS with that release's changelog block.
+  */
+-export const UNRELEASED_CONTRIBUTORS: string[] = [];
++export const UNRELEASED_CONTRIBUTORS: string[] = ["@chuenchen309"];
+ 
+ /**
+  * Contributors who helped with reports, reproductions, and verification.
+```
+
+---
+
+### Incident Patch 3: `eb3a402d` (2026-11-27)
+**Commit Message**: fix(release): qualify the Windows piped-stdin import on x64 and ARM64
+
+The three executables on each Windows target in nightly 45843049590 stopped on Kernel32 PeekNamedPipe. Add only the observed pair. Microsoft documents Windows 2000 Professional for x64; the native ARM64 export probe in run 46009560246 resolved 450/450 on build 26200.9974. Keep machine profiles, minimum floors and the import checker intact.
+
+Replayed all six retained object dumps: x64 459/459, ARM64 450/450 for each executable. Verified a single rejected pair before the change and zero after. Engine preflight and diff checks passed. These checks do not execute the Windows binaries.
+
+**File**: `scripts/release/windows-import-floor.json` (modified, +40/-3)
+```diff
+@@ -6,7 +6,7 @@
+       "osArchitecture": "x64",
+       "qualification": {
+         "result": "PASS",
+-        "kind": "reporter exact-OS export resolution plus 19 documented Microsoft named API minima",
++        "kind": "reporter exact-OS export resolution plus 20 documented Microsoft named API minima",
+         "evidence": {
+           "issue": "https://github.com/codewhale-hq/Codewhale/issues/6953",
+           "binary": "https://github.com/codewhale-hq/Codewhale/releases/download/v0.10.1/codewhale-windows-x64.exe",
+@@ -16,7 +16,7 @@
+           "previous_sha256": "f7b35a1e928f67884637f36b01fc72854f50690130f191bac3bcf62ece3c1d84"
+         },
+         "runtimeAcceptance": "Final 0.10.2 release bytes on 14393 not run",
+-        "qualifiedPairs": 475,
++        "qualifiedPairs": 476,
+         "namedApiContracts": [
+           {
+             "dll": "advapi32.dll",
+@@ -131,6 +131,12 @@
+             "symbol": "IsProcessorFeaturePresent",
+             "minimumClient": "Windows 2000 Professional",
+             "source": "https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent"
++          },
++          {
++            "dll": "kernel32.dll",
++            "symbol": "PeekNamedPipe",
++            "minimumClient": "Windows 2000 Professional",
++            "source": "https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-peeknamedpipe"
+           }
+         ],
+         "namedApiContractEvidence": {
+@@ -174,6 +180,16 @@
+                 "kernel32.dll!IsProcessorFeaturePresent"
+               ],
+               "scope": "api-ms-win-crt-math-l1-1-0.dll!cosf from f32::cos() in TUI/ratatui 5.4.0 live motion and kernel32.dll!IsProcessorFeaturePresent from the windows-2025-vs2026 runner's MSVC 14.52 / Visual Studio 18.12 toolchain update (not a Codewhale call site); documentation-backed static contracts, same limits as above"
++            },
++            {
++              "candidateRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/45843049590",
++              "source": "8838e415c0074e05931313e81e16de1c91210d99",
++              "binarySha256": "6e1ee958ad1ca7f9fe4d607ff201dc2f401d396f393c5b22869994615cae2090",
++              "importReceiptSha256": "5ca1eb5757ccf4e1b41db8493e09339db230eaf5b8782a2902146177935cd8f4",
++              "pairs": [
++                "kernel32.dll!PeekNamedPipe"
++              ],
++              "scope": "The Windows TUI reads piped stdin with PeekNamedPipe. Microsoft documents this Kernel32 export before the Windows 10 build 14393 floor."
+             }
+           ]
+         }
+@@ -533,6 +549,7 @@
+           "OpenThread",
+           "OutputDebugStringA",
+           "OutputDebugStringW",
++          "PeekNamedPipe",
+           "PostQueuedCompletionStatus",
+           "Process32FirstW",
+           "Process32NextW",
+@@ -990,7 +1007,26 @@
+               }
+             }
+           }
+-        }
++        },
++        "additionalExportProbes": [
++          {
++            "pairs": [
++              "kernel32.dll!PeekNamedPipe"
++            ],
++            "time": "2026-11-27T13:44:14.6692724Z",
++            "osBuild": "26200.9974",
++            "processArchitecture": "ARM64",
++            "source": "8838e415c0074e05931313e81e16de1c91210d99",
++            "buildRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/45843049590",
++            "probeRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/46009560246",
++            "binarySha256": "8707e805f714d9a2f684a899ee38cbca7279d7c702a9d41fcf72b6c59fb8a137",
++            "importReceiptSha256": "6a678edcc271ceb97fc23438283fce7f9db74f81463c413dccfb5a0500421122",
++            "probeReceiptSha256": "ef1cddbd19ae952531b11a5c16a62cbedba591e114a383d51383348c1152a6dc",
++            "kernel32Sha256": "3b05fea371380c19022ca18c8ece9690057108954794038e9818f0dfeaf1cb46",
++            "resolved": 450,
++            "unresolved": 0
++          }
++        ]
+       },
+       "imports": {
+         "advapi32.dll": [
+@@ -1347,6 +1383,7 @@
+           "OpenThread",
+           "OutputDebugStringA",
+           "OutputDebugStringW",
++          "PeekNamedPipe",
+           "PostQueuedCompletionStatus",
+           "Process32FirstW",
+           "Process32NextW",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7565** (2026-11-27): fix(engine): preserve pasted summary headers during compaction (@NieZhuZhu)
+- **PR #7563** (2026-11-27): fix(tui): open inline skill completion after CJK text (@chuenchen309)
 - **PR #7561** (2026-11-25): fix(util,engine): resolve remaining R5 durability, grep timeout cancel, and bounded review read defects (@NieZhuZhu)
 - **PR #7560** (2026-11-25): chore(release): cut 0.10.5 (@Hmbown)
 - **PR #7559** (closed): docs(changelog): consolidate and deduplicate the 0.10.5 Unreleased notes (@Hmbown)
 - **PR #7558** (2026-11-24): feat(0.10.5): DSH 0.2.2 host services, per-plugin settings, telemetry honesty, and Wave 2 runtime (@Hmbown)
-- **PR #7557** (2026-11-24): fix(tui): use the engine catalog effort parser and add the Ollama Cloud effort ladder (@Hmbown)
-- **PR #7556** (2026-11-24): test(engine): match the strict [skills] contract in the creator-skills test (@Hmbown)
 
 ---
 
@@ -3501,50 +2661,31 @@ tool-restricting command mid-tur
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. command-contract): background facet carries a fn pointer and plain request, not 
+## X. engine): compaction summaries reuse the turn's cached prefix on DeepSeek
 
 **RULE**:
-When implementing operations in `crates/command-contract/src/facets/background.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84b57765`: command-contract): background facet carries a fn pointer and plain request, not a boxed future. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a82afef9`: engine): compaction summaries reuse the turn's cached prefix on DeepSeek. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/command-contract/src/facets/background.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::path::PathBuf;
-use std::sync::Arc;
-use std::sync::atomic::AtomicBool;
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct BackgroundRequest {
-    pub workspace: PathBuf,
-    pub language: String,
-    pub updater: PathBuf,
-    pub argument: String,
-}
-
-pub type BackgroundCancel = Arc<AtomicBool>;
-
-pub type BackgroundJob = fn(BackgroundRequest, BackgroundCancel) -> BackgroundCommandResult;
-        job: BackgroundJob,
-        request: BackgroundRequest,
+- **`/compact` and automatic compaction reuse the turn's prompt cache on DeepSeek:** the manual summary request now carries the tools the last turn sent, and on DeepSeek every summary request sends the turn's own `tool_choice` instead of `none`, so the cached system prompt, tools and history are no longer billed again as cache misses. A summary reply that calls a tool is treated as unusable and retried once with the stricter prompt; if that also fails, the conversation is kept unchanged. Thanks [@LmeSzinc](https://github.com/LmeSzinc) for the audit-log numbers that pinned this down. (#7564)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use std::future::Future;
-use std::pin::Pin;
-pub type BackgroundCommandWork =
-    Pin<Box<dyn Future<Output = BackgroundCommandResult> + Send + 'static>>;
-        work: BackgroundCommandWork,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84b57765` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a82afef9` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

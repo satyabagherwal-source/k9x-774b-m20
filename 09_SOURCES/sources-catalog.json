@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "8838e415",
+    "sourceVersion": "02e1c520",
     "license": "MIT",
-    "contentHash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
-    "lastHarvestedAt": "2026-11-26T14:53:25.638Z",
+    "contentHash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
+    "lastHarvestedAt": "2026-11-27T15:18:20.123Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {

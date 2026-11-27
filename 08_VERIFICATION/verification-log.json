@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-3C6Q",
-    "timestamp": "2026-11-26T06:52:21.746Z",
-    "repository": "nex-agi/Nex-N2.6",
-    "learningId": "learn-huggingface-nex-agi-nex-n2-6",
-    "contentHash": "3ee16bd06020a07b3c061ac6fd382342249c68194d834d118135908e6967afc2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-E835",
     "timestamp": "2026-11-26T07:00:49.649Z",
     "repository": "maxwell-model/Maxwell-V1-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "sharkdp/bat",
     "learningId": "learn-github-sharkdp-bat",
     "contentHash": "77052f57c36931b5c382081cb29c8578c51362ed997fc22831579e061870758b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LVIN",
+    "timestamp": "2026-11-27T15:18:20.111Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
