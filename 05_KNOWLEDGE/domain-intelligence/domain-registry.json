@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T16:30:33.482Z",
-  "total_records": 2839,
+  "last_updated": "2026-11-27T16:42:23.822Z",
+  "total_records": 2840,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1042,
+      "total": 1043,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1115,7 +1115,8 @@
         "DOM-D-E7237660",
         "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants",
         "DOM-D-457F0DDF",
-        "DOM-D-ACBB63D0"
+        "DOM-D-ACBB63D0",
+        "DOM-D-4E0DE84A"
       ]
     },
     "E": {
@@ -10679,8 +10680,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "aab3b1e913effefb155b80e3bc6f8942505165dda6ff0fffe4a67f09a5edf625",
-      "created_at": "2026-11-25T04:39:36.204Z"
+      "content_hash": "d90b123b656398ece59a808060b2199acac54663223bad0d938cc4f9947a7686",
+      "created_at": "2026-11-27T16:41:39.630Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -15630,8 +15631,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "30ec6400ab48dbe6e3e01b4087dc09ca0ca2ea9c61dce478b80c08567dd1a672",
-      "created_at": "2026-11-27T15:09:21.565Z"
+      "content_hash": "da97fd2fa73c29571d4a8ea7ed13dcb71d3275e438143d83aad62417ef3901a7",
+      "created_at": "2026-11-27T16:42:23.822Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -20260,8 +20261,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "a84a3f8f11fc778300cfb89d86cca411ca8dd4d7f7b0a1abb7bdf1f9fffb91aa",
-      "created_at": "2026-11-25T04:39:43.329Z"
+      "content_hash": "202ca58e5cd0c6b9bcbc8bb9e793a13110232a52da6ade8544b9a264ce5c401e",
+      "created_at": "2026-11-27T16:42:22.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -25571,8 +25572,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "f4890c83fa88954655790c4204654173e4d68681b7ffbfb936b7df41996aa709",
-      "created_at": "2026-11-26T16:40:34.094Z"
+      "content_hash": "2d5b767a17fd417dafc4d36725491c76566797cc55a20f1d7ab2a694ddd10bbc",
+      "created_at": "2026-11-27T16:41:33.989Z"
     },
     "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-core-invariants",
@@ -25589,8 +25590,8 @@
       "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-learnings-quality-verification-intelligence-fallow-rs-fallow-le.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "7d82ec3d489e1c71c63e3276dd2029008ae671948102274444454a0c92d69d4a",
-      "created_at": "2026-11-26T16:40:48.995Z"
+      "content_hash": "c7d1761bb7ebef39cb583bff33ad681a4be1ccbeab4662eb864c1dfc31c7aaf5",
+      "created_at": "2026-11-27T16:41:43.647Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
@@ -47929,6 +47930,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T15:27:46.436Z"
+    },
+    "DOM-D-4E0DE84A": {
+      "record_id": "DOM-D-4E0DE84A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): rook/rook",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  \n> **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  \n> **Source Version**: `99836e57`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Timesta",
+      "content_hash": "afc52ea93c787156279ae716f7595702d4b71ec80fc4bbc9f06b3f6ed7d6bfd2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  \n> **Source**: github ([https://github.com/rook/rook](https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  \n> **Source**: github ([https://github.com/rook/rook](https",
+      "provenance": {
+        "source_uri": "project://rook-rook/rook-rook-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T16:41:44.175Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rook-rook)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of rook-rook"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T16:42:21.430Z"
     }
   }
 }

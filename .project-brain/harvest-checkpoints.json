@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T16:30:27.348Z",
+  "last_updated": "2026-11-27T16:41:39.293Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
-      "verified_at": "2026-11-26T16:40:33.455Z",
+      "content_hash": "ce993cf27ecd5f894b08232a8ace996697676dd8f6dadfbea3a976dbfaac66a0",
+      "verified_at": "2026-11-27T16:41:33.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T16:40:33.455Z"
+      "last_updated": "2026-11-27T16:41:33.344Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
-      "verified_at": "2026-11-25T04:39:35.753Z",
+      "content_hash": "f6dd871ebaa193337d02938a0a3a2fbb80d8293cb1d6262e33d0a75dd274ebe4",
+      "verified_at": "2026-11-27T16:41:39.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:39:35.753Z"
+      "last_updated": "2026-11-27T16:41:39.292Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",

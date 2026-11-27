@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-3J93",
-    "timestamp": "2026-11-26T07:48:30.135Z",
-    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-    "contentHash": "48cac32fda3f8d44dd32f9f4705c8d1038800dfbb682596e74d382028c91ebf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-3TUK",
-    "timestamp": "2026-11-26T07:48:43.868Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-FGZ7",
     "timestamp": "2026-11-26T07:57:47.059Z",
     "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
@@ -7492,6 +7462,36 @@
     "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-KWAI",
+    "timestamp": "2026-11-27T16:41:33.306Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "ce993cf27ecd5f894b08232a8ace996697676dd8f6dadfbea3a976dbfaac66a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-L0W4",
+    "timestamp": "2026-11-27T16:41:39.268Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "f6dd871ebaa193337d02938a0a3a2fbb80d8293cb1d6262e33d0a75dd274ebe4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

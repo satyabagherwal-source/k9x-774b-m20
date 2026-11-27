@@ -4,24 +4,24 @@
 {
   "source_repository": "fallow-rs/fallow",
   "source_url": "https://github.com/fallow-rs/fallow",
-  "source_version": "79b93ba6",
+  "source_version": "2e31fc94",
   "license": "MIT",
-  "timestamp": "2026-11-26T16:40:33.757Z",
+  "timestamp": "2026-11-27T16:41:33.667Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fallow-rs-fallow",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `79b93ba6`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T16:40:33.757Z`  
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `2e31fc94`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T16:41:33.667Z`  
 > **Learning ID**: `learn-github-fallow-rs-fallow`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 84%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from fallow-rs/fallow:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T16:40:31.732Z  
+> **Harvest Timestamp**: 2026-11-27T16:41:31.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5411 stars
+- **Stars / Engagement**: 5420 stars
 
 ---
 
@@ -425,11 +425,11 @@ export { default as Orphan } from "./Orphan.vue";
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5278** (2026-11-25): **[BUG] VSCode: Fallow Analyze loop after only one change to .fallowrc.json**
-  *Symptoms*: ## Repeated analysis loop after one `.fallowrc.json` edit  I believe someone noted this same behaviour before in a comment or Issue, but can't find it. Not sure if editing `.fallowrc.json` is the _only_ trigger but it is one confirmed reproducible trigger.  ### Environment  - OS: Windows 11 - VS Code extension: Fallow 3.48.0 - Fallow LSP binary version: 3.48 - Project: TypeScript monorepo; 7 workspaces, about 849 files  ### Steps to reproduce  1. Start VS Code and open the workspace that has `.fallowrc.json`. 2. Change and save only the root `.fallowrc.json`. 3. Make no further changes.  ### Actual behavior  Fallow repeatedly sends `workspace/didChangeWatchedFiles` notifications and starts full analyses constantly. New notifications sometimes arrive during an analysis; Fallow cancels that run and starts another. I reproduced this after a fresh VS Code start, changing only `.fallowrc.json`.  Example from the trace (paths and username redacted):  ```text 18:36:32.005 Analysis complete 18:36:32.972 Sending notification 'workspace/didChangeWatchedFiles' 18:36:33.180 Running fallow analysis... 18:36:36.400 Sending notification 'workspace/didChangeWatchedFiles' 18:36:37.251 Analysis complete 18:36:37.252 Running fallow analysis... 18:36:37.552 Sending notification 'workspace/didChangeWatchedFiles' 18:36:38.092 Cancelled a fallow analysis that a newer workspace event superseded 18:36:38.093 Running fallow analysis... ... ```  Each run logs that it loaded the root `.fallowrc.json`. T
+- **Issue #5391** (2026-11-27): **mutation: Vitest runs still count test- prefixed and unimported __tests__ helpers as test files**
+  *Symptoms*: ## Problem  `fallow mutation` on a Vitest project still counts two kinds of `__tests__` helper modules as static test files. This is a residual of #4245. Vitest does not list these files, so the run adds the error `test-files-not-discovered` and sets `completion.status` to `partial`. The run did not miss a test, but the report says that it did.  1. A helper whose file name starts with `test-`, for example `__tests__/support/test-gateway.ts`. `has_test_file_marker` accepts the prefixes `test.` and `test-` (`TEST_FILE_PREFIXES` in `crates/engine/src/mutation/plan.rs`). These prefixes are the `node --test` patterns. The Vitest default include does not match them. 2. A helper under `__tests__` that no file imports, for example an old copy of a helper. `is_test_helper` drops a `__tests__` file only when it has an importer.  A real monorepo showed both cases in one run.  ## Reproduction  fallow 3.48.0 (the rule is the same on `main`), Vitest 4.1.0, default Vitest config.  `src/sum.ts`:  ```ts export const sum = (a: number, b: number): number => a + b; ```  `src/__tests__/support/test-gateway.ts`:  ```ts import { sum } from '../../sum'; export const three = (): number => sum(1, 2); ```  `src/__tests__/test-utils/fake-adder.ts` (no file imports it):  ```ts import { sum } from '../../sum'; export const fakeAdd = (): number => sum(2, 2); ```  `src/__tests__/sum.test.ts`:  ```ts import { expect, test } from 'vitest'; import { sum } from '../sum'; import { three } from './support/test-ga
 
-- **Issue #5218** (2026-11-25): **mutation: baseline fails with TanStack Router autoCodeSplitting because the instrumented copy rewrites string literals in codeSplitGroupings (regression since 3.41.0)**
-  *Symptoms*: ### What happened?  With fallow 3.43.1, the baseline (dry run without an active mutant) fails in a project that uses the TanStack Router Vite plugin (`@tanstack/router-plugin` 1.169.0, `autoCodeSplitting: true`). It does not happen with 3.41.0.  Every test file that imports the mutated route (through `routeTree.gen.ts`) fails in the baseline with:  ``` You must provide a string literal for the codeSplitGroupings ```  The run ends with `completion.status = "partial"`, reasons `baseline-failure` and `unloaded-files`. Files only reachable through the route tree end up in `unloaded_paths`. In the real project this was 35 failing test files. With `string-literal` removed from the operators, there are 0 failures; with 3.41.0, the same route file gives 0 failures.  **What I found:**  1. In the mutant-schemata copy, the string inside `codeSplitGroupings` is replaced with a conditional expression:     ```ts    codeSplitGroupings: [[(typeof __fallow_m_a === "function" && __fallow_m_a("<id>") ? ("") : (… , ("component")))]]    ```     The report lists this mutant as `status: "pruned"` with `prune_reason: "framework-config"`, but it is still embedded in the copy. The path string in `createFileRoute("/posts")` is treated the same way. A `// fallow-ignore-next-line` comment above the line did not remove it from the copy either.  2. Since 3.43.x, the companion overlay plugin (`fallow-mutation-overlay`, `enforce: "pre"`, in `crates/api/src/mutation/companion/adapters/vitest.mjs`) serves the 
+- **Issue #5389** (2026-11-27): **mutation: the setup timeout hint suggests 5m also when a longer timeout failed**
+  *Symptoms*: ## Problem  When the runner setup of `fallow mutation` times out, the help text always suggests `--setup-timeout` "with a longer duration, for example 5m". The example does not change with the value that the user gave. With `--setup-timeout 5m` or longer, the hint suggests a value that is equal to or shorter than the value that failed.  ## Reproduction  fallow 3.48.0, Vitest 4.1.0, Node 26.  `vitest.config.ts`:  ```ts import { defineConfig } from 'vitest/config'; export default defineConfig({ test: { testTimeout: 1_000_000 } }); ```  `src/sum.ts`:  ```ts export const sum = (a: number, b: number): number => a + b; ```  `src/sum.test.ts`:  ```ts import { expect, test } from 'vitest'; import { sum } from './sum'; test('sum', async () => {   await new Promise((r) => setTimeout(r, 400000));   expect(sum(1, 2)).toBe(3); }); ```  ```bash git init -q fallow mutation src/sum.ts --allow-dirty --format json --quiet --setup-timeout 5m ```  Output:  ```json {"error":true,"message":"the mutation companion dry_run failed: the companion did not answer before the watchdog","exit_code":2,"code":"FALLOW_MUTATION_RUNNER_FAILED","help":"the runner setup took longer than 300s; on a slow or busy host, pass --setup-timeout with a longer duration, for example 5m"} ```  A real project shows the same text after `--setup-timeout 15m`: "took longer than 900s ... for example 5m".  ## Expected  The example is longer than the timeout that failed, for example two times that value. An agent that follows the h
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -446,1486 +446,1377 @@ export { default as Orphan } from "./Orphan.vue";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `134bd42d` (2026-11-26)
-**Commit Message**: fix(core): read project files inside the project scope (#5277)
+### Incident Patch 1: `301c3eae` (2026-11-27)
+**Commit Message**: feat(benchmarks): record framework and security rule precision (#5402)
 
-* fix(cache): rebuild a graph cache whose modules differ from the discovered files
+* feat(benchmarks): record framework and security rule precision
 
-The graph cache manifest describes the inputs of a run, not the graph that
-the cache file holds. A cache hit now also checks that the graph has one
-module for each discovered file, with the same path, and that each index
-is in bounds. A failed check rebuilds the graph.
+Add waves 3 and 4 of the rule precision ledger.
 
-The CI suggestion reader and the SARIF snippet reader now read a finding
-file only when it resolves to a regular file inside the project root.
+Wave 3 adds four framework projects to the corpus: dub (Next.js),
+ghostfolio (Angular), hoppscotch (Vue) and uptime-kuma (Vue). Each one
+sets "default": false, so a sample takes it only when --projects names
+it. The rows of the other rules then keep the same projects. Four rules
+report findings on these projects and get a row:
+dev-dependency-in-production, unused-component-emit,
+unused-component-input and invalid-client-export. Most other framework
+rules report nothing on them. The boundary and policy rules report only
+against the config of a project, so they get no row. The docs state
+this scope.
+
+Wave 4 measures each fallow security category on the default corpus,
+with the same sample and review method as the other rows. The sample
+script groups security findings by category. A finding keeps its stable
+ID, and a finding without one (a sink in a component template) gets an
+ID from its location.
+
+Refs #5257
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(audit): read diff-risk head files only inside the project
+* style(benchmarks): format the rule pr
 
-The diff-risk rules read the head text of each changed file, of the config
-chain and of clone siblings. Each read now goes through the bounded read
-helper. A file that resolves outside the root, is not a regular file or is
-too large is skipped.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(ci): refuse a ci input file link that leaves the working directory
-
-The ci post-pr-comment, plan-pr-comment and check-run commands read
---body, --envelope and similar files. A path below the working directory
-must no
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `benchmarks/rule-precision-summary.md` (modified, +42/-0)
 ```diff
-@@ -1533,6 +1533,7 @@ dependencies = [
-  "oxc_span",
-  "proptest",
-  "rustc-hash",
-+ "rustix",
-  "schemars",
-  "serde",
-  "serde_json",
+@@ -13,15 +13,19 @@ Reviews is the count of independent reviews; the percentage is how often the fir
+ | Command | Rule | Findings | Sampled | Real | Noise | Unsure | Precision | Reviews | Measured on |
+ |---|---|---|---|---|---|---|---|---|---|
+ | `dead-code` | `circular-dependency` | 158 | 88 | 87 | 1 | 0 | 99% (84 to 100) | 1 | 3.49.0, 2026-11-27 |
++| `dead-code` | `dev-dependency-in-production` | 24 | 24 | 24 | 0 | 0 | 100% (79 to 100) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+ | `dead-code` | `duplicate-export` | 20 | 20 | 17 | 3 | 0 | 85% (36 to 98) | 2 (100% agree) | 3.48.0, 2026-11-25 |
+ | `dead-code` | `duplicate-export-alias` | 69 | 50 | 50 | 0 | 0 | 100% (76 to 100) | 2 (100% agree) | 3.48.0, 2026-11-25 |
++| `dead-code` | `invalid-client-export` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+ | `dead-code` | `package-cycle` | 20 | 20 | 18 | 2 | 0 | 90% (68 to 99) | 1 | 3.48.0, 2026-11-25 |
+ | `dead-code` | `test-only-dependency` | 2 | 2 | 2 | 0 | 0 | 100% (16 to 100) | 1 | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unlisted-binary` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 3 (0% agree) | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unlisted-dependency` | 94 | 46 | 31 | 15 | 0 | 84% (71 to 88) | 3 (83% agree) | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unresolved-import` | 14 | 14 | 0 | 14 | 0 | 0% (0 to 65) | 3 (43% agree) | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unused-catalog-entry` | 16 | 16 | 16 | 0 | 0 | 100% (79 to 100) | 1 | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unused-class-member` | 268 | 70 | 33 | 37 | 0 | 60% (40 to 77) | 1 | 3.49.0, 2026-11-26 |
++| `dead-code` | `unused-component-emit` | 14 | 14 | 10 | 4 | 0 | 71% (42 to 92) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `dead-code` | `unused-component-input` | 5 | 5 | 3 | 2 | 0 | 60% (15 to 95) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+ | `dead-code` | `unused-component-prop` | 18 | 18 | 18 | 0 | 0 | 100% (81 to 100) | 2 (100% agree) | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unused-dependency` | 32 | 32 | 29 | 3 | 0 | 91% (58 to 99) | 1 | 3.48.0, 2026-11-25 |
+ | `dead-code` | `unused-dependency-override` | 7 | 7 | 7 | 0 | 0 | 100% (59 to 100) | 1 | 3.48.0, 2026-11-25 |
+@@ -41,16 +45,35 @@ Reviews is the count of independent reviews; the percentage is how often the fir
+ | `health --coverage-gaps --shallow-directories --css` | `shallow-directory` | 8 | 8 | 8 | 0 | 0 | 100% (23 to 100) | 2 (100% agree) | 3.48.0, 2026-11-25 |
+ | `health --coverage-gaps --shallow-directories --css` | `untested-export` | 5640 | 95 | 83 | 12 | 0 | 97% (80 to 100) | 3 (99% agree) | 3.49.0, 2026-11-27 |
+ | `health --coverage-gaps --shallow-directories --css` | `untested-file` | 3931 | 90 | 89 | 1 | 0 | 100% (85 to 100) | 3 (92% agree) | 3.49.0, 2026-11-27 |
++| `security` | `cleartext-transport` | 2 | 2 | 0 | 2 | 0 | 0% (0 to 84) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `client-server-leak` | 129 | 32 | 0 | 32 | 0 | 0% (0 to 15) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `code-injection` | 3 | 3 | 0 | 3 | 0 | 0% (0 to 71) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `command-injection` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `dangerous-html` | 15 | 15 | 0 | 15 | 0 | 0% (0 to 66) | 3 (67% agree) | 3.49.0, 2026-11-27 |
++| `security` | `dynamic-module-load` | 2 | 2 | 0 | 2 | 0 | 0% (0 to 99) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `nosql-injection` | 2 | 2 | 0 | 2 | 0 | 0% (0 to 84) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `open-redirect` | 91 | 68 | 8 | 60 | 0 | 11% (2 to 34) | 3 (99% agree) | 3.49.0, 2026-11-27 |
++| `security` | `path-traversal` | 33 | 33 | 0 | 33 | 0 | 0% (0 to 30) | 3 (97% agree) | 3.49.0, 2026-11-27 |
++| `security` | `postmessage-wildcard-origin` | 33 | 30 | 29 | 1 | 0 | 97% (83 to 100) | 3 (97% agree) | 3.49.0, 2026-11-27 |
++| `security` | `prototype-pollution` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 2 (100% agree) | 3.49.0, 2026-11-27 |
++| `security` | `react-router-open-redirect` | 39 | 39 | 6 | 33 | 0 | 15% (3 to 39) | 3 (97% agree) | 3.49.0, 2026-11-27 |
++| `security` | `secret-pii-log` | 248 | 38 | 7 | 31 | 0 | 14% (3 to 36) | 3 (95% agree) | 3.49.0, 2026-11-27 |
++| `security` | `sql-injection` | 28 | 28 | 0 | 28 | 0 | 0% (0 to 12) | 3 (96% agree) | 3.49.0, 2026-11-27 |
++| `security` | `ssrf` | 53 | 50 | 3 | 47 | 0 | 6% (0 to 36) | 3 (96% agree) | 3.49.0, 2026-11-27 |
++| `security` | `weak-crypto` | 7 | 7 | 7 | 0 | 0 | 100% (59 to 100) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+ 
+ ## Noise classes
+ 
+ - `circular-dependency`: elided unused import (1)
+ - `duplicate-export`: Svelte component instance method (3)
++- `invalid-client-export`: ordinary client module export (1)
+ - `package-cycle`: Playwright fixture import (2)
+ - `unlisted-binary`: Mise-managed binary (1)
+ - `unlisted-dependency`: documentation example (8), Deno import map (7)
+ - `unresolved-import`: documentation example (8), build output import (3), generated ty
 ```
 
-**File**: `crates/api/src/diff_risk/mod.rs` (modified, +20/-8)
+**File**: `benchmarks/rule-precision.json` (modified, +822/-0)
 ```diff
-@@ -34,6 +34,7 @@ use fallow_output::{
-     DiffRiskRule, DiffRiskSeverity, DiffRiskSuppression, WeakenedTestsKind,
- };
- use fallow_types::duplicates::CloneGroup;
-+use fallow_types::read_guard::{self, ReadRefusal};
- use fallow_types::suppress::{IssueKind, Suppression, SuppressionTarget};
- use rustc_hash::{FxHashMap, FxHashSet};
- 
-@@ -211,6 +212,17 @@ fn is_rule_relevant(root: &Path, rel: &str) -> bool {
-         || crate::dependency_deltas::is_manifest_path(rel)
- }
- 
-+/// The head text of `abs`, or `None` when the file does not exist. A file
-+/// that resolves outside `root`, is not a regular file or is too large is
-+/// refused, and the caller skips it.
-+fn read_head(root: &Path, abs: &Path) -> Result<Option<String>, ReadRefusal> {
-+    match read_guard::read_bytes_inside(root, abs, read_guard::DEFAULT_MAX_READ_BYTES) {
-+        Ok(bytes) => Ok(Some(String::from_utf8_lossy(&bytes).into_owned())),
-+        Err(refusal) if refusal.is_not_found() => Ok(None),
-+        Err(refusal) => Err(refusal),
-+    }
-+}
-+
- fn read_files(input: &DiffRiskInput<'_>, source: &mut BaseSource) -> Vec<FileTexts> {
-     let rename_sources: FxHashSet<&Path> = input
-         .renames
-@@ -246,10 +258,8 @@ fn read_files(input: &DiffRiskInput<'_>, source: &mut BaseSource) -> Vec<FileTex
-         if !is_rule_relevant(input.root, &rel) {
-             continue;
-         }
--        let head = match std::fs::read(abs) {
--            Ok(bytes) => Some(String::from_utf8_lossy(&bytes).into_owned()),
--            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
--            Err(_) => continue,
-+        let Ok(head) = read_head(input.root, abs) else {
-+            continue;
-         };
-         let base = match source.read(base_abs) {
-             BaseRead::Content(base) => Some(base),
-@@ -350,9 +360,11 @@ fn detect_config_changes(
-     source: &mut BaseSource,
-     raw: &mut Vec<RawFinding>,
- ) {
--    let mut read_head = |abs: &Path| match std::fs::read(abs) {
--        Ok(bytes) => ConfigRead::Content(String::from_utf8_lossy(&bytes).into_owned()),
--        Err(error) if error.kind() == std::io::ErrorKind::NotFound => ConfigRead::Missing,
-+    // The config chain can reach above the analysis root, up to the git root.
-+    let git_root = source.git_root.clone();
-+    let mut read_head = |abs: &Path| match read_head(&git_root, abs) {
-+        Ok(Some(text)) => ConfigRead::Content(text),
-+        Ok(None) => ConfigRead::Missing,
-         Err(_) => ConfigRead::Unreadable,
-     };
-     // Changed-file paths start at the canonical git root, so the chain paths
-@@ -816,7 +828,7 @@ fn detect_diverged_clones(
-     };
-     let mut head_text = |rel: &str| match head_by_rel.get(rel) {
-         Some(head) => head.map(str::to_owned),
--        None => std::fs::read_to_string(root.join(rel)).ok(),
-+        None => read_head(root, &root.join(rel)).ok().flatten(),
-     };
-     let found = clones::diverged_clone_siblings(
-         base_groups,
-```
-
-**File**: `crates/api/src/type_aware/client/mod.rs` (modified, +74/-181)
-```diff
-@@ -4,6 +4,7 @@ mod call_evidence;
- mod empty;
- mod queries;
- mod reconcile;
-+mod response_path;
- 
- use std::collections::{BTreeMap, BTreeSet};
- use std::path::{Component, Path, PathBuf};
-@@ -42,6 +43,9 @@ use queries::{build_dead_code_queries, query_supports_guarded_fix};
- use reconcile::apply_dead_code_response;
- #[cfg(test)]
- use reconcile::semantic_only_candidate_stays_hidden;
-+use response_path::{
-+    ResponseScope, contract_paths_in_scope, impact_paths, reference_paths_in_scope,
-+};
- 
- const EVIDENCE_LIMIT: usize = 40;
- /// A type-coupling result is one project-wide report, not one symbol, so it
-@@ -732,14 +736,21 @@ pub fn trace_symbol(
-     let result = response.results.first().ok_or_else(|| {
-         TypeAwareError::from("type-aware trace response omitted its query result".to_string())
-     })?;
--    decode_symbol_trace(&response, &request, result, symbol)
-+    decode_symbol_trace(
-+        &response,
-+        &request,
-+        result,
-+        symbol,
-+        &ResponseScope::new(root),
-+    )
- }
- 
- fn decode_symbol_trace(
-     response: &SemanticResponse,
-     request: &SemanticRequest,
-     result: &SemanticQueryResponse,
-     symbol: SemanticSymbol,
-+    scope: &ResponseScope,
- ) -> Result<SemanticSymbolTrace, TypeAwareError> {
-     let identity = semantic_identity(response, request, result.status);
-     if result.status == SemanticCompleteness::Unavailable {
-@@ -774,7 +785,7 @@ fn decode_symbol_trace(
-             "type-aware symbol trace totals are smaller than returned evidence".to_string(),
-         ));
+@@ -20,6 +20,30 @@
+       "repo": "react-hook-form/react-hook-form",
+       "commit": "f3fd1bf4a3cb1265171adfc778f279a3c7e06fc5",
+       "kind": "library"
++    },
++    "dub": {
++      "repo": "dubinc/dub",
++      "commit": "6b463b4bdd9ed2fd9aa416f67b5b77d317b1471e",
++      "kind": "Next.js app monorepo",
++      "default": false
++    },
++    "ghostfolio": {
++      "repo": "ghostfolio/ghostfolio",
++      "commit": "9cad9e102795aca04a6a58232a22a3fadc680383",
++      "kind": "Angular and NestJS app",
++      "default": false
++    },
++    "hoppscotch": {
++      "repo": "hoppscotch/hoppscotch",
++      "commit": "6177eae1875ea4cc8fc46604d65bf85478912d85",
++      "kind": "Vue app monorepo",
++      "default": false
++    },
++    "uptime-kuma": {
++      "repo": "louislam/uptime-kuma",
++      "commit": "d35c3fafa1da1fe42d86de55e60632255fd9a225",
++      "kind": "Vue and Node app",
++      "default": false
      }
--    let references = decode_symbol_trace_evidence(result)?;
-+    let references = decode_symbol_trace_evidence(result, scope)?;
-     Ok(SemanticSymbolTrace {
-         target: data.symbol,
-         identity,
-@@ -808,14 +819,21 @@ pub fn symbol_impact(
-     let result = response.results.first().ok_or_else(|| {
-         TypeAwareError::from("type-aware impact response omitted its query result".to_string())
-     })?;
--    decode_symbol_impact(&response, &request, result, symbol)
-+    decode_symbol_impact(
-+        &response,
-+        &request,
-+        result,
-+        symbol,
-+        &ResponseScope::new(root),
-+    )
+   },
+   "rows": [
+@@ -77,6 +101,37 @@
+         }
+       ]
+     },
++    {
++      "rule": "dev-dependency-in-production",
++      "command": "dead-code",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size": 30,
++      "reviews": 2,
++      "agreement_percent": 100,
++      "projects": [
++        {
++          "project": "ghostfolio",
++          "commit": "9cad9e102795aca04a6a58232a22a3fadc680383",
++          "findings": 1,
++          "sampled": 1,
++          "real": 1,
++          "noise": 0,
++          "unsure": 0
++        },
++        {
++          "project": "uptime-kuma",
++          "commit": "d35c3fafa1da1fe42d86de55e60632255fd9a225",
++          "findings": 23,
++          "sampled": 23,
++          "real": 23,
++          "noise": 0,
++          "unsure": 0
++        }
++      ],
++      "noise_classes": []
++    },
+     {
+       "rule": "duplicate-export",
+       "command": "dead-code",
+@@ -171,6 +226,33 @@
+       ],
+       "noise_classes": []
+     },
++    {
++      "rule": "invalid-client-export",
++      "command": "dead-code",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size": 30,
++      "reviews": 2,
++      "agreement_percent": 100,
++      "projects": [
++        {
++          "project": "dub",
++          "commit": "6b463b4bdd9ed2fd9aa416f67b5b77d317b1471e",
++          "findings": 1,
++          "sampled": 1,
++          "real": 0,
++          "noise": 1,
++          "unsure": 0
++        }
++      ],
++      "noise_classes": [
++        {
++          "class": "ordinary client module export",
++          "count": 1
++        }
++      ]
++    },
+     {
+       "rule": "package-cycle",
+       "command": "dead-code",
+@@ -485,6 +567,60 @@
+         }
+       ]
+     },
++    {
++      "rule": "unused-component-emit",
++      "command": "dead-code",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size": 30,
++      "reviews": 2,
++      "agreement_percent": 100,
++      "projects": [
++        {
++          "project": "hoppscotch",
++          "commit": "6177eae1875ea4cc8fc46604d65bf85478912d85",
++          "findings": 14,
++          "sampled": 14,
++          "real": 10,
++          "noise": 4,
++          "unsure": 0
++        }
++      ],
++      "noise_classes": [
++        {
++          "class": "emitted by useVModel",
++          "count": 4
++        }
++      ]
++    },
++    {
++      "rule": "unused-component-input",
++      "command": "dead-code",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size": 30,
++      "reviews": 2,
++      "agreement_percent": 100,
++      "projects": [
++        {
++          "project": "ghostfolio",
++          "commit": "9cad9e102795aca04a6a58232a22a3fadc680383",
++          "findings": 5,
++          "sampled": 5,
++          "real": 3,
++          "noise": 2,
++          "unsure": 0
++        }
++      ],
++      "noise_classes": [
++        {
++          "class": "read by Angular host binding",
++          "count": 2
++        }
++      ]
++    },
+     {
+       "rule": "unused-component-prop",
+       "command": "dead-code",
+@@ -1393,6 +1529,692 @@
+           "count": 1
+         }
+       ]
++    },
++    {
++      "rule": "cleartext-transport",
++      "command": "security",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size": 30,
++      "reviews": 2,
++      "agreement_percent": 100,
++      "projects": [
++        {
++          "project": "immich",
++          "commit": "7b27863b13d7ec52340e87637d71a39aa8d7efc0",
++          "findings": 2,
++          "sampled": 2,
++          "real": 0,
++          "noise": 2,
++          "unsure": 0
++        }
++      ],
++      "noise_classes": [
++        {
++          "class": "loopback-only transport",
++          "count": 2
++        }
++      ]
++    },
++    {
++      "rule": "client-server-leak",
++      "command": "security",
++      "args": [],
++      "fallow_version": "3.49.0",
++      "reviewed_on": "2026-11-27",
++      "sample_size":
+```
+
+**File**: `docs/rule-precision.md` (modified, +25/-2)
+```diff
+@@ -27,6 +27,12 @@ was tuned on them. Do not tune a rule on a corpus project and then record its
+ row from the same project. When a fix needs a project for tuning, record the
+ row on the other projects, or add a new held-out project.
+ 
++A project with `"default": false` joins a sample only when `--projects` names
++it. Such a project holds the findings of rules that the default projects do
++not report, for example the rules of one framework. The rows of the other
++rules then stay comparable over time, because a new sample of such a rule
++takes the same default projects.
++
+ ## Method
+ 
+ 1. Build fallow from the commit that you measure.
+@@ -54,7 +60,8 @@ row on the other projects, or add a new held-out project.
+    styling finding. For each rule and project, the script takes up to 30
+    findings (`--sample-size`) in a seeded random order. The seed is the rule,
+    the project and the commit, so the same binary gives the same sample.
+-   `--rules a,b` keeps only some rules.
++   `--rules a,b` keeps only some rules. `--projects a,b` runs only the named
++   projects.
+ 
+    For each rule, the script writes these files to `<work dir>/<rule>/`:
+ 
+@@ -128,6 +135,11 @@ Judge the finding against the contract of the command that reported it. For
+   reaches the code only at runtime does not import it, so the claim holds.
+   Code that only an end-to-end test runner starts, such as the app of a
+   Playwright `webServer`, is not runtime code, so a finding on it is noise.
++  A `fallow security` finding is a candidate for verification, not a
++  confirmed vulnerability. Its claim is the data flow or reach that the
++  explain text and the `evidence` of the finding state. The finding is
++  `real` when that flow or reach exists in the code, also when an attack
++  needs more steps.
+ - `noise`: the claim is false, or the fix changes behavior. Give a
+   `class` that names the cause, for example "framework convention export",
+   "dynamic import by string", or "used by a script outside the source tree".
+@@ -147,7 +159,18 @@ These `health` outputs have no row:
+   or false.
+ 
+ `fallow dupes` clone groups and mirrored directories have rows, and so do the
+-`health` coverage gaps, shallow directories and styling findings.
++`health` coverage gaps, shallow directories and styling findings. Each
++`fallow security` category has its own row, with `--command security`.
++
++These rules have no row, and the summary does not list them:
++
++- `boundary-violation`, `boundary-call-violation`, `boundary-coverage` and
++  `policy-violation` report only against the `boundaries` or `rulePacks`
++  config of the project. No corpus project has one. With a preset, a
++  reference app that follows the preset gives no finding.
++- a rule that reports no finding on the corpus projects. The framework
++  projects (`"default": false`) give findings for some framework rules, but
++  most framework rules report nothing on them.
+ 
+ ## Freshness
+ 
+```
+
+**File**: `scripts/rule-precision.mjs` (modified, +11/-2)
+```diff
+@@ -2,7 +2,7 @@
+ /**
+  * Measures and records the precision of fallow rules on a pinned public corpus.
+  *
+- *   sample   run fallow on each corpus project, write review sheets
++ *   sample   run fallow on the corpus projects, write review sheets
+  *   record   merge the verdicts of a review into the ledger
+  *   summary  write the summary from the ledger
+  *   check    fail when the ledger is malformed or the summary is stale
+@@ -32,6 +32,7 @@ import {
+   renderSummary,
+   reviewView,
+   seededSample,
++  selectProjects,
+   upsertRow,
+ } from "./rule-precision/ledger.mjs";
+ 
+@@ -246,7 +247,14 @@ const sample = (values) => {
+   const wanted = values.rules ? new Set(values.rules.split(",")) : null;
+   const version = fallowVersion(bin);
+   const perRule = new Map();
+-  for (const [name, project] of Object.entries(readJson(LEDGER).corpus)) {
++  const { corpus } = readJson(LEDGER);
++  const selected = selectProjects(
++    corpus,
++    values.projects === undefined ? null : values.projects.split(","),
++  );
++  if (!selected.ok) fail(selected.error);
++  for (const name of selected.names) {
++    const project = corpus[name];
+     const dir = join(corpusDir, name);
+     ensureCheckout(dir, project);
+     console.error(`rule-precision: ${name}: fallow ${command}`);
+@@ -309,6 +317,7 @@ const parseCli = () => {
+         command: { type: "string", default: "dead-code" },
+         args: { type: "string" },
+         rules: { type: "string" },
++        projects: { type: "string" },
+         "sample-size": { type: "string", default: String(DEFAULT_SAMPLE_SIZE) },
+         in: { type: "string" },
+         verdicts: { type: "string", multiple: true },
+```
+
+**File**: `scripts/rule-precision.test.mjs` (modified, +55/-0)
+```diff
+@@ -14,6 +14,7 @@ import {
+   renderSummary,
+   ruleIdFromKey,
+   seededSample,
++  selectProjects,
+   clopperPearson,
+   stratifiedPrecision,
+   upsertRow,
+@@ -82,6 +83,36 @@ test("only findings count, and each finding ID names its rule", () => {
+   );
+ });
+ 
++test("security findings group by category and keep their stable ID", () => {
++  const rules = findingsByRule({
++    kind: "security",
++    security_findings: [
++      { finding_id: "1a", stable_finding_id: "sec1:aa", category: "ssrf", path: "a.ts" },
++      { finding_id: "2b", stable_finding_id: "sec1:bb", category: "client-server-leak" },
++      { finding_id: "3c", stable_finding_id: "sec1:cc", category: "ssrf", path: "b.ts" },
++    ],
++  });
++  assert.deepEqual([...rules.keys()], ["ssrf", "client-server-leak"]);
++  assert.deepEqual(
++    rules.get("ssrf").map((f) => f.finding_id),
++    ["sec1:ssrf:aa", "sec1:ssrf:cc"],
++  );
++});
++
++test("a security finding without a stable ID gets an ID from its location", () => {
++  const site = { category: "dangerous-html", path: "src/App.vue", line: 4, col: 2 };
++  const rules = findingsByRule({
++    security_findings: [
++      { finding_id: "1a", ...site },
++      { finding_id: "2b", ...site },
++    ],
++  });
++  const ids = rules.get("dangerous-html").map((f) => f.finding_id);
++  assert.equal(ids.length, 2);
++  assert.match(ids[0], /^rp1:dangerous-html:[0-9a-f]+$/);
++  assert.equal(ids[1], `${ids[0]}~1`);
++});
++
+ test("health and dupes findings get stable IDs from their identifying fields", () => {
+   const report = {
+     clone_groups: [{ fingerprint: "abc", instances: [{ file: "src/a.ts", start_line: 4 }] }],
+@@ -357,6 +388,30 @@ test("a row measured at another commit than the corpus pin is an error", () => {
+   ]);
+ });
+ 
++test("a project with default false joins a sample only by name", () => {
++  const mixed = { ...corpus, extra: { repo: "owner/extra", commit: SHA, default: false } };
++  assert.deepEqual(selectProjects(mixed, null), { ok: true, names: ["app"] });
++  assert.deepEqual(selectProjects(mixed, ["extra"]), { ok: true, names: ["extra"] });
++  assert.deepEqual(selectProjects(mixed, ["app", "ghost"]), {
++    ok: false,
++    error: "--projects names ghost, which is not in the corpus",
++  });
++  assert.deepEqual(selectProjects(mixed, [" extra ", "app", "extra"]), {
++    ok: true,
++    names: ["extra", "app"],
++  });
++  assert.deepEqual(selectProjects(mixed, ["", " "]), {
++    ok: false,
++    error: "--projects needs at least one project name",
++  });
++  const errors = ledgerErrors({
++    schema_version: 1,
++    corpus: { ...corpus, extra: { repo: "owner/extra", commit: SHA, default: "no" } },
++    rows: [],
++  });
++  assert.deepEqual(errors, ["corpus extra: default must be true or false"]);
++});
++
+ test("ledger validation catches bad counts and unknown projects", () => {
+   assert.deepEqual(ledgerErrors({ schema_version: 1, corpus, rows: [row([counts()])] }), []);
+   const errors = ledgerErrors({
+```
+
+**File**: `scripts/rule-precision/ledger.mjs` (modified, +51/-3)
+```diff
+@@ -89,17 +89,40 @@ const namedFindings = (report) => {
+   return named;
+ };
+ 
++// A `fallow security` finding has a run-local `finding_id` and usually a
++// `stable_finding_id` of the form `sec1:<hash>`. Its category is the rule, so
++// the ID gets the form `sec1:<category>:<hash>`. A finding without a stable
++// ID (for example a sink in a component template) gets an `rp1:` ID from its
++// location, with a counter for a second finding at the same location.
++const securityFindings = (report) => {
++  const seen = new Map();
++  return listAt(report, ["security_findings"])
++    .filter((f) => f && typeof f.category === "string" && f.category !== "")
++    .map((f) => {
++      if (typeof f.stable_finding_id === "string") {
++        const hash = f.stable_finding_id.split(":").pop();
++        return { ...f, finding_id: `sec1:${f.category}:${hash}` };
++      }
++      const base = `${f.category}:${hashSeed(`${f.path}:${f.line}:${f.col}`).toString(16)}`;
++      const count = seen.get(base) ?? 0;
++      seen.set(base, count + 1);
++      return { ...f, finding_id: `rp1:${base}${count ? `~${count}` : ""}` };
++    });
++};
++
+ /**
+  * Groups the findings of one JSON report by rule id. An object with a
+  * `finding_id` in a top-level array is a finding. The sections in
+  * `UNNAMED_FINDINGS` are findings too, with an ID from their identifying
+- * fields. Other keys are metadata.
++ * fields. `fallow security` findings group by their category. Other keys are
++ * metadata.
+  */
+ export const findingsByRule = (report) => {
+   const out = new Map();
+   const add = (rule, finding) => out.set(rule, [...(out.get(rule) ?? []), finding]);
++  for (const finding of securityFindings(report)) add(finding.category, finding);
+   for (const [key, value] of Object.entries(report)) {
+-    if (!Array.isArray(value)) continue;
++    if (!Array.isArray(value) || key === "security_findings") continue;
+     for (const finding of value.filter(isFinding)) add(ruleOf(finding, key), finding);
+   }
+   for (const finding of namedFindings(report)) add(finding.finding_id.split(":")[1], finding);
+@@ -454,8 +477,32 @@ const corpusErrors = (corpus) =>
+     ...(/^[0-9a-f]{40}$/.test(project.commit ?? "")
+       ? []
+       : [`corpus ${name}: commit must be a full SHA`]),
++    ...(project.default === undefined || typeof project.default === "boolean"
++      ? []
++      : [`corpus ${name}: default must be true or false`]),
+   ]);
+ 
++/**
++ * Picks the corpus projects of a sample run. Without names, the run takes
++ * each project that does not set `default: false`, so a project that only
++ * some rules need does not change the rows of the other rules.
++ */
++export const selectProjects = (corpus, names) => {
++  if (!names) {
++    return {
++      ok: true,
++      names: Object.keys(corpus).filter((name) => corpus[name].default !== false),
++    };
++  }
++  const wanted = [...new Set(names.map((name) => name.trim()).filter(Boolean))];
++  if (wanted.length === 0)
++    return { ok: false, error: "--projects needs at least one project name" };
++  const unknown = wanted.filter((name) => !(name in corpus));
++  return unknown.length > 0
++    ? { ok: false, error: `--projects names ${unknown.join(", ")}, which is not in the corpus` }
++    : { ok: true, names: wanted };
++};
++
+ const agreementIsValid = (row) =>
+   row.reviews === 1
+     ? row.agreement_percent === null
+@@ -557,7 +604,8 @@ export const renderSummary = (ledger) => {
+   }
+   lines.push("", "## Corpus", "", "| Project | Repository | Commit |", "|---|---|---|");
+   for (const [name, project] of Object.entries(ledger.corpus)) {
+-    lines.push(`| ${name} | ${project.repo} | \`${project.commit.slice(0, 12)}\` |`);
++    const label = project.default === false ? `${name} (by name only)` : name;
++    lines.push(`| ${label} | ${project.repo} | \`${project.commit.slice(0, 12)}\` |`);
+   }
+   return `${lines.join("\n")}\n`;
+ };
+```
+
+---
+
+### Incident Patch 2: `2623e0c1` (2026-11-27)
+**Commit Message**: fix(mutation): suggest a setup timeout longer than the value that failed (#5417)
+
+After a setup timeout, the hint always gave 5m as the example value for
+--setup-timeout, also when the value that failed was 5m or longer. The
+example is now two times the value that failed, with a minimum of 5m,
+in minutes or hours.
+
+The self-check hint starts from the longer of the setup timeout and the
+job timeout, because the control run waits for the longer of the two.
+
+Closes #5389
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-5389-setup-timeout-hint.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++### Fixed
++
++- **`fallow mutation` suggests a `--setup-timeout` value that is longer than the value that failed.** After a setup timeout, the hint always said "for example 5m", including when the timeout was already 5m or 15m. Now the example is two times the value that failed, with a minimum of 5m. For example, a 5m timeout gives `10m`, and a 15m timeout gives `30m`. The hint of a self-check that timed out uses the same rule, and it starts from the job timeout when that is longer than the setup timeout.
++  (Closes [#5389](https://github.com/fallow-rs/fallow/issues/5389))
+```
+
+**File**: `crates/api/src/mutation/mod.rs` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@ pub(crate) mod run_dir;
+ pub(crate) mod runner_select;
+ pub(crate) mod runner_version;
+ pub(crate) mod scheduler;
++pub(crate) mod setup_timeout;
+ pub(crate) mod transport;
+ pub(crate) mod typecheck;
+ pub(crate) mod verdicts;
+```
+
+**File**: `crates/api/src/mutation/scheduler/mod.rs` (modified, +2/-11)
+```diff
+@@ -18,6 +18,7 @@ use super::protocol::{
+     Capabilities, DryRunResult, DryTest, InitRequest, LinkFault, Ready, ReloadMethod, Request,
+     Response, RunRequest, RunResult, RunStatus, TestStatus,
+ };
++use super::setup_timeout::{self_check_help, setup_timeout_hint};
+ use super::transport::{CompanionLink, CompanionSpawner, SpawnFailure};
+ use super::{MutationProgress, MutationProgressSink};
+ use reserve::PhaseDeadline;
+@@ -1451,16 +1452,6 @@ fn retry_status(first: MutantStatus, job: &Job, retry: &Attempt) -> MutantStatus
+     }
  }
  
- fn decode_symbol_impact(
-     response: &SemanticResponse,
-     request: &SemanticRequest,
-     result: &SemanticQueryResponse,
-     symbol: SemanticSymbol,
-+    scope: &ResponseScope,
- ) -> Result<SemanticSymbolImpact, TypeAwareError> {
-     let identity = semantic_identity(response, request, result.status);
-     if result.status == SemanticCompleteness::Unavailable {
-@@ -846,19 +864,6 @@ fn decode_symbol_impact(
-         ))
-     })?;
-     validate_returned_symbol(&symbol, &data.symbol, result.query_id)?;
--    for consumer in &data.direct_consumers {
--        validate_semantic_response_path(&consumer.path, result.query_id)?;
+-/// The hint for a setup watchdog fault of a restarted companion. The run
+-/// continues, so the hint goes into the mutant error.
+-fn setup_timeout_hint(fault: &LinkFault) -> &'static str {
+-    if matches!(fault, LinkFault::Timeout) {
+-        "; on a slow or busy host, pass --setup-timeout with a longer duration"
+-    } else {
+-        ""
 -    }
--    for path in data
--        .transitive_affected_files
--        .iter()
--        .chain(&data.targeted_tests)
--    {
--        validate_semantic_response_path(&path.path, result.query_id)?;
--        for provenance in &path.provenance {
--            validate_semantic_response_path(provenance, result.query_id)?;
--        }
--    }
-     if data.confidence == SemanticImpactConfidence::Unavailable {
-         return Err(TypeAwareError::from(format!(
-             "type-aware query {} returned an unsupported impact confidence",
-@@ -876,15 +881,16 @@ fn decode_symbol_impact(
-     let direct_consumers = data
-         .direct_consumers
-         .into_iter()
-+        .filter(|consumer| scope.allows(&consumer.path))
-         .map(|consumer| SemanticImpactPath {
-             path: consumer.path,
-             relation: format!("direct-{}-consumer", namespace_name(consumer.namespace)),
-             distance: 1,
-             via: Vec::new(),
-         })
-         .collect();
--    let affected_files = impact_paths(data.transitive_affected_files, "transitive-consumer");
--    let targeted_tests = impact_paths(data.targeted_tests, "targeted-test");
-+    let affected_files = impact_paths(data.transitive_affected_files, "transitive-consumer", scope);
-+    let targeted_tests = impact_paths(data.targeted_tests, "targeted-test", scope);
-     Ok(SemanticSymbolImpact {
-         target: data.symbol,
-         identity,
-@@ -993,7 +999,9 @@ pub fn inspect_symbol(
-         .ok_or_else(|| {
-             TypeAwareError::from("semantic inspect omitted symbol impact".to_string())
-         })?;
--    let trace = decode_symbol_trace(&response, &request, trace_result, symbol.clone())?;
-+    // One scope for the whole request, because the decoders share it.
-+    let scope = ResponseScope::new(Path::new(&request.root));
-+    let trace = decode_symbol_trace(&response, &request, trace_result, symbol.clone(), &scope)?;
-     let api_query = request
-         .queries
-         .iter()
-@@ -1002,7 +1010,7 @@ pub fn inspect_symbol(
-             TypeAwareError::from("semantic inspect omitted its API surface query".to_string())
-         })?;
-     let api_surface = decode_api_surface(api_q
+-}
+-
+ /// The companion error code for a runner version outside the manifest range.
+ const RUNNER_VERSION_CODE: &str = "runner-version";
+ 
+@@ -1804,7 +1795,7 @@ fn self_check(
+             message: format!(
+                 "the self-check of {runner_name} timed out: a control run of the tests of a covered mutant, with no active mutant, did not finish ({detail})"
+             ),
+-            help: "on a slow or busy host, pass --setup-timeout with a longer duration, for example 5m, or run on a less loaded host".to_owned(),
++            help: self_check_help(runner.config.runner_timeout, job.timeout_ms),
+         },
+         Ok(ControlOutcome::Fault(message)) => ScheduleError::RunPath {
+             message: format!(
 ```
 
-**File**: `crates/api/src/type_aware/client/reconcile.rs` (modified, +18/-2)
+**File**: `crates/api/src/mutation/scheduler/tests.rs` (modified, +43/-0)
 ```diff
-@@ -201,6 +201,7 @@ fn plan_response_results(
-     let mut type_coupling = None;
-     let mut query_summaries = Vec::new();
-     let mut source_cache = FxHashMap::default();
-+    let scope = super::response_path::ResponseScope::new(root);
-     let reachable_files = results
-         .semantic_reachable_files
-         .iter()
-@@ -229,6 +230,7 @@ fn plan_response_results(
-                 let decision = retain_non_crediting_evidence(
-                     decode_candidate_decision(
-                         root,
-+                        &scope,
-                         query,
-                         result,
-                         fix_supported,
-@@ -241,15 +243,29 @@ fn plan_response_results(
-             }
-             QueryTarget::UnusedExport(index) => {
-                 let decision = retain_non_crediting_evidence(
--                    decode_candidate_decision(root, query, result, false, &mut source_cache)?,
-+                    decode_candidate_decision(
-+                        root,
-+                        &scope,
-+                        query,
-+                        result,
-+                        false,
-+                        &mut source_cache,
-+                    )?,
-                     &reachable_files,
-                     &mut summary,
-                 );
-                 candidates.record_export(results, *index, decision)?;
-             }
-             QueryTarget::UnusedType(index) => {
-                 let decision = retain_non_crediting_evidence(
--                    decode_candidate_decision(root, query, result, false, &mut source_cache)?,
-+                    decode_candidate_decision(
-+                        root,
-+                        &scope,
-+                        query,
-+                        result,
-+                        false,
-+                        &mut source_cache,
-+                    )?,
-                     &reachable_files,
-                     &mut summary,
-                 );
+@@ -2688,6 +2688,49 @@ fn a_timeout_of_the_self_check_is_reported_as_a_timeout_not_as_a_broken_run_path
+     }
+ }
+ 
++#[test]
++fn a_self_check_timeout_suggests_a_longer_value_than_the_setup_timeout() {
++    for (setup, example) in [(3, "5m"), (300, "10m"), (900, "30m")] {
++        let spawner = FakeSpawner::new(script(
++            |_| standard_dry(),
++            |_, run| Ok(run_result(run, RunStatus::Killed, Some(&run.test_ids[0]))),
++        ))
++        .with_control(|_, _| Err(LinkFault::Timeout));
++        let mut config = config(1);
++        config.runner_timeout = Duration::from_secs(setup);
++        let error = run_schedule(&spawner, &plan(&["m1"]), &config).unwrap_err();
++        let ScheduleError::RunPath { help, .. } = &error else {
++            panic!("expected a run-path error, got {error:?}");
++        };
++        assert!(
++            help.contains(&format!("for example {example}")),
++            "{setup}s: {help}"
++        );
++    }
++}
++
++#[test]
++fn a_self_check_timeout_suggests_a_longer_value_than_the_job_timeout() {
++    // t1 takes 400 s, so the job timeout of m1 is 605 s: longer than the
++    // 60 s setup timeout. Only a value above 605 s changes the control run.
++    let spawner = FakeSpawner::new(script(
++        |_| {
++            let mut dry = standard_dry();
++            dry.tests[0] = test("t1", 400_000.0, TestStatus::Pass);
++            dry
++        },
++        |_, run| Ok(run_result(run, RunStatus::Killed, Some(&run.test_ids[0]))),
++    ))
++    .with_control(|_, _| Err(LinkFault::Timeout));
++    let mut config = config(1);
++    config.runner_timeout = Duration::from_secs(60);
++    let error = run_schedule(&spawner, &plan(&["m1"]), &config).unwrap_err();
++    let ScheduleError::RunPath { help, .. } = &error else {
++        panic!("expected a run-path error, got {error:?}");
++    };
++    assert!(help.contains("for example 21m"), "{help}");
++}
++
+ #[test]
+ fn a_control_run_waits_at_least_the_setup_timeout() {
+     let spawner = FakeSpawner::new(script(
 ```
 
-**File**: `crates/api/src/type_aware/client/response_path.rs` (added, +387/-0)
+**File**: `crates/api/src/mutation/setup_timeout.rs` (added, +91/-0)
 ```diff
-@@ -0,0 +1,387 @@
-+//! Check the file paths that the type-aware companion returns.
-+//!
-+//! The companion reports each path relative to the analysis root. The
-+//! companion can read files above the root: the files of the read scope base
-+//! (the Git work tree of the root), also a hoisted
-+//! `../../node_modules/@angular/core/index.d.ts` of that work tree. The
-+//! companion also reads the library files of its compiler package, which can
-+//! be installed outside the project (`npx`, `npm -g`). A returned path, with
-+//! its `..` segments applied to the root, must stay inside one of those
-+//! directories. The caller drops each entry with a path that does not.
+@@ -0,0 +1,91 @@
++//! The hints that name `--setup-timeout` after a setup timeout.
 +
-+use std::path::{Component, Path, PathBuf};
++use std::time::Duration;
 +
-+/// The directories that a returned path may name for one analysis root.
-+pub(super) struct ResponseScope {
-+    root: PathBuf,
-+    allowed: Vec<PathBuf>,
-+}
++use super::protocol::LinkFault;
 +
-+impl ResponseScope {
-+    /// The scope of `root`: its read scope base and the compiler package
-+    /// directories of the companion.
-+    pub(super) fn new(root: &Path) -> Self {
-+        Self::with_compiler_dirs(
-+            root,
-+            crate::type_aware::transport::companion_compiler_dirs(root),
-+        )
-+    }
++/// The smallest suggested value. A short value that failed, for example
++/// `3s`, gets a value that a slow host can meet.
++const MIN_SUGGESTION: Duration = Duration::from_mins(5);
 +
-+    /// The scope of `root` with the given compiler package directories.
-+    pub(super) fn with_compiler_dirs(root: &Path, compiler_dirs: Vec<PathBuf>) -> Self {
-+        let root = dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
-+        let mut allowed = vec![fallow_config::project_scope_base(&root)];
-+        allowed.extend(compiler_dirs);
-+        Self { root, allowed }
-+    }
++const SECS_PER_MINUTE: u64 = 60;
++const MINUTES_PER_HOUR: u64 = 60;
 +
-+    /// True when the root-relative `path`, with each `..` and `.` applied to
-+    /// the root by text, stays inside an allowed directory. An absolute path
-+    /// is never allowed, because the protocol names root-relative paths.
-+    pub(super) fn allows(&self, path: &Path) -> bool {
-+        let mut joined = self.root.clone();
-+        for component in path.components() {
-+            match component {
-+                Component::Normal(part) => joined.push(part),
-+                Component::CurDir => {}
-+                Component::ParentDir => {
-+                    if !joined.pop() {
-+                        return false;
-+                    }
-+                }
-+                Component::RootDir | Component::Prefix(_) => return false,
-+            }
-+        }
-+        self.allowed.iter().any(|dir| joined.starts_with(dir))
++/// The largest number of minutes that `--setup-timeout` accepts: the value
++/// in seconds must fit in a `u64`.
++const MAX_MINUTES: u64 = u64::MAX / SECS_PER_MINUTE;
++
++/// Gives a `--setup-timeout` value that is longer than `failed`: two times
++/// `failed`, minimum 5 minutes, rounded up to full minutes. The text uses
++/// hours when the minutes divide into full hours, for example `30m` or `2h`.
++pub fn longer_setup_timeout(failed: Duration) -> String {
++    let doubled = failed.saturating_mul(2).max(MIN_SUGGESTION);
++    let minutes = doubled.as_secs().div_ceil(SECS_PER_MINUTE).min(MAX_MINUTES);
++    if minutes.is_multiple_of(MINUTES_PER_HOUR) {
++        format!("{}h", minutes / MINUTES_PER_HOUR)
++    } else {
++        format!("{minutes}m")
 +    }
 +}
 +
-+/// True when each contract declaration of `data` stays inside `scope`.
-+pub(super) fn contract_paths_in_scope(data: &super::SymbolUseData, scope: &ResponseScope) -> bool {
-+    data.contract_relations
-+        .iter()
-+        .map(|contract| &contract.declaration.path)
-+        .chain(
-+            data.framework_contract_relations
-+                .iter()
-+                .map(|contract| &contract.declaration.path),
-+        )
-+        .all(|path| scope.allows(path))
++/// The help of a self-check that timed out. The control run waits the
++/// longer of the setup timeout `setup` and the job timeout `job_ms`, so
++/// only a value above both gives the run more time.
++pub fn self_check_help(setup: Duration, job_ms: u64) -> String {
++    let waited = setup.max(Duration::from_millis(job_ms));
++    format!(
++        "on a slow or busy host, pass --setup-timeout with a longer duration, for example {}, or run on a less loaded host",
++        longer_setup_timeout(waited)
++    )
 +}
 +
-+/// True when the path and each alias hop of `evidence` stay inside `scope`.
-+pub(super) fn reference_paths_in_scope(
-+    evidence: &super::SemanticReferenceData,
-+    scope: &ResponseScope,
-+) -> bool {
-+    scope.allows(&evidence.path) && evidence.via.iter().all(|hop| scope.allows(&hop.path))
-+}
-+
-+/// The impact paths whose path and provenance stay inside `scope`. The
-+/// other paths are dropped.
-+pub(super) fn impact_paths(
-+    paths: Vec<super::ImpactPathData>,
-+    relation: &str,
-+    scope: &ResponseScope,
-+) -> Vec<super::SemanticImpactPath> {
-+    paths
-+        .into_iter()
-+        .filter(|path| {
-+            scope.allows(&path.path) && path.provenance.iter().all(|hop| scope.allows(hop))
-+        })
-+        .map(|path| super::SemanticImpactPath {
-+            distance: path.provenance.len().max(1),
-+            via: path.provenance,
-+            path: path.path,
-+            relation: relation.to_string(),
-+        })
-+        .collect()
++/// The hint for a setup watchdog fault of a restarted companion. The run
++/// continues, so the hint goes into the mutant error.
++pub fn setup_timeout_hint(fault: &LinkFault) -> &'static str {
++    if matches!(fault, LinkFault::Timeout) {
++        "; on a slow or busy host, pass --setup-timeout with a longer duration"
++    } else {
++        ""
++    }
 +}
 +
 +#[cfg(test)]
 +mod tests {
-+    use super::super::tests::symbol;
-+    use super::super::*;
 +    use super::*;
-+    use serde_json::json;
 +
 +    #[test]
-+    #[cfg_attr(miri, ignore = "tempdir is blocked by Miri isolation")]
-+    fn a_package_root_accepts_paths_into_the_work_tree_and_hoisted_node_modules() {
-+        let dir = tempfile::tempdir().expect("temp dir");
-+        let outer = dunce::canonicalize(dir.path()).expect("canonical");
-+        let top = outer.join("repo");
-+        let root = top.join("packages/app");
-+        std::fs::create_dir_all(&root).expect("mkdir");
-+        std::fs::create_dir(top.join(".git")).expect("mkdir");
-+        std::fs::create_dir_all(top.join("node_modules/@angular/core")).expect("mkdir");
-+        let scope = ResponseScope::new(&root);
-+
-+        for path in [
-+            "src/a.ts",
-+            "./src/a.ts",
-+            "src/../lib/a.ts",
-+            "../lib/src/a.ts",
-+            "../../node_modules/@angular/core/index.d.ts",
++    fn the_suggestion_is_longer_than_the_value_that_failed() {
++        for (failed, expected) in [
++            (Duration::from_millis(500), "5m"),
++            (Duration::from_secs(3), "5m"),
++            (Duration::from_mins(2), "5m"),
++            (Duration::from_secs(150), "5m"),
++            (Duration::from_secs(151), "6m"),
++            (Duration::from_mins(5), "10m"),
++            (Duration::from_mins(15), "30m"),
++            (Duration::from_mins(30), "1h"),
++            (Duration::from_mins(45), "90m"),
++            (Duration::from_hours(1), "2h"),
 +        ] {
-+            assert!(scope.allows(Path::new(path)), "{path}");
-+     
-```
-
-**File**: `crates/api/src/type_aware/transport/discovery.rs` (modified, +34/-0)
-```diff
-@@ -217,3 +217,37 @@ pub(super) fn binary_names(binary: &str) -> Vec<String> {
-         vec![binary.to_owned()]
-     }
- }
-+/// The directories of the compiler package that the companion at `sidecar`
-+/// loads, found the way Node resolves `package` from the companion: the
-+/// first `node_modules/<package>` at or above the resolved companion path.
-+/// The list holds the resolved package directory and its enclosing
-+/// `node_modules` directories, the same set that the companion allows its
-+/// checker to read. The list is empty when no package is found.
-+pub(super) fn companion_compiler_dirs(sidecar: &Path, package: &str) -> Vec<PathBuf> {
-+    let Some(start) = dunce::canonicalize(sidecar)
-+        .ok()
-+        .and_then(|real| real.parent().map(Path::to_path_buf))
-+    else {
-+        return Vec::new();
-+    };
-+    let Some(package_dir) = start.ancestors().find_map(|dir| {
-+        let candidate = dir.join("node_modules").join(package);
-+        candidate
-+            .join("package.json")
-+            .is_file()
-+            .then(|| dunce::canonicalize(&candidate).ok())
-+            .flatten()
-+    }) else {
-+        return Vec::new();
-+    };
-+    let mut dirs = vec![package_dir.clone()];
-+    dirs.extend(
-+        package_dir
-+            .ancestors()
-+            .skip(1)
-+            .take(2)
-+            .filter(|dir| dir.file_name() == Some(std::ffi::OsStr::new("node_modules")))
-+            .map(Path::to_path_buf),
-+    );
-+    dirs
-+}
-```
-
-**File**: `crates/api/src/type_aware/transport/mod.rs` (modified, +17/-0)
-```diff
-@@ -397,6 +397,23 @@ impl From<discovery::DiscoveryError> for TypeAwareError {
-     }
- }
- 
-+/// The compiler package directories of the companion that a semantic
-+/// request for `root` runs. The companion reads the library files of the
-+/// compiler there, also when it is installed outside the project. The list
-+/// is empty when no companion or no compiler package is found.
-+pub(in crate::type_aware) fn companion_compiler_dirs(root: &Path) -> Vec<PathBuf> {
-+    let (Ok(backend), Ok(sidecar)) = (selected_backend(), discover_type_aware_sidecar(root)) else {
-+        return Vec::new();
-+    };
-+    discovery::companion_compiler_dirs(&sidecar, backend.package)
-+}
++            assert_eq!(longer_setup_timeout(failed), expected, "{failed:?}");
++        }
++    }
 +
-+/// [`discovery::companion_compiler_dirs`] for a test.
-+#[cfg(test)]
-+pub(in crate::type_aware) fn compiler_dirs_of(sidecar: &Path, package: &str) -> Vec<PathBuf> {
-+    discovery::companion_compiler_dirs(sidecar, package)
-+}
-+
- pub fn run_semantic_request<Request, Response>(
-     root: &Path,
-     request: &Request,
-```
-
-**File**: `crates/api/src/type_aware/transport/process.rs` (modified, +32/-0)
-```diff
-@@ -132,6 +132,10 @@ pub(super) fn sidecar_command_with_script(
-     Ok(command)
- }
- 
-+/// The environment variable that names the read scope base of the checker.
-+/// The companion accepts it only when it is the root or a directory above it.
-+pub(super) const SCOPE_ROOT_ENV: &str = "FALLOW_TYPE_AWARE_SCOPE_ROOT";
-+
- fn restrict_sidecar_environment(command: &mut Command, root: &Path) {
-     const ALLOWED_ENV: &[&str] = &[
-         "HOME",
-@@ -151,8 +155,10 @@ fn restrict_sidecar_environment(command: &mut Command, root: &Path) {
-     let path = fallow_process::HostPaths::from_env()
-         .search_path
-         .and_then(|value| sanitize_search_path(root, &value));
-+    let scope_root = fallow_config::project_scope_base(root);
-     command.env_clear();
-     command.envs(values);
-+    command.env(SCOPE_ROOT_ENV, scope_root);
-     if let Ok(backend) = selected_backend() {
-         command.env(BACKEND_ENV, backend.family);
-     }
-@@ -295,3 +301,29 @@ pub(super) fn bounded_text(bytes: &[u8], max_chars: usize) -> String {
-         .trim()
-         .to_owned()
- }
-+
-+#[cfg(test)]
-+mod scope_root_tests {
-+    use super::*;
-+
-+    /// The companion gets the Git work tree of the root as its read scope
-+    /// base, so a package root can read the shared configs of the work tree.
 +    #[test]
-+    fn the_sidecar_command_names_the_work_tree_as_the_scope_root() {
-+        let dir = tempfile::tempdir().expect("temp dir");
-+        let top = dunce::canonicalize(dir.path()).expect("canonical");
-+        std::fs::create_dir(top.join(".git")).expect("mkdir");
-+        let root = top.join("packages/app");
-+        std::fs::create_dir_all(&root).expect("mkdir");
-+        let sidecar = top.join("install/fallow-type-aware.mjs");
++    fn a_huge_value_gives_a_value_that_fits_in_seconds() {
++        let text = longer_setup_timeout(Duration::MAX);
++        let (number, secs_per_unit) = match text.strip_suffix('h') {
++            Some(hours) => (hours, SECS_PER_MINUTE * MINUTES_PER_HOUR),
++            None => (text.trim_end_matches('m'), SECS_PER_MINUTE),
++        };
++        let number: u64 = number.parse().expect("a number");
++        assert!(number.checked_mul(secs_per_unit).is_some(), "{text}");
++    }
 +
-+        let command = sidecar_command(&sidecar, &root).expect("configure sidecar command");
-+        let scope_root = command
-+            .get_envs()
-+            .find(|(key, _)| *key == std::ffi::OsStr::new(SCOPE_ROOT_ENV))
-+            .and_then(|(_, value)| value)
-+            .map(PathBuf::from);
-+
-+        assert_eq!(scope_root, Some(top));
++    #[test]
++    fn the_self_check_help_uses_the_longer_of_the_two_timeouts() {
++        let setup = Duration::from_mins(1);
++        assert!(self_check_help(setup, 5_000).contains("for example 5m"));
++        assert!(self_check_help(setup, 605_000).contains("for example 21m"));
 +    }
 +}
 ```
 
----
-
-### Incident Patch 2: `ac4f860e` (2026-11-25)
-**Commit Message**: fix(agent): run only install-time programs from the agent gate and install (#5245)
-
-* fix(agent): run only install-time programs from the agent gate
-
-The agent gate now runs only a fallow that the install records or that
-the install root holds:
-
-- A user-scope gate runs the fallow path that the install records in
-  the script, else the fallow on PATH. The install records the first
-  fallow on PATH, as found, that is outside the project and has no
-  node_modules component, else the running binary under the same rule.
-- A project-scope gate runs the launcher of its install root (two
-  directories above the script), else the fallow on PATH, else Yarn or
-  npx in the install root.
-- Before the first program runs, the gate removes from PATH each empty
-  or relative entry and each entry with a node_modules component, in
-  any letter case. git, jq and the other helpers use the same PATH.
-
-Other changes to the gate:
-
-- The gate reads the hook input with the read builtin, and the plain
-  prefilter for a command that is not a git write runs before the gate
-  starts any program or subshell.
-- A small built-in reader gets tool_input.command, and the exact
-  git-write check runs before any fall
-
-**File**: `.agents/skills/fallow/references/cli-reference.md` (modified, +2/-2)
+**File**: `crates/api/src/runtime/mutation.rs` (modified, +26/-2)
 ```diff
-@@ -545,7 +545,7 @@ Steps per harness:
- | `mcp` | `mcpServers.fallow` in `.mcp.json` (`--approve` also lists it in `.claude/settings.local.json`) | `[mcp_servers.fallow]` in `.codex/config.toml` (applies once the project is trusted; the `codex mcp add` next step works immediately) | `mcpServers.fallow` in `.cursor/mcp.json` |
- | `hooks` | `.claude/settings.json` PreToolUse gate plus `.claude/hooks/fallow-gate.sh` | `.codex/hooks.json` PreToolUse gate plus `.codex/hooks/fallow-gate.sh` (Codex runs it after you trust it in `/hooks`), and a marked routing block in `AGENTS.md` | skipped (`unsupported_harness`) |
- 
--The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary; when none exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
-+The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary. A user-level entry (`--user`) and the printed `codex mcp add` and `claude mcp add --scope user` commands never use `npx`, because a user-level server starts in every project: they use the absolute path of the first `fallow-mcp` on `PATH`, as found, that is outside the project and has no `node_modules` component, or of the running multicall binary under the same rule. `agent status` reports a user-level `npx` entry and a user-level gate script from an older fallow as `stale`. When no launcher exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
- 
- Every file or block carries a `<!-- fallow:agent-install v1 ... -->` marker. Re-running is byte-stable. An existing skill named `fallow` or `fallow-setup` without a marker is `refused` (`skill_name_taken`) unless `--force`; the other skill is still written. JSON and TOML cannot carry a marker, so a `fallow` MCP entry counts as fallow-managed only when its command is one fallow writes; any other entry is `refused` (`mcp_entry_foreign`) and never removed without `--force`. `--force` on an unparsable config file saves the old bytes as `<file>.fallow-bak` before rewriting. `uninstall` removes managed content, deletes a config file it emptied (and an emptied `.cursor/` or `.codex/` directory), and deletes `AGENTS.md` or `CLAUDE.md` only while the file still matches what fallow authored.
- 
-@@ -582,7 +582,7 @@ Human output groups paths under "Shared with your team (commit these)" and "Loca
-     {"harness": null, "step": "guide", "status": "written", "scope": "shared", "path": "AGENTS.md"},
-     {"harness": "claude", "step": "mcp", "status": "skipped", "scope": "local", "path": ".claude/settings.local.json", "reason": "approval_not_requested"}
-   ],
--  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- npx --no fallow-mcp", "reason": "...", "mutating": true}]
-+  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- /usr/local/bin/fallow-mcp", "reason": "...", "mutating": true}]
- }
- ```
- 
-```
-
-**File**: `.agents/skills/fallow/references/patterns.md` (modified, +11/-5)
-```diff
-@@ -782,18 +782,24 @@ Manual files:
- Prefer `fallow hooks install --target agent` to install this file. The script is written and maintained by fallow itself; the canonical source is [`crates/cli/src/setup_hooks/fallow-gate.sh`](https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh).
- 
- Behavior you can rely on:
--- The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
-+- The handler runs only the script under `$CLAUDE_PROJECT_DIR`, never a `.claude/hooks/fallow-gate.sh` that a nested repository, submodule or package supplies. It walks up from the session directory and checks for a `.git` entry before it reaches `$CLAUDE_PROJECT_DIR`. When it reaches that directory, it runs the script there, so a session in a package directory audits the install root. When a nested worktree or repository comes first, it runs the same script from the session directory.
- - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
- - A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
- - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
--- Prefers a native Fallow JSON reader discovered from PATH, the process directory or the script's project root; jq remains a compatibility fallback. Audit runner lookup tries project-local `node_modules/.bin/fallow`, PATH, Yarn Plug'n'Play, then `npx --no-install fallow`. A missing JSON reader or audit runner causes a stderr skip notice. Check `fallow agent status --format json --quiet` after setup for missing or unverified runtimes. Approve project trust and the hook in the harness before relying on the gate.
-+- Reads `tool_input.command` and decides if the command is a git write before it starts any program. Most hook inputs need no helper. A hook input that the small built-in reader cannot decode uses the reader order below.
-+- Runs only a fallow that the install trusts, never a launcher of the audited tree or its parents. A project-scope gate tries the `node_modules/.bin/fallow` of its install root (two directories above the script), then the `fallow` on PATH, then Yarn Plug'n'Play and `npx --no-install fallow` in t
-```
-
-**File**: `.claude/skills/fallow/references/cli-reference.md` (modified, +2/-2)
-```diff
-@@ -545,7 +545,7 @@ Steps per harness:
- | `mcp` | `mcpServers.fallow` in `.mcp.json` (`--approve` also lists it in `.claude/settings.local.json`) | `[mcp_servers.fallow]` in `.codex/config.toml` (applies once the project is trusted; the `codex mcp add` next step works immediately) | `mcpServers.fallow` in `.cursor/mcp.json` |
- | `hooks` | `.claude/settings.json` PreToolUse gate plus `.claude/hooks/fallow-gate.sh` | `.codex/hooks.json` PreToolUse gate plus `.codex/hooks/fallow-gate.sh` (Codex runs it after you trust it in `/hooks`), and a marked routing block in `AGENTS.md` | skipped (`unsupported_harness`) |
- 
--The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary; when none exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
-+The step writes each released skill: `fallow` for analysis and `fallow-setup` for setting up code-quality tooling. Each skill is a small pointer to `node_modules/fallow/skills/<name>` when that copy exists (so it never drifts from the installed binary); otherwise the tree embedded in the binary is written. Each skill picks its source on its own, so an older npm package without `fallow-setup` still gets the embedded copy of that skill. The MCP command is probed before anything is written: `npx --no fallow-mcp` for an npm-installed project, `fallow-mcp` from `PATH`, or the running multicall binary. A user-level entry (`--user`) and the printed `codex mcp add` and `claude mcp add --scope user` commands never use `npx`, because a user-level server starts in every project: they use the absolute path of the first `fallow-mcp` on `PATH`, as found, that is outside the project and has no `node_modules` component, or of the running multicall binary under the same rule. `agent status` reports a user-level `npx` entry and a user-level gate script from an older fallow as `stale`. When no launcher exists the step is `skipped` with `mcp_entry_unavailable` rather than writing a config that cannot start.
- 
- Every file or block carries a `<!-- fallow:agent-install v1 ... -->` marker. Re-running is byte-stable. An existing skill named `fallow` or `fallow-setup` without a marker is `refused` (`skill_name_taken`) unless `--force`; the other skill is still written. JSON and TOML cannot carry a marker, so a `fallow` MCP entry counts as fallow-managed only when its command is one fallow writes; any other entry is `refused` (`mcp_entry_foreign`) and never removed without `--force`. `--force` on an unparsable config file saves the old bytes as `<file>.fallow-bak` before rewriting. `uninstall` removes managed content, deletes a config file it emptied (and an emptied `.cursor/` or `.codex/` directory), and deletes `AGENTS.md` or `CLAUDE.md` only while the file still matches what fallow authored.
- 
-@@ -582,7 +582,7 @@ Human output groups paths under "Shared with your team (commit these)" and "Loca
-     {"harness": null, "step": "guide", "status": "written", "scope": "shared", "path": "AGENTS.md"},
-     {"harness": "claude", "step": "mcp", "status": "skipped", "scope": "local", "path": ".claude/settings.local.json", "reason": "approval_not_requested"}
-   ],
--  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- npx --no fallow-mcp", "reason": "...", "mutating": true}]
-+  "next_actions": [{"id": "codex-mcp-add", "command": "codex mcp add fallow -- /usr/local/bin/fallow-mcp", "reason": "...", "mutating": true}]
- }
- ```
- 
-```
-
-**File**: `.claude/skills/fallow/references/patterns.md` (modified, +11/-5)
-```diff
-@@ -782,18 +782,24 @@ Manual files:
- Prefer `fallow hooks install --target agent` to install this file. The script is written and maintained by fallow itself; the canonical source is [`crates/cli/src/setup_hooks/fallow-gate.sh`](https://github.com/fallow-rs/fallow/blob/main/crates/cli/src/setup_hooks/fallow-gate.sh).
- 
- Behavior you can rely on:
--- The handler walks up from the session directory to the nearest directory that holds `.claude/hooks/fallow-gate.sh` and runs the audit there, so a session in a package directory audits the install root. The walk stops at the first `.git` entry. When it finds no script, the handler runs the script under `$CLAUDE_PROJECT_DIR` from the session directory.
-+- The handler runs only the script under `$CLAUDE_PROJECT_DIR`, never a `.claude/hooks/fallow-gate.sh` that a nested repository, submodule or package supplies. It walks up from the session directory and checks for a `.git` entry before it reaches `$CLAUDE_PROJECT_DIR`. When it reaches that directory, it runs the script there, so a session in a package directory audits the install root. When a nested worktree or repository comes first, it runs the same script from the session directory.
- - The hook process can start in a directory that is not the session directory, for example in the main checkout when the session works in a nested git worktree. The script reads the session directory from the `cwd` field of the hook input and finds the audit root from it with the same walk. When the walk finds no script, for example with the user-scope script in `$HOME`, the audit root is the directory of the hook process when it is in the git work tree of the session. Else it is the git top level of the session directory, or the session directory outside a git repository. The audit root is never `$HOME`. The script compares physical paths, so a symlink does not change the walk. When the hook input has no usable `cwd`, the audit runs in the directory of the hook process.
- - A `git commit` or `git push` can name another work tree. The script audits only that target when the command has the strict form `[cd <dir> &&] git [-C <dir>]... commit|push [<option or name>]...` and git reports another work tree for the target (`git rev-parse --show-toplevel --absolute-git-dir` gives a different top level and a different git directory than for the session directory). For a push, the common git directory must differ too: linked worktrees share refs, so a push from another linked worktree of the session repository audits the session tree and the target. The one exception is a push that cannot send the session branch: the options are only `-u`, `-q`, `--set-upstream`, `--force-with-lease` and `--force-if-includes`, `git rev-parse --symbolic-full-name` gives the checked-out branch of the target for each refspec source, that branch is not the session branch, and a push without a refspec has `push.default` unset or `simple`, `current`, `upstream` or `nothing` and no remote `push` or `mirror` setting. That push audits only the target. A git error during this check keeps the session audit. A target in the same work tree keeps the session audit, because `git commit` commits the whole index. Each word in the strict form must be inert: a `-C` directory resolves physically as in git, a `cd` directory starts with `/`, `./` or `../`, a double-quoted word holds no `$`, backquote or backslash, and only a short list of options such as `-m`, `--amend`, `-S` and `-u` is allowed. Any other command audits the session tree as before, plus each directory that it names in another work tree. The gate blocks when one audit fails.
- - Runs only when the intercepted command is a `git commit` or `git push`, including invocations that pass git-level options before the subcommand (`git -c user.name=x commit`, `git --no-pager commit`, `git -C dir push`, `git --git-dir=/x push`); anything else exits 0. Set `FALLOW_GATE_DEBUG=1` to log skipped commands to stderr.
--- Prefers a native Fallow JSON reader discovered from PATH, the process directory or the script's project root; jq remains a compatibility fallback. Audit runner lookup tries project-local `node_modules/.bin/fallow`, PATH, Yarn Plug'n'Play, then `npx --no-install fallow`. A missing JSON reader or audit runner causes a stderr skip notice. Check `fallow agent status --format json --quiet` after setup for missing or unverified runtimes. Approve project trust and the hook in the harness before relying on the gate.
-+- Reads `tool_input.command` and decides if the command is a git write before it starts any program. Most hook inputs need no helper. A hook input that the small built-in reader cannot decode uses the reader order below.
-+- Runs only a fallow that the install trusts, never a launcher of the audited tree or its parents. A project-scope gate tries the `node_modules/.bin/fallow` of its install root (two directories above the script), then the `fallow` on PATH, then Yarn Plug'n'Play and `npx --no-install fallow` in t
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-0)
-```diff
-@@ -186,6 +186,8 @@ jobs:
-               - 'crates/core/tests/integration_test/workspace_hoisted_package_imports.rs'
-               - 'crates/core/tests/integration_test/workspace_cross_imports.rs'
-               - 'crates/core/tests/integration_test/workspaces.rs'
-+              - 'crates/cli/src/setup_hooks_render.rs'
-+              - 'crates/cli/src/user_launcher.rs'
-               - 'crates/engine/src/changed_files.rs'
-               - 'crates/engine/src/churn.rs'
-               - 'crates/engine/src/churn_cache_path.rs'
-```
-
-**File**: `crates/cli/src/agent_install/mcp.rs` (modified, +129/-2)
-```diff
-@@ -7,6 +7,12 @@
- //! first two are resolved on disk. A launcher that would only work on this machine is never
- //! written into a file the team commits.
- //!
-+//! A user-level entry applies in every project. It never uses `npx`, which
-+//! runs the `fallow-mcp` of the project that the harness opens. It uses the
-+//! absolute path of the `fallow-mcp` on `PATH`, as found, or of the running
-+//! binary when that binary serves MCP. A launcher of the current project
-+//! never counts, see [`crate::setup_hooks::user_launcher`].
-+//!
- //! JSON cannot carry a marker comment, so ownership of the `fallow` entry is
- //! recognized by shape: an entry whose command and args match one of the
- //! launchers fallow writes, with no extra keys, is fallow-managed. The one
-@@ -37,6 +43,9 @@ const MCP_VERSION_PREFIX: &str = "fallow-mcp ";
- /// The version line is short; the probe reads no more than this many bytes.
- const PROBE_OUTPUT_LIMIT: u64 = 4096;
- const NO_LAUNCHER_DETAIL: &str = "no fallow-mcp launcher found. Install fallow through npm (npm i -D fallow), or put fallow-mcp on PATH. cargo install fallow-mcp and the GitHub release archive both supply fallow-mcp";
-+/// A user-level entry starts in every project, so it needs a launcher outside
-+/// each project: a global install.
-+const NO_USER_LAUNCHER_DETAIL: &str = "no fallow-mcp launcher outside the project found. A user-level entry needs a global install: npm install -g fallow, or cargo install fallow-mcp";
- 
- /// How the MCP server should be started.
- #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-@@ -91,7 +100,12 @@ impl McpCommand {
-     }
- }
- 
--pub fn resolve_command(root: &Path) -> Option<McpCommand> {
-+/// The launcher for a project-level entry (`user` false) or a user-level
-+/// entry (`user` true).
-+pub fn resolve_command(root: &Path, user: bool) -> Option<McpCommand> {
-+    if user {
-+        return resolve_user_command(root);
-+    }
-     resolve_command_with(
-         node_modules_launcher_present(root),
-         || find_on_path("fallow-mcp"),
-@@ -143,6 +157,47 @@ pub fn resolve_command_with(
-     })
- }
- 
-+/// The launcher for a user-level entry and for a printed user-scope command
-+/// of the project at `root`.
-+pub fn resolve_user_command(root: &Path) -> Option<McpCommand> {
-+    resolve_user_command_with(
-+        crate::setup_hooks::user_launcher::search_dirs(),
-+        &crate::setup_hooks::user_launcher::project_dirs(root),
-+        || {
-+            let exe = std::env::current_exe().ok()?;
-+            serves_mcp(&exe).then_some(exe)
-+        },
-+    )
-+}
-+
-+/// The user-level launcher: the first `fallow-mcp` in `search_dirs` that
-+/// [`crate::setup_hooks::user_launcher::is_user_launcher`] accepts, as found, else the
-+/// running binary when it serves MCP and is accepted too.
-+pub fn resolve_user_command_with(
-+    search_dirs: impl IntoIterator<Item = PathBuf>,
-+    project_dirs: &[PathBuf],
-+    self_probe: impl FnOnce() -> Option<PathBuf>,
-+) -> Option<McpCommand> {
-+    if let Some(found) = crate::setup_hooks::user_launcher::find_user_launcher(
-+        "fallow-mcp",
-+        search_dirs,
-+        project_dirs,
-+    ) {
-+        return Some(McpCommand {
-+            command: found.display().to_string(),
-+            args: Vec::new(),
-+            source: McpSource::Path,
-+        });
-+    }
-+    self_probe()
-+        .filter(|exe| crate::setup_hooks::user_launcher::is_user_launcher(exe, project_dirs))
-+        .map(|exe| McpCommand {
-+            command: exe.display().to_string(),
-+            args: vec!["mcp-server".to_string()],
-+            source: McpSource::SelfBinary,
-+        })
-+}
-+
- /// Resolve a bare command name against `PATH`, the way the agent gate does.
- pub(super) fn find_on_path(name: &str) -> Option<PathBuf> {
-     let candidates: &[&str] = if cfg!(windows) {
-@@ -315,7 +370,11 @@ fn install_for(
-             StepReport::new(Some(harness), Step::Mcp, StepStatus::Skipped, ctx.scope())
-                 .path(ctx, &path)
-                 .reason(Reason::McpEntryUnavailable)
--                .detail(NO_LAUNCHER_DETAIL),
-+                .detail(if ctx.user {
-+                    NO_USER_LAUNCHER_DETAIL
-+                } else {
-+                    NO_LAUNCHER_DETAIL
-+                }),
-         ];
-     };
-     if harness == Harness::Claude && ctx.user {
-@@ -1047,6 +1106,74 @@ pub fn merge_codex(
-     Ok(backup.map_or(FileOutcome::Changed, FileOutcome::ChangedAfterBackup))
- }
- 
-+/// The warning for a Codex project gate in a repository nested in another
-+/// work tree. The Codex handler runs no gate there.
-+pub(super) const NESTED_CODEX_GATE_WARNING: &str = "warning: the Codex gate does not run in a repository nested in another work tree; install in the outer repository";
-+
-+/// True when the git work tree of `root` lies inside the work tree of
-+/// another repository (for example a submodule or a nested clone), and the
-+/// outer repository does not list it as a linked worktree. A work tree at
-+/// `home` does not count as the out
-```
-
-**File**: `crates/cli/src/agent_install/mod.rs` (modified, +47/-8)
-```diff
-@@ -408,11 +408,15 @@ struct Report {
- /// directory still writes `.mcp.json` and `AGENTS.md` where the harnesses
- /// read them.
- pub fn resolve_root(root: &Path, root_explicit: bool) -> PathBuf {
-+    let canonical = dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
-     if root_explicit {
--        return dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
-+        return canonical;
-     }
-+    // The git top level must contain the directory itself. Any other answer
-+    // names a path that git did not mean, so the directory stays the root.
-     crate::base_worktree::git_toplevel(root)
--        .unwrap_or_else(|| dunce::canonicalize(root).unwrap_or_else(|_| root.to_path_buf()))
-+        .filter(|top| canonical.starts_with(top))
-+        .unwrap_or(canonical)
- }
- 
- fn select_harnesses(
-@@ -472,7 +476,7 @@ pub fn run_agent_install(
-     let mcp_command = if skip(Step::Mcp) {
-         None
-     } else {
--        let command = mcp::resolve_command(&root);
-+        let command = mcp::resolve_command(&root, ctx.user);
-         steps.extend(mcp::install(
-             &ctx,
-             &harnesses,
-@@ -483,14 +487,35 @@ pub fn run_agent_install(
-     };
-     if !skip(Step::Hooks) {
-         steps.extend(hooks::install(&ctx, &harnesses));
-+        if !ctx.user
-+            && harnesses.contains(&Harness::Codex)
-+            && mcp::is_nested_repository(&root, ctx.home.as_deref())
-+        {
-+            eprintln!("{}", mcp::NESTED_CODEX_GATE_WARNING);
-+        }
-     }
- 
-+    // `codex mcp add` writes a user-level entry, so the printed command uses
-+    // the user-level launcher, also in a project-scope install.
-+    let user_mcp_command = match &mcp_command {
-+        Some(_) if !ctx.user && harnesses.contains(&Harness::Codex) => {
-+            mcp::resolve_user_command(&root)
-+        }
-+        _ => None,
-+    };
-     let mut next_actions = next_actions(
-         &ctx,
-         FollowUp { opts, root: &root },
-         &harnesses,
-         detected,
--        mcp_command.as_ref(),
-+        McpCommands {
-+            entry: mcp_command.as_ref(),
-+            user: if ctx.user {
-+                mcp_command.as_ref()
-+            } else {
-+                user_mcp_command.as_ref()
-+            },
-+        },
-         &steps,
-     );
-     if let Some(apply) = apply_dry_run_action(opts, &root, &harnesses, &steps) {
-@@ -651,12 +676,20 @@ impl FollowUp<'_> {
-     }
- }
- 
-+/// The MCP launchers of one install: the launcher of the written entries, and
-+/// the user-level launcher for the printed user-scope commands.
-+#[derive(Clone, Copy)]
-+struct McpCommands<'a> {
-+    entry: Option<&'a mcp::McpCommand>,
-+    user: Option<&'a mcp::McpCommand>,
-+}
-+
- fn next_actions(
-     ctx: &Ctx,
-     follow_up: FollowUp<'_>,
-     harnesses: &[Harness],
-     detected: bool,
--    mcp_command: Option<&mcp::McpCommand>,
-+    mcp: McpCommands<'_>,
-     steps: &[StepReport],
- ) -> Vec<NextAction> {
-     let mut next: Vec<NextAction> = Vec::new();
-@@ -669,8 +702,11 @@ fn next_actions(
-             mutating: true,
-         });
-     }
--    if let Some(command) = mcp_command {
--        if harnesses.contains(&Harness::Codex) && !ctx.user {
-+    if mcp.entry.is_some() {
-+        if let Some(command) = mcp.user
-+            && harnesses.contains(&Harness::Codex)
-+            && !ctx.user
-+        {
-             next.push(NextAction {
-                 id: "codex-mcp-add",
-                 command: format!("codex mcp add fallow -- {}", command.shell_words()),
-@@ -679,7 +715,10 @@ fn next_actions(
-                 mutating: true,
-             });
+@@ -49,6 +49,7 @@ use crate::mutation::scheduler::{
+     OutcomeJournal, ResultLookup, ScheduleConfig, ScheduleError, ScheduleIssue, ScheduleOutcome,
+     SchedulePlan, ScheduledMutant, run_schedule_with_progress,
+ };
++use crate::mutation::setup_timeout::longer_setup_timeout;
+ use crate::mutation::transport::ProcessSpawner;
+ use crate::mutation::typecheck::typecheck_survivors;
+ use crate::mutation::worktree::{Exclusions, WorktreeSnapshot, canonical_path, snapshot};
+@@ -767,8 +768,9 @@ fn schedule_error(
          }
--        if harnesses.contains(&Harness::Claude) && ctx.user {
-+        if let Some(command) = mcp.user
-+            && harnesses.contains(&Harness::Claude)
-+            && ctx.user
-+        {
-             next.push(NextAction {
-                 id: "claude-mcp-add-user",
-                 command: format!("claude mcp add --scope user fallow -- {}", command.shell_words()),
-```
-
-**File**: `crates/cli/src/agent_install/skill.rs` (modified, +60/-2)
-```diff
-@@ -238,9 +238,11 @@ impl Source {
-     /// has no usable `SKILL.md`. pnpm and `npm link` make the package directory
-     /// a link, so the check resolves it first and then accepts only files whose
-     /// real path stays inside it. A file that links out of the package could
--    /// otherwise copy any readable file into the working tree.
-+    /// otherwise copy any readable file into the working tree. The resolved
-+    /// directory must also be an installed fallow package, see
-+    /// [`installed_package`].
-     fn shipped(root: &Path, skill: &'static ReleasedSkill) -> Option<Self> {
--        let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
-+        let package = installed_package(root)?;
-         let shipped = root.join(skill.node_modules_dir());
-         let PackageFile::Text(text) = read_package_file(&package, &shipped.join("SKILL.md")) else {
-             return None;
-@@ -302,6 +304,62 @@ impl Source {
+     ) {
+         help.push(format!(
+-            "the runner setup took longer than {}s; on a slow or busy host, pass --setup-timeout with a longer duration, for example 5m",
+-            setup_timeout.as_secs()
++            "the runner setup took longer than {}s; on a slow or busy host, pass --setup-timeout with a longer duration, for example {}",
++            setup_timeout.as_secs(),
++            longer_setup_timeout(setup_timeout)
+         ));
      }
- }
+     if let Some(tail) = stderr_tail.filter(|tail| !tail.trim().is_empty()) {
+@@ -1586,6 +1588,7 @@ mod tests {
+         assert!(help.contains("longer than 120s"), "{help}");
+         assert!(help.contains("--setup-timeout"), "{help}");
+         assert!(help.contains("companion stderr:\nvitest started"), "{help}");
++        assert!(help.contains("for example 5m"), "{help}");
  
-+/// The canonical `node_modules/fallow` of `root`, when it is an installed
-+/// fallow package: a directory named `fallow` in a `node_modules` directory,
-+/// with a `package.json` whose name is `fallow`. Inside the project or its
-+/// git work tree, only a package below the `node_modules` of the project or
-+/// of the work tree top counts (for example the pnpm store), not a directory
-+/// elsewhere. Git must not track the `node_modules/fallow` entry or the
-+/// package files: a package manager writes them, a commit does not. When git
-+/// cannot answer, or a nested repository or submodule below the work tree top
-+/// holds the package, the package does not count.
-+fn installed_package(root: &Path) -> Option<PathBuf> {
-+    let package = dunce::canonicalize(root.join(NODE_MODULES_PACKAGE)).ok()?;
-+    let project = dunce::canonicalize(root).ok()?;
-+    let top = match super::mcp::git_top(&project) {
-+        super::mcp::GitTop::Outside => None,
-+        super::mcp::GitTop::Top(top) => Some(top),
-+        super::mcp::GitTop::Unknown => return None,
-+    };
-+    let trees: Vec<&Path> = std::iter::once(project.as_path())
-+        .chain(top.as_deref())
-+        .collect();
-+    let inside_tree = trees.iter().any(|tree| package.starts_with(tree));
-+    let in_node_modules = trees
-+        .iter()
-+        .any(|tree| package.starts_with(tree.join("node_modules")));
-+    if project.starts_with(&package)
-+        || package.file_name()? != "fallow"
-+        || package.parent()?.file_name()? != "node_modules"
-+        || (inside_tree && !in_node_modules)
-+    {
-+        return None;
-+    }
-+    if let Some(top) = &top {
-+        // Git lists no path inside a nested repository or submodule.
-+        if package
-+            .ancestors()
-+            .take_while(|dir| dir != top)
-+            .any(|dir| dir.join(".git").symlink_metadata().is_ok())
-+        {
-+            return None;
-+        }
-+        let mut tracked = vec![project.strip_prefix(top).ok()?.join(NODE_MODULES_PACKAGE)];
-+        if let Ok(inside) = package.strip_prefix(top) {
-+            tracked.push(inside.to_path_buf());
-+        }
-+        if super::mcp::git_tracks_any(top, &tracked)? {
-+            return None;
+         let other = schedule_error(
+             &ScheduleError::Setup {
+@@ -1599,6 +1602,27 @@ mod tests {
+         assert_eq!(other.help, None);
+     }
+ 
++    #[test]
++    fn a_setup_watchdog_error_suggests_a_longer_value_than_the_one_that_failed() {
++        for (failed, example) in [(3, "5m"), (300, "10m"), (900, "30m"), (3600, "2h")] {
++            let error = schedule_error(
++                &ScheduleError::Setup {
++                    message: "the mutation companion dry_run failed".to_owned(),
++                    stderr_tail: None,
++                    timed_out: true,
++                },
++                vitest_range(),
++                Duration::from_secs(failed),
++            );
++            let help = error.help.as_deref().unwrap_or_default();
++            assert!(help.contains(&format!("longer than {failed}s")), "{help}");
++            assert!(
++                help.contains(&format!("for example {example}")),
++                "{failed}s: {help}"
++            );
 +        }
 +    }
-+    let PackageFile::Text(manifest) = read_package_file(&package, &package.join("package.json"))
-+    else {
-+        return None;
-+    };
-+    let manifest: serde_json::Value = serde_json::from_str(&manifest).ok()?;
-+    (manifest.get("name")?.as_str()? == "fallow").then_some(package)
-+}
 +
- enum PackageFile {
-     Missing,
-     Text(String),
+     #[test]
+     fn a_duplicate_target_test_id_exits_2_and_names_the_id() {
+         let error = schedule_error(
 ```
 
 ---
 
-### Incident Patch 3: `72cbf77c` (2026-11-25)
-**Commit Message**: fix(lsp): start no run for a watched-file event without a content change (#5284)
+### Incident Patch 3: `dd91ac1d` (2026-11-27)
+**Commit Message**: fix(mutation): run bun test from the folder of the package bunfig.toml (#5368)
 
-* fix(lsp): start no run for a watched-file event without a content change
+Bun reads the project bunfig.toml only from its working folder. The Bun
+adapter started each test file at the project root, so the [test] preload
+of a workspace package never ran and the baseline failed.
 
-A watched-file event does not prove that a file changed. The VS Code
-watcher also reports timestamp and attribute changes, and one editor
-save sends `didSave` and then a watched-file event for the same content.
-Each event started a run, so a steady stream of events kept the server
-analyzing without end, and each save started two runs.
+The adapter now starts each test file in the folder of the nearest
+bunfig.toml between the test file and the root, as
+`cd <package> && bun test` does. A package without its own file still runs
+from the root. The test ids stay relative to the root.
 
-The server now keeps the length and a hash of the last known content of
-each saved or watched file. A watched-file event for the same content
-starts no run. The Output channel names the files that start a run and
-counts the skipped events.
+The result cache key of a test file now hashes the bunfig.toml of each
+folder between the root and the test file, so a new or changed package file
+runs the affected mutants again. FORMAT_VERSION goes to 7.
 
-The server also writes only WARN and ERROR tracing lines to stderr,
-because VS Code labels each stderr line `[error]`. `RUST_LOG` selects
-more detail.
-
-The VS Code status bar count now agrees with the sidebar. It leaves out
-the categories that `fallow.issueTypes` turns off, and with a workspace
-scope it keeps the count of the scoped CLI run.
+Refs #5286
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(lsp): count created files and align the status bar with the 
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `changelog.d/fix-5286-bun-package-bunfig.md` (added, +3/-0)
 ```diff
-@@ -1409,6 +1409,7 @@ dependencies = [
-  "tokio",
-  "tower",
-  "tower-lsp-server",
-+ "tracing",
-  "tracing-subscriber",
- ]
- 
-```
-
-**File**: `changelog.d/fix-vscode-watcher-loop.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,3 @@
 +### Fixed
 +
-+- **The language server no longer runs again for a watched-file event that changes no content.** The server compares the content of the file with the content that it saw last. A file watcher can report events for a file that a scanner, a sync client or another tool touches, and each event started a new analysis, so the analysis never came to rest. One editor save also started two runs, because the watched-file event of the save cancelled the run of `didSave`. The Output channel now names the files that start a run, and it counts the skipped events.
-+  (Closes [#5278](https://github.com/fallow-rs/fallow/issues/5278))
-+- **The VS Code status bar count now agrees with the sidebar and the analysis notification.** The status bar now counts the same categories as the sidebar, and it leaves out the categories that `fallow.issueTypes` turns off. With a workspace scope, the status bar keeps the count of the scoped sidebar analysis. The `fallow/analysisComplete` notification now also sends the counts of policy violations, the React Server Components checks and the route checks.
-+- **The language server no longer writes INFO progress lines to stderr.** VS Code labels each stderr line `[error]` in the Output channel. The server now writes only warnings and errors there. Set `RUST_LOG` (for example `RUST_LOG=fallow_core=info`) in the environment of the editor to see more detail.
++- **`fallow mutation` runs `bun test` with the `bunfig.toml` of a workspace package.** Bun reads `bunfig.toml` only from its working folder. Fallow ran each test file from the project root, so the `[test] preload` of a package never ran and the baseline failed. Fallow now starts each test file in the folder of the nearest `bunfig.toml` between the test file and the root, as `cd <package> && bun test` does. For the tests of such a package, `process.cwd()` is the package folder, and Bun loads the `.env` files of the package folder. A project with only a root `bunfig.toml` runs as before. (#5286)
 ```
 
-**File**: `crates/lsp/Cargo.toml` (modified, +2/-0)
+**File**: `crates/api/src/mutation/companion/adapters/bun-test.mjs` (modified, +53/-10)
 ```diff
-@@ -39,6 +39,8 @@ proptest = { workspace = true }
- # The runtime stack probe drives the global Rayon pool that analysis uses.
- rayon = { workspace = true }
- tempfile = { workspace = true }
-+# The stderr filter tests ask the filter about tracing levels.
-+tracing = { workspace = true }
- # `io-util` (duplex pipes, BufReader, AsyncRead/WriteExt) is test-only: the
- # `Server::serve` integration test drives the LSP over framed duplex streams.
- # The production bin keeps the slimmer workspace tokio feature set.
+@@ -1,6 +1,6 @@
+ // Generated from tools/mutation-runner/src/adapters/bun-test.mjs. Do not edit.
+ import { existsSync, readFileSync, rmSync } from "node:fs";
+-import { join, resolve } from "node:path";
++import { join, posix, resolve } from "node:path";
+ import { fileURLToPath } from "node:url";
+ 
+ import { CompanionError } from "../protocol.mjs";
+@@ -44,6 +44,9 @@ const BUN_DEFAULT_TIMEOUT_MS = 5000;
+  */
+ const DRY_RUN_TIMEOUT_MS = dryRunTimeout(BUN_DEFAULT_TIMEOUT_MS);
+ 
++/** The config file that `bun test` reads from its working folder. */
++const BUNFIG = "bunfig.toml";
++
+ /** A `bunfig.toml` line that runs the tests in a random order. */
+ const RANDOMIZE = /^\s*randomize\s*=\s*true\b/mu;
+ 
+@@ -165,10 +168,10 @@ const readLines = (path) =>
+     : [];
+ 
+ /** Starts one `bun test` process and waits for it. */
+-const spawnBun = (args, { root, env }) =>
++const spawnBun = (args, { cwd, env }) =>
+   new Promise((resolveExit, rejectExit) => {
+     const { child, stderr } = spawnWithStderrTail(process.execPath, args, {
+-      cwd: root,
++      cwd,
+       env,
+       tailBytes: STDERR_TAIL_BYTES,
+     });
+@@ -229,7 +232,7 @@ const joinHits = (tests, rows, randomized) => {
+ 
+ const optionalArgs = (condition, args) => (condition ? args : []);
+ 
+-/** The arguments of one `bun test` process. */
++/** The arguments of one `bun test` process. `file` is relative to its folder. */
+ const bunArgs = (file, junit, { timeoutMs = DRY_RUN_TIMEOUT_MS, pattern, bail }) => [
+   "test",
+   "--preload",
+@@ -250,11 +253,43 @@ const childEnv = (workDir, hits, mutantId) => {
+   return env;
+ };
+ 
+-const isRandomized = (root) => {
+-  const bunfig = join(root, "bunfig.toml");
++const isRandomized = (dir) => {
++  const bunfig = join(dir, BUNFIG);
+   return existsSync(bunfig) && RANDOMIZE.test(readFileSync(bunfig, "utf8"));
+ };
+ 
++/**
++ * The folder of the nearest `bunfig.toml` from the test file up to the root,
++ * relative to the root, or `.` for the root. Bun reads the project
++ * `bunfig.toml` only from its working folder and does not search the parent
++ * folders. A workspace package with its own file therefore runs its tests
++ * from that folder, as `cd <package> && bun test` does (issue #5286). A file
++ * above the root never applies.
++ */
++const bunfigFolder = (root, file) => {
++  for (let dir = posix.dirname(file); dir !== "."; dir = posix.dirname(dir)) {
++    if (existsSync(join(root, dir, BUNFIG))) return dir;
++  }
++  return ".";
++};
++
++/**
++ * Gives the working folder of each test file, with the file path relative
++ * to that folder and the random-order setting of its `bunfig.toml`.
++ */
++const runFolders = (root) => {
++  const randomized = new Map();
++  return (file) => {
++    const dir = bunfigFolder(root, file);
++    if (!randomized.has(dir)) randomized.set(dir, isRandomized(join(root, dir)));
++    return {
++      cwd: join(root, dir),
++      file: posix.relative(dir, file),
++      randomized: randomized.get(dir),
++    };
++  };
++};
++
+ /** Reads the result of one finished `bun test` process. */
+ const fileResult = ({ file, exit, junit, hits, randomized, durationMs }) => {
+   const cases = readJunit(junit);
+@@ -287,7 +322,7 @@ export const createAdapter = async (init) => {
+   const root = resolve(init.root);
+   const overlay = buildOverlay(root, init.run_dir, init.path_map);
+   const testFiles = initTestFiles(root, init, TEST_FILE_PATTERNS);
+-  const randomized = isRandomized(root);
++  const folderOf = runFolders(root);
+   const workDir = createWorkDir("fallow-mutation-bun-", overlay);
+   Object.assign(process.env, init.options?.env ?? {});
+   let processCount = 0;
+@@ -296,14 +331,22 @@ export const createAdapter = async (init) => {
+     processCount += 1;
+     const junit = join(workDir.dir, `junit-${processCount}.xml`);
+     const hits = join(workDir.dir, `hits-${processCount}.jsonl`);
++    const folder = folderOf(file);
+     const started = performance.now();
+     try {
+-      const exit = await spawnBun(bunArgs(file, junit, options), {
+-        root,
++      const exit = await spawnBun(bunArgs(folder.file, junit, options), {
++        cwd: folder.cwd,
+         env: childEnv(workDir, hits, options.mutantId),
+       });
+       const durationMs = performance.now() - started;
+-      return fileResult({ file, exit, junit, hits, randomized, durationMs });
++      return fileResult({
++        file,
++        exit,
++        junit,
++        hits,
++        randomized: folder.randomized,
++        durationMs,
++      });
+     } finally {
+       rmSync(junit, { force: true });
+       rmSync(hits, { force: true });
 ```
 
-**File**: `crates/lsp/src/disk_fingerprints.rs` (added, +233/-0)
+**File**: `crates/api/src/mutation/result_cache/mod.rs` (modified, +21/-7)
 ```diff
-@@ -0,0 +1,233 @@
-+//! The last known content of each file that a save or a watched-file event
-+//! reported.
-+//!
-+//! A watched-file event does not prove that the content of a file changed.
-+//! A client reports one event for a save that `didSave` already reported, and
-+//! a file watcher also reports a changed timestamp or attribute, for example
-+//! when a virus scanner, a sync client or another tool touches the file. When
-+//! such events keep coming, each one starts a new run, and the server never
-+//! comes to rest (#5278). The server therefore compares the content of the
-+//! file with the content that it recorded last, and a changed event for
-+//! unchanged content starts no run.
+@@ -42,7 +42,7 @@ use super::scheduler::{CachedResult, ResultLookup, ScheduleOutcome, ScheduledMut
+ pub const RESULT_CACHE_FILE: &str = "results.json";
+ /// The version of the key and of the file format. A change to the key
+ /// parts or to the file shape needs a new version.
+-const FORMAT_VERSION: u32 = 6;
++const FORMAT_VERSION: u32 = 7;
+ /// The most entries that the file keeps.
+ pub const MAX_ENTRIES: usize = 20_000;
+ /// The inputs of a test that the key does not hash.
+@@ -63,12 +63,13 @@ const LOCKFILES: [&str; 6] = [
+ /// [`RUNNER_CONFIG_MODULES`], a file that is absent also is a key fact, so a
+ /// new config file changes the key. The files that a config module reaches
+ /// through static imports are in [`KeyFiles::support_files`].
+-const RUNNER_CONFIG_DATA: [&str; 4] = [
+-    "vitest.workspace.json",
+-    "bunfig.toml",
+-    "package.json",
+-    TSCONFIG,
+-];
++const RUNNER_CONFIG_DATA: [&str; 4] = ["vitest.workspace.json", BUNFIG, "package.json", TSCONFIG];
 +
-+use std::hash::Hasher as _;
-+use std::io::Read as _;
-+use std::path::{Path, PathBuf};
-+use std::time::{Duration, Instant};
-+
-+use rustc_hash::{FxHashMap, FxHasher};
-+
-+/// Most paths that the store keeps. The store starts again when it is full,
-+/// so memory stays bounded in a large workspace.
-+const MAX_RECORDED_FILES: usize = 4_096;
-+
-+/// Largest file that the store reads. An event for a larger file always
-+/// counts as a change.
-+const MAX_FINGERPRINT_BYTES: u64 = 8 * 1024 * 1024;
-+
-+/// Most events of one notification that the server compares. A larger batch,
-+/// for example a branch switch, always counts as a change.
-+pub const MAX_COMPARED_EVENTS: usize = 256;
-+
-+/// The length and a hash of the content of one file.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct Fingerprint {
-+    len: u64,
-+    hash: u64,
-+}
-+
-+/// Read the fingerprint of `path`. `None` when the path is not a readable
-+/// file of at most [`MAX_FINGERPRINT_BYTES`].
-+pub fn read_fingerprint(path: &Path) -> Option<Fingerprint> {
-+    let file = std::fs::File::open(path).ok()?;
-+    let metadata = file.metadata().ok()?;
-+    if !metadata.is_file() || metadata.len() > MAX_FINGERPRINT_BYTES {
-+        return None;
-+    }
-+    let mut content = Vec::new();
-+    file.take(MAX_FINGERPRINT_BYTES + 1)
-+        .read_to_end(&mut content)
-+        .ok()?;
-+    let mut hasher = FxHasher::default();
-+    hasher.write(&content);
-+    Some(Fingerprint {
-+        len: content.len() as u64,
-+        hash: hasher.finish(),
++/// The Bun test config. `bun test` reads it from its working folder, and
++/// the Bun adapter runs a test file from the folder of the nearest one. The
++/// key of a test file hashes this file in each folder between the root and
++/// the test file.
++const BUNFIG: &str = "bunfig.toml";
+ 
+ /// The root tsconfig. The key also hashes each config of its `extends`
+ /// chain.
+@@ -121,6 +122,14 @@ fn lockfile_digest(root: &Path) -> String {
+     hex(&hasher.finalize())
+ }
+ 
++/// The folders between the root and the root-relative `test_file`, from the
++/// folder of the file upward. The root is not one of them.
++fn package_folders(test_file: &str) -> impl Iterator<Item = &str> {
++    std::iter::successors(test_file.rsplit_once('/').map(|(dir, _)| dir), |dir| {
++        dir.rsplit_once('/').map(|(parent, _)| parent)
 +    })
 +}
 +
-+/// The last known content of the reported files.
-+#[derive(Debug, Default)]
-+pub struct DiskFingerprints {
-+    /// Each fingerprint with the number of the read that gave it.
-+    known: FxHashMap<PathBuf, (Fingerprint, u64)>,
-+    reads: u64,
-+}
-+
-+impl DiskFingerprints {
-+    /// Number a read that starts now. Two notifications can read the same
-+    /// file at the same time, and the newer read must win.
-+    pub fn begin_read(&mut self) -> u64 {
-+        self.reads += 1;
-+        self.reads
-+    }
-+
-+    /// Store the fingerprint that read `read` gave for `path`. Returns
-+    /// whether the content differs from the last record, or whether the
-+    /// store cannot tell.
-+    pub fn update(&mut self, path: &Path, fingerprint: Option<Fingerprint>, read: u64) -> bool {
-+        let Some(fingerprint) = fingerprint else {
-+            self.known.remove(path);
-+            return true;
-+        };
-+        match self.known.get(path) {
-+            Some((_, newer)) if *newer > read => return true,
-+            Some((known, _)) if *known == fingerprint => return false,
-+            _ => {}
+ /// The runner config digest of the files at `root`, and of the configs that
+ /// the root `tsconfig.json` extends.
+ fn runner_config_digest(root: &Path) -> String {
+@@ -370,6 +379,11 @@ impl ResultCache {
+         let mut hasher = Sha256::new();
+         feed(&mut hasher, test_file);
+         feed(&mut hasher, &self.hash_of(test_file));
++        for dir in package_folders(test_file) {
++            let bunfig = format!("{dir}/{BUNFIG}");
++            feed(&mut hasher, &bunfig);
++            feed(&mut hasher, &self.hash_of(&bunfig));
 +        }
-+        if self.known.len() >= MAX_RECORDED_FILES && !self.known.contains_key(path) {
-+            self.known.clear();
-+        }
-+        self.known.insert(path.to_path_buf(), (fingerprint, read));
-+        true
-+    }
-+
-+    /// Forget `path` and every recorded path below it. A client can report
-+    /// one event for a deleted directory and none for its files.
-+    pub fn forget(&mut self, path: &Path) {
-+        self.known.retain(|known, _| !known.starts_with(path));
-+    }
-+
-+    /// Forget every record.
-+    pub fn clear(&mut self) {
-+        self.known.clear();
-+    }
-+}
-+
-+/// Shortest time between two log lines about skipped events. A steady
-+/// stream of events would otherwise write one line per notification.
-+const SKIPPED_LOG_INTERVAL: Duration = Duration::from_secs(10);
-+
-+/// Counts the skipped events between two log lines.
-+#[derive(Debug, Default)]
-+pub struct SkippedEventLog {
-+    pending: usize,
-+    last_logged: Option<Instant>,
-+}
-+
-+impl SkippedEventLog {
-+    /// Add `skipped` events. Returns the count to log now, or `None` while
-+    /// the last log line is newer than [`SKIPPED_LOG_INTERVAL`].
-+    pub fn note(&mut self, skipped: usize, now: Instant) -> Option<usize> {
-+        self.pending += skipped;
-+        if self.pending == 0 {
-+            return None;
-+        }
-+        if self
-+            .last_logged
-+            .is_some_and(|last| now.duration_since(last) < SKIPPED_LOG_INTERVAL)
-+        {
-+            return None;
-+        }
-+        self.last_logged = Some(now);
-+        Some(std::mem::take(&mut self.pending))
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    #[test]
+         let reach = self.files.test_file_reach.get(test_file);
+         hasher.update((reach.map_or(0, Vec::len) as u64).to_le_bytes());
+         for path in reach
 ```
 
-**File**: `crates/lsp/src/lib.rs` (modified, +153/-8)
+**File**: `crates/api/src/mutation/result_cache/tests.rs` (modified, +4/-0)
 ```diff
-@@ -15,6 +15,7 @@ mod code_lens;
- mod config_patterns;
- mod diagnostic_filter;
- mod diagnostics;
-+mod disk_fingerprints;
- mod document_state;
- mod hover;
- mod initialization;
-@@ -28,6 +29,7 @@ mod runtime;
- mod schedule;
- mod server_capabilities;
- mod session_store;
-+mod stderr_log;
- 
- use rustc_hash::{FxHashMap, FxHashSet};
- use std::path::{Path, PathBuf};
-@@ -369,6 +371,11 @@ struct FallowLspServer {
-     /// `initializationOptions.prewarm`: parse the project at `initialized`.
-     prewarm: Arc<AtomicBool>,
-     pending_type_aware_changes: Arc<StdMutex<fallow_api::TypeAwareFileChanges>>,
-+    /// The last known content of saved and watched files. See
-+    /// `disk_fingerprints.rs`.
-+    disk_fingerprints: Arc<StdMutex<disk_fingerprints::DiskFingerprints>>,
-+    /// The skipped watched-file events since the last log line about them.
-+    skipped_event_log: Arc<StdMutex<disk_fingerprints::SkippedEventLog>>,
-     /// Canonical git toplevel for the workspace `root`, resolved on first
-     /// analysis run and reused thereafter. Cached so we do not pay for an
-     /// extra `git rev-parse --show-toplevel` subprocess on every save.
-@@ -607,6 +614,9 @@ impl LanguageServer for FallowLspServer {
-     async fn did_save(&self, params: DidSaveTextDocumentParams) {
-         self.mark_document_saved(&params.text_document.uri).await;
-         if let Some(path) = params.text_document.uri.to_file_path() {
-+            // A save always starts a run. The record lets the watched-file
-+            // event of the same save start none.
-+            self.record_disk_contents(vec![path.to_path_buf()]).await;
-             if session_input_file(&path) {
-                 self.lock_sessions().mark_stale();
-             }
-@@ -633,21 +643,25 @@ impl LanguageServer for FallowLspServer {
-     }
- 
-     async fn did_change_watched_files(&self, params: DidChangeWatchedFilesParams) {
--        self.mark_documents_changed_on_disk(params.changes.iter().map(|change| &change.uri))
-+        let changes = self.changed_content_events(params.changes).await;
-+        if changes.is_empty() {
-+            return;
-+        }
-+        self.mark_documents_changed_on_disk(changes.iter().map(|change| &change.uri))
-             .await;
-         {
--            let mut changes = self
-+            let mut pending = self
-                 .pending_type_aware_changes
-                 .lock()
-                 .unwrap_or_else(|error| error.into_inner());
--            for change in params.changes {
-+            for change in changes {
-                 let Some(path) = change.uri.to_file_path() else {
-                     continue;
-                 };
-                 if session_input_file(&path) {
-                     self.lock_sessions().mark_stale();
-                 }
--                record_type_aware_file_change(&mut changes, path.into_owned(), change.typ);
-+                record_type_aware_file_change(&mut pending, path.into_owned(), change.typ);
-             }
-         }
-         self.note_workspace_event();
-@@ -817,6 +831,8 @@ impl FallowLspServer {
-             pending_type_aware_changes: Arc::new(StdMutex::new(
-                 fallow_api::TypeAwareFileChanges::default(),
-             )),
-+            disk_fingerprints: Arc::default(),
-+            skipped_event_log: Arc::default(),
-             git_toplevel: Arc::new(RwLock::new(None)),
-             cached_diagnostics: Arc::new(RwLock::new(DiagnosticCache::default())),
-             client_pulls: Arc::new(AtomicBool::new(false)),
-@@ -1329,6 +1345,136 @@ impl FallowLspServer {
-         drop(documents);
-     }
- 
-+    /// Record the current content of `paths`. Returns for each path whether
-+    /// the content differs from the last record.
-+    async fn record_disk_contents(&self, paths: Vec<PathBuf>) -> Vec<bool> {
-+        let count = paths.len();
-+        let read_number = self
-+            .disk_fingerprints
-+            .lock()
-+            .unwrap_or_else(|error| error.into_inner())
-+            .begin_read();
-+        // The reads run without the store lock, so an event handler that
-+        // takes the lock never waits for disk reads.
-+        let Ok(read) = tokio::task::spawn_blocking(move || {
-+            paths
-+                .into_iter()
-+                .map(|path| {
-+                    let fingerprint = disk_fingerprints::read_fingerprint(&path);
-+                    (path, fingerprint)
-+                })
-+                .collect::<Vec<_>>()
-+        })
-+        .await
-+        else {
-+            return vec![true; count];
-+        };
-+        let mut store = self
-+            .disk_fingerprints
-+            .lock()
-+            .unwrap_or_else(|error| error.into_inner());
-+        read.into_iter()
-+            .map(|(path, fingerprint)| store.update(&path, fingerprint, read_number))
-+            .collect()
-+    }
-+
-+    /// Keep the watched-file events that change a file. A changed event for
-+    /// the same content as the last record starts no run. A created or
-+    /// deleted file, a
+@@ -102,6 +102,10 @@ fn a_file_change_in_each_key_part_changes_the_key() {
+         ("a new runner config file", "vite.config.mts"),
+         ("a new lockfile", "pnpm-lock.yaml"),
+         ("a new bun test config file", "bunfig.toml"),
++        (
++            "a bun test config file of the test folder",
++            "test/bunfig.toml",
++        ),
+     ] {
+         let dir = tempfile::tempdir().unwrap();
+         project(dir.path());
 ```
 
-**File**: `crates/lsp/src/protocol.rs` (modified, +12/-0)
+**File**: `docs/mutation-testing.md` (modified, +13/-0)
 ```diff
-@@ -98,6 +98,12 @@ pub struct AnalysisCompleteParams {
-     pub unresolved_catalog_references: usize,
-     pub unused_dependency_overrides: usize,
-     pub misconfigured_dependency_overrides: usize,
-+    pub policy_violations: usize,
-+    pub invalid_client_exports: usize,
-+    pub mixed_client_server_barrels: usize,
-+    pub misplaced_directives: usize,
-+    pub route_collisions: usize,
-+    pub dynamic_segment_name_conflicts: usize,
-     pub duplication_percentage: f64,
-     pub clone_groups: usize,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-@@ -199,6 +205,12 @@ pub fn analysis_complete_params(input: AnalysisCompleteInput<'_>) -> AnalysisCom
-         unresolved_catalog_references: results.unresolved_catalog_references.len(),
-         unused_dependency_overrides: results.unused_dependency_overrides.len(),
-         misconfigured_dependency_overrides: results.misconfigured_dependency_overrides.len(),
-+        policy_violations: results.policy_violations.len(),
-+        invalid_client_exports: results.invalid_client_exports.len(),
-+        mixed_client_server_barrels: results.mixed_client_server_barrels.len(),
-+        misplaced_directives: results.misplaced_directives.len(),
-+        route_collisions: results.route_collisions.len(),
-+        dynamic_segment_name_conflicts: results.dynamic_segment_name_conflicts.len(),
-         duplication_percentage: duplication.stats.duplication_percentage,
-         clone_groups: duplication.stats.clone_groups,
-         changed_since_scope: changed_since_scope.cloned(),
+@@ -1658,6 +1658,16 @@ itself, so the next mutant run gets the same process.
+ - Each dry run and each mutant run starts one test process for each test
+   file. The `node:test` adapter uses `run()` of `node:test` with process
+   isolation. The `bun test` adapter starts `bun test` with a JUnit report.
++- Bun reads the project `bunfig.toml` only from its working folder and does
++  not search the parent folders. The `bun test` adapter starts each test
++  file in the folder of the nearest `bunfig.toml` from the test file up to
++  the root, else at the root. A workspace package with its own `bunfig.toml`
++  then gets its `[test] preload` and its other settings, as
++  `cd <package> && bun test` does. Bun does not merge that file with the
++  root `bunfig.toml`. For the tests of such a package, `process.cwd()` is
++  the package folder, and Bun loads the `.env` files of the package folder,
++  not of the root. The test ids stay relative to the root (`bunfigFolder`
++  in `tools/mutation-runner/src/adapters/bun-test.mjs`).
+ - A preload file serves the instrumented files. `node:test` uses a
+   synchronous module hook (`module.registerHooks`), so `import` and
+   `require` both get the instrumented file. Node strips the types of a
+@@ -1841,6 +1851,9 @@ The key hashes these parts:
+   does not hash the files that a selected config imports. The selected
+   Vitest projects (`--runner-project`) are a key part too;
+ - the lockfiles of the first directory from the root upward that has one;
++- for each covering test file, the `bunfig.toml` in each folder between the
++  root and the test file. An absent file is also a key fact, because a new
++  file changes the working folder of the `bun test` adapter;
+ - the runner config files at the root: `vitest.config.*`, `vite.config.*`,
+   `vitest.workspace.*`, `bunfig.toml`, `package.json` and `tsconfig.json`. An
+   absent file is also a key fact, so a new config file changes the key;
 ```
 
-**File**: `crates/lsp/src/stderr_log.rs` (added, +78/-0)
+**File**: `tools/mutation-runner/src/adapters/bun-test.mjs` (modified, +53/-10)
 ```diff
-@@ -0,0 +1,78 @@
-+//! The filter for the tracing lines that the server writes to stderr.
-+//!
-+//! Editors show the stderr of a language server as error output. VS Code
-+//! labels each stderr line `[error]` in the Output channel. INFO progress
-+//! lines of the analysis therefore look like failures, and one run writes
-+//! one line per workspace for some of them. The server writes warnings and
-+//! errors only. `RUST_LOG` selects more detail when a user debugs a run.
+@@ -1,5 +1,5 @@
+ import { existsSync, readFileSync, rmSync } from "node:fs";
+-import { join, resolve } from "node:path";
++import { join, posix, resolve } from "node:path";
+ import { fileURLToPath } from "node:url";
+ 
+ import { CompanionError } from "../protocol.mjs";
+@@ -43,6 +43,9 @@ const BUN_DEFAULT_TIMEOUT_MS = 5000;
+  */
+ const DRY_RUN_TIMEOUT_MS = dryRunTimeout(BUN_DEFAULT_TIMEOUT_MS);
+ 
++/** The config file that `bun test` reads from its working folder. */
++const BUNFIG = "bunfig.toml";
 +
-+use tracing_subscriber::filter::{LevelFilter, Targets};
+ /** A `bunfig.toml` line that runs the tests in a random order. */
+ const RANDOMIZE = /^\s*randomize\s*=\s*true\b/mu;
+ 
+@@ -164,10 +167,10 @@ const readLines = (path) =>
+     : [];
+ 
+ /** Starts one `bun test` process and waits for it. */
+-const spawnBun = (args, { root, env }) =>
++const spawnBun = (args, { cwd, env }) =>
+   new Promise((resolveExit, rejectExit) => {
+     const { child, stderr } = spawnWithStderrTail(process.execPath, args, {
+-      cwd: root,
++      cwd,
+       env,
+       tailBytes: STDERR_TAIL_BYTES,
+     });
+@@ -228,7 +231,7 @@ const joinHits = (tests, rows, randomized) => {
+ 
+ const optionalArgs = (condition, args) => (condition ? args : []);
+ 
+-/** The arguments of one `bun test` process. */
++/** The arguments of one `bun test` process. `file` is relative to its folder. */
+ const bunArgs = (file, junit, { timeoutMs = DRY_RUN_TIMEOUT_MS, pattern, bail }) => [
+   "test",
+   "--preload",
+@@ -249,11 +252,43 @@ const childEnv = (workDir, hits, mutantId) => {
+   return env;
+ };
+ 
+-const isRandomized = (root) => {
+-  const bunfig = join(root, "bunfig.toml");
++const isRandomized = (dir) => {
++  const bunfig = join(dir, BUNFIG);
+   return existsSync(bunfig) && RANDOMIZE.test(readFileSync(bunfig, "utf8"));
+ };
+ 
++/**
++ * The folder of the nearest `bunfig.toml` from the test file up to the root,
++ * relative to the root, or `.` for the root. Bun reads the project
++ * `bunfig.toml` only from its working folder and does not search the parent
++ * folders. A workspace package with its own file therefore runs its tests
++ * from that folder, as `cd <package> && bun test` does (issue #5286). A file
++ * above the root never applies.
++ */
++const bunfigFolder = (root, file) => {
++  for (let dir = posix.dirname(file); dir !== "."; dir = posix.dirname(dir)) {
++    if (existsSync(join(root, dir, BUNFIG))) return dir;
++  }
++  return ".";
++};
 +
-+/// Build the stderr filter from the value of `RUST_LOG`.
-+///
-+/// Without `RUST_LOG`, the filter keeps WARN and ERROR of the `fallow*`
-+/// targets, so dependency crates add no lines. A `RUST_LOG` value
-+/// replaces the default. The filter skips a directive that it cannot read,
-+/// such as a span or field filter, and keeps the others.
-+pub fn stderr_log_filter(rust_log: Option<&str>) -> Targets {
-+    let Some(value) = rust_log.map(str::trim) else {
-+        return Targets::new().with_target("fallow", LevelFilter::WARN);
++/**
++ * Gives the working folder of each test file, with the file path relative
++ * to that folder and the random-order setting of its `bunfig.toml`.
++ */
++const runFolders = (root) => {
++  const randomized = new Map();
++  return (file) => {
++    const dir = bunfigFolder(root, file);
++    if (!randomized.has(dir)) randomized.set(dir, isRandomized(join(root, dir)));
++    return {
++      cwd: join(root, dir),
++      file: posix.relative(dir, file),
++      randomized: randomized.get(dir),
 +    };
-+    let readable: Vec<&str> = value
-+        .split(',')
-+        .map(str::trim)
-+        .filter(|directive| !directive.is_empty() && directive.parse::<Targets>().is_ok())
-+        .collect();
-+    // An empty directive list parses to a filter that enables every target.
-+    if readable.is_empty() {
-+        return Targets::new();
-+    }
-+    readable.join(",").parse().unwrap_or_default()
-+}
++  };
++};
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use tracing::Level;
-+
-+    const PLUGIN_TARGET: &str = "fallow_extract::cache";
-+
-+    #[test]
-+    fn default_filter_drops_info_progress_lines() {
-+        let filter = stderr_log_filter(None);
-+        assert!(!filter.would_enable(PLUGIN_TARGET, &Level::INFO));
-+        assert!(!filter.would_enable("fallow_graph::resolve", &Level::INFO));
-+    }
-+
-+    #[test]
-+    fn default_filter_keeps_warnings_and_errors() {
-+        let filter = stderr_log_filter(None);
-+        assert!(filter.would_enable(PLUGIN_TARGET, &Level::WARN));
-+        assert!(filter.would_enable("fallow_config", &Level::ERROR));
-+    }
-+
-+    #[test]
-+    fn default_filter_drops_dependency_lines() {
-+        let filter = stderr_log_filter(None);
-+        assert!(!filter.would_enable("tower_lsp_server::service", &Level::WARN));
-+    }
-+
-+    #[test]
-+    fn rust_log_selects_more_detail() {
-+        let filter = stderr_log_filter(Some("fallow_extract=info"));
-+        assert!(filter.would_enable(PLUGIN_TARGET, &Level::INFO));
-+        assert!(!filter.would_enable("fallow_graph::resolve", &Level::INFO));
-+    }
-+
-+    #[test]
-+    fn empty_rust_log_disables_every_line() {
-+        let filter = stderr_log_filter(Some(""));
-+        assert!(!filter.would_enable(PLUGIN_TARGET, &Level::ERROR));
-+    }
-+
-+    #[test]
-+    fn unreadable_directive_keeps_the_readable_ones() {
-+        let filter = stderr_log_filter(Some("fallow_extract[span{a=1}]=debug,fallow_graph=info"));
-+        assert!(filter.would_enable("fallow_graph::resolve", &Level::INFO));
-+    }
-+}
+ /** Reads the result of one finished `bun test` process. */
+ const fileResult = ({ file, exit, junit, hits, randomized, durationMs }) => {
+   const cases = readJunit(junit);
+@@ -286,7 +321,7 @@ export const createAdapter = async (init) => {
+   const root = resolve(init.root);
+   const overlay = buildOverlay(root, init.run_dir, init.path_map);
+   const testFiles = initTestFiles(root, init, TEST_FILE_PATTERNS);
+-  const randomized = isRandomized(root);
++  const folderOf = runFolders(root);
+   const workDir = createWorkDir("fallow-mutation-bun-", overlay);
+   Object.assign(process.env, init.options?.env ?? {});
+   let processCount = 0;
+@@ -295,14 +330,22 @@ export const createAdapter = async (init) => {
+     processCount += 1;
+     const junit = join(workDir.dir, `junit-${processCount}.xml`);
+     const hits = join(workDir.dir, `hits-${processCount}.jsonl`);
++    const folder = folderOf(file);
+     const started = performance.now();
+     try {
+-      const exit = await spawnBun(bunArgs(file, junit, options), {
+-        root,
++      const exit = await spawnBun(bunArgs(folder.file, junit, options), {
++        cwd: folder.cwd,
+         env: childEnv(workDir, hits, options.mutantId),
+       });
+       const durationMs = performance.now() - started;
+-      return fileResult({ file, exit, junit, hits, randomized, durationMs });
++      return fileResult({
++        file,
++        exit,
++        junit,
++        hits,
++        randomized: folder.randomized,
++        durationMs,
++      });
+     } finally {
+       rmSync(junit, { force: true });
+       rmSync(hits, { force: true });
 ```
 
-**File**: `crates/lsp/src/tests.rs` (modified, +24/-2)
+**File**: `tools/mutation-runner/test/bun-package-bunfig.test.mjs` (added, +123/-0)
 ```diff
-@@ -4853,6 +4853,7 @@ async fn edit_or_watched_change_after_save_needs_a_disk_read_again() {
-             }],
-         })
-         .await;
-+    write_open_document_fixture(dir.path(), "touched.ts", "export const b = 2;\n");
-     backend
-         .did_change_watched_files(DidChangeWatchedFilesParams {
-             changes: vec![FileEvent::new(touched.clone(), FileChangeType::CHANGED)],
-@@ -4866,11 +4867,32 @@ async fn edit_or_watched_change_after_save_needs_a_disk_read_again() {
-         "the edited buffer differs from disk"
-     );
-     assert!(
--        snapshot[&touched].matches_disk,
--        "the buffer still equals the file after the watched event",
-+        !snapshot[&touched].matches_disk,
-+        "another tool changed the file under the buffer",
-     );
- }
- 
-+#[tokio::test(flavor = "current_thread")]
-+async fn watched_event_without_a_content_change_keeps_the_saved_buffer_proven() {
-+    let dir = tempfile::tempdir().expect("temp dir");
-+    let (service, _socket) = LspService::build(FallowLspServer::new).finish();
-+    let backend = service.inner();
-+    backend
-+        .startup_analysis_started
-+        .store(true, Ordering::SeqCst);
-+    let touched = write_open_document_fixture(dir.path(), "touched.ts", "export const b = 1;\n");
-+    open_document(backend, &touched, 1, "export const b = 1;\n").await;
-+    save_document(backend, &touched).await;
-+    backend
-+        .did_change_watched_files(DidChangeWatchedFilesParams {
-+            changes: vec![FileEvent::new(touched.clone(), FileChangeType::CHANGED)],
-+        })
-+        .await;
+@@ -0,0 +1,123 @@
++import assert from "node:assert/strict";
++import { spawnSync } from "node:child_process";
++import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { dirname, join } from "node:path";
++import { after, afterEach, before, describe, test } from "node:test";
 +
-+    assert_eq!(pending_disk_reads(backend).await, 0);
-+    assert!(backend.snapshot_document_versions().await[&touched].matches_disk);
-+}
++import { startCompanion } from "./support/companion-process.mjs";
++import { readMutationConstant } from "./support/vitest-fixture.mjs";
 +
- #[tokio::test(flavor = "current_thread")]
- async fn a_confirmed_disk_match_is_not_read_again() {
-     let dir = tempfile::tempdir().expect("temp dir");
++const bun = spawnSync("bun", ["--version"], { encoding: "utf8" });
++const skip = bun.status !== 0;
++
++const WEB_TEST = "packages/web/src/greet.test.ts";
++const PLAIN_TEST = "packages/plain/src/plain.test.ts";
++const SETUP_ERROR = 'throw new Error("a bunfig.toml above the root ran");\n';
++
++/**
++ * Creates a Bun workspace. `packages/web` has its own `bunfig.toml` with a
++ * preload. `packages/plain` has none, so the root `bunfig.toml` applies. A
++ * `bunfig.toml` above the project root must not apply.
++ */
++const createWorkspace = () => {
++  const workspace = mkdtempSync(join(tmpdir(), "fallow-mutation-bunfig-"));
++  const files = {
++    "bunfig.toml": '[test]\npreload = ["./outside.ts"]\n',
++    "outside.ts": SETUP_ERROR,
++    "project/package.json": '{"name":"p","private":true,"workspaces":["packages/*"]}\n',
++    "project/bunfig.toml": '[test]\npreload = ["./root-setup.ts"]\n',
++    "project/root-setup.ts": "globalThis.ROOT_SETUP = true;\n",
++    "project/packages/web/package.json": '{"name":"web","private":true}\n',
++    "project/packages/web/bunfig.toml": '[test]\npreload = ["./setup.ts"]\n',
++    "project/packages/web/setup.ts": 'globalThis.GREETING = "hello";\n',
++    "project/packages/web/src/greet.ts":
++      "export const greet = (name: string): string => `${globalThis.GREETING} ${name}`;\n",
++    [`project/${WEB_TEST}`]: [
++      'import { expect, test } from "bun:test";',
++      'import { greet } from "./greet";',
++      'test("greet names the person", () => {',
++      '  expect(greet("ada")).toBe("hello ada");',
++      '  expect(process.cwd().endsWith("packages/web")).toBe(true);',
++      "});",
++      "",
++    ].join("\n"),
++    "project/packages/plain/package.json": '{"name":"plain","private":true}\n',
++    [`project/${PLAIN_TEST}`]: [
++      'import { expect, test } from "bun:test";',
++      'test("the root preload runs", () => {',
++      "  expect(globalThis.ROOT_SETUP).toBe(true);",
++      "});",
++      "",
++    ].join("\n"),
++    "run/files/packages/web/src/greet.ts": `${readMutationConstant("PRELUDE")}
++export const greet = (name: string): string => (__fallow_m_a("e1") ? (\`\${globalThis.GREETING}\`) : (__fallow_m_c("e1"), (\`\${globalThis.GREETING} \${name}\`)));
++`,
++  };
++  for (const [path, text] of Object.entries(files)) {
++    const target = join(workspace, path);
++    mkdirSync(dirname(target), { recursive: true });
++    writeFileSync(target, text);
++  }
++  return {
++    root: join(workspace, "project"),
++    runDir: join(workspace, "run"),
++    pathMap: { "packages/web/src/greet.ts": "files/packages/web/src/greet.ts" },
++    cleanup: () => rmSync(workspace, { recursive: true, force: true }),
++  };
++};
++
++describe("bun-test adapter in a workspace with a package bunfig.toml", { skip }, () => {
++  let project;
++  let companion;
++  let nextId = 1;
++  const request = (message) => companion.request({ v: 1, id: nextId++, ...message });
++
++  before(() => {
++    project = createWorkspace();
++  });
++
++  afterEach(async () => {
++    await request({ type: "shutdown" }).catch(() => {});
++    companion?.stop();
++  });
++
++  after(() => project?.cleanup());
++
++  test("each test file runs in the folder of its nearest bunfig.toml", async () => {
++    companion = startCompanion({ runtime: "bun" });
++    const ready = await request({
++      type: "init",
++      root: project.root,
++      runner: "bun-test",
++      config_path: null,
++      run_dir: project.runDir,
++      path_map: project.pathMap,
++      options: { env: {} },
++    });
++    assert.equal(ready.type, "ready", JSON.stringify(ready));
++    assert.deepEqual(ready.test_files.toSorted(), [PLAIN_TEST, WEB_TEST]);
++
++    const dryRun = await request({ type: "dry_run", test_files: [WEB_TEST, PLAIN_TEST] });
++    assert.equal(dryRun.type, "dry_run_result", JSON.stringify(dryRun));
++    assert.deepEqual(dryRun.unhandled_errors, []);
++    assert.deepEqual(
++      dryRun.tests
++        .map(({ test_id, status }) => ({ test_id, status }))
++        .toSorted((a, b) => (a.test_id < b.test_id ? -1 : 1)),
++      [
++        { test_id: `${PLAIN_TEST}::the root preload runs`, status: "pass" },
++        { test_id: `${WEB_TEST}::greet names the person`, status: "pass" },
++      ],
++    );
++
++    const result = await request({
++      type: "run",
++      mutant_id: "e1",
++      test_ids: [`${WEB_TEST}::greet names the person`],
++      timeout_ms: 10_000,
++      bail: true,
++    });
++    assert.equal(result.status, "killed", JSON.stringify(result));
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5305** (2026-11-26): docs(skills): describe MCP tasks in the fallow skill references (@BartWaardenburg)
-- **PR #5304** (2026-11-26): fix(engine): refuse a link into the Git directory of a superproject (@BartWaardenburg)
-- **PR #5302** (2026-11-26): ci(dependabot): hand major updates to a maintainer (@BartWaardenburg)
-- **PR #5300** (2026-11-26): docs(changelog): add the fragment for the type-aware protocol 10 and the read scope fixes (@BartWaardenburg)
-- **PR #5296** (2026-11-26): fix(types): apply the owner rule of the read scope on Windows (@BartWaardenburg)
-- **PR #5293** (2026-11-26): chore: post-release sync for v3.49.0 (@BartWaardenburg)
+- **PR #5420** (2026-11-27): perf(mutation): divide the dry run over the concurrency companions (@BartWaardenburg)
+- **PR #5418** (2026-11-27): fix(mutation): leave Vitest __tests__ helpers out of the test files (@BartWaardenburg)
+- **PR #5417** (2026-11-27): fix(mutation): suggest a setup timeout longer than the value that failed (@BartWaardenburg)
+- **PR #5412** (2026-11-27): fix(members): credit wrapper receivers and dependency hooks (@BartWaardenburg)
+- **PR #5411** (2026-11-27): feat(workspaces): suggest publicPackages for a package that looks published (@BartWaardenburg)
+- **PR #5410** (2026-11-27): fix(core): report invalid client exports only in App Router entry files (@BartWaardenburg)
 
 ---
 
@@ -1945,21 +1836,31 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): read project files inside the project scope
+## X. benchmarks): record framework and security rule precision
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/rule-precision-summary.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `134bd42d`: core): read project files inside the project scope. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `301c3eae`: benchmarks): record framework and security rule precision. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/rule-precision-summary.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rustix",
+| `dead-code` | `dev-dependency-in-production` | 24 | 24 | 24 | 0 | 0 | 100% (79 to 100) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `dead-code` | `invalid-client-export` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `dead-code` | `unused-component-emit` | 14 | 14 | 10 | 4 | 0 | 71% (42 to 92) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `dead-code` | `unused-component-input` | 5 | 5 | 3 | 2 | 0 | 60% (15 to 95) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `cleartext-transport` | 2 | 2 | 0 | 2 | 0 | 0% (0 to 84) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `client-server-leak` | 129 | 32 | 0 | 32 | 0 | 0% (0 to 15) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `code-injection` | 3 | 3 | 0 | 3 | 0 | 0% (0 to 71) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `command-injection` | 1 | 1 | 0 | 1 | 0 | 0% (0 to 98) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `dangerous-html` | 15 | 15 | 0 | 15 | 0 | 0% (0 to 66) | 3 (67% agree) | 3.49.0, 2026-11-27 |
+| `security` | `dynamic-module-load` | 2 | 2 | 0 | 2 | 0 | 0% (0 to 99) | 2 (100% agree) | 3.49.0, 2026-11-27 |
+| `security` | `nosql-injection` | 2 | 2 | 0 | 2 | 0 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1969,7 +1870,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `134bd42d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `301c3eae` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

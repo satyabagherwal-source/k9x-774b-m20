@@ -13851,3 +13851,6 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `df109532` | Multi-dimensional audit evidence | 2026-11-27T16:21:39.304Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `e375c609` | Multi-dimensional audit evidence | 2026-11-27T16:30:24.126Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `977e617f` | Multi-dimensional audit evidence | 2026-11-27T16:30:27.333Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `2e31fc94` | Multi-dimensional audit evidence | 2026-11-27T16:41:33.334Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `99836e57` | Multi-dimensional audit evidence | 2026-11-27T16:41:39.273Z |
+| `learn-dom-d-4e0de84a` | `project://rook-rook` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md` | 2026-11-27T16:42:21.483Z |

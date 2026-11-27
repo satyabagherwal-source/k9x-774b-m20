@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T16:30:33.887Z",
+  "last_updated": "2026-11-27T16:42:24.425Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T16:21:46.347Z",
@@ -133,9 +133,9 @@
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-25T04:39:42.541Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-27T16:42:21.483Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "facebook-folly-learnings.md": {
       "processed_at": "2026-11-27T11:14:37.000Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-27T15:09:20.927Z",
+      "processed_at": "2026-11-27T16:42:22.848Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -448,7 +448,7 @@
       "staged_for_review": 1
     },
     "fallow-rs-fallow-learnings.md": {
-      "processed_at": "2026-11-26T16:40:48.086Z",
+      "processed_at": "2026-11-27T16:41:42.900Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4043,7 +4043,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5016,
-  "total_canonical_promoted": 580,
-  "total_staged_for_review": 3773
+  "total_dossiers_evaluated": 5019,
+  "total_canonical_promoted": 581,
+  "total_staged_for_review": 3775
 }

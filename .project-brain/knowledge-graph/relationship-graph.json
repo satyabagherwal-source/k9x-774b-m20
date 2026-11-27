@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T15:27:46.466Z",
+  "updated_at": "2026-11-27T16:42:21.479Z",
   "statistics": {
-    "total_nodes": 580,
+    "total_nodes": 581,
     "total_edges": 238,
     "domain_distribution": {
-      "D": 347,
+      "D": 348,
       "M": 1,
       "H": 111,
       "J": 22,
@@ -12944,6 +12944,28 @@
       ],
       "created_at": "2026-11-27T15:27:46.466Z",
       "updated_at": "2026-11-27T15:27:46.466Z"
+    },
+    "DOM-D-4E0DE84A": {
+      "id": "DOM-D-4E0DE84A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): rook/rook",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  \n> **Source**: github ([https://github.com/rook/rook](https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  \n> **Source**: github ([https://github.com/rook/rook](https",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://rook-rook/rook-rook-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T16:41:44.175Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rook-rook)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-27T16:42:21.479Z",
+      "updated_at": "2026-11-27T16:42:21.479Z"
     }
   },
   "edges": [

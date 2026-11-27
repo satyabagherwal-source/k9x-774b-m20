@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "79b93ba6",
+    "sourceVersion": "2e31fc94",
     "license": "MIT",
-    "contentHash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
-    "lastHarvestedAt": "2026-11-26T16:40:33.427Z",
+    "contentHash": "ce993cf27ecd5f894b08232a8ace996697676dd8f6dadfbea3a976dbfaac66a0",
+    "lastHarvestedAt": "2026-11-27T16:41:33.334Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "394e6dba",
+    "sourceVersion": "99836e57",
     "license": "Apache-2.0",
-    "contentHash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
-    "lastHarvestedAt": "2026-11-25T04:39:35.736Z",
+    "contentHash": "f6dd871ebaa193337d02938a0a3a2fbb80d8293cb1d6262e33d0a75dd274ebe4",
+    "lastHarvestedAt": "2026-11-27T16:41:39.273Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {

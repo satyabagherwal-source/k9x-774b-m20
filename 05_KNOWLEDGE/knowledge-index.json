@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T16:30:33.701Z",
+  "last_updated": "2026-11-27T16:42:24.146Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26651,
+  "total_items": 26654,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213471,8 +213471,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "394e6dba",
-      "content_hash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
+      "source_version": "99836e57",
+      "content_hash": "f6dd871ebaa193337d02938a0a3a2fbb80d8293cb1d6262e33d0a75dd274ebe4",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -213527,7 +213527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:39:35.495Z",
+      "verified_at": "2026-11-27T16:41:38.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213569,10 +213569,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "394e6dba",
-      "content_hash": "aab3b1e913effefb155b80e3bc6f8942505165dda6ff0fffe4a67f09a5edf625",
+      "source_version": "99836e57",
+      "content_hash": "d90b123b656398ece59a808060b2199acac54663223bad0d938cc4f9947a7686",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:39:36.204Z"
+      "persisted_at": "2026-11-27T16:41:39.630Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213581,10 +213581,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "394e6dba",
-      "content_hash": "7d927001799530a24e9ef246ebeb2333ae1f0432e246b462909b5c993d0a4323",
+      "source_version": "99836e57",
+      "content_hash": "775ab4f7f1c3668ff61de52875acd0cd5a46509817b8e11028617fa7a2ea3fdc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:39:36.394Z"
+      "persisted_at": "2026-11-27T16:41:39.901Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -230346,9 +230346,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "30ec6400ab48dbe6e3e01b4087dc09ca0ca2ea9c61dce478b80c08567dd1a672",
+      "content_hash": "da97fd2fa73c29571d4a8ea7ed13dcb71d3275e438143d83aad62417ef3901a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:09:21.565Z"
+      "persisted_at": "2026-11-27T16:42:23.822Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230358,9 +230358,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "009977129d0269cd9bd4e5b5477a947df77d7404cf1828c684d75e38ec0500a8",
+      "content_hash": "8806d0433ad1ba5b15265806c73d482d807fa8516f979a3a044f3777f8810a4d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:09:21.776Z"
+      "persisted_at": "2026-11-27T16:42:24.146Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -245231,8 +245231,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "79b93ba6",
-      "content_hash": "ac68a36a0c9b9ce018a419fad17267bd172544943ff183a50499baa9830e7a1a",
+      "source_version": "2e31fc94",
+      "content_hash": "ce993cf27ecd5f894b08232a8ace996697676dd8f6dadfbea3a976dbfaac66a0",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -245275,6 +245275,11 @@
           "number": 10726,
           "title": "read project files inside the project scope",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10930,
+          "title": "record framework and security rule precision",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245282,7 +245287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T16:40:33.019Z",
+      "verified_at": "2026-11-27T16:41:32.977Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245322,10 +245327,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "79b93ba6",
-      "content_hash": "4a9450de5f9b87d8dafa4c5ebadd646dbb545927b101805d84a640236a5ae1ac",
+      "source_version": "2e31fc94",
+      "content_hash": "2ba61a6297d74e0712038afeee5895c1c987650af6d5274bbc53a696c58bee72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:40:34.432Z"
+      "persisted_at": "2026-11-27T16:41:34.286Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -245449,9 +245454,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "a660940a35e2b21828aaeeb8c4c3191d973105c96d927ce67c9245301710865a",
+      "content_hash": "ab05b426588d15994d2ed53ce1baae0c64a100fd1e2a42ef934694b7b58f629a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:40:49.304Z"
+      "persisted_at": "2026-11-27T16:41:43.913Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -246326,9 +246331,9 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "a84a3f8f11fc778300cfb89d86cca411ca8dd4d7f7b0a1abb7bdf1f9fffb91aa",
+      "content_hash": "202ca58e5cd0c6b9bcbc8bb9e793a13110232a52da6ade8544b9a264ce5c401e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:39:43.329Z"
+      "persisted_at": "2026-11-27T16:42:22.242Z"
     },
     "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona",
@@ -246338,9 +246343,9 @@
       "title": "Agent Contract: rook-rook-learnings Autonomous Specialist Persona",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "f866feff2ce6c7e91eef25dda5f84ed5daa68ffa2c5fd37f78c09a10b3a8bd66",
+      "content_hash": "8b31603b444e19d5dec8f4e712ee2aedefc36d4dcbd22c313bce174cb6719a9f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:39:43.515Z"
+      "persisted_at": "2026-11-27T16:42:22.543Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings",
@@ -267157,10 +267162,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fallow-rs-fallow-quality-verification-intelligence-fallow-rs-fallow-core-invaria.md",
       "title": "Quality & Verification Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "79b93ba6",
-      "content_hash": "f4890c83fa88954655790c4204654173e4d68681b7ffbfb936b7df41996aa709",
+      "source_version": "2e31fc94",
+      "content_hash": "2d5b767a17fd417dafc4d36725491c76566797cc55a20f1d7ab2a694ddd10bbc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:40:34.094Z"
+      "persisted_at": "2026-11-27T16:41:33.989Z"
     },
     "learn-github-sozercan-kaset": {
       "learning_id": "learn-github-sozercan-kaset",
@@ -267301,9 +267306,9 @@
       "title": "Quality & Verification Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d82ec3d489e1c71c63e3276dd2029008ae671948102274444454a0c92d69d4a",
+      "content_hash": "c7d1761bb7ebef39cb583bff33ad681a4be1ccbeab4662eb864c1dfc31c7aaf5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T16:40:48.995Z"
+      "persisted_at": "2026-11-27T16:41:43.647Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-turbo-quantized-lear",
@@ -350395,13 +350400,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6QZY-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LZ1B-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e0704d87397d5158eb24f7ef36c6331f6a78dfb73086963e230beb877489a7a",
+      "content_hash": "c1a3d331f99e216633ec8570a1cdf6318739b7321a90bba40b31a93a557110ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T16:30:33.263Z"
+      "persisted_at": "2026-11-27T16:42:23.520Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -365917,6 +365922,44 @@
       "content_hash": "28ea63a3cc0e43d209afe13d881ac02446c7dc38a17681e7e347bd00fb620192",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T16:30:32.292Z"
+    },
+    "rule-10930": {
+      "learning_id": "rule-10930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10930,
+      "title": "record framework and security rule precision",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "2e31fc94",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T16:41:32.977Z"
+    },
+    "candidate_directive-record-framework-and-security-rule-precision": {
+      "item_id": "candidate_directive-record-framework-and-security-rule-precision",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KWKJ-record-framework-and-security-rule-precision.md",
+      "title": "record framework and security rule precision",
+      "repository": "fallow-rs/fallow",
+      "source_version": "2e31fc94",
+      "content_hash": "4e5968e3faddd7d96f3f86cd74b87682327baad5e50116f34158bf3ffdc963be",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T16:41:33.668Z"
+    },
+    "candidate_directive-benchmarks-record-framework-and-security-rule-precision": {
+      "item_id": "candidate_directive-benchmarks-record-framework-and-security-rule-precision",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L420-benchmarks-record-framework-and-security-rule-precision.md",
+      "title": "benchmarks): record framework and security rule precision",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3514ff8136428c81d61243d5f2a8ef8ec2fed13000d29ba32889a9701d381fa1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T16:41:43.374Z"
     }
   },
   "ai-builder-brain": {
