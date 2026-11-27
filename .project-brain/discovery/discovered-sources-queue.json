@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T11:03:10.831Z",
+  "updated_at": "2026-11-27T11:14:38.047Z",
   "stats": {
-    "total_discovered": 10293,
-    "approved_pending_harvest": 9764,
+    "total_discovered": 10304,
+    "approved_pending_harvest": 9775,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9768,
+      "COMMUNITY_AND_EXPERT": 9779,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222770,6 +222770,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
         "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-A71874DD583C": {
+      "id": "SRC-A71874DD583C",
+      "url": "https://github.com/meta/watchman/pull/1367",
+      "title": "https://github.com/meta/watchman/pull/1367",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-CFCC86FC13FB": {
+      "id": "SRC-CFCC86FC13FB",
+      "url": "https://github.com/facebook/folly/issues/2703",
+      "title": "https://github.com/facebook/folly/issues/2703",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-0371E72F66B9": {
+      "id": "SRC-0371E72F66B9",
+      "url": "https://github.com/meta/folly/issues/2703",
+      "title": "https://github.com/meta/folly/issues/2703",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-92AD6459B47A": {
+      "id": "SRC-92AD6459B47A",
+      "url": "https://github.com/facebook/BGP.git",
+      "title": "https://github.com/facebook/BGP.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-739ED683A88A": {
+      "id": "SRC-739ED683A88A",
+      "url": "https://github.com/meta/BGP.git",
+      "title": "https://github.com/meta/BGP.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-5FE66C0E773A": {
+      "id": "SRC-5FE66C0E773A",
+      "url": "https://github.com/facebook/cachelib.git",
+      "title": "https://github.com/facebook/cachelib.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-961D9F9AF94E": {
+      "id": "SRC-961D9F9AF94E",
+      "url": "https://github.com/meta/cachelib.git",
+      "title": "https://github.com/meta/cachelib.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.760Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-82D136920652": {
+      "id": "SRC-82D136920652",
+      "url": "https://github.com/facebook/sapling.git",
+      "title": "https://github.com/facebook/sapling.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-148C60AE1F37": {
+      "id": "SRC-148C60AE1F37",
+      "url": "https://github.com/meta/sapling.git",
+      "title": "https://github.com/meta/sapling.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-8638BED8BCA3": {
+      "id": "SRC-8638BED8BCA3",
+      "url": "https://github.com/facebook/mcrouter.git",
+      "title": "https://github.com/facebook/mcrouter.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:37.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-27CB1BEABA82": {
+      "id": "SRC-27CB1BEABA82",
+      "url": "https://github.com/meta/mcrouter.git",
+      "title": "https://github.com/meta/mcrouter.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:14:38.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
       }
     }
   }

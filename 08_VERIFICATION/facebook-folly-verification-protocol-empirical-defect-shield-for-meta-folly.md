@@ -4,22 +4,22 @@
 {
   "source_repository": "meta/folly",
   "source_url": "https://github.com/facebook/folly",
-  "source_version": "ba27193e",
+  "source_version": "af9c9650",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T10:40:55.753Z",
+  "timestamp": "2026-11-27T11:14:30.962Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meta-folly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `ba27193e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T10:40:55.753Z`  
+> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `af9c9650`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T11:14:30.962Z`  
 > **Learning ID**: `learn-github-meta-folly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meta/folly` (Commit: `ba27193e`)
+- **Target Repository**: `meta/folly` (Commit: `af9c9650`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:40:53.764Z  
+> **Harvest Timestamp**: 2026-11-27T11:14:29.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2397,490 +2397,166 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba27193e` (2026-11-26)
-**Commit Message**: F14: copies can miss keys that overflowed from empty chunks
+### Incident Patch 1: `af9c9650` (2026-11-27)
+**Commit Message**: manifests: point unpinned repos at github.com/meta
 
 Summary:
-**Benefit.** Copying an F14 map or set could produce a copy in which `find` and `contains` report a key as missing although the copy holds it (`size()` and iteration still see it). This fixes it.
+Since the GitHub `facebook` org became `meta` on 2026-10-28, old URLs only redirect until someone reuses the repository name in the new `facebook` org. This diff points the manifests of repos that no project pins at `github.com/meta`, plus the rocksdb and zstd archives and the folly issue link in the CMake floor lint. It also points rebalancer at `meta/rebalancer`, where the repo moved from `facebookincubator`.
 
-**Why.** For tables that copy item by item (`F14ValueMap`/`F14ValueSet` of types that are not trivially copyable, and every `F14NodeMap`/`F14NodeSet`), `directBuildFrom` walks the chunks from the top down and stops once every item is copied, i.e. at the lowest occupied chunk. Chunks below it are never visited, so their outbound overflow counts stay zero in the copy. When such a chunk is empty but an item that overflowed out of it lives in a higher chunk, `find` in the copy stops at the empty chunk and misses the item. The loop now also copies the overflow counts of the chunks below. Trivially copyable value tables (the `memcpy` path) and `F14Vector*` were not affected.
+folly, fbthrift, fb303, mvfst, wangle and proxygen keep their `facebook/` URLs. getdeps and `FBFetchFromManifest.cmake` find a dependency's pin at `github_hashes/<org>/<repo>-rev.txt` using the org in `repo_url`, and ShipIt only exports `facebook/` pins, so moving them would build them at main on GitHub. fboss also keeps its URL because its stable-commit scripts expect getdeps to clone it into `github.com-facebook-fboss.git`.
 
-**Risk.** Only the copy path changes: one header update for each chunk below the lowest occupied one, usually none or a few.
-
-Reviewed By: yfeldblum
-
-Differential Revision: D134571954
-
-fbshipit-source-id: 530da44d5c2a8c2be80e64b4915fb3692b505874
-
-**File**: `folly/container/detail/F14Table.h` (modified, +8/-5)
-```diff
-@@ -2250,13 +2250,15 @@ class F14Table : public Policy {
-       }
-     } else {
-       // Happy path, no rehash but pack items toward bottom of chunk
--      // and use copy constructor.  Don't try to optimize by using
--      // lastOccupiedChunk() because there may be higher unoccupied chunks
--      // with the overflow bit set.
-+      // and use copy constructor.  Visit every chunk, not just the occupied
-+      // ones: unoccupied chunks above and below them may still count items
-+      // that overflowed out of them, and find() stops at a chunk whose count
-+      // is zero.
-       auto* srcChunk =
-           Chunk::chunkRawAt(src.chunksToAddress(), chunkCount() - 1);
-       Chunk* dstChunk = Chunk::chunkRawAt(chunksToAddress(), chunkCount() - 1);
--      do {
-+      for (std::size_t chunksLeft = chunkCount(); chunksLeft > 0;
-+           --chunksLeft) {
-         dstChunk->copyOverflowInfoFrom(*srcChunk);
- 
-         auto iter = srcChunk->occupiedIter();
-@@ -2280,7 +2282,8 @@ class F14Table : public Policy {
- 
-         srcChunk = Chunk::prevChunkRaw(srcChunk);
-         dstChunk = Chunk::prevChunkRaw(dstChunk);
--      } while (size() != src.size());
-+      }
-+      FOLLY_SAFE_DCHECK(size() == src.size(), "");
- 
-       // reset doesn't care about packedBegin, so we don't fix it until the end
-       if constexpr (kEnableItemIteration) {
-```
-
-**File**: `folly/container/test/F14MapTest.cpp` (modified, +68/-0)
-```diff
-@@ -1076,6 +1076,74 @@ TEST(F14FastMap, rehash) {
-   runRehash<F14VectorMap<std::string, std::string>>();
- }
- 
-+namespace {
-+struct IdentityAvalanchingHasher {
-+  // this is a lie for testing purposes: it makes the low bits of the key pick
-+  // the chunk directly
-+  using folly_is_avalanching = std::true_type;
-+  std::size_t operator()(uint64_t key) const { return key; }
-+};
-+
-+template <typename M>
-+void runCopyFindsKeyOverflowedFromEmptyChunk() {
-+  // Four chunks for every policy: with an identity hash, multiples of 4 share
-+  // chunk 0, so once it is full (12 or 14 slots) the rest overflow out of it.
-+  M map;
-+  map.reserve(32);
-+  for (uint64_t key = 0; key < 60; key += 4) {
-+    map[key];
-+  }
-+  // Chunk 0 is now empty but still counts the overflowed key 56.
-+  for (uint64_t key = 0; key < 56; key += 4) {
-+    map.erase(key);
-+  }
-+  for (uint64_t key = 1; key < 32; ++key) {
-+    if (key % 4 != 0) {
-+      map[key];
-+    }
-+  }
-+#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
-+  auto stats = F14TableStats::compute(map);
-+  ASSERT_EQ(stats.chunkCount, std::size_t{4});
-+  if (!FOLLY_F14_PERTURB_INSERTION_ORDER) {
-+    // The layout the test relies on: one chunk is empty while it still counts
-+    // the overflowed key.  Debug builds randomise placement, so it is only
-+    // guaranteed without that.
-+    ASSERT_GE(stats.chunkOccupancyHisto.at(0), 1);
-+    ASSERT_GE(stats.chunkOutboundOverflowHisto.size(), std::size_t{2});
-+  }
-+#endif
-+
-+  M copy{map};
-+  EXPECT_EQ(copy.size(), map.size());
-+#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
-+  auto copyStats = F14TableStats::compute(copy);
-+  if (copyStats.chunkCount == stats.chunkCount) {
-+    EXPECT_EQ(
-+        copyStats.chunkOutboundOverflowHisto, stats.chunkOutboundOverflowHisto);
-+  }
-+#endif
-+  for (auto const& entry : map) {
-+    EXPECT_TRUE(copy.contains(entry.first)) << "key " << entry.first;
-+  }
-+}
-+} // namespace
-+
-+TEST(F14ValueMap, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14ValueMap<uint64_t, std::string, IdentityAvalanchingHasher>>();
-+}
-+
-+TEST(F14NodeMap, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14NodeMap<uint64_t, std::string, IdentityAvalanchingHasher>>();
-+}
-+
-+TEST(F14VectorMap, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14VectorMap<uint64_t, std::string, IdentityAvalanchingHasher>>();
-+}
-+
- template <typename T>
- void runPrehash() {
-   T h;
-```
-
-**File**: `folly/container/test/F14SetTest.cpp` (modified, +68/-0)
-```diff
-@@ -1025,6 +1025,74 @@ TEST(F14VectorSet, rehash) {
-   runRehash<F14VectorSet<std::string>>();
- }
- 
-+namespace {
-+struct IdentityAvalanchingHasher {
-+  // this is a lie for testing purposes: it makes the low bits of the key pick
-+  // the chunk directly
-+  using folly_is_avalanching = std::true_type;
-+  std::size_t operator()(uint64_t key) const { return key; }
-+};
-+
-+template <typename S>
-+void runCopyFindsKeyOverflowedFromEmptyChunk() {
-+  // Four chunks for every policy: with an identity hash, multiples of 4 share
-+  // chunk 0, so once it is full (12 or 14 slots) the rest overflow out of it.
-+  S set;
-+  set.reserve(32);
-+  for (uint64_t key = 0; key < 60; key += 4) {
-+    set.insert(key);
-+  }
-+  // Chunk 0 is now empty but still counts the overflowed key 56.
-+  for (uint64_t key = 0; key < 56; key += 4) {
-+    set.erase(key);
-+  }
-+  for (uint64_t key = 1; key < 32; ++key) {
-+    if (key % 4 != 0) {
-+      set.insert(key);
-+    }
-+  }
-+#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
-+  auto stats = F14TableStats::compute(set);
-+  ASSERT_EQ(stats.chunkCount, std::size_t{4});
-+  if (!FOLLY_F14_PERTURB_INSERTION_ORDER) {
-+    // The layout the test relies on: one chunk is empty while it still counts
-+    // the overflowed key.  Debug builds randomise placement, so it is only
-+    // guaranteed without that.
-+    ASSERT_GE(stats.chunkOccupancyHisto.at(0), 1);
-+    ASSERT_GE(stats.chunkOutboundOverflowHisto.size(), std::size_t{2});
-+  }
-+#endif
-+
-+  S copy{set};
-+  EXPECT_EQ(copy.size(), set.size());
-+#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
-+  auto copyStats = F14TableStats::compute(copy);
-+  if (copyStats.chunkCount == stats.chunkCount) {
-+    EXPECT_EQ(
-+        copyStats.chunkOutboundOverflowHisto, stats.chunkOutboundOverflowHisto);
-+  }
-+#endif
-+  for (auto key : set) {
-+    EXPECT_TRUE(copy.contains(key)) << "key " << key;
-+  }
-+}
-+} // namespace
-+
-+TEST(F14ValueSet, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14ValueSet<uint64_t, IdentityAvalanchingHasher>>();
-+}
-+
-+TEST(F14NodeSet, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14NodeSet<uint64_t, IdentityAvalanchingHasher>>();
-+}
-+
-+TEST(F14VectorSet, copyFindsKeyOverflowedFromEmptyChunk) {
-+  runCopyFindsKeyOverflowedFromEmptyChunk<
-+      F14VectorSet<uint64_t, IdentityAvalanchingHasher>>();
-+}
-+
- TEST(F14ValueSet, random) {
-   runRandom<F14ValueSet<uint64_t>>();
- }
-```
-
----
-
-### Incident Patch 2: `b7a6b684` (2026-11-25)
-**Commit Message**: tolerate null elf in DWARF section lookup
-
-Summary:
-Dwarf constructs its debug sections from the elf pointer in its member
-init list, so a null elf crashed in getElfSection before the body ran.
-Return empty spans for null instead; the existing missing-section handling
-and the findAddress null-elf gate cover the rest, with no behavior change
-for non-null callers.
+https://github.com/meta/watchman/pull/1367 also proposed these.
 
 ___
 
 landed-with-radar-review
 
-Reviewed By: dtolnay
+Differential Revision: D134435144
 
-Differential Revision: D134288032
+fbshipit-source-id: c1306953b228811c8c34a4ca0c3c9a7680b50435
 
-fbshipit-source-id: 2aefcac1f61183e829f377ba32d598c449f4973f
-
-**File**: `folly/debugging/symbolizer/DwarfUtil.cpp` (modified, +5/-0)
+**File**: `tool/fbcode_builder/lint_cmake_floors.external-linter-test` (modified, +1/-1)
 ```diff
-@@ -37,6 +37,11 @@ namespace folly {
- namespace symbolizer {
- 
- std::span<const uint8_t> getElfSection(const ElfFile* elf, const char* name) {
-+  // Tolerate null so Dwarf can be constructed without a file; callers check
-+  // for missing sections (and findAddress checks for a null elf).
-+  if (elf == nullptr) {
-+    return {};
-+  }
-   const ElfShdr* elfSection = elf->getSectionByName(name);
-   if (!elfSection) {
-     return {};
+@@ -16,7 +16,7 @@ fbcode/opensource/fbcode_builder/lint_test_fixtures/ok_at_floor/CMakeLists.txt
+   "code": "OSSCMAKEFLOOR",
+   "severity": "error",
+   "name": "cmake-floor",
+-  "description": "cmake_minimum_required is 3.5, below the OSS floor 3.14 (folly requires 3.14). Run `arc lint -a` to apply the bump. See https://github.com/facebook/folly/issues/2703.",
++  "description": "cmake_minimum_required is 3.5, below the OSS floor 3.14 (folly requires 3.14). Run `arc lint -a` to apply the bump. See https://github.com/meta/folly/issues/2703.",
+   "original": "cmake_minimum_required(VERSION 3.5)",
+   "replacement": "cmake_minimum_required(VERSION 3.14)",
+   "bypassChangedLineFiltering": null
 ```
 
-**File**: `folly/debugging/symbolizer/test/DwarfUtilTest.cpp` (modified, +8/-0)
+**File**: `tool/fbcode_builder/lint_cmake_floors.py` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,7 @@
-  * limitations under the License.
-  */
+@@ -13,7 +13,7 @@
+ This linter is a pure function of the files arc lint passes it: every input
+ is checked, nothing else is read. The set of covered files is owned by the
+ lint engine glob; the value they must meet is owned by FLOOR here.
+-See https://github.com/facebook/folly/issues/2703.
++See https://github.com/meta/folly/issues/2703.
  
-+#include <folly/debugging/symbolizer/Dwarf.h>
- #include <folly/debugging/symbolizer/DwarfImpl.h>
- #include <folly/debugging/symbolizer/DwarfSection.h>
- #include <folly/debugging/symbolizer/DwarfUtil.h>
-@@ -352,6 +353,13 @@ class RecordingElfCache : public ElfCacheBase {
-   }
- };
+ Usage:
+     python3 lint_cmake_floors.py @pathsfile
+@@ -128,7 +128,7 @@ def check_content(display: str, content: str) -> None:
+             f"cmake_minimum_required is {found_str}, below the OSS floor "
+             f"{floor_str} (folly requires {floor_str}). Run `arc lint -a` "
+             "to apply the bump. See "
+-            "https://github.com/facebook/folly/issues/2703.",
++            "https://github.com/meta/folly/issues/2703.",
+         )
  
-+TEST(DwarfUtil, NullElfKeepsFindAddressSafe) {
-+  Dwarf dwarf(nullptr, nullptr);
-+  SymbolizedFrame frame;
-+  EXPECT_FALSE(dwarf.findAddress(
-+      0, LocationInfoMode::FULL, frame, {}, [](folly::StringPiece) {}));
-+}
-+
- TEST(DwarfUtil, SplitDwarfWithoutCacheKeepsMainUnit) {
-   const auto unit = splitUnit("/build", "unit.dwo");
-   const auto result = getCompilationUnits(nullptr, unit.sections(), 0, true);
+ 
+```
+
+**File**: `tool/fbcode_builder/manifests/bgp` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = bgp
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/BGP.git
++repo_url = https://github.com/meta/BGP.git
+ 
+ [build.os=linux]
+ builder = cmake
+```
+
+**File**: `tool/fbcode_builder/manifests/cachelib` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = cachelib
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/cachelib.git
++repo_url = https://github.com/meta/cachelib.git
+ 
+ [build]
+ builder = cmake
+```
+
+**File**: `tool/fbcode_builder/manifests/eden` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = eden
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/sapling.git
++repo_url = https://github.com/meta/sapling.git
+ 
+ [build]
+ builder = nop
+```
+
+**File**: `tool/fbcode_builder/manifests/mcrouter` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = mcrouter
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/mcrouter.git
++repo_url = https://github.com/meta/mcrouter.git
+ 
+ [dependencies]
+ # mcrouter's LZ4 codecs need folly built with LZ4 and use <lz4.h> directly.
+```
+
+**File**: `tool/fbcode_builder/manifests/mononoke` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = eden
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/sapling.git
++repo_url = https://github.com/meta/sapling.git
+ 
+ [build.not(os=windows)]
+ builder = cargo
+```
+
+**File**: `tool/fbcode_builder/manifests/mononoke_integration` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ shipit_project = eden
+ shipit_fbcode_builder = true
+ 
+ [git]
+-repo_url = https://github.com/facebook/sapling.git
++repo_url = https://github.com/meta/sapling.git
+ 
+ [build.not(os=windows)]
+ builder = make
 ```
 
 ---
 
-### Incident Patch 3: `3196664e` (2026-11-25)
-**Commit Message**: contain secondary file lookups from malformed debug info
+### Incident Patch 2: `311ce8d8` (2026-11-26)
+**Commit Message**: Add FOLLY_ATTR_CLANG_ALWAYS_INLINE
 
-Summary: DW_AT_comp_dir, DW_AT_dwo_name, and .gnu_debuglink names are read from the file being parsed, so they may be malformed. .gnu_debuglink names are joined onto the executable's directory, so '..' segments there are rejected to keep the lookup from escaping it. (Names are stored verbatim and in practice are often absolute paths, which this lookup deliberately does not resolve; dwo paths are exempt: dwo_name legitimately contains '..' while comp_dir itself is arbitrary, so a check there would cost real builds with no containment.) Also open with O_NONBLOCK and refuse non-regular files, so a fifo target fails instead of blocking forever.
+Summary: Add `FOLLY_ATTR_CLANG_ALWAYS_INLINE`, which expands to `clang::always_inline` where that attribute is available and to nothing elsewhere. Unlike `FOLLY_ALWAYS_INLINE`, which marks a function declaration, it annotates a statement and forces inlining of the calls in that statement.
 
-Reviewed By: dtolnay
+Reviewed By: yuxuanchen1997
 
-Differential Revision: D134258949
+Differential Revision: D134442340
 
-fbshipit-source-id: 0006f245daca6db81cf145200792ad382ff30ba9
+fbshipit-source-id: 250acdbdf897d8539e79d61363dc9dacce7e0d18
 
-**File**: `folly/debugging/symbolizer/Elf.cpp` (modified, +37/-1)
+**File**: `folly/CppAttributes.h` (modified, +7/-0)
 ```diff
-@@ -54,6 +54,24 @@
- namespace folly {
- namespace symbolizer {
+@@ -226,6 +226,13 @@
+ #define FOLLY_ATTR_GNU_FLATTEN
+ #endif
  
-+namespace detail {
++// Can annotate call-site statements, unlike FOLLY_ALWAYS_INLINE.
++#if __has_cpp_attribute(clang::always_inline)
++#define FOLLY_ATTR_CLANG_ALWAYS_INLINE clang::always_inline
++#else
++#define FOLLY_ATTR_CLANG_ALWAYS_INLINE
++#endif
 +
-+bool elfHasDotDotSegment(std::string_view path) noexcept {
-+  for (size_t i = 0; i < path.size();) {
-+    size_t end = i;
-+    while (end < path.size() && path[end] != '/') {
-+      ++end;
-+    }
-+    if (end - i == 2 && path[i] == '.' && path[i + 1] == '.') {
-+      return true;
-+    }
-+    i = end + 1;
-+  }
-+  return false;
-+}
-+
-+} // namespace detail
-+
- void ElfFile::warmUp() noexcept {
-   detail::signal_safe_libc::warmUp();
- }
-@@ -90,8 +108,10 @@ ElfFile::OpenResult ElfFile::openNoThrow(
-   // check failure above if we leave fd != -1 and the object is recycled
-   auto guard = makeGuard([&] { reset(); });
-   detail::signal_safe_libc::strlcpy(filepath_, name, kFilepathMaxLen - 1);
-+  // O_NONBLOCK is ignored for regular files but keeps opening a fifo from
-+  // blocking; non-regular files are rejected below via fstat.
-   fd_ = detail::signal_safe_libc::open(
--      name, (options.writable() ? O_RDWR : O_RDONLY) | O_CLOEXEC);
-+      name, (options.writable() ? O_RDWR : O_RDONLY) | O_CLOEXEC | O_NONBLOCK);
-   if (fd_ == -1) {
-     return {kSystemError, "open"};
-   }
-@@ -100,6 +120,12 @@ ElfFile::OpenResult ElfFile::openNoThrow(
-   if (r == -1) {
-     return {kSystemError, "fstat"};
-   }
-+  // Only regular files can be meaningfully mapped; fstat follows symlinks,
-+  // so symlinked binaries keep working.
-+  if (!S_ISREG(st.st_mode)) {
-+    errno = EINVAL;
-+    return {kInvalidElfFile, "not a regular file"};
-+  }
- 
-   uint64_t mtime_ns = st.st_mtim.tv_sec * 1000'000'000LL + st.st_mtim.tv_nsec;
-   fileId_ = ElfFileId{
-@@ -159,6 +185,16 @@ ElfFile::OpenResult ElfFile::openAndFollow(
-   if (debugFileEnd == debugFileName.end()) {
-     return result;
-   }
-+  // The name is stored verbatim and in practice is often a full path, which
-+  // this dirname-joined lookup deliberately does not resolve. Reject ".."
-+  // segments so a hostile name cannot escape the executable's directory via
-+  // the joined path; a rejection falls back to the original file below.
-+  const std::string_view debugName(
-+      reinterpret_cast<const char*>(debugFileName.data()),
-+      static_cast<size_t>(debugFileEnd - debugFileName.begin()));
-+  if (detail::elfHasDotDotSegment(debugName)) {
-+    return result;
-+  }
-   auto debugFileLen = std::distance(debugFileName.begin(), debugFileEnd);
-   if (dirlen + debugFileLen >= PATH_MAX) {
-     return result;
-```
-
-**File**: `folly/debugging/symbolizer/Elf.h` (modified, +23/-0)
-```diff
-@@ -27,6 +27,7 @@
- #include <limits>
- #include <span>
- #include <stdexcept>
-+#include <string_view>
- #include <system_error>
- #include <unordered_map>
- 
-@@ -79,6 +80,28 @@ struct ElfFileId {
-   friend bool operator==(const ElfFileId& lhs, const ElfFileId& rhs) = default;
- };
- 
-+namespace detail {
-+
-+/**
-+ * True if any '/'-delimited segment of path is exactly "..".
-+ *
-+ * .gnu_debuglink names are attacker-controlled strings joined onto the
-+ * executable's directory; callers use this to keep the joined lookup from
-+ * escaping it. Names are stored verbatim by objcopy and in practice are
-+ * often full paths rather than bare filenames, so this policy only screens
-+ * relative escapes -- and is stricter than other consumers, which do not
-+ * sanitize. The failure mode is graceful (the original file is used).
-+ *
-+ * Note: this is deliberately not applied to DW_AT_comp_dir/DW_AT_dwo_name.
-+ * dwo_name is the compiler's output path relative to comp_dir (e.g.
-+ * "../obj/a.dwo" for "-o ../obj/a.o"), so legitimate builds contain ".."
-+ * segments; and comp_dir itself is an arbitrary absolute path, so the check
-+ * would add no containment there.
-+ */
-+bool elfHasDotDotSegment(std::string_view path) noexcept;
-+
-+} // namespace detail
-+
- /**
-  * ELF file parser.
-  *
-```
-
-**File**: `folly/debugging/symbolizer/test/DwarfUtilTest.cpp` (modified, +42/-0)
-```diff
-@@ -481,6 +481,48 @@ TEST(DwarfUtil, SplitDwarfRejectsOversizedPath) {
-   EXPECT_FALSE(result.splitCU.hasValue());
- }
- 
-+TEST(DwarfUtil, SplitDwarfAllowsDotDotName) {
-+  // dwo_name is the compiler's output path relative to comp_dir, so ".."
-+  // segments are legitimate (e.g. "../obj/a.dwo" for "-o ../obj/a.o").
-+  const auto unit = splitUnit("/build", "../escape.dwo");
-+  RecordingElfCache cache;
-+  const auto result = getCompilationUnits(&cache, unit.sections(), 0, true);
-+
-+  const std::vector<std::string> expected{"/build/../escape.dwo"};
-+  EXPECT_EQ(expected, cache.paths);
-+  EXPECT_EQ(unit.info.size(), result.mainCompilationUnit.size);
-+  EXPECT_FALSE(result.splitCU.hasValue());
-+}
-+
-+TEST(DwarfUtil, SplitDwarfAllowsDotDotDirectory) {
-+  const auto unit = splitUnit("/build/../escape", "unit.dwo");
-+  RecordingElfCache cache;
-+  const auto result = getCompilationUnits(&cache, unit.sections(), 0, true);
-+
-+  const std::vector<std::string> expected{"/build/../escape/unit.dwo"};
-+  EXPECT_EQ(expected, cache.paths);
-+  EXPECT_EQ(unit.info.size(), result.mainCompilationUnit.size);
-+  EXPECT_FALSE(result.splitCU.hasValue());
-+}
-+
-+TEST(DwarfUtil, SplitDwarfAllowsDotDotIndexedName) {
-+  ElfFile elf("/proc/self/exe");
-+  const auto unit = splitUnit(
-+      "/build",
-+      "../escape.dwo",
-+      {.indexedDirectory = true, .indexedName = true, .includeBase = true});
-+  RecordingElfCache cache;
-+  const auto result = getCompilationUnits(&cache, unit.sections(&elf), 0, true);
-+
-+  const std::vector<std::string> expected{
-+      "/build/../escape.dwo",
-+      std::string(elf.filepath()) + ".dwp",
-+  };
-+  EXPECT_EQ(expected, cache.paths);
-+  EXPECT_EQ(unit.info.size(), result.mainCompilationUnit.size);
-+  EXPECT_FALSE(result.splitCU.hasValue());
-+}
-+
- std::vector<uint8_t> unitAbbreviations() {
-   std::vector<uint8_t> bytes;
-   appendAbbreviation(
-```
-
-**File**: `folly/debugging/symbolizer/test/ElfTest.cpp` (modified, +25/-0)
-```diff
-@@ -192,6 +192,31 @@ TEST_F(ElfTest, UnopenedFileDegradesGracefully) {
-   EXPECT_EQ(nullptr, failed.getSymbolByName("main").first);
- }
- 
-+TEST_F(ElfTest, ElfHasDotDotSegment) {
-+  using folly::symbolizer::detail::elfHasDotDotSegment;
-+  EXPECT_FALSE(elfHasDotDotSegment(""));
-+  EXPECT_FALSE(elfHasDotDotSegment("unit.dwo"));
-+  EXPECT_FALSE(elfHasDotDotSegment("/build/unit.dwo"));
-+  EXPECT_FALSE(elfHasDotDotSegment("..."));
-+  EXPECT_FALSE(elfHasDotDotSegment("..foo"));
-+  EXPECT_FALSE(elfHasDotDotSegment("foo.."));
-+  EXPECT_FALSE(elfHasDotDotSegment("a/.../b"));
-+  EXPECT_TRUE(elfHasDotDotSegment(".."));
-+  EXPECT_TRUE(elfHasDotDotSegment("../escape.dwo"));
-+  EXPECT_TRUE(elfHasDotDotSegment("/build/../escape"));
-+  EXPECT_TRUE(elfHasDotDotSegment("a/../b"));
-+  EXPECT_TRUE(elfHasDotDotSegment("a/.."));
-+  EXPECT_TRUE(elfHasDotDotSegment("/.."));
-+}
-+
-+TEST_F(ElfTest, OpenFifoFailsWithoutBlocking) {
-+  folly::test::TemporaryDirectory dir("elf_test");
-+  const auto fifo = dir.path() / "fifo";
-+  ASSERT_EQ(0, ::mkfifo(fifo.c_str(), 0600));
-+  ElfFile file;
-+  EXPECT_EQ(ElfFile::kInvalidElfFile, file.openNoThrow(fifo.c_str()));
-+}
-+
- TEST_F(ElfTest, SymbolsByNameSuccess) {
-   std::vector<std::string> names = {"sum_func", "sub_func"};
-   auto result = elfFile_.getSymbolsByName(names, {STT_FUNC});
+ #if __has_cpp_attribute(clang::lifetimebound)
+ #define FOLLY_ATTR_CLANG_LIFETIMEBOUND clang::lifetimebound
+ #else
 ```
 
 #### Recent Merged Pull Requests:
@@ -2909,42 +2585,31 @@ fbshipit-source-id: 0006f245daca6db81cf145200792ad382ff30ba9
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. F14: copies can miss keys that overflowed from empty chunks
+## X. manifests: point unpinned repos at github.com/meta
 
 **RULE**:
-When implementing operations in `folly/container/detail/F14Table.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tool/fbcode_builder/lint_cmake_floors.external-linter-test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba27193e`: F14: copies can miss keys that overflowed from empty chunks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af9c9650`: manifests: point unpinned repos at github.com/meta. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/container/detail/F14Table.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tool/fbcode_builder/lint_cmake_floors.external-linter-test`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      // and use copy constructor.  Visit every chunk, not just the occupied
-      // ones: unoccupied chunks above and below them may still count items
-      // that overflowed out of them, and find() stops at a chunk whose count
-      // is zero.
-      for (std::size_t chunksLeft = chunkCount(); chunksLeft > 0;
-           --chunksLeft) {
-      }
-      FOLLY_SAFE_DCHECK(size() == src.size(), "");
+  "description": "cmake_minimum_required is 3.5, below the OSS floor 3.14 (folly requires 3.14). Run `arc lint -a` to apply the bump. See https://github.com/meta/folly/issues/2703.",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-      // and use copy constructor.  Don't try to optimize by using
-      // lastOccupiedChunk() because there may be higher unoccupied chunks
-      // with the overflow bit set.
-      do {
-      } while (size() != src.size());
+  "description": "cmake_minimum_required is 3.5, below the OSS floor 3.14 (folly requires 3.14). Run `arc lint -a` to apply the bump. See https://github.com/facebook/folly/issues/2703.",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba27193e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af9c9650` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

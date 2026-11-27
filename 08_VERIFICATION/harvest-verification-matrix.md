@@ -13767,3 +13767,4 @@
 | `CYCLE-20261127-3A5W` | `2026-11-27T10:51:56.084Z` | `MelnixDev/seo-crawl-audit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10882` | Yes (`0df35ec3...`) |
 | `CYCLE-20261127-3AKO` | `2026-11-27T10:51:56.616Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10883` | Yes (`d58328de...`) |
 | `CYCLE-20261127-HNM1` | `2026-11-27T11:03:06.697Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10884` | Yes (`7cfd284d...`) |
+| `CYCLE-20261127-WBCU` | `2026-11-27T11:14:30.654Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10885` | Yes (`f8382e60...`) |

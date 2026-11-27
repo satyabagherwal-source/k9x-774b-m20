@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-N0PM",
-    "timestamp": "2026-11-26T04:47:41.914Z",
-    "repository": "Edge0/Edge0-145B-NVFP4",
-    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
-    "contentHash": "9c6b3a9f2273856ae8d15240e92ff5f045a39c2acaf77249699ed1ec06bb9548",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-N22L",
     "timestamp": "2026-11-26T04:47:43.677Z",
     "repository": "medialab/xan",
@@ -7490,6 +7475,21 @@
     "repository": "apache/arrow",
     "learningId": "learn-github-apache-arrow",
     "contentHash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-WBCU",
+    "timestamp": "2026-11-27T11:14:30.654Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "f8382e60d3013ed492da15f7c0f9d338dee291fe4cc9c12ba0aee36977039a04",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

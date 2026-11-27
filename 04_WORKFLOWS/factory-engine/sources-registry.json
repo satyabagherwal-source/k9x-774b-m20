@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T11:03:10.461Z",
-    "lastVerified": "2026-11-27T11:03:10.461Z",
+    "lastChecked": "2026-11-27T11:14:36.823Z",
+    "lastVerified": "2026-11-27T11:14:36.823Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -405,8 +405,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:34:25.887Z",
-    "lastVerified": "2026-11-27T10:34:25.887Z",
+    "lastChecked": "2026-11-27T11:14:36.813Z",
+    "lastVerified": "2026-11-27T11:14:36.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -676,9 +676,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-26T16:49:23.061Z",
+    "lastChecked": "2026-11-27T11:14:34.465Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-26T16:49:23.061Z"
+    "lastVerified": "2026-11-27T11:14:34.465Z"
   },
   "iii-hq-iii": {
     "name": "iii-hq/iii",
@@ -1550,9 +1550,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-27T06:14:40.280Z",
+    "lastChecked": "2026-11-27T11:14:32.392Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-27T06:14:40.280Z"
+    "lastVerified": "2026-11-27T11:14:32.392Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4815,8 +4815,8 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T17:48:12.123Z",
-    "lastVerified": "2026-11-26T17:48:12.123Z",
+    "lastChecked": "2026-11-27T11:14:29.367Z",
+    "lastVerified": "2026-11-27T11:14:29.367Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -8427,9 +8427,9 @@
   "touchlab-kampkit": {
     "name": "KaMPKit",
     "officialUrl": "https://github.com/touchlab/KaMPKit",
-    "lastChecked": "2026-11-25T02:20:11.611Z",
+    "lastChecked": "2026-11-27T11:14:26.872Z",
     "revisionIdentifier": "4af02006",
-    "lastVerified": "2026-11-25T02:20:11.611Z"
+    "lastVerified": "2026-11-27T11:14:26.872Z"
   },
   "bahdotsh-wrkflw": {
     "name": "bahdotsh/wrkflw",
@@ -9123,14 +9123,14 @@
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T10:40:53.764Z",
-    "lastVerified": "2026-11-26T10:40:53.764Z",
+    "lastChecked": "2026-11-27T11:14:29.121Z",
+    "lastVerified": "2026-11-27T11:14:29.121Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
-    "contentHash": "06d2785eec682d4b99a6f376554bc3f653abbff073f8a67b4b697857cd5ad36f",
+    "contentHash": "f8382e60d3013ed492da15f7c0f9d338dee291fe4cc9c12ba0aee36977039a04",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9525,9 +9525,9 @@
   "code-forge-io-seo-tools": {
     "name": "seo-tools",
     "officialUrl": "https://github.com/code-forge-io/seo-tools",
-    "lastChecked": "2026-11-24T01:28:48.081Z",
+    "lastChecked": "2026-11-27T11:14:24.370Z",
     "revisionIdentifier": "e1e672b3",
-    "lastVerified": "2026-11-24T01:28:48.081Z"
+    "lastVerified": "2026-11-27T11:14:24.370Z"
   },
   "tableproapp-tablepro": {
     "name": "TableProApp/TablePro",

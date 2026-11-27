@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T11:03:06.720Z",
-  "total_cycles_completed": 13067,
-  "total_learnings_persisted": 13067,
-  "total_rules_promoted": 11796,
+  "last_updated": "2026-11-27T11:14:30.682Z",
+  "total_cycles_completed": 13068,
+  "total_learnings_persisted": 13068,
+  "total_rules_promoted": 11797,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:59:33.820Z",
-      "repository": "svenstaro/miniserve",
-      "learningId": "learn-github-svenstaro-miniserve",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:59:41.582Z",
       "repository": "Checkmarx/kics",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T11:03:06.720Z",
       "repository": "apache/arrow",
       "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:14:30.682Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

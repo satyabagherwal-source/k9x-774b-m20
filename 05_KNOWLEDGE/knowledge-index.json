@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T11:03:13.139Z",
+  "last_updated": "2026-11-27T11:14:41.714Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26525,
+  "total_items": 26528,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e1a0c155abf99a538c6ee29b0d8c07d42c15afd3c37f7f9121aad2c382f1514",
+      "content_hash": "f3b3cf8ff94c21c5db55c6f48932cc568c23c3ba5978339b91d2f1df987c81ca",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T08:46:50.850Z"
+      "persisted_at": "2026-11-27T11:14:41.520Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "329687c99eac0d1526f55ddab0055e01d75d7da71b5de3ea3e64ed2ff713326e",
+      "content_hash": "450873242932c82f6b917afba9f31a5cdc2c1c9d73c99c7f2dedbf706c9bf66c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T08:46:50.998Z"
+      "persisted_at": "2026-11-27T11:14:41.714Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "366019d5b10d31f1041e55e8d4220662ddb54878ee8349df2ca0c024adbe1591",
+      "content_hash": "193cd8b80fee5538a1e438d0c5623a7e23e5dd620b41288ccd13dc08f68ab1f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:03:13.139Z"
+      "persisted_at": "2026-11-27T11:14:40.173Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -237758,8 +237758,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "ba27193e",
-      "content_hash": "06d2785eec682d4b99a6f376554bc3f653abbff073f8a67b4b697857cd5ad36f",
+      "source_version": "af9c9650",
+      "content_hash": "f8382e60d3013ed492da15f7c0f9d338dee291fe4cc9c12ba0aee36977039a04",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -237802,6 +237802,11 @@
           "number": 10650,
           "title": "copies can miss keys that overflowed from empty chunks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10885,
+          "title": "point unpinned repos at github.com/meta",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237809,7 +237814,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T10:40:55.011Z",
+      "verified_at": "2026-11-27T11:14:30.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237851,10 +237856,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-architecture-intelligence-meta-folly-core-invariants.md",
       "title": "Architecture Intelligence: meta/folly Core Invariants",
       "repository": "meta/folly",
-      "source_version": "f0ccd5a6",
-      "content_hash": "0e7f8302b8bac84c90592239d31db7e140ae0cd04010bc1c1969ea60c153c2ef",
+      "source_version": "af9c9650",
+      "content_hash": "2d34887b275da41650c9a90bd5758f0ec97ef5b66687e68bb1108ce0973a86b1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:13:32.770Z"
+      "persisted_at": "2026-11-27T11:14:31.192Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meta-folly",
@@ -237863,10 +237868,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "ba27193e",
-      "content_hash": "6dd78a81c7701e926246e2f8cd479f0fd7753b27c28bf0c420912ff761e2a69a",
+      "source_version": "af9c9650",
+      "content_hash": "757807310f337c2fc8ba6aa68c65a083422b1d8f7d636adee0d61d10384ec18e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T10:40:56.422Z"
+      "persisted_at": "2026-11-27T11:14:31.457Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -238092,9 +238097,9 @@
       "title": "Architecture Intelligence: facebook-folly-learnings Core Invariants",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "80de9ed68d3fca68bf06ca4199e0ebeac372dc8e6fa1331800561a49fa7ec837",
+      "content_hash": "b4daf5cbb1f220a005342b067db690b157c74019169c8e89fa6f9425984fa999",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T03:13:39.711Z"
+      "persisted_at": "2026-11-27T11:14:38.621Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-facebook-folly-learnings",
@@ -238104,9 +238109,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b77ab7721eb851fb6724c00f7bf4e506c522ef23eec2518afeee2fd4ad023c7",
+      "content_hash": "e88b98499b4a6a4a28951bc762b391f750fc920b434bed2723c32f1e2cbbd5fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T10:41:10.735Z"
+      "persisted_at": "2026-11-27T11:14:38.869Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -300926,9 +300931,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9cfbe920bf0a1f7bf61a87ecbb322fe41df757fbce27159a96078780e39ae489",
+      "content_hash": "e87cd93e4b00541b9207ae02b087ef7f5799feb32dbfcc68d2845dc1b8149e86",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T08:46:50.678Z"
+      "persisted_at": "2026-11-27T11:14:41.294Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358181,13 +358186,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HSB6-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WIAK-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6b035e75935123fa5739a73b6a3f973047fcef6a92c8f1e414c81b778e4e031",
+      "content_hash": "471efc0fd1c851025ba15342dd98090ed758407b1a1aeb41ee5767194f5566fe",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:03:12.791Z"
+      "persisted_at": "2026-11-27T11:14:39.649Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358197,9 +358202,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5224e14d70fbf6023936452de7254944d31e24d464198aa5fa6f60df5b11ee1",
+      "content_hash": "24421a10d848edf4574dcb26fa2e4ff6831ab712cbf40557c9c94e74f94165d0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:03:12.958Z"
+      "persisted_at": "2026-11-27T11:14:39.937Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362667,13 +362672,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-METJ-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WJBZ-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbba3de5616bd6a656d4ac8d61bf76de2b5947078cb5cd5c2bc5d10f7a6eab5b",
+      "content_hash": "9e07fe070345e64f029f0e4198dc7f25964ac6b54029e58281b4121e00340cb9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T08:46:50.504Z"
+      "persisted_at": "2026-11-27T11:14:40.992Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -364051,6 +364056,44 @@
       "content_hash": "bab24869d4edc11e8af1627c8447fb9f8a3fe60429fb2a87faa76cb17b3dc680",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T11:03:11.250Z"
+    },
+    "rule-10885": {
+      "learning_id": "rule-10885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10885,
+      "title": "point unpinned repos at github.com/meta",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "af9c9650",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T11:14:30.366Z"
+    },
+    "candidate_directive-point-unpinned-repos-at-github-com-meta": {
+      "item_id": "candidate_directive-point-unpinned-repos-at-github-com-meta",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WBL9-point-unpinned-repos-at-github-com-meta.md",
+      "title": "point unpinned repos at github.com/meta",
+      "repository": "meta/folly",
+      "source_version": "af9c9650",
+      "content_hash": "34889ed13dd7247d9d202f07e05ba451dadcfceb90575390f06e830b5d12b8ff",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-27T11:14:30.963Z"
+    },
+    "candidate_directive-manifests-point-unpinned-repos-at-github-com-meta": {
+      "item_id": "candidate_directive-manifests-point-unpinned-repos-at-github-com-meta",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WHAJ-manifests-point-unpinned-repos-at-github-com-meta.md",
+      "title": "manifests: point unpinned repos at github.com/meta",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cad797788c7e6759d7068f50136e05dc87ab0d9725a9484a35975951a1d9b8f5",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-27T11:14:38.354Z"
     }
   },
   "ai-builder-brain": {
