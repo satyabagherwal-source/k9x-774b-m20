@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T07:39:30.464Z",
+  "last_updated": "2026-11-27T07:49:08.389Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26437,
+  "total_items": 26443,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112449,10 +112449,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "repository": "duckdb/duckdb",
-      "source_version": "c826f8f7",
-      "content_hash": "8fae972e1828abd54fb6e268867ec2190f0e5ae7a08ab395a885759d39742e01",
+      "source_version": "b1ae457e",
+      "content_hash": "7f3e3cba41b156e441edb40adca56319e39af95b35c70e65a3e74af00722d1ad",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:55:27.867Z"
+      "persisted_at": "2026-11-27T07:49:01.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb",
@@ -112461,10 +112461,10 @@
       "relative_path": "08_VERIFICATION/duckdb-duckdb-verification-protocol-empirical-defect-shield-for-duckdb-duckdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for duckdb/duckdb",
       "repository": "duckdb/duckdb",
-      "source_version": "c826f8f7",
-      "content_hash": "7e797c1e99ea0f84f6e211273f675c3fc623547cab5477ffa7b4adbec5eed4f4",
+      "source_version": "b1ae457e",
+      "content_hash": "6c3995009554052f06d6ebadfbfdf56401a60a793f1086c30bf7631c006becb5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:55:28.250Z"
+      "persisted_at": "2026-11-27T07:49:01.988Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "aa0282b2",
-      "content_hash": "ba89c1dfd433f245d1c1527d1bf7a3ab76120b8e179d0f0c04c21b7c8f1f357c",
+      "content_hash": "9ed3ac2e2881d0f04a307504eef37afd24f725e1bc0bd17a3bc58e08f8c2c153",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T05:39:48.299Z"
+      "persisted_at": "2026-11-27T07:48:57.003Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "aa0282b2",
-      "content_hash": "343a85b5055c0e86b3cbaa1f9d64d207c1f7b9c56ec940d2da0e17b6e0798fa8",
+      "content_hash": "42c993a48e7a0bfcb0c2892db2cdb7081b416dc9b21182a74856a4d0a06813b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T05:39:48.598Z"
+      "persisted_at": "2026-11-27T07:48:57.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -216308,13 +216308,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "aa0282b2",
-      "content_hash": "383849911816e4b9ee68f5b3270e12e3892a9f82f4599708ff364feccfcfe1fd",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "fed1ee76bec3c01262aaa87076e184337aa1bd400166d5b491693b85903da37f",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216444,7 +216444,7 @@
         {
           "number": 10837,
           "title": "Empirical Invariant Guard in merge-fixup.sh",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216452,7 +216452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T05:39:47.349Z",
+      "verified_at": "2026-11-27T07:48:56.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231844,8 +231844,8 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "b11b73e7",
-      "content_hash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
+      "source_version": "7234f173",
+      "content_hash": "be6005fa07c636dabb0d1e42077bd16ec4c95b5a088600a9065ce3c077a001cb",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
@@ -231858,6 +231858,11 @@
           "number": 9680,
           "title": "JavaScript actions, private uses, prebuilt runner image, stand-in r",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10853,
+          "title": "Prepare 0.9.0, and fix what the held-out sweep found",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231865,7 +231870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:43:44.033Z",
+      "verified_at": "2026-11-27T07:48:47.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231905,10 +231910,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/bahdotsh-wrkflw-agent-contract-bahdotsh-wrkflw-autonomous-specialist-persona.md",
       "title": "Agent Contract: bahdotsh/wrkflw Autonomous Specialist Persona",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b11b73e7",
-      "content_hash": "327cc2f935a8c7afe40ac66a99482b170a53d0b0f8726447ef36f348fc623114",
+      "source_version": "7234f173",
+      "content_hash": "a4788be1243d00e7c86f6cc147c86691ca0d5cd2323d91dd335b0063e78b580f",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T00:43:44.836Z"
+      "persisted_at": "2026-11-27T07:48:48.331Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw",
@@ -231917,10 +231922,10 @@
       "relative_path": "08_VERIFICATION/bahdotsh-wrkflw-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh/wrkflw",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b11b73e7",
-      "content_hash": "3bf1de2a4ab0eb3ed1b7c8c207c607570661d596d7b087e3462459a54e64c666",
+      "source_version": "7234f173",
+      "content_hash": "4a147870692d8cc1bd0a55fed59c69f0ec357f63cd0a01e99364ea2e86ec84e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:43:44.977Z"
+      "persisted_at": "2026-11-27T07:48:48.554Z"
     },
     "learn-github-czy0729-bangumi": {
       "learning_id": "learn-github-czy0729-bangumi",
@@ -232023,8 +232028,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "9f296bf9",
-      "content_hash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
+      "source_version": "1a577e50",
+      "content_hash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -232077,6 +232082,11 @@
           "number": 10710,
           "title": "Update temporalio/ui Docker tag to v2.58.1",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10854,
+          "title": "Classify TLS record version mismatch as recoverable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232084,7 +232094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T15:02:19.863Z",
+      "verified_at": "2026-11-27T07:48:54.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232138,10 +232148,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "9f296bf9",
-      "content_hash": "3d2d45a6fceacfdacc3e7ec10c2a80b4de451caa7ba3680bccbe914083b469c4",
+      "source_version": "1a577e50",
+      "content_hash": "573ece66599b0e5473f3fd8d99ff117c1a04643eef5f15c24f6e29ede0186bcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:02:20.997Z"
+      "persisted_at": "2026-11-27T07:48:55.674Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -232163,9 +232173,9 @@
       "title": "Agent Contract: bahdotsh-wrkflw-learnings Autonomous Specialist Persona",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad893c5210d9c2a635b362d6b8bdede3106d37103e4945e16cf9b359810df4f4",
+      "content_hash": "890e3b3feb3d447a05a9617a6511dde8f743915eaba0461cb3100b65719507a5",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T00:44:00.022Z"
+      "persisted_at": "2026-11-27T07:49:06.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bahdotsh-wrkflw-learnings",
@@ -232175,9 +232185,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bahdotsh-wrkflw-learnings",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "1da5a302437ece7a6a2ba2ac0e0b1828fdcca69c52bf696a984dbc350a4b0e65",
+      "content_hash": "af52446d77224c8a19057c7d4f5cf8bab028c98efbeb0aa19d50c069cf1ff281",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:44:00.154Z"
+      "persisted_at": "2026-11-27T07:49:06.326Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
@@ -241757,8 +241767,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "c826f8f7",
-      "content_hash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
+      "source_version": "b1ae457e",
+      "content_hash": "6365bb385efd09dba1ead524dd5d7648a662da2ed667eac338551ef9041f3637",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -241806,6 +241816,11 @@
           "number": 10697,
           "title": "read_duckdb filters on columns that are converted for the scan",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10855,
+          "title": "Spill top-N heap aggregate states under memory pressure",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241813,7 +241828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:55:27.185Z",
+      "verified_at": "2026-11-27T07:49:00.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244728,7 +244743,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "a1b5adcd7a8b9f189a03686b0073a589e0d9e6af9e1dae1680307dfc553b07bb",
+      "content_hash": "a4732c51f50ab0d16f589ab6c382847ef2edbddef5d6f753dacc22e034653d92",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -244737,7 +244752,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:23:48.562Z",
+      "verified_at": "2026-11-27T07:48:45.567Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244814,9 +244829,9 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings Core Invariants",
       "repository": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings",
       "source_version": "HEAD",
-      "content_hash": "9df6cefb8c61125aa6b0daccc97b51c6ef905b1f76cf7d2903959aa980d9575e",
+      "content_hash": "c4750f6bbd0930885a3382776fee3b50d2834197b760630681d15cc8943a36b0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:24:07.295Z"
+      "persisted_at": "2026-11-27T07:49:06.899Z"
     },
     "learn-huggingface-vllm-sr-d3": {
       "learning_id": "learn-huggingface-vllm-sr-d3",
@@ -287919,10 +287934,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "9f296bf9",
-      "content_hash": "33b6a677358c38122036585de518ba992cc1eba7a7c4ce8b87ff45a9520b89df",
+      "source_version": "1a577e50",
+      "content_hash": "bec690800fbd386ce0524f49077c0e312fa501916a44bbaa25bce51c3ec8b2b9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T15:02:20.772Z"
+      "persisted_at": "2026-11-27T07:48:55.344Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -287944,9 +287959,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "441e3df7e825b612a215dbb64b033d39f5717cf3bac46cee56950b646d090b10",
+      "content_hash": "865f5ed1af76cf63961cfc84678b4abf6852bb5fefa9e055354b070afb3d7ef7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:50:27.754Z"
+      "persisted_at": "2026-11-27T07:49:08.104Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -287956,9 +287971,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8c960197449d2c09db9da79c1c2dd96cc7c99f8f3a9748d5d3acb59cdfc4ac3",
+      "content_hash": "e1bbd5385bfc65b0daa8fd87247bc2135ff2c5b4623334575f307e3e52fa4fd5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T14:50:27.994Z"
+      "persisted_at": "2026-11-27T07:49:08.389Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -301406,10 +301421,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
       "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
       "repository": "bahdotsh/wrkflw",
-      "source_version": "b11b73e7",
-      "content_hash": "3ef46faf82cb7afb6922419325880c8d72fa2a90ddc08034fe38d5292a4b2a3b",
+      "source_version": "7234f173",
+      "content_hash": "e704cf19951ffcd786f3532736cc2b1faf5f5dddb28dd059fb83deec750e0a3e",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T00:43:44.665Z"
+      "persisted_at": "2026-11-27T07:48:48.069Z"
     },
     "rule-9383": {
       "learning_id": "rule-9383",
@@ -301445,9 +301460,9 @@
       "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
       "repository": "bahdotsh-wrkflw-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f8974895f690179891abd55933abc327359b1aa96cc35a770bef6e8a6f358cd",
+      "content_hash": "1fee62268aa2817522fd74bb3eba2442520a4bf52336a3dbfc8e2e912e20660d",
       "domain_letter": "A",
-      "persisted_at": "2026-11-21T00:43:59.864Z"
+      "persisted_at": "2026-11-27T07:49:05.826Z"
     },
     "rule-9384": {
       "learning_id": "rule-9384",
@@ -302079,9 +302094,9 @@
       "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 Core Invariants",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "7401433739da94a92f3a54f24c8603b99d4ce657b1d3b45f26b8a89e27cc968f",
+      "content_hash": "f1d771a79b52a429fea7e3228b5066f48ee18dd869c990cf06f98d9926e410fa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:23:49.149Z"
+      "persisted_at": "2026-11-27T07:48:46.283Z"
     },
     "rule-9401": {
       "learning_id": "rule-9401",
@@ -362118,26 +362133,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10837,
       "title": "Empirical Invariant Guard in merge-fixup.sh",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "aa0282b2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-27T05:39:47.349Z"
+      "verified_at": "2026-11-27T07:48:56.040Z"
     },
     "candidate_directive-empirical-invariant-guard-in-merge-fixup-sh": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-merge-fixup-sh",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y265-empirical-invariant-guard-in-merge-fixup-sh.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JYFM-empirical-invariant-guard-in-merge-fixup-sh.md",
       "title": "Empirical Invariant Guard in merge-fixup.sh",
-      "repository": "provablehq-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "dbfe1b61e9f646f0a977e02fea133d5a780868968746b22e31760cd6c87196c3",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "aa0282b2",
+      "content_hash": "97945dfe7c06e4552a59a3caa69237038ea32eca4c9258370b6ad6f379c4d8ab",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T05:39:56.675Z"
+      "persisted_at": "2026-11-27T07:48:56.729Z"
     },
     "rule-10838": {
       "learning_id": "rule-10838",
@@ -362762,6 +362777,84 @@
       "content_hash": "b635c35bbefaa90e28b683d3be758163dd843362f53fa15788778606fdeca664",
       "domain_letter": "I",
       "persisted_at": "2026-11-27T07:39:29.024Z"
+    },
+    "rule-10853": {
+      "learning_id": "rule-10853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10853,
+      "title": "Prepare 0.9.0, and fix what the held-out sweep found",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "7234f173",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:48:47.060Z"
+    },
+    "candidate_directive-prepare-0-9-0-and-fix-what-the-held-out-sweep-found": {
+      "item_id": "candidate_directive-prepare-0-9-0-and-fix-what-the-held-out-sweep-found",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K58S-prepare-0-9-0-and-fix-what-the-held-out-sweep-found.md",
+      "title": "Prepare 0.9.0, and fix what the held-out sweep found",
+      "repository": "bahdotsh-wrkflw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e18ea49cadcb1b2231a48cadf00426a77ad1592ab4f6de66a726024589c16587",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T07:49:05.555Z"
+    },
+    "rule-10854": {
+      "learning_id": "rule-10854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10854,
+      "title": "Classify TLS record version mismatch as recoverable",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "1a577e50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:48:54.316Z"
+    },
+    "candidate_directive-classify-tls-record-version-mismatch-as-recoverable": {
+      "item_id": "candidate_directive-classify-tls-record-version-mismatch-as-recoverable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K705-classify-tls-record-version-mismatch-as-recoverable.md",
+      "title": "Classify TLS record version mismatch as recoverable",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e6dc2f4bf183ac157300433cb29d755dad012f144795f3295b4087ed048e3e1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T07:49:07.835Z"
+    },
+    "rule-10855": {
+      "learning_id": "rule-10855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10855,
+      "title": "Spill top-N heap aggregate states under memory pressure",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "b1ae457e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T07:49:00.772Z"
+    },
+    "candidate_directive-spill-top-n-heap-aggregate-states-under-memory-pressure": {
+      "item_id": "candidate_directive-spill-top-n-heap-aggregate-states-under-memory-pressure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K22R-spill-top-n-heap-aggregate-states-under-memory-pressure.md",
+      "title": "Spill top-N heap aggregate states under memory pressure",
+      "repository": "duckdb/duckdb",
+      "source_version": "b1ae457e",
+      "content_hash": "8c886e742ae45ed825e07bcac06196bde0c4b04ee0310e468d4e1479e2a574e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T07:49:01.450Z"
     }
   },
   "ai-builder-brain": {

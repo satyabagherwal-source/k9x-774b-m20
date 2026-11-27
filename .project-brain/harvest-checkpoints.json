@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:39:24.564Z",
+  "last_updated": "2026-11-27T07:49:01.125Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "a1b5adcd7a8b9f189a03686b0073a589e0d9e6af9e1dae1680307dfc553b07bb",
-      "verified_at": "2026-11-23T22:23:48.865Z",
+      "content_hash": "a4732c51f50ab0d16f589ab6c382847ef2edbddef5d6f753dacc22e034653d92",
+      "verified_at": "2026-11-27T07:48:45.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:23:48.865Z"
+      "last_updated": "2026-11-27T07:48:45.947Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "383849911816e4b9ee68f5b3270e12e3892a9f82f4599708ff364feccfcfe1fd",
-      "verified_at": "2026-11-27T05:39:47.705Z",
+      "content_hash": "fed1ee76bec3c01262aaa87076e184337aa1bd400166d5b491693b85903da37f",
+      "verified_at": "2026-11-27T07:48:56.393Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T05:39:47.705Z"
+      "last_updated": "2026-11-27T07:48:56.393Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
-      "verified_at": "2026-11-26T15:02:20.255Z",
+      "content_hash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
+      "verified_at": "2026-11-27T07:48:54.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T15:02:20.255Z"
+      "last_updated": "2026-11-27T07:48:54.687Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
-      "verified_at": "2026-11-26T13:55:27.446Z",
+      "content_hash": "6365bb385efd09dba1ead524dd5d7648a662da2ed667eac338551ef9041f3637",
+      "verified_at": "2026-11-27T07:49:01.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:55:27.446Z"
+      "last_updated": "2026-11-27T07:49:01.124Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -11166,14 +11166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bahdotsh-wrkflw",
-      "content_hash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
-      "verified_at": "2026-11-21T00:43:44.273Z",
+      "content_hash": "be6005fa07c636dabb0d1e42077bd16ec4c95b5a088600a9065ce3c077a001cb",
+      "verified_at": "2026-11-27T07:48:47.442Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:43:44.273Z"
+      "last_updated": "2026-11-27T07:48:47.442Z"
     },
     "jordanbaird/Ice": {
       "repository": "jordanbaird/Ice",

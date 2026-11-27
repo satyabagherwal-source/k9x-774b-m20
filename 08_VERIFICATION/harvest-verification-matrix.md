@@ -13718,3 +13718,8 @@
 | `CYCLE-20261127-WK5G` | `2026-11-27T07:30:45.124Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10851` | Yes (`2161f24c...`) |
 | `CYCLE-20261127-7IEH` | `2026-11-27T07:39:16.073Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`52990d42...`) |
 | `CYCLE-20261127-7OXK` | `2026-11-27T07:39:24.536Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10852` | Yes (`775e5e15...`) |
+| `CYCLE-20261127-JQ3K` | `2026-11-27T07:48:45.920Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`a4732c51...`) |
+| `CYCLE-20261127-JR8N` | `2026-11-27T07:48:47.399Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10853` | Yes (`be6005fa...`) |
+| `CYCLE-20261127-JWTW` | `2026-11-27T07:48:54.644Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10854` | Yes (`8d12bc4e...`) |
+| `CYCLE-20261127-JY5G` | `2026-11-27T07:48:56.356Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10837` | Yes (`fed1ee76...`) |
+| `CYCLE-20261127-K1SX` | `2026-11-27T07:49:01.089Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10855` | Yes (`6365bb38...`) |

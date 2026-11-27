@@ -4,22 +4,22 @@
 {
   "source_repository": "duckdb/duckdb",
   "source_url": "https://github.com/duckdb/duckdb",
-  "source_version": "c826f8f7",
+  "source_version": "b1ae457e",
   "license": "MIT",
-  "timestamp": "2026-11-26T13:55:27.676Z",
+  "timestamp": "2026-11-27T07:49:01.450Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-duckdb-duckdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `c826f8f7`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T13:55:27.676Z`  
+> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `b1ae457e`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T07:49:01.450Z`  
 > **Learning ID**: `learn-github-duckdb-duckdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `duckdb/duckdb` (Commit: `c826f8f7`)
+- **Target Repository**: `duckdb/duckdb` (Commit: `b1ae457e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:55:26.377Z  
+> **Harvest Timestamp**: 2026-11-27T07:48:59.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43374 stars
+- **Stars / Engagement**: 43397 stars
 
 ---
 
@@ -1982,11 +1982,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29430** (2026-11-26): **Reduce repeated work in common-subplan extraction**
-  *Symptoms*: Common-subplan extraction resolves types for the entire plan for every materialized subplan and scans its replacement list for every column reference. Resolve types only for the subplans being extracted and use the existing `BindingReplacementGraph` for indexed binding lookups.
+- **Issue #29452** (2026-11-26): **Propagate more filter constraints to join inputs**
+  *Symptoms*: Filter pullup can lose useful predicates at projections, aggregates, windows, and set operations even when those predicates remain true for the output rows. This prevents enclosing joins from applying static filters to other inputs.  Export guaranteed constraints through these boundaries while retaining the original predicates. Projections reuse existing columns and safe computed outputs. Aggregates use keys present in every grouping set; windows use partition keys common to all windows. `UNION` exports predicates shared by every branch after coercion, `EXCEPT` uses left-input constraints, and `INTERSECT` can use constraints from either input.  Also derive constraints through hidden equality keys. For example, `SELECT x FROM t WHERE x = hidden AND hidden IN (2, 8)` can expose `x IN (2, 8)` to an enclosing join. Hidden intermediary join keys can similarly establish equalities between existing outputs.  Share the key-constraint proof with the filter combiner and connect visible equality-class members through one representative, bounding inferred copies without adding projection columns. Preserve comparison structure, constant representation, output bindings, and guards around throwing or volatile expressions.
 
-- **Issue #29426** (2026-11-26): **Reduce relation-set lookup and join reconstruction overhead**
-  *Symptoms*: Builds on #29415; the measurements below compare against that change.  Large join regions spend time walking the relation-set trie and scanning predicates at every reconstructed join. Store complete relation sets in the existing manager using a hash table, with exact comparison on collisions and stable ownership. During reconstruction, collect the remaining filters once so predicates already assigned to joins are excluded from repeated filter scans.  Warm PREPARE medians from five interleaved runs per variant, using two threads on ARM64 with assertions enabled:  | Workload | Before | After | |---|---:|---:| | 64-input flattened query | 322 ms | 314 ms | | 65-input selective external join | 1,476 ms | 1,541 ms | | 1,024-input view expansion | 622 ms | 558 ms | | 4,096-input view expansion | 7.94 s | 5.36 s |  The selective 65-input control regresses by 4–6% across the initial panel and a fresh-process repeat. This tradeoff remains; the improvement targets the much larger regions. Default and forced-approximate plans match for all 234 IMDB, TPC-H and TPC-DS benchmark queries; forced-approximate results match their existing answers.  Local unit testing could not complete the large ART VARCHAR memory test: both this change and the parent build exceeded the same 32 GiB process-tree limit. 
+- **Issue #29450** (2026-11-26): **Cache common-subplan signatures and cost summaries**
+  *Symptoms*: Common-subplan discovery repeatedly hashes and compares entire subtrees and recomputes their materialization statistics. Intern immutable signatures with cached hashes, and compute per-operator cost summaries bottom-up for candidate filtering.  Preserve exact matching when hashes collide, and discard filtering summaries before extraction changes the tree.  Follow-up to #29442.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2003,1512 +2003,1167 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d648b503` (2026-11-26)
-**Commit Message**: Fix read_duckdb filters on columns that are converted for the scan (#29149)
+### Incident Patch 1: `d1508f3a` (2026-11-26)
+**Commit Message**: Spill top-N heap aggregate states under memory pressure (#29335)
 
-`read_duckdb` evaluates a pushed-down filter against the stored column
-when the column has to be converted for the scan. A column is converted
-whenever a file stores it with another type or shape than the scan
-reads: an explicit `schema`, `union_by_name`, or several databases that
-store a column differently. Depending on the conversion the query
-returns wrong rows, fails with an internal error, or reads out of
-bounds.
+`min(x,n)`/`max(x,n)` and `arg_min(x, y, n)`/`arg_max(x, y, n)` keep
+their top-N values in a heap in the aggregate's arena. These states
+could not be exported, so the hash aggregate could not spill them, and
+queries such as [h2o
+q08](https://github.com/duckdb/duckdb/blob/0a784852e33/benchmark/h2oai/group/queries/q08.sql)
+ran out of memory under a memory limit.
 
-```sql
-ATTACH 'r.db' AS r;
-CREATE TABLE r.t AS SELECT {'a': 1::BIGINT, 'b': 2::BIGINT} s, 5::INTEGER x;
-DETACH r;
+This PR lets these states be exported and imported, so the hash
+aggregate can spill them, as it already does for `list()` and string
+`min/max`. A state is written as a struct with n and a list of the
+values it currently keeps. As a side effect, `EXPORT_STATE`,
+`combine_aggr` and `finalize` now work for these functions, running
+top-N windows use the streaming window operator, and
+`ROLLUP`/`CUBE`/`GROUPING SETS` with top-N aggregates cascade through
+exported states. A non-constant n keeps the old behavior, meaning that
+those states are not exported and don't use the streaming window,
+because states with different n cannot be combined.
 
--- the fields of s are crossed, so s reads as {'a': 2, 'b': 1}
-SELECT s FROM read_duckdb('r.db', schema = MAP {
-    's': {name: 's', type: 'STRUCT(a BIGINT, b BIGINT)', default_value: NULL, children: MAP {
-        'b': {name: 'a', type: 'BIGINT', default_value: NULL},
-        'a': {name: 'b', type: 'BIGINT', default_value: NULL}}}})
-WHERE s = {'a': 2, 'b': 1};
--- 0 rows. WHERE s = {'a': 1, 'b': 2} returns the row, as the stored {'a': 1, 'b': 2}.
+h2o q08 (1e8 rows, 32 threads) now finishes with a 1 GB `memory_limit`,
+where main runs out of memory at 2 GB already. At 4 GB i
 
--- INTEGER read as BIGINT
-SELECT x FROM read_duckdb('r.db', schema = MAP {'x': {name: 'x', type: 'BIGINT', default_value: NULL}})
-WHER
-
-**File**: `src/function/table/read_duckdb.cpp` (modified, +155/-3)
+**File**: `extension/core_functions/aggregate/distributive/arg_min_max.cpp` (modified, +59/-4)
 ```diff
-@@ -12,6 +12,11 @@
- #include "duckdb/storage/data_table.hpp"
- #include "duckdb/main/database_manager.hpp"
- #include "duckdb/parser/parsed_data/attach_info.hpp"
-+#include "duckdb/execution/expression_executor.hpp"
-+#include "duckdb/planner/expression/bound_reference_expression.hpp"
-+#include "duckdb/planner/expression_iterator.hpp"
-+#include "duckdb/planner/table_filter_state.hpp"
-+#include "duckdb/storage/table/column_segment.hpp"
+@@ -683,6 +683,41 @@ class ArgMinMaxNState {
+ 		heap.Initialize(allocator, nval);
+ 		is_initialized = true;
+ 	}
++
++	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
++		auto &children = StructVector::GetEntries(entries);
++		auto &entry = heap.GetSlot(slot);
++		VAL_TYPE::Assign(children[0], entry_idx, entry.second.value, nulls_last);
++		ARG_TYPE::Assign(children[1], entry_idx, entry.first.value, nulls_last);
++	}
++
++	struct ImportData {
++		ImportData(const Vector &entries, idx_t count, bool nulls_last)
++		    : validity(entries.Validity()), val_extra_state(VAL_TYPE::CreateExtraState(count)),
++		      arg_extra_state(ARG_TYPE::CreateExtraState(count)) {
++			auto &children = StructVector::GetEntries(entries);
++			VAL_TYPE::PrepareData(children[0], val_extra_state, val_format, nulls_last);
++			ARG_TYPE::PrepareData(children[1], arg_extra_state, arg_format, nulls_last);
++		}
++
++		VectorValidityIterator validity;
++		typename VAL_TYPE::EXTRA_STATE val_extra_state;
++		typename ARG_TYPE::EXTRA_STATE arg_extra_state;
++		UnifiedVectorFormat val_format;
++		UnifiedVectorFormat arg_format;
++	};
++
++	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
++		const auto val_idx = entries.val_format.sel->get_index(entry_idx);
++		const auto arg_idx = entries.arg_format.sel->get_index(entry_idx);
++		if (!entries.validity.IsValid(entry_idx) ||
++		    (reject_nulls &&
++		     (!entries.val_format.validity.RowIsValid(val_idx) || !entries.arg_format.validity.RowIsValid(arg_idx)))) {
++			throw InvalidInputException("Invalid arg_min/arg_max state - the entries cannot be NULL");
++		}
++		heap.AppendSlot(allocator, ARG_TYPE::Create(entries.arg_format, arg_idx),
++		                VAL_TYPE::Create(entries.val_format, val_idx));
++	}
+ };
+ 
+ //------------------------------------------------------------------------------
+@@ -703,8 +738,8 @@ void ArgMinMaxNUpdate(Vector inputs[], AggregateInputData &aggr_input, idx_t inp
+ 	UnifiedVectorFormat n_format;
+ 	UnifiedVectorFormat state_format;
+ 
+-	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
+-	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState();
++	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState(count);
++	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState(count);
+ 
+ 	STATE::VAL_TYPE::PrepareData(val_vector, val_extra_state, val_format, bind_data.nulls_last);
+ 	STATE::ARG_TYPE::PrepareData(arg_vector, arg_extra_state, arg_format, bind_data.nulls_last);
+@@ -773,7 +808,8 @@ void SpecializeArgMinMaxNFunction(BoundAggregateFunction &function) {
+ 	function.SetStateSizeCallback(AggregateFunction::StateSize<STATE>);
+ 	function.SetStateInitCallback(AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
+ 	function.SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
+-	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
++	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
++	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
+ 
+ 	function.SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
+ 	function.SetStateUpdateCallback(ArgMinMaxNUpdate<STATE>);
+@@ -840,7 +876,8 @@ void SpecializeArgMinMaxNullNFunction(BoundAggregateFunction &function) {
+ 	function.SetStateSizeCallback(AggregateFunction::StateSize<STATE>);
+ 	function.SetStateInitCallback(AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
+ 	function.SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
+-	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
++	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
++	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
+ 	function.SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
+ 	function.SetStateUpdateCallback(ArgMinMaxNUpdate<STATE>);
+ }
+@@ -912,6 +949,8 @@ unique_ptr<FunctionData> ArgMinMaxNBind(BindAggregateFunctionInput &input) {
+ 		}
+ 	}
+ 	ExpressionBinder::PushCollation(context, arguments[1], arguments[1]->GetReturnType(), input.GetCollationType());
++	function.GetArguments()[0] = arguments[0]->GetReturnType();
++	function.GetArguments()[1] = arguments[1]->GetReturnType();
+ 
+ 	const auto val_type = arguments[0]->GetReturnType().InternalType();
+ 	const auto arg_type = arguments[1]->GetReturnType().InternalType();
+@@ -924,10 +963,24 @@ unique_ptr<FunctionData> ArgMinMaxNBind(BindAggregateFunctionInput &input) {
+ 	} else {
+ 		SpecializeArgMinMaxNFunction<COMPARATOR>(val_type, arg_type, function);
+ 	}
++	if (arguments[2]->HasParameter()) {
++		// n is constant per execution: bind again once its value is known
++		throw ParameterNotResolvedException();
++	}
++	if (!arguments[2]->IsFoldable()) {
++		MinMaxNOperation::BindPerRowN(function);
++	}
+ 
+ 	return unique_ptr<FunctionData>(std::move(function_data));
+ }
+ 
++AggregateState
+```
+
+**File**: `src/execution/aggregate_state_spilling.cpp` (modified, +22/-20)
+```diff
+@@ -44,27 +44,30 @@ unique_ptr<AggregateStateSpillPlan> AggregateStateSpilling::TryCreateSpillPlan(c
+ 		return nullptr;
+ 	}
+ 	auto plan = make_uniq<AggregateStateSpillPlan>();
+-	plan->state_layouts.reserve(aggregates.size());
++	plan->serializers.reserve(aggregates.size());
+ 	for (auto &aggr : aggregates) {
+ 		if (aggr.function.HasStateDestructorCallback()) {
+ 			// the state owns resources beyond the arena
+ 			return nullptr;
+ 		}
+-		AggregateStateLayout state_layout;
+ 		if (aggr.function.HasGetStateTypeCallback()) {
+-			state_layout = aggr.function.GetStateType(aggr.GetFunctionData());
+-		} else if (!ExportAggregateFunction::TryGetCombinedStateLayout(aggr.function, aggr.GetFunctionData(),
+-		                                                               state_layout)) {
+-			// the aggregate cannot describe its state, and it is not a combine_aggr over states that can: the
+-			// states combine_aggr accumulates have the layout of the aggregate that exported them
++			plan->serializers.emplace_back(aggr.function.GetStateType(aggr.GetFunctionData()), aggr.function,
++			                               aggr.GetFunctionData());
++			continue;
++		}
++		// the states combine_aggr accumulates have the layout of the aggregate that exported them
++		auto combined = ExportAggregateFunction::TryGetCombinedStateSerializer(aggr.function, aggr.GetFunctionData());
++		if (!combined) {
++			// the aggregate cannot describe its state, and it is not a combine_aggr over states that can
+ 			return nullptr;
+ 		}
+-		plan->state_layouts.push_back(std::move(state_layout));
++		plan->serializers.push_back(std::move(*combined));
+ 	}
+ 	// only layouts whose states can reference the arena benefit from spilling
+ 	bool arena_backed = false;
+-	for (auto &state_layout : plan->state_layouts) {
+-		if (FieldHasArenaReferences(state_layout.type, state_layout.field)) {
++	for (auto &serializer : plan->serializers) {
++		auto &state_layout = serializer.layout;
++		if (state_layout.spill_opaque_arena_memory || FieldHasArenaReferences(state_layout.type, state_layout.field)) {
+ 			arena_backed = true;
+ 			break;
+ 		}
+@@ -73,8 +76,8 @@ unique_ptr<AggregateStateSpillPlan> AggregateStateSpilling::TryCreateSpillPlan(c
+ 		return nullptr;
+ 	}
+ 	plan->exported_types = layout.GetTypes();
+-	for (auto &state_layout : plan->state_layouts) {
+-		plan->exported_types.push_back(state_layout.type);
++	for (auto &serializer : plan->serializers) {
++		plan->exported_types.push_back(serializer.layout.type);
+ 	}
+ 	return plan;
+ }
+@@ -83,7 +86,6 @@ void AggregateStateSpilling::ExportStates(ClientContext &context, const TupleDat
+                                           const AggregateStateSpillPlan &plan, TupleDataCollection &source,
+                                           vector<unique_ptr<ColumnDataCollection>> &exported, idx_t exported_radix_bits,
+                                           ArenaAllocator &allocator) {
+-	auto &state_layouts = plan.state_layouts;
+ 	auto &exported_types = plan.exported_types;
+ 	if (source.Count() == 0) {
+ 		return;
+@@ -121,7 +123,8 @@ void AggregateStateSpilling::ExportStates(ClientContext &context, const TupleDat
+ 				state_address_data[i] = row_locations[i] + aggr_offset;
+ 			}
+ 			auto &result = exported_chunk.data[column_count + aggr_idx];
+-			AggregateStateSerialization::SerializeStates(aggr.function, aggr.GetFunctionData(), state_layouts[aggr_idx],
++			auto &serializer = plan.serializers[aggr_idx];
++			AggregateStateSerialization::SerializeStates(serializer.function, serializer.bind_data, serializer.layout,
+ 			                                             state_addresses, count, result, allocator, 0);
+ 			aggr_offset += aggr.payload_size;
+ 		}
+@@ -171,7 +174,6 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
+                                           const AggregateStateSpillPlan &plan, ColumnDataCollection &exported,
+                                           ArenaAllocator &allocator,
+                                           const std::function<void(TupleDataCollection &)> &combine) {
+-	auto &state_layouts = plan.state_layouts;
+ 	if (exported.Count() == 0) {
+ 		return;
+ 	}
+@@ -185,8 +187,8 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
+ 
+ 	// scratch buffer holding one vector of deserialized states, packed consecutively
+ 	idx_t max_state_size = 0;
+-	for (auto &state_layout : state_layouts) {
+-		max_state_size = MaxValue(max_state_size, state_layout.total_state_size);
++	for (auto &serializer : plan.serializers) {
++		max_state_size = MaxValue(max_state_size, serializer.layout.total_state_size);
+ 	}
+ 	auto state_buffer = make_unsafe_uniq_array<data_t>(max_state_size * STANDARD_VECTOR_SIZE);
+ 	Vector state_addresses(LogicalType::POINTER);
+@@ -211,8 +213,8 @@ void AggregateStateSpilling::ImportStates(ClientContext &context, const shared_p
+ 		idx_t aggr_offset = layout->GetAggrOffset();
+ 		for (idx_t aggr_idx = 0; aggr_idx < aggregates.size(); aggr_idx++) {
+ 			auto &agg
+```
+
+**File**: `src/execution/operator/aggregate/physical_streaming_window.cpp` (modified, +1/-1)
+```diff
+@@ -197,7 +197,7 @@ bool PhysicalStreamingWindow::IsStreamingFunction(ClientContext &client, BoundWi
+ 	}
+ 	if (wexpr.GetExpressionType() == ExpressionType::WINDOW_AGGREGATE) {
+ 		// Aggregates with destructors (e.g., quantile) are too slow to repeatedly update/finalize
+-		if (wexpr.AggregateFunction()->HasStateDestructorCallback()) {
++		if (wexpr.AggregateFunction()->HasStateDestructorCallback() || !wexpr.AggregateFunction()->CanStream()) {
+ 			return false;
+ 		}
+ 		// We can stream aggregates if they are "running totals"
+```
+
+**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +40/-2)
+```diff
+@@ -468,6 +468,28 @@ class MinMaxNState {
+ 	static T GetValue(T val) {
+ 		return val;
+ 	}
++
++	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
++		VAL_TYPE::Assign(entries, entry_idx, heap.GetSlot(slot).value, nulls_last);
++	}
++
++	struct ImportData {
++		ImportData(const Vector &entries, idx_t count, bool nulls_last)
++		    : extra_state(VAL_TYPE::CreateExtraState(count)) {
++			VAL_TYPE::PrepareData(entries, extra_state, format, nulls_last);
++		}
++
++		typename VAL_TYPE::EXTRA_STATE extra_state;
++		UnifiedVectorFormat format;
++	};
++
++	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
++		const auto idx = entries.format.sel->get_index(entry_idx);
++		if (reject_nulls && !entries.format.validity.RowIsValid(idx)) {
++			throw InvalidInputException("Invalid min/max state - the entries cannot be NULL");
++		}
++		heap.AppendSlot(allocator, VAL_TYPE::Create(entries.format, idx));
++	}
+ };
+ 
+ template <class STATE>
+@@ -480,7 +502,7 @@ void MinMaxNUpdate(Vector inputs[], AggregateInputData &aggr_input, idx_t input_
+ 	UnifiedVectorFormat n_format;
+ 	UnifiedVectorFormat state_format;
+ 
+-	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
++	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState(count);
+ 
+ 	STATE::VAL_TYPE::PrepareData(val_vector, val_extra_state, val_format, true);
+ 
+@@ -528,10 +550,11 @@ void SpecializeMinMaxNFunction(BoundAggregateFunction &function) {
+ 	function.GetCallbacks().SetStateInitCallback(
+ 	    AggregateFunction::StateInitialize<STATE, OP, AggregateDestructorType::LEGACY>);
+ 	function.GetCallbacks().SetStateCombineCallback(AggregateFunction::StateCombine<STATE, OP>);
+-	function.GetCallbacks().SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
+ 
+ 	function.GetCallbacks().SetStateFinalizeCallback(MinMaxNOperation::Finalize<STATE>);
+ 	function.GetCallbacks().SetStateUpdateCallback(MinMaxNUpdate<STATE>);
++	function.SetExportAggregateStateCallback(MinMaxNOperation::ExportState<STATE>);
++	function.SetImportAggregateStateCallback(MinMaxNOperation::ImportState<STATE>);
+ }
+ 
+ template <class COMPARATOR>
+@@ -600,17 +623,32 @@ unique_ptr<FunctionData> MinMaxNBind(BindAggregateFunctionInput &input) {
+ 
+ 	// Specialize the function based on the input types
+ 	SpecializeMinMaxNFunction<COMPARATOR>(val_type, function);
++	function.GetArguments()[0] = arguments[0]->GetReturnType();
++	if (arguments[1]->HasParameter()) {
++		// n is constant per execution: bind again once its value is known
++		throw ParameterNotResolvedException();
++	}
++	if (!arguments[1]->IsFoldable()) {
++		MinMaxNOperation::BindPerRowN(function);
++	}
+ 
+ 	function.SetReturnType(LogicalType::LIST(arguments[0]->GetReturnType()));
+ 	return nullptr;
+ }
+ 
++AggregateStateLayout MinMaxNGetStateType(AggregateLayoutInput &input) {
++	// EXPORT_STATE rewrites the return type, so derive the entry type from the (bind-resolved) argument instead
++	return MinMaxNOperation::GetStateType(input, input.function.GetArguments()[0]);
++}
++
+ template <class COMPARATOR>
+ AggregateFunction GetMinMaxNFunction() {
+ 	AggregateFunction fun({}, LogicalType::LIST(LogicalType::ANY), nullptr, nullptr, nullptr, nullptr, nullptr,
+ 	                      FunctionNullHandling::DEFAULT_NULL_HANDLING, nullptr, MinMaxNBind<COMPARATOR>, nullptr);
+ 	fun.GetSignature().AddParameter("arg", LogicalTypeId::ANY).AddParameter("n", LogicalType::BIGINT);
+ 	fun.SetUnbindCallback(MinMaxUnbind);
++	fun.SetStructStateExport(MinMaxNGetStateType);
++	fun.SetCombineSourceRetention(AggregateCombineSourceRetention::NEVER_RETAINS);
+ 	fun.SetFallible(); // the update callback rejects NULL and out-of-range n values at runtime
+ 	return fun;
+ }
+```
+
+**File**: `src/function/aggregate_function.cpp` (modified, +6/-1)
+```diff
+@@ -48,6 +48,10 @@ AggregateInputData::AggregateInputData(const AggregateObject &aggr, ArenaAllocat
+                          allocator_p, combine_type_p) {
+ }
+ 
++bool AggregateExecutor::CombineNeverRetainsSource(const AggregateInputData &aggr_input_data) {
++	return aggr_input_data.function.GetCombineSourceRetention() == AggregateCombineSourceRetention::NEVER_RETAINS;
++}
++
+ AggregateFinalizeInputData::AggregateFinalizeInputData(const BoundAggregateFunction &function_p,
+                                                        optional_ptr<const FunctionData> bind_data_p,
+                                                        ArenaAllocator &allocator_p,
+@@ -84,7 +88,8 @@ void AggregateFinalizeInputData::InitializeLocalState() {
+ bool AggregateFunctionProperties::operator==(const AggregateFunctionProperties &rhs) const {
+ 	return FunctionProperties::operator==(rhs) && order_dependent == rhs.order_dependent &&
+ 	       distinct_dependent == rhs.distinct_dependent && single_value_identity == rhs.single_value_identity &&
+-	       is_holistic == rhs.is_holistic && combine_source_retention == rhs.combine_source_retention;
++	       is_holistic == rhs.is_holistic && combine_source_retention == rhs.combine_source_retention &&
++	       can_stream == rhs.can_stream;
+ }
+ bool AggregateFunctionProperties::operator!=(const AggregateFunctionProperties &rhs) const {
+ 	return !(*this == rhs);
+```
+
+**File**: `src/function/aggregate_state_serialization.cpp` (modified, +2/-1)
+```diff
+@@ -336,12 +336,13 @@ static void DeserializeField(const LogicalType &type, const AggregateStateField
+ } // namespace
+ 
+ void AggregateStateSerialization::DeserializeStates(const BoundAggregateFunction &aggr,
++                                                    optional_ptr<const FunctionData> bind_data,
+                                                     const AggregateStateLayout &layout, const Vector &input_vec,
+                                                     idx_t count, data_ptr_t dest_buffer, ArenaAllocator &allocator,
+                                                     StateMemoryOwnership ownership) {
+ 	if (aggr.HasImportAggregateStateCallback()) {
+ 		// the aggregate explicitly deserializes its own states, copying all variable size data
+-		AggregateImportInputData import_input(layout, input_vec, dest_buffer, allocator);
++		AggregateImportInputData import_input(layout, input_vec, dest_buffer, allocator, bind_data);
+ 		aggr.GetImportAggregateStateCallback()(import_input);
+ 		return;
+ 	}
+```
+
+**File**: `src/function/scalar/system/aggregate_export.cpp` (modified, +17/-18)
+```diff
+@@ -145,8 +145,8 @@ void AggregateStateFinalize(DataChunk &input, ExpressionState &state_p, Vector &
+ 		state_vec_writer.WriteValue(state_ptr);
+ 	}
+ 
+-	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[0], count,
+-	                                               local_state.state_buffer.get(), local_state.allocator,
++	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[0],
++	                                               count, local_state.state_buffer.get(), local_state.allocator,
+ 	                                               StateMemoryOwnership::BORROWED);
+ 
+ 	AggregateFinalizeInputData aggr_input_data(bind_data.aggr, bind_data.bind_data.get(), local_state.allocator);
+@@ -197,11 +197,11 @@ void AggregateStateCombine(DataChunk &input, ExpressionState &state_p, Vector &r
+ 	}
+ 
+ 	// Deserialize both inputs — null rows are skipped by LoadOp, keeping the initialized empty state
+-	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[0], count,
+-	                                               local_state.state_buffer0.get(), local_state.allocator,
++	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[0],
++	                                               count, local_state.state_buffer0.get(), local_state.allocator,
+ 	                                               StateMemoryOwnership::BORROWED);
+-	AggregateStateSerialization::DeserializeStates(bind_data.aggr, layout, input.data[1], count,
+-	                                               local_state.state_buffer1.get(), local_state.allocator,
++	AggregateStateSerialization::DeserializeStates(bind_data.aggr, bind_data.bind_data.get(), layout, input.data[1],
++	                                               count, local_state.state_buffer1.get(), local_state.allocator,
+ 	                                               StateMemoryOwnership::BORROWED);
+ 
+ 	AggregateInputData aggr_input_data(bind_data.aggr, bind_data.bind_data.get(), local_state.allocator,
+@@ -555,8 +555,9 @@ void CombineAggrUpdate(Vector inputs[], AggregateInputData &aggr_input_data, idx
+ 	}
+ 	auto &source_allocator = scratch ? *scratch : aggr_input_data.allocator;
+ 	try {
+-		AggregateStateSerialization::DeserializeStates(underlying_aggr, layout, inputs[0], count, temp_state_buf.get(),
+-		                                               source_allocator, StateMemoryOwnership::BORROWED);
++		AggregateStateSerialization::DeserializeStates(underlying_aggr, bind_data.bind_data.get(), layout, inputs[0],
++		                                               count, temp_state_buf.get(), source_allocator,
++		                                               StateMemoryOwnership::BORROWED);
+ 		AggregateInputData combine_input(bind_data.aggr, bind_data.bind_data.get(), aggr_input_data.allocator,
+ 		                                 AggregateCombineType::ALLOW_DESTRUCTIVE);
+ 		if (input_count == 2) {
+@@ -941,21 +942,19 @@ void ExportAggregateFunction::GetSortedStateOrders(const LogicalType &state_type
+ 	ParseOrderBys(order_entry->second, StructType::GetChildTypes(buffer_struct).size(), orders);
+ }
+ 
+-bool ExportAggregateFunction::TryGetCombinedStateLayout(const BoundAggregateFunction &function,
+-                                                        optional_ptr<const FunctionData> bind_data,
+-                                                        AggregateStateLayout &layout) {
++unique_ptr<AggregateStateSerializer>
++ExportAggregateFunction::TryGetCombinedStateSerializer(const BoundAggregateFunction &function,
++                                                       optional_ptr<const FunctionData> bind_data) {
+ 	if (!bind_data || function.GetStateCombineCallback() != CombineAggrStateCombine) {
+-		return false;
++		return nullptr;
+ 	}
+ 	auto &combine_data = bind_data->Cast<ExportAggregateBindData>();
+ 	auto &aggr = combine_data.aggr;
+-	// states with explicit export / import callbacks are not described by their field layout alone
+-	if (!aggr.HasGetStateTypeCallback() || aggr.HasExportAggregateStateCallback() ||
+-	    aggr.HasImportAggregateStateCallback()) {
+-		return false;
++	if (!aggr.HasGetStateTypeCallback()) {
++		return nullptr;
+ 	}
+-	layout = aggr.GetStateType(combine_data.bind_data.get());
+-	return true;
++	return make_uniq<AggregateStateSerializer>(aggr.GetStateType(combine_data.bind_data.get()), aggr,
++	                                           combine_data.bind_data.get());
+ }
+ 
+ void ExportAggregateFunction::SetStateExport(BoundAggregateExpression &aggregate, LogicalType state_layout) {
+```
+
+**File**: `src/include/duckdb/common/vector_operations/aggregate_executor.hpp` (modified, +33/-7)
+```diff
+@@ -935,6 +935,10 @@ class AggregateExecutor {
+ 			return *reinterpret_cast<STATE_TYPE *>(storage);
+ 		}
+ 
++		AggregateInputData &GetInput() {
++			return aggr_input_data;
++		}
++
+ 		void Initialize() {
+ 			D_ASSERT(!initialized);
+ 			InitializeState<STATE_TYPE, OP>(Get());
+@@ -955,34 +959,56 @@ class AggregateExecutor {
+ 		bool initialized = false;
+ 	};
+ 
++	//! Whether the aggregate's combine never leaves the target referencing the source's memory
++	DUCKDB_API static bool CombineNeverRetainsSource(const AggregateInputData &aggr_input_data);
++
+ 	template <class STATE_TYPE, class OP>
+ 	static void GenericRepeatedCombine(const STATE_TYPE &source, STATE_TYPE &target,
+ 	                                   AggregateInputData &aggr_input_data, idx_t multiplicity) {
+ 		AggregateInputData combine_input(aggr_input_data.function, aggr_input_data.bind_data, aggr_input_data.allocator,
+ 		                                 AggregateCombineType::PRESERVE_INPUT);
++		// if the final combine copies what the target keeps, each intermediate state gets a scratch arena, which is
++		// reset when the state is replaced
++		const bool scratch = CombineNeverRetainsSource(aggr_input_data);
++		auto &underlying_allocator = aggr_input_data.allocator.GetUnderlyingAllocator();
++		ArenaAllocator result_arena(underlying_allocator);
++		ArenaAllocator power_arena_a(underlying_allocator);
++		ArenaAllocator power_arena_b(underlying_allocator);
++		AggregateInputData result_input(aggr_input_data.function, aggr_input_data.bind_data,
++		                                scratch ? result_arena : aggr_input_data.allocator,
++		                                AggregateCombineType::PRESERVE_INPUT);
++		AggregateInputData power_input_a(aggr_input_data.function, aggr_input_data.bind_data,
++		                                 scratch ? power_arena_a : aggr_input_data.allocator,
++		                                 AggregateCombineType::PRESERVE_INPUT);
++		AggregateInputData power_input_b(aggr_input_data.function, aggr_input_data.bind_data,
++		                                 scratch ? power_arena_b : aggr_input_data.allocator,
++		                                 AggregateCombineType::PRESERVE_INPUT);
+ 
+-		AggregateStateGuard<STATE_TYPE, OP> result(combine_input);
+-		AggregateStateGuard<STATE_TYPE, OP> power_a(combine_input);
+-		AggregateStateGuard<STATE_TYPE, OP> power_b(combine_input);
++		AggregateStateGuard<STATE_TYPE, OP> result(result_input);
++		AggregateStateGuard<STATE_TYPE, OP> power_a(power_input_a);
++		AggregateStateGuard<STATE_TYPE, OP> power_b(power_input_b);
+ 
+ 		result.Initialize();
+ 		power_a.Initialize();
+-		OP::template Combine<STATE_TYPE, OP>(source, power_a.Get(), combine_input);
++		OP::template Combine<STATE_TYPE, OP>(source, power_a.Get(), power_input_a);
+ 
+ 		auto power = &power_a;
+ 		auto next_power = &power_b;
+ 		while (multiplicity > 0) {
+ 			if (multiplicity & 1) {
+-				OP::template Combine<STATE_TYPE, OP>(power->Get(), result.Get(), combine_input);
++				OP::template Combine<STATE_TYPE, OP>(power->Get(), result.Get(), result_input);
+ 			}
+ 			multiplicity >>= 1;
+ 			if (multiplicity == 0) {
+ 				break;
+ 			}
+ 			next_power->Initialize();
+-			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), combine_input);
+-			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), combine_input);
++			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), next_power->GetInput());
++			OP::template Combine<STATE_TYPE, OP>(power->Get(), next_power->Get(), next_power->GetInput());
+ 			power->Destroy();
++			if (scratch) {
++				power->GetInput().allocator.Reset();
++			}
+ 			std::swap(power, next_power);
+ 		}
+ 		OP::template Combine<STATE_TYPE, OP>(result.Get(), target, combine_input);
+```
+
+---
+
+### Incident Patch 2: `5a60beb0` (2026-11-26)
+**Commit Message**: Avoid signed integer overflow in Chinese calendar month calculation (#29347)
+
+ChineseCalendar::ComputeMonthStart() uses the result of NewYear() before
+checking whether the calendar calculation failed:
+
+```
+const auto new_year = NewYear(eyear);
+auto new_moon = NewMoonNear(new_year + month * 29, true);
+if (HasFailedInternal()) {
+	return 0;
+}
+```
+
+Both new_year and month are int32_t. The addition is therefore evaluated
+using integer arithmetic before its result is converted to the double
+parameter of NewMoonNear().
+
+The overflow was reproduced by setting these calendar fields and calling
+GetTime():
+
+```
+calendar.Set(CAL_EXTENDED_YEAR, 0);
+calendar.Set(CAL_MONTH, 70578965);
+calendar.Set(CAL_DATE, 1);
+calendar.GetTime();
+
+```
+Month normalization produces eyear = 5881580 and month = 5. NewYear()
+sets the failure flag but returns 2147483513. The subsequent addition
+evaluates to 2147483513 + 145, exceeding INT32_MAX. UBSan reports signed
+integer overflow at this expression.
+
+Check the failure flag immediately after NewYear() and perform the
+addition in floating-point arithmetic, matching the argument type of
+NewMoonNear():
+```
+const auto new_year = NewYear(eyear);
+if (HasFailedInternal()) 
+
+**File**: `extension/icu/datetime/chinese.cpp` (modified, +10/-1)
+```diff
+@@ -221,7 +221,13 @@ int32_t ChineseCalendar::NewYear(int32_t gyear) const {
+ 	}
+ 
+ 	const auto solstice_before = WinterSolstice(gyear - 1);
++	if (HasFailedInternal()) {
++		return 0;
++	}
+ 	const auto solstice_after = WinterSolstice(gyear);
++	if (HasFailedInternal()) {
++		return 0;
++	}
+ 	const auto new_moon1 = NewMoonNear(solstice_before + 1, true);
+ 	const auto new_moon2 = NewMoonNear(new_moon1 + SYNODIC_GAP, true);
+ 	const auto new_moon11 = NewMoonNear(solstice_after + 1, false);
+@@ -370,7 +376,10 @@ int64_t ChineseCalendar::ComputeMonthStart(int32_t eyear, int32_t month, bool is
+ 	}
+ 
+ 	const auto new_year = NewYear(eyear);
+-	auto new_moon = NewMoonNear(new_year + month * 29, true);
++	if (HasFailedInternal()) {
++		return 0;
++	}
++	auto new_moon = NewMoonNear(double(new_year) + month * 29, true);
+ 	if (HasFailedInternal()) {
+ 		return 0;
+ 	}
+```
+
+**File**: `test/sql/timezone/test_icu_calendar_failed_year_cache.test` (added, +38/-0)
+```diff
+@@ -0,0 +1,38 @@
++# name: test/sql/timezone/test_icu_calendar_failed_year_cache.test
++# description: Failed lunisolar year calculations must not be cached
++# group: [timezone]
++
++require icu
++
++statement ok
++SET threads=1;
++
++statement ok
++SET TimeZone='UTC';
++
++foreach calendar chinese dangi
++
++statement ok
++SET Calendar='{calendar}';
++
++# Repeated requests must fail even when the calendar instance changes.
++loop iteration 0 2
++
++statement error
++SELECT make_timestamptz(2000, 2147483647, 1, 0, 0, 0);
++----
++<REGEX>:.*(out of range|overflow).*
++
++statement error
++SELECT make_timestamptz(2000, -2147483647, 1, 0, 0, 0);
++----
++<REGEX>:.*(out of range|overflow).*
++
++endloop
++
++query I
++SELECT year(TIMESTAMPTZ '2024-01-10 00:00:00+00') > 0;
++----
++true
++
++endloop
+```
+
+---
+
+### Incident Patch 3: `76099c5a` (2026-11-26)
+**Commit Message**: Fix-29121 Infer transitive group keys for inner expression joins (#29267)
+
+Fixes #29121.
+
+Ranks repeat across groups in the reported self-join. When the first
+rank hash join lacks a group key, it pairs rows across groups and can
+exhaust the temporary-directory limit before a later join checks `grp`.
+
+Filter pullup now carries hidden columns through projections so that
+`FilterCombiner` can infer the transitive group equality before join
+ordering. This replaces the PR’s join-order-specific inference and
+covers both integer and VARCHAR keys. Projections containing fallible or
+volatile expressions block pullup across that boundary. A pulled filter
+bundle containing a fallible or volatile predicate stays below the
+projection, preserving its evaluation boundary and any guarding
+predicates. [Reviewer
+feedback](https://github.com/duckdb/duckdb/pull/29267#pullrequestreview-6059493786)
+
+### Verification
+
+The original 200-group fixture and a VARCHAR variant were run with four
+threads, a 3 GB memory limit, and a 1 GB spill cap. The table reports
+medians from five measured runs after a warmup.
+
+| Group key | Previous PR head `9654e2e2e16` | Updated build |
+| --- | ---: | ---: |
+| BIGINT | 410.1
+
+**File**: `src/include/duckdb/optimizer/filter_pullup.hpp` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ class FilterPullup {
+ 	// only pull up filters when there is a fork
+ 	bool can_pullup = false;
+ 
+-	// identify case the branch is a set operation (INTERSECT or EXCEPT)
++	// Whether a projection can carry additional columns needed by pulled filters.
+ 	bool can_add_column = false;
+ 
+ private:
+```
+
+**File**: `src/optimizer/filter_pullup.cpp` (modified, +69/-0)
+```diff
+@@ -3,15 +3,81 @@
+ #include "duckdb/common/enum_util.hpp"
+ #include "duckdb/optimizer/filter_pushdown.hpp"
+ #include "duckdb/planner/expression/bound_comparison_expression.hpp"
++#include "duckdb/planner/expression/bound_function_expression.hpp"
+ #include "duckdb/planner/operator/logical_any_join.hpp"
+ #include "duckdb/planner/operator/logical_comparison_join.hpp"
+ #include "duckdb/planner/operator/logical_cross_product.hpp"
+ #include "duckdb/planner/operator/logical_join.hpp"
+ #include "duckdb/planner/operator/logical_window.hpp"
++#include "duckdb/planner/subquery/column_binding_layout.hpp"
  
  namespace duckdb {
  
-@@ -84,6 +89,8 @@ struct AttachedDatabaseWrapper {
- 	optional_ptr<TableCatalogEntry> table_entry;
- };
- 
-+struct DuckDBReadLocalState;
++static bool HasComputedJoinOperands(const Expression &lhs, const Expression &rhs) {
++	return !lhs.IsScalar() && !rhs.IsScalar() &&
++	       (lhs.GetExpressionType() != ExpressionType::BOUND_COLUMN_REF ||
++	        rhs.GetExpressionType() != ExpressionType::BOUND_COLUMN_REF);
++}
 +
- class DuckDBReader : public BaseFileReader {
- public:
- 	DuckDBReader(ClientContext &context, OpenFileInfo file, const DuckDBFileReaderOptions &options);
-@@ -106,6 +113,15 @@ class DuckDBReader : public BaseFileReader {
- 	AttachedDatabase &GetAttachedDatabase();
- 	TableCatalogEntry &GetTableEntry();
- 
-+private:
-+	//! The filters the table scan evaluates - those on the columns that are read as the file stores them
-+	optional_ptr<TableFilterSet> GetScanFilters();
-+	//! Prepares the conversions of expression_map and the filters that apply to their results
-+	void InitializeConvertedColumns(ClientContext &context, DuckDBReadLocalState &lstate);
-+	//! Scans the table into the chunk of the file, converts the columns of expression_map and applies their filters
-+	void ScanConvertedColumns(ClientContext &context, TableFunctionInput &input, DuckDBReadLocalState &lstate,
-+	                          DataChunk &chunk);
-+
- private:
- 	ClientContext &context;
- 	shared_ptr<AttachedDatabaseWrapper> db_wrapper;
-@@ -115,18 +131,40 @@ class DuckDBReader : public BaseFileReader {
- 	atomic<bool> finished;
- 	//! The column indexes to scan - the row id is scanned if no columns are projected
- 	vector<ColumnIndex> scan_column_indexes;
-+	//! The subset of the filters that is pushed into the table scan - only set when some columns are converted
-+	unique_ptr<TableFilterSet> scan_filters;
- 	idx_t column_count;
- 	Identifier schema_name;
- 	Identifier table_name;
- };
- 
- struct DuckDBReadGlobalState : GlobalTableFunctionState {};
- 
-+//! A scan column the multi-file scan wants converted before its filters apply (see BaseFileReader::expression_map)
-+struct DuckDBConvertedColumn {
-+	//! The position of the scan column the conversion produces
-+	idx_t position;
-+	unique_ptr<Expression> expression;
-+	unique_ptr<ExpressionExecutor> executor;
-+	//! The columns of the file the expression reads - the scan columns starting at position
-+	unique_ptr<DataChunk> input;
-+};
-+
- struct DuckDBReadLocalState : LocalTableFunctionState {
- 	unique_ptr<LocalTableFunctionState> local_state;
- 	shared_ptr<AttachedDatabaseWrapper> attached_database;
- 	//! The chunk to scan into when no columns are projected (we then scan the row ids)
- 	DataChunk row_id_chunk;
-+	//! The columns of the current file that are converted after the table scan
-+	vector<DuckDBConvertedColumn> converted_columns;
-+	//! For each scan column, whether it is one of the converted columns
-+	vector<bool> converted_position;
-+	//! The filters on the converted columns, as the position of the scan column and the filter state
-+	vector<pair<idx_t, unique_ptr<TableFilterState>>> converted_filters;
-+	//! What the table scan produces, in the types of the file, when some columns are converted afterwards
-+	DataChunk file_chunk;
-+	//! Whether the previous scan into file_chunk was blocked
-+	bool resuming_blocked_scan = false;
- };
- 
- string DuckDBFileReaderOptions::GetCandidates(const vector<reference<TableCatalogEntry>> &tables) const {
-@@ -306,22 +344,131 @@ bool DuckDBReader::TryInitializeScan(ClientContext &context, GlobalTableFunction
- 			// the table scan requires at least one column - scan the row id if no columns are projected
- 			scan_column_indexes.emplace_back(COLUMN_IDENTIFIER_ROW_ID);
- 		}
-+		if (filters && !expression_map.empty()) {
-+			// a filter on a converted column is written against the converted values, not against those of the file -
-+			// it is applied after the conversion, the table scan only evaluates the filters on the other columns
-+			scan_filters = filters->Copy();
-+			for (auto &entry : expression_map) {
-+				if (scan_filters->HasFilter(entry.first)) {
-+					scan_filters->RemoveFilterByColumnIndex(entry.first);
-+				}
++static bool NeedsEarlyJoinKeys(LogicalOperator &op) {
++	if (op.type == LogicalOperatorType::LOGICAL_COMPARISON_JOIN) {
++		auto &join = op.Cast<LogicalComparisonJoin>();
++		if (join.join_type != JoinType::INNER) {
++			return false;
++		}
++		for (auto &condition : join.conditions) {
++			if (condition.IsComparison() && condition.GetComparisonType() == ExpressionType::COMPARE_EQUAL &&
++			    HasComputedJoinOperands(condition.GetLHS(), condition.GetRHS())) {
++				return true;
 +			}
 +		}
- 		// initialize the scan over this table
--		TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(), filters.get());
-+		TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(), GetScanFilters());
- 		global_state = scan_function.init_global(context, input);
++		return false;
++	}
++	if (op.type != LogicalOperatorType::LOGICAL_FILTER ||
++	    op.children[0]->type != LogicalOperatorType::LOGICAL_CROSS_PRODUCT) {
++		return false;
++	}
++	auto &cross = *op.children[0];
++	unordered_set<TableIndex> left_bindings, right_bindings;
++	for (auto &expression : op.expressions) {
++		if (expression->GetExpressionType() != ExpressionType::COMPARE_EQUAL) {
++			continue;
++		}
++		auto &comparison = expression->Cast<BoundFunctionExpression>();
++		auto &lhs = BoundComparisonExpression::Left(comparison);
++		auto &rhs = BoundComparisonExpression::Right(comparison);
++		if (!HasComputedJoinOperands(lhs, rhs)) {
++			continue;
++		}
++		if (left_bindings.empty() && right_bindings.empty()) {
++			LogicalJoin::GetTableReferences(*cross.children[0], left_bindings);
++			LogicalJoin::GetTableReferences(*cross.children[1], right_bindings);
++		}
++		auto lhs_side = JoinSide::GetCurrentJoinSide(lhs, left_bindings, right_bindings);
++		auto rhs_side = JoinSide::GetCurrentJoinSide(rhs, left_bindings, right_bindings);
++		if ((lhs_side == JoinSide::LEFT && rhs_side == JoinSide::RIGHT) ||
++		    (lhs_side == JoinSide::RIGHT && rhs_side == JoinSide::LEFT)) {
++			return true;
++		}
++	}
++	return false;
++}
++
+ unique_ptr<LogicalOperator> FilterPullup::Rewrite(unique_ptr<LogicalOperator> op) {
++	if (can_add_column && op->HasProjectionMap()) {
++		return FinishPullup(std::move(op));
++	}
++	if (!can_pullup && !can_add_column && !op->HasProjectionMap() && NeedsEarlyJoinKeys(*op)) {
++		// Carry hidden keys within this join region and keep its output bindings unchanged.
++		auto output = op->GetColumnBindings();
++		FilterPullup join_pullup(context, false, true);
++		auto rewritten = join_pullup.Rewrite(std::move(op));
++		ColumnBindingLayout layout(rewritten->GetColumnBindings());
++		if (layout.HasSameLayout(output)) {
++			return rewritten;
++		}
++		return LogicalJoin::PromoteJoinSide(std::move(rewritten), layout.CreateProjectionMap(output));
++	}
+ 	switch (op->type) {
+ 	case LogicalOperatorType::LOGICAL_FILTER:
+ 		return PullupFilter(std::move(op));
+@@ -44,6 +110,9 @@ unique_ptr<LogicalOperator> FilterPullup::PullupJoin(unique_ptr<LogicalOperator>
+ 	         op->type == LogicalOperatorType::LOGICAL_ASOF_JOIN || op->type == LogicalOperatorType::LOGICAL_ANY_JOIN ||
+ 	         op->type == LogicalOperatorType::LOGICAL_DELIM_JOIN);
+ 	auto &join = op->Cast<LogicalJoin>();
++	if (can_add_column && (join.join_type != JoinType::INNER || op->type == LogicalOperatorType::LOGICAL_ASOF_JOIN)) {
++		return FinishPullup(std::move(op));
++	}
+ 
+ 	switch (join.join_type) {
+ 	case JoinType::INNER:
+```
+
+**File**: `src/optimizer/pullup/pullup_projection.cpp` (modified, +10/-3)
+```diff
+@@ -65,12 +65,19 @@ void FilterPullup::ProjectSetOperation(LogicalProjection &proj) {
+ 
+ unique_ptr<LogicalOperator> FilterPullup::PullupProjection(unique_ptr<LogicalOperator> op) {
+ 	D_ASSERT(op->type == LogicalOperatorType::LOGICAL_PROJECTION);
++	auto &proj = op->Cast<LogicalProjection>();
++	// Pulling filters above a projection can evaluate its expressions on additional rows.
++	for (auto &expr : proj.expressions) {
++		if (expr->CanThrow() || expr->IsVolatile()) {
++			return FinishPullup(std::move(op));
++		}
++	}
++
+ 	op->children[0] = Rewrite(std::move(op->children[0]));
+ 	if (!filters_expr_pullup.empty()) {
+-		auto &proj = op->Cast<LogicalProjection>();
+ 		for (auto &expr : filters_expr_pullup) {
+-			if (expr->CanThrow()) {
+-				// Keep fallible predicates and their guards below the projection.
++			if (expr->CanThrow() || expr->IsVolatile()) {
++				// Keep fallible or volatile predicates and their guards below the projection.
+ 				RevertFilterPullup(proj, filters_expr_pullup);
+ 				return op;
+ 			}
+```
+
+**File**: `src/optimizer/pushdown/pushdown_filter.cpp` (modified, +14/-1)
+```diff
+@@ -10,7 +10,20 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownFilter(unique_ptr<LogicalOpe
+ 	D_ASSERT(op->type == LogicalOperatorType::LOGICAL_FILTER);
+ 	auto &filter = op->Cast<LogicalFilter>();
+ 	if (filter.HasProjectionMap()) {
+-		return FinishPushdown(std::move(op));
++		if (!filter.expressions.empty()) {
++			return FinishPushdown(std::move(op));
++		}
++		vector<unique_ptr<Expression>> remain_expressions;
++		for (idx_t i = 0; i < filters.size(); i++) {
++			if (!filters[i]->filter->CanThrow() && !filters[i]->filter->IsVolatile()) {
++				continue;
++			}
++			remain_expressions.push_back(std::move(filters[i]->filter));
++			filters.erase_at(i--);
++		}
++		// Preserve the output layout and the evaluation boundary of unsafe predicates.
++		RewriteChild(*op, 0);
++		return AddLogicalFilter(std::move(op), std::move(remain_expressions));
  	}
- 	AssignSharedPointer(lstate.attached_database, db_wrapper);
- 	// initialize the local scan
- 	ThreadContext thread(context);
- 	ExecutionContext exec_context(context, thread, nullptr);
--	TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(), filters.get());
-+	TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(),
+ 	// filter: gather the filters and remove the filter from the set of operations
+ 	for (auto &expression : filter.expressions) {
 ```
 
-**File**: `test/configs/disable_optimizer.json` (modified, +2/-1)
+**File**: `test/configs/verify_statement_explain_sql.json` (modified, +2/-1)
 ```diff
-@@ -114,7 +114,8 @@
-         "test/sql/copy/parquet/parquet_nan_setting.test",
-         "test/sql/storage/prefetch/async_native_scan_read_ahead_pruning.test",
-         "test/sql/optimizer/test_rowid_vector_pruning.test",
--        "test/sql/optimizer/test_rowid_vector_pruning_prefetch.test"
-+        "test/sql/optimizer/test_rowid_vector_pruning_prefetch.test",
-+        "test/sql/storage/read_duckdb/read_duckdb_schema_filter_pushdown.test"
+@@ -13,7 +13,8 @@
+     {
+       "reason": "The generated SQL is planned differently, which changes how often the volatile expressions the fixture counts are evaluated",
+       "paths": [
+-        "test/optimizer/join_to_semi_join_volatile.test"
++        "test/optimizer/join_to_semi_join_volatile.test",
++        "test/optimizer/pushdown/filter_projection_map.test"
        ]
      },
      {
 ```
 
-**File**: `test/configs/storage_compatibility.json` (modified, +7/-0)
+**File**: `test/optimizer/filter_pullup_projection_safety.test` (added, +66/-0)
 ```diff
-@@ -56,6 +56,13 @@
-         "test/parquet/parquet_schema_renamed_struct_filter.test"
-       ]
-     },
-+    {
-+      "reason": "Views over read_duckdb cannot be bound by older versions, which do not have the function.",
-+      "paths": [
-+        "test/sql/storage/read_duckdb/read_duckdb_filter_mixed_types.test",
-+        "test/sql/storage/read_duckdb/read_duckdb_converted_filter_scan.test"
-+      ]
-+    },
-     {
-       "reason": "Stringification too slow",
-       "paths": [
-```
-
-**File**: `test/configs/variant_vector.json` (modified, +2/-1)
-```diff
-@@ -25,7 +25,8 @@
- 				"test/sql/copy/parquet/parquet_schema_default_only_struct.test",
- 				"test/sql/copy/parquet/parquet_schema_default_only_list.test",
- 				"test/sql/copy/parquet/parquet_schema_list_child_name.test",
--				"test/sql/copy/parquet/parquet_schema_list_child_types.test"
-+				"test/sql/copy/parquet/parquet_schema_list_child_types.test",
-+				"test/sql/storage/read_duckdb/read_duckdb_schema_filter.test"
- 			]
- 		},
- 		{
-```
-
-**File**: `test/sql/storage/read_duckdb/read_duckdb_converted_filter_scan.test` (added, +334/-0)
-```diff
-@@ -0,0 +1,334 @@
-+# name: test/sql/storage/read_duckdb/read_duckdb_converted_filter_scan.test
-+# description: Filters on converted read_duckdb columns over blocked scans, deleted rows, indexes, empty tables and virtual columns
-+# group: [read_duckdb]
-+
-+# the reference: the same rows in a table of this database, with the types the scans below convert to
-+statement ok
-+CREATE TABLE ref AS
-+SELECT i::BIGINT id, CASE WHEN i % 97 = 0 THEN NULL ELSE i % 1000 END::BIGINT x, (i * 3)::INTEGER y, 'v' || (i % 50) d
-+FROM range(300000) r(i)
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_conv_big.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT id, x::INTEGER x, y::BIGINT y, d FROM ref
-+
-+statement ok
-+DETACH rd
-+
-+# x is stored as INTEGER and read as BIGINT, y is stored as BIGINT and read as INTEGER
-+statement ok
-+CREATE MACRO conv(file) AS TABLE FROM read_duckdb(file, schema = MAP {
-+	'id': {name: 'id', type: 'BIGINT', default_value: NULL},
-+	'x': {name: 'x', type: 'BIGINT', default_value: NULL},
-+	'y': {name: 'y', type: 'INTEGER', default_value: NULL},
-+	'd': {name: 'd', type: 'VARCHAR', default_value: NULL}
-+})
-+
-+statement ok
-+CREATE VIEW big AS FROM conv('{TEST_DIR}/rd_conv_big.db')
-+
-+query IIII
-+SELECT typeof(id), typeof(x), typeof(y), count(*) FROM big GROUP BY ALL
-+----
-+BIGINT	BIGINT	INTEGER	300000
-+
-+# the scan blocks on its I/O and is resumed
-+foreach strategy plain blocking
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x), sum(y)) FROM big WHERE x = 5) =
-+       (SELECT (count(*), sum(id), sum(x), sum(y)) FROM ref WHERE x = 5)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x), sum(y)) FROM big WHERE x > 990 AND y < 500000) =
-+       (SELECT (count(*), sum(id), sum(x), sum(y)) FROM ref WHERE x > 990 AND y < 500000)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(y)) FROM big WHERE x IS NULL) =
-+       (SELECT (count(*), sum(id), sum(y)) FROM ref WHERE x IS NULL)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x)) FROM big WHERE y = 600) =
-+       (SELECT (count(*), sum(id), sum(x)) FROM ref WHERE y = 600)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x)) FROM big WHERE y > 890000 AND d = 'v7') =
-+       (SELECT (count(*), sum(id), sum(x)) FROM ref WHERE y > 890000 AND d = 'v7')
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id)) FROM big WHERE x IN (1, 2, 3) AND id BETWEEN 200000 AND 200100) =
-+       (SELECT (count(*), sum(id)) FROM ref WHERE x IN (1, 2, 3) AND id BETWEEN 200000 AND 200100)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id)) FROM big WHERE x = 5 AND x = 6) = (0, NULL)
-+----
-+true
-+
-+query III
-+SELECT id, x, y FROM big ORDER BY y DESC LIMIT 3
-+----
-+299999	999	899997
-+299998	998	899994
-+299997	997	899991
-+
-+query III
-+SELECT id, x, y FROM big WHERE id > 1000 ORDER BY x DESC NULLS LAST, id LIMIT 3
-+----
-+1999	999	5997
-+2999	999	8997
-+3999	999	11997
-+
-+query II
-+SELECT count(*), sum(big.id) FROM big JOIN (VALUES (5), (105), (3)) v(k) ON x = k
-+----
-+891	133440561
-+
-+statement ok
-+SET async_threads = 4
-+
-+statement ok
-+SET storage_block_prefetch = 'debug_force_always'
-+
-+statement ok
-+SET read_ahead_depth = 0
-+
-+statement ok
-+SET debug_physical_table_scan_execution_strategy = 'DEFAULT'
-+
-+endloop
-+
-+statement ok
-+RESET async_threads
-+
-+statement ok
-+RESET storage_block_prefetch
-+
-+statement ok
-+RESET read_ahead_depth
-+
-+statement ok
-+RESET debug_physical_table_scan_execution_strategy
-+
-+# prepared statements
-+statement ok
-+PREPARE by_x AS SELECT count(*), sum(id) FROM big WHERE x = ? AND id < 5000
-+
-+query II
-+EXECUTE by_x(5)
-+----
-+5	10025
-+
-+query II
-+EXECUTE by_x(999)
-+----
-+5	14995
-+
-+query II
-+EXECUTE by_x(NULL)
-+----
-+0	NULL
-+
-+query II
-+EXECUTE by_x(5)
-+----
-+5	10025
-+
-+# deleted rows
-+statement ok
-+ATTACH '{TEST_DIR}/rd_conv_del.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT id, x::INTEGER x, y::BIGINT y, d FROM ref
-+
-+statement ok
-+CHECKPOINT rd
-+
-+statement ok
-+DELETE FROM rd.t WHERE id % 4 = 1 OR id BETWEEN 130000 AND 140000
-+
-+statement ok
-+DETACH rd
-+
-+statement ok
-+CREATE VIEW ref_del AS FROM ref WHERE NOT (id % 4 = 1 OR id BETWEEN 130000 AND 140000)
-+
-+statement ok
-+CREATE VIEW del AS FROM conv('{TEST_DIR}/rd_conv_del.db')
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x), sum(y)) FROM del WHERE x = 5) =
-+       (SELECT (count(*), sum(id), sum(x), sum(y)) FROM ref_del WHERE x = 5)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id), sum(x)) FROM del WHERE y BETWEEN 380000 AND 430000) =
-+       (SELECT (count(*), sum(id), sum(x)) FROM ref_del WHERE y BETWEEN 380000 AND 430000)
-+----
-+true
-+
-+query I
-+SELECT (SELECT (count(*), sum(id)) FROM del WHERE x > 990 AND id > 100000) =
-+       (SELECT (count(*), sum(id)) FROM ref_del WHERE x > 990 AND id > 100000)
-+----
-+true
-+
-+# the row id of a row that passes a filter on a converted column
-+query II
-+SELECT count(*), count(*) FILTER (rowid = id) FROM read_duckdb('{TEST_DIR}/rd_conv_del.db', schema = MAP {
-+	'id': {name: 'id', type: 'BIGIN
-```
-
-**File**: `test/sql/storage/read_duckdb/read_duckdb_filter_mixed_types.test` (added, +356/-0)
-```diff
-@@ -0,0 +1,356 @@
-+# name: test/sql/storage/read_duckdb/read_duckdb_filter_mixed_types.test
-+# description: Filters over read_duckdb when the files store a column with different types or shapes
-+# group: [read_duckdb]
-+
-+# two files that store the same columns differently: integer widths, the order of struct fields, list child types
-+statement ok
-+ATTACH '{TEST_DIR}/rd_mixed_narrow.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS
-+SELECT i::INTEGER x, {'a': i::BIGINT, 'b': (i * 10)::BIGINT} s, [i]::INTEGER[] l, i::BIGINT k, 1 only_narrow
-+FROM range(10) r(i)
-+
-+statement ok
-+INSERT INTO rd.t VALUES (NULL, NULL, NULL, 10, NULL)
-+
-+statement ok
-+DETACH rd
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_mixed_wide.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS
-+SELECT (i + 100)::BIGINT x, {'b': (i * 10)::BIGINT, 'a': (i + 100)::BIGINT} s, [i + 100]::BIGINT[] l, (i + 100)::BIGINT k
-+FROM range(10) r(i)
-+
-+statement ok
-+INSERT INTO rd.t VALUES (NULL, NULL, NULL, 110)
-+
-+statement ok
-+DETACH rd
-+
-+# the first file decides the types: wide_first reads the INTEGER column of the second file as BIGINT, narrow_first reads
-+# the BIGINT column of the second file as INTEGER
-+statement ok
-+CREATE VIEW wide_first AS
-+SELECT x, s, l, k FROM read_duckdb(['{TEST_DIR}/rd_mixed_wide.db', '{TEST_DIR}/rd_mixed_narrow.db'])
-+
-+statement ok
-+CREATE VIEW narrow_first AS
-+SELECT x, s, l, k FROM read_duckdb(['{TEST_DIR}/rd_mixed_narrow.db', '{TEST_DIR}/rd_mixed_wide.db'])
-+
-+statement ok
-+CREATE VIEW by_name AS
-+FROM read_duckdb(['{TEST_DIR}/rd_mixed_narrow.db', '{TEST_DIR}/rd_mixed_wide.db'], union_by_name = true)
-+
-+query IIII
-+SELECT typeof(x), typeof(s), typeof(l), count(*) FROM wide_first GROUP BY ALL
-+----
-+BIGINT	STRUCT(b BIGINT, a BIGINT)	BIGINT[]	22
-+
-+query IIII
-+SELECT typeof(x), typeof(s), typeof(l), count(*) FROM narrow_first GROUP BY ALL
-+----
-+INTEGER	STRUCT(a BIGINT, b BIGINT)	INTEGER[]	22
-+
-+query IIII
-+SELECT typeof(x), typeof(s), typeof(l), count(*) FROM by_name GROUP BY ALL
-+----
-+BIGINT	STRUCT(a BIGINT, b BIGINT)	BIGINT[]	22
-+
-+foreach view wide_first narrow_first by_name
-+
-+query II
-+SELECT x, k FROM {view} WHERE x = 5
-+----
-+5	5
-+
-+query II
-+SELECT x, k FROM {view} WHERE x = 105
-+----
-+105	105
-+
-+query I
-+SELECT x FROM {view} WHERE x > 7 AND x < 103 ORDER BY x
-+----
-+8
-+9
-+100
-+101
-+102
-+
-+query I
-+SELECT x FROM {view} WHERE x IN (5, 105, 1000) ORDER BY x
-+----
-+5
-+105
-+
-+query I
-+SELECT k FROM {view} WHERE x IS NULL ORDER BY k
-+----
-+10
-+110
-+
-+query I
-+SELECT count(*) FROM {view} WHERE x IS NOT NULL
-+----
-+20
-+
-+query I
-+SELECT count(*) FROM {view} WHERE x <> 5
-+----
-+19
-+
-+# a filter on the converted column beside a filter on a column both files store alike
-+query II
-+SELECT x, k FROM {view} WHERE x >= 5 AND k < 102 AND k <> 7 ORDER BY k
-+----
-+5	5
-+6	6
-+8	8
-+9	9
-+100	100
-+101	101
-+
-+query I
-+SELECT x FROM {view} WHERE k = 103
-+----
-+103
-+
-+# struct fields are matched by name
-+query I
-+SELECT s.a FROM {view} WHERE s.a = 105
-+----
-+105
-+
-+query I
-+SELECT s.a FROM {view} WHERE s.a = 5
-+----
-+5
-+
-+query II
-+SELECT s.a, s.b FROM {view} WHERE s = {'a': 105, 'b': 50}
-+----
-+105	50
-+
-+query II
-+SELECT s.a, s.b FROM {view} WHERE s = {'a': 5, 'b': 50}
-+----
-+5	50
-+
-+query I
-+SELECT k FROM {view} WHERE s IS NULL ORDER BY k
-+----
-+10
-+110
-+
-+query I
-+SELECT k FROM {view} WHERE s.b = 30 AND x > 0 ORDER BY k
-+----
-+3
-+103
-+
-+# lists
-+query I
-+SELECT l FROM {view} WHERE l = [105]
-+----
-+[105]
-+
-+query I
-+SELECT l FROM {view} WHERE l = [5]
-+----
-+[5]
-+
-+query I
-+SELECT k FROM {view} WHERE l[1] > 107 OR l[1] < 1 ORDER BY k
-+----
-+0
-+108
-+109
-+
-+# top-N pushes a dynamic filter into the scan
-+query I
-+SELECT x FROM {view} ORDER BY x LIMIT 3
-+----
-+0
-+1
-+2
-+
-+query I
-+SELECT x FROM {view} ORDER BY x DESC NULLS LAST LIMIT 3
-+----
-+109
-+108
-+107
-+
-+# a join pushes a filter on the join key into the scan
-+query I
-+SELECT x FROM {view} JOIN (VALUES (5), (105), (1000)) v(key) ON x = key ORDER BY x
-+----
-+5
-+105
-+
-+endloop
-+
-+foreach view wide_first narrow_first
-+
-+# late materialization: the top-N runs over the converted column, the other columns are fetched by row id
-+query III
-+SELECT x, k, s.a FROM {view} ORDER BY x LIMIT 2
-+----
-+0	0	0
-+1	1	1
-+
-+query III
-+SELECT x, k, s.b FROM {view} WHERE k <> 109 ORDER BY x DESC NULLS LAST LIMIT 2
-+----
-+108	108	80
-+107	107	70
-+
-+endloop
-+
-+# the row id is read beside a converted column
-+query II
-+SELECT x, rowid FROM read_duckdb(['{TEST_DIR}/rd_mixed_wide.db', '{TEST_DIR}/rd_mixed_narrow.db']) WHERE x IN (5, 105) ORDER BY x
-+----
-+5	5
-+105	5
-+
-+query II
-+SELECT x, rowid FROM read_duckdb(['{TEST_DIR}/rd_mixed_narrow.db', '{TEST_DIR}/rd_mixed_wide.db']) WHERE x > 107 ORDER BY x
-+----
-+108	8
-+109	9
-+
-+# a column only one of the files stores
-+statement ok
-+CREATE VIEW by_name_wide_first AS
-+FROM read_duckdb(['{TEST_DIR}/rd_mixed_wide.db', '{TEST_DIR}/rd_mixed_narrow.db'], union_by_name = true)
-+
-+query II
-+SELECT x, only_narrow FROM by_name_wide_first WHERE only_narrow = 1 AND x > 7 ORDER BY x
-+----
-+8	1
-
-```
-
-**File**: `test/sql/storage/read_duckdb/read_duckdb_schema_filter.test` (added, +335/-0)
-```diff
-@@ -0,0 +1,335 @@
-+# name: test/sql/storage/read_duckdb/read_duckdb_schema_filter.test
-+# description: Filters on columns that read_duckdb maps through an explicit schema see the mapped values
-+# group: [read_duckdb]
-+
-+require parquet
-+
-+require json
-+
-+statement ok
-+CREATE TABLE src AS SELECT * FROM (VALUES
-+	(1::BIGINT, 5::INTEGER, {'a': 1::BIGINT, 'b': 2::BIGINT}, [1::INTEGER, 2], MAP {'k': 10::INTEGER}, [{'a': 1::BIGINT, 'b': 2::BIGINT}]),
-+	(2, 6, {'a': 3, 'b': 4}, [3], MAP {'k': 20, 'j': 30}, [{'a': 3, 'b': 4}, {'a': 5, 'b': 6}]),
-+	(3, NULL, NULL, NULL, NULL, NULL),
-+	(4, 7, {'a': NULL, 'b': 8}, [], MAP {}, []),
-+	(5, 5, {'a': 2, 'b': 1}, [NULL, 2], MAP {'k': NULL}, [{'a': NULL, 'b': 1}, NULL])
-+) t(id, x, s, li, mi, l)
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_schema_filter.db' AS rdsf
-+
-+statement ok
-+CREATE TABLE rdsf.t AS FROM src
-+
-+statement ok
-+DETACH rdsf
-+
-+statement ok
-+COPY src TO '{TEST_DIR}/rd_schema_filter.parquet'
-+
-+statement ok
-+COPY src TO '{TEST_DIR}/rd_schema_filter.json'
-+
-+statement ok
-+CREATE MACRO scan_duckdb(sch) AS TABLE FROM read_duckdb('{TEST_DIR}/rd_schema_filter.db', schema = sch)
-+
-+statement ok
-+CREATE MACRO scan_parquet(sch) AS TABLE FROM read_parquet('{TEST_DIR}/rd_schema_filter.parquet', schema = sch)
-+
-+statement ok
-+CREATE MACRO scan_json(sch) AS TABLE FROM read_json('{TEST_DIR}/rd_schema_filter.json', schema = sch, columns = {
-+	id: 'BIGINT', x: 'INTEGER', s: 'STRUCT(a BIGINT, b BIGINT)', li: 'INTEGER[]', mi: 'MAP(VARCHAR, INTEGER)',
-+	l: 'STRUCT(a BIGINT, b BIGINT)[]'
-+})
-+
-+# the fields of s are crossed: the field stored as b is read as a, the field stored as a is read as b
-+statement ok
-+SET VARIABLE crossed = MAP {
-+	'id': {name: 'id', type: 'BIGINT', default_value: NULL, children: NULL},
-+	's': {name: 's', type: 'STRUCT(a BIGINT, b BIGINT)', default_value: NULL, children: MAP {
-+		'b': {name: 'a', type: 'BIGINT', default_value: NULL, children: NULL},
-+		'a': {name: 'b', type: 'BIGINT', default_value: NULL, children: NULL}
-+	}}
-+}
-+
-+# s has a field the file lacks, with a default value
-+statement ok
-+SET VARIABLE extra_field = MAP {
-+	'id': {name: 'id', type: 'BIGINT', default_value: NULL, children: NULL},
-+	's': {name: 's', type: 'STRUCT(a BIGINT, b BIGINT, c BIGINT)', default_value: NULL, children: MAP {
-+		'a': {name: 'a', type: 'BIGINT', default_value: NULL, children: NULL},
-+		'b': {name: 'b', type: 'BIGINT', default_value: NULL, children: NULL},
-+		'c': {name: 'c', type: 'BIGINT', default_value: 7, children: NULL}
-+	}}
-+}
-+
-+# every column but id is read as a type other than the stored one
-+statement ok
-+SET VARIABLE widened = MAP {
-+	'id': {name: 'id', type: 'BIGINT', default_value: NULL, children: NULL},
-+	'x': {name: 'x', type: 'BIGINT', default_value: NULL, children: NULL},
-+	's': {name: 's', type: 'STRUCT(a VARCHAR, b BIGINT)', default_value: NULL, children: MAP {
-+		'a': {name: 'a', type: 'VARCHAR', default_value: NULL, children: NULL},
-+		'b': {name: 'b', type: 'BIGINT', default_value: NULL, children: NULL}
-+	}},
-+	'li': {name: 'li', type: 'BIGINT[]', default_value: NULL, children: NULL},
-+	'mi': {name: 'mi', type: 'MAP(VARCHAR, BIGINT)', default_value: NULL, children: NULL},
-+	'l': {name: 'l', type: 'STRUCT(b BIGINT, a BIGINT)[]', default_value: NULL, children: NULL}
-+}
-+
-+statement ok
-+SET VARIABLE as_varchar = MAP {
-+	'id': {name: 'id', type: 'BIGINT', default_value: NULL, children: NULL},
-+	'x': {name: 'x', type: 'VARCHAR', default_value: NULL, children: NULL}
-+}
-+
-+foreach reader duckdb parquet json
-+
-+# crossed fields: the mapped value matches, the stored value matches the other row
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) ORDER BY id
-+----
-+1	{'a': 2, 'b': 1}
-+2	{'a': 4, 'b': 3}
-+3	NULL
-+4	{'a': 8, 'b': NULL}
-+5	{'a': 1, 'b': 2}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s = {'a': 2, 'b': 1}
-+----
-+1	{'a': 2, 'b': 1}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s = {'a': 1, 'b': 2}
-+----
-+5	{'a': 1, 'b': 2}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s.a = 2
-+----
-+1	{'a': 2, 'b': 1}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s.b = 2
-+----
-+5	{'a': 1, 'b': 2}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s IS NULL
-+----
-+3	NULL
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s.b IS NULL ORDER BY id
-+----
-+3	NULL
-+4	{'a': 8, 'b': NULL}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s.a IS NULL
-+----
-+3	NULL
-+
-+# a filter on the mapped column beside a filter on a column that is read as stored
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s.a > 1 AND id < 5 ORDER BY id
-+----
-+1	{'a': 2, 'b': 1}
-+2	{'a': 4, 'b': 3}
-+4	{'a': 8, 'b': NULL}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariable('crossed')) WHERE s > {'a': 2, 'b': 1} AND id IN (1, 2, 5)
-+----
-+2	{'a': 4, 'b': 3}
-+
-+query II
-+SELECT * FROM scan_{reader}(getvariabl
-```
-
-**File**: `test/sql/storage/read_duckdb/read_duckdb_schema_filter_pushdown.test` (added, +362/-0)
-```diff
-@@ -0,0 +1,362 @@
-+# name: test/sql/storage/read_duckdb/read_duckdb_schema_filter_pushdown.test
-+# description: Filters on columns read_duckdb reads as stored reach the table scan when another column is converted
-+# group: [read_duckdb]
-+
-+require json
-+
-+require no_alternative_verify
-+
-+statement ok
-+SET threads = 1
-+
-+# i and k ascend, so their zonemaps let the table scan skip row groups - p makes the row groups large
-+statement ok
-+ATTACH '{TEST_DIR}/rd_schema_pushdown.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT i::INTEGER i, i::BIGINT k, hash(i) p, hash(i + 1) q FROM range(600000) r(i)
-+
-+statement ok
-+DETACH rd
-+
-+# i is read as BIGINT, k and p are read as stored
-+statement ok
-+CREATE VIEW mapped AS
-+FROM read_duckdb('{TEST_DIR}/rd_schema_pushdown.db', schema = MAP {
-+	'i': {name: 'i', type: 'BIGINT', default_value: NULL},
-+	'k': {name: 'k', type: 'BIGINT', default_value: NULL},
-+	'p': {name: 'p', type: 'UBIGINT', default_value: NULL}
-+})
-+
-+# the filters stay in the scan
-+query II
-+EXPLAIN SELECT i, k, p FROM mapped WHERE k = 599999
-+----
-+physical_plan	<REGEX>:.*READ_DUCKDB.*Filters: k = 599999.*
-+
-+query II
-+EXPLAIN SELECT i, k, p FROM mapped WHERE k = 599999
-+----
-+physical_plan	<!REGEX>:.*Filter .*
-+
-+query II
-+EXPLAIN SELECT i, k, p FROM mapped WHERE i = 599999
-+----
-+physical_plan	<REGEX>:.*READ_DUCKDB.*Filters: i = 599999.*
-+
-+query II
-+EXPLAIN SELECT i, k, p FROM mapped WHERE i >= 599990 AND k > 599000
-+----
-+physical_plan	<REGEX>:.*READ_DUCKDB.*Filters:.*
-+
-+query II
-+EXPLAIN SELECT i, k, p FROM mapped WHERE i >= 599990 AND k > 599000
-+----
-+physical_plan	<!REGEX>:.*Filter .*
-+
-+statement ok
-+SET tracked_metrics = ['io.total_bytes_read']
-+
-+# no filter: every row group is read
-+statement ok
-+SET enable_profiling = 'json'
-+
-+statement ok
-+SET profiling_output = '{TEST_DIR}/rd_schema_pushdown_all.json'
-+
-+query III
-+SELECT count(*), sum(i), bit_xor(p) = (SELECT bit_xor(hash(i)) FROM range(600000) r(i)) FROM mapped
-+----
-+600000	179999700000	true
-+
-+statement ok
-+PRAGMA disable_profiling
-+
-+# a filter on a column that is read as stored: the table scan skips the row groups its zonemaps exclude
-+statement ok
-+SET enable_profiling = 'json'
-+
-+statement ok
-+SET profiling_output = '{TEST_DIR}/rd_schema_pushdown_direct.json'
-+
-+query III
-+SELECT count(*), sum(i), bit_xor(p) = hash(599999) FROM mapped WHERE k = 599999
-+----
-+1	599999	true
-+
-+statement ok
-+PRAGMA disable_profiling
-+
-+# the same filter beside a filter on the converted column
-+statement ok
-+SET enable_profiling = 'json'
-+
-+statement ok
-+SET profiling_output = '{TEST_DIR}/rd_schema_pushdown_both.json'
-+
-+query III
-+SELECT count(*), sum(i), bit_xor(p) = (SELECT bit_xor(hash(i)) FROM range(599990, 600000) r(i))
-+FROM mapped WHERE i >= 599990 AND k > 599000
-+----
-+10	5999945	true
-+
-+statement ok
-+PRAGMA disable_profiling
-+
-+# a filter on the converted column only is applied after the conversion
-+query III
-+SELECT count(*), sum(i), bit_xor(p) = (SELECT bit_xor(hash(i)) FROM range(599990, 600000) r(i))
-+FROM mapped WHERE i >= 599990
-+----
-+10	5999945	true
-+
-+query I
-+SELECT io.total_bytes_read > 0 FROM '{TEST_DIR}/rd_schema_pushdown_all.json'
-+----
-+true
-+
-+query I
-+SELECT d.io.total_bytes_read * 2 < a.io.total_bytes_read
-+FROM '{TEST_DIR}/rd_schema_pushdown_all.json' a, '{TEST_DIR}/rd_schema_pushdown_direct.json' d
-+----
-+true
-+
-+query I
-+SELECT b.io.total_bytes_read * 2 < a.io.total_bytes_read
-+FROM '{TEST_DIR}/rd_schema_pushdown_all.json' a, '{TEST_DIR}/rd_schema_pushdown_both.json' b
-+----
-+true
-+
-+# a read_duckdb without a schema pushes the filter as before
-+statement ok
-+SET enable_profiling = 'json'
-+
-+statement ok
-+SET profiling_output = '{TEST_DIR}/rd_schema_pushdown_plain.json'
-+
-+query II
-+SELECT count(*), bit_xor(p) = hash(599999) FROM read_duckdb('{TEST_DIR}/rd_schema_pushdown.db') WHERE i = 599999
-+----
-+1	true
-+
-+statement ok
-+PRAGMA disable_profiling
-+
-+query I
-+SELECT p.io.total_bytes_read * 2 < a.io.total_bytes_read
-+FROM '{TEST_DIR}/rd_schema_pushdown_all.json' a, '{TEST_DIR}/rd_schema_pushdown_plain.json' p
-+----
-+true
-+
-+# two databases that store i with different integer widths
-+statement ok
-+ATTACH '{TEST_DIR}/rd_schema_pushdown_wide.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT (i + 600000)::BIGINT i, i::BIGINT k, hash(i) p, hash(i + 1) q FROM range(600000) r(i)
-+
-+statement ok
-+DETACH rd
-+
-+statement ok
-+CREATE VIEW two_files AS
-+SELECT i, p FROM read_duckdb(['{TEST_DIR}/rd_schema_pushdown_wide.db', '{TEST_DIR}/rd_schema_pushdown.db'])
-+
-+query II
-+SELECT count(*), typeof(any_value(i)) FROM two_files WHERE p IS NOT NULL
-+----
-+1200000	BIGINT
-+
-+# the row is in the file whose column is converted
-+query II
-+SELECT i, p = hash(5) FROM two_files WHERE i = 5
-+----
-+5	true
-+
-+# the row is in the file that stores the scan type
-+query II
-+SELECT i, p = hash(599999) FROM two_files WHERE i = 1199999
-+----
-+1199999	true
-+
-+# late materialization: the top-N over the converted column runs over a scan of its own, 
-```
-
----
-
-### Incident Patch 2: `c826f8f7` (2026-11-26)
-**Commit Message**: Fold a BETWEEN on a constant NULL input to NULL (#29369)
-
-`NULL <= x` already folds to a NULL constant in
-`ComparisonSimplificationRule`, so `x` is never evaluated. `NULL BETWEEN
-a AND b` is just as NULL for any bounds, but it was left in place, so
-its bounds were still evaluated:
-
-```sql
-CREATE TABLE t(c INT); INSERT INTO t VALUES (2000000000);
-SELECT count(*) FROM t WHERE NOT (NULL <= c * 1000);                 -- 0
-SELECT count(*) FROM t WHERE NOT (NULL::INT BETWEEN c * 1000 AND 1); -- Out of Range Error: Overflow in multiplication of INT32
-```
-
-This PR adds `BetweenNullSimplificationRule`. It folds a `BETWEEN` (and
-so a `NOT BETWEEN`) whose input is a foldable constant that evaluates to
-NULL into a NULL BOOLEAN. It only applies to the built-in BETWEEN bind
-data.
-
-This is the cause of 6 of the 7 failures in the nightly `Sqllogic tests`
-job on main: `random/aggregates/slt_good_{17,20,31,38,39,82}.test`.
-Every failing query there has the form `NULL [NOT] BETWEEN … AND <int
-expression that overflows INT32>`, and the expected results come from
-SQLite, which never evaluates those bounds. All 6 files pass with this
-change. The 7th, `evidence/in1.test` (BLOB vs INTEGER `IN`), is a
-sepa
-
-**File**: `src/include/duckdb/optimizer/rule/comparison_simplification.hpp` (modified, +9/-0)
-```diff
-@@ -21,6 +21,15 @@ class ComparisonSimplificationRule : public Rule {
- 	                             bool is_root) override;
- };
- 
-+//! Rewrites a BETWEEN on a constant NULL input into a constant NULL (i.e. [NULL BETWEEN x AND y] => [NULL])
-+class BetweenNullSimplificationRule : public Rule {
-+public:
-+	explicit BetweenNullSimplificationRule(ExpressionRewriter &rewriter);
-+
-+	unique_ptr<Expression> Apply(LogicalOperator &op, vector<reference<Expression>> &bindings, bool &changes_made,
-+	                             bool is_root) override;
-+};
-+
- //! Rewrites top-level filter equality between row constructors into scalar equalities.
- class RowComparisonSimplificationRule : public Rule {
- public:
-```
-
-**File**: `src/optimizer/expression_rewriter.cpp` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@ vector<unique_ptr<Rule>> ExpressionRewriter::CreateDefaultRules(ExpressionRewrit
- 	rules.push_back(make_uniq<DatePartSimplificationRule>(rewriter));
- 	rules.push_back(make_uniq<DateTruncSimplificationRule>(rewriter));
- 	rules.push_back(make_uniq<ComparisonSimplificationRule>(rewriter));
-+	rules.push_back(make_uniq<BetweenNullSimplificationRule>(rewriter));
- 	rules.push_back(make_uniq<RowComparisonSimplificationRule>(rewriter));
- 	rules.push_back(make_uniq<InClauseSimplificationRule>(rewriter));
- 	rules.push_back(make_uniq<InEnumSimplificationRule>(rewriter));
-```
-
-**File**: `src/optimizer/rule/comparison_simplification.cpp` (modified, +26/-0)
-```diff
-@@ -6,6 +6,7 @@
- #include "duckdb/execution/expression_executor.hpp"
- #include "duckdb/planner/expression/bound_constant_expression.hpp"
- #include "duckdb/optimizer/expression_rewriter.hpp"
-+#include "duckdb/planner/expression/bound_between_expression.hpp"
- #include "duckdb/planner/expression/bound_comparison_expression.hpp"
- #include "duckdb/planner/expression/bound_conjunction_expression.hpp"
- #include "duckdb/planner/expression/bound_operator_expression.hpp"
-@@ -203,6 +204,31 @@ ComparisonSimplificationRule::ComparisonSimplificationRule(ExpressionRewriter &r
- 	root = std::move(op);
- }
- 
-+BetweenNullSimplificationRule::BetweenNullSimplificationRule(ExpressionRewriter &rewriter) : Rule(rewriter) {
-+	auto between = make_uniq<FunctionExpressionMatcher>();
-+	between->expr_type = make_uniq<SpecificExpressionTypeMatcher>(ExpressionType::COMPARE_BETWEEN);
-+	between->matchers.push_back(make_uniq<FoldableConstantMatcher>());
-+	between->matchers.push_back(make_uniq<ExpressionMatcher>());
-+	between->matchers.push_back(make_uniq<ExpressionMatcher>());
-+	between->policy = SetMatcher::Policy::ORDERED;
-+	root = std::move(between);
-+}
-+
-+unique_ptr<Expression> BetweenNullSimplificationRule::Apply(LogicalOperator &op,
-+                                                            vector<reference<Expression>> &bindings, bool &changes_made,
-+                                                            bool is_root) {
-+	auto &between = bindings[0].get().Cast<BoundFunctionExpression>();
-+	if (!BoundBetweenExpression::HasValidBindData(between)) {
-+		return nullptr;
-+	}
-+	Value input_value;
-+	if (!ExpressionExecutor::TryEvaluateScalar(GetContext(), bindings[1].get(), input_value) || !input_value.IsNull()) {
-+		return nullptr;
-+	}
-+	// both bound comparisons are NULL whatever the bounds are, so they need not be evaluated
-+	return make_uniq<BoundConstantExpression>(Value(LogicalType::BOOLEAN));
-+}
-+
- RowComparisonSimplificationRule::RowComparisonSimplificationRule(ExpressionRewriter &rewriter) : Rule(rewriter) {
- 	auto comparison = make_uniq<ComparisonExpressionMatcher>();
- 	comparison->expr_type = make_uniq<SpecificExpressionTypeMatcher>(ExpressionType::COMPARE_EQUAL);
-```
-
-**File**: `test/configs/disable_optimizer.json` (modified, +6/-0)
-```diff
-@@ -4,6 +4,12 @@
-   "skip_compiled": "true",
-   "inherit_skip_tests": "test/configs/stats_dependent_tests.json",
-   "skip_tests": [
-+    {
-+      "reason": "Relies on the optimizer folding a BETWEEN on a constant NULL input before its bounds overflow.",
-+      "paths": [
-+        "test/optimizer/between_null_input.test"
-+      ]
-+    },
-     {
-       "reason": "Checks MARK conversion plan shapes and its optimizer gate.",
-       "paths": [
-```
-
-**File**: `test/optimizer/between_null_input.test` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+# name: test/optimizer/between_null_input.test
-+# description: A BETWEEN on a constant NULL input is NULL without evaluating its bounds
+@@ -0,0 +1,66 @@
++# name: test/optimizer/filter_pullup_projection_safety.test
++# description: Keep fallible and volatile expressions at their original evaluation boundary during filter pullup
 +# group: [optimizer]
 +
 +statement ok
-+CREATE TABLE t(c INTEGER, v VARCHAR);
++SET threads = 1;
++
++# Exercise filter pullup without a later pass that can restore the filter's location.
++statement ok
++SET disabled_optimizers = 'filter_pushdown';
 +
 +statement ok
-+INSERT INTO t VALUES (2000000000, 'a'), (1, 'b'), (NULL, NULL);
++CREATE TABLE items(grp INTEGER, value VARCHAR);
++
++statement ok
++INSERT INTO items VALUES (1, '42'), (2, 'bad'), (NULL, 'also_bad');
++
++statement ok
++CREATE TABLE chosen AS SELECT 1 AS grp;
++
++statement ok
++CREATE TABLE singleton AS SELECT 43 AS cast_key, 2 AS sequence_key;
 +
 +query I
-+SELECT count(*) FROM t WHERE NOT (NULL::INTEGER BETWEEN c * 1000 AND 1);
++SELECT p.value
++FROM (SELECT items.value::INTEGER AS value FROM items JOIN chosen USING (grp)) p
++JOIN singleton s ON p.value + 1 = s.cast_key;
 +----
-+0
++42
++
++statement ok
++CREATE SEQUENCE probe_seq;
 +
 +query I
-+SELECT count(*) FROM t WHERE NOT (NULL::INTEGER BETWEEN 1 AND c * 1000);
-+----
-+0
-+
-+query I
-+SELECT count(*) FROM t WHERE NULL NOT BETWEEN c * 1000 AND c * 1000;
-+----
-+0
-+
-+query I
-+SELECT count(*) FROM t WHERE NOT NULL BETWEEN NULL AND c * 1000;
-+----
-+0
-+
-+query I
-+SELECT count(*) FROM t WHERE CAST(NULL AS INTEGER) + 1 NOT BETWEEN NULL AND c * 1000;
-+----
-+0
-+
-+query I
-+SELECT (NULL BETWEEN c * 1000 AND 1) IS NULL FROM t ORDER BY c NULLS LAST;
-+----
-+true
-+true
-+true
-+
-+query I
-+SELECT NULL::VARCHAR BETWEEN v AND repeat(v, 2) FROM t ORDER BY c NULLS LAST;
-+----
-+NULL
-+NULL
-+NULL
-+
-+# a non-NULL constant input still evaluates the bounds
-+statement error
-+SELECT count(*) FROM t WHERE 5 BETWEEN c * 1000 AND 10;
-+----
-+Overflow in multiplication of INT32
-+
-+query I
-+SELECT count(*) FROM t WHERE 5 BETWEEN c AND 10;
++SELECT p.seq
++FROM (SELECT nextval('probe_seq') AS seq FROM items JOIN chosen USING (grp)) p
++JOIN singleton s ON p.seq + 1 = s.sequence_key;
 +----
 +1
 +
 +query I
-+SELECT count(*) FROM t WHERE 5 NOT BETWEEN c AND 10;
++SELECT currval('probe_seq');
 +----
 +1
-```
-
----
-
-### Incident Patch 3: `3c79f8ed` (2026-11-26)
-**Commit Message**: Fix rows lost in multi-file scans when a filter skips a later open reader (#29133)
-
-A multi-file scan that starts with several open readers drops the rows
-of a file when a filter skips a file that comes after it:
-
-```sql
-COPY (SELECT i AS x FROM range(10) r(i)) TO 'a.parquet';
-COPY (SELECT i + 100 AS x FROM range(10) r(i)) TO 'b.parquet';
-COPY (SELECT i + 200 AS x FROM range(10) r(i)) TO 'c.parquet';
-
-SELECT count(*), sum(x)
-FROM read_parquet(['a.parquet', 'b.parquet'], maximum_files_for_stats = 2)
-WHERE filename = 'a.parquet';
--- 0, NULL. Expected 10, 45, which is the result without the option.
-
-SELECT count(*), sum(x)
-FROM read_parquet(['a.parquet', 'b.parquet', 'c.parquet'], maximum_files_for_stats = 3)
-WHERE filename <> 'b.parquet';
--- 10, 2045. Expected 20, 2090.
-```
-
-`read_duckdb` with `union_by_name` is affected the same way, here
-through a column a later file lacks:
-
-```sql
-ATTACH 'both.db' AS a;
-CREATE TABLE a.t AS SELECT i x, 1 only_both FROM range(10) r(i);
-DETACH a;
-ATTACH 'x.db' AS b;
-CREATE TABLE b.t AS SELECT i + 100 x FROM range(10) r(i);
-DETACH b;
-
-SELECT count(*) FROM read_duckdb(['both.db', 'x.db'], union_by_name = true) WHERE only_both = 1;
--- 0, expected 10. Wi
-
-**File**: `src/include/duckdb/common/multi_file/multi_file_function.hpp` (modified, +2/-2)
-```diff
-@@ -889,10 +889,10 @@ class MultiFileFunction : public TableFunction {
- 				                                    context, file_idx, *result);
- 				result->files_opened++;
- 				if (init_result == ReaderInitializeType::SKIP_READING_FILE) {
--					//! File can be skipped entirely, close it and move on
-+					//! File can be skipped entirely, close it - the scan moves past skipped files when it reaches them,
-+					//! the readers before this one still have to be scanned
- 					reader_data->file_state = MultiFileFileState::SKIPPED;
- 					reader_data->reader = nullptr;
--					result->file_index++;
- 				}
- 			}
- 		}
-```
-
-**File**: `test/sql/copy/parquet/multi_file/multi_file_skipped_open_reader.test` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+# name: test/sql/copy/parquet/multi_file/multi_file_skipped_open_reader.test
-+# description: A filter that skips a file whose reader is already open keeps the rows of the open readers before it
-+# group: [multi_file]
-+
-+require parquet
 +
 +statement ok
-+COPY (SELECT i AS x FROM range(10) r(i)) TO '{TEST_DIR}/skip_open_a.parquet'
++CREATE TABLE inputs AS SELECT i, 0.5::DOUBLE AS threshold, 1 AS k FROM range(4) t(i);
 +
 +statement ok
-+COPY (SELECT i + 100 AS x FROM range(10) r(i)) TO '{TEST_DIR}/skip_open_b.parquet'
++CREATE TABLE copies AS SELECT i, 2 AS k FROM range(10) t(i);
 +
 +statement ok
-+COPY (SELECT i + 200 AS x FROM range(10) r(i)) TO '{TEST_DIR}/skip_open_c.parquet'
++SELECT setseed(0.42);
 +
-+foreach threads 1 4
-+
-+statement ok
-+SET threads = {threads}
-+
-+# maximum_files_for_stats opens every file at bind, so the scan starts with several open readers
-+# the second reader is skipped, the first one is not
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet'], maximum_files_for_stats = 2)
-+WHERE filename = '{TEST_DIR}/skip_open_a.parquet'
-+----
-+10	45
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_a.parquet'], maximum_files_for_stats = 2)
-+WHERE filename = '{TEST_DIR}/skip_open_a.parquet'
-+----
-+10	45
-+
-+# a skipped reader between two that are read
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+WHERE filename <> '{TEST_DIR}/skip_open_b.parquet'
-+----
-+20	2090
-+
-+# the last two readers are skipped
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+WHERE filename = '{TEST_DIR}/skip_open_a.parquet'
-+----
-+10	45
-+
-+# the first and the last reader are skipped
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+WHERE filename = '{TEST_DIR}/skip_open_b.parquet'
-+----
-+10	1045
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+WHERE filename <> '{TEST_DIR}/skip_open_c.parquet' AND x % 2 = 0
-+----
-+10	540
-+
-+# every reader is skipped
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+WHERE filename = 'nope'
-+----
-+0	NULL
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet'], maximum_files_for_stats = 2)
-+WHERE file_index >= 2
-+----
-+0	NULL
-+
-+# no reader is skipped
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], maximum_files_for_stats = 3)
-+----
-+30	3135
-+
-+# without the option only the first file is open: it is skipped, the files after it are opened by the scan
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet('{TEST_DIR}/skip_open_*.parquet')
-+WHERE filename <> '{TEST_DIR}/skip_open_a.parquet'
-+----
-+20	3090
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet('{TEST_DIR}/skip_open_*.parquet')
-+WHERE filename = '{TEST_DIR}/skip_open_a.parquet'
-+----
-+10	45
-+
-+# union_by_name opens every file at bind as well
-+query II
-+SELECT count(*), sum(x)
-+FROM read_parquet(['{TEST_DIR}/skip_open_a.parquet', '{TEST_DIR}/skip_open_b.parquet', '{TEST_DIR}/skip_open_c.parquet'], union_by_name = true)
-+WHERE filename <> '{TEST_DIR}/skip_open_b.parquet'
-+----
-+20	2090
-+
-+endloop
-```
-
-**File**: `test/sql/storage/read_duckdb/read_duckdb_union_by_name_filter.test` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+# name: test/sql/storage/read_duckdb/read_duckdb_union_by_name_filter.test
-+# description: A filter that skips a later file of a union_by_name read_duckdb scan keeps the rows of the files before it
-+# group: [read_duckdb]
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_ubn_filter_both.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT i x, 1 only_both FROM range(10) r(i)
-+
-+statement ok
-+DETACH rd
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_ubn_filter_x.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT i + 100 x FROM range(10) r(i)
-+
-+statement ok
-+DETACH rd
-+
-+loop i 0 3
-+
-+statement ok
-+ATTACH '{TEST_DIR}/rd_ubn_filter_glob_{i}.db' AS rd
-+
-+statement ok
-+CREATE TABLE rd.t AS SELECT r + {i} * 10 x FROM range(10) t(r)
-+
-+statement ok
-+DETACH rd
-+
-+endloop
-+
-+foreach threads 1 4
-+
-+statement ok
-+SET threads = {threads}
-+
-+# the file without only_both is skipped for a filter that rejects NULL - the file before it is not
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+10	45
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_both.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+10	45
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both IS NOT NULL AND x > 4
-+----
-+5	35
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both IS NULL
-+----
-+10	1045
-+
-+# several files before and after the skipped ones
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+20	90
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_both.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+20	90
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_both.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+20	90
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both = 1
-+----
-+10	45
-+
-+# every reader is skipped
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE file_index >= 2
-+----
-+0	NULL
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE filename = 'nope'
-+----
-+0	NULL
-+
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_x.db', '{TEST_DIR}/rd_ubn_filter_both.db'], union_by_name = true)
-+WHERE only_both = 1 AND filename = '{TEST_DIR}/rd_ubn_filter_x.db'
-+----
-+0	NULL
-+
-+# one reader is skipped by the file name, the other by the column it lacks
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both IS NULL AND filename = '{TEST_DIR}/rd_ubn_filter_both.db'
-+----
-+0	NULL
-+
-+# no reader is skipped, the filter rejects every row
++# A source row either survives the volatile filter once and yields all ten copies, or is excluded.
 +query I
 +SELECT count(*)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE x < 0
++FROM (
++    SELECT p.i
++    FROM (SELECT i, k FROM inputs WHERE random() < threshold) p
++    JOIN copies c ON p.k + 1 = c.k
++    GROUP BY p.i
++    HAVING count(*) <> 10
++);
 +----
 +0
+```
+
+**File**: `test/optimizer/joins/implied_key_on_expression_join.test` (added, +129/-0)
+```diff
+@@ -0,0 +1,129 @@
++# name: test/optimizer/joins/implied_key_on_expression_join.test
++# description: Pulling up hidden join keys exposes transitive group equalities for rank joins
++# group: [joins]
 +
-+# without union_by_name only the first file is open: it is skipped, the files after it are opened by the scan
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb('{TEST_DIR}/rd_ubn_filter_glob_*.db')
-+WHERE filename <> '{TEST_DIR}/rd_ubn_filter_glob_0.db'
++foreach group_type BIGINT VARCHAR
++
++statement ok
++CREATE OR REPLACE TABLE sales AS
++SELECT g::{group_type} AS grp, p // 12 AS year, p % 12 AS moy, (g * 7 + p * 3 + i) % 50 AS price
++FROM range(4) a(g), range(14) b(p), range(8) c(i);
++
++statement ok
++CREATE OR REPLACE VIEW monthly_total AS SELECT grp, year, moy, sum(price) AS total FROM sales GROUP BY ALL;
++
++statement ok
++CREATE OR REPLACE VIEW monthly_max AS SELECT grp, year, moy, max(price) AS max_price FROM sales GROUP BY ALL;
++
++statement ok
++CREATE OR REPLACE VIEW enriched AS
++SELECT grp, year, moy, total, max_price
++FROM sales JOIN monthly_total USING (grp, year, moy) JOIN monthly_max USING (grp, year, moy);
++
++statement ok
++CREATE OR REPLACE VIEW ranked AS
++SELECT grp, year, moy, rn
++FROM enriched JOIN (
++  SELECT *, row_number() OVER (PARTITION BY grp ORDER BY year, moy) AS rn
++  FROM (SELECT DISTINCT * FROM enriched)
++) USING (grp, year, moy, total, max_price);
++
++statement ok
++CREATE OR REPLACE VIEW ranked_neighbors AS
++SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
++FROM ranked cur, ranked lag, ranked lead
++WHERE cur.rn = lag.rn + 1 AND cur.rn = lead.rn - 1 AND cur.grp = lag.grp AND cur.grp = lead.grp;
++
++query III
++FROM ranked_neighbors;
 +----
-+20	390
++24576	3870720	135168
++
++# Both rank joins include the group key with the default optimizer pipeline.
++query II
++EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
++----
++physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
++
++statement ok
++CREATE OR REPLACE VIEW ranked_neighbors AS
++SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
++FROM ranked cur
++JOIN ranked lag ON cur.rn = lag.rn + 1 AND cur.grp = lag.grp
++JOIN ranked lead ON cur.rn = lead.rn - 1 AND cur.grp = lead.grp;
++
++query III
++FROM ranked_neighbors;
++----
++24576	3870720	135168
 +
 +query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb('{TEST_DIR}/rd_ubn_filter_glob_*.db', union_by_name = true)
-+WHERE filename <> '{TEST_DIR}/rd_ubn_filter_glob_1.db'
++EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
 +----
-+20	290
++physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
 +
-+# no filter
-+query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
++# Group predicates above the joins must pass through the restored output projection.
++statement ok
++CREATE OR REPLACE VIEW ranked_neighbors AS
++SELECT count(*), sum(cur.grp::BIGINT * 100 + cur.rn), sum(lag.year * 100 + lag.moy)
++FROM ranked cur
++JOIN ranked lag ON cur.rn = lag.rn + 1
++JOIN ranked lead ON cur.rn = lead.rn - 1
++WHERE cur.grp = lag.grp AND cur.grp = lead.grp;
++
++query III
++FROM ranked_neighbors;
 +----
-+20	1090
++24576	3870720	135168
++
++query II
++EXPLAIN (FORMAT JSON) FROM ranked_neighbors;
++----
++physical_plan	<REGEX>:(.*"Conditions":\s*\[[^\]]*(\brn\b[^\]]*grp = grp|grp = grp[^\]]*\brn\b)[^\]]*\]){2}.*
 +
 +endloop
 +
-+# the optimizer-disabled result
 +statement ok
-+PRAGMA disable_optimizer
++CREATE TABLE lhs(g INTEGER, r INTEGER);
++
++statement ok
++INSERT INTO lhs VALUES (1, 2), (2, 2), (NULL, 2);
++
++statement ok
++CREATE TABLE rhs AS SELECT g, r - 1 AS r FROM lhs;
++
++statement ok
++CREATE TABLE bridge(g INTEGER);
++
++statement ok
++INSERT INTO bridge VALUES (1), (2), (2), (NULL);
++
++query I
++SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 JOIN bridge c ON a.g = c.g AND b.g = c.g;
++----
++3
++
++query I
++SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 JOIN bridge c ON a.g = c.g;
++----
++9
++
++query I
++SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1
++JOIN bridge c ON a.g IS NOT DISTINCT FROM c.g AND b.g IS NOT DISTINCT FROM c.g;
++----
++4
++
++query I
++SELECT count(*) FROM lhs a JOIN rhs b ON a.r = b.r + 1 LEFT JOIN bridge c ON a.g = c.g AND b.g = c.g;
++----
++10
++
++# Distinct BIGINTs can compare equal after a lossy cast.
++query I
++SELECT count(*)
++FROM (VALUES (9007199254740992::BIGINT, 2)) a(g, r)
++JOIN (VALUES (9007199254740993::BIGINT, 1)) b(g, r) ON a.r = b.r + 1
++JOIN (VALUES (9007199254740992::DOUBLE)) c(g) ON a.g::DOUBLE = c.g AND b.g::DOUBLE = c.g;
++----
++1
+```
+
+**File**: `test/optimizer/pushdown/filter_projection_map.test` (added, +102/-0)
+```diff
+@@ -0,0 +1,102 @@
++# name: test/optimizer/pushdown/filter_projection_map.test
++# description: Push predicates through filters that restore the output layout after hidden-column pullup
++# group: [pushdown]
++
++statement ok
++CREATE TABLE a AS SELECT i::INTEGER AS k, i::INTEGER AS v FROM range(1000) t(i);
++
++statement ok
++CREATE TABLE b AS SELECT i::INTEGER AS k FROM range(1000) t(i);
++
++statement ok
++CREATE TABLE c AS SELECT i::INTEGER AS v FROM range(1000) t(i);
++
++statement ok
++CREATE VIEW selective_join AS
++SELECT p.v, c.v AS other
++FROM (SELECT a.v FROM a JOIN b ON a.k = b.k) p
++JOIN c ON p.v = c.v + 1
++WHERE p.v = 42;
 +
 +query II
-+SELECT count(*), sum(x)
-+FROM read_duckdb(['{TEST_DIR}/rd_ubn_filter_both.db', '{TEST_DIR}/rd_ubn_filter_x.db'], union_by_name = true)
-+WHERE only_both = 1
++FROM selective_join;
 +----
-+10	45
++42	41
++
++# The selective predicate reaches the table scan despite the hidden join column.
++query II
++EXPLAIN (FORMAT JSON) FROM selective_join;
++----
++physical_plan	<REGEX>:.*"Table": "[^"]*\.a"[^}]*"Filters": "\(v = 42\)".*
++
++# Preserve projected values, duplicate columns, NULLs, and row multiplicity.
++statement ok
++INSERT INTO a VALUES (42, 42), (42, NULL);
++
++query IIII rowsort
++SELECT p.v, p.k, p.v, c.v
++FROM (SELECT a.v, a.k FROM a JOIN b ON a.k = b.k) p
++JOIN c ON p.k = c.v + 1
++WHERE p.k = 42;
++----
++42	42	42	41
++42	42	42	41
++NULL	42	NULL	41
++
++query II
++SELECT p.v, c.v
++FROM (SELECT a.v FROM a JOIN b ON a.k = b.k) p
++JOIN c ON p.v = c.v + 1
++WHERE p.v = 42 AND c.v = 42;
++----
++
++statement ok
++CREATE TABLE copies(k INTEGER);
++
++statement ok
++INSERT INTO copies VALUES (1), (1);
++
++statement ok
++CREATE TABLE targets(v INTEGER);
++
++statement ok
++INSERT INTO targets VALUES (0), (0);
++
++statement ok
++CREATE SEQUENCE probe_seq;
++
++# Evaluate the volatile predicate after both joins have duplicated the source row.
++query I
++SELECT count(*)
++FROM (SELECT a.v FROM a JOIN copies ON a.k = copies.k) p
++JOIN targets ON p.v = targets.v + 1
++WHERE nextval('probe_seq') <= p.v;
++----
++1
++
++query I
++SELECT currval('probe_seq');
++----
++4
++
++statement ok
++CREATE TABLE fallible(k INTEGER, value VARCHAR);
++
++statement ok
++INSERT INTO fallible VALUES (1, '42'), (2, 'bad');
++
++statement ok
++INSERT INTO targets VALUES (10);
++
++# Isolate filter pushdown from later join reordering and dynamic join filters.
++statement ok
++SET disabled_optimizers = 'join_filter_pushdown,join_order';
++
++query T rowsort
++SELECT p.value
++FROM (SELECT fallible.k, fallible.value FROM fallible JOIN b ON fallible.k = b.k) p
++JOIN targets ON p.k = targets.v + 1
++WHERE p.value::INTEGER = 42;
++----
++42
++42
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29430** (2026-11-26): Reduce repeated work in common-subplan extraction (@lnkuiper)
-- **PR #29426** (2026-11-26): Reduce relation-set lookup and join reconstruction overhead (@lnkuiper)
-- **PR #29425** (2026-11-26): Add Value::VariantToValue to the v2 C API and C++ API (@Robinho-MR)
-- **PR #29424** (2026-11-26): [v2.0] Backport #28768: order small runtime filter builds before filtered and nested scans (@DinosL)
-- **PR #29422** (2026-11-26): Speed up encoding decoders and decode CSV encodings in cache-sized slices (@Robinho-MR)
-- **PR #29421** (2026-11-26): Avoid rendering entire ART indexes during index creation (@lnkuiper)
+- **PR #29452** (2026-11-26): Propagate more filter constraints to join inputs (@lnkuiper)
+- **PR #29450** (2026-11-26): Cache common-subplan signatures and cost summaries (@lnkuiper)
+- **PR #29445** (2026-11-26): Propagate list length statistics through list functions and casts (@Robinho-MR)
+- **PR #29444** (2026-11-26): Make `ParquetSchemaRecursive` iterative, rename to `ParquetSchemaTree` (@xproblematique)
+- **PR #29442** (2026-11-26): Batch common-subplan binding rewrites and CTE placement (@lnkuiper)
+- **PR #29440** (2026-11-26): Purge trimmed cached allocations at the bulk deallocation threshold (@RecurseAndDesist)
 
 ---
 
@@ -3528,51 +3183,60 @@ SELECT count(*) FROM read_duckdb(['both.db', 'x.db'], union_by_name = true) WHER
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. read_duckdb filters on columns that are converted for the scan
+## X. Spill top-N heap aggregate states under memory pressure
 
 **RULE**:
-When implementing operations in `src/function/table/read_duckdb.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extension/core_functions/aggregate/distributive/arg_min_max.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d648b503`: read_duckdb filters on columns that are converted for the scan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1508f3a`: Spill top-N heap aggregate states under memory pressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function/table/read_duckdb.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `extension/core_functions/aggregate/distributive/arg_min_max.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include "duckdb/execution/expression_executor.hpp"
-#include "duckdb/planner/expression/bound_reference_expression.hpp"
-#include "duckdb/planner/expression_iterator.hpp"
-#include "duckdb/planner/table_filter_state.hpp"
-#include "duckdb/storage/table/column_segment.hpp"
-struct DuckDBReadLocalState;
 
-private:
-	//! The filters the table scan evaluates - those on the columns that are read as the file stores them
-	optional_ptr<TableFilterSet> GetScanFilters();
-	//! Prepares the conversions of expression_map and the filters that apply to their results
-	void InitializeConvertedColumns(ClientContext &context, DuckDBReadLocalState &lstate);
-	//! Scans the table into the chunk of the file, converts the columns of expression_map and applies their filters
-	void ScanConvertedColumns(ClientContext &context, TableFunctionInput &input, DuckDBReadLocalState &lstate,
-	                          DataChunk &chunk);
+	void ExportSlot(Vector &entries, idx_t entry_idx, idx_t slot, bool nulls_last) const {
+		auto &children = StructVector::GetEntries(entries);
+		auto &entry = heap.GetSlot(slot);
+		VAL_TYPE::Assign(children[0], entry_idx, entry.second.value, nulls_last);
+		ARG_TYPE::Assign(children[1], entry_idx, entry.first.value, nulls_last);
+	}
 
-	//! The subset of the filters that is pushed into the table scan - only set when some columns are converted
-	unique_ptr<TableFilterSet> scan_filters;
-//! A scan column the multi-file scan wants converted before its filters apply (see BaseFileReader::expression_map)
-struct DuckDBConvertedCo
+	struct ImportData {
+		ImportData(const Vector &entries, idx_t count, bool nulls_last)
+		    : validity(entries.Validity()), val_extra_state(VAL_TYPE::CreateExtraState(count)),
+		      arg_extra_state(ARG_TYPE::CreateExtraState(count)) {
+			auto &children = StructVector::GetEntries(entries);
+			VAL_TYPE::PrepareData(children[0], val_extra_state, val_format, nulls_last);
+			ARG_TYPE::PrepareData(children[1], arg_extra_state, arg_format, nulls_last);
+		}
+
+		VectorValidityIterator validity;
+		typename VAL_TYPE::EXTRA_STATE val_extra_state;
+		typename ARG_TYPE::EXTRA_STATE arg_extra_state;
+		UnifiedVectorFormat val_format;
+		UnifiedVectorFormat arg_format;
+	};
+
+	void ImportSlot(ArenaAllocator &allocator, const ImportData &entries, idx_t entry_idx, bool reject_nulls) {
+		const auto val_idx = entries.val_format.sel->get_index(entry_idx);
+		const auto arg_idx =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(), filters.get());
-	TableFunctionInitInput input(bind_data.get(), scan_column_indexes, vector<idx_t>(), filters.get());
+	auto val_extra_state = STATE::VAL_TYPE::CreateExtraState();
+	auto arg_extra_state = STATE::ARG_TYPE::CreateExtraState();
+	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
+	function.SetStateDestructorCallback(AggregateFunction::StateDestroy<STATE, OP>);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d648b503` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1508f3a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

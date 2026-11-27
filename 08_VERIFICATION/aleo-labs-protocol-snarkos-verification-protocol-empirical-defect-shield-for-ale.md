@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "27da81ce",
+  "source_version": "aa0282b2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T03:35:21.532Z",
+  "timestamp": "2026-11-27T07:48:56.728Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `27da81ce`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T03:35:21.532Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `aa0282b2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T07:48:56.728Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `27da81ce`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `aa0282b2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T03:35:19.527Z  
+> **Harvest Timestamp**: 2026-11-27T07:48:55.259Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1884,808 +1884,232 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27da81ce` (2026-11-27)
-**Commit Message**: Merge pull request #4801 from aleo-labs-protocol/ci/merge-release/v5.0-into-staging
+### Incident Patch 1: `aa0282b2` (2026-11-27)
+**Commit Message**: Merge pull request #4806 from aleo-labs-protocol/ci/merge-fixup-workspace-versions
 
-Merge release/v5.0 into staging
+ci: resolve workspace version bumps in the merge bot's Cargo.lock
 
-**File**: `.cargo/release-version` (modified, +1/-1)
+**File**: `.github/merge-fixup.sh` (modified, +55/-5)
 ```diff
-@@ -1 +1 @@
--v4.13.1
-\ No newline at end of file
-+v5.0.0
-\ No newline at end of file
+@@ -9,9 +9,11 @@
+ #     target as HEAD forked from it, whichever side changed it. HEAD is the open
+ #     pull request's branch when there is one, and the target can move on after
+ #     that branch forks. The rest of the manifest merges as usual.
+-#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
+-#     left unmerged for people when the source changed both snarkVM and other
+-#     packages, or when HEAD's pin differs from the target's.
++#   - Cargo.lock keeps git's merge without the source's snarkVM entries. When
++#     the source also changed the versions of workspace packages and nothing
++#     else, it is HEAD's lockfile with those versions. It is left unmerged for
++#     people when the source changed snarkVM and anything more than that, or
++#     when HEAD's pin differs from the target's.
+ # Other paths stay as git merged them.
+ #
+ # The hook must not run cargo: the merged tree's cargo and rustup configuration
+@@ -70,6 +72,44 @@ packages() {
+     END { flush() }'
+ }
+ 
++# Prints one line per workspace package of the lockfile: its name, its version
++# and the rest of its entry, separated by tabs.
++members() {
++  awk '
++    function flush() { if (n != "" && !src) print n "\t" v "\t" rest; n = v = rest = ""; src = 0 }
++    /^\[/ { flush(); on = $0 == "[[package]]"; next }
++    on && /^name = / { n = $3; gsub(/"/, "", n); next }
++    on && /^version = / { v = $3; gsub(/"/, "", v); next }
++    on && /^source = / { src = 1 }
++    on && NF { rest = rest " " $0 }
++    END { flush() }'
++}
++
++# Reads package names, and prints each with the source's version of it after a
++# tab. Fails unless each is a workspace package on all three sides, the source
++# changed nothing but its version, and HEAD has the merge base's version. The
++# rest of the entry covers the dependency lists, so it also covers a lockfile
++# that names a workspace package by version in one of them.
++version_bumps() {
++  awk -F '\t' '
++    FILENAME == ARGV[1] { base[$1] = $2; base_rest[$1] = $3; next }
++    FILENAME == ARGV[2] { source[$1] = $2; source_rest[$1] = $3; next }
++    FILENAME == ARGV[3] { head[$1] = $2; next }
++    !($1 in base && $1 in source && $1 in head) { exit 1 }
++    base_rest[$1] != source_rest[$1] || head[$1] != base[$1] { exit 1 }
++    { print $1 "\t" source[$1] }' "$tmp/base.members" "$tmp/source.members" "$tmp/head.members" -
++}
++
++# Prints the input lockfile with the versions of the packages in the given file.
++with_versions() {
++  awk -v f="$1" '
++    BEGIN { while ((getline l < f) > 0) { split(l, a, "\t"); to[a[1]] = a[2] } }
++    /^\[/ { n = "" }
++    /^name = / { n = $3; gsub(/"/, "", n) }
++    /^version = / && n in to { print "version = \"" to[n] "\""; next }
++    { print }'
++}
++
+ has_lockfile() {
+   [ -n "$(git ls-tree "$1" -- "$lockfile")" ]
+ }
+@@ -144,8 +184,18 @@ if has_lockfile HEAD; then
+     fi
+     if grep -qE '^snarkvm(-|$)' <<< "$changed"; then
+       if grep -qvE '^snarkvm(-|$)' <<< "$changed"; then
+-        leave_unmerged "$lockfile"
+-        echo "$lockfile: left unmerged, since $SOURCE changed snarkVM and other packages"
++        git show "$base:$lockfile" | members > "$tmp/base.members"
++        git show "MERGE_HEAD:$lockfile" | members > "$tmp/source.members"
++        git show "HEAD:$lockfile" | members > "$tmp/head.members"
++        if grep -vE '^snarkvm(-|$)' <<< "$changed" | version_bumps > "$tmp/bumps"; then
++          git show "HEAD:$lockfile" | with_versions "$tmp/bumps" > "$tmp/lockfile"
++          cp "$tmp/lockfile" "$lockfile"
++          git add "$lockfile"
++          echo "$lockfile: kept that of $TARGET, with the workspace versions of $SOURCE"
++        else
++          leave_unmerged "$lockfile"
++          echo "$lockfile: left unmerged, since $SOURCE changed snarkVM and other packages"
++        fi
+       else
+         git checkout HEAD -- "$lockfile"
+         echo "$lockfile: dropped the snarkVM entries of $SOURCE"
 ```
 
-**File**: `Cargo.lock` (modified, +22/-22)
+**File**: `.github/merge-fixup.test.sh` (modified, +67/-4)
 ```diff
-@@ -5365,7 +5365,7 @@ dependencies = [
+@@ -34,7 +34,7 @@ version = "${2:-1.0}"
+ EOF
+ }
+ 
+-lockfile() { # pin, anyhow version, foo version, another dependency of a
++lockfile() { # pin, anyhow version, foo version, another dependency of a, version of a
+   local dep=
+   if [ -n "${4:-}" ]; then
+     dep=$'\n'" \"$4\","
+@@ -44,7 +44,7 @@ version = 4
  
  [[package]]
- name = "snarkos"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "built",
-  "clap",
-@@ -5388,15 +5388,15 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-account"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "colored",
+ name = "a"
+-version = "0.1.0"
++version = "${5:-0.1.0}"
+ dependencies = [${dep}
+  "foo",
   "snarkvm",
- ]
+@@ -53,10 +53,12 @@ dependencies = [${dep}
+ [[package]]
+ name = "anyhow"
+ version = "${2:-1.0}"
++source = "registry"
  
  [[package]]
- name = "snarkos-cli"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anstyle",
-  "anyhow",
-@@ -5437,7 +5437,7 @@ dependencies = [
+ name = "foo"
+ version = "${3:-1.0.0}"
++source = "registry"
  
- [[package]]
- name = "snarkos-display"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "crossterm",
-@@ -5450,7 +5450,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-ledger-distribution"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5478,7 +5478,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5519,7 +5519,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-recursion",
-@@ -5570,7 +5570,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-events"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -5593,7 +5593,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-ledger-service"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5610,7 +5610,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-bft-storage-service"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "bytes",
-@@ -5623,7 +5623,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-cdn"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "bincode",
-@@ -5643,7 +5643,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-consensus"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "cfg-if",
-@@ -5666,7 +5666,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-metrics"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "built",
-  "metrics-exporter-prometheus",
-@@ -5679,7 +5679,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-network"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "built",
-@@ -5699,7 +5699,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-rest"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -5738,7 +5738,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-router"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5771,7 +5771,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-router-messages"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "bytes",
-  "indexmap 2.14.2",
-@@ -5789,7 +5789,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-sync"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5816,15 +5816,15 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-sync-communication-service"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "async-trait",
-  "tokio",
- ]
- 
- [[package]]
- name = "snarkos-node-sync-locators"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5835,7 +5835,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-node-tcp"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -5852,7 +5852,7 @@ dependencies = [
- 
- [[package]]
- name = "snarkos-utilities"
--version = "4.13.1"
-+version = "5.0.0"
- dependencies = [
-  "anyhow",
-  "parking_lot",
-```
-
-**File**: `Cargo.toml` (modified, +21/-21)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A decentralized operating system"
- homepage = "https://aleo.org"
-@@ -190,84 +190,84 @@ version = "0.2"
- 
- [workspace.dependencies.snarkos-account]
- path = "account"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-cli]
- path = "cli"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-display]
- path = "display"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node]
- path = "node"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-bft]
- path = "node/bft"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-bft-events]
- path = "node/bft/events"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-bft-storage-service]
- path = "node/bft/storage-service"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-bft-ledger-service]
- path = "node/bft/ledger-service"
--version = "=4.13.1"
-+version = "=5.0.0"
- default-features = false
- 
- [workspace.dependencies.snarkos-node-consensus]
- path = "node/consensus"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-cdn]
- path = "node/cdn"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-metrics]
- path = "node/metrics"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-network]
- path = "node/network"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-router]
- path = "node/router"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-router-messages]
- path = "node/router/messages"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-rest]
- path = "node/rest"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-sync]
- path = "node/sync"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-sync-communication-service]
- path = "node/sync/communication-service"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-sync-locators]
- path = "node/sync/locators"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-node-tcp]
- path = "node/tcp"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [workspace.dependencies.snarkos-utilities]
- path = "utilities"
--version = "=4.13.1"
-+version = "=5.0.0"
- 
- [[bin]]
- name = "snarkos"
-```
-
-**File**: `account/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-account"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Account for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
-**File**: `cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-cli"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Command-line interface for snarkOS"
- homepage = "https://aleo.org"
-```
-
-**File**: `display/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-display"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A display for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
-**File**: `ledger-distribution/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-ledger-distribution"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "Uploads the ledger's blocks to the bucket that serves the snarkOS block CDN"
- homepage = "https://aleo.org"
-```
-
-**File**: `node/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "snarkos-node"
--version = "4.13.1"
-+version = "5.0.0"
- authors = [ "The Aleo Team <hello@aleo.org>" ]
- description = "A node for a decentralized operating system"
- homepage = "https://aleo.org"
-```
-
----
-
-### Incident Patch 2: `98976232` (2026-11-27)
-**Commit Message**: Merge staging into ci/merge-release/v5.0-into-staging
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-31)
-```diff
-@@ -598,41 +598,11 @@ jobs:
-         with: { tool: cargo-hack@0.6.46 }
-       - run: cargo hack clippy --workspace --each-feature --exclude-features cuda --locked -- -D warnings
- 
--  # The one job to require on protected branches. A skipped job counts as passed
--  # for a required check, so every job must succeed here, except one skipped
--  # where it is not meant to run: `schedule-due` off the schedule,
--  # `each-feature` on a pull request, the merge jobs on a pull request into
--  # any branch but a release branch, and `devnet-release` outside a release.
--  # A scheduled run that is not due has no verdict.
--  ci-ok:
--    if: >-
--      always() &&
--      (github.event_name != 'schedule' || needs.schedule-due.outputs.due == 'true')
--    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
--    runs-on: ubuntu-latest
--    steps:
--      - env:
--          NEEDS: ${{ toJSON(needs) }}
--          EVENT: ${{ github.event_name }}
--          RELEASE: >-
--            ${{ github.event_name == 'workflow_dispatch' ||
--            startsWith(github.ref, 'refs/heads/release/') ||
--            startsWith(github.base_ref, 'release/') }}
--        run: |
--          jq -e --arg event "$EVENT" --argjson release "$RELEASE" '
--            (if $event == "schedule" then ["devnet-release"]
--            elif $event != "pull_request" then ["schedule-due"]
--            elif $release then ["schedule-due", "each-feature"]
--            else ["schedule-due", "each-feature", "devnet-merge", "devnet-release", "windows"] end) as $skippable
--            | to_entries
--            | map(select(.value.result != "success" and (.value.result != "skipped" or (.key | IN($skippable[]) | not))))
--            | if length == 0 then true else (map("\(.key): \(.value.result)") | join(", ") | halt_error) end' <<< "$NEEDS"
--
-   # Posts to Slack when staging's scheduled run turns red, and once when it is
-   # green again. `checked` is false for a run that was not due.
-   notify:
-     if: always() && github.event_name == 'schedule' && github.repository == 'aleo-labs-protocol/snarkOS'
--    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature, ci-ok]
-+    needs: [schedule-due, check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows, each-feature]
-     runs-on: ubuntu-latest
-     timeout-minutes: 10
-     permissions: { actions: read }
-```
-
-**File**: `BRANCHING_AND_RELEASING.md` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ This replaces `git checkout mainnet` and `git pull`. The script asks GitHub for
- 
- ## CI
- 
--Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI, and `ci-ok` fails if one is skipped. See [CI.md](CI.md).
-+Pull requests that target a `release/**` branch, and pushes to a `release/**` branch, run the merge and release jobs in addition to the normal CI. See [CI.md](CI.md).
- 
- ## Release process
- 
-```
-
-**File**: `CI.md` (modified, +3/-9)
-```diff
-@@ -21,7 +21,7 @@ Jobs run in one of two places:
- 
- | Event | Runs |
- |---|---|
--| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet`, `ci-ok` |
-+| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet` |
- | Schedule, on `staging`, every six hours at 47 minutes past | the above, plus `devnet-merge`, `windows`, `each-feature` |
- | Pull request into `release/**` | the first row, plus `devnet-merge`, `windows`, `devnet-release` |
- | Push to `release/**`, or manual dispatch | the first row, plus `devnet-merge`, `windows`, `each-feature`, `devnet-release` |
-@@ -36,7 +36,7 @@ head of `staging` is due a check:
- 
- - The head is not due if an earlier scheduled run on it gave a verdict: the
-   run passed or failed, and its `fmt` job ran. Every other job in the run is
--  then skipped, and so is `ci-ok`. The job's summary names that run.
-+  then skipped. The job's summary names that run.
- - A cancelled run, a run that was not due, and a run where `schedule-due`
-   failed give no verdict. A head with only such runs is due.
- - A failed head is not checked again on the next tick. To retry it, re-run
-@@ -98,18 +98,12 @@ jobs run on every event.
- | `machete` | hosted | all | | `cargo machete` |
- | `windows` | hosted (Windows) | merge | | `cargo check --examples --benches --tests` in `account`, `cli`, `display`, `node` |
- | `each-feature` | `cpu` | merge, no pull request | 120 | `cargo hack clippy --each-feature` over the workspace, without `cuda` |
--| `ci-ok` | hosted | all | | fails unless every job succeeded; a job may be skipped where it is not meant to run |
- | `notify` | hosted | schedule | 10 | posts to Slack when the scheduled run turns red or green |
- 
- A job with no timeout gets the GitHub default of six hours. Only hosted jobs
- have none, and a hosted job holds no fleet box.
- 
--Protected branches require `ci-ok` alone. GitHub counts a skipped job as
--passed for a required check, so `ci-ok` checks each job's result itself.
--
--A pull request that changes only Markdown files starts no run, so it gets no
--`ci-ok` check. Where a branch rule requires `ci-ok`,
--such a pull request cannot merge until a workflow reports that check for it.
-+A pull request that changes only Markdown files starts no run.
- 
- ## Test groups
- 
-```
-
-**File**: `Cargo.lock` (modified, +62/-63)
-```diff
-@@ -5483,7 +5483,6 @@ dependencies = [
-  "anyhow",
-  "async-trait",
-  "bytes",
-- "cfg-if",
-  "colored",
-  "deadline",
-  "futures-util",
-@@ -5865,7 +5864,7 @@ dependencies = [
  [[package]]
  name = "snarkvm"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "anyhow",
-  "rand 0.10.3",
-@@ -5884,7 +5883,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5911,7 +5910,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "blst",
-  "cc",
-@@ -5924,7 +5923,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5938,7 +5937,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5948,7 +5947,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5958,7 +5957,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5968,7 +5967,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "anyhow",
-  "indexmap 2.14.2",
-@@ -5988,12 +5987,12 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment-witness"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+@@ -90,10 +92,10 @@ setup() {
+   git -C "$repo" branch release
+ }
  
- [[package]]
- name = "snarkvm-circuit-network"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-collections",
-@@ -6004,7 +6003,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-program"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -45,7 +45,7 @@ members = [
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "4606f61d835394589b7bdf5c73b0886320db9dc5" #staging
-+rev = "a8953a918c427ff9145001dc0928ea086e8f647e" #staging
- #version = "=4.12.0"
- default-features = false
+-edit() { # branch, pin, anyhow version, foo version, line above the anyhow table, another dependency of a
++edit() { # branch, pin, anyhow version, foo version, line above the anyhow table, another dependency of a, version of a
+   git -C "$repo" checkout -q "$1"
+   manifest "$2" "${3:-}" "${5:-}" > "$repo/Cargo.toml"
+-  lockfile "$2" "${3:-}" "${4:-}" "${6:-}" > "$repo/Cargo.lock"
++  lockfile "$2" "${3:-}" "${4:-}" "${6:-}" "${7:-}" > "$repo/Cargo.lock"
+   git -C "$repo" commit -qam "$1"
+ }
  
-```
-
-**File**: `README.md` (modified, +23/-1)
-```diff
-@@ -19,6 +19,7 @@
-   * [3.1 Run an Aleo Client](#31-run-an-aleo-client)
-   * [3.2 Run an Aleo Validator](#32-run-an-aleo-validator)
-   * [3.3 Run an Aleo Prover](#33-run-an-aleo-prover)
-+  * [3.4 Prune Old Authority Data](#34-prune-old-authority-data)
- * [4. FAQs](#4-faqs)
- * [5. Command Line Interface](#5-command-line-interface)
- * [6. Development Guide](#6-development-guide)
-@@ -271,6 +272,24 @@ Enter the Aleo Prover account private key:
- APrivateKey1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
- ```
+@@ -133,6 +135,13 @@ same_as_head() { # path
+   git -C "$repo" diff --cached --quiet HEAD -- "$1" && fails is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
+ }
  
-+## 3.4 Prune Old Authority Data
++# The staged path is HEAD's but for the given number of changed lines, and the
++# working tree has it.
++head_but_lines() { # path, count
++  [ "$(git -C "$repo" diff --cached --numstat HEAD -- "$1" | cut -f1,2)" = "$2"$'\t'"$2" ] \
++    && fails is_unmerged "$1" && git -C "$repo" diff --quiet -- "$1"
++}
 +
-+Start a client or validator with `--prune-authority-data` to keep the authority data (the certificates) of
-+only the last 500,000 blocks, about two weeks. Older blocks keep their headers and transactions.
-+`/v2/block/{height}` answers `410 Gone` for them, and peers fetch them from other nodes.
+ staged_has() { git -C "$repo" show ":$1" | grep -qxF "$2"; }
+ 
+ after_marker() { grep -A1 '^<<<<<<<' "$repo/$1" | grep -qxF "$2"; }
+@@ -192,6 +201,50 @@ run_hook
+ ck "the pin is restored" staged_has Cargo.toml 'rev = "1111111" #staging'
+ ck "the lockfile is left for people" unmerged_are Cargo.lock
+ 
++echo "the source moved the pin and bumped a workspace package's version"
++setup "$staging_pin"
++edit release "$release_pin" 1.0 1.0.0 '' '' 5.0.0
++merge_into
++run_hook
++ck "the pin is restored" staged_has Cargo.toml 'rev = "1111111" #staging'
++ck "the version is the source's" staged_has Cargo.lock 'version = "5.0.0"'
++ck "the rest of the lockfile is the target's" head_but_lines Cargo.lock 1
++ck "nothing is left for people" unmerged_are ''
 +
-+The first start with the flag prunes the existing ledger before the node joins the network. This can take a
-+while on a large ledger. A pruned ledger that is opened without the flag keeps working and stops pruning.
++echo "both sides moved the pin, the source bumped a workspace package's version, and the target bumped a package"
++setup "$release_rev"
++edit staging "$staging_pin" 1.0 1.0.2
++edit release "$release_pin" 1.0 1.0.0 '' '' 5.0.0
++merge_into
++ck "the lockfile conflicts before the hook" is_unmerged Cargo.lock
++run_hook
++ck "the version is the source's" staged_has Cargo.lock 'version = "5.0.0"'
++ck "the target's bump is kept" staged_has Cargo.lock 'version = "1.0.2"'
++ck "the rest of the lockfile is the target's" head_but_lines Cargo.lock 1
++ck "nothing is left for people" unmerged_are ''
 +
-+The flag requires router message version 34 (consensus version V23), which lets peers learn which blocks a
-+node serves. On a network that has not scheduled V23, the node refuses to start. Until V23 activates, peers
-+still on message version 33 stay connected, and those that request blocks the node has pruned are
-+disconnected.
++echo "the source moved the pin, bumped a workspace package's version and added a dependency to it"
++setup "$staging_pin"
++edit release "$release_pin" 1.0 1.0.0 '' anyhow 5.0.0
++merge_into
++run_hook
++ck "the lockfile is left for people" unmerged_are Cargo.lock
 +
-+If no peer serves the blocks a node needs, the node shuts down after 5 minutes, so that a restart syncs them
-+from the CDN. With `--nocdn`, or `--dev` without `--cdn`, it keeps waiting: add a peer with `--peers`, or
-+restore a ledger snapshot.
++echo "the source moved the pin, bumped a workspace package's version and bumped another package"
++setup "$staging_pin"
++edit release "$release_pin" 1.0 1.0.1 '' '' 5.0.0
++merge_into
++run_hook
++ck "the lockfile is left for people" unmerged_are Cargo.lock
 +
- ## 4. FAQs
- 
- ### 1. My node is unable to compile.
-@@ -448,11 +467,14 @@ The following are the options for the `snarkos start` command:
-           For validators, it also contains the latest proposal cache, which is required to participate in consensus.
- 
-       --cdn <CDN>
--          Enables the node to prefetch initial blocks from a CDN
-+          Enables the node to prefetch initial blocks from a CDN, also with `--dev` (which otherwise disables it)
- 
-       --nocdn
-           If the flag is set, the node will not prefetch from a CDN
- 
-+      --prune-authority-data
-+          Prune the authority data (certificates) of blocks older than the retention window. See "Prune Old Authority Data"
++echo "both sides bumped a workspace package's version, and the source moved the pin"
++setup "$staging_pin"
++edit staging "$staging_pin" 1.0 1.0.0 '' '' 0.2.0
++edit release "$release_pin" 1.0 1.0.0 '' '' 5.0.0
++merge_into
++run_hook
++ck "the lockfile is left for people" unmerged_are Cargo.lock
 +
-       --dev <DEV>
-           Enables development mode used to set up test networks.
-           
-```
-
-**File**: `cli/src/commands/start.rs` (modified, +111/-28)
-```diff
-@@ -21,11 +21,12 @@ use crate::helpers::{
- use snarkos_account::Account;
- use snarkos_display::Display;
- use snarkos_node::{
-+    AuthorityRetention,
-     Node,
-     bft::MEMORY_POOL_PORT,
-     network::{NodeType, bootstrap_peers},
-     rest::{DEFAULT_REST_PORT, RestVerificationLimits},
--    router::DEFAULT_NODE_PORT,
-+    router::{DEFAULT_NODE_PORT, messages::Message},
- };
- use snarkos_utilities::{DevHotswapConfig, NodeDataDir, SignalHandler, jwt_secret_file, node_data};
+ echo "the hook cannot read the merge base's lockfile"
+ setup "$staging_pin"
+ edit release "$release_pin"
+@@ -309,5 +362,15 @@ else
+   echo "skipped the replays: this clone lacks mainnet f2eea52d9 or testnet b80d7794d"
+ fi
  
-@@ -38,7 +39,14 @@ use snarkvm::{
-     ledger::{
-         block::Block,
-         committee::{Committee, MIN_DELEGATOR_STAKE, MIN_VALIDATOR_STAKE},
--        store::{ConsensusStore, StorageMode, aleo_dir, aleo_ledger_dir, helpers::memory::ConsensusMemory},
-+        store::{
-+            AUTHORITY_RETENTION_BLOCKS,
-+            ConsensusStore,
-+            StorageMode,
-+            aleo_dir,
-+            aleo_ledger_dir,
-+            helpers::memory::ConsensusMemory,
-+        },
-     },
-     prelude::{FromBytes, Itertools, ToBits, ToBytes},
-     synthesizer::VM,
-@@ -341,14 +349,18 @@ pub struct Start {
-     #[clap(long)]
-     pub auto_db_checkpoints: Option<PathBuf>,
- 
--    /// Enables the node to prefetch initial blocks from a CDN
-+    /// Enables the node to prefetch initial blocks from a CDN, also with `--dev` (which otherwise disables it)
-     #[clap(long, conflicts_with = "nocdn")]
-     pub cdn: Option<http::Uri>,
- 
-     /// If the flag is set, the node will not prefetch from a CDN
-     #[clap(long)]
-     pub nocdn: bool,
- 
-+    /// Prune the authority data (certificates) of blocks older than the retention window. See "Prune Old Authority Data"
-+    #[clap(long)]
-+    pub prune_authority_data: bool,
++if [ -n "${top:-}" ] && git -C "$top" cat-file -e 73fd16438 2> /dev/null && git -C "$top" cat-file -e 4cf2b68ae 2> /dev/null; then
++  echo "release/v5.0 4cf2b68ae into staging 73fd16438"
++  replay 73fd16438 4cf2b68ae
++  run_hook
++  ck "the lockfile is staging's with the 22 workspace versions" head_but_lines Cargo.lock 22
++  ck "nothing is left for people" unmerged_are ''
++else
++  echo "skipped the replay: this clone lacks staging 73fd16438 or release/v5.0 4cf2b68ae"
++fi
 +
-     /// Enables development mode used to set up test networks.
-     ///
-     /// The purpose of this flag is to run multiple nodes on the same machine and in the same working directory.
-@@ -382,6 +394,11 @@ pub struct Start {
-     #[clap(long, group = "dev_flags", requires = "dev_num_validators", default_value_t = false)]
-     pub dev_on_prod: bool,
- 
-+    /// If development mode is enabled, set how many recent blocks' authority data this node keeps with
-+    /// `--prune-authority-data`.
-+    #[clap(long, group = "dev_flags", requires = "prune_authority_data", hide = true)]
-+    pub dev_authority_retention_blocks: Option<u32>,
-+
-     /// If the flag is set, the node will attempt to automatically migrate the node data to the new format.
-     #[clap(long)]
-     pub auto_migrate_node_data: bool,
-@@ -482,34 +499,58 @@ impl Start {
-         Ok(Some(url))
-     }
- 
-+    /// Returns how much authority data the node keeps.
-+    fn parse_authority_retention<N: Network>(&self) -> Result<AuthorityRetention> {
-+        self.parse_authority_retention_with::<N>(Message::<N>::latest_message_version())
-+    }
-+
-+    /// Returns how much authority data the node keeps on a network whose latest scheduled router
-+    /// message version is `latest_message_version`. Pruning is refused until
-+    /// `Message::STATUS_MESSAGE_VERSION` is scheduled, as peers learn which blocks a node serves only
-+    /// from its status replies and Ping floors. Until that version activates, peers on older
-+    /// versions stay connected, and those that request blocks below the watermark are disconnected.
-+    fn parse_authority_retention_with<N: Network>(&self, latest_message_version: u32) -> Result<AuthorityRetention> {
-+        if !self.prune_authority_data {
-+            return Ok(AuthorityRetention::default());
-+        }
-+        if !matches!(self.parse_node_type(), NodeType::Client | NodeType::Validator) {
-+            bail!("`--prune-authority-data` prunes the ledger and is only supported on a client or validator");
-+        }
-+        let status_version = Message::<N>::STATUS_MESSAGE_VERSION;
-+        ensure!(
-+            latest_message_version >= status_version,
-+            "--prune-authority-data needs router message version {status_version} (ConsensusVersion::V23), which \
-+             this network has not scheduled."
-+        );
-+        AuthorityRetention::prune::<N>(self.dev_authority_retention_blocks.unwrap_or(AUTHORITY_RETENTION_BLOCKS))
-+    }
-+
-     /// Returns the CDN to prefetch initial blocks from, or `None` if fetching from the CDN is disabled.
-     fn parse_cdn<N: Network>(&self) -> Result<Option<http::Uri>> {
--        // Disable CDN if:
--        //  1. The node is in development mode.
--        //  2. The user has explicitly disabled CDN.
--        //  3. The node is a prover (no need to sync).
--        let no_cdn_reasons = [("--dev", self.dev.is_some()), ("--nocdn", self.nocdn), ("--prover", self.prover)]
-+        // Disable CDN if the user has explicitly disabled it, or the node is a prover (no need to sync).
-+        let no_cdn_reasons = [("--nocdn", self.nocdn), ("--prover", self.prover)]
-             .into_iter()
-             .filter_map(|(reason, flag_set)| flag_set.then_some(reason))
-             .join(" and ");
-         if !no_cdn_reasons.is_em
-```
-
-**File**: `node/Cargo.toml` (modified, +0/-3)
-```diff
-@@ -56,9 +56,6 @@ workspace = true
- [dependencies.bytes]
- workspace = true
- 
--[dependencies.cfg-if]
--workspace = true
--
- [dependencies.colored]
- workspace = true
- 
+ echo "$pass passed, $fail failed"
+ [ "$fail" = 0 ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4806** (2026-11-27): ci: resolve workspace version bumps in the merge bot's Cargo.lock (@cbeck88)
 - **PR #4803** (2026-11-26): Remove the ci-ok job (@cbeck88)
 - **PR #4801** (2026-11-27): Merge release/v5.0 into staging (@aleo-labs-merge-bot[bot])
 - **PR #4792** (2026-11-25): Default the Gauntlet load and release tests to a V23 stockpile (@cbeck88)
 - **PR #4791** (2026-11-25): Build tests at opt-level 1 (@cbeck88)
 - **PR #4786** (2026-11-25): ci: offer a 21-validator network in the Gauntlet forms (@cbeck88)
-- **PR #4785** (2026-11-25): Return VM halts in the developer commands as command errors (@cbeck88)
 
 ---
 
@@ -2705,31 +2129,57 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in release-version
+## X. Empirical Invariant Guard in merge-fixup.sh
 
 **RULE**:
-When implementing operations in `.cargo/release-version`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/merge-fixup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27da81ce`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa0282b2`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/release-version`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/merge-fixup.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-v5.0.0
+#   - Cargo.lock keeps git's merge without the source's snarkVM entries. When
+#     the source also changed the versions of workspace packages and nothing
+#     else, it is HEAD's lockfile with those versions. It is left unmerged for
+#     people when the source changed snarkVM and anything more than that, or
+#     when HEAD's pin differs from the target's.
+# Prints one line per workspace package of the lockfile: its name, its version
+# and the rest of its entry, separated by tabs.
+members() {
+  awk '
+    function flush() { if (n != "" && !src) print n "\t" v "\t" rest; n = v = rest = ""; src = 0 }
+    /^\[/ { flush(); on = $0 == "[[package]]"; next }
+    on && /^name = / { n = $3; gsub(/"/, "", n); next }
+    on && /^version = / { v = $3; gsub(/"/, "", v); next }
+    on && /^source = / { src = 1 }
+    on && NF { rest = rest " " $0 }
+    END { flush() }'
+}
+
+# Reads package names, and prints each with the source's version of it after a
+# tab. Fails unless each is a workspace package on all three sides, the source
+# changed nothing but its version, and HEAD has the merge base's version. The
+# rest of the entry covers the dependency lists, so it also covers a lockfile
+# that names a w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-v4.13.1
+#   - Cargo.lock keeps git's merge without the source's snarkVM entries. It is
+#     left unmerged for people when the source changed both snarkVM and other
+#     packages, or when HEAD's pin differs from the target's.
+        leave_unmerged "$lockfile"
+        echo "$lockfile: left unmerged, since $SOURCE changed snarkVM and other packages"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27da81ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa0282b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

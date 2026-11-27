@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "a1b5adcd7a8b9f189a03686b0073a589e0d9e6af9e1dae1680307dfc553b07bb",
-    "lastHarvestedAt": "2026-11-23T22:23:48.854Z",
+    "contentHash": "a4732c51f50ab0d16f589ab6c382847ef2edbddef5d6f753dacc22e034653d92",
+    "lastHarvestedAt": "2026-11-27T07:48:45.925Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "27da81ce",
+    "sourceVersion": "aa0282b2",
     "license": "Apache-2.0",
-    "contentHash": "5d3832c84f935c46ccb99d2a3954596f65de4d15ab6da41be1325b9b5d5ddfad",
-    "lastHarvestedAt": "2026-11-27T03:35:21.187Z",
+    "contentHash": "fed1ee76bec3c01262aaa87076e184337aa1bd400166d5b491693b85903da37f",
+    "lastHarvestedAt": "2026-11-27T07:48:56.374Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "9f296bf9",
+    "sourceVersion": "1a577e50",
     "license": "AGPL-3.0",
-    "contentHash": "a5155995ac2996a1b2a1512d7357c9f6760d77220aa1b6fec3310512cb937360",
-    "lastHarvestedAt": "2026-11-26T15:02:20.226Z",
+    "contentHash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
+    "lastHarvestedAt": "2026-11-27T07:48:54.665Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "c826f8f7",
+    "sourceVersion": "b1ae457e",
     "license": "MIT",
-    "contentHash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
-    "lastHarvestedAt": "2026-11-26T13:55:27.425Z",
+    "contentHash": "6365bb385efd09dba1ead524dd5d7648a662da2ed667eac338551ef9041f3637",
+    "lastHarvestedAt": "2026-11-27T07:49:01.107Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "b11b73e7",
+    "sourceVersion": "7234f173",
     "license": "MIT",
-    "contentHash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
-    "lastHarvestedAt": "2026-11-21T00:43:44.265Z",
+    "contentHash": "be6005fa07c636dabb0d1e42077bd16ec4c95b5a088600a9065ce3c077a001cb",
+    "lastHarvestedAt": "2026-11-27T07:48:47.419Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {

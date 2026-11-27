@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-SY2V",
-    "timestamp": "2026-11-26T01:36:21.127Z",
-    "repository": "PrunaAI/P-Image-OSS",
-    "learningId": "learn-huggingface-prunaai-p-h3-image",
-    "contentHash": "2a47d2a3947e0eaf2dfa5674c7ec5c0c5a72a8aad31e11d7ccc9c4cad23aaeb7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TAAT",
-    "timestamp": "2026-11-26T01:36:36.965Z",
-    "repository": "infiniflow/infinity",
-    "learningId": "learn-github-infiniflow-infinity",
-    "contentHash": "c7f4994f2c8555f885426e8d8e48633c292510b48b1f3bcba9d8715cf86b8bd9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-474Q",
-    "timestamp": "2026-11-26T01:45:06.074Z",
-    "repository": "Viggle/Viggle-Remake",
-    "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "f5e2e48925cecfdf6a0f04dbf91b7385173b65de5f0602a36db1bddc7b9860b1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-EVEY",
-    "timestamp": "2026-11-26T01:53:24.106Z",
-    "repository": "audio-cpp/audio.cpp-gguf",
-    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-    "contentHash": "5488245aac775509a9818d73be8ee766e54ca453ed332497117ef7d5552e8262",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-F2K1",
-    "timestamp": "2026-11-26T01:53:33.361Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "93029d21bce8e68e208b87be4c35007ac596f039d9492d12aacf57c581883029",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-F4FK",
     "timestamp": "2026-11-26T01:53:35.792Z",
     "repository": "smallstep/cli",
@@ -7490,6 +7415,81 @@
     "repository": "dragonflyoss/dragonfly",
     "learningId": "learn-github-dragonflyoss-dragonfly",
     "contentHash": "775e5e151d1556aed28aad0c02d12d35fa494e18ac7d5317c4b0a9172e7a3c09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JQ3K",
+    "timestamp": "2026-11-27T07:48:45.920Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "a4732c51f50ab0d16f589ab6c382847ef2edbddef5d6f753dacc22e034653d92",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JR8N",
+    "timestamp": "2026-11-27T07:48:47.399Z",
+    "repository": "bahdotsh/wrkflw",
+    "learningId": "learn-github-bahdotsh-wrkflw",
+    "contentHash": "be6005fa07c636dabb0d1e42077bd16ec4c95b5a088600a9065ce3c077a001cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JWTW",
+    "timestamp": "2026-11-27T07:48:54.644Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "8d12bc4e5083d11bd2745ba2f56552c0823678a1f99bc77b03c1c5c3dc8c1e4d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JY5G",
+    "timestamp": "2026-11-27T07:48:56.356Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "fed1ee76bec3c01262aaa87076e184337aa1bd400166d5b491693b85903da37f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-K1SX",
+    "timestamp": "2026-11-27T07:49:01.089Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "6365bb385efd09dba1ead524dd5d7648a662da2ed667eac338551ef9041f3637",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

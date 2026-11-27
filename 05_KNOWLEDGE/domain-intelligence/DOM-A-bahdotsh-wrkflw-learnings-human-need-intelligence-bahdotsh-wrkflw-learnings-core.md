@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:43:59.557Z",
+  "timestamp": "2026-11-27T07:49:05.385Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-bahdotsh-wrkflw-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [bahdotsh-wrkflw-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:43:59.557Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:49:05.385Z`  
 > **Learning ID**: `LEARN-EVO-bahdotsh-wrkflw-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from bahdotsh-wrkflw-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `b11b73e7`  
+> **Source Version**: `7234f173`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:43:43.153Z  
+> **Timestamp**: 2026-11-27T07:48:45.834Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:43:42.915Z  
+> **Harvest Timestamp**: 2026-11-27T07:48:45.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3345 stars
+- **Stars / Engagement**: 3351 stars
 
 ---
 
@@ -203,7 +203,6 @@ use thiserror::Error;
 
 use crate::acceleration;
 use crate::action_resolver::{self, is_git_sha};
-use crate::checkout_sync::copy_directory_contents;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
@@ -220,8 +219,8 @@ use crate::matrix_fold::{matrix_twins, repeated_leg};
 use crate::podman;
 use crate::setup_actions::{
     detect_setup, runner_node_install, rust_toolchain_extras, static_input, unrun_action_cause,
-    BuiltRuntimes, SetupDetection, SetupRuntime, NO_IMPLEMENTATION, PYTHON_SCRIPTS_DIR,
-    SETUP_ACTIONS, UV_PYTHON_DIR,
+    BuiltRuntimes, SetupDetection, SetupRuntime, NO_IMPLEMENTATION, PYTHON_LINKS_DIR,
+    PYTHON_SCRIPTS_DIR, SETUP_ACTIONS, UV_PYTHON_DIR,
 };
 use wrkflw_logging;
 use wrkflw_matrix::MatrixCombination;
@@ -442,7 +441,8 @@ async fn execute_github_workflow(
     let mut all_job_outputs: HashMap<String, HashMap<String, String>> = HashMap::new();
     let mut all_job_results: HashMap<String, String> = HashMap::new();
 
-    for job_batch in execution_
+    for job_batch in execution_plan {
+        // Execute jobs in
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -1906,11 +1906,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #177** (2026-11-26): **Prepare 0.9.0, and fix what the held-out sweep found**
+  *Symptoms*: ## What changes  - **Version.** Every crate is 0.9.0, and the 30 "(unreleased)" entries in `BREAKING_CHANGES.md` say 0.9.0. - **Release rehearsal.** A tag with a suffix, such as `v0.9.0-rc.1`, builds the archives, publishes the runner base image and makes a GitHub pre-release, and publishes nothing to crates.io. "latest" skips a pre-release, so `install.sh` and the weekly image refresh keep using v0.8.0 until the real tag. - **A real release stops on a private runner image.** GHCR makes a new package private, and the workflow only warned. Now a tag without a suffix fails in the `runner-image` job, before crates.io and the GitHub release, until the package is public. A rehearsal tag still only warns. A refusal of the anonymous token (GHCR's 403 for a private package) counts as private, as a refused manifest does; only a network error or a 5xx asks for a rerun. This reverses the earlier choice to never fail the release there: say if you'd rather keep the warning. - **README.** 650 lines to about 200. Usage, runtimes, agents, reusable workflows, secrets and the compare/verdict/conformance notes move to `docs/`, with their text unchanged apart from heading levels and links. The Windows and macOS limit is split into sub-points, and a line under the table says why cobra is slower here than on GitHub (19 jobs on one VM). - **Help.** The top-level examples lead with `doctor`, `gate` and `compare`. - **Test leak.** `reusable_workflow_jobs_skip_after_failed_need` clears `.needs-reusabl
+
 - **Issue #176** (2026-11-20): **Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo**
   *Symptoms*: Polish before 0.9.0, from the pre-release review.  ## What's in it  **`wrkflw doctor`** checks, without starting or pulling anything: which engine `auto` picks (and warns when Docker is down and Podman quietly takes over), the engine VM's memory, whether a first run pulls the published runner base or builds here, where a GitHub token comes from (never the token itself), git, and the workflows in the directory. `--format json` gives the same checks, documented in AGENTS.md. It exits 1 only when a check fails.  **`--macos-on-host`** (`WRKFLW_MACOS_ON_HOST=1`) runs `macos-*` jobs, and the macOS legs of a matrix, on the Mac under emulation while the other jobs keep their containers. Their pass then checks macOS instead of being reported unverified. It's off by default because those steps run with no container around them. How it works: - The switch is made per job and per matrix leg, using the env emulation would seed, held in a task-local scoped around each job batch (`host_jobs.rs`). - A host leg is never folded into a container leg as a twin, and no image is built ahead for it. - The hint in `run`/`gate` now names this flag instead of `--runtime emulation`.  **compare: token hint.** When a job fails and its output shows `gh` asking for a token, or a 401, the note says the step needed the token GitHub gives every job, and that `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours. This is the itoa attestation case.  **Held-out sweep.** `scripts/conformance/held_out_runs.txt` lists 14 repo
-
-- **Issue #175** (2026-11-20): **Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence**
-  *Symptoms*: Closes the gaps left before the next release, so that a local pass stands for GitHub's on more real workflows and a first run is faster. One commit per item.  ## What changes  **1. JavaScript actions run** (`fd16db9`) An action with `runs.using: node12|16|20|24`, remote or local, used to pass without running and made the run `partial`. It now runs as GitHub's runner runs it: `node <main>` through the `run:` path, so in the job's container as the `runner` user, with `INPUT_<NAME>` from `with:` or the input's evaluated default (hyphens kept) and `GITHUB_ACTION_PATH`/`_REPOSITORY`/`_REF` set. `pre` runs first when `pre-if` holds. `post` runs at the end of the job, last action first, when `post-if` holds (`always()` by default), and reads what `main` saved through `$GITHUB_STATE` or `::save-state` as `STATE_<name>`. A remote action is cloned once per run. An image with no `node` leaves the action unrun and the step `unverified`. Setup and Rust toolchain actions keep wrkflw's own versions. `WRKFLW_JS_ACTIONS=0` restores the old behaviour.  **2. Private repositories for remote `uses:`** (`f2d7dbe`) Every clone is tried anonymously first. For github.com it is then retried with a token: the job's `GITHUB_TOKEN` from a secret provider, else `GITHUB_TOKEN`/`GH_TOKEN`, else `gh auth token`, found once per run. The token reaches git as an `http.extraheader` through `GIT_CONFIG_*` env vars, so it never appears in the URL, argv or `.git/config`. `GIT_TERMINAL_PROMPT=0` makes a missing toke
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1927,852 +1927,586 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `490a508b` (2026-11-20)
-**Commit Message**: Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence (#175)
+### Incident Patch 1: `7234f173` (2026-11-26)
+**Commit Message**: Prepare 0.9.0, and fix what the held-out sweep found (#177)
 
-* feat(executor): clone private repositories for remote uses with the user's GitHub token
+* chore: regenerate INDEX.md
 
-A remote uses: was cloned over anonymous HTTPS, so a called workflow or
-action in a private repository failed. The clone is now retried, once the
-anonymous one fails for github.com, with the GITHUB_TOKEN a secret
-provider gave the job, else GITHUB_TOKEN or GH_TOKEN, else gh auth token,
-found once per run. The token reaches git as an extra HTTP header through
-its environment, never the URL, argv or .git/config, and git never
-prompts for a password.
+* Prepare 0.9.0: version, release rehearsal, shorter README with docs/, help examples
 
-* feat(executor): run JavaScript actions with node, with their pre, post and state
+- Bump every crate to 0.9.0 and label the unreleased breaking changes 0.9.0.
+- Release workflow: a suffixed tag (v0.9.0-rc.1) is a rehearsal that builds
+  the archives, publishes the runner base image and makes a pre-release,
+  without publishing to crates.io. A real release stops before publishing
+  when the runner image can't be pulled anonymously.
+- README: reference sections move to docs/; the Windows and macOS limit is
+  split into sub-points; the cobra timing is explained.
+- Top-level help examples lead with doctor, gate and compare.
+- The reusable-workflow needs test clears directories a killed run left.
 
-A uses: step whose action runs on Node passed without running and made
-the run partial. Such an action, remote or local, now runs as the runner
-runs it: node <main> from the action's directory through the run: path,
-so in the job's container as its user, with INPUT_<NAME> from with: or
-the input's evaluated default (hyphens kept), GITHUB_ACTION_PATH,
-GITHUB_ACTION_REPOSITORY and GITHUB_ACTION_REF. pre runs first when
-pre-if holds; post is queued and run a
+* docs: publish the first held-out sweep
 
-**File**: `.cargo/config.toml` (modified, +6/-0)
+Fourteen repositories wrkflw was never tuned against, run on the 0.9.0
+code: 62 jobs agree and 53 differ, and two runs give no report because
+wrkflw refuses their trigger filters. The README gets the table and the
+largest causes; held_out_expected.tsv records the twelve runs that gave a
+report, so the next sweep can tell a regression.
+
+* fix: close the gaps 
+
+**File**: `.github/workflows/release.yml` (modified, +47/-10)
 ```diff
-@@ -11,3 +11,9 @@ WRKFLW_FRESH_WORKSPACE = "1"
- # An existing value wins, so name a file to measure, as in
- # `WRKFLW_JOB_MEMORY_FILE=/tmp/job-memory.json cargo run -- run ...`.
- WRKFLW_JOB_MEMORY_FILE = ""
-+# And for the runner base image: a test run on a commit whose base isn't
-+# published would remember it as unavailable in the user's cache, and real
-+# runs would then skip it for a day. CI names its own base with
-+# WRKFLW_RUNNER_IMAGE and sets this to 1. It applies to `cargo run` too:
-+# set WRKFLW_PREBUILT_IMAGES=1 there to time a first run on the base.
-+WRKFLW_PREBUILT_IMAGES = "0"
-```
-
-**File**: `.gitattributes` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+docker/runner.Dockerfile text eol=lf
-+docker/runner-image.txt text eol=lf
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +36/-0)
-```diff
-@@ -39,12 +39,48 @@ jobs:
-     name: Build (${{ matrix.os }})
-     runs-on: ${{ matrix.os }}
-     strategy:
-+      # One OS failing says nothing about the others: let them finish.
-+      fail-fast: false
-       matrix:
-         os: [ubuntu-latest, macos-latest, windows-latest]
+@@ -1,5 +1,13 @@
+ name: Release
+ 
++# A tag with a suffix, such as v0.9.0-rc.1, is a rehearsal: it builds the
++# archives, publishes the runner base image and makes a GitHub pre-release,
++# and leaves crates.io alone. Use one to try scripts/install.sh
++# (WRKFLW_VERSION=v0.9.0-rc.1) and to make a new runner image's package
++# public before the release that needs it. A rehearsal only warns about a
++# private package, so once it is public, rerun its "Publish the runner base
++# image" job and see it pass with no warning: that is the check a release
++# stops on, and the rehearsal is the only place it runs before one.
+ on:
+   push:
+     tags:
+@@ -111,22 +119,47 @@ jobs:
+             --push .
+       # GHCR makes a new package private. wrkflw pulls the base without
+       # credentials and builds the whole image itself when it can't, so a
+-      # private package fails nothing; it only takes away the faster first
+-      # run. Say so, rather than fail the release.
++      # private package breaks no run: it takes away the faster first run,
++      # silently, on every machine. So a release stops here, before anything
++      # is published, until the package is public (rerun this job then); a
++      # rehearsal only says so, as it is how the package first appears.
+       - name: Check the image can be pulled anonymously
+         env:
+           IMAGE: ${{ steps.image.outputs.name }}
+         run: |
+           ref="${IMAGE#ghcr.io/}"
+           name="${ref%%:*}"
+           tag="${ref##*:}"
+-          token=$(curl -fsS "https://ghcr.io/token?scope=repository:${name}:pull" | jq -r .token)
+-          if ! curl -fsS -o /dev/null \
+-              -H "Authorization: Bearer ${token}" \
+-              -H "Accept: application/vnd.oci.image.index.v1+json" \
+-              "https://ghcr.io/v2/${name}/manifests/${tag}"; then
+-            echo "::warning::${IMAGE} can't be pulled anonymously: make the package public in its settings, or wrkflw builds the image on each machine"
++          # Only a refusal says the package is private, and it comes from
++          # either request: GHCR refuses an anonymous token for a private
++          # package (403) before the manifest is asked for. Anything else,
++          # such as a network error or a 5xx left after curl's retries, says
++          # nothing about it, and asks for a rerun.
++          body=$(mktemp)
++          status=$(curl -sS --retry 3 --retry-connrefused -o "$body" -w '%{http_code}' \
++            "https://ghcr.io/token?scope=repository:${name}:pull") || status=000
++          if [ "$status" = 200 ]; then
++            if token=$(jq -er .token "$body"); then
++              status=$(curl -sS --retry 3 --retry-connrefused -o /dev/null -w '%{http_code}' \
++                -H "Authorization: Bearer ${token}" \
++                -H "Accept: application/vnd.oci.image.index.v1+json" \
++                "https://ghcr.io/v2/${name}/manifests/${tag}") || status=000
++            else
++              status=000
++            fi
+           fi
++          case "$status" in
++            200) exit 0 ;;
++            401|403) message="${IMAGE} can't be pulled anonymously: make the package public in its settings, or wrkflw builds the image on each machine" ;;
++            # GHCR answers 404 for a private package's manifest, and for a
++            # tag that was never pushed: say both.
++            404) message="${IMAGE} wasn't found anonymously: make the package public in its settings, or check the tag was pushed by the step above" ;;
++            *) message="couldn't tell whether ${IMAGE} can be pulled anonymously (HTTP ${status}): rerun this job" ;;
++          esac
++          case "$RELEASE_TAG" in
++            *-*) echo "::warning::${message}" ;;
++            *) echo "::error::${message}"; exit 1 ;;
++          esac
+ 
+   build:
+     name: Build (${{ matrix.target }})
+@@ -198,8 +231,9 @@ jobs:
+     # After the runner base image: a published wrkflw pulls it on first run.
+     needs: [build, changelog, runner-image]
+     # Only publish on tag push — manual dispatch uses a branch ref, intentionally excluded
+-    # because publishing to crates.io is irreversible
+-    if: startsWith(github.ref, 'refs/tags/v')
++    # because publishing to crates.io is irreversible. A rehearsal tag
++    # (v0.9.0-rc.1) publishes nothing there either.
++    if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-')
      steps:
        - uses: actions/checkout@v4
        - uses: dtolnay/rust-toolchain@stable
-       - uses: Swatinem/rust-cache@v2
-+      # The Docker tests start their jobs from the runner base image, built
-+      # here once from the committed Dockerfile and cached by its text, as
-+      # a release publishes it. Built inside each test instead, its 120 MB
-+      # from Ubuntu's archive sometimes outlast the 10-minute build limit.
-+      # Its apt uses Azure's Ubuntu mirror, as the runner itself does, so
-+      # what the tests install on it (docker.io) doesn't wait on
-+      # archive.ubuntu.com either.
-+      # Rebuilt each week too, as the published image is, so the tests run
-+      # on current packages rather than the ones of the first cached build.
-+      - name: Name the week
-+        if: runner.os == 'Linux'
-+        id: week
-+        run: echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
-+      - name: Restore the runner base image
-+        if: runner.os == 'Linux'
-+        id: runner-image
-+        uses: actions/cache@v4
-+        with:
-+          path: ~/runner-image.tar
-+          key: runner-image-azure-${{ steps.week.outputs.week }}-${{ hashFiles('docker/runner.Dockerfile') }}
-+      - name: Build the runner base image
-+        if: runner.os == 'Linux' && steps.runner-image.outputs.cache-hit != 'true'
-+        run: |
-+          mirror='RUN sed -i -E "s#http://(archive|security)\.ubuntu\.com#http://azure.archive.ubuntu.com#g" /etc/apt/sources.list.d/ubuntu.sources'
-+          { head -n 1 docker/runner.Dockerfile; echo "$mirror"; tail -n +2 docker/runner.Dockerfile; } \
-+            > "$RUNNER_TEMP/runner.Dockerfile"
-+          docker build -f "$RUNNER_TEMP/runner.Dockerfile" -t wrkflw-runner:ci docker
-+          docker save wrkflw-runner:ci -o ~/runner-image.tar
-+      - name: Load the runner base image
-+        if: runner.os == 'Linux' && steps.runner-image.outputs.cache-hit == 'true'
-+        run: docker load -i ~/runner-image.tar
-       - run: cargo build --workspace --all-features
-       - run: cargo check --no-default-features --workspace
-       - run: cargo test --workspace --all-features
-+        env:
-+          WRKFLW_RUNNER_IMAGE: ${{ runner.os == 'Linux' && 'wrkflw-runner:ci' || '' }}
-+          WRKFLW_PREBUILT_IMAGES: ${{ runner.os == 'Linux' && '1' || '0' }}
+@@ -246,4 +280,7 @@ jobs:
+             ## What's Changed
+             ${{ needs.changelog.outputs.changelog }}
+           files: artifacts/*
++          # A rehearsal tag is a pre-release, which "latest" skips: install.sh
++          # and the weekly runner image refresh keep using the last release.
++          prerelease: ${{ contains(env.RELEASE_TAG, '-') }}
+           generate_release_notes: false
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +70/-2)
+**File**: `.github/workflows/runner-image.yml` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,72 @@ jobs:
-             echo "CHANGELOG_EOF"
-           } >> "$GITHUB_OUTPUT"
+@@ -6,7 +6,7 @@ name: Refresh runner image
+ # rebuilds the latest release's tag each week, so a machine pulling it for
+ # the first time gets current packages and security fixes. A machine that
+ # pulled it already keeps its copy, as it keeps an image it built, until the
+-# image is removed (see the README). wrkflw's own job images build on it
++# image is removed (see docs/usage.md). wrkflw's own job images build on it
+ # with the same tag, so nothing else changes.
+ on:
+   schedule:
+```
+
+**File**: `.gitignore` (modified, +3/-0)
+```diff
+@@ -3,3 +3,6 @@
+ .claude/todos/
  
-+  runner-image:
-+    name: Publish the runner base image
-+    runs-on: ubuntu-latest
-+    # Not before the tag is checked: this job pushes packages.
-+    needs: changelog
-+    permissions:
-+      contents: read
-+      packages: write
-+    steps:
-+      # Pinned by commit: this job can write packages.
-+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-+        with:
-+          ref: ${{ env.RELEASE_TAG }}
-+      # docker/runner.Dockerfile is what every built-in job image starts
-+      # with, named by a hash of its text in docker/runner-image.txt (a test
-+      # keeps both current). wrkflw pulls it instead of building those
-+      # layers on a user's machine. The tag names its content, so a release
-+      # whose Dockerfile didn't change has nothing to push.
-+      - name: Read the image name
-+        id: image
-+        run: echo "name=$(tr -d '[:space:]' < docker/runner-image.txt)" >> "$GITHUB_OUTPUT"
-+      # Pinned by commit: this job can write packages.
-+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
-+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-+        with:
-+          registry: ghcr.io
-+          username: ${{ github.actor }}
-+          password: ${{ secrets.GITHUB_TOKEN }}
-+      - name: Build and push unless published
-+        env:
-+          IMAGE: ${{ steps.image.outputs.name }}
-+        run: |
-+          if docker buildx imagetools inspect "$IMAGE" >/dev/null 2>&1; then
-+            echo "$IMAGE is already published"
-+            exit 0
-+          fi
-+          # Provenance names the commit and workflow that built it, so a user can
-+          # check where a pulled base image came from. The source label links
-+          # the package to this repository.
-+          docker buildx build \
-+            --platform linux/amd64,linux/arm64 \
-+            --provenance=mode=max \
-+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
-+            -f docker/runner.Dockerfile \
-+            -t "$IMAGE" \
-+            --push .
-+      # GHCR makes a new package private. wrkflw pulls the base without
-+      # credentials and builds the whole image itself when it can't, so a
-+      # private package fails nothing; it only takes away the faster first
-+      # run. Say so, rather than fail the release.
-+      - name: Check the image can be pulled anonymously
-+        env:
-+          IMAGE: ${{ steps.image.outputs.name }}
-+        run: |
-+          ref="${IMAGE#ghcr.io/}"
-+          name="${ref%%:*}"
-+          tag="${ref##*:}"
-+          token=$(curl -fsS "https://ghcr.io/token?scope=repository:${name}:pull" | jq -r .token)
-+          if ! curl -fsS -o /dev/null \
-+              -H "Authorization: Bearer ${token}" \
-+              -H "Accept: application/vnd.oci.image.index.v1+json" \
-+              "https://ghcr.io/v2/${name}/manifests/${tag}"; then
-+            echo "::warning::${IMAGE} can't be pulled anonymously: make the package public in its settings, or wrkflw builds the image on each machine"
-+          fi
+ .idea/
 +
-   build:
-     name: Build (${{ matrix.target }})
-     runs-on: ${{ matrix.os }}
-@@ -129,7 +195,8 @@ jobs:
-   publish:
-     name: Publish to crates.io
-     runs-on: ubuntu-latest
--    needs: [build, changelog]
-+    # After the runner base image: a published wrkflw pulls it on first run.
-+    needs: [build, changelog, runner-image]
-     # Only publish on tag push — manual dispatch uses a branch ref, intentionally excluded
-     # because publishing to crates.io is irreversible
-     if: startsWith(github.ref, 'refs/tags/v')
-@@ -154,7 +221,8 @@ jobs:
-   release:
-     name: Create GitHub Release
-     runs-on: ubuntu-latest
--    needs: [build, changelog]
-+    # After the runner base image: a released wrkflw pulls it on first run.
-+    needs: [build, changelog, runner-image]
-     steps:
-       - uses: actions/checkout@v4
- 
++# Left by a test run that was killed before it could clean up.
++crates/wrkflw/.needs-reusable-*/
 ```
 
-**File**: `.github/workflows/runner-image.yml` (added, +83/-0)
+**File**: `BREAKING_CHANGES.md` (modified, +36/-30)
 ```diff
-@@ -0,0 +1,83 @@
-+name: Refresh runner image
-+
-+# The runner base image's tag names the text of docker/runner.Dockerfile,
-+# not what it installs: `ubuntu:latest`, its packages and Node.js 22 move
-+# on while the tag stays. The release workflow pushes a tag once; this
-+# rebuilds the latest release's tag each week, so a machine pulling it for
-+# the first time gets current packages and security fixes. A machine that
-+# pulled it already keeps its copy, as it keeps an image it built, until the
-+# image is removed (see the README). wrkflw's own job images build on it
-+# with the same tag, so nothing else changes.
-+on:
-+  schedule:
-+    - cron: "17 4 * * 1"
-+  workflow_dispatch:
-+    inputs:
-+      tag:
-+        description: "Release whose runner image to rebuild (default: the latest)"
-+        required: false
-+
-+permissions:
-+  contents: read
-+  packages: write
-+
-+concurrency:
-+  group: runner-image
-+  cancel-in-progress: false
-+
-+jobs:
-+  refresh:
-+    name: Rebuild the runner base image
-+    runs-on: ubuntu-latest
-+    steps:
-+      - name: Find the release
-+        id: release
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          TAG: ${{ inputs.tag }}
-+        run: |
-+          if [ -z "$TAG" ]; then
-+            TAG=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
-+          fi
-+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-+      # Pinned by commit: this job can write packages.
-+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-+        with:
-+          ref: ${{ steps.release.outputs.tag }}
-+      - name: Read the image name
-+        id: image
-+        # The tag through the environment, never spliced into the script.
-+        env:
-+          TAG: ${{ steps.release.outputs.tag }}
-+        run: |
-+          if [ ! -f docker/runner-image.txt ]; then
-+            echo "$TAG publishes no runner image"
-+            exit 0
-+          fi
-+          echo "name=$(tr -d '[:space:]' < docker/runner-image.txt)" >> "$GITHUB_OUTPUT"
-+      # Pinned by commit: this job can write packages.
-+      - if: steps.image.outputs.name != ''
-+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-+      - if: steps.image.outputs.name != ''
-+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
-+      - if: steps.image.outputs.name != ''
-+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-+        with:
-+          registry: ghcr.io
-+          username: ${{ github.actor }}
-+          password: ${{ secrets.GITHUB_TOKEN }}
-+      - name: Rebuild and push
-+        if: steps.image.outputs.name != ''
-+        env:
-+          IMAGE: ${{ steps.image.outputs.name }}
-+        run: |
-+          # Provenance names the commit and workflow that built it, so a user can
-+          # check where a pulled base image came from.
-+          docker buildx build \
-+            --pull --no-cache \
-+            --platform linux/amd64,linux/arm64 \
-+            --provenance=mode=max \
-+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
-+            -f docker/runner.Dockerfile \
-+            -t "$IMAGE" \
-+            --push .
-```
-
-**File**: `BREAKING_CHANGES.md` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
+@@ -1,14 +1,20 @@
  # Breaking Changes
  
-+## JavaScript actions run (unreleased)
+-## JavaScript actions run (unreleased)
++## `actions/github-script` gets a stand-in token, and `GlobPattern` matches through a method (0.9.0)
 +
-+A `uses:` step whose action runs on Node, such as `actions/github-script`, `codecov/codecov-action` or a local `./` action whose `action.yml` says `runs.using: node20`, used to pass without running and was reported as not run, which made the run `partial`. Such an action now runs with node in the job's container, with its `pre` and `post`; under `--runtime emulation` it runs on your machine as you, so a remote action is code from its repository (pinned only as firmly as its `@ref`) running with your access, your tokens and keys included: wrkflw leaves credential-named variables (`GH_TOKEN`, `AWS_SECRET_ACCESS_KEY`, `SSH_AUTH_SOCK` and the like) out of its environment, which is a precaution, not a boundary. The same goes for the steps of a remote composite action under emulation, which used to inherit them: one that runs `gh`, `aws` or `ssh` with your own credentials now needs them passed through the step's `env:`. A step can no longer set, for later steps through `$GITHUB_ENV`, a variable wrkflw sets for each step (GitHub's defaults such as `GITHUB_SHA` or `RUNNER_TEMP`, `GITHUB_ACTION_PATH`, `WRKFLW_RUNTIME_MODE`) or `NODE_OPTIONS`, as GitHub doesn't let it either; such a line is ignored with a warning. Names of your own, `GITHUB_SHA_SHORT` included, pass on as before. A local `./` action is read from the job's workspace rather than the repository wrkflw runs in, as on GitHub. Its `pre` runs right before it, not at the start of the job, and its `post` runs at the end of the job even when `pre`, `main` or a later step failed. The action can fail where it used to pass, and the run is `verified` when nothing else was left out. An action that needs GitHub's run services (`ACTIONS_RUNTIME_TOKEN` or the OIDC token) fails locally, so a workflow using `github/codeql-action`, `actions/deploy-pages` or `actions/attest-build-provenance` now fails under `wrkflw gate` where it was `partial`: add them to `WRKFLW_SKIP_ACTIONS`. A remote action is cloned from GitHub, with your GitHub token if the anonymous clone fails. `WRKFLW_JS_ACTIONS=0` brings back the old behaviour, and `WRKFLW_SKIP_ACTIONS=owner/repo,./path` leaves only the actions it lists unrun. Stored results are keyed on both, and the key's version goes to 6, so `--reuse-results` (which `wrkflw gate` always uses) reruns every job once instead of reusing a pass whose JavaScript actions didn't run. The setup actions and the Rust toolchain actions are unchanged.
++A local job has no GitHub token unless `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours, so `actions/github-script`'s `github-token` input, which defaults to the job's token, was empty, and the action stopped before running its script with "Input required and not supplied: github-token". It now gets `wrkflw-no-github-token` instead: a script that never calls the API, such as the one inside `codecov/codecov-action`, runs as it does on GitHub, and one that calls it fails with a 401, as it would have failed before. A script that tested the token for being empty sees a value now.
 +
-+## Steps run as the `runner` user (unreleased)
++In `wrkflw-trigger-filter`, a pattern with `**` inside a path component, such as `**.go`, used to be refused, and now compiles to several `glob` patterns; one with more than four such components is still refused. `GlobPattern`'s compiled patterns are private, `pattern` included, so it can no longer be built with a struct literal (use `GlobPattern::new`) and `pattern.matches_with(text, GlobPattern::match_options())` no longer compiles: match with `GlobPattern::matches(text)`, which tries all of them. `source` stays public.
 +
-+In the image wrkflw builds for a job, its steps now run as `runner`, a user with a home directory and sudo without a password, as on GitHub's hosted runner, where they used to run as root. A step that wrote where only root may, or relied on being root, can now fail: run it with `sudo`, as on GitHub, or set `WRKFLW_STEPS_AS_ROOT=1` to keep root everywhere. On Linux the user takes the uid of whoever runs wrkflw, so a bind-mounted workspace stays theirs. Under a rootless engine, or where the user can't write the job's mounts, steps run as root with a warning. A job `container:`, an image mapped with `-P` and Kubernetes are unchanged. Stored results are keyed on it and the key's version goes to 5, so `--reuse-results` reruns every job once.
-+
- ## A job's steps share one container (unreleased)
++## JavaScript actions run (0.9.0)
  
- On Docker and Podman a job's `run:` steps now run in one container, started once and kept for the job, where each step used to get a container of its own. What a step leaves outside the workspace is there for the next one, as on GitHub: `go install`, `apt-get install`, `rustup toolchain add`, `pip install`, a file under `$HOME` or `/tmp`, a process left running. A workflow that only passed locally because a step started from a clean image now behaves as it does on GitHub. `--step-containers`, or `WRKFLW_STEP_CONTAINERS=1`, brings the old behaviour back, and `--preserve-containers-on-failure` still implies it. `--job-container` is accepted and does nothing, even beside `--step-containers`. Both variables also apply to runs started from the TUI and `wrkflw watch`. The jobs of a called workflow share a container too, and their services now start. A step that is cancelled or times out may still be running in the job's container, so the steps after it, `if: always()` ones included, get a fresh container without what earlier steps installed, and the job's services restart with it.
+ A `uses:` step whose action runs on Node, such as `actions/github-script`, `codecov/codecov-action` or a local `./` action whose `action.yml` says `runs.using: node20`, used to pass without running and was reported as not run, which made the run `partial`. Such an action now runs with node in the job's container, with its `pre` and `post`; under `--runtime emulation` it runs on your machine as you, so a remote action is code from its repository (pinned only as firmly as its `@ref`) running with your access, your tokens and keys included: wrkflw leaves credential-named variables (`GH_TOKEN`, `AWS_SECRET_ACCESS_KEY`, `SSH_AUTH_SOCK` and the like) out of its environment, which is a precaution, not a boundary. The same goes for the steps of a remote composite action under emulation, which used to inherit them: one that runs `gh`, `aws` or `ssh` with your own credentials now needs them passed through the step's `env:`. A step can no longer set, for later steps through `$GITHUB_ENV`, a variable wrkflw sets for each step (GitHub's defaults such as `GITHUB_SHA` or `RUNNER_TEMP`, `GITHUB_ACTION_PATH`, `WRKFLW_RUNTIME_MODE`) or `NODE_OPTIONS`, as GitHub doesn't let it either; such a line is ignored with a warning. Names of your own, `GITHUB_SHA_SHORT` included, pass on as before. A local `./` action is read from the job's workspace rather than the repository wrkflw runs in, as on GitHub. Its `pre` runs right before it, not at the start of the job, and its `post` runs at the end of the job even when `pre`, `main` or a later step failed. The action can fail where it used to pass, and the run is `verified` when nothing else was left out. An action that needs GitHub's run services (`ACTIONS_RUNTIME_TOKEN` or the OIDC token) fails locally, so a workflow using `github/codeql-action`, `actions/deploy-pages` or `actions/attest-build-provenance` now fails under `wrkflw gate` where it was `partial`: add them to `WRKFLW_SKIP_ACTIONS`. A remote action is cloned from GitHub, with your GitHub token if the anonymous clone fails. `WRKFLW_JS_ACTIONS=0` brings back the old behaviour, and `WRKFLW_SKIP_ACTIONS=owner/repo,./path` leaves only the actions it lists unrun. Stored results are keyed on both, and the key's version goes to 6, so `--reuse-results` (which `wrkflw gate` always uses) reruns every job once instead of reusing a pass whose JavaScript actions didn't run. The setup actions and the Rust toolchain actions are unchanged.
+ 
+-## Steps run as the `runner` user (unreleased)
++## Steps run as the `runner` user (0.9.0)
+ 
+ In the image wrkflw builds for a job, its steps now run as `runner`, a user with a home directory and sudo without a password, as on GitHub's hosted runner, where they used to run as root. A step that wrote where only root may, or relied on being root, can now fail: run it with `sudo`, as on GitHub, or set `WRKFLW_STEPS_AS_ROOT=1` to keep root everywhere. On Linux the user takes the uid of whoever runs wrkflw, so a bind-mounted workspace stays theirs. Under a rootless engine, or where the user can't write the job's mounts, steps run as root with a warning. A job `container:`, an image mapped with `-P` and Kubernetes are unchanged. Stored results are keyed on it and the key's version goes to 5, so `--reuse-results` reruns every job once.
+ 
+-## A job's steps share one container (unreleased)
++## A job's steps share one container (0.9.0)
+ 
+ On Docker and Podman a job's `run:` steps now run in one container, started once and kept for the job, where each step used to get a container of its own. What a step leaves outside the workspace is there for the next one, as on GitHub: `go install`, `apt-get install`, `rus
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +17/-17)
 ```diff
-@@ -4429,6 +4429,7 @@ name = "wrkflw-executor"
- version = "0.8.0"
+@@ -4364,7 +4364,7 @@ checksum = "ea2f10b9bb0928dfb1b42b65e1f9e36f7f54dbdf08457afefb38afcdec4fa2bb"
+ 
+ [[package]]
+ name = "wrkflw"
+-version = "0.8.0"
++version = "0.9.0"
  dependencies = [
-  "async-trait",
-+ "base64 0.21.7",
   "bollard",
   "chrono",
+@@ -4416,7 +4416,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-evaluator"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "colored",
+  "serde_yaml",
+@@ -4426,7 +4426,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-executor"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "async-trait",
+  "base64 0.21.7",
+@@ -4466,7 +4466,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-github"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "lazy_static",
+  "regex",
+@@ -4482,7 +4482,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-gitlab"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "lazy_static",
+  "regex",
+@@ -4498,7 +4498,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-logging"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "chrono",
+  "once_cell",
+@@ -4509,7 +4509,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-matrix"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "indexmap 2.14.2",
+  "serde",
+@@ -4521,7 +4521,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-models"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "serde",
+  "serde_json",
+@@ -4531,7 +4531,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-parser"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "glob",
+  "jsonschema",
+@@ -4548,7 +4548,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-runs"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "chrono",
   "dirs",
-```
-
-**File**: `README.md` (modified, +29/-7)
-```diff
-@@ -20,7 +20,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
- - **Job dependency resolution** — automatic ordering based on `needs` with parallel execution of independent jobs
- - **Expression evaluator** — evaluates `${{ ... }}` expressions including `toJSON`, `fromJSON`, `contains`, `startsWith`, etc.
--- **Action support** — Docker container actions, composite actions (with output propagation), local actions, and built-in versions of `actions/checkout`, `actions/cache`, the artifact actions and the common setup actions (`setup-node`, `setup-python`, `setup-go`, `setup-java`, `setup-dotnet`, `setup-php`, `rust-toolchain`, `setup-uv`), which install the runtime into the job's image, honouring `*-version-file` inputs. Any other JavaScript action is not run: its step passes and is reported under `unverified`
-+- **Action support** — JavaScript actions (`runs.using: node*`, run with node in the job's container, with `pre`, `post` and `$GITHUB_STATE`), Docker container actions, composite actions (with output propagation), local actions, and built-in versions of `actions/checkout`, `actions/cache`, the artifact actions and the common setup actions (`setup-node`, `setup-python`, `setup-go`, `setup-java`, `setup-dotnet`, `setup-php`, `rust-toolchain`, `setup-uv`), which install the runtime into the job's image, honouring `*-version-file` inputs. A JavaScript action that finds no `node` in the job's image is not run: its step passes and is reported under `unverified`
- - **Reusable workflows** — execute caller jobs via `jobs.<id>.uses` (local or `owner/repo/path@ref`) with output propagation
- - **Artifacts, cache, and inter-job outputs** — `actions/upload-artifact`, `actions/download-artifact`, `actions/cache`, and `needs.<id>.outputs.*`
- - **GitHub context emulation** — environment variables, `GITHUB_OUTPUT`, `GITHUB_ENV`, `GITHUB_PATH`, `GITHUB_STEP_SUMMARY`
-@@ -37,9 +37,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+@@ -4567,7 +4567,7 @@ dependencies = [
  
- - GitHub encrypted secrets and fine-grained permissions
- - Event triggers other than `workflow_dispatch` for the remote `trigger` command
--- JavaScript actions outside the built-in set — a step such as `uses: some-org/setup-tool@v1`, or a local `uses: ./my-action`, whose action runs on Node is not executed. The step passes, prints that it would have run the action, and is listed under `unverified` in `run_finished`, the `gate` result and `compare`, with a warning in the log and a mark on the step in the TUI, so the run's verdict is `partial` rather than `verified`. Whatever the action would have installed or checked is missing from the job, so later steps may fail with `command not found`. Pass `--platform ubuntu-latest=IMAGE` with an image that has the tool, or install it in a `run:` step
- - Absolute-URL actions such as `uses: https://gitea.com/actions/checkout@v4` — they pass validation, but at run time the URL is not resolved and the step falls back to built-in handling
--- Private repos for remote `uses:` — reusable workflows clone over unauthenticated HTTPS
- - `cancel-in-progress` and workflow-level `concurrency:` — job-level groups are enforced within a run, but a local run has nothing earlier to cancel
- - Service containers outside Docker and Podman — emulation, secure emulation, Kubernetes and jobs inside a called workflow don't start `services:`
- - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
-@@ -162,6 +160,7 @@ export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
- - A job-level `container:` still wins over `--platform`, which wins over the built-in image.
- - The built-in image is the base image plus tools the hosted Ubuntu runner has and steps call without installing: `sudo`, `jq`, `gh`, `unzip`, `zip`, `wget`, `xz`, `zstd`, `file`, `ssh`, `rsync`, `git-lfs`, `python3` with `pip`, a C toolchain and Node.js. It is built once and shared by every job. `gh` comes from cli.github.com in a layer of its own: when that can't be reached the job runs without it, with a warning, and the next run tries again. When the tools can't be installed at all, a job with nothing else to set up runs on the bare base image.
- - Steps of a job in the built-in image run as `runner`, as on GitHub: a user with `/home/runner` for its home and `sudo` without a password, so a test that expects a permission error gets one. rustup and cargo are in its home, and it owns what `pip install` and `npm install -g` write to. On Linux the user has your uid, so what a step writes in the workspace stays yours; elsewhere it has GitHub's, 1001. Files an earlier run left in the workspace or the `--dep-cache
-```
-
----
-
-### Incident Patch 2: `b11b73e7` (2026-11-20)
-**Commit Message**: Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo (#176)
-
-* feat: doctor, macOS jobs on the Mac, a held-out sweep, prebuilt installs and a new demo
-
-Pre-release polish for 0.9.0.
-
-- `wrkflw doctor` reports, without starting or pulling anything, which
-  engine `auto` picks (and says so when Docker is down and Podman takes
-  over), the engine VM's memory, whether a first run pulls the published
-  runner base or builds here, where a GitHub token was found, git, and the
-  workflows in the directory. `--format json` gives the same checks.
-
-- `--macos-on-host` (WRKFLW_MACOS_ON_HOST=1) runs `macos-*` jobs, and the
-  macOS legs of a matrix, on a Mac under emulation while the run's other
-  jobs keep their containers, so their pass checks macOS instead of being
-  reported unverified. The switch is per job and per leg, with the env
-  emulation would seed, scoped to the run through a task-local. A host leg
-  is never folded into a container leg, and gets no image built ahead.
-  Off by default: those steps run with no container around them.
-
-- compare says a step needed the GitHub token GitHub gives every job,
-  and that WRKFLW_JOB_GITHUB_TOKEN=1 giv
-
-**File**: `.github/workflows/release.yml` (modified, +5/-0)
-```diff
-@@ -232,6 +232,11 @@ jobs:
-           path: artifacts
-           merge-multiple: true
- 
-+      # scripts/install.sh checks the archive it downloads against these.
-+      - name: Write checksums
-+        working-directory: artifacts
-+        run: sha256sum wrkflw-* > SHA256SUMS
-+
-       - name: Create release
-         uses: softprops/action-gh-release@v2
-         with:
-```
-
-**File**: `AGENTS.md` (modified, +3/-0)
-```diff
-@@ -50,6 +50,8 @@ Add `--reuse-results` to `wrkflw run`, or `reuse_results` to the MCP `run_workfl
- 
- `step_finished.output` holds the last 64 KiB of a step's output, delivered when the step ends. To follow a long step before it ends, add `--stream-output` to `run`: it adds `step_output` lines, `{job, step, index, lines}`, as the step prints, masked like the rest. Without it no `step_output` lines are printed.
- 
-+`doctor` prints `{"schema_version": 1, "type": "doctor", "ok": bool, "checks": [{"name": "...", "status": "ok" | "warn" | "fail", "detail": "...", "fix": "..." | null}]}`. The checks are `runtime` (which engine `auto` picks), `memory` (the engine's VM), `runner_image` (whether a first run pulls the prebuilt base or builds here), `macos_jobs` (on a Mac), `github_token` (where one was found, never the token), `git` and `workflows`. It starts and pulls nothing, and exits 1 only when a check fails; a `warn` is something that makes runs slower or less like GitHub's.
-+
- `clean` prints `{"schema_version": 1, "type": "clean", "removed": n, "bytes": n, "in_use": n, "volumes": n, "failed": [{"path": "...", "error": "..."}]}`: workspaces removed, the bytes they held, workspaces left because a run holds them, container volumes removed because their workspace was gone, and workspaces that could not be removed. It exits 1 when `failed` is not empty, after cleaning the rest.
- 
- A job that does not run, because of its `if:`, a failed `needs` job, fail-fast, a GitLab rule or `gate: false`, still gets `job_started` and `job_finished`, with `status` `skipped` and `duration_ms` 0.
-@@ -93,4 +95,5 @@ The run also records your session, from `--session`, `WRKFLW_SESSION`, `CLAUDE_C
- - `--from-step` needs `--job`. Earlier steps are skipped apart from `actions/checkout`, so their outputs and files are missing. Use it to iterate on a step that doesn't depend on them.
- - `runs replay` reruns against the current working tree. Compare `git_sha` and `git_dirty` on the record if the result differs.
- - `--runtime emulation` runs steps directly on this machine. Use a container runtime or `secure-emulation` for code you don't trust.
-+- `--macos-on-host` (`WRKFLW_MACOS_ON_HOST=1`) does the same for `macos-*` jobs: their steps run on this Mac with no container and see this shell's environment, credentials included. Don't pass it, even when `run` or `gate` suggests it, for a repository you don't trust.
- - `plan` reports a matrix computed by expressions as `dynamic`, because it is only known at run time.
-```
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -4572,6 +4572,7 @@ dependencies = [
+ [[package]]
+ name = "wrkflw-runtime"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
   "async-trait",
   "futures",
-  "ignore",
-+ "libc",
-  "once_cell",
-  "regex",
+@@ -4588,7 +4588,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-secrets"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "aes-gcm",
+  "anyhow",
+@@ -4617,7 +4617,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-trigger-filter"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "glob",
+  "serde_yaml",
+@@ -4630,7 +4630,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-ui"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "base64 0.21.7",
+  "chrono",
+@@ -4664,7 +4664,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-utils"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "nix 0.27.1",
   "serde",
+@@ -4674,7 +4674,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-validators"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "serde",
+  "serde_yaml",
+@@ -4685,7 +4685,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "wrkflw-watcher"
+-version = "0.8.0"
++version = "0.9.0"
+ dependencies = [
+  "futures",
+  "notify",
 ```
 
-**File**: `README.md` (modified, +79/-24)
+**File**: `Cargo.toml` (modified, +17/-17)
 ```diff
-@@ -5,10 +5,65 @@
- [![Build Status](https://img.shields.io/github/actions/workflow/status/bahdotsh/wrkflw/ci.yml?branch=main)](https://github.com/bahdotsh/wrkflw/actions/workflows/ci.yml)
- [![Downloads](https://img.shields.io/crates/d/wrkflw)](https://crates.io/crates/wrkflw)
+@@ -3,7 +3,7 @@ members = ["crates/*"]
+ resolver = "2"
  
--A command-line tool for validating and executing GitHub Actions workflows locally. Test your workflows on your machine before pushing to GitHub.
-+**Run your GitHub Actions workflows on your own machine, and get the verdict GitHub would give.**
-+
-+`wrkflw gate` runs everything CI would run for a push, in Docker or Podman, before the push leaves your machine. Every run ends with a verdict that says how much its pass proves: `verified`, `partial` (and what wasn't checked), or `nothing_checked`. And `wrkflw compare <run URL>` checks wrkflw itself against a finished GitHub run, job by job.
+ [workspace.package]
+-version = "0.8.0"
++version = "0.9.0"
+ edition = "2021"
+ # `std::fs::File::try_lock` guards kept job workspaces.
+ rust-version = "1.89"
+@@ -17,22 +17,22 @@ license = "MIT"
  
- ![WRKFLW Demo](demo.gif)
+ [workspace.dependencies]
+ # Internal crate dependencies
+-wrkflw-models = { path = "crates/models", version = "0.8.0" }
+-wrkflw-evaluator = { path = "crates/evaluator", version = "0.8.0" }
+-wrkflw-executor = { path = "crates/executor", version = "0.8.0" }
+-wrkflw-github = { path = "crates/github", version = "0.8.0" }
+-wrkflw-gitlab = { path = "crates/gitlab", version = "0.8.0" }
+-wrkflw-logging = { path = "crates/logging", version = "0.8.0" }
+-wrkflw-matrix = { path = "crates/matrix", version = "0.8.0" }
+-wrkflw-parser = { path = "crates/parser", version = "0.8.0" }
+-wrkflw-runs = { path = "crates/runs", version = "0.8.0" }
+-wrkflw-runtime = { path = "crates/runtime", version = "0.8.0" }
+-wrkflw-secrets = { path = "crates/secrets", version = "0.8.0" }
+-wrkflw-ui = { path = "crates/ui", version = "0.8.0" }
+-wrkflw-utils = { path = "crates/utils", version = "0.8.0" }
+-wrkflw-trigger-filter = { path = "crates/trigger-filter", version = "0.8.0" }
+-wrkflw-watcher = { path = "crates/watcher", version = "0.8.0" }
+-wrkflw-validators = { path = "crates/validators", version = "0.8.0" }
++wrkflw-models = { path = "crates/models", version = "0.9.0" }
++wrkflw-evaluator = { path = "crates/evaluator", version = "0.9.0" }
++wrkflw-executor = { path = "crates/executor", version = "0.9.0" }
++wrkflw-github = { path = "crates/github", version = "0.9.0" }
++wrkflw-gitlab = { path = "crates/gitlab", version = "0.9.0" }
++wrkflw-logging = { path = "crates/logging", version = "0.9.0" }
++wrkflw-matrix = { path = "crates/matrix", version = "0.9.0" }
++wrkflw-parser = { path = "crates/parser", version = "0.9.0" }
++wrkflw-runs = { path = "crates/runs", version = "0.9.0" }
++wrkflw-runtime = { path = "crates/runtime", version = "0.9.0" }
++wrkflw-secrets = { path = "crates/secrets", version = "0.9.0" }
++wrkflw-ui = { path = "crates/ui", version = "0.9.0" }
++wrkflw-utils = { path = "crates/utils", version = "0.9.0" }
++wrkflw-trigger-filter = { path = "crates/trigger-filter", version = "0.9.0" }
++wrkflw-watcher = { path = "crates/watcher", version = "0.9.0" }
++wrkflw-validators = { path = "crates/validators", version = "0.9.0" }
  
-+## How close to GitHub
-+
-+We rerun finished GitHub runs of open-source repositories with `wrkflw compare`. The last sweep (2026-11-19, on the 0.9.0 code): a job agrees when both sides passed or both failed; not compared are the Windows jobs, which run on a Linux stand-in. Jobs agreed include `macos-*` jobs run as Linux, which `compare` counts as agreeing unverified (`--macos-on-host` runs them on a Mac instead). Local times are warm, on a Mac with a 7.7 GB Docker VM.
-+
-+| Repository | Jobs agreed | Differed | Not compared | Local | GitHub |
-+|---|---|---|---|---|---|
-+| pallets/click | 10 | 0 | 1 | 38 s | 65 s |
-+| chalk/chalk | 2 | 0 | 0 | 13 s | 39 s |
-+| sindresorhus/ky | 4 | 0 | 0 | 130 s | 187 s |
-+| rust-lang/log | 10 | 1 | 2 | 362 s | 527 s |
-+| dtolnay/itoa | 8 | 3 | 0 | 101 s | 346 s |
-+| tj/commander.js | 6 | 0 | 3 | 67 s | 99 s |
-+| spf13/cobra | 18 | 0 | 1 | 134 s | 99 s |
-+| fatih/color | 1 | 0 | 0 | 25 s | 57 s |
-+| pallets/flask | 11 | 0 | 1 | 32 s | 44 s |
-+
-+rust-lang/log's one difference is its documentation job, which fails on Rust 1.100, released after its GitHub run, as `stable` floats. itoa's three verify an attestation with the job's GitHub token, which a local job doesn't get unless `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours.
-+
-+These nine repositories are the ones wrkflw has been fixed against. [`held_out_runs.txt`](scripts/conformance/held_out_runs.txt) lists fourteen more it has never been tuned for, with services, wide OS matrices and a known failure, to measure how it does on a repository it hasn't seen. See [Conformance](#conformance) to run either sweep yourself.
-+
-+## Quick Start
-+
-+```bash
-+cargo binstall wrkflw          # or: brew install wrkflw, or see Installation
-+
-+wrkflw doctor                  # what runs here would use, and what would slow them down
-+wrkflw gate                    # run what CI would run for this push
-+wrkflw gate --install-hook     # ...and do it before every push
-+wrkflw run .github/workflows/ci.yml
-+wrkflw                         # the TUI
-+```
-+
-+### Check every push before it leaves
-+
-+Add the gate to a repository once, and every `git push` first runs what CI would run for it:
-+
-+```bash
-+wrkflw doctor                  # Docker answering, with enough memory?
-+wrkflw gate --install-hook     # writes .git/hooks/pre-push; an existing hook is left alone
-+```
-+
-+Then tell it what must only ever run in CI. The gate runs jobs with this machine's credentials and can't tell a deploy from a test, so mark deploys and releases in `.wrkflw/affected.yml`:
-+
-+```yaml
-+jobs:
-+  deploy:
-+    gate: false     # the gate reports it skipped, with every job that needs it
-+  release:
-+    gate: false
-+```
-+
-+A push the gate fails is stopped with the job, step and error lines that failed. `git push --no-verify` skips it once. A `partial` pass says on one line each what it didn't check, such as a `macos-*` job run as Linux or an action that didn't run. The hook keeps the `--runtime` and `--remote-cache` you install it with, so jobs that already passed in CI can be [reused](#sharing-results-across-machines) instead of rerun. See [Spending less on CI](#spending-less-on-ci) for everything it does.
-+
- ## Features
- 
- - **TUI interface** — interactive terminal UI with Workflows, Run (jobs, graph and log views), History, Dispatch and Setup tabs, plus a Help overlay
-@@ -43,11 +98,25 @@ A command-line tool for validating and executing GitHub Actions workflows locall
- - Service settings that reach the host — a service's `volumes:` can only name a volume, not a host path, and its `options:` only take flags that shape the service container itself, such as `--health-cmd`, `--user`, `--tmpfs` and `-e NAME=value`. Anything else, such as `--privileged` or `-v`, fails the job.
- - Services that listen on the same port — services share the job container's network, as they do on a GitHub runner, so two Postgres services can't both have 5432. wrkflw refuses two services whose `ports:` name the same container port, and warns about two services of one image.
- - A job with `services:` runs its steps in one c
+ # External dependencies
+ clap = { version = "4.3", features = ["derive", "env"] }
 ```
 
-**File**: `RELEASE_POST_0.9.0.md` (modified, +10/-2)
+**File**: `INDEX.md` (modified, +964/-144)
 ```diff
-@@ -28,6 +28,10 @@ On Docker and Podman, a built-in job image on `ubuntu:latest` that doesn't set u
+@@ -1,7 +1,7 @@
+ # Codebase Index: wrkflw
  
- Steps run as `runner` with passwordless `sudo`, share one container per job, so what a step installs is there for the next, and get the runner's tools (`gh`, `jq`, `zip`, `python3`, Rust when steps call cargo, Docker with `--docker-in-jobs`). Services start, and composite actions hand `$GITHUB_ENV` and `$GITHUB_PATH` on to the job.
+-> Generated: 2026-11-14 13:25:31 UTC | Files: 264 | Lines: 120068
+-> Languages: JSON (4), Markdown (27), Rust (170), Shell (6), TOML (19), YAML (38)
++> Generated: 2026-11-26 09:05:12 UTC | Files: 282 | Lines: 129058
++> Languages: JSON (4), Markdown (35), Rust (176), Shell (10), TOML (19), YAML (38)
  
-+### macOS jobs on your Mac
+ ## Directory Structure
+ 
+@@ -14,6 +14,7 @@ wrkflw/
+   INDEX.md
+   README.md
+   RELEASE_POST.md
++  RELEASE_POST_0.9.0.md
+   cliff.toml
+   crates/
+     README.md
+@@ -25,6 +26,8 @@ wrkflw/
+     executor/
+       Cargo.toml
+       README.md
++      examples/
++        runner_dockerfile.rs
+       src/
+         acceleration/
+           concurrency.rs
+@@ -46,6 +49,7 @@ wrkflw/
+         events.rs
+         expression.rs
+         github_env_files.rs
++        host_jobs.rs
+         image_build.rs
+         job_memory.rs
+         job_session.rs
+@@ -57,9 +61,12 @@ wrkflw/
+         live_step.rs
+         log_redaction.rs
+         matrix_fold.rs
++        node_actions.rs
+         podman.rs
+         run_options.rs
++        runner_base.rs
+         runner_fidelity.rs
++        runner_user.rs
+         script_commands.rs
+         setup_actions.rs
+         substitution.rs
+@@ -241,6 +248,7 @@ wrkflw/
+       src/
+         cli_secrets.rs
+         compare_cmd.rs
++        doctor_cmd.rs
+         gate_cmd.rs
+         git.rs
+         json_output.rs
+@@ -265,7 +273,18 @@ wrkflw/
+         reusable_inputs_outputs_test.rs
+         startup_test.rs
+         target_job_test.rs
++  docs/
++    agents.md
++    matching-github.md
++    reusable-workflows.md
++    runtimes.md
++    secrets.md
++    usage.md
+   examples/
++    gate-demo/
++      README.md
++      greet.sh
++      test.sh
+     secrets-demo/
+       README.md
+       secrets-workflow.yml
+@@ -285,7 +304,9 @@ wrkflw/
+   scripts/
+     bump-crate.sh
+     conformance/
++      compare_sweep.sh
+       plan_corpus.sh
++    install.sh
+   skills/
+     wrkflw/
+       SKILL.md
+@@ -357,75 +378,24 @@ wrkflw/
+ 
+ **README.md**
+ - `# WRKFLW`
++- `# With cargo-binstall`
++- `# Or with the install script (Linux and macOS), which checks the download`
++- `# against the release's SHA256SUMS. WRKFLW_VERSION and WRKFLW_INSTALL_DIR`
++- `# (default ~/.local/bin) choose the release and where it goes.`
+ - `# Launch the TUI (auto-detects .gitea/workflows and .github/workflows)`
+ - `# Validate workflows`
+ - `# Run a workflow`
+ - `# Rerun workflows automatically on file changes`
+ - `# List detected workflows and pipelines`
+-- `# Validate all workflows in .gitea/workflows and .github/workflows`
+-- `# Validate specific files or directories`
+-- `# Validate multiple paths`
+-- `# GitLab pipelines`
+-- `# Verbose output`
+-- `# Run with auto-detection (default: tries Docker, then Podman, then emulation)`
+-- `# Run with Docker explicitly`
+-- `# Run with Podman`
+-- `# Run each step as a pod in a Kubernetes cluster`
+-- `# Run in emulation mode (no containers)`
+-- `# Run in sandboxed secure emulation`
+-- `# Run a specific job`
+-- `# Set GitLab pipeline variables, which rules and scripts both see`
+-- `# List workflows and their jobs`
+-- `# Preserve failed containers for debugging`
+-- `# Repeat the flag or separate entries with commas`
+-- `# Set it once for every command, including the TUI and watch mode`
+-- `# Auto-detect changed files from git (vs origin/HEAD, main/master, or HEAD~1)`
+-- `# Pin the diff range`
+-- `# Supply changed files explicitly (e.g. from a CI wrapper)`
+-- `# Simulate a pull_request — `--base-branch` is required under strict mode`
+-- `# Opt out of strict rejection (legacy warn-and-proceed)`
+-- `# Check everything CI would run for this push, reusing what already passed.`
+-- `# On a feature branch, a workflow a push doesn't fire is checked as a pull`
+-- `# request into the default branch. The result says how much the pass proves:`
+-- `# verified, partial (some jobs ran as another OS, or passed a step whose`
+-- `# action wrkflw can't run) or nothing_checked.`
+-- `# Run it on every push (an existing hook is left alone). The hook keeps the`
+-- `# --runtime and --remote-cache given here, and compares against what the`
+-- `# remote already has for the pushed branch. It refuses a core.hooksPath`
+-- `# outside the repository, which other repositories share. It checks the`
+-- `# working tree, so uncommitted changes count, and it warns when there are any.`
+-- `# The same pieces, one at a time`
+-- `# In trusted CI on your main branch: run every job and publish its result`
+-- `# Anywhere else: read`
+-- `# Watch .github/workflows for changes and rerun affected workflows`
+-- `# Watch a specific path, simulate pull_request, and cap concurrency`
+-- `# Ignore extra directories on top of the built-in list`
+-- `# Open TUI with default directory`
+-- `# Open with specific runtime`
+-- `# Force a color theme`
+-- `# GitHub (requires GITHUB_TOKEN env var)`
+-- `# GitLab (requires GITLAB_TOKEN env var)`
+-- `# Machine-readable output: stdout is JSON only, logs go to stderr`
+-- `# See what would run, and why a trigger 
+```
+
+**File**: `README.md` (modified, +41/-467)
+```diff
+@@ -27,9 +27,32 @@ We rerun finished GitHub runs of open-source repositories with `wrkflw compare`.
+ | fatih/color | 1 | 0 | 0 | 25 s | 57 s |
+ | pallets/flask | 11 | 0 | 1 | 32 s | 44 s |
+ 
+-rust-lang/log's one difference is its documentation job, which fails on Rust 1.100, released after its GitHub run, as `stable` floats. itoa's three verify an attestation with the job's GitHub token, which a local job doesn't get unless `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours.
++rust-lang/log's one difference is its documentation job, which fails on Rust 1.100, released after its GitHub run, as `stable` floats. itoa's three verify an attestation with the job's GitHub token, which a local job doesn't get unless `WRKFLW_JOB_GITHUB_TOKEN=1` gives it yours. spf13/cobra is the one run slower here than on GitHub: its 19 jobs each get a machine of their own there, and share one 7.7 GB VM here.
+ 
+-These nine repositories are the ones wrkflw has been fixed against. [`held_out_runs.txt`](scripts/conformance/held_out_runs.txt) lists fourteen more it has never been tuned for, with services, wide OS matrices and a known failure, to measure how it does on a repository it hasn't seen. See [Conformance](#conformance) to run either sweep yourself.
++These nine repositories are the ones wrkflw has been fixed against. To see how it does on repositories it hadn't seen, fourteen more were held out, with services, wide OS matrices and a known failure. Their first sweep (2026-11-20, same machine) agreed on 62 jobs and differed on 53, and two refused to run. wrkflw was then fixed against what it found, and the same runs swept again (2026-11-22):
 +
-+On a Mac, `--macos-on-host` runs `macos-*` jobs, and the macOS legs of a matrix, on the Mac itself while the other jobs keep their containers, so their pass checks macOS instead of standing in as Linux. It is off by default: those steps run with no container around them.
++| Repository | First sweep: agreed / differed | After the fixes | Local | GitHub |
++|---|---|---|---|---|
++| pallets/markupsafe | 9 / 0 | 9 / 0 | 96 s | 38 s |
++| psf/requests | 12 / 6 | **18 / 0** | 239 s | 279 s |
++| encode/httpx | 4 / 1 | **5 / 0** | 62 s | 56 s |
++| go-chi/chi | refused | **4 / 0** | 113 s | 107 s |
++| lib/pq | refused | **13 / 2** | 446 s | 95 s |
++| jazzband/django-redis | 0 / 3 | **13 / 1** | 223 s | 291 s |
++| dtolnay/anyhow | 9 / 2 | 9 / 2 | 477 s | 449 s |
++| expressjs/express | 9 / 2 | 8 / 3 | 291 s | 125 s |
++| urfave/cli | 3 / 1 | 3 / 1 | 179 s | 128 s |
++| BurntSushi/memchr | 6 / 9 | 7 / 8 | 573 s | 608 s |
++| sharkdp/hyperfine | 4 / 10 | 4 / 10 | 355 s | 183 s |
++| sharkdp/fd | 5 / 10 | 5 / 10 | 370 s | 384 s |
++| sindresorhus/execa | 0 / 6 | 5 / 1 | 3725 s | 1149 s |
++| go-sql-driver/mysql | 1 / 3 | 2 / 18 | 1434 s | 671 s |
 +
- ### Honest verdicts
- 
- Every run ends with a `verdict`: `verified`, `partial` or `nothing_checked`. `partial` lists what wasn't checked: a Windows or macOS job run as Linux, or a step whose action didn't run. `wrkflw gate` checks a push as CI will see it, reuses jobs that already passed, and says each cause on its own line. `wrkflw compare <run>` checks wrkflw itself against a finished GitHub run.
-@@ -46,11 +50,15 @@ Steps run as the `runner` user, JavaScript actions run, a job's steps share one
- 
- ## Install
- 
-+A prebuilt binary, no Rust needed:
++What the first sweep found and is now fixed: trigger filters GitHub accepts, `branches: "**"` as a string and the glob `**.go` (chi, lib/pq); `actions/checkout` with a `path:` (chi); `actions/github-script` without a token, inside `codecov/codecov-action` (execa, urfave/cli); `${{ github.action_path }}` in a container step (execa); `::set-output` values lost to an empty `$GITHUB_OUTPUT` (django-redis); folded job names and legs of a matrix made at run time, which `compare` couldn't pair (django-redis, mysql); `ImageOS`, which actions that download a build for the runner's OS read (mysql); `python`, `libncurses6`, OpenSSL headers and the setup-python PATH order in the runner image (mysql, requests, httpx); Node 19 for Ubuntu 26.04 (express); and rustup on the overlay filesystem (memchr).
 +
- ```sh
--cargo install wrkflw
-+cargo binstall wrkflw
-+# or
-+curl -fsSL https://raw.githubusercontent.com/bahdotsh/wrkflw/main/scripts/install.sh | sh
++What is left, and isn't wrkflw's to fix: coverage uploads to Codecov and Coveralls, which take them only from a GitHub job (mysql's 16 test legs pass their tests and differ only there, urfave/cli); steps that need the job's GitHub token, unless `WRKFLW_JOB_GITHUB_TOKEN=1` (anyhow, mysql); `cross` on an Apple Silicon Mac, which runs x86_64 tools the arm64 job container can't (hyperfine, fd, memchr), and which `compare` names on each job; timing tests that fail while many legs and databases share one machine (lib/pq, express); and one test that failed on GitHub and passed here (django-redis). execa's legs need more memory than a 7.7 GB Docker VM holds side by side, so they run one at a time, and one of them still runs out of JavaScript heap.
++
++Those fourteen are in the tuned sweep now. Fourteen new repositories, which no change has been made against, are held out in [`held_out_runs.txt`](scripts/conformance/held_out_runs.txt), with no results yet. See [Conformance](docs/matching-github.md#conformance) to run either sweep yourself.
+ 
+ ## Quick Start
+ 
+@@ -62,7 +85,7 @@ jobs:
+     gate: false
  ```
  
--or `brew install wrkflw`.
-+or `brew install wrkflw`, or `cargo install wrkflw`. Then `wrkflw doctor` says what runs on your machine would use and what would slow them down, and `wrkflw gate --install-hook` checks every push before it leaves.
- 
- ---
- 
-```
-
-**File**: `crates/executor/src/acceleration.rs` (modified, +33/-5)
-```diff
-@@ -499,6 +499,12 @@ fn job_key_with(
-     if every_matrix_leg && lookup.job.matrix_config().is_some() {
-         document["every_matrix_leg"] = serde_json::json!(true);
-     }
-+    // A matrix whose macOS legs run on this Mac (`--macos-on-host`) passed
-+    // on other ground than one whose legs all ran in containers. Only that
-+    // mode changes the key. A job without a matrix differs by `runtime`.
-+    if crate::host_jobs::legs_may_run_on_host(lookup.job) {
-+        document["macos_on_host"] = serde_json::json!(true);
-+    }
-     // A pass with a container per step can rest on each step starting from
-     // a clean image, so it can't stand in for a run whose steps share one,
-     // or the other way round. Version 3 keys were all of the former.
-@@ -1158,13 +1164,11 @@ pub(crate) fn mark_executed(job_name: &str) {
- }
- 
- /// Store a passing result under the key `decide` returned. A job that ran on
--/// the host passed with that host's tools, so its result stays on this machine.
--pub(crate) async fn store(key: &str, jobs: Vec<StoredJob>, env: &HashMap<String, String>) {
-+/// the host (`on_host`), or any leg of it did, passed with that host's
-+/// tools, so its result stays on this machine.
-+pub(crate) async fn store(key: &str, jobs: Vec<StoredJob>, on_host: bool) {
-     let Some(run) = current() else { return };
-     let Some(store) = &run.store else { return };
--    let on_host = env
--        .get("WRKFLW_RUNTIME_MODE")
--        .is_some_and(|mode| mode.contains("emulation"));
-     if on_host && run.accel.push_results && !run.warned_on_host_push.swap(true, Ordering::Relaxed) {
-         wrkflw_logging::warning(
-             "Not pushing results from this run: emulation depends on this machine's tools",
-@@ -1282,6 +1286,30 @@ mod tests {
-         );
-     }
- 
-+    /// A matrix whose macOS legs run on this Mac isn't reused for a run with
-+    /// every leg in a container, or the other way round: the hint to rerun
-+    /// with `--macos-on-host` must actually run them.
-+    #[tokio::test]
-+    async fn a_matrix_run_with_legs_on_the_host_is_kept_apart() {
-+        let dir = repo();
-+        let wf = workflow();
-+        let tree = hash_tree(dir.path()).unwrap();
-+        let matrix = job(
-+            "runs-on: ${{ matrix.os }}\nstrategy:\n  matrix:\n    os: [ubuntu-latest, macos-15]\nsteps:\n  - run: make\n",
-+        );
-+        let in_containers = key_for_mode(&matrix, &wf, &tree, None, false);
-+        let host = crate::host_jobs::HostJobs::new(
-+            Box::new(wrkflw_runtime::emulation::EmulationRuntime::new()),
-+            &HashMap::new(),
-+            HashMap::new(),
-+        );
-+        let on_host = crate::host_jobs::scope(Some(std::sync::Arc::new(host)), async {
-+            key_for_mode(&matrix, &wf, &tree, None, false)
-+        })
-+        .await;
-+        assert_ne!(in_containers, on_host);
-+    }
-+
-     #[test]
-     fn running_every_matrix_leg_does_not_reuse_a_folded_result() {
-         let dir = repo();
-```
-
-**File**: `crates/executor/src/engine.rs` (modified, +366/-71)
-```diff
-@@ -156,17 +156,19 @@ async fn execute_github_workflow(
-     let workspace_dir = tempfile::tempdir()
-         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
- 
--    // 4. Set up GitHub-like environment
--    let (mut env_context, user_env) = github_run_env(
-+    // 4. Set up GitHub-like environment. The context is made once: jobs run
-+    // on the host below get the same run id and the like as the rest.
-+    let github_context = environment::create_github_context(
-         &workflow,
-         workspace_dir.path(),
--        &config.runtime_type,
-         &environment::RunRef {
-             event_name: config.event_name.as_deref(),
-             git_ref: config.git_ref.as_deref(),
-             base_branch: config.base_branch.as_deref(),
-         },
--    )?;
-+    );
-+    let (mut env_context, user_env) =
-+        github_run_env_from(github_context.clone(), &workflow, &config.runtime_type)?;
- 
-     // show=true means hide=false (inverted for the env var)
-     env_context.insert(
-@@ -184,6 +186,33 @@ async fn execute_github_workflow(
-         ExecutionError::Execution(format!("Failed to setup GitHub env files: {}", e))
-     })?;
- 
-+    // `macos-*` jobs on this Mac, when asked, with the env emulation gives.
-+    let host_jobs = if crate::host_jobs::wanted(&config.runtime_type) {
-+        let (host_env, _) =
-+            github_run_env_from(github_context, &workflow, &RuntimeType::Emulation)?;
-+        wrkflw_logging::warning(
-+            "macos-* jobs run on this Mac itself (--macos-on-host), with no container \
-+             around their steps: they can change this machine, and they see this shell's \
-+             environment, credentials included. They have no terminal to ask for input \
-+             at, so one that does, such as sudo asking for a password, fails",
-+        );
-+        Some(std::sync::Arc::new(crate::host_jobs::HostJobs::new(
-+            Box::new(emulation::EmulationRuntime::new()),
-+            &env_context,
-+            host_env,
-+        )))
-+    } else {
-+        if crate::run_options::macos_on_host() {
-+            wrkflw_logging::warning(&format!(
-+                "--macos-on-host has no effect here: it runs macos-* jobs on a Mac whose \
-+                 other jobs run in containers, and this run is on {} with {}",
-+                std::env::consts::OS,
-+                config.runtime_type.mode_name()
-+            ));
-+        }
-+        None
-+    };
-+
-     // 5. Initialize secrets management
-     let secret_manager = if let Some(secrets_config) = &config.secrets_config {
-         Some(
-@@ -226,20 +255,23 @@ async fn execute_github_workflow(
-         // Execute jobs in parallel if they don't depend on each other.
-         // `needs:` failure propagation and `if:` evaluation happen per job inside
-         // `execute_job_with_matrix`, so this loop and `run_called_workflow` share them.
--        let job_results = execute_job_batch(
--            &job_batch,
--            &workflow,
--            runtime.as_ref(),
--            &env_context,
--            &user_env,
--            config.verbose,
--            secret_manager.as_ref(),
--            Some(&secret_masker),
--            &all_job_outputs,
--            &all_job_results,
--            &artifact_store,
--            &cache_store,
--            &config.platform_overrides,
-+        let job_results = crate::host_jobs::scope(
-+            host_jobs.clone(),
-+            execute_job_batch(
-+                &job_batch,
-+                &workflow,
-+                runtime.as_ref(),
-+                &env_context,
-+                &user_env,
-+                config.verbose,
-+                secret_manager.as_ref(),
-+                Some(&secret_masker),
-+                &all_job_outputs,
-+                &all_job_results,
-+                &artifact_store,
-+                &cache_store,
-+                &config.platform_overrides,
-+            ),
-         )
-         .await?;
- 
-@@ -432,6 +464,13 @@ async fn execute_gitlab_pipeline(
-     let workspace_dir = tempfile::tempdir()
-         .map_err(|e| ExecutionError::Execution(format!("Failed to create workspace: {}", e)))?;
- 
-+    if crate::run_options::macos_on_host() {
-+        wrkflw_logging::warning(
-+            "--macos-on-host has no effect on a GitLab pipeline: it runs a GitHub workflow's \
-+             macos-* jobs",
-+        );
-+    }
-+
-     // 5. Set up GitLab-like environment
-     let mut env_context = create_gitlab_context(&pipeline, workspace_dir.path());
- 
-@@ -889,14 +928,27 @@ pub fn detect_runtime(runtime_type: RuntimeType) -> RuntimeType {
- type EnvMap = HashMap<String, String>;
- 
- /// Build the run-level env for a GitHub workflow. Returns the full lookup map
--/// and the user-declared slice of it.
-+/// and the user-declared slice of it. A run makes its context itself and
-+/// calls [`github_run_env_from`], as it may need the env for two runtimes.
-+#[cfg(test)]
- fn github_run_env(
-     workflow: &WorkflowDefinition,
-     workspace_dir: &Path,
-   
-```
-
-**File**: `crates/executor/src/host_jobs.rs` (added, +555/-0)
-```diff
-@@ -0,0 +1,555 @@
-+//! `macos-*` jobs run on this Mac, when asked.
-+//!
-+//! On a Mac running jobs in containers, a job whose `runs-on` names macOS
-+//! runs as Linux, in the Ubuntu image, and its pass is only `unverified`.
-+//! With [`crate::run_options::MACOS_ON_HOST_ENV`] (`--macos-on-host`) such a
-+//! job, or matrix leg, runs under emulation instead: on the Mac itself, with
-+//! `runner.os` macOS and the host's paths, while the run's other jobs keep
-+//! their containers. Off by default, because emulation gives a step no
-+//! isolation: a macOS job's `brew install` changes this machine.
-+
-+use crate::engine::RuntimeType;
-+use serde_yaml::Value;
-+use std::collections::HashMap;
-+use std::future::Future;
-+use std::path::{Path, PathBuf};
-+use std::sync::Arc;
-+use wrkflw_parser::workflow::Job;
-+use wrkflw_runtime::container::{ContainerError, ContainerOutput, ContainerRuntime};
-+
-+/// What a job run on the host runs with instead of the run's runtime.
-+pub(crate) struct HostJobs {
-+    pub runtime: Box<dyn ContainerRuntime + Send + Sync>,
-+    /// The env values emulation seeds where they differ from the run's:
-+    /// host paths, `RUNNER_OS` macOS, and workflow `env:` resolved with
-+    /// them. Laid over the env a job is handed, so what its caller gave it,
-+    /// such as a called workflow's inputs and secrets, stays.
-+    overlay: Vec<(String, String)>,
-+}
-+
-+impl HostJobs {
-+    /// `run_env` is the run's env as its container runtime seeds it, and
-+    /// `host_env` the same run's env as emulation seeds it.
-+    pub fn new(
-+        runtime: Box<dyn ContainerRuntime + Send + Sync>,
-+        run_env: &HashMap<String, String>,
-+        host_env: HashMap<String, String>,
-+    ) -> Self {
-+        let overlay = host_env
-+            .into_iter()
-+            .filter(|(key, value)| run_env.get(key) != Some(value))
-+            .collect();
-+        HostJobs {
-+            runtime: Box::new(OffTask {
-+                runtime: Arc::from(runtime),
-+                one_at_a_time: Arc::new(tokio::sync::Semaphore::new(1)),
-+            }),
-+            overlay,
-+        }
-+    }
-+
-+    /// The env and user env a job handed `env` and `user_env` runs with on
-+    /// the host. A user env key is changed only where the job has it, so
-+    /// a called workflow's empty user env stays empty.
-+    pub fn env_for(
-+        &self,
-+        env: &HashMap<String, String>,
-+        user_env: &HashMap<String, String>,
-+    ) -> (HashMap<String, String>, HashMap<String, String>) {
-+        let mut env = env.clone();
-+        let mut user_env = user_env.clone();
-+        for (key, value) in &self.overlay {
-+            env.insert(key.clone(), value.clone());
-+            if let Some(slot) = user_env.get_mut(key) {
-+                slot.clone_from(value);
-+            }
-+        }
-+        (env, user_env)
-+    }
-+}
-+
-+/// A runtime whose steps run off the task that drives the run's jobs.
-+///
-+/// Emulation waits for a step's process in place, without yielding. A
-+/// run's jobs, and the legs of a matrix chunk, are all polled from one
-+/// task, so a host job's long `brew install` would stop the container jobs
-+/// beside it until it ended. Here each step waits on a blocking thread.
-+///
-+/// Host steps run one at a time. On GitHub each macOS job has a machine of
-+/// its own; here they share this Mac, its Homebrew lock and its caches, so
-+/// two at once can fail where neither would alone. They still run while
-+/// container jobs do.
-+struct OffTask {
-+    runtime: Arc<dyn ContainerRuntime + Send + Sync>,
-+    one_at_a_time: Arc<tokio::sync::Semaphore>,
-+}
-+
-+/// Ends a step's processes when the step is given up on: a timeout or a
-+/// cancelled job drops the future waiting for it, which leaves its thread
-+/// running. A step that ended has nothing left to end.
-+struct EndOnDrop(wrkflw_runtime::emulation::StepHandle);
-+
-+impl Drop for EndOnDrop {
-+    fn drop(&mut self) {
-+        self.0.kill();
-+    }
-+}
-+
-+#[async_trait::async_trait]
-+impl ContainerRuntime for OffTask {
-+    async fn run_container(
-+        &self,
-+        image: &str,
-+        cmd: &[&str],
-+        env_vars: &[(&str, &str)],
-+        working_dir: &Path,
-+        volumes: &[(&Path, &Path)],
-+        entrypoint: Option<&str>,
-+    ) -> Result<ContainerOutput, ContainerError> {
-+        let runtime = Arc::clone(&self.runtime);
-+        let image = image.to_string();
-+        let cmd: Vec<String> = cmd.iter().map(|s| s.to_string()).collect();
-+        let env: Vec<(String, String)> = env_vars
-+            .iter()
-+            .map(|(k, v)| (k.to_string(), v.to_string()))
-+            .collect();
-+        let working_dir = working_dir.to_path_buf();
-+        let volumes: Vec<(PathBuf, PathBuf)> = volumes
-+            .iter()
-+            .map(|(host, inside)| (host.to_path_buf(), inside.to_path_buf()))
-+            .collect();
-+        let entrypoint = entrypoint.map(str::to_string);
-+        // The step's output goes to the tap of this task, which the thread
-+ 
+-A push the gate fails is stopped with the job, step and error lines that failed. `git push --no-verify` skips it once. A `partial` pass says on one line each what it didn't check, such as a `macos-*` job run as Linux or an action that didn't run. The hook keeps the `--runtime` and `--remote-cache` you install it with, so jobs that already passed in CI can be [reused](#sharing-results-across-machines) instead of rerun. See [Spending less on CI](#spending-less-on-ci) for everything it does.
++A push the gate fails is stopped with the job, step and error lines that fa
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #177** (2026-11-26): Prepare 0.9.0, and fix what the held-out sweep found (@bahdotsh)
 - **PR #176** (2026-11-20): Pre-release polish: doctor, macOS jobs on the Mac, held-out sweep, prebuilt installs, new demo (@bahdotsh)
 - **PR #175** (2026-11-20): Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence (@bahdotsh)
 - **PR #174** (2026-11-19): fix: close the gaps left after the compare sweep (#173 follow-up) (@bahdotsh)
 - **PR #173** (2026-11-18): fix: close the gaps the eight-repo compare sweep found (@bahdotsh)
 - **PR #172** (2026-11-14): fix: keep what a step installs for the next one, and give jobs the runner's Rust and Docker (@bahdotsh)
-- **PR #171** (2026-11-13): fix: agree with GitHub on real repositories, and build job images faster (@bahdotsh)
 
 ---
 
@@ -2792,36 +2526,56 @@ Pre-release polish for 0.9.0.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in r
+## X. Prepare 0.9.0, and fix what the held-out sweep found
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `490a508b`: Pre-release: JavaScript actions, private uses, prebuilt runner image, stand-in reporting, sweep evidence. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7234f173`: Prepare 0.9.0, and fix what the held-out sweep found. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# And for the runner base image: a test run on a commit whose base isn't
-# published would remember it as unavailable in the user's cache, and real
-# runs would then skip it for a day. CI names its own base with
-# WRKFLW_RUNNER_IMAGE and sets this to 1. It applies to `cargo run` too:
-# set WRKFLW_PREBUILT_IMAGES=1 there to time a first run on the base.
-WRKFLW_PREBUILT_IMAGES = "0"
+# A tag with a suffix, such as v0.9.0-rc.1, is a rehearsal: it builds the
+# archives, publishes the runner base image and makes a GitHub pre-release,
+# and leaves crates.io alone. Use one to try scripts/install.sh
+# (WRKFLW_VERSION=v0.9.0-rc.1) and to make a new runner image's package
+# public before the release that needs it. A rehearsal only warns about a
+# private package, so once it is public, rerun its "Publish the runner base
+# image" job and see it pass with no warning: that is the check a release
+# stops on, and the rehearsal is the only place it runs before one.
+      # private package breaks no run: it takes away the faster first run,
+      # silently, on every machine. So a release stops here, before anything
+      # is published, until the package is public (rerun this job then); a
+      # rehearsal only says so, as it is how the package first appears.
+          # Only a refusal says the package is private, and it comes from
+          # either request: GHCR refuses an anonymous token for a private
+          # package (403) before the manifest is asked for. Anything else,
+          # such as a network error or a 5xx left after curl's retries, says
+          # nothing abo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      # private package fails nothing; it only takes away the faster first
+      # run. Say so, rather than fail the release.
+          token=$(curl -fsS "https://ghcr.io/token?scope=repository:${name}:pull" | jq -r .token)
+          if ! curl -fsS -o /dev/null \
+              -H "Authorization: Bearer ${token}" \
+              -H "Accept: application/vnd.oci.image.index.v1+json" \
+              "https://ghcr.io/v2/${name}/manifests/${tag}"; then
+            echo "::warning::${IMAGE} can't be pulled anonymously: make the package public in its settings, or wrkflw builds the image on each machine"
+    # because publishing to crates.io is irreversible
+    if: startsWith(github.ref, 'refs/tags/v')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `490a508b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7234f173` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

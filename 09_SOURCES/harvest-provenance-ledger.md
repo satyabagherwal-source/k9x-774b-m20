@@ -13751,3 +13751,8 @@ Every entry in this ledger must capture:
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `078550d7` | Multi-dimensional audit evidence | 2026-11-27T07:30:45.136Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-27T07:39:16.078Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `6ec85c29` | Multi-dimensional audit evidence | 2026-11-27T07:39:24.550Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-27T07:48:45.925Z |
+| `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `7234f173` | Multi-dimensional audit evidence | 2026-11-27T07:48:47.419Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `1a577e50` | Multi-dimensional audit evidence | 2026-11-27T07:48:54.665Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `aa0282b2` | Multi-dimensional audit evidence | 2026-11-27T07:48:56.374Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `b1ae457e` | Multi-dimensional audit evidence | 2026-11-27T07:49:01.107Z |

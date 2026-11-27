@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T07:39:30.246Z",
+  "last_updated": "2026-11-27T07:49:08.104Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -8711,8 +8711,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "8fae972e1828abd54fb6e268867ec2190f0e5ae7a08ab395a885759d39742e01",
-      "created_at": "2026-11-26T13:55:27.867Z"
+      "content_hash": "7f3e3cba41b156e441edb40adca56319e39af95b35c70e65a3e74af00722d1ad",
+      "created_at": "2026-11-27T07:49:01.722Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -8919,10 +8919,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "ba89c1dfd433f245d1c1527d1bf7a3ab76120b8e179d0f0c04c21b7c8f1f357c",
-      "created_at": "2026-11-27T05:39:48.299Z"
+      "content_hash": "9ed3ac2e2881d0f04a307504eef37afd24f725e1bc0bd17a3bc58e08f8c2c153",
+      "created_at": "2026-11-27T07:48:57.003Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -19840,8 +19840,8 @@
       "title": "Research & Knowledge Intelligence: hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-learnings-research-knowledge-int.md",
       "repository": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings",
-      "content_hash": "9df6cefb8c61125aa6b0daccc97b51c6ef905b1f76cf7d2903959aa980d9575e",
-      "created_at": "2026-11-23T22:24:07.295Z"
+      "content_hash": "c4750f6bbd0930885a3382776fee3b50d2834197b760630681d15cc8943a36b0",
+      "created_at": "2026-11-27T07:49:06.899Z"
     },
     "DOM-D-F32FC521": {
       "record_id": "DOM-D-F32FC521",
@@ -30353,8 +30353,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "33b6a677358c38122036585de518ba992cc1eba7a7c4ce8b87ff45a9520b89df",
-      "created_at": "2026-11-26T15:02:20.772Z"
+      "content_hash": "bec690800fbd386ce0524f49077c0e312fa501916a44bbaa25bce51c3ec8b2b9",
+      "created_at": "2026-11-27T07:48:55.344Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -30362,8 +30362,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "441e3df7e825b612a215dbb64b033d39f5717cf3bac46cee56950b646d090b10",
-      "created_at": "2026-11-25T14:50:27.754Z"
+      "content_hash": "865f5ed1af76cf63961cfc84678b4abf6852bb5fefa9e055354b070afb3d7ef7",
+      "created_at": "2026-11-27T07:49:08.104Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
@@ -34068,8 +34068,8 @@
       "title": "Human & Need Intelligence: bahdotsh/wrkflw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-human-need-intelligence-bahdotsh-wrkflw-core-invariants.md",
       "repository": "bahdotsh/wrkflw",
-      "content_hash": "3ef46faf82cb7afb6922419325880c8d72fa2a90ddc08034fe38d5292a4b2a3b",
-      "created_at": "2026-11-21T00:43:44.665Z"
+      "content_hash": "e704cf19951ffcd786f3532736cc2b1faf5f5dddb28dd059fb83deec750e0a3e",
+      "created_at": "2026-11-27T07:48:48.069Z"
     },
     "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -34077,8 +34077,8 @@
       "title": "Human & Need Intelligence: bahdotsh-wrkflw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-bahdotsh-wrkflw-learnings-human-need-intelligence-bahdotsh-wrkflw-learnings-core.md",
       "repository": "bahdotsh-wrkflw-learnings",
-      "content_hash": "0f8974895f690179891abd55933abc327359b1aa96cc35a770bef6e8a6f358cd",
-      "created_at": "2026-11-21T00:43:59.864Z"
+      "content_hash": "1fee62268aa2817522fd74bb3eba2442520a4bf52336a3dbfc8e2e912e20660d",
+      "created_at": "2026-11-27T07:49:05.826Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants",
@@ -34209,8 +34209,8 @@
       "title": "Research & Knowledge Intelligence: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-research-knowledge-intelligence-.md",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "content_hash": "7401433739da94a92f3a54f24c8603b99d4ce657b1d3b45f26b8a89e27cc968f",
-      "created_at": "2026-11-23T22:23:49.149Z"
+      "content_hash": "f1d771a79b52a429fea7e3228b5066f48ee18dd869c990cf06f98d9926e410fa",
+      "created_at": "2026-11-27T07:48:46.283Z"
     },
     "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-thaw-app-thaw-core-invariants",

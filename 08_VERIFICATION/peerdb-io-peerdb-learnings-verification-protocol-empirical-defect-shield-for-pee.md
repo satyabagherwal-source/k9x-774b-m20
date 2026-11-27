@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T14:50:27.426Z",
+  "timestamp": "2026-11-27T07:49:07.676Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-peerdb-io-peerdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [peerdb-io-peerdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T14:50:27.426Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:49:07.676Z`  
 > **Learning ID**: `LEARN-EVO-peerdb-io-peerdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `cec4a6e5`  
+> **Source Version**: `1a577e50`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T14:50:21.633Z  
+> **Timestamp**: 2026-11-27T07:48:53.139Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:50:21.627Z  
+> **Harvest Timestamp**: 2026-11-27T07:48:53.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3324 stars
+- **Stars / Engagement**: 3326 stars
 
 ---
 
@@ -1904,348 +1904,374 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cec4a6e5` (2026-11-25)
-**Commit Message**: Renovate config: Comments link to tracking issue (#5119)
+### Incident Patch 1: `1a577e50` (2026-11-27)
+**Commit Message**: Classify TLS record version mismatch as recoverable (#5130)
 
-This PR instructs renovate to add the following comment:
+A Postgres CDC sync failed once with `tls: received record with version
+0 when expecting version 303` while reading the publication settings,
+and the error was reported as `OTHER`.
 
-```
-Part of https://linear.app/clickhouse/issue/DBI-1390
-```
+Go's `crypto/tls` returns this `tls.RecordHeaderError` when an
+established TLS connection reads a record header with the wrong version
+([conn.go](https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663)),
+so the bytes that arrived were not a TLS record. That connection is
+unusable, a new one works, and the pipe resumed within minutes without
+intervention.
 
-to the descriptions of the PRs it creates.  
+This classifies that message as `ErrorRetryRecoverable` (source `net`,
+code `tls.RecordHeaderError`). Other record header errors stay `OTHER`,
+and the SSH tunnel wrappers keep their precedence.
 
-Part of: https://linear.app/clickhouse/issue/DBI-1390
+What produced the stray bytes is not known; the failing connection went
+through an SSH tunnel. The message only carries the version field, so
+the branch also logs the full five-byte record header. A Postgres
+message type there points at the source side, zeros point at the
+transport. It is the header only, never the record payload.
 
-**File**: `renovate.json5` (modified, +4/-0)
+Fixes DBI-1331
+
+**File**: `flow/alerting/classifier.go` (modified, +14/-0)
 ```diff
-@@ -4,6 +4,10 @@
-     "local>PeerDB-io/.github:renovate-config",
-     ":preserveSemverRanges"
-   ],
-+  "prBodyNotes": [
-+    // This adds a comment in the description referencing the continuous task of keeping deps up to date
-+    "Part of https://linear.app/clickhouse/issue/DBI-1390"
-+  ], 
-   "packageRules": [
-     {
-       "groupName": "{{manager}} dependencies",
+@@ -3,6 +3,7 @@ package alerting
+ import (
+ 	"context"
+ 	"crypto/tls"
++	"encoding/hex"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+@@ -596,6 +597,19 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
+ 		}
+ 	}
+ 
++	// Non-TLS bytes arrived on an established TLS connection; reconnecting recovers.
++	// https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663
++	if tlsErr, ok := errors.AsType[tls.RecordHeaderError](err); ok &&
++		strings.HasPrefix(tlsErr.Msg, "received record with version") {
++		// Log the full header to see what arrived instead of TLS.
++		internal.LoggerFromCtx(ctx).Warn("TLS record header with unexpected version",
++			slog.String("recordHeader", hex.EncodeToString(tlsErr.RecordHeader[:])))
++		return ErrorRetryRecoverable, ErrorInfo{
++			Source: ErrorSourceNet,
++			Code:   "tls.RecordHeaderError",
++		}
++	}
++
+ 	if temporalErr, ok := errors.AsType[*temporal.ApplicationError](err); ok {
+ 		switch exceptions.ApplicationErrorType(temporalErr.Type()) {
+ 		case exceptions.ApplicationErrorTypeIrrecoverableInvalidSnapshot:
+```
+
+**File**: `flow/alerting/classifier_test.go` (modified, +41/-0)
+```diff
+@@ -1755,6 +1755,47 @@ func TestMySQLExecuteError(t *testing.T) {
+ 	}, errInfo)
+ }
+ 
++func TestTLSRecordVersionMismatch(t *testing.T) {
++	t.Parallel()
++
++	recordErr := tls.RecordHeaderError{
++		Msg:          "received record with version 0 when expecting version 303",
++		RecordHeader: [5]byte{0x45, 0x00, 0x00, 0x00, 0x66},
++	}
++	recoverable := ErrorInfo{
++		Source: ErrorSourceNet,
++		Code:   "tls.RecordHeaderError",
++	}
++
++	// Postgres CDC source creation, as logged by the SyncFlow activity
++	cdcErr := fmt.Errorf("error checking publish_via_partition_root for publication %s: %w", "test_publication", recordErr)
++	errorClass, errInfo := GetErrorClass(t.Context(), cdcErr)
++	assert.Equal(t, ErrorRetryRecoverable, errorClass)
++	assert.Equal(t, recoverable, errInfo)
++
++	errorClass, errInfo = GetErrorClass(t.Context(), fmt.Errorf("failed in pull records when: %w", cdcErr))
++	assert.Equal(t, ErrorRetryRecoverable, errorClass)
++	assert.Equal(t, recoverable, errInfo)
++
++	// A tunnel already known to be bad keeps its SSH classification
++	errorClass, errInfo = GetErrorClass(t.Context(),
++		exceptions.NewSSHTunnelConnectionError(fmt.Errorf("ReceiveMessage failed: %w", recordErr)))
++	assert.Equal(t, ErrorNotifyConnectivity, errorClass)
++	assert.Equal(t, ErrorInfo{
++		Source: ErrorSourceSSH,
++		Code:   "TUNNEL_CONNECTION_LOST",
++	}, errInfo)
++
++	// Other record header errors are not covered
++	errorClass, errInfo = GetErrorClass(t.Context(),
++		fmt.Errorf("error getting major version: %w", tls.RecordHeaderError{Msg: "oversized record received with length 20527"}))
++	assert.Equal(t, ErrorOther, errorClass)
++	assert.Equal(t, ErrorInfo{
++		Source: ErrorSourceOther,
++		Code:   "UNKNOWN",
++	}, errInfo)
++}
++
+ func TestClickHouseTooManyPartsWithTableName(t *testing.T) {
+ 	err := &clickhouse.Exception{
+ 		Code: int32(chproto.ErrTooManyParts),
 ```
 
 ---
 
-### Incident Patch 2: `b2a1dab2` (2026-11-25)
-**Commit Message**: Remove unreachable functions found by deadcode (#5122)
+### Incident Patch 2: `e2ab26ce` (2026-11-27)
+**Commit Message**: compute payload size for table addition from workflow query (#5124)
 
-## Why
-`deadcode -test -tags tilt ./...` on `flow` reports functions nothing
-calls.
-Tool: [deadcode](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode),
-see also the Go blog post [Finding unreachable functions with
-deadcode](https://go.dev/blog/deadcode).
+Alternative proposal for https://github.com/PeerDB-io/peerdb/pull/5116 
 
-## What
-Removes 15 of the 17 reported functions:
-- `cmd/logged_interceptor.go` (whole file; `NewLoggedWorkerInterceptor`
-is never constructed)
-- `AsAPIError`, `connectors.LoadPeerTypes`,
-`exceptions.NewPostgresSetupError`, `e2e.EnvEqualTables`
-- `TypedSignal.SignalChildWorkflow`, `TypedReceiveChannel.Receive` /
-`ReceiveWithTimeout` / `ReceiveAsyncWithMoreFlag`
+CDCFlowWorkflow carries `cfg` and `state` into each new run through
+ContinueAsNew. Temporal rejects a run input over 2MB, and the workflow
+then stops making progress. A table addition grows `state`, so a large
+enough addition leaves the mirror stuck.
 
-Kept on purpose:
-- `pkg/mysql.GetSchemaMapping`: `flow/pkg` is a separate published
-module and has users outside this repo
-- `SetupSuiteMinIO_TLS`: no test has ever run it. Should we wire it up
-or delete it (along with `MinioTls`)?
+`FlowStateChange` now predicts the size of the next run input before it
+signals a table addition. If the size is over 2MB minus 1KB, the API
+rejects the request. Validation works by:
 
-Follow-up: `PostgresSetupError` is never constructed, so the check for
-it in `alerting/classifier.go:422` is dead.
+1. read the workflow's real `cfg` and `state` through workflow queries. 
+2. apply the request's table changes to `state`.
+4. encode `cfg` and `state` with Temporal's default data converter.
 
-## Testing
-- `go build ./...` and `go vet -tags tilt ./...` pass
-- `go test` on `model`, `shared`, `cmd` and `alerting` passes (1 run,
-11/11 packages ok)
-- Rerunning deadcod
 
-**File**: `flow/alerting/classifier.go` (modified, +0/-8)
+Testing: add e2e to test rejection of table addition
+
+**File**: `flow/cmd/handler.go` (modified, +3/-0)
 ```diff
-@@ -418,14 +418,6 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			// For now we are not making it as verbose, will take this up later
- 			return errorClass, unknownErrorInfo(ErrorSourceOther)
+@@ -477,6 +477,9 @@ func (h *FlowRequestHandler) FlowStateChange(
+ 			structured.NormalizeStructuredIngestionTypes(tm.StructuredIngestionConfig, tm.Columns)
  		}
--
--		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
--			errorClass := ErrorNotifyConnectivity
--			if pgErr != nil {
--				return errorClass, pgErrorInfo
--			}
--			return errorClass, unknownErrorInfo(pgErrSource)
--		}
- 	}
- 
- 	if changefeedErr, ok := errors.AsType[*exceptions.CockroachChangefeedIrrecoverableError](err); ok {
+ 		if len(cdcUpdate.AdditionalTables) > 0 {
++			if apiErr := h.checkCDCFlowPayloadSizeForTableAddition(ctx, workflowID, cdcUpdate); apiErr != nil {
++				return nil, apiErr
++			}
+ 			config, err := h.getFlowConfigFromCatalog(ctx, req.FlowJobName)
+ 			if err != nil {
+ 				return nil, NewInternalApiError(fmt.Errorf("unable to get flow config: %w", err))
 ```
 
-**File**: `flow/cmd/api_error.go` (modified, +0/-18)
+**File**: `flow/cmd/mirror_status.go` (modified, +18/-0)
 ```diff
-@@ -89,24 +89,6 @@ func convertToStatus(code codes.Code, err error, details ...protoadapt.MessageV1
- 	return richStatus
+@@ -573,6 +573,24 @@ func (h *FlowRequestHandler) getCDCWorkflowState(ctx context.Context,
+ 	return &state, nil
  }
  
--// AsAPIError converts an error to APIError if it's a gRPC status error,
--// otherwise wraps it as an Internal error
--func AsAPIError(err error) APIError {
--	if err == nil {
--		return nil
--	}
--
--	if apiErr, ok := err.(APIError); ok {
--		return apiErr
--	}
--
--	if s, ok := status.FromError(err); ok {
--		return newAPIError(s)
--	}
--
--	return NewInternalApiError(err)
--}
--
- func NewMirrorErrorInfo(metadata map[string]string) *rpc.ErrorInfo {
- 	return &rpc.ErrorInfo{
- 		Reason:   common.ErrorInfoReasonMirror,
++func (h *FlowRequestHandler) getCDCWorkflowCfg(ctx context.Context,
++	workflowID string,
++) (*protos.FlowConnectionConfigsCore, error) {
++	res, err := h.temporalClient.QueryWorkflow(ctx, workflowID, "", shared.CDCFlowConfigQuery)
++	if err != nil {
++		slog.ErrorContext(ctx, fmt.Sprintf("failed to get config in workflow with ID %s: %s", workflowID, err.Error()))
++		return nil,
++			fmt.Errorf("failed to get config in workflow with ID %s: %w", workflowID, err)
++	}
++	var cfg protos.FlowConnectionConfigsCore
++	if err := res.Get(&cfg); err != nil {
++		slog.ErrorContext(ctx, fmt.Sprintf("failed to get config in workflow with ID %s: %s", workflowID, err.Error()))
++		return nil,
++			fmt.Errorf("failed to get config in workflow with ID %s: %w", workflowID, err)
++	}
++	return &cfg, nil
++}
++
+ func (h *FlowRequestHandler) getMirrorCreatedAt(ctx context.Context, flowJobName string) (*time.Time, error) {
+ 	var createdAt pgtype.Timestamp
+ 	err := h.pool.QueryRow(ctx, "SELECT created_at FROM flows WHERE name=$1", flowJobName).Scan(&createdAt)
 ```
 
-**File**: `flow/cmd/logged_interceptor.go` (removed, +0/-79)
+**File**: `flow/cmd/validate_mirror.go` (modified, +57/-0)
 ```diff
-@@ -1,79 +0,0 @@
--package cmd
--
--import (
--	"context"
--
--	"go.temporal.io/sdk/interceptor"
--	"go.temporal.io/sdk/workflow"
--)
--
--type LoggedWorkflowInboundInterceptor struct {
--	interceptor.WorkflowInboundInterceptorBase
--	Next interceptor.WorkflowInboundInterceptor
--}
--
--func NewLoggedWorkflowInboundInterceptor(next interceptor.WorkflowInboundInterceptor) *LoggedWorkflowInboundInterceptor {
--	return &LoggedWorkflowInboundInterceptor{
--		WorkflowInboundInterceptorBase: interceptor.WorkflowInboundInterceptorBase{Next: next},
--		Next:                           next,
--	}
--}
--
--func (w *LoggedWorkflowInboundInterceptor) ExecuteWorkflow(
--	ctx workflow.Context,
--	in *interceptor.ExecuteWorkflowInput,
--) (any, error) {
--	// Workflow starts here
--	result, err := w.Next.ExecuteWorkflow(ctx, in)
--	// Workflow ends here
--	return result, err
--}
--
--type LoggedActivityInboundInterceptor struct {
--	interceptor.ActivityInboundInterceptorBase
--	Next interceptor.ActivityInboundInterceptor
--}
--
--func NewLoggedActivityInboundInterceptor(next interceptor.ActivityInboundInterceptor) *LoggedActivityInboundInterceptor {
--	return &LoggedActivityInboundInterceptor{
--		ActivityInboundInterceptorBase: interceptor.ActivityInboundInterceptorBase{Next: next},
--		Next:                           next,
--	}
--}
--
--func (c *LoggedActivityInboundInterceptor) ExecuteActivity(
--	ctx context.Context,
--	in *interceptor.ExecuteActivityInput,
--) (any, error) {
--	// Activity starts here
--	out, err := c.Next.ExecuteActivity(ctx, in)
--	// Activity ends here
--	return out, err
--}
--
--type LoggedWorkerInterceptor struct {
--	interceptor.WorkerInterceptorBase
--}
--
--func NewLoggedWorkerInterceptor() *LoggedWorkerInterceptor {
--	return &LoggedWorkerInterceptor{
--		WorkerInterceptorBase: interceptor.WorkerInterceptorBase{},
--	}
--}
--
--func (c LoggedWorkerInterceptor) InterceptActivity(
--	ctx context.Context,
--	next interceptor.ActivityInboundInterceptor,
--) interceptor.ActivityInboundInterceptor {
--	return NewLoggedActivityInboundInterceptor(next)
--}
--
--func (c LoggedWorkerInterceptor) InterceptWorkflow(
--	ctx workflow.Context,
--	next interceptor.WorkflowInboundInterceptor,
--) interceptor.WorkflowInboundInterceptor {
--	// Workflow intercepted here
--	intercepted := NewLoggedWorkflowInboundInterceptor(next)
--	// Workflow intercepting ends here
--	return intercepted
--}
+@@ -5,8 +5,11 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"log/slog"
++	"maps"
++	"math"
+ 	"slices"
+ 
++	"go.temporal.io/sdk/converter"
+ 	"google.golang.org/protobuf/proto"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/connectors"
+@@ -250,6 +253,60 @@ func (h *FlowRequestHandler) checkAdditionalTables(ctx context.Context, cfg *pro
+ 	return nil
+ }
+ 
++// Temporal's default payload size limit, less a small buffer
++const maxPayloadBytes = 2*1024*1024 - 1024
++
++// checkCDCFlowPayloadSizeForTableAddition rejects a table addition when CDCFlowWorkflow's
++// next run input would exceed Temporal's 2MB payload size limit
++func (h *FlowRequestHandler) checkCDCFlowPayloadSizeForTableAddition(
++	ctx context.Context, workflowID string, update *protos.CDCFlowConfigUpdate,
++) APIError {
++	cfg, err := h.getCDCWorkflowCfg(ctx, workflowID)
++	if err != nil {
++		return NewInternalApiError(err)
++	}
++	state, err := h.getCDCWorkflowState(ctx, workflowID)
++	if err != nil {
++		return NewInternalApiError(err)
++	}
++
++	// process added tables
++	state.SyncFlowOptions.TableMappings = append(state.SyncFlowOptions.TableMappings, update.AdditionalTables...)
++	if len(state.SyncFlowOptions.SrcTableIdNameMapping) > 0 {
++		id := uint32(math.MaxUint32)
++		for _, table := range update.AdditionalTables {
++			state.SyncFlowOptions.SrcTableIdNameMapping[id] = table.SourceTableIdentifier
++			id--
++		}
++	}
++
++	// process removed tables
++	if len(update.RemovedTables) > 0 {
++		removedTablesMap := make(map[string]struct{}, len(update.RemovedTables))
++		for _, table := range update.RemovedTables {
++			removedTablesMap[table.SourceTableIdentifier] = struct{}{}
++		}
++		state.SyncFlowOptions.TableMappings = slices.DeleteFunc(state.SyncFlowOptions.TableMappings, func(table *protos.TableMapping) bool {
++			_, removed := removedTablesMap[table.SourceTableIdentifier]
++			return removed
++		})
++		maps.DeleteFunc(state.SyncFlowOptions.SrcTableIdNameMapping, func(_ uint32, source string) bool {
++			_, removed := removedTablesMap[source]
++			return removed
++		})
++	}
++
++	payloads, err := converter.GetDefaultDataConverter().ToPayloads(cfg, state)
++	if err != nil {
++		return NewInternalApiError(fmt.Errorf("failed to encode workflow input: %w", err))
++	}
++	if proto.Size(payloads) > maxPayloadBytes {
++		return NewInvalidArgumentApiError(fmt.Errorf(
++			"payload limit exceeded; please create a new mirror for the added tables"))
++	}
++	return nil
++}
++
+ // checkSourceTableConfig validates one table's columns.
+ // If maybeStructuredIngestionConfig is non-nil, column types are validated too.
+ func checkSourceTableConfig(
 ```
 
-**File**: `flow/connectors/core.go` (modified, +0/-35)
+**File**: `flow/e2e/api_suite.go` (modified, +69/-0)
 ```diff
-@@ -460,41 +460,6 @@ func LoadFlowSourcePeerType(ctx context.Context, catalogPool shared.CatalogPool,
- 	return dbtype, nil
+@@ -3953,6 +3953,75 @@ func (s APITestSuite) TestTableAdditionWithoutInitialLoad() {
+ 	RequireEnvCanceled(s.t, env)
  }
  
--func LoadPeerTypes(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]protos.DBType, error) {
--	if len(peerNames) == 0 {
--		return nil, nil
--	}
--
--	rows, err := catalogPool.Query(ctx, "SELECT name, type FROM peers WHERE name = ANY($1)", peerNames)
--	if err != nil {
--		return nil, fmt.Errorf("failed to query peer types: %w", err)
--	}
--
--	peerTypes := make(map[string]protos.DBType, len(peerNames))
--	var peerName string
--	var dbtype protos.DBType
--	if _, err := pgx.ForEachRow(rows, []any{&peerName, &dbtype}, func() error {
--		peerTypes[peerName] = dbtype
--		return nil
--	}); err != nil {
--		return nil, fmt.Errorf("error querying peer rows: %w", err)
--	}
--
--	// Verify all requested peers were found
--	var missingPeers []string
--	for _, peerName := range peerNames {
--		if _, found := peerTypes[peerName]; !found {
--			missingPeers = append(missingPeers, peerName)
--		}
--	}
--
--	if len(missingPeers) > 0 {
--		return nil, fmt.Errorf("peers not found: %v", missingPeers)
--	}
--
--	return peerTypes, nil
--}
--
- func LoadPeers(ctx context.Context, catalogPool shared.CatalogPool, peerNames []string) (map[string]*protos.Peer, error) {
- 	if len(peerNames) == 0 {
- 		return nil, nil
++func (s APITestSuite) TestTableAdditionOverPayloadLimit() {
++	switch s.source.(type) {
++	case *PostgresSource, *MySqlSource:
++		require.NoError(s.t, s.source.Exec(s.t.Context(),
++			fmt.Sprintf("CREATE TABLE %s(id int primary key, val text)", AttachSchema(s, "payload_limit"))))
++	case *MongoSource:
++		res, err := s.Source().(*MongoSource).AdminClient().
++			Database(Schema(s)).Collection("payload_limit").
++			InsertOne(s.t.Context(), bson.D{bson.E{Key: "id", Value: 1}}, options.InsertOne())
++		require.NoError(s.t, err)
++		require.True(s.t, res.Acknowledged)
++	default:
++		require.Fail(s.t, fmt.Sprintf("unknown source type %T", s.source))
++	}
++
++	connectionGen := FlowConnectionGenerationConfig{
++		FlowJobName:      "added_tables_payload_limit_" + s.suffix,
++		TableNameMapping: map[string]string{AttachSchema(s, "payload_limit"): "payload_limit"},
++		Destination:      s.ch.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	response, err := s.CreateCDCFlow(s.t.Context(), &protos.CreateCDCFlowRequest{ConnectionConfigs: flowConnConfig})
++	require.NoError(s.t, err)
++	require.NotNil(s.t, response)
++	tc := NewTemporalClient(s.t)
++	env, err := GetPeerflow(s.t.Context(), s.catalog, tc, flowConnConfig.FlowJobName)
++	require.NoError(s.t, err)
++	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
++	EnvWaitFor(s.t, env, 3*time.Minute, "wait for mirror to run", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_RUNNING
++	})
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_PAUSED,
++	})
++	require.NoError(s.t, err)
++	EnvWaitFor(s.t, env, 3*time.Minute, "wait for pause for add table", func() bool {
++		return env.GetFlowStatus(s.t) == protos.FlowStatus_STATUS_PAUSED
++	})
++
++	// enough tables to push the next run's workflow input over Temporal's 2MB payload limit;
++	// the size check runs before the tables are validated, so they don't need to exist in db
++	tablesToAdd := make([]*protos.TableMapping, 0, 20_000)
++	for i := range 20_000 {
++		tablesToAdd = append(tablesToAdd, &protos.TableMapping{
++			SourceTableIdentifier:      AttachSchema(s, fmt.Sprintf("oversized_%05d", i)),
++			DestinationTableIdentifier: fmt.Sprintf("oversized_%05d", i),
++		})
++	}
++	_, err = s.FlowStateChange(s.t.Context(), &protos.FlowStateChangeRequest{
++		FlowJobName:        flowConnConfig.FlowJobName,
++		RequestedFlowState: protos.FlowStatus_STATUS_RUNNING,
++		FlowConfigUpdate: &protos.FlowConfigUpdate{
++			Update: &protos.FlowConfigUpdate_CdcFlowConfigUpdate{
++				CdcFlowConfigUpdate: &protos.CDCFlowConfigUpdate{
++					AdditionalTables:                     tablesToAdd,
++					SkipInitialSnapshotForTableAdditions: true,
++				},
++			},
++		},
++	})
++	require.Equal(s.t, codes.InvalidArgument, status.Code(err))
++	require.ErrorContains(s.t, err, "payload limit exceeded")
++	require.Equal(s.t, protos.FlowStatus_STATUS_PAUSED, env.GetFlowStatus(s.t))
++
++	env.Cancel(s.t.Context())
++	RequireEnvCanceled(s.t, env)
++}
++
+ // Simulate a mirror whose Temporal workflow no longer exists (e.g. completed or failed
+ // over 30 days ago and was already cleaned up).
+ func (s APITestSuite) TestDropMissing() {
 ```
 
-**File**: `flow/e2e/test_utils.go` (modified, +0/-4)
+**File**: `flow/shared/constants.go` (modified, +1/-0)
 ```diff
-@@ -144,10 +144,6 @@ func RequireEqualTablesWithNames(suite RowSource, srcTable string, dstTable stri
- 	require.True(t, e2eshared.CheckEqualRecordBatches(t, sourceRows, rows))
- }
+@@ -78,6 +78,7 @@ const (
  
--func EnvEqualTables[TSource connectors.Connector](env WorkflowRun, suite RowSource, table string, cols string) {
--	EnvEqualTablesWithNames(env, suite, table, table, cols)
--}
--
- func EnvEqualTablesWithNames(
- 	env WorkflowRun, suite RowSource, srcTable string, dstTable string, cols string,
- ) {
-```
-
-**File**: `flow/model/signals.go` (modified, +0/-26)
-```diff
-@@ -33,14 +33,6 @@ func (self TypedSignal[T]) SignalClientWorkflow(
- 	return c.SignalWorkflow(ctx, workflowID, runID, self.Name, value)
- }
- 
--func (self TypedSignal[T]) SignalChildWorkflow(
--	ctx workflow.Context,
--	wf workflow.ChildWorkflowFuture,
--	value T,
--) workflow.Future {
--	return wf.SignalChildWorkflow(ctx, self.Name, value)
--}
--
- func (self TypedSignal[T]) SignalExternalWorkflow(
- 	ctx workflow.Context,
- 	workflowID string,
-@@ -54,30 +46,12 @@ type TypedReceiveChannel[T any] struct {
- 	Chan workflow.ReceiveChannel
- }
- 
--func (self TypedReceiveChannel[T]) Receive(ctx workflow.Context) (T, bool) {
--	var result T
--	more := self.Chan.Receive(ctx, &result)
--	return result, more
--}
--
--func (self TypedReceiveChannel[T]) ReceiveWithTimeout(ctx workflow.Context, timeout time.Duration) (T, bool, bool) {
--	var result T
--	ok, more := self.Chan.ReceiveWithTimeout(ctx, timeout, &result)
--	return result, ok, more
--}
--
- func (self TypedReceiveChannel[T]) ReceiveAsync() (T, bool) {
- 	var result T
- 	ok := self.Chan.ReceiveAsync(&result)
- 	return result, ok
- }
- 
--func (self TypedReceiveChannel[T]) ReceiveAsyncWithMoreFlag() (T, bool, bool) {
--	var result T
--	ok, more := self.Chan.ReceiveAsyncWithMoreFlag(&result)
--	return result, ok, more
--}
--
- func (self TypedReceiveChannel[T]) AddToSelector(selector workflow.Selector, f func(T, bool)) workflow.Selector {
- 	return selector.AddReceive(self.Chan, func(c workflow.ReceiveChannel, more bool) {
- 		var result T
-```
-
-**File**: `flow/shared/exceptions/postgres.go` (modified, +0/-17)
-```diff
-@@ -7,23 +7,6 @@ import (
- 	"github.com/jackc/pgx/v5/pgproto3"
+ 	// Queries
+ 	CDCFlowStateQuery  = "q-cdc-flow-state"
++	CDCFlowConfigQuery = "q-cdc-flow-config"
+ 	QRepFlowStateQuery = "q-qrep-flow-state"
  )
  
--// PostgresSetupError represents errors during setup of Postgres peers, maybe we can later replace with a more generic error type
--type PostgresSetupError struct {
--	error
--}
--
--func NewPostgresSetupError(err error) *PostgresSetupError {
--	return &PostgresSetupError{err}
--}
--
--func (e *PostgresSetupError) Error() string {
--	return "Postgres setup error: " + e.error.Error()
--}
--
--func (e *PostgresSetupError) Unwrap() error {
--	return e.error
--}
--
- type CatalogError struct {
- 	error
- }
+```
+
+**File**: `flow/workflows/cdc_flow.go` (modified, +5/-0)
+```diff
+@@ -1265,6 +1265,11 @@ func CDCFlowWorkflow(
+ 	}); err != nil {
+ 		return state, fmt.Errorf("failed to set `%s` query handler: %w", shared.CDCFlowStateQuery, err)
+ 	}
++	if err := workflow.SetQueryHandler(ctx, shared.CDCFlowConfigQuery, func() (*protos.FlowConnectionConfigsCore, error) {
++		return cfg, nil
++	}); err != nil {
++		return state, fmt.Errorf("failed to set `%s` query handler: %w", shared.CDCFlowConfigQuery, err)
++	}
+ 
+ 	// completion from a snapshot-only mirror, we are done
+ 	if state.CurrentFlowStatus == protos.FlowStatus_STATUS_COMPLETED {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5130** (2026-11-27): Classify TLS record version mismatch as recoverable (@gheorghepucea)
+- **PR #5128** (closed): Classify Postgres 'logical decoding requires wal_level' slot error (@dtunikov)
+- **PR #5124** (2026-11-27): compute payload size for table addition from workflow query (@jgao54)
 - **PR #5122** (2026-11-25): Remove unreachable functions found by deadcode (@gheorghepucea)
 - **PR #5120** (2026-11-24): fix(pg-pg): unblock and skip and report on error for pgdump (@Amogh-Bharadwaj)
 - **PR #5119** (2026-11-25): Renovate config: Comments link to tracking issue (@pfcoperez)
-- **PR #5115** (2026-11-24): Stop copying state table mappings into CDCFlowWorkflow cfg (@dtunikov)
-- **PR #5114** (closed): remove redundant copy-back logic (@jgao54)
-- **PR #5112** (2026-11-24): Update gomod dependencies (@renovate[bot])
 
 ---
 
@@ -2265,24 +2291,34 @@ it in `alerting/classifier.go:422` is dead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Renovate config: Comments link to tracking issue
+## X. Classify TLS record version mismatch as recoverable
 
 **RULE**:
-When implementing operations in `renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/alerting/classifier.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cec4a6e5`: Renovate config: Comments link to tracking issue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a577e50`: Classify TLS record version mismatch as recoverable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `renovate.json5`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/alerting/classifier.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  "prBodyNotes": [
-    // This adds a comment in the description referencing the continuous task of keeping deps up to date
-    "Part of https://linear.app/clickhouse/issue/DBI-1390"
-  ], 
+	"encoding/hex"
+	// Non-TLS bytes arrived on an established TLS connection; reconnecting recovers.
+	// https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go#L658-L663
+	if tlsErr, ok := errors.AsType[tls.RecordHeaderError](err); ok &&
+		strings.HasPrefix(tlsErr.Msg, "received record with version") {
+		// Log the full header to see what arrived instead of TLS.
+		internal.LoggerFromCtx(ctx).Warn("TLS record header with unexpected version",
+			slog.String("recordHeader", hex.EncodeToString(tlsErr.RecordHeader[:])))
+		return ErrorRetryRecoverable, ErrorInfo{
+			Source: ErrorSourceNet,
+			Code:   "tls.RecordHeaderError",
+		}
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2292,7 +2328,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cec4a6e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a577e50` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

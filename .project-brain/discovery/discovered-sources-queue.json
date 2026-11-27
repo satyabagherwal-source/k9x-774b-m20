@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T07:30:49.393Z",
+  "updated_at": "2026-11-27T07:49:07.492Z",
   "stats": {
-    "total_discovered": 10265,
-    "approved_pending_harvest": 9736,
+    "total_discovered": 10267,
+    "approved_pending_harvest": 9738,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9740,
+      "COMMUNITY_AND_EXPERT": 9742,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222154,6 +222154,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-14C44874F09C": {
+      "id": "SRC-14C44874F09C",
+      "url": "https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go",
+      "title": "https://github.com/golang/go/blob/go1.25.0/src/crypto/tls/conn.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:49:07.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-B9580DCABEDD": {
+      "id": "SRC-B9580DCABEDD",
+      "url": "https://github.com/PeerDB-io/peerdb/pull/5116",
+      "title": "https://github.com/PeerDB-io/peerdb/pull/5116",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:49:07.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
       }
     }
   }

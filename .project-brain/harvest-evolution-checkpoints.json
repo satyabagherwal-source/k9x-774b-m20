@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:39:30.646Z",
+  "last_updated": "2026-11-27T07:49:08.624Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T06:55:11.382Z",
@@ -763,7 +763,7 @@
       "staged_for_review": 1
     },
     "peerdb-io-peerdb-learnings.md": {
-      "processed_at": "2026-11-25T14:50:26.985Z",
+      "processed_at": "2026-11-27T07:49:07.228Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1373,7 +1373,7 @@
       "staged_for_review": 0
     },
     "bahdotsh-wrkflw-learnings.md": {
-      "processed_at": "2026-11-21T00:43:58.876Z",
+      "processed_at": "2026-11-27T07:49:05.015Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2838,7 +2838,7 @@
       "staged_for_review": 0
     },
     "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md": {
-      "processed_at": "2026-11-23T22:24:07.017Z",
+      "processed_at": "2026-11-27T07:49:06.577Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4872,
+  "total_dossiers_evaluated": 4875,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3647
+  "total_staged_for_review": 3649
 }
