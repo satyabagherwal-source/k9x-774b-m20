@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "7ab87806",
+    "sourceVersion": "3cc8b5c1",
     "license": "Apache-2.0",
-    "contentHash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
-    "lastHarvestedAt": "2026-11-27T03:07:45.403Z",
+    "contentHash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
+    "lastHarvestedAt": "2026-11-27T21:11:27.088Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -8923,10 +8923,10 @@
     "repository": "GateNLP/ultimate-sitemap-parser",
     "platform": "github",
     "sourceUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
-    "sourceVersion": "6ab7704f",
+    "sourceVersion": "6f532e9d",
     "license": "GPL-3.0",
-    "contentHash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
-    "lastHarvestedAt": "2026-10-19T20:22:50.463Z",
+    "contentHash": "da3626292f8dd5f3c172b69a617e45512bf3aaaa9fe79d41348346eb859c1a44",
+    "lastHarvestedAt": "2026-11-27T21:11:22.406Z",
     "learningId": "learn-github-gatenlp-ultimate-sitemap-parser"
   },
   "kevinnzou-compose-webview-multiplatform": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "a8e35878",
+    "sourceVersion": "bedff729",
     "license": "Apache-2.0",
-    "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
-    "lastHarvestedAt": "2026-11-26T20:49:40.009Z",
+    "contentHash": "5a606e16cc9479738e7f40e75826bd79cd2cddc99f813b241c7af41464c459f0",
+    "lastHarvestedAt": "2026-11-27T21:11:19.781Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

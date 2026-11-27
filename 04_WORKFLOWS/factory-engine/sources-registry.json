@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T20:57:51.324Z",
-    "lastVerified": "2026-11-27T20:57:51.324Z",
+    "lastChecked": "2026-11-27T21:11:30.767Z",
+    "lastVerified": "2026-11-27T21:11:30.767Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T20:29:41.358Z",
+    "lastChecked": "2026-11-27T21:11:29.627Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T20:29:41.358Z"
+    "lastVerified": "2026-11-27T21:11:29.627Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1545,14 +1545,14 @@
     "officialUrl": "https://github.com/goharbor/harbor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:07:43.869Z",
-    "lastVerified": "2026-11-27T03:07:43.869Z",
+    "lastChecked": "2026-11-27T21:11:25.551Z",
+    "lastVerified": "2026-11-27T21:11:25.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-goharbor-harbor",
-    "contentHash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
+    "contentHash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1984,12 +1984,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T16:52:05.936Z",
-    "lastVerified": "2026-11-27T16:52:05.936Z",
+    "lastChecked": "2026-11-27T21:11:24.702Z",
+    "lastVerified": "2026-11-27T21:11:24.702Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1998,7 +1998,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d74ff6dc"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4306,14 +4307,14 @@
     "officialUrl": "https://github.com/erkamyaman/rust-anything",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:49:38.798Z",
-    "lastVerified": "2026-11-26T20:49:38.798Z",
+    "lastChecked": "2026-11-27T21:11:18.098Z",
+    "lastVerified": "2026-11-27T21:11:18.098Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
+    "contentHash": "5a606e16cc9479738e7f40e75826bd79cd2cddc99f813b241c7af41464c459f0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5036,9 +5037,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-27T01:55:05.326Z",
+    "lastChecked": "2026-11-27T21:11:26.999Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-27T01:55:05.326Z"
+    "lastVerified": "2026-11-27T21:11:26.999Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -10131,9 +10132,9 @@
   "sayaka-sh-spmp": {
     "name": "spmp",
     "officialUrl": "https://github.com/sayaka-sh/spmp",
-    "lastChecked": "2026-11-25T12:28:57.711Z",
+    "lastChecked": "2026-11-27T21:11:19.498Z",
     "revisionIdentifier": "2fb03e84",
-    "lastVerified": "2026-11-25T12:28:57.711Z"
+    "lastVerified": "2026-11-27T21:11:19.498Z"
   },
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
@@ -10613,11 +10614,21 @@
     "lastVerified": "2026-11-25T16:05:57.556Z"
   },
   "gatenlp-ultimate-sitemap-parser": {
-    "name": "ultimate-sitemap-parser",
+    "name": "GateNLP/ultimate-sitemap-parser",
     "officialUrl": "https://github.com/GateNLP/ultimate-sitemap-parser",
-    "lastChecked": "2026-11-24T13:03:56.809Z",
-    "revisionIdentifier": "6ab7704f",
-    "lastVerified": "2026-11-24T13:03:56.809Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-27T21:11:20.803Z",
+    "lastVerified": "2026-11-27T21:11:20.803Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
+    "contentHash": "da3626292f8dd5f3c172b69a617e45512bf3aaaa9fe79d41348346eb859c1a44",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "realm-realm-kotlin": {
     "name": "realm-kotlin",

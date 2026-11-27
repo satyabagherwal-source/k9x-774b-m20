@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T03:07:55.709Z",
+  "timestamp": "2026-11-27T21:11:35.656Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-goharbor-harbor-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [goharbor-harbor-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T03:07:55.709Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:11:35.656Z`  
 > **Learning ID**: `LEARN-EVO-goharbor-harbor-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from goharbor-harbor-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `7ab87806`  
+> **Source Version**: `3cc8b5c1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T03:07:43.875Z  
+> **Timestamp**: 2026-11-27T21:11:25.557Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T03:07:43.869Z  
+> **Harvest Timestamp**: 2026-11-27T21:11:25.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Harbor is a CNCF graduated open-source container registry to manage container images and other OCI artifacts securely with policies, role-based access control, vulnerability scans and signing.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29810 stars
+- **Stars / Engagement**: 29819 stars
 
 ---
 
@@ -704,131 +704,298 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ffac21f6` (2026-11-26)
-**Commit Message**: fix(i18n): translate Korean strings still shown in English (#24488)
+### Incident Patch 1: `3cc8b5c1` (2026-11-27)
+**Commit Message**: Compile audit resolver patterns once (#24476)
 
-Signed-off-by: Ethan <[REDACTED_EMAIL]>
+The audit log middleware runs PreCheckMetadata on every request, and
+both PreCheckMetadata and Resolve compiled each registered resolver URL
+pattern with regexp.MustCompile on every call. The basic resolver did
+the same with ResourceIDPattern.
 
-**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +159/-159)
+Compile the URL patterns in RegisterResolver and cache the compiled
+ResourceIDPattern. A blob GET in this path drops from about 65 us and
+862 allocations to under 1 us with none. Add a benchmark for it.
+
+Fixes #24475
+
+Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
+
+**File**: `src/controller/event/metadata/commonevent/model.go` (modified, +23/-13)
 ```diff
-@@ -9,7 +9,7 @@
-         "REMEMBER": "사용자 정보 기억하기",
-         "INVALID_MSG": "유효하지 않은 사용자 이름 또는 비밀번호입니다.",
-         "CORE_SERVICE_NOT_AVAILABLE": "핵심 서비스를 이용할 수 없습니다.",
--        "OR": "OR",
-+        "OR": "또는",
-         "VIA_LOCAL_DB": "로컬 DB를 통해 로그인"
-     },
-     "SIGN_UP": {
-@@ -127,10 +127,10 @@
-         "CONFIRM_BODY_CLI_GENERATE": "Cli 시크릿을 재생성하면 이전 Cli 시크릿이 삭제됩니다"
-     },
-     "CHANGE_PREF": {
--        "TITLE": "Preferences",
--        "LANGUAGE": "Language",
--        "DATE_TIME_FORMAT": "Date/Time Format",
--        "PULL_CMD_PREFIX": "Pull Command Prefix"
-+        "TITLE": "환경 설정",
-+        "LANGUAGE": "언어",
-+        "DATE_TIME_FORMAT": "날짜/시간 형식",
-+        "PULL_CMD_PREFIX": "풀(Pull) 명령어 접두사"
-     },
-     "CHANGE_PWD": {
-         "TITLE": "비밀번호 변경",
-@@ -142,9 +142,9 @@
-     },
-     "ACCOUNT_SETTINGS": {
-         "PROFILE": "사용자 프로필",
--        "PREFERENCES": "Preferences",
-+        "PREFERENCES": "환경 설정",
-         "CHANGE_PWD": "비밀번호 변경",
--        "ABOUT": "About",
-+        "ABOUT": "정보",
-         "LOGOUT": "로그아웃"
-     },
-     "GLOBAL_SEARCH": {
-@@ -194,7 +194,7 @@
-         "DELETION_SUMMARY": "사용자{{param}}를 정말 삭제하시겠습니까?",
-         "DELETE_SUCCESS": "사용자를 성공적으로 삭제했습니다.",
-         "ITEMS": "아이템",
--        "OF": "of",
-+        "OF": "/",
-         "RESET_OK": "사용자 비밀번호를 성공적으로 초기화했습니다",
-         "EXISTING_PASSWORD": "새 비밀번호는 이전 비밀번호와 동일할 수 없습니다",
-         "UNKNOWN": "알 수 없음",
-@@ -229,10 +229,10 @@
-         "DELETED_SUCCESS": "프로젝트가 성공적으로 삭제됐습니다.",
-         "TOGGLED_SUCCESS": "프로젝트가 성공적으로 전환됐습니다.",
-         "INLINE_HELP_PUBLIC": "프로젝트가 공개로 설정되면 누구나 이 프로젝트의 저장소에 대한 읽기 권한을 갖게 되며 사용자는 이 프로젝트에서 이미지를 가져오기 전에 \"docker login\"을 실행할 필요가 없습니다.",
--        "PROXY_CACHE_BANDWIDTH": "Set the maximum network bandwidth to pull image from upstream for proxy-cache. For unlimited bandwidth, please enter -1. ",
--        "BANDWIDTH": "Bandwidth",
--        "SPEED_LIMIT_TIP": "Please enter -1 or an integer greater than 0. ",
--        "OF": "of",
-+        "PROXY_CACHE_BANDWIDTH": "프록시 캐시가 업스트림에서 이미지를 가져올 때 쓸 최대 네트워크 대역폭을 설정합니다. 무제한 대역폭을 원하시면 -1을 입력하세요. ",
-+        "BANDWIDTH": "대역폭",
-+        "SPEED_LIMIT_TIP": "-1 또는 0보다 큰 정수를 입력하세요. ",
-+        "OF": "/",
-         "COUNT_QUOTA": "할당량 수",
-         "STORAGE_QUOTA": "프로젝트 할당량 제한",
-         "STORAGE_QUOTA_TIP": "저장 장치 할당량의 상한은 '1024TB'로 제한되는 정수 값만 사용합니다. 할당량을 무제한으로 지정하려면 '-1'을 입력하세요.",
-@@ -251,8 +251,8 @@
-         "PROXY_CACHE_MAX_UPSTREAM_CONN_PLACEHOLDER": "-1 또는 0보다 큰 정수를 입력하세요.",
-         "PROXY_CACHE_LOCAL_ON_NOT_FOUND": "오래된 콘텐츠를 로컬에서 제공",
-         "PROXY_CACHE_LOCAL_ON_NOT_FOUND_TOOLTIP": "업스트림 레지스트리에서 아티팩트를 찾을 수 없는 경우에도 이 프로젝트가 캐시된 콘텐츠를 계속 제공할 수 있도록 하려면 이 옵션을 활성화하세요. 이로 인해 오래된 콘텐츠가 제공될 수 있습니다.",
--        "PROXY_REFERRER_API_TIP": "Enable this to proxy OCI 1.1 referrer API requests to the upstream registry.",
--        "PROXY_REFERRER_API_LABEL": "Enable proxy for referrer API",
-+        "PROXY_REFERRER_API_TIP": "OCI 1.1 referrer API 요청을 업스트림 레지스트리로 프록시하려면 이 옵션을 활성화하세요.",
-+        "PROXY_REFERRER_API_LABEL": "referrer API 프록시 활성화",
-         "REPOSITORY_FILTER": "저장소 필터",
-         "REPOSITORY_FILTER_TOOLTIP": "업스트림 레지스트리에서 캐시할 저장소를 제한하는 선택적 필터입니다. 'Doublestar'(기본값)는 ** 지원 glob 스타일 패턴을 사용합니다(예: library/**). 'Regex'는 정규식 패턴을 사용하며, 패턴은 전체 저장소 경로와 일치해야 합니다(예: ^library/.*). 현재 프록시 캐시 프로젝트에만 적용됩니다.",
-         "REPOSITORY_FILTER_PLACEHOLDER": "예: library/**",
-@@ -273,7 +273,7 @@
-         "CONFIG": "설정",
-         "ROBOT_ACCOUNTS": "로봇 계정",
-         "WEBHOOKS": "웹훅",
--        "IMMUTABLE_TAG": "Tag Immutability",
-+        "IMMUTABLE_TAG": "태그 불변성",
-         "POLICY": "정책"
-     },
-     "PROJECT_CONFIG": {
-@@ -283,8 +283,8 @@
-         "SECURITY": "배포 보안",
-         "CONTENT_TRUST_POLCIY": "확인된 이미지만 배포되도록 허용합니다.",
-         "PREVENT_VULNERABLE_TOGGLE": "취약한 이미지가 실행되지 않도록 방지합니다.",
--        "PREVENT_VULNERABLE_1": "Prevent images with vulnerability severity of",
--        "PREVENT_VULNERABLE_2": "and above from being deployed.",
-+        "PREVENT_VULNERABLE_1": "취약점 심각도가",
-+        "PREVENT_VULNERABLE_2": "이상인 이미지가 배포되지 않도록 방지합니다.",
-         "SCAN": "취약점 스캔",
-         "AUTOSCAN_TOGGLE": "푸시 시 이미지 자동 스캔",
-         "AUTOSCAN_POLICY": "이미지가 프로젝트 레지스트리에 푸시되면 자동으로 이미지를 스캔합니다.",
-@@ -326,7 +326,7 @@
-         "DELETION_SUMMARY": "프로젝트 구성원{{param}}를 정말 삭제하시겠습니까?",
-         "ADDED_SUCCESS": "구성원를 성공적으로 추가했습니다.",
-         "DELETED_SUCCESS": "구성원를 성공적으로 삭제했습니다.",
--        "OF": "of",
-+        "OF": "/",
-         "SET_ROLE": "역할 설정",
-         "REMOVE": "제거",
-         "GROUP_NAME_REQUIRED": "그룹 이름은 필수항목입니다",
-@@ -347,7 +347,7 @@
-         "ACTION": "동작",
-         "EDIT": "편집",
-         "ITEMS": "아이템",
--        "OF": "of",
-+        "OF": "/",
-         "DELETE": "삭제",
-         "PUSH": "푸시",
-         "PULL": "풀(Pull)",
-@@ -393,7 +393,7 @@
-         "ARTIFACT_ADDITION": "아티팩트 추가",
-         "ARTIFACT_LABEL": "아티팩트 라벨",
-         "PREHEAT_POLICY": "예열 정책",
--        "IMMUTABLE_TAG": "Tag Immutability",
-+        "IMMUTABLE_TAG": "태그 불변성",
-         "LOG": "로그",
-         "NOTIFICATION_POLICY": "알림 정책",
-         "QUOTA": 
+@@ -28,20 +28,32 @@ type Resolver interface {
+ 	PreCheck(ctx context.Context, url string, method string) (bool, string)
+ }
+ 
+-var urlResolvers = map[string]Resolver{}
++type registration struct {
++	pattern  *regexp.Regexp
++	resolver Resolver
++}
++
++var registrations = map[string]registration{}
+ 
+ var mu = &sync.Mutex{}
+ 
+ // RegisterResolver register a resolver for a specific URL pattern
+ func RegisterResolver(urlPattern string, resolver Resolver) {
++	p := regexp.MustCompile(urlPattern)
+ 	mu.Lock()
+-	urlResolvers[urlPattern] = resolver
+-	mu.Unlock()
++	defer mu.Unlock()
++	registrations[urlPattern] = registration{pattern: p, resolver: resolver}
+ }
+ 
+-// Resolvers get map of resolvers
++// Resolvers returns a copy of the registered resolvers keyed by URL pattern
+ func Resolvers() map[string]Resolver {
+-	return urlResolvers
++	mu.Lock()
++	defer mu.Unlock()
++	resolvers := make(map[string]Resolver, len(registrations))
++	for urlPattern, reg := range registrations {
++		resolvers[urlPattern] = reg.resolver
++	}
++	return resolvers
+ }
+ 
+ // Metadata the raw data of event
+@@ -73,21 +85,19 @@ type Metadata struct {
+ 
+ // Resolve parse the audit information from CommonEventMetadata
+ func (c *Metadata) Resolve(event *event.Event) error {
+-	for url, r := range Resolvers() {
+-		p := regexp.MustCompile(url)
+-		if p.MatchString(c.RequestURL) {
+-			return r.Resolve(c, event)
++	for _, reg := range registrations {
++		if reg.pattern.MatchString(c.RequestURL) {
++			return reg.resolver.Resolve(c, event)
+ 		}
+ 	}
+ 	return nil
+ }
+ 
+ // PreCheck check if current event is matched and return the prefetched resource name when it is delete operation
+ func (c *Metadata) PreCheckMetadata() (bool, string) {
+-	for urlPattern, r := range Resolvers() {
+-		p := regexp.MustCompile(urlPattern)
+-		if p.MatchString(c.RequestURL) {
+-			return r.PreCheck(c.Ctx, c.RequestURL, c.RequestMethod)
++	for _, reg := range registrations {
++		if reg.pattern.MatchString(c.RequestURL) {
++			return reg.resolver.PreCheck(c.Ctx, c.RequestURL, c.RequestMethod)
+ 		}
+ 	}
+ 	return false, ""
+```
+
+**File**: `src/controller/event/metadata/commonevent/model_test.go` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++// Copyright Project Harbor Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package commonevent
++
++import (
++	"context"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/goharbor/harbor/src/pkg/notifier/event"
++)
++
++type fakeResolver struct{}
++
++func (fakeResolver) Resolve(*Metadata, *event.Event) error { return nil }
++
++func (fakeResolver) PreCheck(context.Context, string, string) (bool, string) {
++	return true, "fake"
++}
++
++func TestRegisterResolverInvalidPatternLeavesRegistryUnchanged(t *testing.T) {
++	const invalid = `^/api/v2.0/(`
++	const valid = `^/api/v2.0/commonevent-test$`
++	t.Cleanup(func() {
++		delete(registrations, invalid)
++		delete(registrations, valid)
++	})
++
++	assert.Panics(t, func() { RegisterResolver(invalid, fakeResolver{}) })
++	require.True(t, mu.TryLock(), "registry lock still held after panic")
++	mu.Unlock()
++	assert.NotContains(t, registrations, invalid)
++
++	RegisterResolver(valid, fakeResolver{})
++	m := &Metadata{Ctx: context.Background(), RequestURL: "/api/v2.0/commonevent-test"}
++	matched, name := m.PreCheckMetadata()
++	assert.True(t, matched)
++	assert.Equal(t, "fake", name)
++}
++
++func TestResolversReturnsCopy(t *testing.T) {
++	const probe = `^/api/v2.0/commonevent-copy$`
++	t.Cleanup(func() {
++		delete(registrations, probe)
++	})
++
++	Resolvers()[probe] = fakeResolver{}
++	assert.NotContains(t, registrations, probe)
++
++	m := &Metadata{Ctx: context.Background(), RequestURL: "/v2/library/nginx/blobs/sha256:abc"}
++	assert.NotPanics(t, func() { m.PreCheckMetadata() })
++}
+```
+
+**File**: `src/pkg/auditext/event/basic.go` (modified, +15/-4)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"fmt"
+ 	"net/http"
+ 	"regexp"
++	"sync"
+ 	"time"
+ 
+ 	"slices"
+@@ -61,7 +62,7 @@ func (e *Resolver) PreCheck(ctx context.Context, url string, method string) (cap
+ 	// for delete operation on a resource has name, need to resolve the resource id to resource name before delete
+ 	resName := ""
+ 	if capture && method == http.MethodDelete && e.ShouldResolveName {
+-		re := regexp.MustCompile(e.ResourceIDPattern)
++		re := resourceIDRegexp(e.ResourceIDPattern)
+ 		m := re.FindStringSubmatch(url)
+ 		if len(m) >= 2 && e.IDToNameFunc != nil {
+ 			resName = e.IDToNameFunc(m[1])
+@@ -70,6 +71,16 @@ func (e *Resolver) PreCheck(ctx context.Context, url string, method string) (cap
+ 	return true, resName
+ }
+ 
++var resourceIDPatterns sync.Map
++
++func resourceIDRegexp(pattern string) *regexp.Regexp {
++	if re, ok := resourceIDPatterns.Load(pattern); ok {
++		return re.(*regexp.Regexp)
++	}
++	re, _ := resourceIDPatterns.LoadOrStore(pattern, regexp.MustCompile(pattern))
++	return re.(*regexp.Regexp)
++}
++
+ // Resolve ...
+ func (e *Resolver) Resolve(ce *commonevent.Metadata, event *event.Event) error {
+ 	if ce.RequestMethod != http.MethodPost && ce.RequestMethod != http.MethodDelete && ce.RequestMethod != http.MethodPut {
+@@ -92,7 +103,7 @@ func (e *Resolver) Resolve(ce *commonevent.Metadata, event *event.Event) error {
+ 	case createOp:
+ 		if len(ce.ResponseLocation) > 0 {
+ 			// extract resource id from response location
+-			re := regexp.MustCompile(e.ResourceIDPattern)
++			re := resourceIDRegexp(e.ResourceIDPattern)
+ 			m := re.FindStringSubmatch(ce.ResponseLocation)
+ 			if len(m) < 2 {
+ 				return nil
+@@ -107,7 +118,7 @@ func (e *Resolver) Resolve(ce *commonevent.Metadata, event *event.Event) error {
+ 		}
+ 
+ 	case deleteOp:
+-		re := regexp.MustCompile(e.ResourceIDPattern)
++		re := resourceIDRegexp(e.ResourceIDPattern)
+ 		m := re.FindStringSubmatch(ce.RequestURL)
+ 		if len(m) < 2 {
+ 			return nil
+@@ -118,7 +129,7 @@ func (e *Resolver) Resolve(ce *commonevent.Metadata, event *event.Event) error {
+ 		}
+ 
+ 	case updateOp:
+-		re := regexp.MustCompile(e.ResourceIDPattern)
++		re := resourceIDRegexp(e.ResourceIDPattern)
+ 		m := re.FindStringSubmatch(ce.RequestURL)
+ 		if len(m) < 2 {
+ 			return nil
+```
+
+**File**: `src/pkg/auditext/event/login/login.go` (modified, +3/-2)
+```diff
+@@ -46,6 +46,8 @@ const (
+ 	payloadPattern = `principal=(.*?)&password`
+ )
+ 
++var payloadRe = regexp.MustCompile(payloadPattern)
++
+ type loginResolver struct {
+ }
+ 
+@@ -61,9 +63,8 @@ func (l *loginResolver) Resolve(ce *commonevent.Metadata, event *event.Event) er
+ 	}
+ 
+ 	// Extract the username from payload
+-	re := regexp.MustCompile(payloadPattern)
+ 	if len(ce.RequestPayload) > 0 {
+-		match := re.FindStringSubmatch(ce.RequestPayload)
++		match := payloadRe.FindStringSubmatch(ce.RequestPayload)
+ 		if len(match) > 1 {
+ 			e.ResourceName = match[1]
+ 			e.Operator = match[1]
+```
+
+**File**: `src/pkg/auditext/event/resolve_bench_test.go` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++// Copyright Project Harbor Authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//    http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package event_test
++
++import (
++	"context"
++	"net/http"
++	"testing"
++
++	"github.com/goharbor/harbor/src/controller/event/metadata/commonevent"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/config"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/login"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/member"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/project"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/role"
++	_ "github.com/goharbor/harbor/src/pkg/auditext/event/user"
++)
++
++// BenchmarkPreCheckMetadataBlobGet measures the audit log middleware path for
++// a registry blob pull, which matches no resolver.
++func BenchmarkPreCheckMetadataBlobGet(b *testing.B) {
++	m := &commonevent.Metadata{
++		Ctx:           context.Background(),
++		RequestMethod: http.MethodGet,
++		RequestURL:    "/v2/library/nginx/blobs/sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1",
++	}
++	b.ReportAllocs()
++	for b.Loop() {
++		m.PreCheckMetadata()
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -857,69 +1024,65 @@ Signed-off-by: Ethan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. i18n): translate Korean strings still shown in English
+## X. Compile audit resolver patterns once
 
 **RULE**:
-When implementing operations in `src/portal/src/i18n/lang/ko-kr-lang.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/controller/event/metadata/commonevent/model.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ffac21f6`: i18n): translate Korean strings still shown in English. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3cc8b5c1`: Compile audit resolver patterns once. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/i18n/lang/ko-kr-lang.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/controller/event/metadata/commonevent/model.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "OR": "또는",
-        "TITLE": "환경 설정",
-        "LANGUAGE": "언어",
-        "DATE_TIME_FORMAT": "날짜/시간 형식",
-        "PULL_CMD_PREFIX": "풀(Pull) 명령어 접두사"
-        "PREFERENCES": "환경 설정",
-        "ABOUT": "정보",
-        "OF": "/",
-        "PROXY_CACHE_BANDWIDTH": "프록시 캐시가 업스트림에서 이미지를 가져올 때 쓸 최대 네트워크 대역폭을 설정합니다. 무제한 대역폭을 원하시면 -1을 입력하세요. ",
-        "BANDWIDTH": "대역폭",
-        "SPEED_LIMIT_TIP": "-1 또는 0보다 큰 정수를 입력하세요. ",
-        "OF": "/",
-        "PROXY_REFERRER_API_TIP": "OCI 1.1 referrer API 요청을 업스트림 레지스트리로 프록시하려면 이 옵션을 활성화하세요.",
-        "PROXY_REFERRER_API_LABEL": "referrer API 프록시 활성화",
-        "IMMUTABLE_TAG": "태그 불변성",
-        "PREVENT_VULNERABLE_1": "취약점 심각도가",
-        "PREVENT_VULNERABLE_2": "이상인 이미지가 배포되지 않도록 방지합니다.",
-        "OF": "/",
-        "OF": "/",
-        "IMMUTABLE_TAG": "태그 불변성",
+type registration struct {
+	pattern  *regexp.Regexp
+	resolver Resolver
+}
+
+var registrations = map[string]registration{}
+	p := regexp.MustCompile(urlPattern)
+	defer mu.Unlock()
+	registrations[urlPattern] = registration{pattern: p, resolver: resolver}
+// Resolvers returns a copy of the registered resolvers keyed by URL pattern
+	mu.Lock()
+	defer mu.Unlock()
+	resolvers := make(map[string]Resolver, len(registrations))
+	for urlPattern, reg := range registrations {
+		resolvers[urlPattern] = reg.resolver
+	}
+	return resolvers
+	for _, reg := range registrations {
+		if reg.pattern.MatchString(c.RequestURL) {
+			return reg.resolver.Resolve(c, event)
+	for _, reg := range registrations {
+		if reg.pattern.MatchString(c.RequestURL) {
+			return reg.resolver.PreCheck(c.Ctx, c.RequestURL, c.RequestMethod)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        "OR": "OR",
-        "TITLE": "Preferences",
-        "LANGUAGE": "Language",
-        "DATE_TIME_FORMAT": "Date/Time Format",
-        "PULL_CMD_PREFIX": "Pull Command Prefix"
-        "PREFERENCES": "Preferences",
-        "ABOUT": "About",
-        "OF": "of",
-        "PROXY_CACHE_BANDWIDTH": "Set the maximum network bandwidth to pull image from upstream for proxy-cache. For unlimited bandwidth, please enter -1. ",
-        "BANDWIDTH": "Bandwidth",
-        "SPEED_LIMIT_TIP": "Please enter -1 or an integer greater than 0. ",
-        "OF": "of",
-        "PROXY_REFERRER_API_TIP": "Enable this to proxy OCI 1.1 referrer API requests to the upstream registry.",
-        "PROXY_REFERRER_API_LABEL": "Enable proxy for referrer API",
-        "IMMUTABLE_TAG": "Tag Immutability",
-        "PREVENT_VULNERABLE_1": "Prevent images with vulnerability severity of",
-        "PREVENT_VULNERABLE_2": "and above from being deployed.",
-        "OF": "of",
-        "OF": "of",
-        "IMMUTABLE_TAG": "Tag Immutability",
+var urlResolvers = map[string]Resolver{}
+	urlResolvers[urlPattern] = resolver
+	mu.Unlock()
+// Resolvers get map of resolvers
+	return urlResolvers
+	for url, r := range Resolvers() {
+		p := regexp.MustCompile(url)
+		if p.MatchString(c.RequestURL) {
+			return r.Resolve(c, event)
+	for urlPattern, r := range Resolvers() {
+		p := regexp.MustCompile(urlPattern)
+		if p.MatchString(c.RequestURL) {
+			return r.PreCheck(c.Ctx, c.RequestURL, c.RequestMethod)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ffac21f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3cc8b5c1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

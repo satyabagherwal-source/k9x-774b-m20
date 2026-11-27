@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T20:47:02.832Z",
+  "last_updated": "2026-11-27T21:11:27.100Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
-      "verified_at": "2026-11-27T03:07:45.432Z",
+      "content_hash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
+      "verified_at": "2026-11-27T21:11:27.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:07:45.432Z"
+      "last_updated": "2026-11-27T21:11:27.099Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -13431,14 +13431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
-      "content_hash": "57823c25039c7b0f92df7edd533339cb8306338a13ffa4045d05d19739a9c725",
-      "verified_at": "2026-10-19T20:22:50.467Z",
+      "content_hash": "da3626292f8dd5f3c172b69a617e45512bf3aaaa9fe79d41348346eb859c1a44",
+      "verified_at": "2026-11-27T21:11:22.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:22:50.467Z"
+      "last_updated": "2026-11-27T21:11:22.416Z"
     },
     "KevinnZou/compose-webview-multiplatform": {
       "repository": "KevinnZou/compose-webview-multiplatform",
@@ -19461,14 +19461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-erkamyaman-rust-anything",
-      "content_hash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
-      "verified_at": "2026-11-26T20:49:40.029Z",
+      "content_hash": "5a606e16cc9479738e7f40e75826bd79cd2cddc99f813b241c7af41464c459f0",
+      "verified_at": "2026-11-27T21:11:19.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T20:49:40.029Z"
+      "last_updated": "2026-11-27T21:11:19.791Z"
     },
     "akhaliq/MiniMax-H3-Image-Character-Swap": {
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",

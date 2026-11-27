@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:47:02.829Z",
-  "total_cycles_completed": 13162,
-  "total_learnings_persisted": 13162,
-  "total_rules_promoted": 11877,
+  "last_updated": "2026-11-27T21:11:27.095Z",
+  "total_cycles_completed": 13165,
+  "total_learnings_persisted": 13165,
+  "total_rules_promoted": 11880,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:43:58.332Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T03:44:02.712Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T03:54:55.380Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:55:06.407Z",
       "repository": "siderolabs/talos",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T20:47:02.829Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:11:19.788Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:11:22.412Z",
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:11:27.095Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

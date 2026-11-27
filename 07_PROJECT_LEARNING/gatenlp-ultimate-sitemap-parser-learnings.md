@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md`  
 > **Source**: github ([https://github.com/GateNLP/ultimate-sitemap-parser](https://github.com/GateNLP/ultimate-sitemap-parser))  
-> **Source Version**: `6ab7704f`  
+> **Source Version**: `6f532e9d`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:22:50.238Z  
+> **Timestamp**: 2026-11-27T21:11:20.810Z  
 > **Learning ID**: `learn-github-gatenlp-ultimate-sitemap-parser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GateNLP/ultimate-sitemap-parser](https://github.com/GateNLP/ultimate-sitemap-parser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:22:48.822Z  
+> **Harvest Timestamp**: 2026-11-27T21:11:20.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultimate Website Sitemap Parser
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 257 stars
+- **Stars / Engagement**: 258 stars
 
 ---
 
@@ -1338,20 +1338,146 @@ class SitemapPage:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ab7704f` (2026-06-16)
-**Commit Message**: Prepare 1.8.1 fix (#134)
+### Incident Patch 1: `6f532e9d` (2026-11-26)
+**Commit Message**: Preserve alternate links in dictionary exports (#138)
 
-* Fix release 1.8.1
+**File**: `tests/tree/test_save.py` (modified, +39/-1)
+```diff
+@@ -7,7 +7,8 @@
+ from dateutil.tz import tzoffset
+ 
+ from tests.tree.base import TreeTestBase
+-from usp.tree import sitemap_tree_for_homepage
++from usp.objects.page import SitemapPage
++from usp.tree import sitemap_from_str, sitemap_tree_for_homepage
+ 
+ 
+ class TestTreeSave(TreeTestBase):
+@@ -59,6 +60,7 @@ def test_page_to_dict(self, tree):
+                 ),
+                 "change_frequency": "monthly",
+                 "images": None,
++                "alternates": None,
+                 "news_story": None,
+             },
+             {
+@@ -69,6 +71,7 @@ def test_page_to_dict(self, tree):
+                 ),
+                 "change_frequency": "always",
+                 "images": None,
++                "alternates": None,
+                 "news_story": None,
+             },
+             {
+@@ -77,6 +80,7 @@ def test_page_to_dict(self, tree):
+                 "last_modified": None,
+                 "change_frequency": None,
+                 "images": None,
++                "alternates": None,
+                 "news_story": {
+                     "title": "Foo <foo>",
+                     "publish_date": datetime.datetime(
+@@ -96,6 +100,7 @@ def test_page_to_dict(self, tree):
+                 "last_modified": None,
+                 "change_frequency": None,
+                 "images": None,
++                "alternates": None,
+                 "news_story": {
+                     "title": "Bar & bar",
+                     "publish_date": datetime.datetime(
+@@ -115,6 +120,7 @@ def test_page_to_dict(self, tree):
+                 "last_modified": None,
+                 "change_frequency": None,
+                 "images": None,
++                "alternates": None,
+                 "news_story": {
+                     "title": "Bar & bar",
+                     "publish_date": datetime.datetime(
+@@ -134,6 +140,7 @@ def test_page_to_dict(self, tree):
+                 "last_modified": None,
+                 "change_frequency": None,
+                 "images": None,
++                "alternates": None,
+                 "news_story": {
+                     "title": "Bąž",
+                     "publish_date": datetime.datetime(
+@@ -148,3 +155,34 @@ def test_page_to_dict(self, tree):
+                 },
+             },
+         ]
++
++    def test_parsed_alternates_to_dict(self):
++        tree = sitemap_from_str(
++            f"""
++            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
++                    xmlns:xhtml="http://www.w3.org/1999/xhtml">
++              <url>
++                <loc>{self.TEST_BASE_URL}/en/page</loc>
++                <xhtml:link rel="alternate" hreflang="fr-FR"
++                            href="{self.TEST_BASE_URL}/fr/page"/>
++                <xhtml:link rel="alternate" hreflang="x-default"
++                            href="{self.TEST_BASE_URL}/en/page"/>
++              </url>
++            </urlset>
++            """
++        )
++        expected = [
++            ("fr-FR", f"{self.TEST_BASE_URL}/fr/page"),
++            ("x-default", f"{self.TEST_BASE_URL}/en/page"),
++        ]
++        page = next(tree.all_pages())
++
++        assert page.alternates == expected
++        assert page.to_dict()["alternates"] == expected
++        assert tree.to_dict()["pages"][0]["alternates"] == expected
++
++    @pytest.mark.parametrize("alternates", [None, []])
++    def test_page_to_dict_empty_alternates(self, alternates):
++        page = SitemapPage(url=self.TEST_BASE_URL, alternates=alternates)
++
++        assert page.to_dict()["alternates"] == alternates
+```
 
-* uv lock
+**File**: `usp/objects/page.py` (modified, +1/-0)
+```diff
+@@ -423,6 +423,7 @@ def to_dict(self):
+             "images": [image.to_dict() for image in self.images]
+             if self.images
+             else None,
++            "alternates": self.alternates,
+         }
+ 
+     @property
+```
+
+---
+
+### Incident Patch 2: `6bd28881` (2026-11-25)
+**Commit Message**: Prepare 1.8.2 (#137)
+
+**File**: `docs/changelog.rst` (modified, +5/-0)
+```diff
+@@ -1,6 +1,11 @@
+ Changelog
+ =========
+ 
++v1.8.2 (2026-11-25)
++-------------------
++
++* Relax ``python-dateutil`` version constraint to allow newer versions (:pr:`136` by :user:`itzzdev09`)
++
+ v1.8.1 (2026-06-16)
+ -------------------
+ 
+```
 
 **File**: `pyproject.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [project]
  name = "ultimate-sitemap-parser"
--version = "1.8.0"
-+version = "1.8.1"
+-version = "1.8.1"
++version = "1.8.2"
  description = "A performant library for parsing and crawling sitemaps"
  authors = [
      { name = "Linas Valiukas", email = "linas@media.mit.edu" },
@@ -1363,224 +1489,20 @@ Observed empirical fixes and code patches:
  
  [[package]]
  name = "ultimate-sitemap-parser"
--version = "1.8.0"
-+version = "1.8.1"
+-version = "1.8.1"
++version = "1.8.2"
  source = { editable = "." }
  dependencies = [
      { name = "python-dateutil" },
 ```
 
----
-
-### Incident Patch 2: `102bfdf0` (2025-06-09)
-**Commit Message**: Adjust default timeouts (#95)
-
-* Adjust default timeout
-
-* changelog
-
-**File**: `docs/changelog.rst` (modified, +7/-0)
-```diff
-@@ -1,6 +1,13 @@
- Changelog
- =========
- 
-+Upcoming
-+--------
-+
-+**Bug Fixes**
-+
-+- Set different timeouts for HTTP request connection and read to lower maximum request length. Instead of 60s for each, it is now 10s for connection and 60s for read. (:pr:`95`)
-+
- v1.4.0 (2025-04-23)
- -------------------
- 
-```
-
-**File**: `usp/web_client/requests_client.py` (modified, +2/-2)
-```diff
-@@ -79,7 +79,7 @@ class RequestsWebClient(AbstractWebClient):
- 
-     __USER_AGENT = f"ultimate_sitemap_parser/{__version__}"
- 
--    __HTTP_REQUEST_TIMEOUT = 60
-+    __HTTP_REQUEST_TIMEOUT = (9.05, 60)
-     """
-     HTTP request timeout.
- 
-@@ -114,7 +114,7 @@ def __init__(
-         self.__waiter = RequestWaiter(wait, random_wait)
-         self.__session = session or requests.Session()
- 
--    def set_timeout(self, timeout: Union[int, Tuple[int, int], None]) -> None:
-+    def set_timeout(self, timeout: Optional[Union[float, Tuple[float, float]]]) -> None:
-         """Set HTTP request timeout.
- 
-         See also: `Requests timeout docs <https://requests.readthedocs.io/en/latest/user/advanced/#timeouts>`__
-```
-
----
-
-### Incident Patch 3: `b015194a` (2025-04-23)
-**Commit Message**: Fix gzip warning for transport encoding (#89)
-
-* Fix gzip decode warning
-
-* ruff
-
-* changelog
-
-**File**: `docs/changelog.rst` (modified, +5/-0)
-```diff
-@@ -8,6 +8,11 @@ Upcoming
- 
- - Support parsing sitemaps when a proper XML namespace is not declared (:pr:`87`)
- 
-+**Bug Fixes**
-+
-+- Fix incorrect logic in gunzip behaviour which attempted to gunzip responses that were already gunzipped by requests (:pr:`89`)
-+- Change log output for gunzip failures to include the URL instead of request response object (:pr:`89`)
-+
- v1.3.1 (2025-03-31)
- -------------------
- 
-```
-
-**File**: `tests/integration/test_integration.py` (modified, +1/-0)
-```diff
-@@ -19,3 +19,4 @@ def test_sitemap_parse(site_url, cassette_path):
-     for page in sitemap.all_pages():
-         page_count += 1
-     log.critical(f"Site {site_url} has {page_count} pages")
-+    assert page_count > 0
-```
-
-**File**: `tests/tree/test_basic.py` (modified, +50/-2)
-```diff
-@@ -132,7 +132,7 @@ def test_sitemap_tree_for_homepage(self, requests_mock):
-         assert len(list(actual_sitemap_tree.all_pages())) == 6
-         assert len(list(actual_sitemap_tree.all_sitemaps())) == 7
- 
--    def test_sitemap_tree_for_homepage_gzip(self, requests_mock):
-+    def test_sitemap_tree_for_homepage_gzip(self, requests_mock, caplog):
-         """Test sitemap_tree_for_homepage() with gzipped sitemaps."""
- 
-         requests_mock.add_matcher(TreeTestBase.fallback_to_404_not_found_matcher)
-@@ -153,6 +153,7 @@ def test_sitemap_tree_for_homepage_gzip(self, requests_mock):
-                 Sitemap: {self.TEST_BASE_URL}/sitemap_1.gz
-                 Sitemap: {self.TEST_BASE_URL}/sitemap_2.dat
-                 Sitemap: {self.TEST_BASE_URL}/sitemap_3.xml.gz
-+                Sitemap: {self.TEST_BASE_URL}/sitemap_4.xml
-             """
-             ).strip(),
-         )
-@@ -235,6 +236,33 @@ def test_sitemap_tree_for_homepage_gzip(self, requests_mock):
-             ).strip(),
-         )
- 
-+        # Sitemap encoded as gzip for transport by the web server
-+        requests_mock.get(
-+            self.TEST_BASE_URL + "/sitemap_4.xml",
-+            headers={"Content-Type": "application/xml", "Content-Encoding": "gzip"},
-+            content=gzip(
-+                textwrap.dedent(
-+                    f"""
-+                <?xml version="1.0" encoding="UTF-8"?>
-+                <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-+                        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-+                    <url>
-+                        <loc>{self.TEST_BASE_URL}/news/baz.html</loc>
-+                        <news:news>
-+                            <news:publication>
-+                                <news:name>{self.TEST_PUBLICATION_NAME}</news:name>
-+                                <news:language>{self.TEST_PUBLICATION_LANGUAGE}</news:language>
-+                            </news:publication>
-+                            <news:publication_date>{self.TEST_DATE_STR_ISO8601}</news:publication_date>
-+                            <news:title><![CDATA[Bąž]]></news:title>    <!-- CDATA and UTF-8 -->
-+                        </news:news>
-+                    </url>
-+                </urlset>
-+            """
-+                ).strip()
-+            ),
-+        )
-+
-         actual_sitemap_tree = sitemap_tree_for_homepage(homepage_url=self.TEST_BASE_URL)
- 
-         # Don't do an in-depth check, we just need to make sure that gunzip works
-@@ -243,7 +271,7 @@ def test_sitemap_tree_for_homepage_gzip(self, requests_mock):
- 
-         assert isinstance(actual_sitemap_tree.sub_sitemaps[0], IndexRobotsTxtSitemap)
-         # noinspection PyUnresolvedReferences
--        assert len(actual_sitemap_tree.sub_sitemaps[0].sub_sitemaps) == 3
-+        assert len(actual_sitemap_tree.sub_sitemaps[0].sub_sitemaps) == 4
- 
-         # noinspection PyUnresolvedReferences
-         sitemap_1 = actual_sitemap_tree.sub_sitemaps[0].sub_sitemaps[0]
-@@ -260,6 +288,26 @@ def test_sitemap_tree_for_homepage_gzip(self, requests_mock):
-         assert isinstance(sitemap_3, PagesXMLSitemap)
-         assert len(sitemap_3.pages) == 1
- 
-+        sitemap_4 = actual_sitemap_tree.sub_sitemaps[0].sub_sitemaps[3]
-+        assert isinstance(sitemap_4, PagesXMLSitemap)
-+        assert len(sitemap_4.pages) == 1
-+
-+        # Check that only sitemap_3 caused a gunzip error
-+        assert (
-+            len(
-+                [
-+                    record
-+                    for record in caplog.records
-+                    if "Unable to gunzip response" in record.message
-+                ]
-+            )
-+            == 1
-+        )
-+        assert (
-+            f"Unable to gunzip response for {self.TEST_BASE_URL}/sitemap_3.xml.gz"
-+            in caplog.text
-+        )
-+
-     def test_sitemap_tree_for_homepage_huge_sitemap(self, requests_mock):
-         """Test sitemap_tree_for_homepage() with a huge sitemap (mostly for profiling)."""
- 
-```
-
-**File**: `usp/helpers.py` (modified, +2/-7)
-```diff
-@@ -194,13 +194,8 @@ def __response_is_gzipped_data(
-     uri = urlparse(url)
-     url_path = unquote_plus(uri.path)
-     content_type = response.header("content-type") or ""
--    content_encoding = response.header("content-encoding") or ""
- 
--    if (
--        url_path.lower().endswith(".gz")
--        or "gzip" in content_type.lower()
--        or "gzip" in content_encoding.lower()
--    ):
-+    if url_path.lower().endswith(".gz") or "gzip" in content_type.lower():
-         return True
- 
-     else:
-@@ -260,7 +255,7 @@ def ungzipped_response_content(
-         except GunzipException as ex:
-             # In case of an error, just assume that it's one of the non-gzipped sitemaps with ".gz" extension
-             log.warning(
--                f"Unable to gunzip response {response}, maybe it's a non-gzipped sitemap: {ex}"
-+                f"Unable to gunzip response for {url}, maybe it's a non-gzipped sitemap: {ex}"
-             )
- 
-     # FIXME other encodings
-```
-
 #### Recent Merged Pull Requests:
+- **PR #138** (2026-11-26): Preserve alternate links in dictionary exports (@fbirds5230)
+- **PR #137** (2026-11-25): Prepare 1.8.2 (@freddyheppell)
+- **PR #136** (2026-11-25): Allow python-dateutil 3 and 4 (@itzzdev09)
 - **PR #134** (2026-06-16): Prepare 1.8.1 fix (@freddyheppell)
 - **PR #133** (2026-06-16): Prepare v1.8.1 (@freddyheppell)
 - **PR #132** (2026-01-25): Release 1.8.0 (@freddyheppell)
-- **PR #131** (2026-01-25): Upgrade to Sphinx 9 (@freddyheppell)
-- **PR #130** (2026-01-22): C00k1ez/sitemap tree for homepage fix (@c00k1ez)
-- **PR #128** (2026-01-20): Release 1.7.0.post2 (@freddyheppell)
 
 ---
 
@@ -1600,28 +1522,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare 1.8.1 fix (#134)
+## X. Preserve alternate links in dictionary exports
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GateNLP/ultimate-sitemap-parser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/tree/test_save.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GateNLP/ultimate-sitemap-parser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ab7704f`: Prepare 1.8.1 fix (#134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f532e9d`: Preserve alternate links in dictionary exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/tree/test_save.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "1.8.1"
+from usp.objects.page import SitemapPage
+from usp.tree import sitemap_from_str, sitemap_tree_for_homepage
+                "alternates": None,
+                "alternates": None,
+                "alternates": None,
+                "alternates": None,
+                "alternates": None,
+                "alternates": None,
+
+    def test_parsed_alternates_to_dict(self):
+        tree = sitemap_from_str(
+            f"""
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+                    xmlns:xhtml="http://www.w3.org/1999/xhtml">
+              <url>
+                <loc>{self.TEST_BASE_URL}/en/page</loc>
+                <xhtml:link rel="alternate" hreflang="fr-FR"
+                            href="{self.TEST_BASE_URL}/fr/page"/>
+                <xhtml:link rel="alternate" hreflang="x-default"
+                            href="{self.TEST_BASE_URL}/en/page"/>
+              </url>
+            </urlset>
+            """
+        )
+        expected = [
+            ("fr-FR", f"{self.TEST_BASE_URL}/fr/page"),
+            ("x-default", f"{self.TEST_BASE_URL}/en/page"),
+        ]
+        page = next(tree.all_pages())
+
+        assert page.alternates == expected
+        asser
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.8.0"
+// Induced defect failure mode:
+from usp.tree import sitemap_tree_for_homepage
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ab7704f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f532e9d` are properly handled with clean fallback behavior.

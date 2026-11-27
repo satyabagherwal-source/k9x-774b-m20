@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T20:57:53.836Z",
-  "total_records": 2855,
+  "last_updated": "2026-11-27T21:11:36.086Z",
+  "total_records": 2857,
   "domains": {
     "A": {
       "total": 25,
@@ -2629,7 +2629,7 @@
       ]
     },
     "J": {
-      "total": 60,
+      "total": 62,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2690,7 +2690,9 @@
         "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-core-invariants",
         "domain_intelligence-search-distribution-intelligence-pimalaya-himalaya-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-core-invar",
-        "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-"
+        "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-",
+        "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-"
       ]
     },
     "K": {
@@ -13104,8 +13106,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "6cbb5aaba74ade61ea41e4c11f0358d65bda5ce31723fb4f56267284cfc7e5c3",
-      "created_at": "2026-11-27T03:07:46.026Z"
+      "content_hash": "44e522029ac980aae419cca32161efbde0d6ca473d4e329e8e24c7a19d9bcb14",
+      "created_at": "2026-11-27T21:11:27.720Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -13182,8 +13184,8 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
       "repository": "goharbor-harbor-learnings",
-      "content_hash": "5bd2ea52739d07b3f5a0b0d870a15265af3f4f50c7870bb393e101312cd4a4f6",
-      "created_at": "2026-11-27T03:07:56.151Z"
+      "content_hash": "1ce6f0ca048cf49ed031f5449fe7f4503b85bc4552eb2691ed4b576a8b37dad3",
+      "created_at": "2026-11-27T21:11:36.086Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
@@ -46949,8 +46951,8 @@
       "title": "Quality & Verification Intelligence: erkamyaman/rust-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-quality-verification-intelligence-erkamyaman-rust-anyth.md",
       "repository": "erkamyaman/rust-anything",
-      "content_hash": "926b9595681eb17d8a42041250b41c3b1695f4ad6c5ce5e6dbf48222962a6df1",
-      "created_at": "2026-11-26T20:49:40.459Z"
+      "content_hash": "c029add7129af623bdb3c44cc259e8dff21784b133b706c9c05ecbb9576e39ce",
+      "created_at": "2026-11-27T21:11:20.396Z"
     },
     "DOM-F-1B31BB0E": {
       "record_id": "DOM-F-1B31BB0E",
@@ -47000,8 +47002,8 @@
       "title": "Quality & Verification Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-learnings-quality-verification-intelligence-erkamyaman-.md",
       "repository": "erkamyaman-rust-anything-learnings",
-      "content_hash": "5e7245e3c4acb20eec2fa36a11a516f9d3e7effea3061dd25cfc8fb9ab2e5489",
-      "created_at": "2026-11-26T20:50:18.337Z"
+      "content_hash": "617402db778225efe8712f51bc04fa10d3ac1b68be540796d6d9754bed0c02b2",
+      "created_at": "2026-11-27T21:11:31.843Z"
     },
     "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-svenstaro-miniserve-core-invariants",
@@ -48279,6 +48281,24 @@
       "repository": "hf-openuncensored-inkling-2-mini-uncensored-learnings",
       "content_hash": "2e610c483a102946a710c21ace8e73de6279b17dad2f5c4579a0f7073647d07a",
       "created_at": "2026-11-27T20:20:43.579Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: GateNLP/ultimate-sitemap-parser Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-gatenlp-ultimate-sitemap-parser-search-distribution-intelligence-gatenlp-ultimat.md",
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "content_hash": "07fdf8c5faa4cdca39f6aa26a75443f7d3b4194a6e0977f320afd744e787d6b6",
+      "created_at": "2026-11-27T21:11:23.019Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: gatenlp-ultimate-sitemap-parser-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-gatenlp-ultimate-sitemap-parser-learnings-search-distribution-intelligence-gaten.md",
+      "repository": "gatenlp-ultimate-sitemap-parser-learnings",
+      "content_hash": "b0542517c6f9b5c9784b76b512186fdad0305894f761a7d30377015ec28dda6d",
+      "created_at": "2026-11-27T21:11:34.353Z"
     }
   }
 }

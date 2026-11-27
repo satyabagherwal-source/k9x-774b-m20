@@ -13870,3 +13870,6 @@
 | `CYCLE-20261127-1AOW` | `2026-11-27T20:38:15.392Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10961` | Yes (`2e017c5e...`) |
 | `CYCLE-20261127-CKHF` | `2026-11-27T20:47:01.299Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10962` | Yes (`75c95a8a...`) |
 | `CYCLE-20261127-CLNF` | `2026-11-27T20:47:02.811Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10963` | Yes (`d44a52c9...`) |
+| `CYCLE-20261127-7TUG` | `2026-11-27T21:11:19.768Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10964` | Yes (`5a606e16...`) |
+| `CYCLE-20261127-7VVB` | `2026-11-27T21:11:22.391Z` | `GateNLP/ultimate-sitemap-parser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10965` | Yes (`da362629...`) |
+| `CYCLE-20261127-7ZHF` | `2026-11-27T21:11:27.075Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10966` | Yes (`dd074d2a...`) |

@@ -13903,3 +13903,6 @@ Every entry in this ledger must capture:
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `ca2e7c55` | Multi-dimensional audit evidence | 2026-11-27T20:38:15.404Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `72791552` | Multi-dimensional audit evidence | 2026-11-27T20:47:01.311Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ebb631f8` | Multi-dimensional audit evidence | 2026-11-27T20:47:02.823Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `bedff729` | Multi-dimensional audit evidence | 2026-11-27T21:11:19.781Z |
+| `learn-github-gatenlp-ultimate-sitemap-parser` | `https://github.com/GateNLP/ultimate-sitemap-parser` | `6f532e9d` | Multi-dimensional audit evidence | 2026-11-27T21:11:22.406Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `3cc8b5c1` | Multi-dimensional audit evidence | 2026-11-27T21:11:27.088Z |

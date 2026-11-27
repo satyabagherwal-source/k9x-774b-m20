@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T20:57:54.025Z",
-  "total_verified_learnings": 9146,
+  "last_updated": "2026-11-27T21:11:36.362Z",
+  "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26753,
+  "total_items": 26763,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222766,8 +222766,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "7ab87806",
-      "content_hash": "aaf4e39f128ddf60ef5394dbe2e402ca8a34df54b702b6143ba64e8766b664e8",
+      "source_version": "3cc8b5c1",
+      "content_hash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -222805,6 +222805,11 @@
           "number": 10815,
           "title": "translate Korean strings still shown in English",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10966,
+          "title": "Compile audit resolver patterns once",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222812,7 +222817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:07:45.063Z",
+      "verified_at": "2026-11-27T21:11:26.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222854,10 +222859,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "repository": "goharbor/harbor",
-      "source_version": "7ab87806",
-      "content_hash": "6cbb5aaba74ade61ea41e4c11f0358d65bda5ce31723fb4f56267284cfc7e5c3",
+      "source_version": "3cc8b5c1",
+      "content_hash": "44e522029ac980aae419cca32161efbde0d6ca473d4e329e8e24c7a19d9bcb14",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T03:07:46.026Z"
+      "persisted_at": "2026-11-27T21:11:27.720Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor",
@@ -222866,10 +222871,10 @@
       "relative_path": "08_VERIFICATION/goharbor-harbor-verification-protocol-empirical-defect-shield-for-goharbor-harbo.md",
       "title": "Verification Protocol: Empirical Defect Shield for goharbor/harbor",
       "repository": "goharbor/harbor",
-      "source_version": "7ab87806",
-      "content_hash": "6e83a8e1731bea2f18288629556f051ec9a9f132f838d009bac6a9c25da200ae",
+      "source_version": "3cc8b5c1",
+      "content_hash": "95ebeca15f9e809af78285c5175e506f3bbc5dece2a0ddb5f17e5a6c03e58a1f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:07:46.293Z"
+      "persisted_at": "2026-11-27T21:11:27.989Z"
     },
     "learn-github-lioensky-vcptoolbox": {
       "learning_id": "learn-github-lioensky-vcptoolbox",
@@ -223077,9 +223082,9 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "repository": "goharbor-harbor-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bd2ea52739d07b3f5a0b0d870a15265af3f4f50c7870bb393e101312cd4a4f6",
+      "content_hash": "1ce6f0ca048cf49ed031f5449fe7f4503b85bc4552eb2691ed4b576a8b37dad3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T03:07:56.151Z"
+      "persisted_at": "2026-11-27T21:11:36.086Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor-learnings",
@@ -223089,9 +223094,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for goharbor-harbor-learnings",
       "repository": "goharbor-harbor-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfcd89c884d30117c712fcc69810fca1010f043bc19403da2626664efd040895",
+      "content_hash": "cd1dcf6d1c052b7bc8f78ea0f63f7f21170333b40535f24abf8eab750661a28d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:07:56.417Z"
+      "persisted_at": "2026-11-27T21:11:36.362Z"
     },
     "learn-huggingface-tongyi-mai-z-image-turbo": {
       "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
@@ -296836,8 +296841,8 @@
       "slug": "erkamyaman-rust-anything",
       "platform": "github",
       "source_url": "https://github.com/erkamyaman/rust-anything",
-      "source_version": "a8e35878",
-      "content_hash": "dd55a64d82a840d25e5d8a7ead5714577ae06fe9c0f652668d7659072635478d",
+      "source_version": "bedff729",
+      "content_hash": "5a606e16cc9479738e7f40e75826bd79cd2cddc99f813b241c7af41464c459f0",
       "dossier_path": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
       "promoted_rules": [
@@ -296875,6 +296880,11 @@
           "number": 10775,
           "title": "Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10964,
+          "title": "Lessons from other porting skills: end state, reviewer report, language guides,",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -296882,7 +296892,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:49:39.757Z",
+      "verified_at": "2026-11-27T21:11:19.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -296936,10 +296946,10 @@
       "relative_path": "08_VERIFICATION/erkamyaman-rust-anything-verification-protocol-empirical-defect-shield-for-erkam.md",
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman/rust-anything",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "a8e35878",
-      "content_hash": "8b2b98cff64caf77357e11d9b16a496e206e22c74ad1c46de19016a64fefe954",
+      "source_version": "bedff729",
+      "content_hash": "413f0fa41cd71e0b87b2edd13530326b91c1a1e12847e7fc22b2cf2b97691af0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:49:40.659Z"
+      "persisted_at": "2026-11-27T21:11:20.666Z"
     },
     "rule-9273": {
       "learning_id": "rule-9273",
@@ -296987,9 +296997,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for erkamyaman-rust-anything-learnings",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "921b275b49d418ecc1d757a532dbf8c66a611eb9db7966d671c6bdce7989f26e",
+      "content_hash": "1d8b154762f83ca96f9c586915ca6ee322b0d98fe7fad2a6a01300d6b876c946",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:50:18.555Z"
+      "persisted_at": "2026-11-27T21:11:32.127Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
@@ -359985,10 +359995,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-erkamyaman-rust-anything-quality-verification-intelligence-erkamyaman-rust-anyth.md",
       "title": "Quality & Verification Intelligence: erkamyaman/rust-anything Core Invariants",
       "repository": "erkamyaman/rust-anything",
-      "source_version": "a8e35878",
-      "content_hash": "926b9595681eb17d8a42041250b41c3b1695f4ad6c5ce5e6dbf48222962a6df1",
+      "source_version": "bedff729",
+      "content_hash": "c029add7129af623bdb3c44cc259e8dff21784b133b706c9c05ecbb9576e39ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:49:40.459Z"
+      "persisted_at": "2026-11-27T21:11:20.396Z"
     },
     "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari": {
       "item_id": "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari",
@@ -359998,9 +360008,9 @@
       "title": "Quality & Verification Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "repository": "erkamyaman-rust-anything-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e7245e3c4acb20eec2fa36a11a516f9d3e7effea3061dd25cfc8fb9ab2e5489",
+      "content_hash": "617402db778225efe8712f51bc04fa10d3ac1b68be540796d6d9754bed0c02b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:50:18.337Z"
+      "persisted_at": "2026-11-27T21:11:31.843Z"
     },
     "learn-github-svenstaro-miniserve": {
       "learning_id": "learn-github-svenstaro-miniserve",
@@ -367409,6 +367419,153 @@
       "content_hash": "b04f5a7f672fd458051913e660ea68effde9edafe486e376e7bc1524897a543b",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T20:47:06.874Z"
+    },
+    "rule-10964": {
+      "learning_id": "rule-10964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10964,
+      "title": "Lessons from other porting skills: end state, reviewer report, language guides,",
+      "source_url": "https://github.com/erkamyaman/rust-anything",
+      "source_version": "bedff729",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:11:19.438Z"
+    },
+    "candidate_directive-lessons-from-other-porting-skills-end-state-reviewer-report-language-guides": {
+      "item_id": "candidate_directive-lessons-from-other-porting-skills-end-state-reviewer-report-language-guides",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-82YC-lessons-from-other-porting-skills-end-state-reviewer-report-language-guides.md",
+      "title": "Lessons from other porting skills: end state, reviewer report, language guides,",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3313a0edc89be8d8c12e8bee0bf52c07e67859b22f9b17808f6fe6963a06ce13",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:11:31.579Z"
+    },
+    "learn-github-gatenlp-ultimate-sitemap-parser": {
+      "learning_id": "learn-github-gatenlp-ultimate-sitemap-parser",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "GateNLP/ultimate-sitemap-parser",
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "slug": "gatenlp-ultimate-sitemap-parser",
+      "platform": "github",
+      "source_url": "https://github.com/GateNLP/ultimate-sitemap-parser",
+      "source_version": "6f532e9d",
+      "content_hash": "da3626292f8dd5f3c172b69a617e45512bf3aaaa9fe79d41348346eb859c1a44",
+      "dossier_path": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gatenlp-ultimate-sitemap-parser-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10965,
+          "title": "Preserve alternate links in dictionary exports",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-27T21:11:22.045Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10965": {
+      "learning_id": "rule-10965",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10965,
+      "title": "Preserve alternate links in dictionary exports",
+      "source_url": "https://github.com/GateNLP/ultimate-sitemap-parser",
+      "source_version": "6f532e9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:11:22.045Z"
+    },
+    "candidate_directive-preserve-alternate-links-in-dictionary-exports": {
+      "item_id": "candidate_directive-preserve-alternate-links-in-dictionary-exports",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-84VE-preserve-alternate-links-in-dictionary-exports.md",
+      "title": "Preserve alternate links in dictionary exports",
+      "repository": "gatenlp-ultimate-sitemap-parser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "196b5906f692c962037531a38b4009452013034f740870a43aa956a33f21d42e",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-27T21:11:34.058Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-gatenlp-ultimate-sitemap-parser-search-distribution-intelligence-gatenlp-ultimat.md",
+      "title": "Search & Distribution Intelligence: GateNLP/ultimate-sitemap-parser Core Invariants",
+      "repository": "GateNLP/ultimate-sitemap-parser",
+      "source_version": "6f532e9d",
+      "content_hash": "07fdf8c5faa4cdca39f6aa26a75443f7d3b4194a6e0977f320afd744e787d6b6",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-27T21:11:23.019Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gatenlp-ultimate-sitemap-parse": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gatenlp-ultimate-sitemap-parse",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gatenlp-ultimate-sitemap-parser-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gatenlp-ultimate-sitemap-parser-learnings",
+      "repository": "gatenlp-ultimate-sitemap-parser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39912e5007c6c30fa704582d944829d0602afdb16b57ce2240a190224f3c885a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T21:11:34.619Z"
+    },
+    "rule-10966": {
+      "learning_id": "rule-10966",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10966,
+      "title": "Compile audit resolver patterns once",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "3cc8b5c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:11:26.727Z"
+    },
+    "candidate_directive-compile-audit-resolver-patterns-once": {
+      "item_id": "candidate_directive-compile-audit-resolver-patterns-once",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8680-compile-audit-resolver-patterns-once.md",
+      "title": "Compile audit resolver patterns once",
+      "repository": "goharbor-harbor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9fcf512ca9625389fe68fc1bb7285ee55c47c44741fa84ccaab4b9e61003e942",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T21:11:35.808Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-gatenlp-ultimate-sitemap-parser-learnings-search-distribution-intelligence-gaten.md",
+      "title": "Search & Distribution Intelligence: gatenlp-ultimate-sitemap-parser-learnings Core Invariants",
+      "repository": "gatenlp-ultimate-sitemap-parser-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0542517c6f9b5c9784b76b512186fdad0305894f761a7d30377015ec28dda6d",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-27T21:11:34.353Z"
     }
   },
   "ai-builder-brain": {

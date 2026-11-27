@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:57:53.613Z",
+  "last_updated": "2026-11-27T21:11:35.808Z",
   "directives": [
     {
       "id": "CD-001",
@@ -72538,6 +72538,66 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2D1832-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-82YC",
+      "directive_title": "Lessons from other porting skills: end state, reviewer report, language guides,",
+      "source_repo": "erkamyaman-rust-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-82YC-lessons-from-other-porting-skills-end-state-reviewer-report-language-guides.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-84VE",
+      "directive_title": "Preserve alternate links in dictionary exports",
+      "source_repo": "gatenlp-ultimate-sitemap-parser-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-84VE-preserve-alternate-links-in-dictionary-exports.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-8680",
+      "directive_title": "Compile audit resolver patterns once",
+      "source_repo": "goharbor-harbor-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8680-compile-audit-resolver-patterns-once.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-FB3671",
+      "directive_title": "Lessons from other porting skills: end state, reviewer report, language guides,",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "erkamyaman-rust-anything",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FB3671-lessons-from-other-porting-skills-end-st.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-1507A4",
+      "directive_title": "Preserve alternate links in dictionary exports",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gatenlp-ultimate-sitemap-parser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1507A4-preserve-alternate-links-in-dictionary-e.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-D0C1E3",
+      "directive_title": "Compile audit resolver patterns once",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "goharbor-harbor",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D0C1E3-compile-audit-resolver-patterns-once.md",
       "staged_date": "2026-11-27"
     }
   ]

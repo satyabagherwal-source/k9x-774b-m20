@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-LMUD",
-    "timestamp": "2026-11-26T10:50:32.293Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "8322c8d3d6d2d7c8c245334a40300495c5e77a76e3c581d1d4d82302a4eb6dac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LQUZ",
-    "timestamp": "2026-11-26T10:50:37.499Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "312bc5e0058300bbcf66be44e693b3256cfd5447353eb8c74360847a0ae0ce84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LSWR",
-    "timestamp": "2026-11-26T10:50:40.155Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "8689fe0f13545dce48c5c22c9681a40c7b2186be7a60eb4d64a5d212c2dd409e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-LWW1",
     "timestamp": "2026-11-26T10:50:45.313Z",
     "repository": "StarRocks/starrocks",
@@ -7490,6 +7445,51 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7TUG",
+    "timestamp": "2026-11-27T21:11:19.768Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "5a606e16cc9479738e7f40e75826bd79cd2cddc99f813b241c7af41464c459f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7VVB",
+    "timestamp": "2026-11-27T21:11:22.391Z",
+    "repository": "GateNLP/ultimate-sitemap-parser",
+    "learningId": "learn-github-gatenlp-ultimate-sitemap-parser",
+    "contentHash": "da3626292f8dd5f3c172b69a617e45512bf3aaaa9fe79d41348346eb859c1a44",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-7ZHF",
+    "timestamp": "2026-11-27T21:11:27.075Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

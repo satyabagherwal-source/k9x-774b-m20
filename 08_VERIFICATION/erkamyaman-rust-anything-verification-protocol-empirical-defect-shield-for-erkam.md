@@ -4,22 +4,22 @@
 {
   "source_repository": "erkamyaman/rust-anything",
   "source_url": "https://github.com/erkamyaman/rust-anything",
-  "source_version": "a8e35878",
+  "source_version": "bedff729",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T20:49:40.255Z",
+  "timestamp": "2026-11-27T21:11:20.118Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-erkamyaman-rust-anything",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `a8e35878`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:49:40.255Z`  
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `bedff729`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T21:11:20.118Z`  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `erkamyaman/rust-anything` (Commit: `a8e35878`)
+- **Target Repository**: `erkamyaman/rust-anything` (Commit: `bedff729`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T20:49:38.798Z  
+> **Harvest Timestamp**: 2026-11-27T21:11:18.098Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Rewrite your app in Rust, piece by piece, checked against the original at every step. Works with TypeScript, JavaScript, Python, Go, Ruby, Java, C, PHP, C#, Kotlin and PowerShell.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10133 stars
+- **Stars / Engagement**: 10732 stars
 
 ---
 
@@ -1951,195 +1951,423 @@ pub fn is_default_this_binding(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cf86c53` (2026-11-26)
-**Commit Message**: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu; [REDACTED_EMAIL] as contact
+### Incident Patch 1: `3c96b0d2` (2026-11-27)
+**Commit Message**: Lessons from other porting skills: end state, reviewer report, language guides, evals, skills over MCP
 
-Replaces the Prettier GIF with a live race panel timed to the measured 3.63 s and 0.20 s. Fixes the right-to-left layout (logical sides, code and numbers kept left to right), hydration errors from the external-link script, low-contrast orange text, the dark mobile menu (now light, closes on Escape), wrapping nav links and tabs, and clipped focus rings. Restores dark docs code blocks, orange links, title leads, the dark install band padding and the orange CTA. Adds [REDACTED_EMAIL] to the footer, sponsors section, README, SECURITY, Code of Conduct, and plugin and npm metadata.
+- bridge --end-state replace|bindings|scaffold, kept in rust-anything.json
+- REPORT.md lists the end state, intended differences and kept exports
+- gate notes known-diffs entries added since the last pass, and no longer panics on a shortened Go file
+- ten per-language guides in the skill, installed by setup and shipped in the plugins
+- the MCP server serves the skill over the skills extension (SEP-2640)
+- evals/ with a no-plugin baseline and a runs-in-Rust probe
+- README: how it works, and consulting; descriptions say migrate
 
-**File**: `CODE_OF_CONDUCT.md` (modified, +1/-1)
+**File**: `.claude-plugin/marketplace.json` (modified, +2/-2)
 ```diff
-@@ -32,7 +32,7 @@ someone represents the project elsewhere.
- Report unacceptable behavior to the maintainer, [@erkamyaman](https://github.com/erkamyaman),
- through GitHub. For something you'd rather not post in public, use
- [Report a vulnerability](https://github.com/erkamyaman/rust-anything/security/advisories/new) and
--say it's a conduct report. Every report is reviewed, and the reporter's privacy is respected.
-+say it's a conduct report, or email [hello@rustanything.ai](mailto:hello@rustanything.ai). Every report is reviewed, and the reporter's privacy is respected.
- 
- The maintainer may remove, edit or reject comments, commits, code, issues and other contributions
- that break this code, and may ban, temporarily or permanently, anyone whose behavior is harmful.
+@@ -3,12 +3,12 @@
+   "owner": {
+     "name": "Erkam Yaman"
+   },
+-  "description": "rust-anything: rewrite your app in Rust one piece at a time, and prove it still behaves the same.",
++  "description": "rust-anything: migrate your app to Rust one piece at a time, and prove it still behaves the same.",
+   "plugins": [
+     {
+       "name": "rust-anything",
+       "source": "./plugin",
+-      "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step. Needs the rust-anything CLI on PATH (cargo install rust-anything)."
++      "description": "Migrate your app to Rust, one piece at a time, checked against the original's recorded behavior at every step. Needs the rust-anything CLI on PATH (cargo install rust-anything)."
+     }
+   ]
+ }
 ```
 
-**File**: `README.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +35/-0)
 ```diff
-@@ -401,6 +401,8 @@ commands (see the [FAQ](docs/faq.md)).
-   <a href="https://buymeacoffee.com/erkamyaman"><img src="https://img.shields.io/badge/Buy_me_a_coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy me a coffee"></a>
- </p>
+@@ -2,6 +2,41 @@
  
-+<p align="center">Sponsoring as a company, or anything else? <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a></p>
+ ## Unreleased
+ 
++- `bridge --end-state replace|bindings|scaffold` records what the unit's bindings are for once the
++  port is done: `replace` (the original is deleted after cut-over), `bindings` (callers keep
++  importing it, so the bindings are public API) or `scaffold` (the bindings are deleted at
++  cut-over). It is kept as `end_state` in `rust-anything.json` (the MCP `bridge` tool takes it
++  too), and crates bridged before it keep working without one.
++- The skill reads a short guide for the unit's language before porting (`languages/` next to
++  `SKILL.md`, one file per language): how errors, null, numbers, strings, collections and classes
++  map to Rust, and the traps that made recorded cases differ in this repository. `setup` installs
++  them with the skill, the plugins ship them, and the MCP `port_unit` prompt takes a `language`
++  argument that adds the file. The skill now asks the end state before `bridge`, and says a port
++  keeps behavior, bugs included: a fix lands in its own change after `gate` passes.
++- `evals/` measures what the skill and tool add over an agent without them, with
++  `claude plugin eval` and a no-plugin baseline: a TypeScript, a Python and a Go module whose
++  callers must keep working while the functions run in Rust. `evals/score.py` checks the callers
++  are unchanged, replays held-out inputs the agent never saw, and proves each call enters Rust.
++  No results are published until a full run on stated hardware (`docs/evals.md`).
++- The MCP server serves the workflow skill over MCP's skills extension
++  (`io.modelcontextprotocol/skills`, SEP-2640): `skills/list`, `skills/get` and `resources/read`
++  at `skill://rust-anything/`, with each file's SHA-256 digest and size. A client that supports the
++  extension gets the skill from `rust-anything mcp` alone, without a plugin.
++- `gate` no longer panics on a Go unit whose source file got shorter after `bridge` (the manifest's
++  line pointed past the end of the file, as when the package is rewritten to call the Rust
++  binding).
++- The README says how the tool decides a port is done, what reports and what migrates, how long a
++  run takes, how to plan with no model and port with a strong one, and which agents it supports,
++  plus a line about consulting for Rust migrations.
++- `docs/install.md` lists every way to give an agent the skill: `setup`, the Claude Code and Codex
++  plugins, `npx skills add erkamyaman/rust-anything`, a copy by hand (with each agent's skills
++  folder), and the MCP server by hand.
++- `report` writes what a reviewer needs into `REPORT.md`: the end state, every `known-diffs.jsonl`
++  entry with its reason ("Intended differences"), and the exports kept in the original language
++  with theirs.
++- `gate`'s behavior line counts the `known-diffs.jsonl` entries added since the last passing gate,
++  so a behavior change that lands in the same change as the port is visible.
 +
- ## Contributing
+ - `analyze` also flags Python bitwise augmented assignments (`&=`, `|=`, `^=`, `>>=`) as
+   `Number semantics`, alongside `&`, `|`, `^` and `>>` (and as `//=`, `%=`, `**=` and `<<=`
+   already are for division and integer semantics) (#768 by @brixtonpham).
+```
+
+**File**: `Cargo.lock` (modified, +78/-0)
+```diff
+@@ -85,6 +85,15 @@ version = "2.13.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
  
- Issues and pull requests are welcome; [CONTRIBUTING.md](./CONTRIBUTING.md) covers the setup, where
-```
-
-**File**: `SECURITY.md` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@ Security fixes go into the latest release. Upgrade with `cargo install rust-anyt
++[[package]]
++name = "block-buffer"
++version = "0.10.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
++dependencies = [
++ "generic-array",
++]
++
+ [[package]]
+ name = "bstr"
+ version = "1.13.1"
+@@ -191,6 +200,15 @@ version = "0.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "417bef24afe1460300965a25ff4a24b8b45ad011948302ec221e8a0a81eb2c79"
  
- Please report it privately, not in a public issue: use
- [Report a vulnerability](https://github.com/erkamyaman/rust-anything/security/advisories/new) on
--the repository's Security tab.
-+the repository's Security tab, or email [hello@rustanything.ai](mailto:hello@rustanything.ai).
++[[package]]
++name = "cpufeatures"
++version = "0.2.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
++dependencies = [
++ "libc",
++]
++
+ [[package]]
+ name = "crossbeam-deque"
+ version = "0.8.8"
+@@ -216,6 +234,26 @@ version = "0.8.23"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a31eee39dddec8330830986fcd7625edb5a24ec90ea038215273bbc3adb08ac6"
  
- Include what you found, how to reproduce it, which version and platform you used, and what an
- attacker could do with it. You'll get a reply within a few days, and you'll hear when a fix is out.
-```
-
-**File**: `directory/.claude-plugin/plugin.json` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
-   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP and C#. Uses the rust-anything CLI (cargo install rust-anything or npm install -g rust-anything).",
-   "author": {
-     "name": "Erkam Yaman",
-+    "email": "hello@rustanything.ai",
-     "url": "https://github.com/erkamyaman"
-   },
-   "homepage": "https://github.com/erkamyaman/rust-anything",
-```
-
-**File**: `npm/rust-anything/package.json` (modified, +5/-0)
-```diff
-@@ -10,6 +10,11 @@
-     "url": "git+https://github.com/erkamyaman/rust-anything.git"
-   },
-   "homepage": "https://github.com/erkamyaman/rust-anything",
-+  "author": {
-+    "name": "Erkam Yaman",
-+    "email": "hello@rustanything.ai",
-+    "url": "https://github.com/erkamyaman"
-+  },
-   "bin": {
-     "rust-anything": "bin/rust-anything.js"
-   },
-```
-
-**File**: `plugin/.claude-plugin/plugin.json` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
-   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP, C# and PowerShell.",
-   "author": {
-     "name": "Erkam Yaman",
-+    "email": "hello@rustanything.ai",
-     "url": "https://github.com/erkamyaman"
-   },
-   "homepage": "https://github.com/erkamyaman/rust-anything",
-```
-
-**File**: `plugin/.codex-plugin/plugin.json` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
-   "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP, C# and PowerShell.",
-   "author": {
-     "name": "Erkam Yaman",
-+    "email": "hello@rustanything.ai",
-     "url": "https://github.com/erkamyaman"
-   },
-   "homepage": "https://github.com/erkamyaman/rust-anything",
-```
-
-**File**: `website/components/landing/Home.tsx` (modified, +52/-8)
-```diff
-@@ -14,15 +14,20 @@ const HOW_DOCS = [
++[[package]]
++name = "crypto-common"
++version = "0.1.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
++dependencies = [
++ "generic-array",
++ "typenum",
++]
++
++[[package]]
++name = "digest"
++version = "0.10.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
++dependencies = [
++ "block-buffer",
++ "crypto-common",
++]
++
+ [[package]]
+ name = "displaydoc"
+ version = "0.2.7"
+@@ -251,6 +289,16 @@ version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
++[[package]]
++name = "generic-array"
++version = "0.14.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
++dependencies = [
++ "typenum",
++ "version_check",
++]
++
+ [[package]]
+ name = "globset"
+ version = "0.4.21"
+@@ -415,6 +463,12 @@ dependencies = [
+  "ucd-trie",
  ]
  
- function Head({ id, title, desc, locale, dark }: { id: string; title: string; desc: string; locale: string; dark?: boolean }) {
--  const cut = /^(.+?[.。!?])\s+([\s\S]+)$/.exec(desc)
--  const lead = cut ? cut[1] : ''
--  const rest = cut ? cut[2] : desc
-+  const cut = /^(.+?[.。!?])\s*([\s\S]+)$/.exec(desc)
-+  const short = !!cut && cut[1].length <= 64 && !cut[1].includes('`')
-+  const lead = short && cut ? cut[1] : ''
-+  const rest = short && cut ? cut[2] : desc
-   return (
-     <div className={`section-head${dark ? ' on-dark' : ''}`}>
-       <h2 id={id} className="section-title">
-         {title}
--        {/[.。!?]$/.test(title) ? ' ' : '. '}
--        {lead && <span className="soft">{lead}</span>}
-+        {lead && (
-+          <>
-+            {/[.。!?]$/.test(title) ? ' ' : /[\u3040-\u30ff\u4e00-\u9fff]/.test(title) ? '。' : '. '}
-+            <span className="soft">{lead}</span>
-+          </>
-+        )}
-       </h2>
-       <p className="section-desc">
-         <Rich text={rest} locale={locale} />
-@@ -95,9 +100,45 @@ export default function Home({ hero, install, locale = 'en' }: { hero: React.Rea
-       <section className="section" aria-labelledby="prettier-title">
-         <div className="wrap">
-           <Head id="prettier-title" title={m.prettierTitle} desc={m.prettierDesc} locale={locale} />
--          <a href="https://github.com/erkamyaman/rust-anything/blob/main/docs/real-world.md#prettier" className="prettier-demo">
--            <img src="/prettier.gif" width={820} alt={m.prettierAlt} loading="lazy" />
--          </a>
-+          <div className="race">
-+            <div className="race-card">
-+              <div className="race-lane">
-+                <div className="race-top">
-+                  <b>Prettier</b>
-+                  <span className="race-chip">Node 24</span>
-+                </div>
-+                <code className="race-cmd">$ prettier &lt;file&gt;</code>
-+                <div className="race-time">3.63 s</div>
-+                <div className="race-bar">
-+                  <span className="slow" />
-+                </div>
-+                <div className="race-meta">59 / 59 {m.raceFiles}</div>
-+              </div>
-+              <div className="race-lane rust">
-+                <div className="race-top">
-+                  <b>
-+                    <span className="rust-word">Rust</span> port
-+                  </b>
-+                  <span className="race-chip">one binary</span>
-+                </div>
-+                <code className="race-cmd">$ prettier-rs &lt;file&gt;</code>
-+                <div className="race-time">0.20 s</div>
-+                <div className="race-bar">
-+                  <span className="fast" />
-+                </div>
-+                <div className="race-meta">59 / 59 {m.raceFiles}</div>
-+              </div>
-+            </div>
-+            <div className="race-result">
-+              <span className="what">{m.raceSame}</span>
-+              <code>59 / 59</code>
-+              <span className="state ok">match</span>
-+              <span className="race-x">
-+                <b>18x</b> {m.raceFaster}
-+              </span>
-+              <a href="https://github.com/erkamyaman/rust-anything/blob/main/docs/real-world.md#prettier">{m.raceHow}</a>
-+            </div>
-+          </div>
-         </div>
-       </section>
++[[package]]
++name = "libc"
++version = "0.2.191"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
++
+ [[package]]
+ name = "litemap"
+ version = "0.8.3"
+@@ -797,6 +851,7 @@ dependencies = [
+  "regex",
+  "serde",
+  "serde_json",
++ "sha2",
+  "toml_edit",
+  "tree-sitter",
+  "tree-sitter-c",
+@@ -882,6 +937,17 @@ dependencies = [
+  "zmij",
+ ]
  
-@@ -386,6 +427,9 @@ export default function Home({ hero, install, locale = 'en' }: { hero: React.Rea
-               {m.buyCoffee}
-             </a>
-           </div>
-+          <p className="sponsor-mail">
-+            {m.sponsorEmail} <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a>
-+          </p>
-         </div>
-       </section>
++[[package]]
++name = "sha2"
++version = "0.10.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
++dependencies = [
++ "cfg-if",
++ "cpufeatures",
++ "digest",
++]
++
+ [[package]]
+ name = "shlex"
+ version = "2.0.1"
+@@ -1134,6 +1200,12 @@ dependencies = [
+  "tree-sitter-language",
+ ]
  
++[[package]]
++name = "typenum"
++version = "1.20.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
++
+ [[package]]
+ name = "ucd-trie"
+ version = "0.1.7"
+@@ -1185,6 +1257,12 @@ version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
+ 
++[[package]]
++name = "version_check"
++version = "0.9.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
++
+ [[package]]
+ name = "walkdir"
+ version = "2.5.0"
+```
+
+**File**: `Cargo.toml` (modified, +2/-1)
+```diff
+@@ -2,7 +2,7 @@
+ name = "rust-anything"
+ version = "5.0.1"
+ edition = "2024"
+-description = "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step. TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP, C# and PowerShell"
++description = "Migrate your app to Rust, one piece at a time, checked against the original's recorded behavior at every step. TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP, C# and PowerShell"
+ license = "MIT OR Apache-2.0"
+ readme = "README.md"
+ rust-version = "1.97"
+@@ -27,6 +27,7 @@ regex = "1"
+ serde = { version = "1", features = ["derive"] }
+ # float_roundtrip: recorded floats must survive parsing bit for bit.
+ serde_json = { version = "1", features = ["float_roundtrip", "preserve_order", "unbounded_depth"] }
++sha2 = "0.10"
+ toml_edit = "0.25"
+ tree-sitter = "0.27.2"
+ tree-sitter-c = "0.24.2"
+```
+
+**File**: `README.md` (modified, +15/-1)
+```diff
+@@ -17,7 +17,7 @@
+ </p>
+ 
+ <p align="center">
+-Rewrite your app in Rust, and prove it still behaves the same.
++Migrate your app to Rust, and prove it still behaves the same.
+ </p>
+ 
+ <p align="center">
+@@ -74,6 +74,8 @@ Rewrite your app in Rust, and prove it still behaves the same.
+ 
+ <p align="center">Sponsoring as a company, or anything else? <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a></p>
+ 
++<p align="center">Moving a codebase to Rust? I offer consulting for Rust migrations: <a href="mailto:hello@rustanything.ai">hello@rustanything.ai</a></p>
++
+ ## Quick start
+ 
+ Paste this into your coding agent:
+@@ -92,6 +94,18 @@ rust-anything setup           # adds it to Claude Code, Codex, Cursor, Gemini CL
+ > [!TIP]
+ > **Agents:** read [rustanything.ai/llms.txt](https://rustanything.ai/llms.txt) for the install steps, every command and the porting workflow.
+ 
++## How it works
++
++**What counts as done.** Behavior, not your tests. `record` runs the original on generated and given inputs and saves what each call returns, throws and prints. A port is done when `gate` passes: every recorded case matches, and fmt, clippy, `cargo test`, the `unsafe` check, the stub check and the check for recorded answers pasted into the port all pass. Your own tests run too.
++
++**Report or migrate, you pick.** `analyze` and `profile` only report: a ranked plan of what to port, and what is hot under a real workload. They are plain commands, so the report costs no tokens. `go` migrates one unit: it bridges the hottest function, records it, hands the port to your agent, then builds, diffs and gates it, and switches it on only when everything matches (TS/JS, Python and PowerShell; `disable` switches it back off).
++
++**How long a run takes.** One `go` run ports one unit, with at most `--rounds` agent turns (3 by default): one for the port, then one per failing diff or gate. A whole app is one run per unit, so you can stop after any of them.
++
++**Cheap model for the plan, strong model for the port.** The plan needs no model. For the port, pass any agent command: `rust-anything go --agent "claude --model <model>" -- <workload>`.
++
++**Agents.** `rust-anything setup` adds it to Claude Code, Codex, Cursor, Gemini CLI and OpenCode. Any other MCP client can run `rust-anything mcp`, and the skill also installs on its own with `npx skills add erkamyaman/rust-anything` (see [install](docs/install.md)).
++
+ ## License
+ 
+ Licensed under either of [MIT](./LICENSE-MIT) or [Apache-2.0](./LICENSE-APACHE), at your option. © [Erkam Yaman](https://github.com/erkamyaman). Ports and generated code in your repository are yours.
+```
+
+**File**: `directory/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "rust-anything",
+   "version": "5.0.1",
+-  "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP and C#. Uses the rust-anything CLI (cargo install rust-anything or npm install -g rust-anything).",
++  "description": "Migrate your app to Rust, one piece at a time, checked against the original's recorded behavior at every step: profile, bridge, record, diff, bench, shadow and gate, for TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP and C#, with whole-app record and replay for apps in each; profile covers TypeScript/JavaScript, Python, Go, Java and Ruby, and shadow covers every language but PHP and C#. Uses the rust-anything CLI (cargo install rust-anything or npm install -g rust-anything).",
+   "author": {
+     "name": "Erkam Yaman",
+     "email": "hello@rustanything.ai",
+```
+
+**File**: `directory/skills/rust-anything/SKILL.md` (modified, +28/-45)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ name: rust-anything
+-description: Port TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP, C# and PowerShell to Rust with the rust-anything CLI or MCP tools, from one hot function up to a whole app rewritten as a pure Rust app - profile, plan, bridge one unit at a time, record the original's behavior, port, diff, bench, shadow and gate; batch hot loops so they run in Rust on all cores. Use when asked to rewrite, port or migrate code or an app to Rust, to plan such a migration, or to make slow code faster with Rust.
++description: Port or migrate TypeScript/JavaScript, Python, C, Go, Ruby, Java, Kotlin, PHP, C# and PowerShell to Rust with the rust-anything CLI or MCP tools, from one hot function up to a whole app rewritten as a pure Rust app - profile, plan, bridge one unit at a time, record the original's behavior, port, diff, bench, shadow and gate; batch hot loops so they run in Rust on all cores. Use when asked to rewrite, port or migrate code or an app to Rust, to plan such a migration, or to make slow code faster with Rust.
+ ---
+ 
+ # Migration to Rust with rust-anything
+@@ -14,14 +14,14 @@ the decisions, researches the dependencies, records the whole app, puts a Rust f
+ of the original, runs the steps below for every unit, then lifts the app to a standalone Rust
+ binary (or, for a library, one pure Rust crate). CLIs, HTTP servers and libraries.
+ 
+-Languages: TypeScript/JavaScript, Python, C, Go, Ruby, Java. The language is detected; `--lang`
+-overrides it. The steps are the same everywhere; only the bridge differs (napi-rs or wasm for
+-TS, PyO3, a C ABI, cgo, a magnus extension, JNI), and the original's callers keep their API.
+-For PHP: `analyze`, and for a whole app `app record`, `app replay` and
+-`app front-door` (CLIs, and servers run with `php -S 127.0.0.1:{port} router.php`); `bridge` does not
+-take PHP units yet, so tell the user before planning a PHP port past the front door. C# works
+-the same way: record a built app (`dotnet out/app.dll`, servers with
+-`--urls http://127.0.0.1:{port}`); `bridge` does not take C# units yet.
++The language is detected; `--lang` overrides it. The steps are the same for every language; the
++bridge and the traps differ, and the original's callers keep their API. **Before writing a port,
++read the file for the unit's language** in [languages/](languages/): how its constructs map to
++Rust, and the traps that made recorded cases differ.
++[typescript.md](languages/typescript.md) (TS and JS), [python.md](languages/python.md),
++[go.md](languages/go.md), [ruby.md](languages/ruby.md), [java.md](languages/java.md),
++[kotlin.md](languages/kotlin.md), [c.md](languages/c.md), [php.md](languages/php.md),
++[csharp.md](languages/csharp.md), [powershell.md](languages/powershell.md).
+ 
+ Tools: the `rust-anything` CLI, or the same steps as MCP tools (`rust-anything mcp`): `go`,
+ `profile`, `analyze`, `bridge`, `refresh`, `record`, `build`, `diff`, `bench`, `shadow`, `gate`,
+@@ -83,25 +83,31 @@ rust-anything analyze <repo> --json            # you: schema rust-anything/analy
+ - Call out `keep` units (UI, editor code: they stay in the source language), `blocked` units and
+   their reason, and dependencies with fit `none` or `unknown`. Do not hand-roll a missing crate
+   silently: flag it.
+-- **Wait for the user's approval of the plan and of the first unit.**
++- Before bridging any unit, ask the user its **end state**, which `bridge --end-state` records:
++  - `replace`: the Rust replaces the original, which is deleted after cut-over.
++  - `bindings`: callers keep importing the unit through the bindings for good, so the binding
++    surface is public API.
++  - `scaffold`: the bindings are temporary and are deleted at cut-over.
++- **Wait for the user's approval of the plan, the first unit and its end state.**
+ 
+ ## 2. Port one unit
+ 
+ ```sh
+-rust-anything bridge <repo> <unit-id>          # crate in <repo>/rust/<name>; never overwrites
++rust-anything bridge <repo> <unit-id> --end-state <replace|bindings|scaffold>   # crate in <repo>/rust/<name>; never overwrites
+ rust-anything record <crate>                   # the original's behavior on edge-case inputs -> cases.jsonl
+ ```
+ 
+ - If the original has tests, record their calls too: `record <crate> --from-tests -- npx jest`
+   (TS/JS, any runner) or `-- pytest` (Python). Every call the suite makes to the unit's exported
+-  functions becomes a case; the source is restored afterwards. Exports that are not function
+-  declarations (`export const f = () => ...`) are listed as not captured.
++  functions becomes a case; the source is restored afterwards.
+ - Add real-world inputs with `--inputs cases.jsonl` (`{"fn": name, "args": [...]}` per line) when
+   the generated ones cannot reach the interesting paths (structured arguments, domain strings).
+-- TS that cannot run directly in Node (extensionless imports, path aliases): record from built
+-  output with `--module dist/x.mjs`, or pass `--node-arg=--import=tsx`.
+ - If 
+```
+
+**File**: `directory/skills/rust-anything/languages/c.md` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++# C ports
++
++The bridge is `extern "C"` functions with the original names and a header, called directly with
++no crossing cost, so `bench` compares the code itself. Scalars keep their C
++width and sign (`c_int`, `c_long`, which is 32 bits on Windows, `u8`, `usize`); a port function
++returns `T` as the C one does. `profile` does not cover C (use `perf`), and `--batch` is not for C.
++
++## Constructs
++
++- **Errors and undefined behavior**: inputs recorded as `crash:` (a signal in the original) are
++  undefined behavior, and any result passes. Undefined behavior that does not crash
++  (`ispunct(1000)` reads past glibc's table and returns 1) is recorded like a real result: remove
++  that case from `cases.jsonl` by hand and tell the user.
++- **Pointers**: a byte pointer with a length parameter is `&[u8]` (or `&mut [u8]` when the
++  function writes it), a pointer to one scalar is `Option<&mut T>`, and a returned pointer into a
++  parameter is its offset (`Option<usize>`). A `char **` / `const char **` the function points into
++  the first `char` string argument is `Option<&mut Option<usize>>` (the offset into it). A struct
++  of scalar fields passed or returned by value is a `#[repr(C)]` struct at the crate root
++  (`crate::AVRational`), and an object of its fields in cases.
++- **Strings**: `const char *` is `Option<&[u8]>`, which costs a `strlen` per argument. Where that
++  dominates (short-string helpers), type the parameter `Option<crate::CChars<'_>>` in `port.rs`
++  and run `refresh`: the port reads the bytes as it goes (`next`, `peek`, `to_bytes`).
++- **Blocked shapes**: contexts, other structs, other `**`, other returned pointers, function
++  pointers and variadic functions stay in C: bridge a small wrapper with plain arguments, and say
++  so.
++- **Integers**: unsigned arithmetic wraps (`wrapping_*`); signed overflow and division by zero are
++  undefined, so recorded cases there crash or say nothing.
++
++## Traps
++
++- **libc edges**: `strtod("-")` converts nothing and returns `+0.0`, not `-0.0`; `strtol` with
++  base 0 reads `077` as octal and `0x` without a hex digit as `0`; glibc's `toupper(-128)` is
++  `128`.
++- **Target-dependent C** (inline assembly, `volatile` hardware access, bitfields, `#pragma pack`,
++  integers cast to addresses): a recording on this machine says nothing about the target. Keep it
++  in C and port the portable logic around it.
++- **Macros**: the parser cannot read functions defined through macros, and the plan marks those
++  units partial.
++
++## Recording
++
++- In `--inputs`, give buffers as hex text (a number means that many zero bytes, `null` is `NULL`)
++  and leave length parameters out; recorded results then hold the return value and what the
++  function wrote. For `char **` give the starting offset, `true` for a `NULL` start, or `null` for
++  a `NULL` `**`.
++- Pass the project's build flags in `CFLAGS` (`-DHAVE_CONFIG_H`, `-I<root>`) when its sources need
++  them, and check that the originals compile before reading anything into a failed `record`.
 ```
 
 ---
 
-### Incident Patch 2: `a8e35878` (2026-11-26)
-**Commit Message**: fix(mcp): name a required path that is not a string instead of calling it missing (#688)
+### Incident Patch 2: `086e4f36` (2026-11-27)
+**Commit Message**: fix(analyze): flag Python bitwise &=, |=, ^= and >>= as Number semantics (#768)
 
 **File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
@@ -2147,197 +2375,175 @@ Replaces the Prettier GIF with a live race panel timed to the measured 3.63 s an
  
  ## Unreleased
  
-+- Every MCP tool's required path (`root`, `repo` or `crate`) that is there but not a string is
-+  refused with `` `root` must be a string, not 5 `` instead of `` missing `root` ``. An absent or
-+  `null` path still says `` missing `root` `` (#685, #688 by @susheelg1197).
- - The MCP `bridge` and `app_wire` tools refuse a `unit` that is not a string with
-   `` `unit` must be a string, not 5 `` instead of `` missing `unit` ``, and `bridge` refuses a `name`
-   that is not a string instead of writing the bridge under the default name. A missing or `null`
++- `analyze` also flags Python bitwise augmented assignments (`&=`, `|=`, `^=`, `>>=`) as
++  `Number semantics`, alongside `&`, `|`, `^` and `>>` (and as `//=`, `%=`, `**=` and `<<=`
++  already are for division and integer semantics) (#768 by @brixtonpham).
+ - `analyze` unit notes say "1 parse error", "1 npm dependency not in the crate table: check it by
+   hand" and "1 import uses aliases or virtual modules and was not followed" when the count is one,
+   instead of the plural (#767 by @brixtonpham).
 ```
 
-**File**: `src/mcp.rs` (modified, +20/-2)
+**File**: `src/lang/python.rs` (modified, +8/-2)
 ```diff
-@@ -828,8 +828,7 @@ fn opt_bool(args: &Value, key: &str) -> Result<Option<bool>> {
- 
- fn call(name: &str, args: &Value) -> Result<Value> {
-     let path = |key: &str| -> Result<PathBuf> {
--        args[key]
--            .as_str()
-+        opt_string(args, key)?
-             .map(PathBuf::from)
-             .with_context(|| format!("missing `{key}`"))
-     };
-@@ -1317,6 +1316,25 @@ mod tests {
-         assert_eq!(err, "`ready` must be a string, not 42");
-     }
- 
-+    #[test]
-+    fn a_required_path_that_is_not_a_string_is_named_not_reported_missing() {
-+        // Issue #685: `"root": 5` was reported as `missing `root``, which sends the caller looking
-+        // for a typo in the key instead of the value.
-+        let err = |args: Value| call("analyze", &args).unwrap_err().to_string();
-+        assert_eq!(err(json!({ "root": 5 })), "`root` must be a string, not 5");
-+        assert_eq!(err(json!({})), "missing `root`");
-+        assert_eq!(err(json!({ "root": null })), "missing `root`");
-+        let err = |tool: &str, args: Value| call(tool, &args).unwrap_err().to_string();
-+        assert_eq!(
-+            err("app_lift", json!({ "repo": true })),
-+            "`repo` must be a string, not true"
-+        );
-+        assert_eq!(
-+            err("package", json!({ "crate": ["x"] })),
-+            "`crate` must be a string, not [\"x\"]"
-+        );
-+    }
-+
+@@ -355,7 +355,9 @@ pub fn scan(source: &str) -> FileFacts {
+             match op {
+                 "//" | "%" | "//=" | "%=" => add(&mut facts, Risk::DivisionSemantics, node),
+                 "**" | "**=" | "<<" | "<<=" => add(&mut facts, Risk::IntegerSemantics, node),
+-                "&" | "|" | "^" | ">>" => add(&mut facts, Risk::NumberSemantics, node),
++                "&" | "|" | "^" | ">>" | "&=" | "|=" | "^=" | ">>=" => {
++                    add(&mut facts, Risk::NumberSemantics, node)
++                }
+                 _ => {}
+             }
+         }
+@@ -1635,13 +1637,17 @@ mod tests {
      #[test]
-     fn a_wrong_type_argument_is_classified_as_invalid_arguments_through_handle() {
-         // The type error keeps the machine-readable code a missing argument has, and a quoted value that
+     fn scans_risks_and_imports() {
+         let facts = scan(
+-            "import os\nfrom .util import helper\nimport re\nx = 7 // 2\nre.compile(r'(?<=a)b')\nfor i in range(3): pass\n",
++            "import os\nfrom .util import helper\nimport re\nx = 7 // 2\nx &= 0xff\nx |= 1\nx ^= 2\nx >>= 1\nre.compile(r'(?<=a)b')\nfor i in range(3): pass\n",
+         );
+         let specs: Vec<&str> = facts.imports.iter().map(|i| i.specifier.as_str()).collect();
+         assert!(
+             specs.contains(&"os") && specs.contains(&".util") && specs.contains(&".util.helper")
+         );
+         assert!(facts.risks.contains_key(&Risk::DivisionSemantics));
++        assert_eq!(
++            facts.risks.get(&Risk::NumberSemantics).map(Vec::as_slice),
++            Some(&[5, 6, 7, 8][..])
++        );
+         assert!(facts.risks.contains_key(&Risk::RegexSyntax));
+         assert_eq!(facts.loops, 1);
+     }
 ```
 
 ---
 
-### Incident Patch 3: `682438e8` (2026-11-26)
-**Commit Message**: fix(mcp): refuse a bridge or app_wire unit, or a bridge name, that is not a string (#687)
+### Incident Patch 3: `8a3f7e3a` (2026-11-27)
+**Commit Message**: fix(analyze): pick singular or plural in unit parse-error, dependency and import notes (#767)
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -2,6 +2,11 @@
+@@ -2,6 +2,9 @@
  
  ## Unreleased
  
-+- The MCP `bridge` and `app_wire` tools refuse a `unit` that is not a string with
-+  `` `unit` must be a string, not 5 `` instead of `` missing `unit` ``, and `bridge` refuses a `name`
-+  that is not a string instead of writing the bridge under the default name. A missing or `null`
-+  `unit` still says `` missing `unit` ``. A wrong-type argument to any MCP tool now gets the
-+  `invalid_arguments` code, not retryable, instead of `failed` (#684, #687 by @susheelg1197).
- - `docs/whole-apps.md` says six of the seven `app` commands are MCP tools and that `app shadow` is
-   CLI only, instead of "All six are MCP tools too" (#672, #674 by @XiaoBinGan).
- - The MCP `app_record` tool refuses a `ready`, `name`, `db_reset` or `db_dump` that is neither a
++- `analyze` unit notes say "1 parse error", "1 npm dependency not in the crate table: check it by
++  hand" and "1 import uses aliases or virtual modules and was not followed" when the count is one,
++  instead of the plural (#767 by @brixtonpham).
+ - `record`, `diff` and `bench` on a Java unit use the `CLASSPATH` variable for classes from outside
+   the source tree (a Gradle or Maven module's libraries). `javac` already read it, but the driver
+   ran with its own `-cp`, so every case recorded `NoClassDefFoundError` instead of a result. When
 ```
 
-**File**: `src/mcp.rs` (modified, +89/-3)
+**File**: `src/analyze.rs` (modified, +70/-10)
 ```diff
-@@ -223,6 +223,14 @@ struct FailureKind {
- 
- /// Checked in order; the first match wins, `failed` otherwise.
- const FAILURES: &[FailureKind] = &[
-+    // An argument of the wrong type (`opt_string`, `req_string`, `opt_u64`): checked first, since the
-+    // value it quotes may contain text another rule matches, such as "still running after".
-+    FailureKind {
-+        code: "invalid_arguments",
-+        retryable: false,
-+        matches: |t| t.starts_with('`') && t.contains("` must be ") && !t.contains('\n'),
-+        next: None,
-+    },
-     FailureKind {
-         code: "timed_out",
-         retryable: true,
-@@ -762,6 +770,12 @@ fn opt_string(args: &Value, key: &str) -> Result<Option<String>> {
+@@ -775,21 +775,27 @@ fn score(u: usize, ctx: &Ctx) -> UnitReport {
+     let reasons = notes.clone();
+     if unit.parse_errors > 0 {
+         notes.push(format!(
+-            "{} parse errors: results for this unit are partial.",
+-            unit.parse_errors
++            "{}: results for this unit are partial.",
++            crate::report::count(unit.parse_errors, "parse error")
+         ));
      }
- }
- 
-+/// A string argument the tool cannot run without: absent or `null` is "missing", any other type is
-+/// refused by name, so `"unit": 5` is not reported as if `unit` had not been sent.
-+fn req_string(args: &Value, key: &str) -> Result<String> {
-+    opt_string(args, key)?.with_context(|| format!("missing `{key}`"))
-+}
+     if unknown_deps > 0 {
+-        notes.push(format!(
+-            "{unknown_deps} {} dependencies not in the crate table: check them by hand.",
+-            ctx.lang.registry()
+-        ));
++        let reg = ctx.lang.registry();
++        notes.push(if unknown_deps == 1 {
++            format!("1 {reg} dependency not in the crate table: check it by hand.")
++        } else {
++            format!("{unknown_deps} {reg} dependencies not in the crate table: check them by hand.")
++        });
+     }
+     if unit.unresolved > 0 {
+-        notes.push(format!(
+-            "{} imports use aliases or virtual modules and were not followed.",
+-            unit.unresolved
+-        ));
++        notes.push(if unit.unresolved == 1 {
++            "1 import uses aliases or virtual modules and was not followed.".into()
++        } else {
++            format!(
++                "{} imports use aliases or virtual modules and were not followed.",
++                unit.unresolved
++            )
++        });
+     }
+     if cycle.len() > 1 {
+         let others: Vec<&str> = cycle
+@@ -1347,4 +1353,58 @@ mod tests {
+     fn sorts_packages_topologically() {
+         assert_eq!(topological(&[vec![1], vec![], vec![0, 1]]), [1, 0, 2]);
+     }
 +
- fn opt_u64(args: &Value, key: &str) -> Result<Option<u64>> {
-     match args.get(key) {
-         None | Some(Value::Null) => Ok(None),
-@@ -865,10 +879,10 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-             let force = opt_bool(args, "force")?.unwrap_or(false);
-             serde_json::to_value(bridge::bridge(&bridge::Options {
-                 root: &root,
--                unit: args["unit"].as_str().context("missing `unit`")?,
-+                unit: &req_string(args, "unit")?,
-                 kind,
-                 out: opt_path("out"),
--                name: args["name"].as_str().map(str::to_string),
-+                name: opt_string(args, "name")?,
-                 force,
-                 keep: strings("keep"),
-                 lang: None,
-@@ -1250,7 +1264,7 @@ fn call(name: &str, args: &Value) -> Result<Value> {
-             let repo = path("repo")?;
-             serde_json::to_value(front_door::wire(&front_door::WireOptions {
-                 repo: &repo,
--                unit: args["unit"].as_str().context("missing `unit`")?,
-+                unit: &req_string(args, "unit")?,
-                 commands: &strings("commands"),
-                 routes: &strings("routes"),
-                 skip_gate: opt_bool(args, "skip_gate")?.unwrap_or(false),
-@@ -1303,6 +1317,60 @@ mod tests {
-         assert_eq!(err, "`ready` must be a string, not 42");
-     }
- 
 +    #[test]
-+    fn a_wrong_type_argument_is_classified_as_invalid_arguments_through_handle() {
-+        // The type error keeps the machine-readable code a missing argument has, and a quoted value that
-+        // reads like a timeout is not reported as retryable.
-+        for arguments in [
-+            json!({ "root": ".", "unit": 5, "kind": "napi" }),
-+            json!({ "root": ".", "unit": { "x": "still running after 5s" }, "kind": "napi" }),
++    fn unit_notes_use_singular_for_one_parse_error_unknown_dep_or_unresolved_import() {
++        let root = std::env::temp_dir().join(format!("ra-unit-notes-{}", std::process::id()));
++        let _ = std::fs::remove_dir_all(&root);
++        std::fs::create_dir_all(root.join("src/errs")).unwrap();
++        for (path, text) in [
++            ("package.json", r#"{"name":"t"}"#),
++            ("src/err1.ts", "export const x = (\n"),
++            ("src/errs/a.ts", "export const a = (\n"),
++            ("src/errs/b.ts", "export const b = (\n"),
++            (
++                "src/one.ts",
++                "import 'mystery-pkg-1'\nimport 'virtual:mod-1'\nexport const x = 1\n",
++            ),
++            (
++                "src/two.ts",
++                "import 'mystery-pkg-1'\nimport 'mystery-pkg-2'\nimport 'virtual:mod-1'\nimport 'virtual:mod-2'\nexport const y = 2\n",
++            ),
 +        ] {
-+            let response = handle(&json!({ "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-+                "params": { "name": "bridge", "arguments": arguments } }))
-+            .unwrap();
-+            let s = &response["result"]["structuredContent"];
-+            assert_eq!(s["code"], "invalid_arguments", "{s}");
-+            assert_eq!(s["retryable"], false, "{s}");
++            std::fs::write(root.join(path), text).unwrap();
++        }
++        let report = analyze(&root).unwrap();
++        std::fs::remove_dir_all(&root).unwrap();
++        for (id, expected) in [
++            (
++                "src/err1.ts",
++                "1 parse error: results for this unit are partial.",
++            ),
++            (
++                "src/errs/",
++                "2 parse errors: results for this unit are partial.",
++            ),
++            (
++                "src/one.ts",
++                "1 npm dependency not in the crate table: check it by hand.",
++            ),
++            (
++                "src/one.ts",
++                "1 import uses aliases or virtual modules and was not followed.",
++            ),
++            (
++                "src/two.ts",
++                "2 npm dependencies not in the crate table: check them by hand.",
++            ),
++            (
++                "src/two.ts",
++                "2 imports use aliases or virtual modules and were not followed.",
++            ),
++        ] {
++            let notes = &report.units.iter().find(|u| u.id == id).unwrap().notes;
++            assert!(notes.iter().any(|n| n == expected), "{id}: {notes:?}");
 +        }
 +    }
-+
-+    #[test]
-+    fn bridge_and_app_wire_refuse_a_unit_or_name_that_is_not_a_string() {
-+        // Issue #684: `"unit": 5` used to read as a missing unit, and `"name": 7` was dropped, so the
-+        // bridge was written under the default name. Both are refused before anything is written.
-+        let dir =
-+            std::env::temp_dir().join(format!("rust-anything-mcp-684-{}", std::process::id()));
-+        std::fs::create_dir_all(&dir).unwrap();
-+        let root = dir.to_str().unwrap();
-+        let err = |tool: &str, args: Value| call(tool, &args).unwrap_err().to_string();
-+        assert_eq!(
-+            err("bridge", json!({ "root": root, "unit": 5, "kind": "napi" })),
-+            "`unit` must be a string, not 5"
-+        );
-+        assert_eq!(
-+            err("app_wire", json!({ "repo": root, "unit": 5 })),
-+            "`unit` must be a string, not 5"
-+        );
-+        assert_eq!(
-+            err(
-+                "bridge",
-+                json!({ "root": root, "unit": "src/math.ts", "kind": "napi", "name": 7 })
-+            ),
-+            "`name` must be a string, not 7"
-+        );
-+        assert_eq!(
-+            err("bridge", json!({ "root": root, "kind": "napi" })),
-+            "missing `unit`"
-+        );
-+        assert_eq!(
-+            err("app_wire", json!({ "repo": root, "unit": null })),
-+            "missing `unit`"
-+        );
-+        let written = std::fs::read_dir(&dir).unwrap().count();
-+        std::fs::remove_dir_all(&dir).unwrap();
-+        assert_eq!(written, 0);
-+    }
-+
-     #[test]
-     fn a_fuzz_time_too_large_for_a_duration_is_an_error_not_a_panic() {
-         // The conversion used to be `Duration::from_secs_f64`, which
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #695** (closed): fix(mcp): validate unit and name argument types in bridge and app_wire (#684) (@Papito084)
-- **PR #693** (closed): fix(mcp): report non-string path arguments as type errors (#685) (@Papito084)
-- **PR #688** (2026-11-26): fix(mcp): name a required path that is not a string instead of calling it missing (@susheelg1197)
-- **PR #687** (2026-11-26): fix(mcp): refuse a bridge or app_wire unit, or a bridge name, that is not a string (@susheelg1197)
-- **PR #677** (2026-11-26): fix(app): keep an HTTP input that repeats an earlier request (@antont)
-- **PR #676** (2026-11-26): fix(bridge): give ports an exact UTF-16 slice for substrings JS hands back (@antont)
+- **PR #768** (2026-11-27): fix(analyze): flag Python bitwise &=, |=, ^= and >>= as Number semantics (@brixtonpham)
+- **PR #767** (2026-11-27): fix(analyze): pick singular or plural in unit parse-error, dependency and import notes (@brixtonpham)
+- **PR #766** (closed): test(codegen): cover the FFI dispatcher helpers (@Verlintas)
+- **PR #765** (2026-11-27): fix(record): use CLASSPATH for a Java unit's outside classes (#744) (@Layfate)
+- **PR #764** (2026-11-27): test(switch): compare enable's paths without the \\?\ prefix (@Layfate)
+- **PR #763** (2026-11-27): fix(record): report TS/JS coverage on Windows (@Layfate)
 
 ---
 
@@ -2357,31 +2563,33 @@ Replaces the Prettier GIF with a live race panel timed to the measured 3.63 s an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu;
+## X. Lessons from other porting skills: end state, reviewer report, language guides, 
 
 **RULE**:
-When implementing operations in `CODE_OF_CONDUCT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude-plugin/marketplace.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2cf86c53`: Website fixes: Prettier race panel, right-to-left layout, contrast, mobile menu; [REDACTED_EMAIL] as contact. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c96b0d2`: Lessons from other porting skills: end state, reviewer report, language guides, evals, skills over MCP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE_OF_CONDUCT.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude-plugin/marketplace.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-say it's a conduct report, or email [hello@rustanything.ai](mailto:hello@rustanything.ai). Every report is reviewed, and the reporter's privacy is respected.
+  "description": "rust-anything: migrate your app to Rust one piece at a time, and prove it still behaves the same.",
+      "description": "Migrate your app to Rust, one piece at a time, checked against the original's recorded behavior at every step. Needs the rust-anything CLI on PATH (cargo install rust-anything)."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-say it's a conduct report. Every report is reviewed, and the reporter's privacy is respected.
+  "description": "rust-anything: rewrite your app in Rust one piece at a time, and prove it still behaves the same.",
+      "description": "Rewrite your app in Rust, one piece at a time, checked against the original's recorded behavior at every step. Needs the rust-anything CLI on PATH (cargo install rust-anything)."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cf86c53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c96b0d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
