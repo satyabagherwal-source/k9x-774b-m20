@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:18:38.622Z",
+  "last_updated": "2026-11-27T15:27:50.299Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "41ba1e7e117b5b510670b3bcb13c51453481326c6bdff7ccf7405e28b9ecb478",
+      "content_hash": "3f546b14d6ea079ab36671bd8996dcc0f483bae5d7b95b3e5d45bf3f1a0d1e37",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T15:18:38.464Z"
+      "persisted_at": "2026-11-27T15:27:50.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a51e643a2cd1477486e7862a2ac9bb1aef327d46f082e0fee563bb4bfab2d14b",
+      "content_hash": "8f0cc58968dec9f0c08e9d2317db35e5ab54a3a2f24a260cd30c25ea6c0d646c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:18:38.622Z"
+      "persisted_at": "2026-11-27T15:27:50.299Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d04ab9a6263da3ba7419147c51caebcd075f65bcc645feabbef3a9e4b3532bdd",
+      "content_hash": "d3abdcb6f6c3c6d4c5b0d32a3d5531e47077056f3248b8896e0f130f287ed6fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:18:37.448Z"
+      "persisted_at": "2026-11-27T15:27:48.756Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -251415,8 +251415,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "878316e2",
-      "content_hash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
+      "source_version": "073d2fba",
+      "content_hash": "36c4913f98f16850aac9f6bc00f5cb2aba15e6cd49c4b73164b8c8b66e207abd",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -251431,7 +251431,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T06:03:04.531Z",
+      "verified_at": "2026-11-27T15:27:13.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251447,10 +251447,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "repository": "momenbasel/PureMac",
-      "source_version": "878316e2",
-      "content_hash": "fdba8036a1833badaf81b9d47eb3403bd43cdf94b5a36a16be4e7d4bbfbe47b5",
+      "source_version": "073d2fba",
+      "content_hash": "da884c715a14d447f59a4853b8492f18601d4e9acc9e0d53fc7b1094b8008bd1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:03:05.011Z"
+      "persisted_at": "2026-11-27T15:27:14.137Z"
     },
     "rule-8621": {
       "learning_id": "rule-8621",
@@ -251486,9 +251486,9 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "repository": "momenbasel-puremac-learnings",
       "source_version": "HEAD",
-      "content_hash": "327161275ace75da56b6f45718c2e42a27f647a4856e3578b1c253dcaa83971d",
+      "content_hash": "6e139e6d77ecbfd375da010a3905f9de7ef71ad8f685df80147ca18ad758cecb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T06:03:41.641Z"
+      "persisted_at": "2026-11-27T15:27:47.416Z"
     },
     "learn-github-pimalaya-himalaya": {
       "learning_id": "learn-github-pimalaya-himalaya",
@@ -301081,9 +301081,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc369a7b772922fb369dfa473938d2293c2168a92a683820055227944df580a5",
+      "content_hash": "cf87629178476e71db46d8901fc737deb234b1ac19374e04d6a0853112cce329",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T15:18:38.283Z"
+      "persisted_at": "2026-11-27T15:27:49.845Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358341,13 +358341,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M8MD-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y1WS-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4cf46f75ca0d48fbea63312521d91d4c61be6aef591a84d597d6ce887d90a7cb",
+      "content_hash": "392edd5e49afbba078a7c4187be3b803d0803a6f88130bdf5daf9fd503881b3d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:18:37.096Z"
+      "persisted_at": "2026-11-27T15:27:48.281Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358357,9 +358357,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "24a9e5feeebe7bdf083dfab08f85ddfe14ea46cfb57a78b544c3a72bf6b67949",
+      "content_hash": "e04de3d735a3eb9fd3243591debbda5e58f877966b110d49282c19aed244caa0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T15:18:37.274Z"
+      "persisted_at": "2026-11-27T15:27:48.519Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362827,13 +362827,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M9E1-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y2XY-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "180f936b2662a62e867b3ede1c48615271b41f09229468a665c11cb0e2731d49",
+      "content_hash": "502ad6233f30a7bd3a69422f8aeddfd933a460d8b41940377ba302ce610f26d2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T15:18:38.090Z"
+      "persisted_at": "2026-11-27T15:27:49.607Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",

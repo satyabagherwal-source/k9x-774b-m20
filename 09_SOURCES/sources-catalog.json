@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "878316e2",
+    "sourceVersion": "073d2fba",
     "license": "MIT",
-    "contentHash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
-    "lastHarvestedAt": "2026-11-25T06:03:04.752Z",
+    "contentHash": "36c4913f98f16850aac9f6bc00f5cb2aba15e6cd49c4b73164b8c8b66e207abd",
+    "lastHarvestedAt": "2026-11-27T15:27:13.866Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {

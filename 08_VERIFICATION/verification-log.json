@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-E835",
-    "timestamp": "2026-11-26T07:00:49.649Z",
-    "repository": "maxwell-model/Maxwell-V1-Flash",
-    "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
-    "contentHash": "ac49f93f503bcc84931a5f982984eb4723b65b6b768a3c0ddbfb5fce64c38829",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QCCK",
     "timestamp": "2026-11-26T07:10:15.044Z",
     "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
@@ -7492,6 +7477,21 @@
     "contentHash": "f27ffb22a855059ff2a3241526c70652d8741fcfea543eb86c905c4177214251",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XBD1",
+    "timestamp": "2026-11-27T15:27:13.861Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "36c4913f98f16850aac9f6bc00f5cb2aba15e6cd49c4b73164b8c8b66e207abd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

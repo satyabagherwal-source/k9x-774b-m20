@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T15:18:20.136Z",
+  "last_updated": "2026-11-27T15:27:13.908Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12036,14 +12036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-momenbasel-puremac",
-      "content_hash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
-      "verified_at": "2026-11-25T06:03:04.769Z",
+      "content_hash": "36c4913f98f16850aac9f6bc00f5cb2aba15e6cd49c4b73164b8c8b66e207abd",
+      "verified_at": "2026-11-27T15:27:13.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T06:03:04.769Z"
+      "last_updated": "2026-11-27T15:27:13.907Z"
     },
     "nalexn/clean-architecture-swiftui": {
       "repository": "nalexn/clean-architecture-swiftui",

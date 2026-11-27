@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T15:18:35.714Z",
+  "updated_at": "2026-11-27T15:27:47.082Z",
   "stats": {
-    "total_discovered": 10455,
-    "approved_pending_harvest": 9924,
+    "total_discovered": 10461,
+    "approved_pending_harvest": 9930,
     "harvested_count": 0,
     "rejected_count": 531,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9929,
+      "COMMUNITY_AND_EXPERT": 9935,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226320,6 +226320,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
         "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-EB21649B8F0F": {
+      "id": "SRC-EB21649B8F0F",
+      "url": "https://github.com/momenbasel/PureMac/issues",
+      "title": "https://github.com/momenbasel/PureMac/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:46.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-F6B17277CB75": {
+      "id": "SRC-F6B17277CB75",
+      "url": "https://github.com/momenbasel/PureMac/releases",
+      "title": "https://github.com/momenbasel/PureMac/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:46.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-6757ED8763C4": {
+      "id": "SRC-6757ED8763C4",
+      "url": "https://www.moamenbasel.com/puresnitch",
+      "title": "https://www.moamenbasel.com/puresnitch",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:46.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-CFB7C41E209F": {
+      "id": "SRC-CFB7C41E209F",
+      "url": "https://www.moamenbasel.com/pesty",
+      "title": "https://www.moamenbasel.com/pesty",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:46.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-98F89D0BF266": {
+      "id": "SRC-98F89D0BF266",
+      "url": "https://www.moamenbasel.com/Phosphor",
+      "title": "https://www.moamenbasel.com/Phosphor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:46.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-EB73200D0D49": {
+      "id": "SRC-EB73200D0D49",
+      "url": "https://www.moamenbasel.com/purefence",
+      "title": "https://www.moamenbasel.com/purefence",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:27:47.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T15:18:38.283Z",
-  "total_records": 2838,
+  "last_updated": "2026-11-27T15:27:49.845Z",
+  "total_records": 2839,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1041,
+      "total": 1042,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1114,7 +1114,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c",
         "DOM-D-E7237660",
         "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-learnings-core-invariants",
-        "DOM-D-457F0DDF"
+        "DOM-D-457F0DDF",
+        "DOM-D-ACBB63D0"
       ]
     },
     "E": {
@@ -22086,8 +22087,8 @@
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "repository": "momenbasel/PureMac",
-      "content_hash": "fdba8036a1833badaf81b9d47eb3403bd43cdf94b5a36a16be4e7d4bbfbe47b5",
-      "created_at": "2026-11-25T06:03:05.011Z"
+      "content_hash": "da884c715a14d447f59a4853b8492f18601d4e9acc9e0d53fc7b1094b8008bd1",
+      "created_at": "2026-11-27T15:27:14.137Z"
     },
     "DOM-D-E86C357A": {
       "record_id": "DOM-D-E86C357A",
@@ -22137,8 +22138,8 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-learnings-architecture-intelligence-momenbasel-puremac-learni.md",
       "repository": "momenbasel-puremac-learnings",
-      "content_hash": "327161275ace75da56b6f45718c2e42a27f647a4856e3578b1c253dcaa83971d",
-      "created_at": "2026-11-25T06:03:41.641Z"
+      "content_hash": "6e139e6d77ecbfd375da010a3905f9de7ef71ad8f685df80147ca18ad758cecb",
+      "created_at": "2026-11-27T15:27:47.416Z"
     },
     "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants",
@@ -33968,8 +33969,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fc369a7b772922fb369dfa473938d2293c2168a92a683820055227944df580a5",
-      "created_at": "2026-11-27T15:18:38.283Z"
+      "content_hash": "cf87629178476e71db46d8901fc737deb234b1ac19374e04d6a0853112cce329",
+      "created_at": "2026-11-27T15:27:49.845Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46785,8 +46786,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "24a9e5feeebe7bdf083dfab08f85ddfe14ea46cfb57a78b544c3a72bf6b67949",
-      "created_at": "2026-11-27T15:18:37.274Z"
+      "content_hash": "e04de3d735a3eb9fd3243591debbda5e58f877966b110d49282c19aed244caa0",
+      "created_at": "2026-11-27T15:27:48.519Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -47886,6 +47887,48 @@
       "repository": "meshery-meshery-learnings",
       "content_hash": "7226b1865d91c2711b838e6d17cb5253f471f86c76b4bca8c629faa22eff6901",
       "created_at": "2026-11-27T13:23:15.092Z"
+    },
+    "DOM-D-ACBB63D0": {
+      "record_id": "DOM-D-ACBB63D0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  \n> **Source Version**: `073d2fba`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synth",
+      "content_hash": "9b7b9a1b05dffaf94bc3779a1dfdd085839cc675bcc54a3a987ac888a0a83b46",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T15:27:17.953Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of momenbasel-puremac"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T15:27:46.436Z"
     }
   }
 }
