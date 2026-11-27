@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Sentinel7/h3",
   "source_version": "hf-sentinel7-h3",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T15:27:03.452Z",
+  "timestamp": "2026-11-27T23:39:11.298Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-sentinel7-h3",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Sentinel7/h3](https://huggingface.co/Sentinel7/h3) (Revision: `hf-sentine`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T15:27:03.452Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:39:11.298Z`  
 > **Learning ID**: `learn-huggingface-sentinel7-h3`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Sentinel7/h3](https://huggingface.co/Sentinel7/h3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:27:01.858Z  
+> **Harvest Timestamp**: 2026-11-27T23:39:10.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 1750 likes
+- **Stars / Engagement**: 0 downloads | 2232 likes
 
 ---
 

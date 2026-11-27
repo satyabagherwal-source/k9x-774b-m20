@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:30:45.946Z",
+  "last_updated": "2026-11-27T23:39:24.999Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-VXLG",
+      "id": "CD-I9QF",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-VXLG-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-I9QF-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -73240,6 +73240,35 @@
       "source_repo": "trinodb-trino",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0BB5FC-create-partition-page-builders-on-first-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-I8IR",
+      "directive_title": "tests/stm32: give saes a 60s teleprobe timeout",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-I8IR-tests-stm32-give-saes-a-60s-teleprobe-timeout.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F08BB9",
+      "directive_title": "tests/stm32: give saes a 60s teleprobe timeout",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F08BB9-tests-stm32-give-saes-a-60s-teleprobe-ti.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-1ADFD4",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1ADFD4-bump-version-number.md",
       "staged_date": "2026-11-27"
     }
   ]

@@ -13903,3 +13903,5 @@
 | `CYCLE-20261127-6QMM` | `2026-11-27T23:30:27.022Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10987` | Yes (`d916cda6...`) |
 | `CYCLE-20261127-6VJ3` | `2026-11-27T23:30:33.375Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10988` | Yes (`8c37a9bf...`) |
 | `CYCLE-20261127-70Q8` | `2026-11-27T23:30:40.112Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10989` | Yes (`fcf6cc00...`) |
+| `CYCLE-20261127-HYYN` | `2026-11-27T23:39:11.039Z` | `Sentinel7/h3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md` | Yes (`f1eeecab...`) |
+| `CYCLE-20261127-I00C` | `2026-11-27T23:39:12.396Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10990` | Yes (`2b9fac27...`) |

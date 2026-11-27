@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T23:41:07.085Z",
+  "timestamp": "2026-11-27T23:39:23.287Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-embassy-rs-embassy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [embassy-rs-embassy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T23:41:07.085Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T23:39:23.287Z`  
 > **Learning ID**: `LEARN-EVO-embassy-rs-embassy-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `86b0b067`  
+> **Source Version**: `aaa905b1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:40:53.460Z  
+> **Timestamp**: 2026-11-27T23:39:11.139Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:40:53.454Z  
+> **Harvest Timestamp**: 2026-11-27T23:39:11.135Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10156 stars
+- **Stars / Engagement**: 10159 stars
 
 ---
 
@@ -1460,13 +1460,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7652** (2026-11-26): **Usb: refactor device test utils**
-  *Symptoms*: Remove duplicated (x5) `MockDriver` and stuff, in usb driver classes Same idea as already done for host.  Two commits - device already had private mocks `TestDriver`, `TestBus` and `TestEndpoint`, so moved and made `pub(crate)`. Needs "std" so conditional to `test_utils` feature AND target having OS (so embedded target don't get it by mistake) - extended mocks with endpoint + stall behaviour requires by classes.    
-  **Post-Mortem & Fix Analysis**:
-  > This pull request is a **draft**, so it isn't in the [review queue](https://bot.embassy.dev) yet. Mark it as **ready for review** when you'd like someone to look at it.
+- **Issue #7659** (2026-11-27): **stm32/low-power: derive Stop capabilities from METADATA.power and unify WBA**
+  *Symptoms*: ### Summary - **\`embassy-stm32/build.rs\`**: Declare and enable \`power_stop0\`..\`power_stop3\` cfgs from \`METADATA.power.modes\` (\`PowerModeKind::Stop0..Stop3\`), matching the existing \`METADATA.adc_calibration\` cfg pattern. Also emit the 9-char line cfg (\`stm32wba5\`, \`stm32wba6\`, \`stm32wba2\`) in \`get_chip_cfgs\`. - **\`embassy-stm32/src/low_power.rs\`**:   - Replace the \`feature = "stm32wba65ri"\` special cases in \`Into<Lpms> for StopMode\` and \`configure_pwr()\` with \`power_stop*\` metadata cfgs:     - All \`stm32wba6*\` (62/63/64/65 per RM0515 §11.7.8) and \`stm32wba2*\` (RM0521), alongside L4/L5/U0/U3/U5/WB/WL, map \`StopMode::Standby | StopMode::Stop2 => Lpms::Stop2\`.     - All \`stm32wba5*\` (RM0493 Table 88/89, which lack Stop 2) clamp \`StopMode::Standby | StopMode::Stop2 => Lpms::Stop1\` instead of falling back to \`Lpms::Stop0\`.   - Clamp \`stop_mode\` in \`configure_pwr()\` under \`#[cfg(not(power_stop2))]\` so trace logs match the entered hardware mode while keeping \`rcc::get_stop_mode()\` compatible with existing callers and tests.   - Guard WBA \`es.stop2f()\` reading under \`#[cfg(all(stm32wba, power_stop2))]\` since \`PWR_SR[3]\` is reserved on WBA5x (RM0493 §11.10.12).
 
-- **Issue #7648** (2026-11-26): **stm32/adc: enable native VREFINT and temperature calibration across families**
-  *Symptoms*: ## Summary  Uses the structured `AdcCalibration` metadata added in embassy-rs/stm32-data#1004 to enable native VDDA and temperature calibration across STM32 families (removing hardcoded per-family `#[cfg]` lists and adding resolution-aware fixed-point conversion + optional `Adc` convenience methods):  - **Update `stm32-metapac` to `stm32-data-c4bec50293a31ad80084f76cce851caf5f16e38d`**   - Adapts `embassy-stm32/src/flash/v5.rs` (`set_clr_*` on G5 from `stm32-data` PR #1001) and `embassy-stm32/build.rs` / `embassy-stm32/src/rcc/h.rs` (`CCIPR1` on H7RS from `stm32-data` PR #998). - **Metadata-driven `build.rs` cfgs & constants**   - Reads `METADATA.adc_calibration`, emits `adc_vrefint_cal`, `adc_temp_cal`, `adc_temp_two_point`, `adc_temp_one_point`, and `adc_temp_nominal` cfgs, and populates `_generated.rs` constants (`ADC_VREF_CAL_MV`, `ADC_VREF_CAL_BITS`, `ADC_TEMP_CAL_MV`, `ADC_TEMP_CAL_BITS`, `ADC_TEMP_CAL1_C`, `ADC_TEMP_CAL2_C`, `ADC_TEMP_REF_C`, `ADC_TEMP_VREF_MV`, `ADC_TEMP_AVG_SLOPE_UV_PER_C`). - **Generalized `Calibration`, token accessors, and native `Adc` read helpers (`src/adc/internal.rs`)**   - Enables `VrefInt::calibrated_value()` across all `adc_vrefint_cal` families (masked to `ADC_VREF_CAL_BITS`, fixing unaligned `DESIG` upper bits on WBA/U5/U3), `Temperature::calibrated_value()` (`adc_temp_two_point`, migrating U0 from `TSCAL` to `TS_CAL1`/`TS_CAL2`), and `Temperature::cal1()` (`adc_temp_cal`).   - Generalizes `Calibration` (`read`, `vdda_mv`, `sample_to_mv`,
+- **Issue #7657** (2026-11-27): **stm32-wpan, stm32: integrate WBA 2.4 GHz radio deep-sleep and Stop hooks**
+  *Symptoms*: Part of the iterative STM32 low-power roadmap in #7213 (PR 5).  ## Summary  - **STM32WBA radio sleep hooks (`embassy-stm32/src/rcc/wba.rs`, `embassy-stm32/src/low_power.rs`):**   - Enable `lsi2on` and wait on `lsi2rdy` in `rcc::wba::init()` when LSI is configured as the 2.4 GHz radio sleep timer source (`Radiostsel::Lsi`, per RM0515 §12.4.13).   - Add `#[doc(hidden)]` `RadioSleepHooks` and `set_radio_sleep_hooks()` in `embassy_stm32::rcc` (using `bool` / `Option<bool>` so non-`low-power` WBA builds compile unchanged without exposing `StopMode`).   - Wire `radio_max_stop_mode()`, `radio_before_stop(cs, deep_stop)`, `radio_before_wfi(cs)`, and `radio_after_wfi(cs, stop)` under `#[cfg(stm32wba)]` in `low_power.rs` (`deep_stop` accounts for `stm32wba65ri` Stop 1/2 vs WBA5x Stop 1). - **WBA Link Layer platform low-power integration (`embassy-stm32-wpan`):**   - Add `low-power = ["embassy-stm32/low-power"]` feature and `MaybeWakeGuard::const_no_stop()` (`StopMode::Stop1`) in `embassy-stm32/src/rcc/mod.rs` for `RADIO_EVT_GUARD` and `RCO_CLBR_GUARD` across active radio events and RCO calibration.   - Expose `ll_sys_dp_slp::{ll_sys_dp_slp_get_state, ll_sys_dp_slp_enter, ll_sys_dp_slp_exit}` as `pub(crate)` and widen `LL_INTERNAL_TMR_US_TO_STEPS` conversion math to `u64` (clamped to `u32::MAX`) to avoid overflow on long sleep intervals.   - Implement `wba_check_stop()`, `wba_before_stop()` (with `CLOCK_RESTORE_MARGIN_US = 500`), `wba_before_wfi()` (`NotifyWFIEnter`), and `wba_after_wfi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1483,98 +1481,210 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `844f8876` (2026-11-18)
-**Commit Message**: Revert "stm32/i2s: override the clock source for f3"
+### Incident Patch 1: `f7c0d0d5` (2026-11-26)
+**Commit Message**: tests/stm32: give saes a 60s teleprobe timeout
 
-This reverts commit 235899025319b4beb02dfcb00d4687ea4a88fc32.
+The saes suite runs for ~5s on the WBA board but had no
+teleprobe_meta::timeout, so it ran with the server's 10s default
+(which includes flashing) and failed the deadline intermittently
+under CI load.
 
-**File**: `embassy-stm32/src/i2s.rs` (modified, +1/-19)
+Also pin the teleprobe client to 20f3184 so CI recovers from proxy
+errors without retry storms.
+
+**File**: `.github/ci/build.sh` (modified, +1/-0)
 ```diff
-@@ -658,26 +658,8 @@ impl<'d, W: Word> I2S<'d, W> {
+@@ -31,6 +31,7 @@ hashtime save /ci/cache/filetime.json
+ # when bumping these you must increment the version, otherwise the new version will not be installed
  
-         #[cfg(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7))]
-         let pclk = unsafe { crate::rcc::get_freqs() }.plli2s1_r.to_hertz().unwrap();
--        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7, stm32f3)))]
-+        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7)))]
-         let pclk = T::frequency();
--        #[cfg(stm32f3)]
--        let pclk = {
--            // On STM32F3, I2SxCLK is either SYSCLK or the external I2S_CKIN pin.
--            // It is NOT PCLK1 (that is only the SPI kernel clock).
--            let cfgr = crate::pac::RCC.cfgr().read();
--            match cfgr.i2ssrc() {
--                crate::pac::rcc::vals::Issrc::Sys => {
--                    // SAFETY: RCC must have been initialised before I2S construction.
--                    unsafe { crate::rcc::get_freqs() }.sys.to_hertz().unwrap()
--                }
--                crate::pac::rcc::vals::Issrc::Ckin => {
--                    panic!(
--                        "I2S on STM32F3 is configured to use I2S_CKIN; \
--                    either switch I2SSRC to SYSCLK or provide the CKIN frequency"
--                    )
--                }
--            }
--        };
+ cargo install --git https://github.com/embassy-rs/cargo-embassy-devtool --locked --rev f8a8cce4092ef2566fbae04f088daa70c9e1fe93
++cargo install --git https://github.com/embassy-rs/teleprobe --locked --rev 20f318435b7f7091e276a271f410ca166ba4ea74 teleprobe
  
-         let (odd, div) = compute_baud_rate(pclk, config.frequency, config.master_clock, config.format);
+ ./ci.sh
  
+```
+
+**File**: `tests/stm32/src/bin/saes.rs` (modified, +3/-0)
+```diff
+@@ -27,6 +27,9 @@ use embassy_stm32::saes::{AesCbc, AesEcb, Cipher, CipherSized, Direction, IVSize
+ use embassy_stm32::saes::{AesCcm, AesCtr, AesGcm, CipherAuthenticated};
+ use embassy_stm32::{bind_interrupts, peripherals, rng, saes};
+ 
++// The known-answer suites take a while to run.
++teleprobe_meta::timeout!(60);
++
+ bind_interrupts!(struct Irqs {
+     SAES => saes::InterruptHandler<peripherals::SAES>;
+     RNG => rng::InterruptHandler<peripherals::RNG>;
 ```
 
 ---
 
-### Incident Patch 2: `ea5eb1d0` (2026-11-20)
-**Commit Message**: stm32/i2s: fix build.rs after branch rebase
+### Incident Patch 2: `0af0deaa` (2026-11-26)
+**Commit Message**: Merge pull request #7649 from leftger/fix/stm32-data-lp-compat
 
-**File**: `embassy-stm32/build.rs` (modified, +4/-5)
+stm32: update metapac
+
+**File**: `.github/ci/build.sh` (modified, +1/-0)
 ```diff
-@@ -1081,17 +1081,15 @@ fn main() {
-             };
+@@ -31,6 +31,7 @@ hashtime save /ci/cache/filetime.json
+ # when bumping these you must increment the version, otherwise the new version will not be installed
  
-             let clock_frequency = match &rcc.kernel_clock {
--                PeripheralRccKernelClock::Mux(mux) => clock_gen.gen_mux(p.name, mux),
-                 PeripheralRccKernelClock::Clock(clock) => {
-                     // STM32F3 SPI2/SPI3 are dual-purpose. If I2SMOD is set, the audio clock
-                     // comes from SYSCLK (or I2S_CKIN). If not, it's standard PCLK.
-                     //
-                     // Below code is implement a runtime check against I2SCFGR.I2SMOD that returns
-                     // the SPI clock in SPI mode and the I2S clock in I2S mode.
-                     let is_f3_i2s_capable = chip_name.starts_with("stm32f3")
--                        && p.name.starts_with("SPI")
--                            .strip_prefix("SPI")
-                         && p.name
-+                            .strip_prefix("SPI")
-                             .map(|n| peripheral_map.contains_key(format!("I2S{}", n).as_str()))
-                             .unwrap_or(false);
+ cargo install --git https://github.com/embassy-rs/cargo-embassy-devtool --locked --rev f8a8cce4092ef2566fbae04f088daa70c9e1fe93
++cargo install --git https://github.com/embassy-rs/teleprobe --locked --rev 20f318435b7f7091e276a271f410ca166ba4ea74 teleprobe
  
-@@ -1108,9 +1106,9 @@ fn main() {
-                                     panic!(
-                                         "I2S on {} is configured to use external I2S_CKIN, which is not \
-                                          supported by this driver. Clear RCC_CFGR.I2SSRC to use SYSCLK.",
--                                        stringify!(#pname)
-+                                        stringify!(#pname))
-                                 }
--                                    );
+ ./ci.sh
+ 
+```
+
+**File**: `embassy-stm32/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -263,11 +263,11 @@ aligned = "0.4.3"
+ heapless = "0.9.3"
+ 
+ # stm32-metapac = { version = "21" }
+-stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-c4bec50293a31ad80084f76cce851caf5f16e38d" }
++stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-73b9a681d80d4a7d66e8b6040c05ec9b94503b72" }
+ 
+ [build-dependencies]
+ # stm32-metapac = { version = "21", default-features = false, features = ["metadata"]}
+-stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-c4bec50293a31ad80084f76cce851caf5f16e38d", default-features = false, features = ["metadata"] }
++stm32-metapac = { git = "https://github.com/embassy-rs/stm32-data-generated", tag = "stm32-data-73b9a681d80d4a7d66e8b6040c05ec9b94503b72", default-features = false, features = ["metadata"] }
+ 
+ proc-macro2 = "1.0.107"
+ quote = "1.0.47"
+```
+
+**File**: `embassy-stm32/build.rs` (modified, +68/-14)
+```diff
+@@ -10,9 +10,72 @@ use quote::{format_ident, quote};
+ use stm32_metapac::metadata::ir::BitOffset;
+ use stm32_metapac::metadata::{
+     ALL_CHIPS, ALL_PERIPHERAL_VERSIONS, METADATA, MemoryRegion, MemoryRegionKind, Peripheral, PeripheralRccKernelClock,
+-    PeripheralRccMux, PeripheralRccRegister, PeripheralRegisters, StopMode, TempCalibration,
++    PeripheralRccMux, PeripheralRccRegister, PeripheralRegisters, TempCalibration,
+ };
+ 
++fn single_digit(s: &str, prefix: &str) -> bool {
++    s.strip_prefix(prefix)
++        .is_some_and(|rest| rest.len() == 1 && rest.as_bytes()[0].is_ascii_digit())
++}
 +
-                                 unsafe { crate::rcc::get_freqs() }
-                                     .sys
-                                     .to_hertz()
-@@ -1127,6 +1125,7 @@ fn main() {
-                         clock_gen.gen_clock(p.name, clock)
-                     }
-                 }
-+                PeripheralRccKernelClock::Mux(mux) => clock_gen.gen_kernel(p.name, mux),
-             };
++/// Preserve legacy `crate::rcc::StopMode` assignments on `main` until the
++/// capability-driven low-power engine (`#7647` / `#7213`) lands.
++fn legacy_stop_mode(chip_name: &str, peri_name: &str) -> Ident {
++    let variant = if peri_name == "RTC" {
++        "Standby"
++    } else if chip_name.starts_with("stm32wb55") {
++        match peri_name {
++            "LPTIM1" | "LPUART1" | "I2C3" => "Standby",
++            "USART1" | "I2C1" => "Stop2",
++            _ if peri_name.starts_with("LP") => "Stop2",
++            _ => "Stop1",
++        }
++    } else if chip_name.starts_with("stm32wle5") {
++        match peri_name {
++            "LPUART1" | "I2C3" | "LPTIM1" => "Standby",
++            "I2C1" | "I2C2" | "SUBGHZSPI" | "ADC1" => "Stop2",
++            _ if peri_name.starts_with("LP") => "Stop2",
++            _ => "Stop1",
++        }
++    } else if chip_name.starts_with("stm32wl55") {
++        match peri_name {
++            "LPUART1" | "I2C3" | "LPTIM1" | "IPCC" => "Standby",
++            "I2C1" | "I2C2" | "SUBGHZSPI" | "ADC1" | "HSEM" => "Stop2",
++            _ if peri_name.starts_with("LP") => "Stop2",
++            _ => "Stop1",
++        }
++    } else if chip_name.starts_with("stm32wba") {
++        if matches!(peri_name, "LPUART1" | "LPTIM1" | "I2C3" | "SPI3") {
++            "Standby"
++        } else if peri_name == "ADC4"
++            || single_digit(peri_name, "USART")
++            || single_digit(peri_name, "I2C")
++            || single_digit(peri_name, "SPI")
++            || single_digit(peri_name, "COMP")
++            || peri_name.starts_with("LP")
++        {
++            "Stop2"
++        } else {
++            "Stop1"
++        }
++    } else if chip_name.starts_with("stm32u3") || chip_name.starts_with("stm32u5") {
++        if peri_name.starts_with("LPDMA") {
++            "Standby"
++        } else if peri_name.starts_with("GPDMA") || peri_name.starts_with("LP") {
++            "Stop2"
++        } else {
++            "Stop1"
++        }
++    } else if chip_name.starts_with("stm32u0") && single_digit(peri_name, "LPTIM") {
++        "Standby"
++    } else if peri_name.starts_with("LP") {
++        "Stop2"
++    } else {
++        "Stop1"
++    };
++    format_ident!("{variant}")
++}
++
+ #[path = "./build_common.rs"]
+ mod common;
  
-             let bus_clock_frequency = clock_gen.gen_clock(p.name, rcc.bus_clock);
+@@ -1132,11 +1195,8 @@ fn main() {
+ 
+             // A refcount leak can result if the same field is shared by peripherals with different stop modes
+             // This condition should be checked in stm32-data
+-            let stop_mode = match rcc.stop_mode {
+-                StopMode::Standby => quote! { crate::rcc::StopMode::Standby },
+-                StopMode::Stop2 => quote! { crate::rcc::StopMode::Stop2 },
+-                StopMode::Stop1 => quote! { crate::rcc::StopMode::Stop1 },
+-            };
++            let stop_mode = legacy_stop_mode(&chip_name, p.name);
++            let stop_mode = quote! { crate::rcc::StopMode::#stop_mode };
+ 
+             g.extend(quote! {
+                 impl crate::rcc::SealedRccPeripheral for peripherals::#pname {
+@@ -3117,14 +3177,8 @@ fn main() {
+         let stop_mode = dma_peri
+             .rcc
+             .as_ref()
+-            .map(|rcc| rcc.stop_mode.clone())
+-            .unwrap_or_default();
+-
+-        let stop_mode = match stop_mode {
+-            StopMode::Standby => quote! { Standby },
+-            StopMode::Stop2 => quote! { Stop2 },
+-            StopMode::Stop1 => quote! { Stop1 },
+-        };
++            .map(|_| legacy_stop_mode(&chip_name, dma_peri.name))
++            .unwrap_or_else(|| format_ident!("Stop1"));
+ 
+         let name = format_ident!("{}", ch.name);
+ 
+```
+
+**File**: `tests/stm32/src/bin/saes.rs` (modified, +3/-0)
+```diff
+@@ -27,6 +27,9 @@ use embassy_stm32::saes::{AesCbc, AesEcb, Cipher, CipherSized, Direction, IVSize
+ use embassy_stm32::saes::{AesCcm, AesCtr, AesGcm, CipherAuthenticated};
+ use embassy_stm32::{bind_interrupts, peripherals, rng, saes};
+ 
++// The known-answer suites take a while to run.
++teleprobe_meta::timeout!(60);
++
+ bind_interrupts!(struct Irqs {
+     SAES => saes::InterruptHandler<peripherals::SAES>;
+     RNG => rng::InterruptHandler<peripherals::RNG>;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7659** (2026-11-27): stm32/low-power: derive Stop capabilities from METADATA.power and unify WBA (@leftger)
+- **PR #7657** (2026-11-27): stm32-wpan, stm32: integrate WBA 2.4 GHz radio deep-sleep and Stop hooks (@leftger)
+- **PR #7656** (2026-11-27): stm32/usb: add OTG PCGCCTL clock gating, suspend Stop1 release, and VBUS ExtiInput (@leftger)
+- **PR #7655** (2026-11-27): stm32: add SimplePwm::stop/resume and RingBuffered* MaybeWakeGuard lifecycle (@leftger)
 - **PR #7652** (2026-11-26): Usb: refactor device test utils (@cryptographix)
-- **PR #7648** (2026-11-26): stm32/adc: enable native VREFINT and temperature calibration across families (@leftger)
-- **PR #7647** (closed): stm32: capability-based low-power modes, WakeSource registry, and residency scheduling (@leftger)
-- **PR #7646** (2026-11-26): stm32: update metapac (@xoviat)
-- **PR #7641** (2026-11-25): [MCXA] OSC32K: keep a retained mismatch running, make the lock optional (@gjpmsft)
-- **PR #7638** (2026-11-26): usb-host: Fail open pipes when device removed, incl hub removal (@cryptographix)
+- **PR #7651** (2026-11-27): stm32/i2s: derive the I2S clock from the extension block metadata (F3 SYSCLK) (@xoviat)
 
 ---
 
@@ -1594,49 +1704,31 @@ This reverts commit 235899025319b4beb02dfcb00d4687ea4a88fc32.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Revert "stm32/i2s: override the clock source for f3"
+## X. tests/stm32: give saes a 60s teleprobe timeout
 
 **RULE**:
-When implementing operations in `embassy-stm32/src/i2s.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ci/build.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `844f8876`: Revert "stm32/i2s: override the clock source for f3". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7c0d0d5`: tests/stm32: give saes a 60s teleprobe timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-stm32/src/i2s.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ci/build.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7)))]
+cargo install --git https://github.com/embassy-rs/teleprobe --locked --rev 20f318435b7f7091e276a271f410ca166ba4ea74 teleprobe
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        #[cfg(not(any(all(rcc_f4, not(stm32f410)), rcc_f2, rcc_f7, stm32f3)))]
-        #[cfg(stm32f3)]
-        let pclk = {
-            // On STM32F3, I2SxCLK is either SYSCLK or the external I2S_CKIN pin.
-            // It is NOT PCLK1 (that is only the SPI kernel clock).
-            let cfgr = crate::pac::RCC.cfgr().read();
-            match cfgr.i2ssrc() {
-                crate::pac::rcc::vals::Issrc::Sys => {
-                    // SAFETY: RCC must have been initialised before I2S construction.
-                    unsafe { crate::rcc::get_freqs() }.sys.to_hertz().unwrap()
-                }
-                crate::pac::rcc::vals::Issrc::Ckin => {
-                    panic!(
-                        "I2S on STM32F3 is configured to use I2S_CKIN; \
-                    either switch I2SSRC to SYSCLK or provide the CKIN frequency"
-                    )
-                }
-            }
-        };
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `844f8876` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7c0d0d5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-sentinel7`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T15:27:02.443Z  
+> **Timestamp**: 2026-11-27T23:39:10.439Z  
 > **Learning ID**: `learn-huggingface-sentinel7-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Sentinel7/h3](https://huggingface.co/Sentinel7/h3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T15:27:01.858Z  
+> **Harvest Timestamp**: 2026-11-27T23:39:10.344Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 1750 likes
+- **Stars / Engagement**: 0 downloads | 2232 likes
 
 ---
 

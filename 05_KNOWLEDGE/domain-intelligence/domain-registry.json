@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T23:30:46.128Z",
+  "last_updated": "2026-11-27T23:39:25.204Z",
   "total_records": 2864,
   "domains": {
     "A": {
@@ -10677,8 +10677,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "d27dcdbbc69a31be4a63ea6c9915909748cb23cc51ddf7d41d4b64c714fca195",
-      "created_at": "2026-11-26T23:40:55.464Z"
+      "content_hash": "8e46774d20bbba7345b0a7c71511c992e25ab490cd67583a43bf1852d5d2edec",
+      "created_at": "2026-11-27T23:39:12.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10722,8 +10722,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "514ac1388f92d5c54e96c8b50ff0d0b85f79e1219a99d802d55621acb86abbb4",
-      "created_at": "2026-11-26T23:41:07.507Z"
+      "content_hash": "423bb066aff0806df99d674c5bc5747f531ac8e07fd47e8f4c6eb656ae291e06",
+      "created_at": "2026-11-27T23:39:23.660Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -15655,8 +15655,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "e388e2c46d022092dfdd84b043943c379aa42751132ad54cc03d6892f4896a50",
-      "created_at": "2026-11-27T22:23:05.343Z"
+      "content_hash": "1f6ed699e91d90fad99b894d3890d7a0368e3902fda3323beb58576a3b4702ea",
+      "created_at": "2026-11-27T23:39:25.204Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -43003,8 +43003,8 @@
       "title": "Research & Knowledge Intelligence: Sentinel7/h3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentinel7-h3-research-knowledge-intelligence-sentinel7-h3-core-invariants.md",
       "repository": "Sentinel7/h3",
-      "content_hash": "73543f17d204a67ce9532388cdab7668922aaef050fef05f040d3f12e2526073",
-      "created_at": "2026-11-24T15:27:03.453Z"
+      "content_hash": "b4845b2dc585fb6fcb6c7d663e211a30e5393f4cfedd9d5d6ad3b8e36eabc0f9",
+      "created_at": "2026-11-27T23:39:11.299Z"
     },
     "DOM-D-A5C5FED6": {
       "record_id": "DOM-D-A5C5FED6",
@@ -43054,8 +43054,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentinel7-h3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentinel7-h3-learnings-research-knowledge-intelligence-hf-sentinel7-h3-learni.md",
       "repository": "hf-sentinel7-h3-learnings",
-      "content_hash": "0b350ccb33ad844b7f6fa121c8f7f811b07e813516cc9493bd3ef92a9595a13a",
-      "created_at": "2026-11-24T15:28:01.082Z"
+      "content_hash": "7ad6aed6ca3d9761dacdef28475dc5f824a9e06305b745d8947227f7427f29e8",
+      "created_at": "2026-11-27T23:39:24.326Z"
     },
     "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",

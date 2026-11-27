@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T23:30:40.131Z",
+  "last_updated": "2026-11-27T23:39:12.417Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "f0d4b3bdf57687ec338d0562c5e6085d2e9e2476ba598732a93fde9f439d5c84",
-      "verified_at": "2026-11-26T23:40:54.923Z",
+      "content_hash": "2b9fac2769e83cf80cc0bc04812a4f70741ef9777fdef53c5b607161a8fff75f",
+      "verified_at": "2026-11-27T23:39:12.416Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T23:40:54.923Z"
+      "last_updated": "2026-11-27T23:39:12.416Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
@@ -19686,14 +19686,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentinel7-h3",
-      "content_hash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
-      "verified_at": "2026-11-24T15:27:03.147Z",
+      "content_hash": "f1eeecabf2d84e110225bf5994dc1e28f02c1f6a8125edbd51c608816a23d447",
+      "verified_at": "2026-11-27T23:39:11.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:27:03.147Z"
+      "last_updated": "2026-11-27T23:39:11.060Z"
     },
     "AngelSlim/Hy4-flash-GGUF": {
       "repository": "AngelSlim/Hy4-flash-GGUF",

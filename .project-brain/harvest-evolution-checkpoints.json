@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:30:46.478Z",
+  "last_updated": "2026-11-27T23:39:25.607Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T23:04:22.728Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-27T22:23:04.714Z",
+      "processed_at": "2026-11-27T23:39:24.560Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -908,7 +908,7 @@
       "staged_for_review": 0
     },
     "embassy-rs-embassy-learnings.md": {
-      "processed_at": "2026-11-26T23:41:06.867Z",
+      "processed_at": "2026-11-27T23:39:22.962Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3588,8 +3588,8 @@
       "staged_for_review": 0
     },
     "hf-sentinel7-h3-learnings.md": {
-      "processed_at": "2026-11-24T15:28:00.705Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-27T23:39:24.079Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-angelslim-hy4-flash-gguf-learnings.md": {
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5148,
+  "total_dossiers_evaluated": 5151,
   "total_canonical_promoted": 587,
-  "total_staged_for_review": 3892
+  "total_staged_for_review": 3894
 }

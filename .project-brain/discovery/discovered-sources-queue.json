@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T23:30:44.687Z",
+  "updated_at": "2026-11-27T23:39:23.124Z",
   "stats": {
-    "total_discovered": 10633,
-    "approved_pending_harvest": 10093,
+    "total_discovered": 10635,
+    "approved_pending_harvest": 10095,
     "harvested_count": 0,
     "rejected_count": 540,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10102,
+      "COMMUNITY_AND_EXPERT": 10104,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230173,6 +230173,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
         "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-43C9E0F70092": {
+      "id": "SRC-43C9E0F70092",
+      "url": "https://github.com/embassy-rs/cargo-embassy-devtool",
+      "title": "https://github.com/embassy-rs/cargo-embassy-devtool",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:39:23.048Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-092B7F606F58": {
+      "id": "SRC-092B7F606F58",
+      "url": "https://github.com/embassy-rs/teleprobe",
+      "title": "https://github.com/embassy-rs/teleprobe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:39:23.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
       }
     }
   }

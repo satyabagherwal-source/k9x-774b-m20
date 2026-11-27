@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "86b0b067",
+    "sourceVersion": "aaa905b1",
     "license": "Apache-2.0",
-    "contentHash": "f0d4b3bdf57687ec338d0562c5e6085d2e9e2476ba598732a93fde9f439d5c84",
-    "lastHarvestedAt": "2026-11-26T23:40:54.898Z",
+    "contentHash": "2b9fac2769e83cf80cc0bc04812a4f70741ef9777fdef53c5b607161a8fff75f",
+    "lastHarvestedAt": "2026-11-27T23:39:12.408Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -13065,8 +13065,8 @@
     "sourceUrl": "https://huggingface.co/Sentinel7/h3",
     "sourceVersion": "hf-sentinel7-h3",
     "license": "Open-Source",
-    "contentHash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
-    "lastHarvestedAt": "2026-11-24T15:27:03.127Z",
+    "contentHash": "f1eeecabf2d84e110225bf5994dc1e28f02c1f6a8125edbd51c608816a23d447",
+    "lastHarvestedAt": "2026-11-27T23:39:11.050Z",
     "learningId": "learn-huggingface-sentinel7-h3"
   },
   "hf-angelslim-hy4-flash-gguf": {

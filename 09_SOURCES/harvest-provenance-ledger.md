@@ -13936,3 +13936,5 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c7e68c59` | Multi-dimensional audit evidence | 2026-11-27T23:30:27.033Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `1596e0b5` | Multi-dimensional audit evidence | 2026-11-27T23:30:33.389Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1a278de9` | Multi-dimensional audit evidence | 2026-11-27T23:30:40.123Z |
+| `learn-huggingface-sentinel7-h3` | `https://huggingface.co/Sentinel7/h3` | `hf-sentine` | Multi-dimensional audit evidence | 2026-11-27T23:39:11.050Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `aaa905b1` | Multi-dimensional audit evidence | 2026-11-27T23:39:12.408Z |

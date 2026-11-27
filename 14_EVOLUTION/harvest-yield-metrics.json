@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:30:40.128Z",
-  "total_cycles_completed": 13194,
-  "total_learnings_persisted": 13194,
-  "total_rules_promoted": 11904,
+  "last_updated": "2026-11-27T23:39:12.413Z",
+  "total_cycles_completed": 13196,
+  "total_learnings_persisted": 13196,
+  "total_rules_promoted": 11905,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:39:51.374Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:48:14.613Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:48:15.674Z",
       "repository": "restatedev/restate",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T23:30:40.128Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:39:11.057Z",
+      "repository": "Sentinel7/h3",
+      "learningId": "learn-huggingface-sentinel7-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:39:12.413Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

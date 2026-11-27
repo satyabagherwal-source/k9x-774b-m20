@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T23:30:46.307Z",
+  "last_updated": "2026-11-27T23:39:25.421Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26827,
+  "total_items": 26829,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213185,8 +213185,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "86b0b067",
-      "content_hash": "f0d4b3bdf57687ec338d0562c5e6085d2e9e2476ba598732a93fde9f439d5c84",
+      "source_version": "aaa905b1",
+      "content_hash": "2b9fac2769e83cf80cc0bc04812a4f70741ef9777fdef53c5b607161a8fff75f",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -213249,6 +213249,11 @@
           "number": 10794,
           "title": "Revert \"stm32/i2s: override the clock source for f3\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10990,
+          "title": "tests/stm32: give saes a 60s teleprobe timeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213256,7 +213261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T23:40:54.561Z",
+      "verified_at": "2026-11-27T23:39:12.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213298,10 +213303,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "86b0b067",
-      "content_hash": "d27dcdbbc69a31be4a63ea6c9915909748cb23cc51ddf7d41d4b64c714fca195",
+      "source_version": "aaa905b1",
+      "content_hash": "8e46774d20bbba7345b0a7c71511c992e25ab490cd67583a43bf1852d5d2edec",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T23:40:55.464Z"
+      "persisted_at": "2026-11-27T23:39:12.865Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213310,10 +213315,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "86b0b067",
-      "content_hash": "e5c856f0e04427c8b945c20a6d972aa436c1d3da5b983f153df5da7dbb261b63",
+      "source_version": "aaa905b1",
+      "content_hash": "540227999d6d8418e05ec64231f4b0ff0b3c1e2fc3b3b7a022569a8f32a4fa69",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:40:55.717Z"
+      "persisted_at": "2026-11-27T23:39:13.076Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213938,9 +213943,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "514ac1388f92d5c54e96c8b50ff0d0b85f79e1219a99d802d55621acb86abbb4",
+      "content_hash": "423bb066aff0806df99d674c5bc5747f531ac8e07fd47e8f4c6eb656ae291e06",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T23:41:07.507Z"
+      "persisted_at": "2026-11-27T23:39:23.660Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213950,9 +213955,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9db3fc6dda669a569c0e18e21b1eddc0f79d78cdf289cc8df8be65606a2e078",
+      "content_hash": "6cbdf172bdc3448b46de02eacb137e466c36ab83f4e90b1d65aea64178d252a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:41:07.727Z"
+      "persisted_at": "2026-11-27T23:39:23.868Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -230476,9 +230481,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e388e2c46d022092dfdd84b043943c379aa42751132ad54cc03d6892f4896a50",
+      "content_hash": "1f6ed699e91d90fad99b894d3890d7a0368e3902fda3323beb58576a3b4702ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T22:23:05.343Z"
+      "persisted_at": "2026-11-27T23:39:25.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230488,9 +230493,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "31e58b1f3ff86d22c175eb8e52b34b2f20b9e30346cfc5617723ae5e16557732",
+      "content_hash": "933241469061311b600a20525ad5e4d53d221d7aa220426dda71a08d89709766",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T22:23:05.568Z"
+      "persisted_at": "2026-11-27T23:39:25.421Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -310849,7 +310854,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Sentinel7/h3",
       "source_version": "hf-sentinel7-h3",
-      "content_hash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
+      "content_hash": "f1eeecabf2d84e110225bf5994dc1e28f02c1f6a8125edbd51c608816a23d447",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md",
       "promoted_rules": [
@@ -310874,7 +310879,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:27:02.819Z",
+      "verified_at": "2026-11-27T23:39:10.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -340893,9 +340898,9 @@
       "title": "Research & Knowledge Intelligence: Sentinel7/h3 Core Invariants",
       "repository": "Sentinel7/h3",
       "source_version": "hf-sentinel7-h3",
-      "content_hash": "73543f17d204a67ce9532388cdab7668922aaef050fef05f040d3f12e2526073",
+      "content_hash": "b4845b2dc585fb6fcb6c7d663e211a30e5393f4cfedd9d5d6ad3b8e36eabc0f9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T15:27:03.453Z"
+      "persisted_at": "2026-11-27T23:39:11.299Z"
     },
     "rule-10294": {
       "learning_id": "rule-10294",
@@ -340931,9 +340936,9 @@
       "title": "Research & Knowledge Intelligence: hf-sentinel7-h3-learnings Core Invariants",
       "repository": "hf-sentinel7-h3-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b350ccb33ad844b7f6fa121c8f7f811b07e813516cc9493bd3ef92a9595a13a",
+      "content_hash": "7ad6aed6ca3d9761dacdef28475dc5f824a9e06305b745d8947227f7427f29e8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T15:28:01.082Z"
+      "persisted_at": "2026-11-27T23:39:24.326Z"
     },
     "candidate_directive-cli-support-http-https-yt-export-proxies-with-regression-tests": {
       "item_id": "candidate_directive-cli-support-http-https-yt-export-proxies-with-regression-tests",
@@ -350690,13 +350695,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VXLG-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I9QF-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e94ce4eb742cd5db556f441eb634eef21d33e3df8ffc52626d069434384622a",
+      "content_hash": "1cf8422b32fbf64e625b3e51ae48b43bd67bffaffe81459aa3b3ed8829761b6c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:22:02.837Z"
+      "persisted_at": "2026-11-27T23:39:24.999Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -368495,6 +368500,32 @@
       "content_hash": "2d6b78feec1df3a22d672a2a528847b2270c396c0fbfe8c4c9981e1505c50ea0",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T23:30:45.127Z"
+    },
+    "rule-10990": {
+      "learning_id": "rule-10990",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10990,
+      "title": "tests/stm32: give saes a 60s teleprobe timeout",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "aaa905b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:39:12.137Z"
+    },
+    "candidate_directive-tests-stm32-give-saes-a-60s-teleprobe-timeout": {
+      "item_id": "candidate_directive-tests-stm32-give-saes-a-60s-teleprobe-timeout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I8IR-tests-stm32-give-saes-a-60s-teleprobe-timeout.md",
+      "title": "tests/stm32: give saes a 60s teleprobe timeout",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcc3eb69b1e8cabbe935fdc1dd3cde19ab9ec49675cfb79f69dfb46ee501b8cb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T23:39:23.428Z"
     }
   },
   "ai-builder-brain": {

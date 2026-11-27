@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-47MG",
-    "timestamp": "2026-11-26T12:28:57.880Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "c57dd74a4d9a154baad2d86c33fc12646894342d98cc7ff16443db7c7956fc48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-4CED",
-    "timestamp": "2026-11-26T12:29:04.069Z",
-    "repository": "gauthierpiarrette/highball",
-    "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "2856cbcee1380109db70082b888e7418f8d55ded9ad394571e89efa03e7a0353",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-4E4V",
     "timestamp": "2026-11-26T12:29:06.319Z",
     "repository": "goodrain/rainbond",
@@ -7490,6 +7460,36 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "fcf6cc008bbb49bd6a114d1422a4e0ef7721d3dbbd903ea49a10d41a19c66feb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-HYYN",
+    "timestamp": "2026-11-27T23:39:11.039Z",
+    "repository": "Sentinel7/h3",
+    "learningId": "learn-huggingface-sentinel7-h3",
+    "contentHash": "f1eeecabf2d84e110225bf5994dc1e28f02c1f6a8125edbd51c608816a23d447",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-I00C",
+    "timestamp": "2026-11-27T23:39:12.396Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "2b9fac2769e83cf80cc0bc04812a4f70741ef9777fdef53c5b607161a8fff75f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
