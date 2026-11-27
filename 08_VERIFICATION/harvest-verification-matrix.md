@@ -13894,3 +13894,4 @@
 | `CYCLE-20261127-WX5U` | `2026-11-27T22:54:49.314Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10981` | Yes (`7926a23d...`) |
 | `CYCLE-20261127-WYCD` | `2026-11-27T22:54:50.845Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10982` | Yes (`07c258d2...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T22:55:24.940Z` | `scrapy-scrapy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-068F8BD9` [Domain J] | Yes (`bbc0d104...`) |
+| `CYCLE-20261127-9333` | `2026-11-27T23:04:16.863Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10983` | Yes (`3ff52632...`) |

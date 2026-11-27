@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-HQM7",
-    "timestamp": "2026-11-26T12:11:29.407Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "f8373b4b22493b945dede9930e9ef1a5e224528671b2ed218fa2cd5e1f5a2034",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HSGZ",
     "timestamp": "2026-11-26T12:11:31.811Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9333",
+    "timestamp": "2026-11-27T23:04:16.863Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "3ff5263217bc3db095e79e6cac7ebfc57ffced8801b82165b7472cec7939fb70",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

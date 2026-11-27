@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T22:54:50.866Z",
+  "last_updated": "2026-11-27T23:04:16.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
-      "verified_at": "2026-11-25T11:51:19.363Z",
+      "content_hash": "3ff5263217bc3db095e79e6cac7ebfc57ffced8801b82165b7472cec7939fb70",
+      "verified_at": "2026-11-27T23:04:16.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:51:19.363Z"
+      "last_updated": "2026-11-27T23:04:16.885Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:54:50.863Z",
-  "total_cycles_completed": 13185,
-  "total_learnings_persisted": 13185,
-  "total_rules_promoted": 11897,
+  "last_updated": "2026-11-27T23:04:16.882Z",
+  "total_cycles_completed": 13186,
+  "total_learnings_persisted": 13186,
+  "total_rules_promoted": 11898,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:11:29.003Z",
-      "repository": "kividbio/kividb",
-      "learningId": "learn-github-kividbio-kividb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:21:23.802Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T22:54:50.863Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:04:16.882Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4,17 +4,17 @@
 {
   "source_repository": "authzed/spicedb",
   "source_url": "https://github.com/authzed/spicedb",
-  "source_version": "188b9411",
+  "source_version": "9116c889",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T17:52:01.577Z",
+  "timestamp": "2026-11-27T23:04:17.142Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-authzed-spicedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `188b9411`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:52:01.577Z`  
+> **Provenance**: Harvested from [authzed/spicedb](https://github.com/authzed/spicedb) (Revision: `9116c889`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T23:04:17.142Z`  
 > **Learning ID**: `learn-github-authzed-spicedb`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:52:00.340Z  
+> **Harvest Timestamp**: 2026-11-27T23:04:15.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7238 stars
+- **Stars / Engagement**: 7245 stars
 
 ---
 
@@ -1100,11 +1100,11 @@ func inputMessagesForService[S any](
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3530** (2026-11-27): **docs(serve): explain preshared key ordering for dispatch**
+  *Symptoms*: ## Summary  Updates the `--grpc-preshared-key` help text. It now says that SpiceDB accepts any configured key, but sends only the **first** key when dispatching to other SpiceDB nodes, so list order matters when rotating keys.  Today the help text only says the keys "must be provided by clients", so nothing tells users that a rotated key placed first can break dispatch. A node restarted with the new key first will send it to peers that don't accept it yet, and those dispatches fail with `PermissionDenied`. This has caused dispatch failures during key rotation in a customer environment.  The help text syncs to the command reference on the docs site through the existing "Update Docs Repo" workflow. The full rotation procedure is in authzed/docs#611.  ## Changes  - `pkg/cmd/serve.go`: expanded flag description - `docs/spicedb.md`: regenerated with `go run ./cmd/docs`  ## Test plan  - [x] `go build ./pkg/cmd/...` - [x] `go run ./cmd/docs` regenerates `docs/spicedb.md` with the new text  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+
 - **Issue #3524** (2026-11-23): **chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey**
   *Symptoms*: ## Description  Review of #3473 caught a new context key declared as a bare `struct{}` type instead of using `github.com/authzed/ctxkey`. This adds an analyzer so that lint catches it.  - **`ctxkeycheck`**: reports every call to `context.WithValue`. The callee is resolved through type information, so a renamed `context` import is caught and a local `WithValue` function or method is not. Reading with `ctx.Value` is not reported. - **`allowed-key-types` flag**: exempts keys owned by another module. Lint sets it to `github.com/authzed/consistent.ctxKey`, because the hashring balancer reads that key itself. - **Migration**: the ten existing `context.WithValue` callers now use `ctxkey`, so lint needs no skip list. This covers the dispatcher and consistency middleware handles, the interceptor-order bookkeeping, the development warnings relation key, the CRDB `CtxDisableRetries` key, and `migrate.BackfillBatchSize`.  ## Breaking change for embedders  `migrate.BackfillBatchSize` in `pkg/migrate` is now a `*ctxkey.Key[uint64]` and `migrate.MigrationVariable` is removed. Code that runs migrations itself must call `migrate.BackfillBatchSize.Set(ctx, size)`. A value set with `context.WithValue(ctx, migrate.BackfillBatchSize, size)` still compiles but is no longer read; the Postgres backfill migration now returns an error when the batch size is missing instead of panicking on a type assertion.  ## Testing  - `ctxkeycheck` has analysistest coverage for flagged and allowed cases. - The full
-
-- **Issue #3522** (2026-11-23): **fix(lookupsubjects): stop combining found subjects into a shared slice**
-  *Symptoms*: ## Description  Fixes and issue where `LookupSubjects` can omit subjects that would otherwise be granted by `CheckPermission`, causing results for the same data to vary between requests.  When a lookup reaches a group through multiple parent groups in the same batch, that group is resolved once and its `FoundSubjects` slice is shared across all of those parents. `combineFoundSubjects` appended each parent's additional subjects directly to the shared slice. When the underlying array had spare capacity, concurrent or subsequent appends from different parents could write to the same slot, overwriting earlier subjects. `combineFoundSubjects` now clips the shared slice when it is first stored for a parent, so the next append allocates a new backing array instead of writing into the shared one.  Because this depends on map iteration order and slice capacity, the failure is intermittent. On a 24-relationship nested-group dataset where one group is reached through two parents, roughly 8% of lookups returned 4 of the 5 subjects granted by `CheckPermission`. The `query-plan-lookups` engine is unaffected. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1121,12 +1121,26 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `188b9411` (2026-11-23)
-**Commit Message**: chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
+### Incident Patch 1: `9116c889` (2026-11-27)
+**Commit Message**: docs(serve): explain preshared key ordering for dispatch (#3530)
 
-Adds a ctxkeycheck analyzer that reports calls to context.WithValue, so that new context keys use the typed keys from github.com/authzed/ctxkey. Keys owned by another module can be exempted with the allowed-key-types flag, which lint uses for the consistent hashring balancer's request key.
+* docs(serve): explain preshared key ordering for dispatch
 
-Migrates the existing context.WithValue callers to ctxkey so that no files need to be skipped. migrate.BackfillBatchSize becomes a typed key and migrate.MigrationVariable is removed.
+The --grpc-preshared-key help text did not mention that the first
+configured key is the one SpiceDB sends when dispatching to other nodes,
+while any configured key is accepted. That ordering determines whether a
+key rotation interrupts dispatch, so call it out in the flag help (which
+is synced to the docs site's command reference).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): note preshared key help text update
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1134,184 +1148,45 @@ Migrates the existing context.WithValue callers to ctxkey so that no files need 
  - LookupResources: the v1 `LookupResources` stream can now pack several resources into one response. A client sets `optional_response_batch_size` on the request, and the server returns batched messages carrying up to that many resources with a single resume cursor per batch, instead of one message (and one cursor) per resource, cutting per-message gRPC overhead and cursor-token payload for high-cardinality lookups. `0`, the default, keeps one resource per message. A request whose `optional_response_batch_size` exceeds `--max-lookup-resources-response-batch-size` (default 1000) is rejected. Requires the LR3 LookupResources engine. (https://github.com/authzed/spicedb/pull/3517)
  
  ### Changed
-+- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
++- Server: the `--grpc-preshared-key` help text now explains that any configured key is accepted, but only the first is used to authenticate dispatch requests sent to other SpiceDB nodes, so the order of keys matters when rotating them. Behavior is unchanged. (https://github.com/authzed/spicedb/pull/3530)
+ - Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
  - Server: `--experimental-lookup-resources-version` now defaults to `lr3`, enabling the LR3 LookupResources engine by default. Set it to an empty value to opt back out. (https://github.com/authzed/spicedb/pull/3517)
  - Dispatch: when the primary fails a Check with an error that may be transient, such as being unavailable, the Check now waits for the secondary dispatchers and returns a secondary's answer if one succeeds, as LookupResources and LookupSubjects already did. Errors caused by the request itself are still returned at once. A Check that every dispatcher fails is no longer counted under `handler_name="$primary"` in `spicedb_dispatch_remote_dispatch_handler_total`. (https://github.com/authzed/spicedb/pull/3468)
- - Postgres: the minimum supported version is now 15. PostgreSQL 14 reached end of life on November 12, 2026 and is no longer tested. (https://github.com/authzed/spicedb/pull/3486)
 ```
 
-**File**: `internal/checkbaseline/postgres.go` (modified, +1/-1)
+**File**: `docs/spicedb.md` (modified, +1/-1)
 ```diff
-@@ -177,7 +177,7 @@ func openBaselineBackend(ctx context.Context, cfg AuditConfig) (*baselineBackend
- 		return nil, err
+@@ -635,7 +635,7 @@ spicedb serve [flags]
+       --grpc-max-conn-age-grace duration                                                how long a connection serving gRPC stays open after its max age for the in-flight requests it carries. 0 waits for them forever
+       --grpc-max-workers uint32                                                         set the number of workers for this server (0 value means 1 worker per request)
+       --grpc-network string                                                             network type to serve gRPC ("tcp", "tcp4", "tcp6", "unix", "unixpacket") (default "tcp")
+-      --grpc-preshared-key strings                                                      (required) preshared key(s) that must be provided by clients to authenticate requests
++      --grpc-preshared-key strings                                                      (required) preshared key(s) that must be provided by clients to authenticate requests. Any configured key is accepted; the first key is also used to authenticate dispatch requests sent to other SpiceDB nodes, so list order matters when rotating keys
+       --grpc-shutdown-drain-delay duration                                              the lame duck period between SpiceDB's health service reporting NOT_SERVING and server shutdown; used to signal to load balancers that SpiceDB is going out of service. configure according to your load balancer's health check behavior.
+       --grpc-shutdown-grace-period duration                                             time limit given to the server to shutdown gracefully after it receives SIGINT or SIGTERM. A value of zero means no limit (default 5s)
+       --grpc-tls-cert-path string                                                       local path to the TLS certificate used to serve gRPC
+```
+
+**File**: `pkg/cmd/serve.go` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ func RegisterServeFlags(cmd *cobra.Command, config *server.Config) error {
+ 
+ 	// Flags for the gRPC API server
+ 	util.RegisterGRPCServerFlags(grpcFlagSet, &config.GRPCServer, "grpc", "gRPC", ":50051", true)
+-	grpcFlagSet.StringSliceVar(&config.PresharedSecureKey, PresharedKeyFlag, []string{}, "(required) preshared key(s) that must be provided by clients to authenticate requests")
++	grpcFlagSet.StringSliceVar(&config.PresharedSecureKey, PresharedKeyFlag, []string{}, "(required) preshared key(s) that must be provided by clients to authenticate requests. Any configured key is accepted; the first key is also used to authenticate dispatch requests sent to other SpiceDB nodes, so list order matters when rotating keys")
+ 	if err := cobra.MarkFlagRequired(grpcFlagSet, PresharedKeyFlag); err != nil {
+ 		return fmt.Errorf("failed to mark flag as required: %w", err)
  	}
- 	defer driver.Close(context.Background())
--	err = migrations.DatabaseMigrations.Run(context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000)), driver, migrate.Head, migrate.LiveRun)
-+	err = migrations.DatabaseMigrations.Run(migrate.BackfillBatchSize.Set(ctx, 1000), driver, migrate.Head, migrate.LiveRun)
- 	closeErr := driver.Close(ctx)
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `internal/datastore/crdb/crdb.go` (modified, +1/-1)
-```diff
-@@ -445,7 +445,7 @@ func (cds *crdbDatastore) ReadWriteTx(
- 
- 	config := options.NewRWTOptionsWithOptions(opts...)
- 	if config.DisableRetries {
--		ctx = context.WithValue(ctx, pool.CtxDisableRetries, true)
-+		ctx = pool.CtxDisableRetries.Set(ctx, true)
- 	}
- 
- 	err := cds.writePool.TryBeginFunc(ctx, cds.acquireTimeout, func(tx pgx.Tx) error {
-```
-
-**File**: `internal/datastore/crdb/pool/pool.go` (modified, +4/-4)
-```diff
-@@ -14,6 +14,8 @@ import (
- 	"github.com/prometheus/client_golang/prometheus"
- 	"golang.org/x/time/rate"
- 
-+	"github.com/authzed/ctxkey"
-+
- 	"github.com/authzed/spicedb/internal/datastore/common"
- 	pgxcommon "github.com/authzed/spicedb/internal/datastore/postgres/common"
- 	log "github.com/authzed/spicedb/internal/logging"
-@@ -39,10 +41,8 @@ func init() {
- 	prometheus.MustRegister(resetHistogram)
- }
- 
--type ctxDisableRetries struct{}
--
- var (
--	CtxDisableRetries ctxDisableRetries
-+	CtxDisableRetries = ctxkey.NewWithDefault(false)
- 	ErrAcquire        = errors.New("failed to acquire in time")
- )
- 
-@@ -323,7 +323,7 @@ func (p *RetryPool) withRetries(ctx context.Context, acquireTimeout time.Duratio
- 	}()
- 
- 	maxRetries := p.maxRetries
--	if disabled, ok := ctx.Value(CtxDisableRetries).(bool); ok && disabled {
-+	if CtxDisableRetries.Value(ctx) {
- 		maxRetries = 0
- 	}
- 
-```
-
-**File**: `internal/datastore/postgres/migrations/zz_migration.0011_backfill_xid_add_indices.go` (modified, +6/-1)
-```diff
-@@ -2,6 +2,7 @@ package migrations
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
- 
- 	"github.com/jackc/pgx/v5"
-@@ -125,7 +126,11 @@ func init() {
- 				}
- 			}
- 
--			batchSize := ctx.Value(migrate.BackfillBatchSize).(uint64)
-+			batchSize, ok := migrate.BackfillBatchSize.Value(ctx)
-+			if !ok {
-+				return errors.New("backfill batch size not found in context")
-+			}
-+
- 			for _, stmt := range backfills {
- 				concreteStmt := fmt.Sprintf(stmt, batchSize)
- 
-```
-
-**File**: `internal/datastore/postgres/replica_lag_test.go` (modified, +1/-1)
-```diff
-@@ -528,7 +528,7 @@ func runMigrations(ctx context.Context, t testing.TB, uri string) {
- 	t.Helper()
- 	// The xid-backfill migration reads its batch size from the context, as the
- 	// standard test bootstrap does.
--	ctx = context.WithValue(ctx, migrate.BackfillBatchSize, uint64(1000))
-+	ctx = migrate.BackfillBatchSize.Set(ctx, 1000)
- 	driver, err := pgmigrations.NewAlembicPostgresDriver(ctx, uri, datastore.NoCredentialsProvider, false)
- 	require.NoError(t, err)
- 	defer func() { _ = driver.Close(ctx) }()
-```
-
-**File**: `internal/middleware/dispatcher/dispatcher.go` (modified, +9/-10)
-```diff
-@@ -6,40 +6,39 @@ import (
- 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
- 	"google.golang.org/grpc"
- 
-+	"github.com/authzed/ctxkey"
-+
- 	"github.com/authzed/spicedb/internal/dispatch"
- )
- 
--type ctxKeyType struct{}
--
--var dispatcherKey ctxKeyType = struct{}{}
--
- type dispatchHandle struct {
- 	dispatcher dispatch.Dispatcher
- }
- 
-+var dispatcherKey = ctxkey.New[*dispatchHandle]()
-+
- // ContextWithHandle adds a placeholder to a context that will later be
- // filled by the dispatcher
- func ContextWithHandle(ctx context.Context) context.Context {
--	return context.WithValue(ctx, dispatcherKey, &dispatchHandle{})
-+	return dispatcherKey.Set(ctx, &dispatchHandle{})
- }
- 
- // FromContext reads the selected dispatcher out of a context.Context
- // and returns nil if it does not exist.
- func FromContext(ctx context.Context) dispatch.Dispatcher {
--	if c := ctx.Value(dispatcherKey); c != nil {
--		handle := c.(*dispatchHandle)
-+	if handle, ok := dispatcherKey.Value(ctx); ok {
- 		return handle.dispatcher
- 	}
- 	return nil
- }
- 
- // SetInContext adds a dispatcher to the given context
- func SetInContext(ctx context.Context, dispatcher dispatch.Dispatcher) error {
--	handle := ctx.Value(dispatcherKey)
--	if handle == nil {
-+	handle, ok := dispatcherKey.Value(ctx)
-+	if !ok {
- 		return nil
- 	}
--	handle.(*dispatchHandle).dispatcher = dispatcher
-+	handle.dispatcher = dispatcher
- 	return nil
- }
- 
-```
-
-**File**: `internal/testserver/datastore/postgres.go` (modified, +1/-1)
-```diff
-@@ -117,7 +117,7 @@ func (b *postgresTester) hostConnectionString(ctx context.Context) (string, erro
- 
- func (b *postgresTester) NewDatastore(t testing.TB, initFunc InitFunc) datastore.Datastore {
- 	t.Helper()
--	ctx := context.WithValue(t.Context(), migrate.BackfillBatchSize, uint64(1000))
-+	ctx := migrate.BackfillBatchSize.Set(t.Context(), 1000)
- 
- 	var uri string
- 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3530** (2026-11-27): docs(serve): explain preshared key ordering for dispatch (@julianleonard123)
 - **PR #3524** (2026-11-23): chore(lint): add ctxkeycheck analyzer and migrate context keys to ctxkey (@josephschorr)
+- **PR #3523** (2026-11-24): chore(deps): bump the go-mod group across 2 directories with 39 updates (@dependabot[bot])
 - **PR #3522** (2026-11-23): fix(lookupsubjects): stop combining found subjects into a shared slice (@mazdakb)
 - **PR #3519** (closed): chore(deps): bump the go-mod group across 2 directories with 38 updates (@dependabot[bot])
 - **PR #3517** (2026-11-20): feat: batched streaming responses for LookupResources (@ostafen)
-- **PR #3515** (2026-11-23): test: add schema variant generator for property-based tests (@josephschorr)
-- **PR #3513** (2026-11-20): fix(watch): emit schema Watch events from the unified stored schema in read-new modes (@vroldanbet)
 
 ---
 
@@ -1331,13 +1206,13 @@ Migrates the existing context.WithValue callers to ctxkey so that no files need 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lint): add ctxkeycheck analyzer and migrate context keys to ctxkey
+## X. docs(serve): explain preshared key ordering for dispatch
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `188b9411`: lint): add ctxkeycheck analyzer and migrate context keys to ctxkey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9116c889`: docs(serve): explain preshared key ordering for dispatch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1345,7 +1220,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Migrations: `migrate.BackfillBatchSize` in `pkg/migrate` is now a typed `ctxkey` key and the `migrate.MigrationVariable` type is removed. Programs that embed SpiceDB and run migrations themselves must set the batch size with `migrate.BackfillBatchSize.Set(ctx, size)`; a value set with `context.WithValue` is no longer read. (https://github.com/authzed/spicedb/pull/3524)
+- Server: the `--grpc-preshared-key` help text now explains that any configured key is accepted, but only the first is used to authenticate dispatch requests sent to other SpiceDB nodes, so the order of keys matters when rotating them. Behavior is unchanged. (https://github.com/authzed/spicedb/pull/3530)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1355,7 +1230,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `188b9411` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9116c889` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

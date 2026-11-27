@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:55:29.962Z",
+  "last_updated": "2026-11-27T23:04:23.239Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-GU03",
+      "id": "CD-9804",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-GU03-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9804-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-LNUN",
+      "id": "CD-973J",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-LNUN-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-973J-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -73047,6 +73047,44 @@
       "source_repo": "dathere-qsv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-05FA97-write-nested-jsonl-values-as-json-text-5.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-96BA",
+      "directive_title": "docs(serve): explain preshared key ordering for dispatch",
+      "source_repo": "authzed-spicedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-96BA-docs-serve-explain-preshared-key-ordering-for-dispatch.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-97BCF4",
+      "directive_title": "docs(serve): explain preshared key ordering for dispatch",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "authzed-spicedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-97BCF4-docs-serve-explain-preshared-key-orderin.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-E6268A",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E6268A-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-2FA2AE",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2FA2AE-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
     }
   ]

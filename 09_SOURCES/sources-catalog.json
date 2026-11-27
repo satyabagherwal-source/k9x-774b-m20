@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "9596a364",
+    "sourceVersion": "9116c889",
     "license": "Apache-2.0",
-    "contentHash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
-    "lastHarvestedAt": "2026-11-25T11:51:19.347Z",
+    "contentHash": "3ff5263217bc3db095e79e6cac7ebfc57ffced8801b82165b7472cec7939fb70",
+    "lastHarvestedAt": "2026-11-27T23:04:16.877Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {

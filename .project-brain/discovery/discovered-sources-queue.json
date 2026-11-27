@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T22:55:29.466Z",
+  "updated_at": "2026-11-27T23:04:20.700Z",
   "stats": {
-    "total_discovered": 10607,
-    "approved_pending_harvest": 10068,
+    "total_discovered": 10608,
+    "approved_pending_harvest": 10069,
     "harvested_count": 0,
     "rejected_count": 539,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10076,
+      "COMMUNITY_AND_EXPERT": 10077,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -229608,6 +229608,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-122F3AD361E3": {
+      "id": "SRC-122F3AD361E3",
+      "url": "https://github.com/authzed/spicedb/pull/3530",
+      "title": "https://github.com/authzed/spicedb/pull/3530",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:04:20.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
+        "fileName": "authzed-spicedb-learnings.md"
       }
     }
   }
