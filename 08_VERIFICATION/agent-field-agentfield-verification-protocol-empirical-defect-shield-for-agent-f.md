@@ -4,22 +4,22 @@
 {
   "source_repository": "Agent-Field/agentfield",
   "source_url": "https://github.com/Agent-Field/agentfield",
-  "source_version": "1b3c68a3",
+  "source_version": "1d83dbb9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:14:23.067Z",
+  "timestamp": "2026-11-28T03:26:33.340Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-field-agentfield",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `1b3c68a3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:14:23.067Z`  
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `1d83dbb9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T03:26:33.340Z`  
 > **Learning ID**: `learn-github-agent-field-agentfield`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Agent-Field/agentfield` (Commit: `1b3c68a3`)
+- **Target Repository**: `Agent-Field/agentfield` (Commit: `1d83dbb9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:14:21.567Z  
+> **Harvest Timestamp**: 2026-11-28T03:26:31.792Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2667 stars
+- **Stars / Engagement**: 2671 stars
 
 ---
 
@@ -1429,879 +1429,537 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc802dcb` (2026-11-23)
-**Commit Message**: fix(sdk-python): record token usage for every tool-calling turn in ai(tools=...) (#1221)
+### Incident Patch 1: `7813f846` (2026-11-27)
+**Commit Message**: fix(sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4 (#1254)
 
-* fix(sdk-python): record token usage for every tool-calling turn in ai(tools=...)
+* fix(sdk/go): probe codeaf for watched-run support and fall back to exec on older builds
 
-The tool-calling path of AgentAI.ai() returned before the cost-tracker
-recording used by the plain completion path, so ai(tools=...) never
-contributed tokens or cost to the tracker. Record usage per LLM turn
-inside the tool-loop completion callback.
+A watched run starts `codeaf chat --once ... --json --events --steer
+--session`. codeaf v0.8.2 and v0.8.3 refuse that command line ("codeaf chat
+has no --json flag", exit 1, nothing on stdout), and the only fallback fired
+on a different message, so every watched run died at once.
 
-* test(sdk-python): cover cache tokens and missing usage in tool-loop turns
+Before choosing the watched path the SDK now runs `<bin> chat --help` (10s
+cap) and requires all four flags to be listed. The answer is cached per
+binary path, modification time and size, so it costs one probe per process
+per binary. A build without them logs one WARNING and runs the unwatched
+`exec` command, exactly as a non-watched run does. A failed probe runs that
+one run unwatched and is not remembered.
 
-Both rate-limit-retry and direct paths of the per-turn recorder are
-exercised, so every line added by the usage-recording fix is covered.
+The post-run fallback also recognises "has no --(json|events|steer|session)
+flag" and "flag provided but not defined: -(json|events|steer|session|once)",
+and re-runs only when the run exited non-zero with no envelope on stdout.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(sdk-python): never fail a tool-loop turn on a usage-tracker error
+* fix(sdk/go): pin CodeAF v0.8.4
 
-Recording is an observation side effect, like the stream path. Without the
-guard, a tracker error (for example a lock timeout) would turn a successful
-completion into an exception, which the tool loop never did before it
-recorded usage.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Abir Abbas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `sdk/python/agentfield/agent_ai.py` (modified, +58/-2)
+**File**: `sdk/go/agent/harness_live_test.go` (modified, +11/-1)
 ```diff
-@@ -987,8 +987,64 @@ async def _call_with_fallbacks():
- 
-                 if final_config.enable_rate_limit_retry:
-                     rate_limiter = self._get_rate_limiter()
--                    return await rate_limiter.execute_with_retry(_call_with_fallbacks)
--                return await _call_with_fallbacks()
-+                    turn_resp = await rate_limiter.execute_with_retry(
-+                        _call_with_fallbacks
-+                    )
-+                else:
-+                    turn_resp = await _call_with_fallbacks()
-+                try:
-+                    _record_tool_turn_usage(turn_resp, params)
-+                except Exception as e:
-+                    # Usage accounting is an observation side effect: it must
-+                    # never fail a completion that already succeeded.
-+                    log_debug(f"Tool loop: usage recording failed: {e}")
-+                return turn_resp
-+
-+            def _record_tool_turn_usage(turn_resp, params):
-+                """Record token usage for one LLM turn of the tool loop."""
-+                from agentfield.cost_tracker import (
-+                    derive_provider,
-+                    get_current_cost_tracker,
-+                )
-+                from .multimodal_response import detect_multimodal_response
-+                from .usage_routing import routing_provider
-+
-+                tracker = get_current_cost_tracker() or getattr(
-+                    self.agent, "cost_tracker", None
-+                )
-+                if tracker is None:
-+                    return
-+                requested_model = params.get("model", final_config.model)
-+                provider = derive_provider(requested_model)
-+                route = routing_provider(provider, params.get("api_base"))
-+                usage = detect_multimodal_response(turn_resp)
-+                if not usage.usage:
-+                    tracker.record(
-+                        model=requested_model,
-+                        provider=provider,
-+                        routing_provider=route,
-+                        usage_status="missing",
-+                    )
-+                    return
-+                from agentfield.execution_context import get_current_context
-+
-+                ctx = get_current_context()
-+                tracker.record(
-+                    model=getattr(turn_resp, "model", "") or requested_model,
-+                    provider=provider,
-+                    routing_provider=route,
-+                    prompt_tokens=usage.usage.get("prompt_tokens", 0),
-+                    completion_tokens=usage.usage.get("completion_tokens", 0),
-+                    total_tokens=usage.usage.get("total_tokens", 0),
-+                    cost_usd=usage.cost_usd,
-+                    reasoner_name=ctx.reasoner_name if ctx else None,
-+                    source="llm",
-+                    cache_read_tokens=usage.usage.get("cache_read_tokens", 0),
-+                    cache_creation_tokens=usage.usage.get(
-+                        "cache_creation_tokens", 0
-+                    ),
-+                    cost_source=usage.cost_source,
-+                )
- 
-             resp, trace = await execute_tool_call_loop(
-                 agent=self.agent,
-```
-
-**File**: `sdk/python/tests/test_agent_ai_comprehensive.py` (modified, +174/-0)
-```diff
-@@ -529,3 +529,177 @@ async def test_ai_system_and_user_prompts(monkeypatch, agent_with_ai):
-     assert len(messages) >= 2
-     assert any(msg.get("role") == "system" for msg in messages)
-     assert any(msg.get("role") == "user" for msg in messages)
-+
-+
-+@pytest.mark.asyncio
-+async def test_ai_tool_loop_records_usage_per_turn(monkeypatch, agent_with_ai):
-+    """Every LLM turn of the tool-calling loop is recorded in the cost tracker."""
-+    from agentfield.cost_tracker import CostTracker
-+
-+    agent_with_ai.cost_tracker = CostTracker()
-+    litellm_module = setup_litellm_stub(monkeypatch)
-+
-+    def chat(content, tool_calls, usage):
-+        return SimpleNamespace(
-+            model="gpt-4",
-+            usage=usage,
-+            choices=[
-+                SimpleNamespace(
-+                    message=SimpleNamespace(
-+                        content=content,
-+                        audio=None,
-+                        tool_calls=tool_calls,
-+                        model_dump=lambda: {
-+                            "role": "assistant",
-+                            "content": content,
-+                        },
-+                    )
-+                )
-+            ],
-+        )
-+
-+    tool_call = SimpleNamespace(
-+        id="call_1",
-+        function=SimpleNamespace(name="lookup", arguments="{}"),
-+    )
-+    litellm_module.acompletion.side_effect = [
-+        chat(
-+            None,
-+            [tool_call],
-+            {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
-+        ),
-+        chat(
-+            "done",
-+            None,
-+            {"prompt_tokens": 20, "completion_tokens": 7, "total_tokens": 27},
-+        ),
-+    ]
-+    agent_with_ai.call = AsyncMock(return_value={"ok": True})
-+
-+    ai = AgentAI(agent_with_ai)
-+    tools = [
-+        {
-+            "type": "function",
-+            "function": {
-+                "name": "lookup",
-+                "description": "d",
-+                "parameters": {"type": "object", "properties": {}},
-+            },
-+        }
-+    ]
-+    await ai.ai("question", tools=tools)
-+
-+    summary = agent_with_ai.cost_tracker.serialize()
-+    assert len(summary["entries"]) == 2
-+    assert summary["total_tokens"] == 42
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("rate_limit_retry", [True, False])
-+async def test_ai_tool_loop_records_cache_tokens_and_missing_usage(
-+    monkeypatch, agent_with_ai, rate_limit_retry
-+):
-+    """Tool-loop turns keep prompt-cache counts, and a turn whose provider
-+    reported no usage is flagged as missing rather than silently dropped."""
-+    from agentfield.cost_tracker import CostTracker
-+
-+    agent_with_ai.cost_tracker = CostTracker()
-+    agent_with_ai.ai_config.enable_rate_limit_retry = rate_limit_retry
-+    litellm_module = setup_litellm_stub(monkeypatch)
-+
-+    def chat(content, tool_calls, usage):
-+        return SimpleNamespace(
-+            model="gpt-4",
-+            usage=usage,
-+            choices=[
-+                SimpleNamespace(
-+                    message=SimpleNamespace(
-+                        content=content,
-+                        audio=None,
-+                        tool_calls=tool_calls,
-+                        model_dump=lambda: {"role": "assistant", "content": content},
-+                    )
-+                )
-+            ],
-+        )
-+
-+    tool_call = SimpleNamespace(
-+        id="call_1", function=SimpleNamespace(name="lookup", arguments="{}")
-+    )
-+    litellm_module.acompletion.side_effect = [
-+        chat(
-+            None,
-+            [tool_call],
-+            {
-+                "prompt_tokens": 10,
-+                "completion_tokens": 5,
-+                "total_tokens": 15,
-+                "cache_read_input_tokens": 4,
-+                "cache_creation_input_tokens": 2,
-+            },
-+        ),
-+        chat("done", None, None),
-+    ]
-+    agent_with_ai.call = AsyncMock(return_value={"ok": True})
-+
-+    tools = [
-+        {
-+            "type": "function",
-+            "function": {
-+                "name": "lookup",
-+                "description": "d",
-+                "parameters": {"type": "object", "properties": {}},
-+            },
-+        }
-+    ]
-+    await AgentAI(agent_with_ai).ai("question", tools=tools)
-+
-+    entries = agent_with_ai.cost_tracker.serialize()["entries"]
-+    assert len(entries) == 2
-+    assert entries[0]["cache_read_tokens"] == 4
-+    assert entries[0]["cache_creation_tokens"] == 2
-+    assert entries[1]["usage_status"] == "missing"
-+
-+
-+@pytest.mark.asyncio
-+async def test_ai_tool_loop_survives_usage_tracker_failure(monkeypatch, agent_with_ai):
-+    """A broken cost tracker must not fail a tool-loop completion that succeeded."""
-+
-+    class _BrokenTracker:
-+        def record(self, **kwargs):
-+            raise RuntimeError("tracker down")
-+
-+    agent_with_ai.cost_tracker = _BrokenTracker()
-+    litellm_module = setup_litellm_stub(monkeypatch)
-+    usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens
-```
-
----
-
-### Incident Patch 2: `961af5f1` (2026-11-23)
-**Commit Message**: fix(tray): reduce endpoint-security false positives on macOS (#1236)
-
-* Separate macOS tray setup from server startup
-
-* Sign and notarize standalone macOS tray binaries
-
-* fix(tray): remove the staged tray copy when the packaged app takes over
-
-Older Desktop builds and install.sh copied the tray helper to
-~/.agentfield/bin/af-tray. Once the tray runs from the signed Desktop app that
-copy is an unreferenced executable in a hidden folder, which is exactly what
-endpoint-security tools quarantine. Delete it when Desktop adopts or hides the
-tray, but never while a tray job still names it and never the running program.
-
-af service uninstall now also removes the session tray plist and the staged
-copy, so an uninstall leaves no launchd job or helper behind.
-
-Co-authored-by: ZeroPoint95 <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(install): stop stripping the macOS quarantine attribute
-
-curl never sets com.apple.quarantine on what it downloads, so the three
-xattr -d calls removed nothing, and a script that clears that attribute looks
-like Gatekeeper evasion to endpoint-security tools. The release binaries are
-Developer ID signed and notarized, so macOS acc
-
-**File**: `.github/workflows/control-plane.yml` (modified, +8/-0)
-```diff
-@@ -141,6 +141,14 @@ jobs:
-           go build ./cmd/af-tray/
-           go vet ./cmd/af-tray/
- 
-+      # The tray's install, upgrade and login-item paths are darwin-only code
-+      # that the Linux jobs cannot execute. These tests drive them against a stub
-+      # launchctl, and check that Service Management can see the bundled login
-+      # agent from inside an app bundle.
-+      - name: Test the macOS tray lifecycle
-+        working-directory: control-plane
-+        run: go test -count=1 ./cmd/af-tray/ ./internal/launchdsvc/
-+
-   # Summary job that depends on all critical checks
-   required-checks:
-     name: All Required Checks Passed
-```
-
-**File**: `.github/workflows/desktop.yml` (modified, +34/-0)
-```diff
-@@ -64,11 +64,45 @@ jobs:
-           else
-             printf 'stub' > vendor/af
-           fi
-+          if [ "$RUNNER_OS" = "macOS" ]; then
-+            # af-tray lands in Contents/MacOS, where it is signed as code, so the
-+            # stub has to be a real Mach-O binary rather than a text file.
-+            printf 'int main(void) { return 0; }\n' > "$RUNNER_TEMP/af-tray-stub.c"
-+            cc -o vendor/af-tray "$RUNNER_TEMP/af-tray-stub.c"
-+          fi
- 
-       - name: Package (unsigned, unpacked)
-         working-directory: desktop
-         run: npm run dist:dir
- 
-+      # The tray helper must ship inside the app, with the one bundled login
-+      # agent that Service Management registers. Without them the app falls back
-+      # to copying the helper into a second bundle, which is the install pattern
-+      # endpoint-security tools flag as malware persistence.
-+      - name: Check the packaged tray layout (macOS)
-+        if: runner.os == 'macOS'
-+        working-directory: desktop
-+        run: |
-+          set -euo pipefail
-+          shopt -s nullglob
-+          apps=(release/mac*/*.app)
-+          if [ ${#apps[@]} -ne 1 ]; then
-+            echo "expected one packed .app under desktop/release, found: ${apps[*]:-nothing}" >&2
-+            exit 1
-+          fi
-+          app="${apps[0]}"
-+          test -x "$app/Contents/MacOS/af-tray"
-+          agents=("$app"/Contents/Library/LaunchAgents/*.plist)
-+          if [ ${#agents[@]} -ne 1 ] || [ "$(basename "${agents[0]}")" != "ai.agentfield.tray.login.plist" ]; then
-+            echo "expected exactly ai.agentfield.tray.login.plist, found: ${agents[*]:-nothing}" >&2
-+            exit 1
-+          fi
-+          plutil -lint "${agents[0]}"
-+          # BundleProgram is resolved against the app bundle, so it must name the helper.
-+          test "$(plutil -extract BundleProgram raw -o - "${agents[0]}")" = "Contents/MacOS/af-tray"
-+          # The ad-hoc signature must seal the helper and the plist like any other code.
-+          codesign --verify --deep --strict --verbose=2 "$app"
-+
-   # Manual-dispatch-only: prove the macOS signing/notarization secrets work
-   # without cutting a release. Imports the Developer ID cert into a keychain
-   # (the same thing electron-builder does with CSC_LINK) and authenticates
-```
-
-**File**: `.github/workflows/release.yml` (modified, +134/-0)
-```diff
-@@ -300,6 +300,118 @@ jobs:
-           echo "=== Flattened dist/ directory ==="
-           ls -lah dist/agentfield-* 2>/dev/null || echo "No binaries found"
- 
-+      # The standalone macOS binaries are signed with the same Developer ID as the
-+      # Desktop app, with the hardened runtime and a secure timestamp, and are
-+      # notarized. Both are launched by the user's login session (the tray, and the
-+      # control plane under launchd), and an ad-hoc or unsigned executable that runs
-+      # at login is what endpoint-security tools quarantine. This runs before the
-+      # publish job computes checksums, so the published sums match what ships.
-+      #
-+      # Production releases refuse to ship unsigned binaries. Staging degrades to a
-+      # warning like the Desktop installer step below.
-+      - name: Sign and notarize standalone macOS binaries
-+        if: matrix.label == 'darwin'
-+        shell: bash
-+        env:
-+          CSC_LINK: ${{ secrets.CSC_LINK }}
-+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-+          APPLE_ID: ${{ secrets.APPLE_ID }}
-+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-+          RELEASE_ENVIRONMENT: ${{ needs.prepare.outputs.environment }}
-+        run: |
-+          set -euo pipefail
-+
-+          if [[ -z "$CSC_LINK" || -z "$CSC_KEY_PASSWORD" || -z "$APPLE_ID" || \
-+                -z "$APPLE_APP_SPECIFIC_PASSWORD" || -z "$APPLE_TEAM_ID" ]]; then
-+            if [[ "$RELEASE_ENVIRONMENT" == "production" ]]; then
-+              echo "::error::Production macOS binaries require the Developer ID and Apple notarization secrets"
-+              exit 1
-+            fi
-+            echo "::warning::signing/notarization secrets incomplete; the standalone macOS binaries stay unsigned"
-+            exit 0
-+          fi
-+
-+          # name:identifier pairs. The identifier is what macOS shows for the item
-+          # in Login Items and in security prompts.
-+          targets=(
-+            "dist/agentfield-tray-darwin-amd64:ai.agentfield.tray"
-+            "dist/agentfield-tray-darwin-arm64:ai.agentfield.tray"
-+            "dist/agentfield-darwin-amd64:ai.agentfield.cli"
-+            "dist/agentfield-darwin-arm64:ai.agentfield.cli"
-+          )
-+          binaries=()
-+          for target in "${targets[@]}"; do
-+            binary="${target%%:*}"
-+            if [[ ! -f "$binary" ]]; then
-+              echo "::error::Missing standalone macOS binary: $binary"
-+              exit 1
-+            fi
-+            binaries+=("$binary")
-+          done
-+
-+          signing_dir="$(mktemp -d "$RUNNER_TEMP/af-signing.XXXXXX")"
-+          keychain="$signing_dir/signing.keychain-db"
-+          trap 'security delete-keychain "$keychain" >/dev/null 2>&1 || true; rm -rf -- "$signing_dir"' EXIT
-+          keychain_password="$(openssl rand -hex 32)"
-+
-+          printf '%s' "$CSC_LINK" | base64 --decode > "$signing_dir/cert.p12"
-+          security create-keychain -p "$keychain_password" "$keychain"
-+          security unlock-keychain -p "$keychain_password" "$keychain"
-+          security import "$signing_dir/cert.p12" -k "$keychain" \
-+            -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
-+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain" >/dev/null
-+
-+          # Include the temporary keychain when codesign resolves the certificate chain.
-+          # Deleting the keychain removes its entry from the search list.
-+          existing_keychains="$(security list-keychains -d user | sed -E 's/^[[:space:]]*"//; s/"$//')"
-+          keychains=("$keychain")
-+          while IFS= read -r entry; do
-+            if [[ -n "$entry" ]]; then keychains+=("$entry"); fi
-+          done <<< "$existing_keychains"
-+          security list-keychains -d user -s "${keychains[@]}"
-+
-+          requirement="=anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.13] exists and certificate leaf[subject.OU] = \"$APPLE_TEAM_ID\""
-+          for target in "${targets[@]}"; do
-+            binary="${target%%:*}"
-+            identifier="${target##*:}"
-+            codesign --force --sign 'Developer ID Application:' --keychain "$keychain" \
-+              --identifier "$identifier" --options runtime --timestamp "$binary"
-+            codesign --verify --strict --test-requirement "$requirement" --verbose=2 "$binary"
-+            # Notarization below rejects a binary without the hardened runtime or
-+            # a secure timestamp, so those flags are enforced by Apple, not here.
-+          done
-+
-+          # The ZIP is for Apple only. Raw Mach-O binaries get online tickets
-+          # and keep their existing release asset names and download format.
-+          archive="$signing_dir/af-binaries.zip"
-+          zip -jq "$archive" "${binaries[@]}"
-+          notary_auth=(--apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEA
-```
-
-**File**: `README.md` (modified, +8/-4)
-```diff
-@@ -54,10 +54,14 @@ The provider name `aforge` remains an alias; set `AFORGE_BIN` and select
- `$AGENTFIELD_HOME/codeaf`. See [harness providers](docs/harness-providers.md)
- for binary overrides, mirror/skip switches, and telemetry controls.
- 
--On macOS the installer also registers the control plane to start at login (under
--launchd) and adds a menu-bar icon. Stop it with `af service stop` or the menu-bar
--icon — a plain `kill` looks like a crash and it restarts. `af service status`
--shows health and in-flight work; install with `--no-tray` to skip this entirely.
-+On macOS the installer does not register anything to run at login. Add the
-+optional menu-bar icon with `--with-tray`; it registers one login job for the
-+icon, and the icon's **Control plane → Start at login** switch decides whether
-+the control plane starts at login as well. A machine that already has the icon
-+keeps it and is updated in place (`--no-tray` skips that). When launchd
-+supervises the control plane, stop it with `af service stop` or the menu-bar icon
-+— a plain `kill` looks like a crash and it restarts. `af service status` shows
-+health and in-flight work.
- 
- Then in your coding agent, paste any spec with /agentfield :
- 
-```
-
-**File**: `control-plane/cmd/af-tray/assets_darwin.go` (modified, +0/-5)
-```diff
-@@ -12,8 +12,3 @@ var iconActive []byte
- 
- //go:embed assets/icon_inactive.png
- var iconInactive []byte
--
--// appIconICNS is written into the generated .app bundle's Resources on macOS.
--//
--//go:embed assets/appicon.icns
--var appIconICNS []byte
-```
-
-**File**: `control-plane/cmd/af-tray/claude_quota_darwin.go` (modified, +11/-0)
-```diff
-@@ -16,6 +16,12 @@ import (
- // STRICT contract (see shared.go): read-only. We never write to the Keychain,
- // and the token is only ever handed to fetchClaudeQuota, which sends it to
- // api.anthropic.com and nowhere else. It is never logged or persisted.
-+//
-+// OPT-IN ONLY. This reads a credential that belongs to another application, so
-+// the caller must have checked claudeUsageEnabled() first: the tray never runs
-+// `security find-generic-password` until the user has turned "Show Claude usage
-+// limits" on. Endpoint-security tools treat an unprompted Keychain read by a
-+// background helper as credential theft, and they are right to.
- 
- // readClaudeCodeToken reads the OAuth access token that Claude Code stores in
- // the macOS login Keychain under the "Claude Code-credentials" generic-password
-@@ -54,6 +60,11 @@ const claudeUsageURL = "https://api.anthropic.com/api/oauth/usage"
- // It returns a zero (OK=false) claudeQuota whenever anything is unavailable, so
- // the caller can render nothing without special-casing.
- func fetchClaudeQuotaNow() claudeQuota {
-+	// The one door to the Keychain read: without the user's opt-in this
-+	// returns before any `security` process is spawned.
-+	if !claudeUsageEnabled() {
-+		return claudeQuota{}
-+	}
- 	token := readClaudeCodeToken()
- 	if token == "" {
- 		return claudeQuota{}
-```
-
-**File**: `control-plane/cmd/af-tray/claude_quota_darwin_test.go` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+//go:build darwin
-+
-+package main
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+)
-+
-+// Contract: the tray reads the Claude Code login from the Keychain only after
-+// the user has turned "Show Claude usage limits" on. Before that no `security`
-+// process is started at all, because an unprompted Keychain read by a background
-+// helper is what endpoint-security tools treat as credential theft.
-+func TestKeychainIsNotReadUntilTheUserOptsIn(t *testing.T) {
-+	root := t.TempDir()
-+	t.Setenv("HOME", root)
-+	bin := filepath.Join(root, "bin")
-+	marker := filepath.Join(root, "security-ran")
-+	mustWriteTrayFixture(t, filepath.Join(bin, "security"), "#!/bin/sh\necho \"$@\" >> \""+marker+"\"\nexit 1\n")
-+	t.Setenv("PATH", bin+":/usr/bin:/bin")
-+
-+	ran := func() bool {
-+		_, err := os.Stat(marker)
-+		return err == nil
-+	}
-+
-+	if q := fetchClaudeQuotaNow(); q.OK || ran() {
-+		t.Fatalf("default: quota=%+v, security ran=%v; want no Keychain read", q, ran())
-+	}
-+	if err := setClaudeUsageEnabled(true); err != nil {
-+		t.Fatal(err)
-+	}
-+	fetchClaudeQuotaNow()
-+	if !ran() {
-+		t.Fatal("opted in: the Keychain was never consulted")
-+	}
-+	if err := setClaudeUsageEnabled(false); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Remove(marker); err != nil {
-+		t.Fatal(err)
-+	}
-+	if q := fetchClaudeQuotaNow(); q.OK || ran() {
-+		t.Fatalf("opted back out: quota=%+v, security ran=%v; want no Keychain read", q, ran())
-+	}
-+}
-```
-
-**File**: `control-plane/cmd/af-tray/desktop_install_darwin.go` (added, +350/-0)
-```diff
-@@ -0,0 +1,350 @@
-+//go:build darwin
-+
-+package main
-+
-+import (
-+	"bytes"
-+	"errors"
-+	"fmt"
-+	"html"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"strings"
-+	"syscall"
-+	"time"
-+
-+	"github.com/Agent-Field/agentfield/control-plane/internal/launchdsvc"
-+)
-+
-+const desktopLoginLabel = "ai.agentfield.tray.login"
-+
-+func desktopMarkerPath() string { return filepath.Join(agentfieldDir(), "desktop-tray") }
-+func traySessionPath() string   { return filepath.Join(agentfieldDir(), "tray-session.plist") }
-+
-+// Both installers manage the same per-user tray. Serialize the transition across
-+// processes, including a CLI update that overlaps with Desktop startup.
-+func withTrayLock(apply func() error) error {
-+	if err := os.MkdirAll(logsDir(), 0o755); err != nil {
-+		return err
-+	}
-+	lock, err := os.OpenFile(filepath.Join(agentfieldDir(), "tray.lock"), os.O_CREATE|os.O_RDWR, 0o600)
-+	if err != nil {
-+		return err
-+	}
-+	defer lock.Close()
-+	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX); err != nil {
-+		return err
-+	}
-+	return apply()
-+}
-+
-+// stagedTrayPath is the copy of the helper that older Desktop builds and the
-+// installer left in ~/.agentfield/bin. A tray that runs from the signed Desktop
-+// app has no use for it, and an unreferenced executable in a hidden folder is
-+// exactly what endpoint-security tools quarantine.
-+func stagedTrayPath() string { return filepath.Join(binDir(), "af-tray") }
-+
-+// removeStagedTray deletes the staged copy once no tray job names it. It never
-+// follows a link, never deletes the program that is running, and leaves the copy
-+// alone while a job still points at it (the CLI-installed tray runs from it).
-+func removeStagedTray(program string) error {
-+	staged := stagedTrayPath()
-+	if staged == program {
-+		return nil
-+	}
-+	info, err := os.Lstat(staged)
-+	if errors.Is(err, os.ErrNotExist) {
-+		return nil
-+	}
-+	if err != nil || !info.Mode().IsRegular() {
-+		return err
-+	}
-+	for _, job := range []string{trayPlistPath(), traySessionPath()} {
-+		data, err := os.ReadFile(job)
-+		if err != nil {
-+			continue
-+		}
-+		if html.UnescapeString(launchdsvc.ParsePlistOwner(data).Program) == staged {
-+			return nil
-+		}
-+	}
-+	return removeIfPresent(staged)
-+}
-+
-+func desktopOwnsTray() bool {
-+	data, err := os.ReadFile(desktopMarkerPath())
-+	if err != nil {
-+		return false
-+	}
-+	program, _, _ := strings.Cut(string(data), "\n")
-+	info, err := os.Stat(program)
-+	return err == nil && info.Mode().IsRegular()
-+}
-+
-+// A native login job can start while a session tray is still shutting down.
-+func lockTrayProcess() (*os.File, error) {
-+	if err := os.MkdirAll(agentfieldDir(), 0o755); err != nil {
-+		return nil, err
-+	}
-+	lock, err := os.OpenFile(filepath.Join(agentfieldDir(), "tray-running.lock"), os.O_CREATE|os.O_RDWR, 0o600)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
-+		lock.Close()
-+		if errors.Is(err, syscall.EWOULDBLOCK) {
-+			return nil, nil
-+		}
-+		return nil, err
-+	}
-+	return lock, nil
-+}
-+
-+func installDesktop() error {
-+	return withTrayLock(func() error {
-+		if desktopOwnsTray() {
-+			fmt.Println("The tray is managed by AgentField Desktop.")
-+			return nil
-+		}
-+		program, err := os.Executable()
-+		if err != nil {
-+			return err
-+		}
-+		if err := installTrayAgent(trayPlistPath(), program); err != nil {
-+			return err
-+		}
-+		if err := launchdsvc.RemoveLegacyTrayBundle(home()); err != nil {
-+			return err
-+		}
-+		fmt.Println("AgentField tray installed. Look for the icon in your menu bar.")
-+		return nil
-+	})
-+}
-+
-+func uninstallDesktop() error {
-+	return withTrayLock(func() error {
-+		if desktopOwnsTray() {
-+			return fmt.Errorf("hide the tray in AgentField Desktop settings")
-+		}
-+		if err := removeTrayAgent(trayPlistPath()); err != nil {
-+			return err
-+		}
-+		return launchdsvc.RemoveLegacyTrayBundle(home())
-+	})
-+}
-+
-+func syncDesktopTray(visible bool, login string) error {
-+	program, err := os.Executable()
-+	if err != nil {
-+		return err
-+	}
-+	return withTrayLock(func() error { return syncPackagedTray(program, visible, login) })
-+}
-+
-+func syncPackagedTray(program string, visible bool, login string) error {
-+	native := desktopLoginStatus()
-+	legacy, err := readTrayAgent(trayPlistPath())
-+	if err != nil {
-+		return err
-+	}
-+	atLogin := login == "login" || login == "auto" && (native.registered() || len(legacy) > 0 && legacyTrayAtLogin())
-+	digest, ok := launchdsvc.FileSHA256(program)
-+	if !ok {
-+		return fmt.Errorf("could not fingerprint the bundled tray at %s", program)
-+	}
-+	previous, _ := os.ReadFile(desktopMarkerPath())
-+	marker := []byte(program + "\n" + digest + "\n")
-+	if !visible {
-+		if err := setDesktopLogin(native, false); err != nil {
-+			return err
-+		}
-+		if err := removeTrayAgent(traySessionPath()); err != nil {
-+			return err
-+		}
-+		if err := removeTrayAgent(trayPlistPath()); err != nil {
-+			return err
-+		}
-+		if err := launchdsvc.RemoveLegacyTrayBundle(home()); err != nil {
-+			return
-```
-
----
-
-### Incident Patch 3: `cb7f77ee` (2026-11-23)
-**Commit Message**: fix(sdk-go): panic on nil skill in IncludeRouter and name the handler (#1233)
-
-**File**: `sdk/go/agent/agent_invariant_test.go` (modified, +2/-2)
-```diff
-@@ -231,9 +231,9 @@ func TestInvariant_Agent_LocalCallIsolation(t *testing.T) {
- // registering a nil handler panics immediately rather than silently storing it.
- func TestInvariant_Agent_NilHandlerPanics(t *testing.T) {
- 	a := makeMinimalAgent(t)
--	assert.Panics(t, func() {
-+	assert.PanicsWithValue(t, `agentfield: reasoner "bad": nil handler`, func() {
- 		a.RegisterReasoner("bad", nil)
--	}, "registering nil handler must panic")
-+	}, "registering nil handler must panic and name the reasoner")
- }
- 
- // TestInvariant_Agent_ExecuteUnknownReasoner returns a non-nil error.
-```
-
-**File**: `sdk/go/agent/agent_register.go` (modified, +9/-3)
-```diff
-@@ -2,13 +2,19 @@ package agent
- 
- import (
- 	"encoding/json"
--	"errors"
-+	"fmt"
+@@ -22,8 +22,14 @@ import (
  )
  
-+// nilHandlerError reports a nil handler for the reasoner or skill called name,
-+// so the offender can be found in an agent with many routers.
-+func nilHandlerError(kind, name string) error {
-+	return fmt.Errorf("agentfield: %s %q: nil handler", kind, name)
-+}
-+
- // RegisterReasoner makes a handler available at /reasoners/{name}.
- func (a *Agent) RegisterReasoner(name string, handler HandlerFunc, opts ...ReasonerOption) {
- 	if handler == nil {
--		panic("nil handler supplied")
-+		panic(nilHandlerError("reasoner", name).Error())
- 	}
- 
- 	meta := &Reasoner{
-@@ -50,7 +56,7 @@ func (a *Agent) RegisterReasoner(name string, handler HandlerFunc, opts ...Reaso
- // RegisterSkill makes a deterministic handler available at /skills/{name}.
- func (a *Agent) RegisterSkill(name string, handler HandlerFunc, opts ...ReasonerOption) error {
- 	if handler == nil {
--		return errors.New("nil handler supplied")
-+		return nilHandlerError("skill", name)
- 	}
- 
- 	meta := &Reasoner{
+ // fakeCodeAF is a codeaf that streams two entries, waits for a person's note
+-// on its steer file, says it read it, and answers.
++// on its steer file, says it read it, and answers. Like a current build, it
++// lists the watched run's flags when asked for `chat --help`; the SDK asks
++// before it starts a watched run.
+ const fakeCodeAF = `#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
++  exit 0
++fi
+ events=""; steer=""
+ while [ $# -gt 0 ]; do
+   case "$1" in --events) events="$2"; shift;; --steer) steer="$2"; shift;; esac
+@@ -402,6 +408,10 @@ func TestRelayRidesTheLinkAndFallsBackToHTTP(t *testing.T) {
+ // recordingCodeAF records its argv and stdin into REC_DIR so a test can prove
+ // whether codeaf ran on the origin/main exec path or the watched chat path.
+ const recordingCodeAF = `#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
++  exit 0
++fi
+ : > "$REC_DIR/argv"
+ for arg in "$@"; do
+   printf '%s\n' "$arg" >> "$REC_DIR/argv"
 ```
 
-**File**: `sdk/go/agent/router.go` (modified, +5/-1)
+**File**: `sdk/go/harness/codeaf.go` (modified, +10/-3)
 ```diff
-@@ -172,7 +172,11 @@ func (r *Router) flatten(prefix string, inheritedTags []string) []routerHandlerE
- func (a *Agent) IncludeRouter(router *Router, opts RouterOptions) {
- 	for _, e := range router.flatten(opts.Prefix, opts.Tags) {
- 		if e.skill {
--			a.RegisterSkill(e.name, e.handler, e.opts...)
-+			// IncludeRouter has no error return, so a rejected skill panics like
-+			// the reasoner branch below instead of silently going missing.
-+			if err := a.RegisterSkill(e.name, e.handler, e.opts...); err != nil {
-+				panic(err.Error())
-+			}
- 			continue
- 		}
- 		a.RegisterReasoner(e.name, e.handler, e.opts...)
-```
-
-**File**: `sdk/go/agent/router_test.go` (modified, +34/-0)
-```diff
-@@ -300,3 +300,37 @@ func TestRouter_IssueExample(t *testing.T) {
- 	mustNotExecute(t, b, "users.get-profile")
- 	mustNotExecute(t, b, "orders.create")
+@@ -43,10 +43,13 @@ func WarnCodeAFMissingKeyOnce(warn func(string)) {
+ // CodeAFProvider invokes CodeAF's canonical headless exec or do protocol.
+ // Binary discovery and managed installation happen lazily on first execution.
+ // When CodeAF is unavailable it can delegate to the unchanged legacy adapter.
++// probeCLI runs `chat --help` to learn whether a watched run can use the
++// binary; nil means the real runner.
+ type CodeAFProvider struct {
+ 	BinPath       string
+ 	alias         bool
+ 	runCLI        func(ctx context.Context, cmd []string, env map[string]string, cwd string, timeout, idleSeconds int, stdin []byte) (*CLIResult, error)
++	probeCLI      func(ctx context.Context, cmd []string, env map[string]string, cwd string, timeout, idleSeconds int, stdin []byte) (*CLIResult, error)
+ 	resolveBinary func(context.Context, string) (codeAFBinary, error)
  }
-+
-+// A nil handler on a router must fail loudly when the router is mounted, for
-+// skills as well as reasoners, and the message must name the mounted handler.
-+func TestRouter_NilHandlerPanicsOnMount(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		register func(*agent.Router)
-+		want     string
-+	}{
-+		{
-+			name:     "skill",
-+			register: func(r *agent.Router) { r.RegisterSkill("lookup", nil) },
-+			want:     `agentfield: skill "orders.lookup": nil handler`,
-+		},
-+		{
-+			name:     "reasoner",
-+			register: func(r *agent.Router) { r.RegisterReasoner("lookup", nil) },
-+			want:     `agentfield: reasoner "orders.lookup": nil handler`,
-+		},
-+	}
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			r := agent.NewRouter()
-+			tc.register(r)
-+
-+			defer func() {
-+				if got := recover(); got != tc.want {
-+					t.Fatalf("IncludeRouter panic = %v, want %q", got, tc.want)
-+				}
-+			}()
-+			newTestAgent(t).IncludeRouter(r, agent.RouterOptions{Prefix: "orders"})
-+		})
-+	}
-+}
+ 
+@@ -384,10 +387,14 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
+ 	// A watched run uses `codeaf chat --once`, a full session whose record is
+ 	// streamed line by line through --events and steered through --steer. A
+ 	// codeaf too old for those flags is run the old way, unwatched: watching
+-	// a run is a convenience and must never cost the run itself.
++	// a run is a convenience and must never cost the run itself. The binary
++	// is asked first (`chat --help`), because a build that does not know the
++	// flags refuses the command line and the watched run dies at once; the
++	// check after the run below is the net for a build that lists the flags
++	// and still refuses them.
+ 	var live *liveRun
+ 	runCmd, runCwd := cmd, ""
+-	if command == "exec" && options.Live != nil {
++	if command == "exec" && options.Live != nil && p.supportsLiveChat(runCtx, binary.path, env) {
+ 		run, flags, err := startLive(options.Live, p.LiveInfo())
+ 		if err != nil {
+ 			log.Printf("WARNING CodeAF live transcript unavailable: %v", err)
+@@ -405,7 +412,7 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
+ 		cli, err = runCLI(runCtx, cmd, env, "", outerTimeout, 0, input)
+ 	}
+ 	live.finish()
+-	if live != nil && err == nil && cli != nil && cli.ReturnCode != 0 && strings.Contains(cli.Stderr, "-events") && strings.Contains(cli.Stderr, "not defined") {
++	if live != nil && err == nil && codeAFRejectedLiveFlags(cli) {
+ 		cli, err = runCLI(runCtx, cmd, env, "", int(math.Ceil(time.Until(deadline).Seconds())), 0, input)
+ 	}
+ 	elapsed := int(time.Since(started).Milliseconds())
 ```
 
-**File**: `sdk/go/agent/skill_registration_additional_test.go` (modified, +1/-1)
+**File**: `sdk/go/harness/codeaf_install.go` (modified, +8/-8)
 ```diff
-@@ -23,7 +23,7 @@ func TestRegisterSkill_HTTPDiscoveryAndLocalExecution(t *testing.T) {
- 	})
- 	require.NoError(t, err)
+@@ -18,21 +18,21 @@ import (
  
--	require.Error(t, a.RegisterSkill("bad", nil))
-+	require.EqualError(t, a.RegisterSkill("bad", nil), `agentfield: skill "bad": nil handler`)
- 	require.NoError(t, a.RegisterSkill("add", func(ctx context.Context, input map[string]any) (any, error) {
- 		return map[string]any{"ok": input["ok"]}, nil
- 	}, WithReasonerTags("deterministic"), WithRequireRealtimeValidation()))
+ const (
+ 	// CodeAFVersion is the managed CodeAF release, verified using embedded hashes.
+-	CodeAFVersion = "v0.8.2"
++	CodeAFVersion = "v0.8.4"
+ 	// CodeAFBaseURL is the pinned release directory, overridable by AGENTFIELD_CODEAF_BASE_URL.
+-	CodeAFBaseURL         = "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2"
++	CodeAFBaseURL         = "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4"
+ 	maxCodeAFDownloadSize = 128 << 20
+ 	codeAFVersionFilename = ".codeaf.version"
+ 	codeAFDownloadRetry   = time.Minute
+ )
+ 
+ var codeAFHashes = map[string]string{
+-	"codeaf-darwin-amd64":      "a476f1ce44b21f8016583a65c49b21497d10713bcd72c33478b3bd12e52446d7",
+-	"codeaf-darwin-arm64":      "e61adac060bf2345c08a3e23ae83239871c3050eadac046879f5f3176270c4f1",
+-	"codeaf-linux-amd64":       "681d9813f2517addc86fb644d313e3f7cf0ab60be708c8e8b13d77fb16a6798c",
+-	"codeaf-linux-arm64":       "c6375d58d198d9e1a84880d8b4324ee6c067a0e5e351af115ca5506b1ffa1c78",
+-	"codeaf-windows-amd64.exe": "ff80f6f0c89c209fc809e960c70a1eb3518ccfc06775d587d5a187edd5d5222d",
+-	"codeaf-windows-arm64.exe": "bfc0b386e5248e7e6756f097b372f72e4e955ee1e19e9216ccafee47064b2b80",
++	"codeaf-darwin-amd64":      "9a8db2d6cdb01affd5eab5d0259d2a8b773d2e7939ee3c519ee46eadff2b268d",
++	"codeaf-darwin-arm64":      "5ba7992a61d1bcd4e222ba5de96b8221dc3e664ede78baf8524a2cbcafdacf64",
++	"codeaf-linux-amd64":       "0af6241aa8822be7ed97c9cf14b302393ff0dbac481a74c213cceba94f2a4315",
++	"codeaf-linux-arm64":       "bf4c485c77d98a40c7163e9ccdd452d3c06065491d9b045f4e83fad4df13a39e",
++	"codeaf-windows-amd64.exe": "e1701579bc0d26ba60bd4c11be9181592e85ed8071ef0ba3bff785f637b75b91",
++	"codeaf-windows-arm64.exe": "a54b3019e8bdd32894a3bf1ab956e592697299ed8ce10ea405cd9f74f0b6b83c",
+ }
+ 
+ type codeAFBinary struct {
+```
+
+**File**: `sdk/go/harness/codeaf_install_test.go` (modified, +8/-8)
+```diff
+@@ -359,15 +359,15 @@ func TestCodeAFInstalledRequiresExecutableAndMarker(t *testing.T) {
+ }
+ 
+ func TestCodeAFPlatformPinsAndHome(t *testing.T) {
+-	assert.Equal(t, "v0.8.2", CodeAFVersion)
+-	assert.Equal(t, "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2", CodeAFBaseURL)
++	assert.Equal(t, "v0.8.4", CodeAFVersion)
++	assert.Equal(t, "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4", CodeAFBaseURL)
+ 	for _, tc := range []struct{ goos, arch, hash string }{
+-		{"darwin", "amd64", "a476f1ce44b21f8016583a65c49b21497d10713bcd72c33478b3bd12e52446d7"},
+-		{"darwin", "arm64", "e61adac060bf2345c08a3e23ae83239871c3050eadac046879f5f3176270c4f1"},
+-		{"linux", "amd64", "681d9813f2517addc86fb644d313e3f7cf0ab60be708c8e8b13d77fb16a6798c"},
+-		{"linux", "arm64", "c6375d58d198d9e1a84880d8b4324ee6c067a0e5e351af115ca5506b1ffa1c78"},
+-		{"windows", "amd64", "ff80f6f0c89c209fc809e960c70a1eb3518ccfc06775d587d5a187edd5d5222d"},
+-		{"windows", "arm64", "bfc0b386e5248e7e6756f097b372f72e4e955ee1e19e9216ccafee47064b2b80"},
++		{"darwin", "amd64", "9a8db2d6cdb01affd5eab5d0259d2a8b773d2e7939ee3c519ee46eadff2b268d"},
++		{"darwin", "arm64", "5ba7992a61d1bcd4e222ba5de96b8221dc3e664ede78baf8524a2cbcafdacf64"},
++		{"linux", "amd64", "0af6241aa8822be7ed97c9cf14b302393ff0dbac481a74c213cceba94f2a4315"},
++		{"linux", "arm64", "bf4c485c77d98a40c7163e9ccdd452d3c06065491d9b045f4e83fad4df13a39e"},
++		{"windows", "amd64", "e1701579bc0d26ba60bd4c11be9181592e85ed8071ef0ba3bff785f637b75b91"},
++		{"windows", "arm64", "a54b3019e8bdd32894a3bf1ab956e592697299ed8ce10ea405cd9f74f0b6b83c"},
+ 	} {
+ 		asset, hash := codeAFAsset(tc.goos, tc.arch)
+ 		want := "codeaf-" + tc.goos + "-" + tc.arch
+```
+
+**File**: `sdk/go/harness/codeaf_probe.go` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++package harness
++
++import (
++	"context"
++	"log"
++	"os"
++	"os/exec"
++	"regexp"
++	"strings"
++	"sync"
++)
++
++// codeAFProbeTimeoutSeconds bounds `codeaf chat --help`, which only prints its
++// flag list. A binary that cannot do that quickly is not worth waiting for: the
++// run goes ahead unwatched.
++const codeAFProbeTimeoutSeconds = 10
++
++// codeAFLiveFlags are the flags a watched run passes to `codeaf chat --once`.
++// A build that does not list every one of them refuses the command line at
++// once (v0.8.3: "codeaf chat has no --json flag"), so a watched run on such a
++// build is dead before it starts.
++var codeAFLiveFlags = []string{"json", "events", "steer", "session"}
++
++// codeAFLiveFlagListed reads one flag's line out of a `chat --help` listing.
++// The help prints each flag on a line of its own, "  --json" or "  --events
++// string" (a stock Go flag package would print "  -json"), so the flag must
++// open the line. A usage line such as "[--session path]" mentions flags
++// without listing them and must not count.
++func codeAFLiveFlagListed(help, name string) bool {
++	return regexp.MustCompile(`(?m)^[ \t]+--?` + regexp.QuoteMeta(name) + `([ \t]|$)`).MatchString(help)
++}
++
++// codeAFMissingLiveFlags names the live flags a `chat --help` output leaves out.
++func codeAFMissingLiveFlags(help string) []string {
++	var missing []string
++	for _, name := range codeAFLiveFlags {
++		if !codeAFLiveFlagListed(help, name) {
++			missing = append(missing, "--"+name)
++		}
++	}
++	return missing
++}
++
++// codeAFLiveFlagRejection recognises a run that died up front because codeaf
++// does not know one of the watched run's flags: the stderr of a build that
++// refuses the command line, before any work started.
++var codeAFLiveFlagRejection = regexp.MustCompile(
++	`has no --(json|events|steer|session) flag|flag provided but not defined: -{1,2}(json|events|steer|session|once)\b`)
++
++// codeAFRejectedLiveFlags reports whether a failed watched run was refused for
++// an unknown flag, with nothing run: it exited non-zero and printed no
++// envelope. The older spelling, "-events ... not defined", still counts.
++func codeAFRejectedLiveFlags(cli *CLIResult) bool {
++	if cli == nil || cli.ReturnCode == 0 || parseCodeAFEnvelope(cli.Stdout) != nil {
++		return false
++	}
++	return codeAFLiveFlagRejection.MatchString(cli.Stderr) ||
++		(strings.Contains(cli.Stderr, "-events") && strings.Contains(cli.Stderr, "not defined"))
++}
++
++// codeAFProbeKey identifies one build of one binary. A binary replaced in
++// place (an upgrade) changes its size or modification time and so is probed
++// again.
++type codeAFProbeKey struct {
++	path  string
++	mtime int64
++	size  int64
++}
++
++// codeAFLiveProbes remembers what each binary answered, for the life of the
++// process. The mutex is held across the probe on purpose: runs that start
++// together share one `chat --help` instead of each running their own.
++var codeAFLiveProbes = struct {
++	sync.Mutex
++	cache map[codeAFProbeKey]bool
++}{cache: make(map[codeAFProbeKey]bool)}
++
++func resetCodeAFLiveProbes() {
++	codeAFLiveProbes.Lock()
++	defer codeAFLiveProbes.Unlock()
++	codeAFLiveProbes.cache = make(map[codeAFProbeKey]bool)
++}
++
++// codeAFProbeKeyFor resolves the binary on PATH when it is a bare name and
++// stats it; ok is false when it cannot be, and then nothing is cached.
++func codeAFProbeKeyFor(bin string) (codeAFProbeKey, bool) {
++	path := bin
++	if !strings.ContainsAny(path, `/\`) {
++		resolved, err := exec.LookPath(path)
++		if err != nil {
++			return codeAFProbeKey{}, false
++		}
++		path = resolved
++	}
++	info, err := os.Stat(path)
++	if err != nil {
++		return codeAFProbeKey{}, false
++	}
++	return codeAFProbeKey{path: path, mtime: info.ModTime().UnixNano(), size: info.Size()}, true
++}
++
++// supportsLiveChat reports whether `bin chat --once` takes every flag a watched
++// run passes, found by reading `bin chat --help` rather than by guessing at a
++// version number. The answer is remembered per binary (path, modification time
++// and size), so the probe runs once per process per binary, and so does the
++// warning a "no" logs. A probe that could not run (a timeout, a missing binary)
++// says no for this run and is not remembered, so a flaky start does not turn
++// watching off for good.
++func (p *CodeAFProvider) supportsLiveChat(ctx context.Context, bin string, env map[string]string) bool {
++	key, keyed := codeAFProbeKeyFor(bin)
++	if keyed {
++		codeAFLiveProbes.Lock()
++		defer codeAFLiveProbes.Unlock()
++		if supported, ok := codeAFLiveProbes.cache[key]; ok {
++			return supported
++		}
++	}
++	probe := p.probeCLI
++	if probe == nil {
++		probe = runCodeAFCLI
++	}
++	cli, err := probe(ctx, []string{bin, "chat", "--help"}, env, "", codeAFProbeTimeoutSeconds, 0, nil)
++	// Both streams: this build prints the flag list on stdout, and a stock
++	// flag package prints it on stderr.
++	help := ""
++	if cli != nil {
++		help = cli.Stdout + "\n" + cli.Stderr
++	}
++	if err != nil || cli == nil || cli.ReturnCode < 0 
+```
+
+**File**: `sdk/go/harness/codeaf_probe_test.go` (added, +289/-0)
+```diff
+@@ -0,0 +1,289 @@
++package harness
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++// Validation contract (a watched CodeAF run and an older CodeAF build):
++//
++//	P1  A binary whose `chat --help` lacks the watched run's flags (v0.8.3,
++//	    which also refuses `chat --json`) is never sent `chat ... --json`: the run
++//	    goes through `exec`, succeeds, and logs one WARNING naming the mismatch.
++//	P2  A binary whose `chat --help` lists --json, --events, --steer and --session
++//	    is run as `chat --once ... --json --events --steer --session`, never `exec`.
++//	P3  A binary that lists the flags and still refuses one up front ("has no
++//	    --json flag") is re-run through `exec` once, and that run succeeds.
++//	P4  `chat --help` runs once per binary per process, however many runs follow
++//	    or start together; a binary replaced in place is asked again.
++//	P5  A failed run is re-run only when it was refused for a live flag, exited
++//	    non-zero and printed no envelope.
++//	P6  The listing is read the way codeaf prints it, not by substring: a usage
++//	    line that mentions "[--session path]" does not list --session.
++
++const fakeCodeAFEnvelope = `{"ok":true,"stop":"done","answer":"done"}`
++
++// fakeCodeAFScript writes a stand-in codeaf. Every `chat --help` appends to
++// probes, every other call appends its arguments to calls. help is the flag
++// listing it prints; rejectChat makes `chat` refuse the way v0.8.3 does.
++func fakeCodeAFScript(t *testing.T, dir string, help []string, rejectChat string) (bin, calls, probes string) {
++	t.Helper()
++	if runtime.GOOS == "windows" {
++		t.Skip("shell-script stand-in for codeaf")
++	}
++	bin, calls, probes = filepath.Join(dir, "fake-codeaf"), filepath.Join(dir, "calls"), filepath.Join(dir, "probes")
++	writeFakeCodeAF(t, bin, calls, probes, help, rejectChat)
++	return bin, calls, probes
++}
++
++func writeFakeCodeAF(t *testing.T, bin, calls, probes string, help []string, rejectChat string) {
++	t.Helper()
++	var listing strings.Builder
++	listing.WriteString("  codeaf chat [--model slug] [--session path] [--once \"text\"]\n\nflags:\n")
++	for _, flag := range help {
++		fmt.Fprintf(&listing, "  --%s\n      what %s does\n", flag, flag)
++	}
++	reject := `printf '%s\n' '` + fakeCodeAFEnvelope + `'`
++	if rejectChat != "" {
++		reject = `printf '%s\n' '` + rejectChat + `' >&2; exit 1`
++	}
++	script := fmt.Sprintf(`#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  echo probe >> '%s'
++  cat <<'HELP'
++%sHELP
++  exit 0
++fi
++echo "$*" >> '%s'
++if [ "$1" = chat ]; then
++  %s
++  exit 0
++fi
++cat >/dev/null
++printf '%%s\n' '%s'
++`, probes, listing.String(), calls, reject, fakeCodeAFEnvelope)
++	tmp := bin + ".tmp"
++	require.NoError(t, os.WriteFile(tmp, []byte(script), 0o755))
++	require.NoError(t, os.Rename(tmp, bin))
++}
++
++func readLines(t *testing.T, path string) []string {
++	t.Helper()
++	raw, err := os.ReadFile(path)
++	if os.IsNotExist(err) {
++		return nil
++	}
++	require.NoError(t, err)
++	return strings.Split(strings.TrimSpace(string(raw)), "\n")
++}
++
++// fakeCodeAFProvider is a provider that runs the real runners against a script.
++func fakeCodeAFProvider(bin string) *CodeAFProvider {
++	p := stubCodeAF()
++	p.BinPath = bin
++	p.probeCLI, p.runCLI = nil, nil
++	return p
++}
++
++func liveOptions(t *testing.T) (Options, *int) {
++	begun := 0
++	return Options{ProjectDir: t.TempDir(), Live: &Live{Begin: func(LiveInfo) { begun++ }}}, &begun
++}
++
++// P1
++func TestCodeAFLiveRunUsesExecOnABuildWithoutTheLiveFlags(t *testing.T) {
++	isolateCodeAF(t)
++	logs := captureCodeAFLogs(t)
++	bin, calls, probes := fakeCodeAFScript(t, t.TempDir(), []string{"session"}, "Error: codeaf chat has no --json flag")
++	options, begun := liveOptions(t)
++
++	raw, err := fakeCodeAFProvider(bin).Execute(context.Background(), "write it", options)
++
++	require.NoError(t, err)
++	assert.Equal(t, "done", raw.Result)
++	assert.False(t, raw.IsError)
++	got := readLines(t, calls)
++	require.Len(t, got, 1, "the run must go straight to exec: %v", got)
++	assert.True(t, strings.HasPrefix(got[0], "exec --json "), got[0])
++	assert.NotContains(t, strings.Join(got, "\n"), "chat")
++	assert.Len(t, readLines(t, probes), 1)
++	assert.Equal(t, 0, *begun, "an unwatched run must not announce itself as watchable")
++	assert.Equal(t, 1, strings.Count(logs.String(), "WARNING CodeAF at "+bin+" is older than this SDK expects"), logs.String())
++	assert.Contains(t, logs.String(), "--json, --events, --steer")
++}
++
++// P2
++func TestCodeAFLiveRunUsesChatOnABuildWithTheLiveFlags(t *testing.T) {
++	isolateCodeAF(t)
++	logs := captureCodeAFLogs(t)
++	bin, calls, _ := fakeCodeAFScript(t, t.TempDir(), []string{"events string", "json", "session string", "steer string"}, "")
++	options, begun := liveOptions(t)
++
++	raw, err := fakeCodeAFProvider(bin).Execute(context.Background(), "write it", options)
++
++	require.NoError(t, err)
+
+```
+
+**File**: `sdk/go/harness/codeaf_test.go` (modified, +10/-1)
+```diff
+@@ -30,8 +30,12 @@ func isolateCodeAF(t *testing.T) {
+ 	}
+ 	t.Setenv("AGENTFIELD_SKIP_CODEAF", "1")
+ 	resetCodeAFResolution()
++	resetCodeAFLiveProbes()
+ 	codeAFAliasOnce, codeAFLegacyOnce, codeAFCommandOnce = sync.Once{}, sync.Once{}, sync.Once{}
+-	t.Cleanup(resetCodeAFResolution)
++	t.Cleanup(func() {
++		resetCodeAFResolution()
++		resetCodeAFLiveProbes()
++	})
+ }
+ 
+ func resetCodeAFResolution() {
+@@ -56,6 +60,11 @@ func stubCodeAF() *CodeAFProvider {
+ 	p.resolveBinary = func(context.Context, string) (codeAFBinary, error) {
+ 		return codeAFBinary{path: p.BinPath}, nil
+ 	}
++	// The stubbed binary is a current build: its `chat --help` lists every
++	// flag a watched run passes. Tests of the probe replace this.
++	p.probeCLI = func(context.Context, []string, map[string]string, string, int, int, []byte) (*CLIResult, error) {
++		return &CLIResult{Stdout: "flags:\n  --events string\n  --json\n  --session string\n  --steer string\n"}, nil
++	}
+ 	return p
+ }
+ 
+```
+
+**File**: `sdk/go/harness/testdata/codeaf-chat-help-live-flags.txt` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++  codeaf chat [--model slug] [--reasoning level] [--session path] [--yolo]
++              [--host host[:path]] [--at name[:path]] [--once "text"]
++              [--no-compact] [--one-model] [--no-host] [--debug]
++              [--max-cost dollars] [--max-hours hours]
++      --no-host stays in this process; --debug keeps the full run record
++      --max-cost and --max-hours bound unattended work and require --yolo
++
++flags:
++  --at codeaf serve
++      reach a machine that has no ssh, by the name codeaf serve prints there:
++      otter-lamp-42, or otter-lamp-42:path/to/project
++  --debug
++      keep the full record of this run — call bodies, tool calls and the choices
++      made — in a folder of its own under ~/c/logs/trace (env CODEAF_DEBUG) ·
++      /debug turns it on mid-session
++  --events string
++      with --once: copy every line of this conversation's record to this file as
++      it is written
++  --host string
++      run the session on another machine over ssh: host, user@host, or
++      host:path/to/project
++  --json
++      with --once: print one machine-readable object {ok, stop, answer, model,
++      error} instead of the reply
++  --max-cost float
++      how many dollars an unattended --yolo session may carry its own work on
++      (env CODEAF_MAX_COST)
++  --max-hours float
++      how many hours an unattended --yolo session may carry its own work on; the
++      window closes itself 2 minutes after (env CODEAF_MAX_HOURS)
++  --model string
++      model slug for this session; beats the configured default
++  --no-compact
++      never compact automatically
++  --no-host
++      open this conversation in this process instead of attaching to this
++      workspace's session host
++  --once string
++      run one message non-interactively, print the reply, and exit
++  --one-model
++      every text call this session makes runs on the session model: the tier
++      rows, the role pins, the fallback chain and the task model all stand down
++  --reasoning string
++      reasoning override: auto (inherit), low, medium, high, xhigh or max; off
++      is an alias for auto
++  --session string
++      session transcript to resume; empty resumes this directory's most recent
++  --steer string
++      with --once: read each line appended to this file as a note into the
++      running turn
++  --yolo
++      run every tool without asking: the approval default becomes allow
++
++run `codeaf --help` for every command, `codeaf help env` for the variables.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1254** (2026-11-27): fix(sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4 (@AbirAbbas)
 - **PR #1240** (2026-11-23): fix(desktop): extract deploy-engine zips with tar.exe so the Windows installer builds again (@AbirAbbas)
 - **PR #1238** (2026-11-23): feat: generic app link (owner proof, provider-agnostic live watch and steer, contract doc) (@AbirAbbas)
 - **PR #1236** (2026-11-23): fix(tray): reduce endpoint-security false positives on macOS (@AbirAbbas)
 - **PR #1233** (2026-11-23): fix(sdk-go): panic on nil skill in IncludeRouter and name the handler (@Aditya-Tripuraneni)
 - **PR #1232** (2026-11-23): docs: fix broken relative links in examples and SDK READMEs (@radasanuflorin)
-- **PR #1230** (2026-11-22): docs(skills): add agentfield-sdk, a reference skill for coding agents (@santoshkumarradha)
 
 ---
 
@@ -2321,58 +1979,41 @@ Developer ID signed and notarized, so macOS acc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk-python): record token usage for every tool-calling turn in ai(tools=...)
+## X. sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF
 
 **RULE**:
-When implementing operations in `sdk/python/agentfield/agent_ai.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/agent/harness_live_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc802dcb`: sdk-python): record token usage for every tool-calling turn in ai(tools=...). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7813f846`: sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/agent_ai.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/agent/harness_live_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                    turn_resp = await rate_limiter.execute_with_retry(
-                        _call_with_fallbacks
-                    )
-                else:
-                    turn_resp = await _call_with_fallbacks()
-                try:
-                    _record_tool_turn_usage(turn_resp, params)
-                except Exception as e:
-                    # Usage accounting is an observation side effect: it must
-                    # never fail a completion that already succeeded.
-                    log_debug(f"Tool loop: usage recording failed: {e}")
-                return turn_resp
-
-            def _record_tool_turn_usage(turn_resp, params):
-                """Record token usage for one LLM turn of the tool loop."""
-                from agentfield.cost_tracker import (
-                    derive_provider,
-                    get_current_cost_tracker,
-                )
-                from .multimodal_response import detect_multimodal_response
-                from .usage_routing import routing_provider
-
-                tracker = get_current_cost_tracker() or getattr(
-                    self.agent, "cost_tracker", None
-                )
-                if tracker is None:
- 
+// on its steer file, says it read it, and answers. Like a current build, it
+// lists the watched run's flags when asked for `chat --help`; the SDK asks
+// before it starts a watched run.
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-                    return await rate_limiter.execute_with_retry(_call_with_fallbacks)
-                return await _call_with_fallbacks()
+// on its steer file, says it read it, and answers.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc802dcb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7813f846` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

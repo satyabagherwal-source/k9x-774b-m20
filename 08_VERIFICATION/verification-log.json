@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-YPFR",
-    "timestamp": "2026-11-26T14:44:39.112Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "c5b901a9ba23c2d9c09796c35de3d6b2de685be444f3428aa098f86a530bc0d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-YRNR",
     "timestamp": "2026-11-26T14:44:41.991Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7475,21 @@
     "repository": "ClickHouse/ClickHouse",
     "learningId": "learn-github-clickhouse-clickhouse",
     "contentHash": "9f45e10fa9c4b4b933958d95d5b4cec3dc32b74b73774e0b7041ccc2238f5007",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-MD8B",
+    "timestamp": "2026-11-28T03:26:33.083Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "12eaf9584748499cc12cacbe9f021e0b60a668401d9d0634b3e0a67c0474b7d3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

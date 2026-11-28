@@ -4,23 +4,23 @@
 {
   "source_repository": "Agent-Field/agentfield",
   "source_url": "https://github.com/Agent-Field/agentfield",
-  "source_version": "d81cedf4",
+  "source_version": "1d83dbb9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T00:06:38.802Z",
+  "timestamp": "2026-11-28T03:26:33.337Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-field-agentfield",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `d81cedf4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T00:06:38.802Z`  
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `1d83dbb9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T03:26:33.337Z`  
 > **Learning ID**: `learn-github-agent-field-agentfield`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:06:37.225Z  
+> **Harvest Timestamp**: 2026-11-28T03:26:31.792Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2659 stars
+- **Stars / Engagement**: 2671 stars
 
 ---
 
@@ -1432,174 +1432,537 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f404fbf2` (2026-11-19)
-**Commit Message**: fix(sdk-go): honor the Retry-After header on 429 responses
+### Incident Patch 1: `7813f846` (2026-11-27)
+**Commit Message**: fix(sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4 (#1254)
 
-APIError dropped the response headers, so the rate limiter never saw the provider's Retry-After hint. Record the header (seconds or HTTP date) in APIError.RetryAfter and prefer it when computing the backoff.
+* fix(sdk/go): probe codeaf for watched-run support and fall back to exec on older builds
 
-Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+A watched run starts `codeaf chat --once ... --json --events --steer
+--session`. codeaf v0.8.2 and v0.8.3 refuse that command line ("codeaf chat
+has no --json flag", exit 1, nothing on stdout), and the only fallback fired
+on a different message, so every watched run died at once.
 
-**File**: `sdk/go/ai/client.go` (modified, +2/-2)
+Before choosing the watched path the SDK now runs `<bin> chat --help` (10s
+cap) and requires all four flags to be listed. The answer is cached per
+binary path, modification time and size, so it costs one probe per process
+per binary. A build without them logs one WARNING and runs the unwatched
+`exec` command, exactly as a non-watched run does. A failed probe runs that
+one run unwatched and is not remembered.
+
+The post-run fallback also recognises "has no --(json|events|steer|session)
+flag" and "flag provided but not defined: -(json|events|steer|session|once)",
+and re-runs only when the run exited non-zero with no envelope on stdout.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(sdk/go): pin CodeAF v0.8.4
+
+**File**: `sdk/go/agent/harness_live_test.go` (modified, +11/-1)
 ```diff
-@@ -202,7 +202,7 @@ func (c *Client) sendRequest(ctx context.Context, req *Request, body []byte) (*R
- 
- 	// Check for errors
- 	if httpResp.StatusCode < http.StatusOK || httpResp.StatusCode >= http.StatusMultipleChoices {
--		return nil, newAPIError(httpResp.StatusCode, respBody)
-+		return nil, newAPIErrorFromResponse(httpResp, respBody)
- 	}
- 
- 	// Parse response
-@@ -273,7 +273,7 @@ func (c *Client) openStream(ctx context.Context, req *Request, body []byte) (*ht
- 		respBody, _ := io.ReadAll(httpResp.Body)
- 		httpResp.Body.Close()
- 		cancel()
--		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
-+		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
- 	}
- 	return httpResp, cancel, nil
- }
-```
-
-**File**: `sdk/go/ai/errors.go` (modified, +36/-0)
-```diff
-@@ -3,6 +3,10 @@ package ai
- import (
- 	"encoding/json"
- 	"fmt"
-+	"net/http"
-+	"strconv"
-+	"strings"
-+	"time"
+@@ -22,8 +22,14 @@ import (
  )
  
- const maxAPIErrorBody = 4 << 10
-@@ -18,6 +22,9 @@ type APIError struct {
- 	Type       string
- 	Code       string
- 	Body       []byte
-+	// RetryAfter is the delay requested by the provider via the Retry-After
-+	// response header, or zero when absent or unparseable.
-+	RetryAfter time.Duration
- }
- 
- // Error returns a human-readable description including the HTTP status.
-@@ -55,3 +62,32 @@ func newAPIError(statusCode int, body []byte) *APIError {
- 	apiErr.Body = append([]byte(nil), body...)
- 	return apiErr
- }
-+
-+// newAPIErrorFromResponse builds an APIError and records the Retry-After
-+// header of resp so rate-limit handling can honor the provider's hint.
-+func newAPIErrorFromResponse(resp *http.Response, body []byte) *APIError {
-+	apiErr := newAPIError(resp.StatusCode, body)
-+	apiErr.RetryAfter = parseRetryAfter(resp.Header.Get("Retry-After"), time.Now())
-+	return apiErr
-+}
-+
-+// parseRetryAfter parses a Retry-After header value, which is either a number
-+// of seconds or an HTTP date. It returns 0 for empty, invalid, or past values.
-+func parseRetryAfter(value string, now time.Time) time.Duration {
-+	value = strings.TrimSpace(value)
-+	if value == "" {
-+		return 0
-+	}
-+	if secs, err := strconv.ParseFloat(value, 64); err == nil {
-+		if secs > 0 {
-+			return time.Duration(secs * float64(time.Second))
-+		}
-+		return 0
-+	}
-+	if when, err := http.ParseTime(value); err == nil {
-+		if d := when.Sub(now); d > 0 {
-+			return d
-+		}
-+	}
-+	return 0
-+}
+ // fakeCodeAF is a codeaf that streams two entries, waits for a person's note
+-// on its steer file, says it read it, and answers.
++// on its steer file, says it read it, and answers. Like a current build, it
++// lists the watched run's flags when asked for `chat --help`; the SDK asks
++// before it starts a watched run.
+ const fakeCodeAF = `#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
++  exit 0
++fi
+ events=""; steer=""
+ while [ $# -gt 0 ]; do
+   case "$1" in --events) events="$2"; shift;; --steer) steer="$2"; shift;; esac
+@@ -402,6 +408,10 @@ func TestRelayRidesTheLinkAndFallsBackToHTTP(t *testing.T) {
+ // recordingCodeAF records its argv and stdin into REC_DIR so a test can prove
+ // whether codeaf ran on the origin/main exec path or the watched chat path.
+ const recordingCodeAF = `#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
++  exit 0
++fi
+ : > "$REC_DIR/argv"
+ for arg in "$@"; do
+   printf '%s\n' "$arg" >> "$REC_DIR/argv"
 ```
 
-**File**: `sdk/go/ai/errors_test.go` (modified, +34/-0)
+**File**: `sdk/go/harness/codeaf.go` (modified, +10/-3)
 ```diff
-@@ -2,8 +2,12 @@ package ai
+@@ -43,10 +43,13 @@ func WarnCodeAFMissingKeyOnce(warn func(string)) {
+ // CodeAFProvider invokes CodeAF's canonical headless exec or do protocol.
+ // Binary discovery and managed installation happen lazily on first execution.
+ // When CodeAF is unavailable it can delegate to the unchanged legacy adapter.
++// probeCLI runs `chat --help` to learn whether a watched run can use the
++// binary; nil means the real runner.
+ type CodeAFProvider struct {
+ 	BinPath       string
+ 	alias         bool
+ 	runCLI        func(ctx context.Context, cmd []string, env map[string]string, cwd string, timeout, idleSeconds int, stdin []byte) (*CLIResult, error)
++	probeCLI      func(ctx context.Context, cmd []string, env map[string]string, cwd string, timeout, idleSeconds int, stdin []byte) (*CLIResult, error)
+ 	resolveBinary func(context.Context, string) (codeAFBinary, error)
+ }
  
- import (
- 	"bytes"
+@@ -384,10 +387,14 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
+ 	// A watched run uses `codeaf chat --once`, a full session whose record is
+ 	// streamed line by line through --events and steered through --steer. A
+ 	// codeaf too old for those flags is run the old way, unwatched: watching
+-	// a run is a convenience and must never cost the run itself.
++	// a run is a convenience and must never cost the run itself. The binary
++	// is asked first (`chat --help`), because a build that does not know the
++	// flags refuses the command line and the watched run dies at once; the
++	// check after the run below is the net for a build that lists the flags
++	// and still refuses them.
+ 	var live *liveRun
+ 	runCmd, runCwd := cmd, ""
+-	if command == "exec" && options.Live != nil {
++	if command == "exec" && options.Live != nil && p.supportsLiveChat(runCtx, binary.path, env) {
+ 		run, flags, err := startLive(options.Live, p.LiveInfo())
+ 		if err != nil {
+ 			log.Printf("WARNING CodeAF live transcript unavailable: %v", err)
+@@ -405,7 +412,7 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
+ 		cli, err = runCLI(runCtx, cmd, env, "", outerTimeout, 0, input)
+ 	}
+ 	live.finish()
+-	if live != nil && err == nil && cli != nil && cli.ReturnCode != 0 && strings.Contains(cli.Stderr, "-events") && strings.Contains(cli.Stderr, "not defined") {
++	if live != nil && err == nil && codeAFRejectedLiveFlags(cli) {
+ 		cli, err = runCLI(runCtx, cmd, env, "", int(math.Ceil(time.Until(deadline).Seconds())), 0, input)
+ 	}
+ 	elapsed := int(time.Since(started).Milliseconds())
+```
+
+**File**: `sdk/go/harness/codeaf_install.go` (modified, +8/-8)
+```diff
+@@ -18,21 +18,21 @@ import (
+ 
+ const (
+ 	// CodeAFVersion is the managed CodeAF release, verified using embedded hashes.
+-	CodeAFVersion = "v0.8.2"
++	CodeAFVersion = "v0.8.4"
+ 	// CodeAFBaseURL is the pinned release directory, overridable by AGENTFIELD_CODEAF_BASE_URL.
+-	CodeAFBaseURL         = "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2"
++	CodeAFBaseURL         = "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4"
+ 	maxCodeAFDownloadSize = 128 << 20
+ 	codeAFVersionFilename = ".codeaf.version"
+ 	codeAFDownloadRetry   = time.Minute
+ )
+ 
+ var codeAFHashes = map[string]string{
+-	"codeaf-darwin-amd64":      "a476f1ce44b21f8016583a65c49b21497d10713bcd72c33478b3bd12e52446d7",
+-	"codeaf-darwin-arm64":      "e61adac060bf2345c08a3e23ae83239871c3050eadac046879f5f3176270c4f1",
+-	"codeaf-linux-amd64":       "681d9813f2517addc86fb644d313e3f7cf0ab60be708c8e8b13d77fb16a6798c",
+-	"codeaf-linux-arm64":       "c6375d58d198d9e1a84880d8b4324ee6c067a0e5e351af115ca5506b1ffa1c78",
+-	"codeaf-windows-amd64.exe": "ff80f6f0c89c209fc809e960c70a1eb3518ccfc06775d587d5a187edd5d5222d",
+-	"codeaf-windows-arm64.exe": "bfc0b386e5248e7e6756f097b372f72e4e955ee1e19e9216ccafee47064b2b80",
++	"codeaf-darwin-amd64":      "9a8db2d6cdb01affd5eab5d0259d2a8b773d2e7939ee3c519ee46eadff2b268d",
++	"codeaf-darwin-arm64":      "5ba7992a61d1bcd4e222ba5de96b8221dc3e664ede78baf8524a2cbcafdacf64",
++	"codeaf-linux-amd64":       "0af6241aa8822be7ed97c9cf14b302393ff0dbac481a74c213cceba94f2a4315",
++	"codeaf-linux-arm64":       "bf4c485c77d98a40c7163e9ccdd452d3c06065491d9b045f4e83fad4df13a39e",
++	"codeaf-windows-amd64.exe": "e1701579bc0d26ba60bd4c11be9181592e85ed8071ef0ba3bff785f637b75b91",
++	"codeaf-windows-arm64.exe": "a54b3019e8bdd32894a3bf1ab956e592697299ed8ce10ea405cd9f74f0b6b83c",
+ }
+ 
+ type codeAFBinary struct {
+```
+
+**File**: `sdk/go/harness/codeaf_install_test.go` (modified, +8/-8)
+```diff
+@@ -359,15 +359,15 @@ func TestCodeAFInstalledRequiresExecutableAndMarker(t *testing.T) {
+ }
+ 
+ func TestCodeAFPlatformPinsAndHome(t *testing.T) {
+-	assert.Equal(t, "v0.8.2", CodeAFVersion)
+-	assert.Equal(t, "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2", CodeAFBaseURL)
++	assert.Equal(t, "v0.8.4", CodeAFVersion)
++	assert.Equal(t, "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4", CodeAFBaseURL)
+ 	for _, tc := range []struct{ goos, arch, hash string }{
+-		{"darwin", "amd64", "a476f1ce44b21f8016583a65c49b21497d10713bcd72c33478b3bd12e52446d7"},
+-		{"darwin", "arm64", "e61adac060bf2345c08a3e23ae83239871c3050eadac046879f5f3176270c4f1"},
+-		{"linux", "amd64", "681d9813f2517addc86fb644d313e3f7cf0ab60be708c8e8b13d77fb16a6798c"},
+-		{"linux", "arm64", "c6375d58d198d9e1a84880d8b4324ee6c067a0e5e351af115ca5506b1ffa1c78"},
+-		{"windows", "amd64", "ff80f6f0c89c209fc809e960c70a1eb3518ccfc06775d587d5a187edd5d5222d"},
+-		{"windows", "arm64", "bfc0b386e5248e7e6756f097b372f72e4e955ee1e19e9216ccafee47064b2b80"},
++		{"darwin", "amd64", "9a8db2d6cdb01affd5eab5d0259d2a8b773d2e7939ee3c519ee46eadff2b268d"},
++		{"darwin", "arm64", "5ba7992a61d1bcd4e222ba5de96b8221dc3e664ede78baf8524a2cbcafdacf64"},
++		{"linux", "amd64", "0af6241aa8822be7ed97c9cf14b302393ff0dbac481a74c213cceba94f2a4315"},
++		{"linux", "arm64", "bf4c485c77d98a40c7163e9ccdd452d3c06065491d9b045f4e83fad4df13a39e"},
++		{"windows", "amd64", "e1701579bc0d26ba60bd4c11be9181592e85ed8071ef0ba3bff785f637b75b91"},
++		{"windows", "arm64", "a54b3019e8bdd32894a3bf1ab956e592697299ed8ce10ea405cd9f74f0b6b83c"},
+ 	} {
+ 		asset, hash := codeAFAsset(tc.goos, tc.arch)
+ 		want := "codeaf-" + tc.goos + "-" + tc.arch
+```
+
+**File**: `sdk/go/harness/codeaf_probe.go` (added, +146/-0)
+```diff
+@@ -0,0 +1,146 @@
++package harness
++
++import (
 +	"context"
- 	"errors"
-+	"net/http"
-+	"net/http/httptest"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
- )
-@@ -17,3 +21,33 @@ func TestAPIErrorCapsUnparseableBody(t *testing.T) {
- 	require.Len(t, apiErr.Body, maxAPIErrorBody)
- 	require.True(t, errors.Is(err, &APIError{StatusCode: 502}))
- }
++	"log"
++	"os"
++	"os/exec"
++	"regexp"
++	"strings"
++	"sync"
++)
 +
-+func TestAPIErrorCarriesRetryAfterHeader(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Retry-After", "7")
-+		w.WriteHeader(http.StatusTooManyRequests)
-+		_, _ = w.Write([]byte(`{"error":{"message":"slow down","type":"rate_limit_error"}}`))
-+	}))
-+	defer server.Close()
++// codeAFProbeTimeoutSeconds bounds `codeaf chat --help`, which only prints its
++// flag list. A binary that cannot do that quickly is not worth waiting for: the
++// run goes ahead unwatched.
++const codeAFProbeTimeoutSeconds = 10
 +
-+	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m"})
-+	require.NoError(t, err)
++// codeAFLiveFlags are the flags a watched run passes to `codeaf chat --once`.
++// A build that does not list every one of them refuses the command line at
++// once (v0.8.3: "codeaf chat has no --json flag"), so a watched run on such a
++// build is dead before it starts.
++var codeAFLiveFlags = []string{"json", "events", "steer", "session"}
 +
-+	_, err = client.Complete(context.Background(), "hi")
-+	var apiErr *APIError
-+	require.ErrorAs(t, err, &apiErr)
-+	require.Equal(t, 7*time.Second, apiErr.RetryAfter)
-+	require.Equal(t, 7*time.Second, retryAfterFromError(err))
++// codeAFLiveFlagListed reads one flag's line out of a `chat --help` listing.
++// The help prints each flag on a line of its own, "  --json" or "  --events
++// string" (a stock Go flag package would print "  -json"), so the flag must
++// open the line. A usage line such as "[--session path]" mentions flags
++// without listing them and must not count.
++func codeAFLiveFlagListed(help, name string) bool {
++	return regexp.MustCompile(`(?m)^[ \t]+--?` + regexp.QuoteMeta(name) + `([ \t]|$)`).MatchString(help)
 +}
 +
-+func TestParseRetryAfter(t *testing.T) {
-+	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-+	require.Equal(t, time.Duration(0), parseRetryAfter("", now))
-+	require.Equal(t, time.Duration(0), parseRetryAfter("soon", now))
-+	require.Equal(t, time.Duration(0), parseRetryAfter("-3", now))
-+	require.Equal(t, 30*time.Second, parseRetryAfter("30", now))
-+	require.Equal(t, 90*time.Second,
-+		parseRetryAfter(now.Add(90*time.Second).Format(http.TimeFormat), now))
-+	require.Equal(t, time.Duration(0),
-+		parseRetryAfter(now.Add(-time.Minute).Format(http.TimeFormat), now))
++// codeAFMissingLiveFlags names the live flags a `chat --help` output leaves out.
++func codeAFMissingLiveFlags(help string) []string {
++	var missing []string
++	for _, name := range codeAFLiveFlags {
++		if !codeAFLiveFlagListed(help, name) {
++			missing = append(missing, "--"+name)
++		}
++	}
++	return missing
 +}
++
++// codeAFLiveFlagRejection recognises a run that died up front because codeaf
++// does not know one of the watched run's flags: the stderr of a build that
++// refuses the command line, before any work started.
++var codeAFLiveFlagRejection = regexp.MustCompile(
++	`has no --(json|events|steer|session) flag|flag provided but not defined: -{1,2}(json|events|steer|session|once)\b`)
++
++// codeAFRejectedLiveFlags reports whether a failed watched run was refused for
++// an unknown flag, with nothing run: it exited non-zero and printed no
++// envelope. The older spelling, "-events ... not defined", still counts.
++func codeAFRejectedLiveFlags(cli *CLIResult) bool {
++	if cli == nil || cli.ReturnCode == 0 || parseCodeAFEnvelope(cli.Stdout) != nil {
++		return false
++	}
++	return codeAFLiveFlagRejection.MatchString(cli.Stderr) ||
++		(strings.Contains(cli.Stderr, "-events") && strings.Contains(cli.Stderr, "not defined"))
++}
++
++// codeAFProbeKey identifies one build of one binary. A binary replaced in
++// place (an upgrade) changes its size or modification time and so is probed
++// again.
++type codeAFProbeKey struct {
++	path  string
++	mtime int64
++	size  int64
++}
++
++// codeAFLiveProbes remembers what each binary answered, for the life of the
++// process. The mutex is held across the probe on purpose: runs that start
++// together share one `chat --help` instead of each running their own.
++var codeAFLiveProbes = struct {
++	sync.Mutex
++	cache map[codeAFProbeKey]bool
++}{cache: make(map[codeAFProbeKey]bool)}
++
++func resetCodeAFLiveProbes() {
++	codeAFLiveProbes.Lock()
++	defer codeAFLiveProbes.Unlock()
++	codeAFLiveProbes.cache = make(map[codeAFProbeKey]bool)
++}
++
++// codeAFProbeKeyFor resolves the binary on PATH when it is a bare name and
++// stats it; ok is false when it cannot be, and then nothing is cached.
++func codeAFProbeKeyFor(bin string) (codeAFProbeKey, bool) {
++	path := bin
++	if !strings.ContainsAny(path, `/\`) {
++		resolved, err := exec.LookPath(path)
++		if err != nil {
++			return codeAFProbeKey{}, false
++		}
++		path = resolved
++	}
++	info, err := os.Stat(path)
++	if err != nil {
++		return codeAFProbeKey{}, false
++	}
++	return codeAFProbeKey{path: path, mtime: info.ModTime().UnixNano(), size: info.Size()}, true
++}
++
++// supportsLiveChat reports whether `bin chat --once` takes every flag a watched
++// run passes, found by reading `bin chat --help` rather than by guessing at a
++// version number. The answer is remembered per binary (path, modification time
++// and size), so the probe runs once per process per binary, and so does the
++// warning a "no" logs. A probe that could not run (a timeout, a missing binary)
++// says no for this run and is not remembered, so a flaky start does not turn
++// watching off for good.
++func (p *CodeAFProvider) supportsLiveChat(ctx context.Context, bin string, env map[string]string) bool {
++	key, keyed := codeAFProbeKeyFor(bin)
++	if keyed {
++		codeAFLiveProbes.Lock()
++		defer codeAFLiveProbes.Unlock()
++		if supported, ok := codeAFLiveProbes.cache[key]; ok {
++			return supported
++		}
++	}
++	probe := p.probeCLI
++	if probe == nil {
++		probe = runCodeAFCLI
++	}
++	cli, err := probe(ctx, []string{bin, "chat", "--help"}, env, "", codeAFProbeTimeoutSeconds, 0, nil)
++	// Both streams: this build prints the flag list on stdout, and a stock
++	// flag package prints it on stderr.
++	help := ""
++	if cli != nil {
++		help = cli.Stdout + "\n" + cli.Stderr
++	}
++	if err != nil || cli == nil || cli.ReturnCode < 0 
 ```
 
-**File**: `sdk/go/ai/rate_limiter.go` (modified, +5/-2)
+**File**: `sdk/go/harness/codeaf_probe_test.go` (added, +289/-0)
 ```diff
-@@ -367,13 +367,16 @@ func isRateLimitError(err error) bool {
- 	return false
+@@ -0,0 +1,289 @@
++package harness
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++// Validation contract (a watched CodeAF run and an older CodeAF build):
++//
++//	P1  A binary whose `chat --help` lacks the watched run's flags (v0.8.3,
++//	    which also refuses `chat --json`) is never sent `chat ... --json`: the run
++//	    goes through `exec`, succeeds, and logs one WARNING naming the mismatch.
++//	P2  A binary whose `chat --help` lists --json, --events, --steer and --session
++//	    is run as `chat --once ... --json --events --steer --session`, never `exec`.
++//	P3  A binary that lists the flags and still refuses one up front ("has no
++//	    --json flag") is re-run through `exec` once, and that run succeeds.
++//	P4  `chat --help` runs once per binary per process, however many runs follow
++//	    or start together; a binary replaced in place is asked again.
++//	P5  A failed run is re-run only when it was refused for a live flag, exited
++//	    non-zero and printed no envelope.
++//	P6  The listing is read the way codeaf prints it, not by substring: a usage
++//	    line that mentions "[--session path]" does not list --session.
++
++const fakeCodeAFEnvelope = `{"ok":true,"stop":"done","answer":"done"}`
++
++// fakeCodeAFScript writes a stand-in codeaf. Every `chat --help` appends to
++// probes, every other call appends its arguments to calls. help is the flag
++// listing it prints; rejectChat makes `chat` refuse the way v0.8.3 does.
++func fakeCodeAFScript(t *testing.T, dir string, help []string, rejectChat string) (bin, calls, probes string) {
++	t.Helper()
++	if runtime.GOOS == "windows" {
++		t.Skip("shell-script stand-in for codeaf")
++	}
++	bin, calls, probes = filepath.Join(dir, "fake-codeaf"), filepath.Join(dir, "calls"), filepath.Join(dir, "probes")
++	writeFakeCodeAF(t, bin, calls, probes, help, rejectChat)
++	return bin, calls, probes
++}
++
++func writeFakeCodeAF(t *testing.T, bin, calls, probes string, help []string, rejectChat string) {
++	t.Helper()
++	var listing strings.Builder
++	listing.WriteString("  codeaf chat [--model slug] [--session path] [--once \"text\"]\n\nflags:\n")
++	for _, flag := range help {
++		fmt.Fprintf(&listing, "  --%s\n      what %s does\n", flag, flag)
++	}
++	reject := `printf '%s\n' '` + fakeCodeAFEnvelope + `'`
++	if rejectChat != "" {
++		reject = `printf '%s\n' '` + rejectChat + `' >&2; exit 1`
++	}
++	script := fmt.Sprintf(`#!/bin/sh
++if [ "$1" = chat ] && [ "$2" = --help ]; then
++  echo probe >> '%s'
++  cat <<'HELP'
++%sHELP
++  exit 0
++fi
++echo "$*" >> '%s'
++if [ "$1" = chat ]; then
++  %s
++  exit 0
++fi
++cat >/dev/null
++printf '%%s\n' '%s'
++`, probes, listing.String(), calls, reject, fakeCodeAFEnvelope)
++	tmp := bin + ".tmp"
++	require.NoError(t, os.WriteFile(tmp, []byte(script), 0o755))
++	require.NoError(t, os.Rename(tmp, bin))
++}
++
++func readLines(t *testing.T, path string) []string {
++	t.Helper()
++	raw, err := os.ReadFile(path)
++	if os.IsNotExist(err) {
++		return nil
++	}
++	require.NoError(t, err)
++	return strings.Split(strings.TrimSpace(string(raw)), "\n")
++}
++
++// fakeCodeAFProvider is a provider that runs the real runners against a script.
++func fakeCodeAFProvider(bin string) *CodeAFProvider {
++	p := stubCodeAF()
++	p.BinPath = bin
++	p.probeCLI, p.runCLI = nil, nil
++	return p
++}
++
++func liveOptions(t *testing.T) (Options, *int) {
++	begun := 0
++	return Options{ProjectDir: t.TempDir(), Live: &Live{Begin: func(LiveInfo) { begun++ }}}, &begun
++}
++
++// P1
++func TestCodeAFLiveRunUsesExecOnABuildWithoutTheLiveFlags(t *testing.T) {
++	isolateCodeAF(t)
++	logs := captureCodeAFLogs(t)
++	bin, calls, probes := fakeCodeAFScript(t, t.TempDir(), []string{"session"}, "Error: codeaf chat has no --json flag")
++	options, begun := liveOptions(t)
++
++	raw, err := fakeCodeAFProvider(bin).Execute(context.Background(), "write it", options)
++
++	require.NoError(t, err)
++	assert.Equal(t, "done", raw.Result)
++	assert.False(t, raw.IsError)
++	got := readLines(t, calls)
++	require.Len(t, got, 1, "the run must go straight to exec: %v", got)
++	assert.True(t, strings.HasPrefix(got[0], "exec --json "), got[0])
++	assert.NotContains(t, strings.Join(got, "\n"), "chat")
++	assert.Len(t, readLines(t, probes), 1)
++	assert.Equal(t, 0, *begun, "an unwatched run must not announce itself as watchable")
++	assert.Equal(t, 1, strings.Count(logs.String(), "WARNING CodeAF at "+bin+" is older than this SDK expects"), logs.String())
++	assert.Contains(t, logs.String(), "--json, --events, --steer")
++}
++
++// P2
++func TestCodeAFLiveRunUsesChatOnABuildWithTheLiveFlags(t *testing.T) {
++	isolateCodeAF(t)
++	logs := captureCodeAFLogs(t)
++	bin, calls, _ := fakeCodeAFScript(t, t.TempDir(), []string{"events string", "json", "session string", "steer string"}, "")
++	options, begun := liveOptions(t)
++
++	raw, err := fakeCodeAFProvider(bin).Execute(context.Background(), "write it", options)
++
++	require.NoError(t, err)
+
+```
+
+**File**: `sdk/go/harness/codeaf_test.go` (modified, +10/-1)
+```diff
+@@ -30,8 +30,12 @@ func isolateCodeAF(t *testing.T) {
+ 	}
+ 	t.Setenv("AGENTFIELD_SKIP_CODEAF", "1")
+ 	resetCodeAFResolution()
++	resetCodeAFLiveProbes()
+ 	codeAFAliasOnce, codeAFLegacyOnce, codeAFCommandOnce = sync.Once{}, sync.Once{}, sync.Once{}
+-	t.Cleanup(resetCodeAFResolution)
++	t.Cleanup(func() {
++		resetCodeAFResolution()
++		resetCodeAFLiveProbes()
++	})
  }
  
--// retryAfterFromError extracts a Retry-After hint from an APIError body when the
--// provider surfaces one. It returns 0 when no usable value is present.
-+// retryAfterFromError extracts a Retry-After hint from an APIError: the
-+// Retry-After response header when present, else a numeric error code. It returns 0 when no usable value is present.
- func retryAfterFromError(err error) time.Duration {
- 	var apiErr *APIError
- 	if !errors.As(err, &apiErr) {
- 		return 0
+ func resetCodeAFResolution() {
+@@ -56,6 +60,11 @@ func stubCodeAF() *CodeAFProvider {
+ 	p.resolveBinary = func(context.Context, string) (codeAFBinary, error) {
+ 		return codeAFBinary{path: p.BinPath}, nil
  	}
-+	if apiErr.RetryAfter > 0 {
-+		return apiErr.RetryAfter
++	// The stubbed binary is a current build: its `chat --help` lists every
++	// flag a watched run passes. Tests of the probe replace this.
++	p.probeCLI = func(context.Context, []string, map[string]string, string, int, int, []byte) (*CLIResult, error) {
++		return &CLIResult{Stdout: "flags:\n  --events string\n  --json\n  --session string\n  --steer string\n"}, nil
 +	}
- 	if apiErr.Code == "" {
- 		return 0
- 	}
+ 	return p
+ }
+ 
+```
+
+**File**: `sdk/go/harness/testdata/codeaf-chat-help-live-flags.txt` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++  codeaf chat [--model slug] [--reasoning level] [--session path] [--yolo]
++              [--host host[:path]] [--at name[:path]] [--once "text"]
++              [--no-compact] [--one-model] [--no-host] [--debug]
++              [--max-cost dollars] [--max-hours hours]
++      --no-host stays in this process; --debug keeps the full run record
++      --max-cost and --max-hours bound unattended work and require --yolo
++
++flags:
++  --at codeaf serve
++      reach a machine that has no ssh, by the name codeaf serve prints there:
++      otter-lamp-42, or otter-lamp-42:path/to/project
++  --debug
++      keep the full record of this run — call bodies, tool calls and the choices
++      made — in a folder of its own under ~/c/logs/trace (env CODEAF_DEBUG) ·
++      /debug turns it on mid-session
++  --events string
++      with --once: copy every line of this conversation's record to this file as
++      it is written
++  --host string
++      run the session on another machine over ssh: host, user@host, or
++      host:path/to/project
++  --json
++      with --once: print one machine-readable object {ok, stop, answer, model,
++      error} instead of the reply
++  --max-cost float
++      how many dollars an unattended --yolo session may carry its own work on
++      (env CODEAF_MAX_COST)
++  --max-hours float
++      how many hours an unattended --yolo session may carry its own work on; the
++      window closes itself 2 minutes after (env CODEAF_MAX_HOURS)
++  --model string
++      model slug for this session; beats the configured default
++  --no-compact
++      never compact automatically
++  --no-host
++      open this conversation in this process instead of attaching to this
++      workspace's session host
++  --once string
++      run one message non-interactively, print the reply, and exit
++  --one-model
++      every text call this session makes runs on the session model: the tier
++      rows, the role pins, the fallback chain and the task model all stand down
++  --reasoning string
++      reasoning override: auto (inherit), low, medium, high, xhigh or max; off
++      is an alias for auto
++  --session string
++      session transcript to resume; empty resumes this directory's most recent
++  --steer string
++      with --once: read each line appended to this file as a note into the
++      running turn
++  --yolo
++      run every tool without asking: the approval default becomes allow
++
++run `codeaf --help` for every command, `codeaf help env` for the variables.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1217** (2026-11-19): fix(sdk-go): honor the Retry-After header on 429 responses (@pcbeingused333)
-- **PR #1215** (closed): fix(sdk-go): record watched CodeAF harness usage (#1183) (@ZeroPoint95)
-- **PR #1214** (closed): fix(go-sdk): keep a custom harness binary on the resolved provider, not legacy pin (@ZeroPoint95)
-- **PR #1213** (closed): fix(sdk/go/ai): bound MaxTokens and HTTP timeout for partial AI configs (@ZeroPoint95)
-- **PR #1212** (closed): docs: correct claude-code max_budget_usd bound in fleet docs (@ZeroPoint95)
-- **PR #1210** (2026-11-18): fix(sdk-go): accept SSE data fields without a space in audio generation (@pcbeingused333)
+- **PR #1254** (2026-11-27): fix(sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4 (@AbirAbbas)
+- **PR #1240** (2026-11-23): fix(desktop): extract deploy-engine zips with tar.exe so the Windows installer builds again (@AbirAbbas)
+- **PR #1238** (2026-11-23): feat: generic app link (owner proof, provider-agnostic live watch and steer, contract doc) (@AbirAbbas)
+- **PR #1236** (2026-11-23): fix(tray): reduce endpoint-security false positives on macOS (@AbirAbbas)
+- **PR #1233** (2026-11-23): fix(sdk-go): panic on nil skill in IncludeRouter and name the handler (@Aditya-Tripuraneni)
+- **PR #1232** (2026-11-23): docs: fix broken relative links in examples and SDK READMEs (@radasanuflorin)
 
 ---
 
@@ -1619,33 +1982,41 @@ Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk-go): honor the Retry-After header on 429 responses
+## X. sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF
 
 **RULE**:
-When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go/agent/harness_live_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f404fbf2`: sdk-go): honor the Retry-After header on 429 responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7813f846`: sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/agent/harness_live_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return nil, newAPIErrorFromResponse(httpResp, respBody)
-		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
+// on its steer file, says it read it, and answers. Like a current build, it
+// lists the watched run's flags when asked for `chat --help`; the SDK asks
+// before it starts a watched run.
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return nil, newAPIError(httpResp.StatusCode, respBody)
-		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
+// on its steer file, says it read it, and answers.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f404fbf2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7813f846` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

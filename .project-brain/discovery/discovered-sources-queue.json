@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T03:17:58.923Z",
+  "updated_at": "2026-11-28T03:26:36.860Z",
   "stats": {
-    "total_discovered": 10712,
-    "approved_pending_harvest": 10167,
+    "total_discovered": 10714,
+    "approved_pending_harvest": 10169,
     "harvested_count": 0,
     "rejected_count": 545,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10180,
+      "COMMUNITY_AND_EXPERT": 10182,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231876,6 +231876,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
         "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-CDA3C559F7D3": {
+      "id": "SRC-CDA3C559F7D3",
+      "url": "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2",
+      "title": "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T03:26:36.789Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-83275F8620A9": {
+      "id": "SRC-83275F8620A9",
+      "url": "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4",
+      "title": "https://github.com/Agent-Field/CodeAF/releases/download/v0.8.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T03:26:36.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
       }
     }
   }

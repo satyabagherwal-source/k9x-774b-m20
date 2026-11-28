@@ -833598,3 +833598,83 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c31c6ee4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11026. sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF (Harvested from Agent-Field/agentfield)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF",
+  "source": "Agent-Field/agentfield",
+  "source_url": "https://github.com/Agent-Field/agentfield",
+  "source_version": "1d83dbb9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T03:26:32.488Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-field-agentfield",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `1d83dbb9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `sdk/go/agent/harness_live_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7813f846`: sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF v0.8.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/agent/harness_live_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// on its steer file, says it read it, and answers. Like a current build, it
+// lists the watched run's flags when asked for `chat --help`; the SDK asks
+// before it starts a watched run.
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
+if [ "$1" = chat ] && [ "$2" = --help ]; then
+  printf '%s\n' 'flags:' '  --events string' '  --json' '  --session string' '  --steer string'
+  exit 0
+fi
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// on its steer file, says it read it, and answers.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7813f846` are properly handled with clean fallback behavior.

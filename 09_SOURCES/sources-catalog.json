@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "1b3c68a3",
+    "sourceVersion": "1d83dbb9",
     "license": "Apache-2.0",
-    "contentHash": "6d21f709a545b0e847de531baeafd76f49c68c2288f164906ed9d4fe5f1f9f20",
-    "lastHarvestedAt": "2026-11-24T03:14:22.818Z",
+    "contentHash": "12eaf9584748499cc12cacbe9f021e0b60a668401d9d0634b3e0a67c0474b7d3",
+    "lastHarvestedAt": "2026-11-28T03:26:33.095Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {

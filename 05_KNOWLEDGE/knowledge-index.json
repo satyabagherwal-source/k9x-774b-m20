@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T03:18:01.441Z",
+  "last_updated": "2026-11-28T03:26:39.553Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26924,
+  "total_items": 26926,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "379dee245fecdedacaac8a8b062dd6a9a880f86017cbdd5b4a80c81d25a4ad85",
+      "content_hash": "5838c3b949c6298f9d05a1bbf2355fc2eb8db233dbe56205c3b2a1b1a348778b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:08:13.093Z"
+      "persisted_at": "2026-11-28T03:26:39.553Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "71a7dbcd4eb4018c5d606557d7dd5b82e2de0c09a9445897540dab806dbb7151",
+      "content_hash": "0875854f454a7195e0aeadb725ed45c3cd062f6afcabdabfa0fe77461af399e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:10:12.184Z"
+      "persisted_at": "2026-11-28T03:26:38.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2819458feda4d4c8f739adf167c2399723b5d5f3f3c633dba3dee2f407dfcae1",
+      "content_hash": "e3b8517d8c702ebb427258db2afd1bf4d36ee475a6fa5aa29560c9b83c4d4e85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:10:12.476Z"
+      "persisted_at": "2026-11-28T03:26:38.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235304,8 +235304,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "1b3c68a3",
-      "content_hash": "6d21f709a545b0e847de531baeafd76f49c68c2288f164906ed9d4fe5f1f9f20",
+      "source_version": "1d83dbb9",
+      "content_hash": "12eaf9584748499cc12cacbe9f021e0b60a668401d9d0634b3e0a67c0474b7d3",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -235353,6 +235353,11 @@
           "number": 10183,
           "title": "record token usage for every tool-calling turn in ai(tools=...)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11026,
+          "title": "sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235360,7 +235365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:14:22.593Z",
+      "verified_at": "2026-11-28T03:26:32.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235414,10 +235419,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "1b3c68a3",
-      "content_hash": "ef7b4fb1aabc2cfd985ee2ea54d0b6deeeed69e2e2be97ef081a86aa7760f032",
+      "source_version": "1d83dbb9",
+      "content_hash": "33f5839f20fc9c375701a661ddeceaa5f156a240108b3e1e1dae174a978adc65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:14:23.416Z"
+      "persisted_at": "2026-11-28T03:26:33.742Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -235657,9 +235662,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "74d852109a151d4793612264dd63f1e438f305447bab72d0a00454a2103ff9af",
+      "content_hash": "d03d5015f8d7977f76bd0fb6e8788a9cb5a5dd267f2727e12ef99be197872a56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:14:32.384Z"
+      "persisted_at": "2026-11-28T03:26:37.526Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -297328,10 +297333,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-architecture-intelligence-agent-field-agentfield-core-inv.md",
       "title": "Architecture Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "d81cedf4",
-      "content_hash": "560989e5c53b9fc5e8eb8be724e7d61b4b056aad3d1a7b0e5b194c77cb0447b5",
+      "source_version": "1d83dbb9",
+      "content_hash": "9fea91f863ce54a62d4bf04826d96341ed5e76ffdfafdb003392c5b41870aefd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:06:38.998Z"
+      "persisted_at": "2026-11-28T03:26:33.542Z"
     },
     "candidate_directive-sdk-go-accept-sse-data-fields-without-a-space-in-audio-generation": {
       "item_id": "candidate_directive-sdk-go-accept-sse-data-fields-without-a-space-in-audio-generation",
@@ -297353,9 +297358,9 @@
       "title": "Architecture Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "3644b2ccd13d12072f0aac7833f485efe63c30a89d3759985f1db138acfd78aa",
+      "content_hash": "1c56c4c27cc44786dfc32c21b4c0ed822686232728670227819ac054ce69efa2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:06:48.776Z"
+      "persisted_at": "2026-11-28T03:26:37.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
@@ -358881,13 +358886,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YS5W-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MHXA-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e18a10cb374333f15301a3c5d4234c9d2ebedccd728f52b67741912f54d7b74e",
+      "content_hash": "d17f799bfd7ac19bb05c102d49f18872ca07e61dbf89ec221e88d00952bd9ffb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T03:08:12.695Z"
+      "persisted_at": "2026-11-28T03:26:39.169Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358897,9 +358902,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4247af15b2c2ec11e0598f133ad49ad160c978c76b37391b4b421eba320367f",
+      "content_hash": "3a6b8bb0b7d6234d1fbd73aa3b093853280c826978aa725bfa484794261ecab0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T03:08:12.892Z"
+      "persisted_at": "2026-11-28T03:26:39.362Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361788,13 +361793,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-R0L6-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MH23-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f006455125a8c3b40a3afcf1cb083dc824ac589813bb991e8545732433e830f",
+      "content_hash": "fbbc3244dbad0cfb44bd3b1bc796456a4ee95e0681c26e368bde2c3f0d7b6eca",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:10:11.904Z"
+      "persisted_at": "2026-11-28T03:26:38.046Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -369937,6 +369942,32 @@
       "content_hash": "74a63843279000f82dfbbd6415e3bb719d4d2eccf8d37147f1cc042502e030a0",
       "domain_letter": "D",
       "persisted_at": "2026-11-28T03:17:59.453Z"
+    },
+    "rule-11026": {
+      "learning_id": "rule-11026",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11026,
+      "title": "sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "1d83dbb9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T03:26:32.830Z"
+    },
+    "candidate_directive-sdk-go-probe-codeaf-for-watched-run-support-fall-back-to-exec-and-pin-codeaf": {
+      "item_id": "candidate_directive-sdk-go-probe-codeaf-for-watched-run-support-fall-back-to-exec-and-pin-codeaf",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MGCU-sdk-go-probe-codeaf-for-watched-run-support-fall-back-to-exec-and-pin-codeaf.md",
+      "title": "sdk/go): probe codeaf for watched-run support, fall back to exec, and pin CodeAF",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ed5423cac9c8dc4e0d5093412682387354088134c2b878377677e7633cdf888b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T03:26:37.138Z"
     }
   },
   "ai-builder-brain": {

@@ -13989,3 +13989,4 @@ Every entry in this ledger must capture:
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `07c9a117` | Multi-dimensional audit evidence | 2026-11-28T03:08:07.624Z |
 | `learn-huggingface-atomicchat-inkling-2-mini-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-28T03:17:36.893Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `7ca0f9c3` | Multi-dimensional audit evidence | 2026-11-28T03:17:53.653Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1d83dbb9` | Multi-dimensional audit evidence | 2026-11-28T03:26:33.095Z |

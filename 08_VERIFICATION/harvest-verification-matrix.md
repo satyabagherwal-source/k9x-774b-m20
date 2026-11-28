@@ -13956,3 +13956,4 @@
 | `CYCLE-20261128-YO8Q` | `2026-11-28T03:08:07.610Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11024` | Yes (`8f79c2b3...`) |
 | `CYCLE-20261128-AVHS` | `2026-11-28T03:17:36.880Z` | `AtomicChat/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md` | Yes (`ad8a5595...`) |
 | `CYCLE-20261128-B8FC` | `2026-11-28T03:17:53.640Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11025` | Yes (`9f45e10f...`) |
+| `CYCLE-20261128-MD8B` | `2026-11-28T03:26:33.083Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11026` | Yes (`12eaf958...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T03:18:01.155Z",
+  "last_updated": "2026-11-28T03:26:39.362Z",
   "total_records": 2870,
   "domains": {
     "A": {
@@ -9603,8 +9603,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "71a7dbcd4eb4018c5d606557d7dd5b82e2de0c09a9445897540dab806dbb7151",
-      "created_at": "2026-11-28T01:10:12.184Z"
+      "content_hash": "0875854f454a7195e0aeadb725ed45c3cd062f6afcabdabfa0fe77461af399e7",
+      "created_at": "2026-11-28T03:26:38.241Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -32650,8 +32650,8 @@
       "title": "Architecture Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-architecture-intelligence-agent-field-agentfield-core-inv.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "560989e5c53b9fc5e8eb8be724e7d61b4b056aad3d1a7b0e5b194c77cb0447b5",
-      "created_at": "2026-11-20T00:06:38.998Z"
+      "content_hash": "9fea91f863ce54a62d4bf04826d96341ed5e76ffdfafdb003392c5b41870aefd",
+      "created_at": "2026-11-28T03:26:33.542Z"
     },
     "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants",
@@ -32659,8 +32659,8 @@
       "title": "Architecture Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-learnings-architecture-intelligence-agent-field-agentfiel.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "3644b2ccd13d12072f0aac7833f485efe63c30a89d3759985f1db138acfd78aa",
-      "created_at": "2026-11-20T00:06:48.776Z"
+      "content_hash": "1c56c4c27cc44786dfc32c21b4c0ed822686232728670227819ac054ce69efa2",
+      "created_at": "2026-11-28T03:26:37.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
@@ -46817,8 +46817,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f4247af15b2c2ec11e0598f133ad49ad160c978c76b37391b4b421eba320367f",
-      "created_at": "2026-11-28T03:08:12.892Z"
+      "content_hash": "3a6b8bb0b7d6234d1fbd73aa3b093853280c826978aa725bfa484794261ecab0",
+      "created_at": "2026-11-28T03:26:39.362Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
