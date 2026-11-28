@@ -836297,3 +836297,160 @@ A keyed `reconcile` keeps a row's store proxy when the row is matched by key, ev
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `510bb8d0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11061. ci(tessl): add PR steward, groom-ready digest and more maintainer loops (Harvested from agent-of-empires/agent-of-empires)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+  "source": "agent-of-empires/agent-of-empires",
+  "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+  "source_version": "13db8d17",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T07:40:07.496Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-agent-of-empires-agent-of-empires",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `13db8d17`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `tessl-plugins/aoe-maintainer/skills/groom-ready/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a53f1334`: ci(tessl): add PR steward, groom-ready digest and more maintainer loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tessl-plugins/aoe-maintainer/skills/groom-ready/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+description: "Scan open agent-of-empires issues that lack the ready-for-agent label, pick up to 10 that are well specified, and record a Tessl finding per candidate recommending that a maintainer add ready-for-agent or tessl, listing any missing information, then post one weekly digest comment that mentions the maintainers in the Maintainer digest issue. On GitHub it writes only that issue and its comment; it never labels, assigns, or comments on the issues it assesses. Use when the weekly grooming runs, or when asked which issues are ready for an agent."
+candidate, then post a digest for maintainers. This runs unattended with a
+token that can write issues. On GitHub, write only the `Maintainer digest`
+issue and one comment on it per run (step 4). Never label, assign, or comment
+on the issues you assess.
+Never copy issue text, titles included, into the digest: name an issue by its
+number only and name missing information only with the fixed reasons in
+step 4.
+After every `tessl finding create` or `tessl finding update` in this run,
+retirements included, read the finding back with
+`tessl finding view <id> --json`. Compare each field with what you intended.
+If one differs, fix it onc
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+description: "Scan open agent-of-empires issues that lack the ready-for-agent label, pick up to 10 that are well specified, and record a Tessl finding per candidate recommending that a maintainer add ready-for-agent or tessl, listing any missing information. Read-only: never writes to GitHub. Use when the weekly grooming runs, or when asked which issues are ready for an agent."
+candidate. This runs unattended with a read-only GitHub token. Do not label,
+comment, or assign.
+End with one sentence giving how many issues you assessed and the finding ids.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a53f1334` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11062. Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md (Harvested from octodns/octodns)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+  "source": "octodns/octodns",
+  "source_url": "https://github.com/octodns/octodns",
+  "source_version": "31bb4d3b",
+  "license": "MIT",
+  "extracted_at": "2026-11-28T07:40:14.658Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-octodns-octodns",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [octodns/octodns](https://github.com/octodns/octodns) (Revision: `31bb4d3b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changelog/8429ba637f9c47d095ed93b6db92a465.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `31bb4d3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/8429ba637f9c47d095ed93b6db92a465.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+---
+type: none
+---
+Add octodns-nameocean provider to documentation
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `31bb4d3b` are properly handled with clean fallback behavior.

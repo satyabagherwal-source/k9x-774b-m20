@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QUPS",
-    "timestamp": "2026-11-26T16:58:30.784Z",
-    "repository": "topoteretes/cognee",
-    "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-0RBA",
-    "timestamp": "2026-11-26T17:06:12.934Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "035da65b790b8ba555a804a670f314b7a09562653fc174ae188fd801ad9c22b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-0XK7",
-    "timestamp": "2026-11-26T17:06:21.031Z",
-    "repository": "NervJS/taro",
-    "learningId": "learn-github-nervjs-taro",
-    "contentHash": "51e145933436ae95f8be2526ffa1adf0876e90fcb584da938173ca01b959fc71",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-10MZ",
     "timestamp": "2026-11-26T17:06:25.019Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7445,51 @@
     "repository": "solidjs/solid",
     "learningId": "learn-github-solidjs-solid",
     "contentHash": "10e7e8af7169f9a809a349d85096fe77fa4b5e88e29303e09b070380658ab794",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OH8G",
+    "timestamp": "2026-11-28T07:40:08.128Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "b05bfbdf195777c2e2cb6d8193adc4bd48f6d5148cab783c0799e0890a954342",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OIR6",
+    "timestamp": "2026-11-28T07:40:10.098Z",
+    "repository": "vitejs/vite",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "f62662534e33e0709bfa3b46983b99a060fdf877a18f014a0fb21182d05f8e7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-OMRN",
+    "timestamp": "2026-11-28T07:40:15.299Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "2136da9b58e978d83255379c18cf3ade3d2b99093cda3aaab2314ead6b19b0cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

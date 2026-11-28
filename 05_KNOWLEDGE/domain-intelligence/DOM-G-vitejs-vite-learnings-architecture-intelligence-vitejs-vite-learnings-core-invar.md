@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:14:05.807Z",
+  "timestamp": "2026-11-28T07:40:48.073Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vitejs-vite-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vitejs-vite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:14:05.807Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:40:48.073Z`  
 > **Learning ID**: `LEARN-EVO-vitejs-vite-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
-> **Source Version**: `e16ca5a1`  
+> **Source Version**: `7d0c054f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:13:48.680Z  
+> **Timestamp**: 2026-11-28T07:40:09.493Z  
 > **Learning ID**: `learn-github-vitejs-vite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:13:48.395Z  
+> **Harvest Timestamp**: 2026-11-28T07:40:09.488Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Next generation frontend tooling. It's fast!
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 84076 stars
+- **Stars / Engagement**: 84153 stars
 
 ---
 
@@ -478,17 +478,17 @@ import type { ResolvedConfig } from '../config'
 import { createBackCompatIdResolver } from '../idResolver'
 import type { ResolveIdFn } from '../idResolver'
 import type { Plugin } from '../plugin'
-import { evalValue, injectQuery, transformStableResult } from '../utils'
-import { fileToUrl, toOutputFilePathInJSForBundledDev } from './asset'
+import { evalValue, transformStableResult } from '../utils'
+import { toOutputFilePathInJSForBundledDev } from './asset'
 import { hasViteIgnoreRE } from './importAnalysis'
 import type { InternalResolveOptions } from './resolve'
 import { tryFsResolve } from './resolve'
 import type { WorkerType } from './worker'
 import {
-  WORKER_FILE_ID,
   emitWorkerAssetsForBundledDev,
   recordWorkerReference,
   generateWorkerEntryUrlExpr,
+  workerFileToDevUrl,
   workerFileToUrl,
 } from './worker'
 
@@ -766,12 +766,13 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
                 this.addWatchFile(file)
               }
             } else {
-              builtUrlExpr = await fileToUrl(this, cleanUrl(file), 'string')
-              builtUrlExpr = injectQuery(
-                `${builtUrlExpr}${queryPostfix}`,
-                `${WORKER_FILE_ID}&type=${workerType}`,
+              const url = await workerFileToDevUrl(
+                this,
+                cleanUrl(file),
+                queryPostfix,
+                workerType,
               )
-              builtUrlExpr = JSON.stringify(builtUrlExpr)
+              builtUrlExpr = JSON.stringify(url)
             }
             s.update(
               expStart,
@@ -1332,11 +1333,11 @@ self.onmessage = (e) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24202** (2026-11-24): **fix: keep `runnerImport` from setting `NODE_ENV` (fix #20299)**
-  *Symptoms*: `runnerImport` calls `resolveConfig` with the `serve` command, which defaults an unset `process.env.NODE_ENV` to `development`. That default stays on the process after the import, so a later `build()` can run as development. This fixes #20299 by saving `NODE_ENV` before `resolveConfig` and restoring it afterwards when it was unset or empty and is still the default. A value set by a config hook is left alone.  Alternative considered: changing `resolveConfig` itself. That would also change `createServer` and `build`, where the default is intended (#18712), so the fix stays in `runnerImport`.  For reviewers: with `NODE_ENV` unset, the imported module now evaluates without it instead of with `development`; the CLI path is unaffected because its outer config resolution sets the value first. A concurrent `build()` during `runnerImport` can still see the default.  AI disclosure: I used Claude Code to write the change and the tests. I reviewed the diff, ran the unit tests (8 passed), lint and format locally, and confirmed the new tests fail without the source change and when an assertion is altered. Full suites and typecheck are left to CI. 
+- **Issue #24247** (2026-11-28): **feat(css): treat root-relative @import as external URL (fix #13998)**
+  *Symptoms*: ### What is this PR solving?  A root-relative `@import` specifier like `/cdn/my-resource.css` currently fails with `ENOENT`: both the postcss-import resolver and the lightningcss resolver treat it as a local file path. Browsers resolve such specifiers against the origin though, and `url()` references to external URLs already pass through untouched, so this PR extends the same treatment to `@import` — root-relative specifiers are left as-is in the output for the browser to fetch at runtime.  Fixes #13998.  **Why it's a missing capability, not polish**  - It is a capability gap: external `@import` errors out instead of working. The reporter serves `/cdn/my-resource.css` from a different service and is fine with the browser failing to load it — currently they cannot even build. - It follows existing precedent in this codebase: `skipUrlReplacer` passes external `url()` through, and the lightningcss resolver already returns `{ external: id }` for absolute URLs. This fills the same gap for root-relative paths, which `isExternalUrl` / `absoluteOrProtocolRelativeUrlRE` do not match. - It aligns with browser semantics instead of introducing a new concept.  **Alternatives considered**  - A better error message: the reporter needs the import to work, not a nicer error. - Appending a query (`?shared`) to skip postcss-import's resolution: a workaround that also does not help the lightningcss path. - Matching `build.rolldownOptions.external` regexes for `@import` (tsup-style `external`): l
 
-- **Issue #24199** (2026-11-24): **chore(deps): update vue34 to vue35**
-  *Symptoms*: <!-- - What is this PR solving? Write a clear and concise description. - Reference the issues it solves (e.g. `fixes #123`). - What other alternatives have you explored? - Are there any parts you think require more attention from reviewers?  Also, please make sure you do the following:  - Read the Contributing Guidelines at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md. - Check that there isn't already a PR that solves the problem the same way. If you find a duplicate, please help us review it. If you've solved it in a different way, clarify what is different and link the other PRs in the PR description. - Update the corresponding documentation if needed. - Include relevant tests that fail without this PR but pass with it. If the tests are not included, explain why.  If you have used AI:  - Read the AI Policy at https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md#ai-policy. - Keep the PR description and discussion concise. Use your own words, do not let AI write for you. - Disclose and describe how you have reviewed its code, e.g. the thought process and decisions that lead to the final code.  Thank you for contributing to Vite! --> The only vulnerable instance of @vue/server-renderer (<3.5.42, GHSA-g2v6-rqmx-r4w6) comes from the `vue34` fixture in  playground/external, which is intentionally pinned to vue ~3.4.38 to test CDN-style imports of older Vue versions. Only the browser runtime build is served in tests; @vue/server-renderer is never used, so suppress 
+- **Issue #24244** (2026-11-27): **fix: allow SPA fallback for root directory names in server.fs.strict 'extended'**
+  *Symptoms*: ﻿### Description  Fixes #24240  When `server.fs.strict` is `'extended'` in a SPA dev server, `checkLoadingAccess()` checked `isFileReadable(path)` without filtering out directories (`statSync` returning a readable directory with `EACCES === false`). When a client navigated to an extensionless route whose name happened to match an existing top-level filesystem directory (such as `/Users` on Windows/macOS or `/var`/`/etc` on Linux), `serveRawFsMiddleware` passed that directory path to `checkLoadingAccess()`, which returned `'denied'` and responded with `403 Restricted` instead of falling through to `indexHtmlMiddleware`.  This change checks `!tryStatSync(path)?.isDirectory() && isFileReadable(path)` before treating a candidate outside `server.fs.allow` as a readable restricted file, returning `'fallback'` for directory paths while keeping readable outside files `'denied'` (`403 Restricted`).  ### Alternatives Considered  Filtering inside `serveRawFsMiddleware` was considered, but handling directories directly inside `checkLoadingAccess()` is localized to the access-decision helper and avoids misclassifying directories in any caller using `sirvOptions` (`extensions: []`, which never serves directories).  ### Verification  - `pnpm --filter vite run build` (`rolldown` bundle + `.d.ts` + `tsc --project tsconfig.check.json`): passed (`0` errors) - `pnpm exec oxfmt --check packages/vite/src/node/server/middlewares/static.ts packages/vite/src/node/server/__tests__/strictExtendedFsServ
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1353,261 +1354,482 @@ self.onmessage = (e) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87d8a5a9` (2026-11-24)
-**Commit Message**: fix(deps): update all non-major dependencies (#24190)
+### Incident Patch 1: `7d0c054f` (2026-11-27)
+**Commit Message**: docs(guide/migration): update to latest state (#24225)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+**File**: `docs/guide/migration.md` (modified, +0/-3)
+```diff
+@@ -212,8 +212,6 @@ The Oxc Minifier is now used for JavaScript minification instead of esbuild. You
+ 
+ If you were using the `esbuild.minify*` options to control minification behavior, you can now use `build.rolldownOptions.output.minify` instead. If you were using the `esbuild.drop` option, you can now use [`build.rolldownOptions.output.minify.compress.drop*` options](https://oxc.rs/docs/guide/usage/minifier/dead-code-elimination).
+ 
+-Property mangling and its related options ([`mangleProps`, `reserveProps`, `mangleQuoted`, `mangleCache`](https://esbuild.github.io/api/#mangle-props)) are not supported by Oxc. If you need these options, please see [oxc-project/oxc#15375](https://github.com/oxc-project/oxc/issues/15375).
+-
+ esbuild and Oxc Minifier make slightly different assumptions about source code. In case you suspect the minifier is causing breakage in your code, you can compare these assumptions here:
+ 
+ - [esbuild minify assumptions](https://esbuild.github.io/api/#minify-considerations)
+@@ -370,7 +368,6 @@ These breaking changes are expected to only affect a minority of use cases:
+   - `shouldTransformCachedModule` hook ([rolldown#4389](https://github.com/rolldown/rolldown/issues/4389))
+   - `resolveImportMeta` hook ([rolldown#1010](https://github.com/rolldown/rolldown/issues/1010))
+   - `renderDynamicImport` hook ([rolldown#4532](https://github.com/rolldown/rolldown/issues/4532))
+-  - `resolveFileUrl` hook
+ - `parseAst` / `parseAstAsync` functions are now deprecated in favor of `parseSync` / `parse` functions which have more features.
+ - comments are removed before the `renderChunk` hook instead of after the `renderChunk` hook
+ - comments other than the ones listed [here](https://rolldown.rs/reference/OutputOptions.comments) are moved, while Rollup only removes comments if the adjacent code is removed
+```
+
+---
+
+### Incident Patch 2: `1b34d86d` (2026-11-25)
+**Commit Message**: fix(css): dedupe CSS of inlined common chunks when `cssCodeSplit: false` (#24168)
+
 Co-authored-by: sapphi-red <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/ecosystem-ci-trigger.yml` (modified, +1/-1)
+**File**: `packages/vite/src/node/__tests__/build.spec.ts` (modified, +40/-0)
 ```diff
-@@ -137,7 +137,7 @@ jobs:
+@@ -632,6 +632,46 @@ describe('build', () => {
+     assertOutputHashContentChange(result[0], result[1])
+   })
  
-       - name: Generate Token
-         id: generate-token
--        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
-         with:
-           client-id: ${{ vars.ECOSYSTEM_CI_GITHUB_APP_CLIENT_ID }}
-           private-key: ${{ secrets.ECOSYSTEM_CI_GITHUB_APP_PRIVATE_KEY }}
++  test('cssCodeSplit: false emits the CSS of an inlined common chunk once', async () => {
++    const root = resolve(
++      dirname,
++      'fixtures/css-single-bundle-inline-common-chunks',
++    )
++    const result = (await build({
++      root,
++      logLevel: 'silent',
++      build: {
++        write: false,
++        cssCodeSplit: false,
++        cssMinify: false,
++        rolldownOptions: {
++          input: [resolve(root, 'a.js'), resolve(root, 'b.js')],
++          output: {
++            codeSplitting: {
++              experimentalInlineCommonChunks: { maxSize: 10_000 },
++            },
++          },
++        },
++      },
++    })) as RolldownOutput
++
++    const sharedCarriers = result.output.filter(
++      (o) =>
++        o.type === 'chunk' &&
++        o.moduleIds.some((id) => id.endsWith('shared.css')),
++    )
++    expect(sharedCarriers).toHaveLength(2)
++    const css = result.output.find(
++      (output): output is OutputAsset =>
++        output.type === 'asset' && output.fileName.endsWith('.css'),
++    )!
++    // shared.css comes once, before the a.css rule that overrides it
++    expect(css.source.toString().match(/color: \w+/g)).toStrictEqual([
++      'color: red',
++      'color: blue',
++    ])
++  })
++
+   test('css entries with the same basename should not cross-link manifest assets', async () => {
+     const root = resolve(dirname, 'fixtures/css-entry-same-basename')
+     const result = (await build({
 ```
 
-**File**: `.github/workflows/semantic-pull-request.yml` (modified, +1/-1)
+**File**: `packages/vite/src/node/__tests__/fixtures/css-single-bundle-inline-common-chunks/a.css` (added, +4/-0)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-       pull-requests: read
-     steps:
-       - name: Validate PR title
--        uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
-+        uses: amannn/action-semantic-pull-request@c5e23b7e584519ee15caa684cf60d056aa9f035f # v6.1.3
-         with:
-           subjectPattern: ^(?![A-Z]).+$
-           subjectPatternError: |
+@@ -0,0 +1,4 @@
++/* overrides shared.css */
++.shared {
++  color: blue;
++}
 ```
 
-**File**: `.github/workflows/semgrep.yml` (modified, +2/-2)
+**File**: `packages/vite/src/node/__tests__/fixtures/css-single-bundle-inline-common-chunks/a.js` (added, +2/-0)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-     permissions:
-       security-events: write # Required for upload-sarif to upload SARIF files.
-     container:
--      image: semgrep/semgrep:1.185.0@sha256:67518c174185a2043fdbed16c70631b79209499b3671178e7194379b48295a0d
-+      image: semgrep/semgrep:1.186.0@sha256:6e1b04340e60e910fbb4ddbf3c857ab0918f064417ad5ac530014ccb3cf8c8f1
-     steps:
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-@@ -31,6 +31,6 @@ jobs:
-           > semgrep-results.sarif
- 
-       - name: Upload SARIF result
--        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
-         with:
-           sarif_file: semgrep-results.sarif
+@@ -0,0 +1,2 @@
++import './shared.css'
++import './a.css'
 ```
 
-**File**: `.github/workflows/zizmor.yml` (modified, +1/-1)
+**File**: `packages/vite/src/node/__tests__/fixtures/css-single-bundle-inline-common-chunks/b.js` (added, +1/-0)
 ```diff
-@@ -27,4 +27,4 @@ jobs:
-           persist-credentials: false
- 
-       - name: Run zizmor 🌈
--        uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
-+        uses: zizmorcore/zizmor-action@1b4550e929643b8b26a62303c6bd64814271a4f1 # v0.9.2
+@@ -0,0 +1 @@
++import './shared.css'
 ```
 
-**File**: `docs/package.json` (modified, +1/-1)
+**File**: `packages/vite/src/node/__tests__/fixtures/css-single-bundle-inline-common-chunks/shared.css` (added, +3/-0)
 ```diff
-@@ -18,7 +18,7 @@
-     "vitepress-plugin-graphviz": "^0.1.0",
-     "vitepress-plugin-group-icons": "^1.8.2",
-     "vitepress-plugin-llms": "^1.15.0",
--    "vue": "^3.5.45",
-+    "vue": "^3.5.46",
-     "vue-tsc": "^3.3.14"
+@@ -0,0 +1,3 @@
++.shared {
++  color: red;
++}
+```
+
+**File**: `packages/vite/src/node/plugins/css.ts` (modified, +41/-20)
+```diff
+@@ -521,6 +521,11 @@ export function cssPlugin(config: ResolvedConfig): Plugin {
    }
  }
-```
-
-**File**: `package.json` (modified, +6/-6)
-```diff
-@@ -56,10 +56,10 @@
-     "@vitejs/release-scripts": "^1.10.0",
-     "eslint-plugin-n": "^18.5.0",
-     "eslint-plugin-regexp": "^3.3.3",
--    "lint-staged": "^17.6.0",
--    "oxfmt": "^0.78.0",
--    "oxlint": "^1.93.0",
--    "oxlint-tsgolint": "^7.0.2007",
-+    "lint-staged": "^17.6.2",
-+    "oxfmt": "^0.79.0",
-+    "oxlint": "^1.94.0",
-+    "oxlint-tsgolint": "^7.0.2008",
-     "picocolors": "^1.1.1",
-     "playwright-chromium": "^1.65.1",
-     "rolldown": "~1.3.2",
-@@ -68,7 +68,7 @@
-     "tsx": "^4.23.15",
-     "typescript": "~7.0.2",
-     "vite": "workspace:*",
--    "vitest": "^5.1.0"
-+    "vitest": "^5.1.1"
-   },
-   "simple-git-hooks": {
-     "pre-commit": "pnpm exec lint-staged --concurrent false"
-@@ -87,7 +87,7 @@
-       "oxlint --fix"
-     ]
-   },
--  "packageManager": "pnpm@12.21.0",
-+  "packageManager": "pnpm@12.23.0",
-   "stackblitz": {
-     "startCommand": "pnpm --filter='./packages/vite' run dev"
-   }
-```
-
-**File**: `packages/create-vite/src/index.ts` (modified, +5/-5)
-```diff
-@@ -921,11 +921,11 @@ function setupEslint(root: string, isTs: boolean) {
-   // renovate: datasource=npm depName=eslint-plugin-react-hooks
-   const eslintPluginReactHooksVersion = '7.1.1'
-   // renovate: datasource=npm depName=eslint-plugin-react-refresh
--  const eslintPluginReactRefreshVersion = '0.5.7'
-+  const eslintPluginReactRefreshVersion = '0.5.8'
-   // renovate: datasource=npm depName=globals
-   const globalsVersion = '17.14.0'
-   // renovate: datasource=npm depName=typescript-eslint
--  const typescriptEslintVersion = '8.72.2'
-+  const typescriptEslintVersion = '8.73.0'
  
-   const eslintConfigForTS = /* js */ `import js from '@eslint/js'
- import globals from 'globals'
-@@ -1110,11 +1110,11 @@ function updateReactCompilerReadme(root: string, newBody: string) {
++interface ChunkStyle {
++  content: string
++  moduleId: string
++}
++
+ /**
+  * Plugin applied after user plugins
+  */
+@@ -536,7 +541,8 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+   // when there are multiple rollup outputs and extracting CSS, only emit once,
+   // since output formats have no effect on the generated CSS.
+   let hasEmitted = false
+-  let chunkCSSMap: Map<string, string>
++  // the CSS of each style module in a chunk, keyed by the chunk's file name
++  let chunkCSSMap: Map<string, ChunkStyle[]>
  
- function setupDevTools(root: string, isTs: boolean) {
-   // renovate: datasource=npm depName=@vitejs/devtools
--  const devtoolsVersion = '0.8.2'
-+  const devtoolsVersion = '0.8.3'
-   // renovate: datasource=npm depName=@vitejs/devtools-vite
--  const devtoolsViteVersion = '0.8.2'
-+  const devtoolsViteVersion = '0.8.3'
-   // renovate: datasource=npm depName=@vitejs/devtools-rolldown
--  const devtoolsRolldownVersion = '0.8.2'
-+  const devtoolsRolldownVersion = '0.8.3'
+   const rolldownOptionsOutput = config.build.rolldownOptions.output
+   const assetFileNames = (
+@@ -719,13 +725,14 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+     ...(config.command === 'build'
+       ? {
+           async renderChunk(code, chunk, opts, meta) {
+-            let chunkCSS: string | undefined
++            const chunkStyles: ChunkStyle[] = []
+             // the chunk is empty if it's a dynamic entry chunk that only contains a CSS import
+             const isJsChunkEmpty = code === '' && !chunk.isEntry
+             let isPureCssChunk = chunk.exports.length === 0
+             const ids = Object.keys(chunk.modules)
+             for (const id of ids) {
+-              if (styles.has(id)) {
++              const content = styles.get(id)
++              if (content !== undefined) {
+                 // ?transform-only is used for ?url and shouldn't be included in normal CSS chunks
+                 if (transformOnlyRE.test(id)) {
+                   continue
+@@ -747,7 +754,7 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+                   isPureCssChunk = false
+                 }
  
-   const option = `{
-     // Remove this \`apply\` property to enable devtools for build as well
-```
-
-**File**: `packages/create-vite/template-react-ts/package.json` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
-     "@vitejs/plugin-react": "^6.3.0",
--    "oxlint": "^1.93.0",
-+    "oxlint": "^1.94.0",
-     "typescript": "~7.0.2",
-     "vite": "^8.3.8"
-   }
-```
-
----
-
-### Incident Patch 2: `942f6d73` (2026-11-24)
-**Commit Message**: build(deps): bump body-parser from 2.3.0 to 2.4.0 (#24198)
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pnpm-lock.yaml` (modified, +4/-4)
-```diff
-@@ -5463,8 +5463,8 @@ packages:
-   birpc@2.9.0:
-     resolution: {integrity: sha512-KrayHS5pBi69Xi9JmvoqrIgYGDkD6mcSe/i6YKi3w5kekCLzrX4+nawcXqrj2tIp50Kw/mT/s3p+GVK0A0sKxw==}
+-                chunkCSS = (chunkCSS || '') + styles.get(id)
++                chunkStyles.push({ content, moduleId: id })
+               } else if (!isJsChunkEmpty) {
+                 // if the module does not have a style, then it's not a pure css chunk.
+                 // this is true because in the `transform` hook above, only modules
+@@ -762,11 +769,9 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+             const resolveAssetUrlsInCss = (
+               chunkCSS: string,
+               cssAssetName: string,
+-              originalFileName?: string,
++              assetDirname: string,
+             ) => {
+-              const cssAssetDirname = slash(
+-                getCssAssetDirname(cssAssetName, originalFileName),
+-              )
++              const cssAssetDirname = slash(assetDirname)
  
--  body-parser@2.3.0:
--    resolution: {integrity: sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==}
-+  body-parser@2.4.0:
-+    resolution: {integrity: sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==}
-     engines: {node: '>=18'}
+               const toRelative = (filename: string) => {
+                 // relative base + extracted CSS
+@@ -841,18 +846,17 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+                   path.basename(originalFileName),
+                   '.css',
+                 )
+-                if (!styles.has(id)) {
++                let cssContent = styles.get(id)
++                if (cssContent === undefined) {
+                   throw new Error(
+                     `css content for ${JSON.stringify(id)} was not found`,
+                   )
+                 }
  
-   brace-expansion@2.1.7:
-@@ -11057,7 +11057,7 @@ snapshots:
+-                let cssContent = styles.get(id)!
+-
+                 cssContent = resolveAssetUrlsInCss(
+                   cssContent,
+                   cssAssetName,
+-                  originalFileName,
++                  getCssAssetDirname(cssAssetName, originalFileName),
+                 )
  
-   birpc@2.9.0: {}
+                 urlEmitTasks.push({
+@@ -914,7 +918,7 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+               }
+             }
  
--  body-parser@2.3.0(ms@2.1.3):
-+  body-parser@2.4.0(ms@2.1.3):
-     dependencies:
-       bytes: 3.1.2
-       content-type: 2.1.0
-@@ -11495,7 +11495,7 @@ snapshots:
-   express@5.3.0(ms@2.1.3):
-     dependencies:
-       accepts: 2.0.0
--      body-parser: 2.3.0(ms@2.1.3)
-+      body-parser: 2.4.0(ms@2.1.3)
-       content-disposition: 2.0.1
-       content-type: 2.1.0
-       cookie: 0.7.2
+-            if (chunkCSS !== undefined) {
++            if (chunkStyles.length > 0) {
+               if (
+                 isPureCssChunk &&
+                 (opts.format === 'es' || opts.format === 'cjs')
+@@ -932,6 +936,9 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+               }
+ 
+               if (this.environment.config.build.cssCodeSplit) {
++                let chunkCSS = chunkStyles
++                  .map(({ content }) => content)
++                  .join('')
+                 if (
+                   (opts.format === 'es' || opts.format === 'cjs') &&
+                   !chunk.fileName.includes('-legacy')
+@@ -958,12 +965,12 @@ export function cssPostPlugin(config: ResolvedConfig): Plugin {
+                   chunkCSS = resolveAssetUrlsInCss(
+                     chunkCSS,
+                     cssAssetName,
+-                    originalFileName,
++                    getCssAssetDirname(cssAssetName, originalFileName),
+                   )
+ 
+                   // wait for previous tasks as well
+                   chunkCSS = await codeSplitEmitQueue.run(async () => {
+-                    return finalizeCss(chunkCSS!, config)
++                    return finalizeCss(chunkCSS, config)
+                   })
+ 
+                   if (chunkCSS || isEntry) {
+@@ -1013,14 +1020,21 @@ export function cssPostPlugin(con
 ```
 
 ---
 
-### Incident Patch 3: `24eb35ad` (2026-11-24)
-**Commit Message**: fix: keep plugin error messages as thrown (#24148)
+### Incident Patch 3: `a78fb8a2` (2026-11-25)
+**Commit Message**: fix(dev): register references to safe modules only for `server.fs.strict: 'extended'` (#24206)
 
-**File**: `packages/vite/src/node/__tests__/plugins/hooks.spec.ts` (modified, +2/-2)
+Co-authored-by: lufeirider <[REDACTED_EMAIL]>
+
+**File**: `packages/vite/src/node/__tests__/dev.spec.ts` (modified, +1/-1)
 ```diff
-@@ -749,7 +749,7 @@ describe('plugin hook errors', () => {
-       await expect(run(plugin)).rejects.toMatchObject({
-         plugin: 'throws',
-         hook,
--        message: expect.stringContaining('[throws] missing apiKey'),
-+        message: 'missing apiKey',
-       })
-     })
-   }
-@@ -776,7 +776,7 @@ describe('plugin hook errors', () => {
-         type: 'error',
-         err: {
-           plugin: 'throws',
--          message: expect.stringContaining('[throws] missing apiKey'),
-+          message: 'missing apiKey',
-         },
-       })
-     })
+@@ -414,7 +414,7 @@ describe('the dev server', () => {
+       environments: { ssr: { input: 'virtual:ssr-entry' } },
+       optimizeDeps: { noDiscovery: true },
+       server: {
+-        fs: { allow: [root] },
++        fs: { allow: [root], strict: 'extended' },
+         host: '127.0.0.1',
+         port: 0,
+         ws: false,
 ```
 
-**File**: `packages/vite/src/node/plugins/index.ts` (modified, +1/-2)
+**File**: `packages/vite/src/node/plugins/asset.ts` (modified, +16/-2)
 ```diff
-@@ -5,7 +5,7 @@ import {
-   viteJsonPlugin as nativeJsonPlugin,
-   oxcRuntimePlugin,
- } from 'rolldown/experimental'
--import { enhanceRollupError, resolveBuildPlugins } from '../build'
-+import { resolveBuildPlugins } from '../build'
- import type { PluginHookUtils, ResolvedConfig } from '../config'
- import { watchPackageDataPlugin } from '../packages'
+@@ -34,11 +34,13 @@ import {
+   encodeURIPath,
+   getHash,
+   injectQuery,
++  isCSSRequest,
+   normalizePath,
+   rawRE,
+   removeUrlQuery,
+   urlRE,
+ } from '../utils'
++import { isDirectRequest } from './css'
+ import { getImportMapFilename } from './html'
+ 
+ // referenceId is a 22-character base64url string but replaces - with $
+@@ -481,9 +483,21 @@ export async function fileToDevUrl(
+     return pathToFileURL(cleanedId).href
+   }
+ 
+-  if (!publicFile && environment.mode === 'dev') {
++  if (
++    !publicFile &&
++    environment.mode === 'dev' &&
++    // `fileToUrl` may be called for modules that are not checked by the `server.fs` check for `server.fs.strict: true`
++    // for example, `/@fs/<absolute-path>?worker&import`
++    config.server.fs.strict === 'extended'
++  ) {
+     // Asset URLs are fetched by the browser even when emitted by SSR.
+-    config.environments.client.safeModulePaths.addId(id)
++    const { safeModulePaths } = config.environments.client
++    const requestId = id.split('#', 1)[0]
++    safeModulePaths.addId(requestId)
++    if (isCSSRequest(requestId) && !isDirectRequest(requestId)) {
++      // The transform middleware adds this query to stylesheet requests.
++      safeModulePaths.addId(injectQuery(requestId, 'direct'))
++    }
+   }
+ 
+   const moduleUrl = publicFile ? id : fileToModuleUrl(id, config.root)
+```
+
+**File**: `packages/vite/src/node/plugins/worker.ts` (modified, +21/-5)
+```diff
+@@ -370,6 +370,26 @@ export function splitWorkerRequest(id: string): {
+ }
+ 
+ export const WORKER_FILE_ID = 'worker_file'
++
++export async function workerFileToDevUrl(
++  context: PluginContext,
++  file: string,
++  postfix: string,
++  workerType: WorkerType,
++): Promise<string> {
++  const assetUrl = await fileToUrl(context, file, 'string')
++  const query = `${WORKER_FILE_ID}&type=${workerType}`
++  if (
++    context.environment.mode === 'dev' &&
++    context.environment.config.server.fs.strict === 'extended'
++  ) {
++    const clientEnvironment =
++      context.environment.getTopLevelConfig().environments.client
++    clientEnvironment.safeModulePaths.addId(injectQuery(file + postfix, query))
++  }
++  return injectQuery(assetUrl + postfix, query)
++}
++
+ const workerOutputCaches = new WeakMap<ResolvedConfig, WorkerOutputCache>()
+ 
+ export function recordWorkerReference(
+@@ -806,11 +826,7 @@ export function webWorkerPlugin(config: ResolvedConfig): Plugin {
+           }
+         } else {
+           const { file, postfix } = splitWorkerRequest(id)
+-          let url = await fileToUrl(this, file, 'string')
+-          url = injectQuery(
+-            `${url}${postfix}`,
+-            `${WORKER_FILE_ID}&type=${workerType}`,
+-          )
++          const url = await workerFileToDevUrl(this, file, postfix, workerType)
+           urlCode = JSON.stringify(url)
+         }
+ 
+```
+
+**File**: `packages/vite/src/node/plugins/workerImportMetaUrl.ts` (modified, +9/-8)
+```diff
+@@ -9,17 +9,17 @@ import type { ResolvedConfig } from '../config'
+ import { createBackCompatIdResolver } from '../idResolver'
+ import type { ResolveIdFn } from '../idResolver'
+ import type { Plugin } from '../plugin'
+-import { evalValue, injectQuery, transformStableResult } from '../utils'
+-import { fileToUrl, toOutputFilePathInJSForBundledDev } from './asset'
++import { evalValue, transformStableResult } from '../utils'
++import { toOutputFilePathInJSForBundledDev } from './asset'
+ import { hasViteIgnoreRE } from './importAnalysis'
+ import type { InternalResolveOptions } from './resolve'
+ import { tryFsResolve } from './resolve'
+ import type { WorkerType } from './worker'
  import {
-@@ -249,7 +249,6 @@ function tagPluginError(e: unknown, plugin: string, hook: string): void {
-   if (err.plugin) return
-   err.plugin = plugin
-   err.hook = hook
--  enhanceRollupError(err)
- }
+-  WORKER_FILE_ID,
+   emitWorkerAssetsForBundledDev,
+   recordWorkerReference,
+   generateWorkerEntryUrlExpr,
++  workerFileToDevUrl,
+   workerFileToUrl,
+ } from './worker'
  
- type FilterForPluginValue = {
+@@ -297,12 +297,13 @@ export function workerImportMetaUrlPlugin(config: ResolvedConfig): Plugin {
+                 this.addWatchFile(file)
+               }
+             } else {
+-              builtUrlExpr = await fileToUrl(this, cleanUrl(file), 'string')
+-              builtUrlExpr = injectQuery(
+-                `${builtUrlExpr}${queryPostfix}`,
+-                `${WORKER_FILE_ID}&type=${workerType}`,
++              const url = await workerFileToDevUrl(
++                this,
++                cleanUrl(file),
++                queryPostfix,
++                workerType,
+               )
+-              builtUrlExpr = JSON.stringify(builtUrlExpr)
++              builtUrlExpr = JSON.stringify(url)
+             }
+             s.update(
+               expStart,
+```
+
+**File**: `packages/vite/src/node/server/middlewares/indexHtml.ts` (modified, +5/-0)
+```diff
+@@ -260,6 +260,11 @@ const devHtmlHook: IndexHtmlTransformHook = async (
+     const moduleUrl = `${proxyModuleUrl}?html-proxy&index=${inlineModuleIndex}.${ext}`
+     inlineModuleUrls.push(moduleUrl)
+     const browserUrl = moduleUrlToBrowserUrl(moduleUrl, decodedBase)
++    if (config.server.fs.strict === 'extended') {
++      safeModulePathRegistrations.push(
++        addHtmlRequestToSafeModulePaths(moduleUrl, server!, 'script'),
++      )
++    }
+ 
+     s.update(
+       node.sourceCodeLocation!.startOffset,
+```
+
+**File**: `playground/assets-sanitize/__tests__/assets-sanitize.spec.ts` (modified, +3/-1)
+```diff
+@@ -44,5 +44,7 @@ test.runIf(!isBuild)('denied .env', async () => {
+   expect(await page.textContent('.unsafe-dotenv')).toBe(
+     isBundledDev ? '200' : '403',
+   )
+-  expect(await page.textContent('.unsafe-dotenv-double-slash')).toBe('200') // SPA fallback
++  expect(await page.textContent('.unsafe-dotenv-double-slash')).toBe(
++    isBundledDev ? '200' : '403',
++  )
+ })
+```
+
+**File**: `playground/fs-serve/__tests__/commonTests.ts` (modified, +23/-1)
+```diff
+@@ -26,7 +26,7 @@ import {
+ import { getWindows83ShortNameForDotEnv as getWindows83ShortNameForDotEnv } from '../root/windows83Filename'
+ import testJSON from '../safe.json'
+ 
+-export function tests() {
++export function tests(fsStrict: true | 'extended' = true) {
+   // `viteTestUrl` is set lazily, so this must be a function.
+   // `viteTestUrl` keeps its trailing slash when the playground sets a base, so
+   // plain concatenation would produce `//`-prefixed paths, which the server
+@@ -237,6 +237,28 @@ export function tests() {
+         status: '403',
+         disableVariants: [''],
+       },
++      // Legacy strict mode serves the worker wrappers. Extended strict mode
++      // denies the requests before serving a wrapper.
++      {
++        name: 'unsafe fetch with worker import query',
++        testId: 'unsafe-worker-import',
++        content: fsStrict === 'extended' ? /403 Restricted/ : /WorkerWrapper/,
++        status: fsStrict === 'extended' ? '403' : '200',
++      },
++      {
++        name: 'unsafe fetch with sharedworker import query',
++        testId: 'unsafe-sharedworker-import',
++        content: fsStrict === 'extended' ? /403 Restricted/ : /WorkerWrapper/,
++        status: fsStrict === 'extended' ? '403' : '200',
++      },
++      // The page fetches the same file after both worker wrapper requests to
++      // check that the file is still restricted.
++      {
++        name: 'unsafe fetch after a worker import query',
++        testId: 'unsafe-after-worker-import',
++        content: /403 Restricted/,
++        status: '403',
++      },
+       // It is 404 in `fs-serve/base` test, 403 in `fs-serve` test
+       {
+         name: 'unsafe fetch with relative path after query',
+```
+
+**File**: `playground/fs-serve/__tests__/extended/fs-serve-extended.spec.ts` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
+ import { bundledDevUnsupported, isServe, page, viteTestUrl } from '~utils'
+ import { tests } from '../commonTests'
+ 
+-tests()
++tests('extended')
+ 
+ describe.runIf(isServe)(
+   'extended filesystem checks',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24202** (closed): fix: keep `runnerImport` from setting `NODE_ENV` (fix #20299) (@Israel-Kli)
-- **PR #24199** (2026-11-24): chore(deps): update vue34 to vue35 (@btea)
-- **PR #24198** (2026-11-24): build(deps): bump body-parser from 2.3.0 to 2.4.0 (@dependabot[bot])
-- **PR #24196** (2026-11-24): docs: replace stale esbuild references in option JSDoc (@abrahamguo)
-- **PR #24195** (2026-11-24): chore(css): fix typo in `preliminaryNameToChunkMap` (@iiio2)
-- **PR #24194** (closed): fix(create-vite): check for missing vanilla-ts elements (@fengmk2)
+- **PR #24247** (closed): feat(css): treat root-relative @import as external URL (fix #13998) (@Surri757)
+- **PR #24244** (closed): fix: allow SPA fallback for root directory names in server.fs.strict 'extended' (@tranhoangtu-it)
+- **PR #24243** (closed): docs: fix typos in build and features guides (@Brilliancoder)
+- **PR #24237** (closed): fix(html): treat og:audio:url and og:video:url as asset sources (@shreyanshj10)
+- **PR #24235** (closed): Pull (@hassankhalifemd-sudo)
+- **PR #24227** (closed): fix(build): run closeBundle when a watch build fails (@harpreetkbadhan)
 
 ---
 
@@ -1621,37 +1843,6 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): update all non-major dependencies
-
-**RULE**:
-When implementing operations in `.github/workflows/ecosystem-ci-trigger.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vitejs/vite. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `87d8a5a9`: deps): update all non-major dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ecosystem-ci-trigger.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87d8a5a9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

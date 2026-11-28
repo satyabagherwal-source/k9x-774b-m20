@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T07:30:45.730Z",
+  "last_updated": "2026-11-28T07:40:15.312Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8316,14 +8316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-octodns-octodns",
-      "content_hash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
-      "verified_at": "2026-11-20T05:16:20.224Z",
+      "content_hash": "2136da9b58e978d83255379c18cf3ade3d2b99093cda3aaab2314ead6b19b0cb",
+      "verified_at": "2026-11-28T07:40:15.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:16:20.224Z"
+      "last_updated": "2026-11-28T07:40:15.311Z"
     },
     "Netflix/dynomite": {
       "repository": "Netflix/dynomite",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "e5a899658fe5b9d365a06d0aa5d36533110c860f22fc08095e0d5553283e7232",
-      "verified_at": "2026-11-27T07:58:19.242Z",
+      "content_hash": "b05bfbdf195777c2e2cb6d8193adc4bd48f6d5148cab783c0799e0890a954342",
+      "verified_at": "2026-11-28T07:40:08.142Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:58:19.242Z"
+      "last_updated": "2026-11-28T07:40:08.142Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
-      "verified_at": "2026-11-24T23:13:49.536Z",
+      "content_hash": "f62662534e33e0709bfa3b46983b99a060fdf877a18f014a0fb21182d05f8e7b",
+      "verified_at": "2026-11-28T07:40:10.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:13:49.536Z"
+      "last_updated": "2026-11-28T07:40:10.118Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",

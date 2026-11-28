@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:31:27.706Z",
+  "last_updated": "2026-11-28T07:40:49.482Z",
   "directives": [
     {
       "id": "CD-001",
@@ -75354,6 +75354,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7BDFB2-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-OPOY",
+      "directive_title": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+      "source_repo": "agent-of-empires-agent-of-empires-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OPOY-ci-tessl-add-pr-steward-groom-ready-digest-and-more-maintainer-loops.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-PD56",
+      "directive_title": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+      "source_repo": "octodns-octodns-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PD56-empirical-invariant-guard-in-8429ba637f9c47d095ed93b6db92a465-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-8AA844",
+      "directive_title": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "agent-of-empires-agent-of-empires",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8AA844-ci-tessl-add-pr-steward-groom-ready-dige.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-AC13CA",
+      "directive_title": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "octodns-octodns",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC13CA-empirical-invariant-guard-in-8429ba637f9.md",
       "staged_date": "2026-11-28"
     }
   ]

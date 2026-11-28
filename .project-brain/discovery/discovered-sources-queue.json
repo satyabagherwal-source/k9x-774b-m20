@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T07:31:24.446Z",
+  "updated_at": "2026-11-28T07:40:49.210Z",
   "stats": {
-    "total_discovered": 10842,
-    "approved_pending_harvest": 10294,
+    "total_discovered": 10857,
+    "approved_pending_harvest": 10309,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10304,
+      "COMMUNITY_AND_EXPERT": 10319,
       "OFFICIAL_DOCUMENTATION": 296,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -234715,6 +234715,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md",
         "fileName": "solidjs-solid-learnings.md"
+      }
+    },
+    "SRC-CF45D1BC6583": {
+      "id": "SRC-CF45D1BC6583",
+      "url": "https://oxc.rs/docs/guide/usage/minifier/dead-code-elimination",
+      "title": "https://oxc.rs/docs/guide/usage/minifier/dead-code-elimination",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.425Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-E6B089B0BA96": {
+      "id": "SRC-E6B089B0BA96",
+      "url": "https://esbuild.github.io/api",
+      "title": "https://esbuild.github.io/api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.509Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-8805A1FFE339": {
+      "id": "SRC-8805A1FFE339",
+      "url": "https://github.com/oxc-project/oxc/issues/15375",
+      "title": "https://github.com/oxc-project/oxc/issues/15375",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-B1ED00A26ED1": {
+      "id": "SRC-B1ED00A26ED1",
+      "url": "https://github.com/rolldown/rolldown/issues/4389",
+      "title": "https://github.com/rolldown/rolldown/issues/4389",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-46EE5C8112B6": {
+      "id": "SRC-46EE5C8112B6",
+      "url": "https://github.com/rolldown/rolldown/issues/1010",
+      "title": "https://github.com/rolldown/rolldown/issues/1010",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-33276B0158E1": {
+      "id": "SRC-33276B0158E1",
+      "url": "https://github.com/rolldown/rolldown/issues/4532",
+      "title": "https://github.com/rolldown/rolldown/issues/4532",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.836Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-7D57BDB1226F": {
+      "id": "SRC-7D57BDB1226F",
+      "url": "https://rolldown.rs/reference/OutputOptions.comments",
+      "title": "https://rolldown.rs/reference/OutputOptions.comments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:47.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md",
+        "fileName": "vitejs-vite-learnings.md"
+      }
+    },
+    "SRC-0595CDBA3447": {
+      "id": "SRC-0595CDBA3447",
+      "url": "https://github.com/M0NsTeRRR/octodns-mikrotik",
+      "title": "https://github.com/M0NsTeRRR/octodns-mikrotik",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:48.628Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-39C4A0C55548": {
+      "id": "SRC-39C4A0C55548",
+      "url": "https://www.mythic-beasts.com/support/hosting/dns",
+      "title": "https://www.mythic-beasts.com/support/hosting/dns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:48.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-8F37B2D06389": {
+      "id": "SRC-8F37B2D06389",
+      "url": "https://github.com/octodns/octodns-mythicbeasts",
+      "title": "https://github.com/octodns/octodns-mythicbeasts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:48.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-0287F125FDA3": {
+      "id": "SRC-0287F125FDA3",
+      "url": "https://nameocean.net/dns",
+      "title": "https://nameocean.net/dns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:48.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-546EE42AAE93": {
+      "id": "SRC-546EE42AAE93",
+      "url": "https://github.com/NameOcean/octodns-nameocean",
+      "title": "https://github.com/NameOcean/octodns-nameocean",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:48.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-9FE1DF1083EE": {
+      "id": "SRC-9FE1DF1083EE",
+      "url": "https://github.com/peteeckel/netbox-plugin-dns",
+      "title": "https://github.com/peteeckel/netbox-plugin-dns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:49.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-E90157424A35": {
+      "id": "SRC-E90157424A35",
+      "url": "https://github.com/olofvndrhr/octodns-netbox-dns",
+      "title": "https://github.com/olofvndrhr/octodns-netbox-dns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:49.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
+      }
+    },
+    "SRC-DB55B8FC123C": {
+      "id": "SRC-DB55B8FC123C",
+      "url": "https://ns1.com/products/managed-dns",
+      "title": "https://ns1.com/products/managed-dns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T07:40:49.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/octodns-octodns-learnings.md",
+        "fileName": "octodns-octodns-learnings.md"
       }
     }
   }

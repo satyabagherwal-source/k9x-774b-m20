@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "420f2bab",
+    "sourceVersion": "31bb4d3b",
     "license": "MIT",
-    "contentHash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
-    "lastHarvestedAt": "2026-11-20T05:16:20.215Z",
+    "contentHash": "2136da9b58e978d83255379c18cf3ade3d2b99093cda3aaab2314ead6b19b0cb",
+    "lastHarvestedAt": "2026-11-28T07:40:15.304Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "0186ba2d",
+    "sourceVersion": "13db8d17",
     "license": "MIT",
-    "contentHash": "e5a899658fe5b9d365a06d0aa5d36533110c860f22fc08095e0d5553283e7232",
-    "lastHarvestedAt": "2026-11-27T07:58:19.224Z",
+    "contentHash": "b05bfbdf195777c2e2cb6d8193adc4bd48f6d5148cab783c0799e0890a954342",
+    "lastHarvestedAt": "2026-11-28T07:40:08.133Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -9993,10 +9993,10 @@
     "repository": "vitejs/vite",
     "platform": "github",
     "sourceUrl": "https://github.com/vitejs/vite",
-    "sourceVersion": "e16ca5a1",
+    "sourceVersion": "7d0c054f",
     "license": "MIT",
-    "contentHash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
-    "lastHarvestedAt": "2026-11-24T23:13:49.519Z",
+    "contentHash": "f62662534e33e0709bfa3b46983b99a060fdf877a18f014a0fb21182d05f8e7b",
+    "lastHarvestedAt": "2026-11-28T07:40:10.109Z",
     "learningId": "learn-github-vitejs-vite"
   },
   "keyboardkit-keyboardkit": {

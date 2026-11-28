@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T07:31:28.222Z",
+  "last_updated": "2026-11-28T07:40:49.934Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27021,
+  "total_items": 27025,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -232602,8 +232602,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "0186ba2d",
-      "content_hash": "e5a899658fe5b9d365a06d0aa5d36533110c860f22fc08095e0d5553283e7232",
+      "source_version": "13db8d17",
+      "content_hash": "b05bfbdf195777c2e2cb6d8193adc4bd48f6d5148cab783c0799e0890a954342",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -232651,6 +232651,11 @@
           "number": 10856,
           "title": "snooze sessions from the list in any sort",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11061,
+          "title": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232658,7 +232663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T07:58:18.835Z",
+      "verified_at": "2026-11-28T07:40:07.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232700,10 +232705,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "0186ba2d",
-      "content_hash": "a4347b1349d468abf7f7f03b2407d8bbf4dda804febe187590d4d64a845f7fcf",
+      "source_version": "13db8d17",
+      "content_hash": "658c0c79eeac6f5fd8436b5eafdf52de5eec1bcd29b8b202e90ca2de4cfad0ef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T07:58:19.862Z"
+      "persisted_at": "2026-11-28T07:40:08.593Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi",
@@ -232713,9 +232718,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "57211c6dfa3e26a9a42a9425db02f16c27b4fbb70b38de7c12a703d1e86e3ddf",
+      "content_hash": "d1ecc9f7c360d1da31ac5f91aa9a65e16453397e7ae3df75eb68b34129081d96",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:58:40.078Z"
+      "persisted_at": "2026-11-28T07:40:19.519Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -233045,9 +233050,9 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "76a90204b4b260bb656c5ec835703ce88c591fb2d2ec94bf1a965b5c279f635e",
+      "content_hash": "876344c9b63e3b9168d8afca142cba05bb6f3e57f2798e554c65d5ac44c12b60",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T07:58:39.807Z"
+      "persisted_at": "2026-11-28T07:40:19.299Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
@@ -272306,8 +272311,8 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "e16ca5a1",
-      "content_hash": "cdc03b2d2faa7a1cc9bb48be657d8cd5230f19a06ab69fe62b14e87e84f4629a",
+      "source_version": "7d0c054f",
+      "content_hash": "f62662534e33e0709bfa3b46983b99a060fdf877a18f014a0fb21182d05f8e7b",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
@@ -272332,7 +272337,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:13:49.281Z",
+      "verified_at": "2026-11-28T07:40:09.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -299078,8 +299083,8 @@
       "slug": "octodns-octodns",
       "platform": "github",
       "source_url": "https://github.com/octodns/octodns",
-      "source_version": "420f2bab",
-      "content_hash": "1eccfec56aa5efc13874ce94d66729b26f7feebd326cdbc58849cb98937432d9",
+      "source_version": "31bb4d3b",
+      "content_hash": "2136da9b58e978d83255379c18cf3ade3d2b99093cda3aaab2314ead6b19b0cb",
       "dossier_path": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/octodns-octodns-learnings.md",
       "promoted_rules": [
@@ -299092,6 +299097,11 @@
           "number": 9515,
           "title": "Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11062,
+          "title": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -299099,7 +299109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T05:16:20.007Z",
+      "verified_at": "2026-11-28T07:40:15.030Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -299141,10 +299151,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-technical-construction-intelligence-octodns-octodns-core-invaria.md",
       "title": "Technical Construction Intelligence: octodns/octodns Core Invariants",
       "repository": "octodns/octodns",
-      "source_version": "420f2bab",
-      "content_hash": "f526dfae519e4d9dbc332bca4df2518bd4c25f9a2f20a6c22f0ef7992cba951b",
+      "source_version": "31bb4d3b",
+      "content_hash": "dd999922872e161ae334207b76c0cea37ed175c39abc64b07671033f6c66d7b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:16:20.589Z"
+      "persisted_at": "2026-11-28T07:40:15.736Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns",
@@ -299153,10 +299163,10 @@
       "relative_path": "08_VERIFICATION/octodns-octodns-verification-protocol-empirical-defect-shield-for-octodns-octodn.md",
       "title": "Verification Protocol: Empirical Defect Shield for octodns/octodns",
       "repository": "octodns/octodns",
-      "source_version": "420f2bab",
-      "content_hash": "30fad69e6718d69d9db0febd921e1e9f9f5875736a22c42b2519cb12374078c2",
+      "source_version": "31bb4d3b",
+      "content_hash": "0fbe15ed0243bf2ecd12034b4cb2a51f70663d47f99a3591a25fa2c2244d306b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:16:20.777Z"
+      "persisted_at": "2026-11-28T07:40:15.936Z"
     },
     "rule-9313": {
       "learning_id": "rule-9313",
@@ -307829,9 +307839,9 @@
       "title": "Technical Construction Intelligence: octodns-octodns-learnings Core Invariants",
       "repository": "octodns-octodns-learnings",
       "source_version": "HEAD",
-      "content_hash": "56404652890444f7603b1319379764ccda8c381e19a3c613d088136cfa29b22a",
+      "content_hash": "fcbc8fff461ae0623a2768ec25f3b5c272f0a5509e1fc79acc4202e3e907e3b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:16:29.869Z"
+      "persisted_at": "2026-11-28T07:40:49.709Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-octodns-octodns-learnings",
@@ -307841,9 +307851,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for octodns-octodns-learnings",
       "repository": "octodns-octodns-learnings",
       "source_version": "HEAD",
-      "content_hash": "25f55a5536212bc9665b1e5ae8aead098843971a5b6539a3377c15f876d83f61",
+      "content_hash": "4cbac22e59f60cb4f75282028246773f0eb2ba141ca0b65130c304f0ebec6623",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:16:30.023Z"
+      "persisted_at": "2026-11-28T07:40:49.934Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -344754,10 +344764,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-architecture-intelligence-vitejs-vite-core-invariants.md",
       "title": "Architecture Intelligence: vitejs/vite Core Invariants",
       "repository": "vitejs/vite",
-      "source_version": "e16ca5a1",
-      "content_hash": "7b24c025f0cb2f1c5b8ef9199d7fa1088e1bddb108eb30ff824c78fb2d3a4c41",
+      "source_version": "7d0c054f",
+      "content_hash": "962ebbb99372b708df226740b338df2a58d32dd137ab5cfa39a77f6e22ba6472",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:13:49.990Z"
+      "persisted_at": "2026-11-28T07:40:10.362Z"
     },
     "rule-10380": {
       "learning_id": "rule-10380",
@@ -344805,9 +344815,9 @@
       "title": "Architecture Intelligence: vitejs-vite-learnings Core Invariants",
       "repository": "vitejs-vite-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2986f182cd4feaa0a5b06427437d42e91fdfcdd4f5abd314950e9a2989a8590",
+      "content_hash": "581385a13350ac61b4b5d8e62cab49ce465ac196da4671292481285053f576de",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T23:14:06.199Z"
+      "persisted_at": "2026-11-28T07:40:48.203Z"
     },
     "candidate_directive-java-upgrade-apache-httpclient-5-to-5-6-5": {
       "item_id": "candidate_directive-java-upgrade-apache-httpclient-5-to-5-6-5",
@@ -371369,6 +371379,58 @@
       "content_hash": "0d306f7f9c32f91e11f9f5e44631c1eea26e5be9b8a1e01d8b2bc49b55f053d5",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T07:31:24.867Z"
+    },
+    "rule-11061": {
+      "learning_id": "rule-11061",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11061,
+      "title": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "13db8d17",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:40:07.852Z"
+    },
+    "candidate_directive-ci-tessl-add-pr-steward-groom-ready-digest-and-more-maintainer-loops": {
+      "item_id": "candidate_directive-ci-tessl-add-pr-steward-groom-ready-digest-and-more-maintainer-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OPOY-ci-tessl-add-pr-steward-groom-ready-digest-and-more-maintainer-loops.md",
+      "title": "ci(tessl): add PR steward, groom-ready digest and more maintainer loops",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d7dccbfbd2a63b53bd4d8899ffe67f386d9b3b7758cdc6a3f0522be54b5a9926",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T07:40:19.095Z"
+    },
+    "rule-11062": {
+      "learning_id": "rule-11062",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11062,
+      "title": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+      "source_url": "https://github.com/octodns/octodns",
+      "source_version": "31bb4d3b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T07:40:15.030Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-8429ba637f9c47d095ed93b6db92a465-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-8429ba637f9c47d095ed93b6db92a465-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PD56-empirical-invariant-guard-in-8429ba637f9c47d095ed93b6db92a465-md.md",
+      "title": "Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md",
+      "repository": "octodns-octodns-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e4f434816d916a7892c8b8da692a1a59ddbf6b061466f56c3aed3d4f6c4e7bef",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T07:40:49.482Z"
     }
   },
   "ai-builder-brain": {

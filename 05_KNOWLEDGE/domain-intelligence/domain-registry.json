@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:31:27.963Z",
-  "total_records": 2881,
+  "last_updated": "2026-11-28T07:40:49.709Z",
+  "total_records": 2882,
   "domains": {
     "A": {
       "total": 27,
@@ -76,7 +76,7 @@
       ]
     },
     "D": {
-      "total": 1059,
+      "total": 1060,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1136,7 +1136,8 @@
         "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-37b-a4b-core-invariants",
         "DOM-D-174E1CF1",
         "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-37b-a4b-learnings-core-inva",
-        "DOM-D-5456C5F2"
+        "DOM-D-5456C5F2",
+        "DOM-D-095C01F1"
       ]
     },
     "E": {
@@ -16212,8 +16213,8 @@
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "a4347b1349d468abf7f7f03b2407d8bbf4dda804febe187590d4d64a845f7fcf",
-      "created_at": "2026-11-27T07:58:19.862Z"
+      "content_hash": "658c0c79eeac6f5fd8436b5eafdf52de5eec1bcd29b8b202e90ca2de4cfad0ef",
+      "created_at": "2026-11-28T07:40:08.593Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
@@ -16239,8 +16240,8 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "76a90204b4b260bb656c5ec835703ce88c591fb2d2ec94bf1a965b5c279f635e",
-      "created_at": "2026-11-27T07:58:39.807Z"
+      "content_hash": "876344c9b63e3b9168d8afca142cba05bb6f3e57f2798e554c65d5ac44c12b60",
+      "created_at": "2026-11-28T07:40:19.299Z"
     },
     "DOM-D-C580DAE3": {
       "record_id": "DOM-D-C580DAE3",
@@ -33228,8 +33229,8 @@
       "title": "Technical Construction Intelligence: octodns/octodns Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-technical-construction-intelligence-octodns-octodns-core-invaria.md",
       "repository": "octodns/octodns",
-      "content_hash": "f526dfae519e4d9dbc332bca4df2518bd4c25f9a2f20a6c22f0ef7992cba951b",
-      "created_at": "2026-11-20T05:16:20.589Z"
+      "content_hash": "dd999922872e161ae334207b76c0cea37ed175c39abc64b07671033f6c66d7b6",
+      "created_at": "2026-11-28T07:40:15.736Z"
     },
     "DOM-D-9B951EAF": {
       "record_id": "DOM-D-9B951EAF",
@@ -35733,8 +35734,8 @@
       "title": "Technical Construction Intelligence: octodns-octodns-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-learnings-technical-construction-intelligence-octodns-octodns-le.md",
       "repository": "octodns-octodns-learnings",
-      "content_hash": "56404652890444f7603b1319379764ccda8c381e19a3c613d088136cfa29b22a",
-      "created_at": "2026-11-20T05:16:29.869Z"
+      "content_hash": "fcbc8fff461ae0623a2768ec25f3b5c272f0a5509e1fc79acc4202e3e907e3b5",
+      "created_at": "2026-11-28T07:40:49.709Z"
     },
     "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -43759,8 +43760,8 @@
       "title": "Architecture Intelligence: vitejs/vite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-architecture-intelligence-vitejs-vite-core-invariants.md",
       "repository": "vitejs/vite",
-      "content_hash": "7b24c025f0cb2f1c5b8ef9199d7fa1088e1bddb108eb30ff824c78fb2d3a4c41",
-      "created_at": "2026-11-24T23:13:49.990Z"
+      "content_hash": "962ebbb99372b708df226740b338df2a58d32dd137ab5cfa39a77f6e22ba6472",
+      "created_at": "2026-11-28T07:40:10.362Z"
     },
     "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants",
@@ -43768,8 +43769,8 @@
       "title": "Architecture Intelligence: vitejs-vite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vitejs-vite-learnings-architecture-intelligence-vitejs-vite-learnings-core-invar.md",
       "repository": "vitejs-vite-learnings",
-      "content_hash": "d2986f182cd4feaa0a5b06427437d42e91fdfcdd4f5abd314950e9a2989a8590",
-      "created_at": "2026-11-24T23:14:06.199Z"
+      "content_hash": "581385a13350ac61b4b5d8e62cab49ce465ac196da4671292481285053f576de",
+      "created_at": "2026-11-28T07:40:48.203Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari",
@@ -48828,6 +48829,48 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T07:31:23.947Z"
+    },
+    "DOM-D-095C01F1": {
+      "record_id": "DOM-D-095C01F1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): vitejs/vite",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  \n> **Source**: github ([https://github.com/vitejs/vite](https://github.com/vitejs/vite))  \n> **Source Version**: `7d0c054f`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Timestam",
+      "content_hash": "df1294b73e7ad3809d7845785c63447b7cec7be4db4b62afde53318371db4fe2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  \n> **Source**: github ([https://github.com/vitejs/vite](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vitejs-vite-learnings.md`  \n> **Source**: github ([https://github.com/vitejs/vite](h",
+      "provenance": {
+        "source_uri": "project://vitejs-vite/vitejs-vite-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T07:40:19.699Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (vitejs-vite)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of vitejs-vite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T07:40:47.184Z"
     }
   }
 }

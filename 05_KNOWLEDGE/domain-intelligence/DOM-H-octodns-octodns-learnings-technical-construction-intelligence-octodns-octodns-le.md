@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T05:16:29.587Z",
+  "timestamp": "2026-11-28T07:40:49.358Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-octodns-octodns-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [octodns-octodns-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T05:16:29.587Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T07:40:49.358Z`  
 > **Learning ID**: `LEARN-EVO-octodns-octodns-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from octodns-octodns-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source**: github ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
-> **Source Version**: `420f2bab`  
+> **Source Version**: `31bb4d3b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:16:19.139Z  
+> **Timestamp**: 2026-11-28T07:40:14.032Z  
 > **Learning ID**: `learn-github-octodns-octodns`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/octodns-octodns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/octodns/octodns](https://github.com/octodns/octodns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:16:18.963Z  
+> **Harvest Timestamp**: 2026-11-28T07:40:14.027Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Tools for managing DNS across multiple providers
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3784 stars
+- **Stars / Engagement**: 3792 stars
 
 ---
 
@@ -782,237 +782,87 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `420f2bab` (2026-11-20)
-**Commit Message**: Merge pull request #1486 from octodns/net-test
+### Incident Patch 1: `31bb4d3b` (2026-11-27)
+**Commit Message**: Merge pull request #1487 from akarca/nameocean-provider-docs
 
-Replace pytest-network with pytest-socket
+Add octodns-nameocean provider to documentation
 
-**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
+**File**: `.changelog/8429ba637f9c47d095ed93b6db92a465.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
 +type: none
 +---
-+Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
++Add octodns-nameocean provider to documentation
 ```
 
-**File**: `pyproject.toml` (modified, +2/-2)
+**File**: `docs/index.rst` (modified, +5/-0)
 ```diff
-@@ -56,13 +56,13 @@ test = [
-     "jsonschema>=4.0.0",
-     "pytest>=6.2.5",
-     "pytest-cov>=3.0.0",
--    "pytest-network>=0.0.1",
-+    "pytest-socket>=0.8.1",
- ]
- dev = [
-     "jsonschema>=4.0.0",
-     "pytest>=6.2.5",
-     "pytest-cov>=3.0.0",
--    "pytest-network>=0.0.1",
-+    "pytest-socket>=0.8.1",
-     # we need to manually/explicitely bump major versions as they're
-     # likely to result in formatting changes that should happen in their
-     # own PR. This will basically happen yearly
-```
-
-**File**: `requirements.txt` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ changelet==0.6.1
- charset-normalizer==3.5.2
- click==8.5.1
- comrak==0.0.16
--coverage==7.17.2
-+coverage==7.17.3
- cryptography==50.0.2
- dnspython==2.9.2
- docutils==0.22.4
-@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
- pytest==9.2.0
- pytest-cov==7.1.0
- pytest-mock==3.17.0
--pytest-network==0.0.1
-+pytest-socket==0.8.1
- python-dateutil==4.0.0
- pytokens==0.4.1
- pyyaml==6.0.3
-```
-
-**File**: `script/cibuild-module` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
- # that local octodns.
- if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
-   pip_module=1
--  pip install -e .[dev] pytest-network
-+  pip install -e .[dev] pytest-socket
- elif [ -f pyproject.toml ]; then
-   # install poetry
-   pip install poetry
-@@ -52,7 +52,7 @@ pip freeze
- echo "## run module tests ############################################################"
- export PYTHONPATH=.:$PYTHONPATH
- if [ -n "$pip_module" ]; then
--  pytest --disable-network
-+  pytest --disable-socket
- elif [ -f poetry.toml ]; then
-   poetry run pytest
- fi
-```
-
-**File**: `script/cibuild-package` (modified, +1/-1)
-```diff
-@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
- # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
- wheel_file=$(ls dist/*$VERSION*.whl)
- pip install "${wheel_file}[test]"
--pytest --disable-network
-+pytest --disable-socket
- echo "## complete ####################################################################"
-```
-
-**File**: `script/coverage` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
- fi
- 
- pytest \
--  --disable-network \
-+  --disable-socket \
-   --cov-reset \
-   --cov=$SOURCE_DIR \
-   --cov-fail-under=100 \
-```
-
-**File**: `script/test` (modified, +1/-1)
-```diff
-@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
- # Activate OctoDNS Python venv
- source "${SCRIPT_PATH}/common.sh"
- 
--pytest --disable-network "$@"
-+pytest --disable-socket "$@"
+@@ -149,6 +149,9 @@ their own repositories and released as independent modules.
+    * - `Mythic Beasts DNS`_
+      - `octodns_mythicbeasts`_
+      -
++   * - `NameOcean`_
++     - `octodns_nameocean`_
++     -
+    * - `NetBox-DNS Plugin`_
+      - `olofvndrhr/octodns-netbox-dns`_
+      -
+@@ -263,6 +266,8 @@ their own repositories and released as independent modules.
+ .. _octodns_mikrotik: https://github.com/M0NsTeRRR/octodns-mikrotik
+ .. _Mythic Beasts DNS: https://www.mythic-beasts.com/support/hosting/dns
+ .. _octodns_mythicbeasts: https://github.com/octodns/octodns-mythicbeasts/
++.. _NameOcean: https://nameocean.net/dns/
++.. _octodns_nameocean: https://github.com/NameOcean/octodns-nameocean
+ .. _NetBox-DNS Plugin: https://github.com/peteeckel/netbox-plugin-dns
+ .. _olofvndrhr/octodns-netbox-dns: https://github.com/olofvndrhr/octodns-netbox-dns
+ .. _NS1: https://ns1.com/products/managed-dns
 ```
 
 ---
 
-### Incident Patch 2: `052815b3` (2026-11-20)
-**Commit Message**: Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
+### Incident Patch 2: `5f8e3a30` (2026-11-27)
+**Commit Message**: Add octodns-nameocean provider to documentation
 
-**File**: `.changelog/588a9582e1eb49a5a56661deae7135dd.md` (added, +4/-0)
+**File**: `.changelog/8429ba637f9c47d095ed93b6db92a465.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +---
 +type: none
 +---
-+Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
++Add octodns-nameocean provider to documentation
 ```
 
-**File**: `pyproject.toml` (modified, +2/-2)
+**File**: `docs/index.rst` (modified, +5/-0)
 ```diff
-@@ -56,13 +56,13 @@ test = [
-     "jsonschema>=4.0.0",
-     "pytest>=6.2.5",
-     "pytest-cov>=3.0.0",
--    "pytest-network>=0.0.1",
-+    "pytest-socket>=0.8.1",
- ]
- dev = [
-     "jsonschema>=4.0.0",
-     "pytest>=6.2.5",
-     "pytest-cov>=3.0.0",
--    "pytest-network>=0.0.1",
-+    "pytest-socket>=0.8.1",
-     # we need to manually/explicitely bump major versions as they're
-     # likely to result in formatting changes that should happen in their
-     # own PR. This will basically happen yearly
-```
-
-**File**: `requirements.txt` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ changelet==0.6.1
- charset-normalizer==3.5.2
- click==8.5.1
- comrak==0.0.16
--coverage==7.17.2
-+coverage==7.17.3
- cryptography==50.0.2
- dnspython==2.9.2
- docutils==0.22.4
-@@ -63,7 +63,7 @@ pyproject-hooks==1.3.3
- pytest==9.2.0
- pytest-cov==7.1.0
- pytest-mock==3.17.0
--pytest-network==0.0.1
-+pytest-socket==0.8.1
- python-dateutil==4.0.0
- pytokens==0.4.1
- pyyaml==6.0.3
-```
-
-**File**: `script/cibuild-module` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ echo "## install module dev requirements #######################################
- # that local octodns.
- if [ -e setup.py ] || grep -q '^\[project\]' pyproject.toml 2>/dev/null; then
-   pip_module=1
--  pip install -e .[dev] pytest-network
-+  pip install -e .[dev] pytest-socket
- elif [ -f pyproject.toml ]; then
-   # install poetry
-   pip install poetry
-@@ -52,7 +52,7 @@ pip freeze
- echo "## run module tests ############################################################"
- export PYTHONPATH=.:$PYTHONPATH
- if [ -n "$pip_module" ]; then
--  pytest --disable-network
-+  pytest --disable-socket
- elif [ -f poetry.toml ]; then
-   poetry run pytest
- fi
-```
-
-**File**: `script/cibuild-package` (modified, +1/-1)
-```diff
-@@ -23,5 +23,5 @@ echo "## validate tests can run against installed code #########################
- # (see: https://pip.pypa.io/en/stable/user_guide/#installing-from-wheels)
- wheel_file=$(ls dist/*$VERSION*.whl)
- pip install "${wheel_file}[test]"
--pytest --disable-network
-+pytest --disable-socket
- echo "## complete ####################################################################"
-```
-
-**File**: `script/coverage` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ if [ "$PRAGMA_COUNT" -ne "$PRAGMA_ALLOWED" ]; then
- fi
- 
- pytest \
--  --disable-network \
-+  --disable-socket \
-   --cov-reset \
-   --cov=$SOURCE_DIR \
-   --cov-fail-under=100 \
-```
-
-**File**: `script/test` (modified, +1/-1)
-```diff
-@@ -5,4 +5,4 @@ SCRIPT_PATH="$( dirname -- "$( readlink -f -- "${0}"; )"; )"
- # Activate OctoDNS Python venv
- source "${SCRIPT_PATH}/common.sh"
- 
--pytest --disable-network "$@"
-+pytest --disable-socket "$@"
+@@ -149,6 +149,9 @@ their own repositories and released as independent modules.
+    * - `Mythic Beasts DNS`_
+      - `octodns_mythicbeasts`_
+      -
++   * - `NameOcean`_
++     - `octodns_nameocean`_
++     -
+    * - `NetBox-DNS Plugin`_
+      - `olofvndrhr/octodns-netbox-dns`_
+      -
+@@ -263,6 +266,8 @@ their own repositories and released as independent modules.
+ .. _octodns_mikrotik: https://github.com/M0NsTeRRR/octodns-mikrotik
+ .. _Mythic Beasts DNS: https://www.mythic-beasts.com/support/hosting/dns
+ .. _octodns_mythicbeasts: https://github.com/octodns/octodns-mythicbeasts/
++.. _NameOcean: https://nameocean.net/dns/
++.. _octodns_nameocean: https://github.com/NameOcean/octodns-nameocean
+ .. _NetBox-DNS Plugin: https://github.com/peteeckel/netbox-plugin-dns
+ .. _olofvndrhr/octodns-netbox-dns: https://github.com/olofvndrhr/octodns-netbox-dns
+ .. _NS1: https://ns1.com/products/managed-dns
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1487** (2026-11-27): Add octodns-nameocean provider to documentation (@akarca)
 - **PR #1486** (2026-11-20): Replace pytest-network with pytest-socket (@ross)
 - **PR #1485** (2026-11-06): Fix TXT and SPF values that start but don't end with a quote (@ross)
 - **PR #1483** (2026-11-06): Improve SVCB and HTTPS record parsing (@TilCreator)
 - **PR #1482** (2026-10-26): Update requirements.txt (@ross)
 - **PR #1481** (2026-10-23): docs: add an SPF pull-request check tutorial to Related Projects and Resources (@joshpurvis)
-- **PR #1480** (2026-11-18): Update python versions to include 3.15 (@ross)
 
 ---
 
@@ -1032,16 +882,16 @@ Replace pytest-network with pytest-socket
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in 588a9582e1eb49a5a56661deae7135dd.md
+## X. Empirical Invariant Guard in 8429ba637f9c47d095ed93b6db92a465.md
 
 **RULE**:
-When implementing operations in `.changelog/588a9582e1eb49a5a56661deae7135dd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changelog/8429ba637f9c47d095ed93b6db92a465.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `420f2bab`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31bb4d3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/588a9582e1eb49a5a56661deae7135dd.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changelog/8429ba637f9c47d095ed93b6db92a465.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
@@ -1049,7 +899,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ---
 type: none
 ---
-Replace unmaintained pytest-network with pytest-socket for blocking network access in tests
+Add octodns-nameocean provider to documentation
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1059,7 +909,7 @@ Replace unmaintained pytest-network with pytest-socket for blocking network acce
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `420f2bab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31bb4d3b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

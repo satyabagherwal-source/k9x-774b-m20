@@ -14039,3 +14039,7 @@ Every entry in this ledger must capture:
 | `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `fd610a26` | Multi-dimensional audit evidence | 2026-11-28T07:21:54.827Z |
 | `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `510bb8d0` | Multi-dimensional audit evidence | 2026-11-28T07:30:45.720Z |
 | `learn-dom-h-3b7becba` | `project://solidjs-solid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/solidjs-solid-learnings.md` | 2026-11-28T07:31:23.997Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `13db8d17` | Multi-dimensional audit evidence | 2026-11-28T07:40:08.133Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `7d0c054f` | Multi-dimensional audit evidence | 2026-11-28T07:40:10.109Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `31bb4d3b` | Multi-dimensional audit evidence | 2026-11-28T07:40:15.304Z |
+| `learn-dom-d-095c01f1` | `project://vitejs-vite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vitejs-vite-learnings.md` | 2026-11-28T07:40:47.218Z |

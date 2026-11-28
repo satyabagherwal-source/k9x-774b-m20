@@ -14006,3 +14006,7 @@
 | `CYCLE-20261128-11MU` | `2026-11-28T07:21:54.822Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11059` | Yes (`6f60a460...`) |
 | `CYCLE-20261128-CF9Q` | `2026-11-28T07:30:45.710Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11060` | Yes (`10e7e8af...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:31:23.997Z` | `solidjs-solid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-3B7BECBA` [Domain H] | Yes (`f9031fcc...`) |
+| `CYCLE-20261128-OH8G` | `2026-11-28T07:40:08.128Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11061` | Yes (`b05bfbdf...`) |
+| `CYCLE-20261128-OIR6` | `2026-11-28T07:40:10.098Z` | `vitejs/vite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vitejs-vite-learnings.md` | Yes (`f6266253...`) |
+| `CYCLE-20261128-OMRN` | `2026-11-28T07:40:15.299Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11062` | Yes (`2136da9b...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:40:47.218Z` | `vitejs-vite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-095C01F1` [Domain D] | Yes (`df1294b7...`) |
