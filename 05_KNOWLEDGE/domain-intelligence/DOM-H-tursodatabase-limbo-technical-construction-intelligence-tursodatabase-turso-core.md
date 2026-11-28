@@ -4,24 +4,24 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/limbo",
-  "source_version": "204997d8",
+  "source_version": "0dcd4f40",
   "license": "MIT",
-  "timestamp": "2026-11-27T08:32:39.728Z",
+  "timestamp": "2026-11-28T03:35:35.906Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `204997d8`).  
-> **License**: MIT | **Timestamp**: `2026-11-27T08:32:39.728Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `0dcd4f40`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T03:35:35.906Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tursodatabase/turso:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T08:32:04.420Z  
+> **Harvest Timestamp**: 2026-11-28T03:35:34.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25380 stars
+- **Stars / Engagement**: 25387 stars
 
 ---
 
@@ -1446,13 +1446,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12593** (2026-11-27): **core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints**
-  *Symptoms*: ## Problem  ``` fresh file, experimental autovacuum on  PRAGMA auto_vacuum=FULL          -> header written, dirty pages cleared,                                     then SetCookie marks page 1 dirty again (no transaction) PRAGMA page_count, step one row, drop the statement               -> read rollback panics:                                     "dirty pages should be empty for read txn" PRAGMA wal_checkpoint(TRUNCATE)  -> Busy: "cannot checkpoint while another statement is active" ```  `INCREMENTAL` failed the same way. `NONE` did not.  The auto_vacuum setter in `core/translate/pragma.rs` calls `Pager::persist_auto_vacuum_mode`. That function writes both auto-vacuum header fields of the new database and clears the dirty pages, because no transaction is open. The setter then also emitted `ReadCookie`, `If` and `SetCookie IncrementalVacuum` with `TransactionMode::None`. That `SetCookie` wrote the same value again and marked page 1 dirty, and no transaction committed or rolled back that change.  ## Fix  - Remove the `ReadCookie`/`If`/`Halt`/`SetCookie` block from the auto_vacuum setter. The setter returns early when page 1 exists, so the block only ran on new databases, where `persist_auto_vacuum_mode` has already written the value. - `op_set_cookie` now asserts that the pager holds the WAL write lock when MVCC (multi-version concurrency control) is off. In MVCC mode it already returned an error without a transaction. A program that emits `SetCookie` without a write transactio
+- **Issue #12640** (2026-11-28): **dialect-definitions: move the SQLite dialect to a crate that both frontends use**
+  *Symptoms*: The PostgreSQL frontend depended on `turso_sqlite`. It used `SqliteDialect` to parse the statements that core and the frontend run for themselves, and to parse the generated catalog tables. Thus each PostgreSQL binary linked the crate of the SQLite frontend.  This PR adds the crate `turso_dialect_definitions`, which holds `SqliteDialect`.  - `turso_sqlite` exports `SqliteDialect` again, so the crates that use it do not change. - `turso_pg` depends on `turso_dialect_definitions` and no longer on `turso_sqlite`. - `scripts/publish-crates.sh` publishes the new crate before `turso_sqlite`.  No behavior changes.  The purpose is the NaN work of #12592. With this split, `turso_sqlite` is in each SQLite binary and in no PostgreSQL binary, and `turso_pg` is the opposite. Each of the two crates can then give core its own functions to read and write a REAL in a record, and the linker selects the correct pair for each binary.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #12591** (2026-11-27): **core: normalize sqlite nan values and generalize type ordering**
-  *Symptoms*: SQLite table reads treated NaN bits in a REAL field as NULL, but index comparisons could still read NaN. This made a valid SQLite file fail `integrity_check` and made a DELETE report a corrupt database. NaN handling in individual numeric constructors also mixed SQL policy with arithmetic.  The core now preserves NaN during arithmetic and applies the dialect's policy when decoding records and publishing register values. SQLite turns NaN into NULL at both boundaries, so table reads, index lookups, function results, and writes agree. Aggregate scratch values retain NaN until the result is published.  This PR extracts the core and SQLite work from #12516 into eight commits. It also:  - Makes type ordering a handle supplied by a type, including ordering of stored column values. - Carries ordered-set aggregate collation in the instruction. - Supports operator arguments from another registered type and declared parameter types for native scalar functions. SQLite uses its ordinary casts for those parameters. - Adds regression tests for indexed NaN files, native function results, infinities, negative zero, and custom type ordering, and documents SQLite's NaN behavior.  There are no changes under `postgres/`. The PostgreSQL float implementation remains in #12516.  Validation on this branch:  - SQLite, Turso, and shared SQL suites: 23,321 passed, 873 skipped. - Native extension, dialect, and integrity-check integration tests: 124 passed. - Numeric, register, and value unit tests: 65 pas
+- **Issue #12639** (2026-11-28): **postgres: open only PostgreSQL databases in the frontend tests**
+  *Symptoms*: Three tests in `turso_pg` opened a database with the SQLite dialect. Thus a PostgreSQL test binary held databases of two dialects. This PR removes that, so that a binary opens databases of one dialect only. A rule that depends on the dialect, such as the NaN rule of #12592, can then be one value for the whole process.  - `test_postgres_tables_hidden_in_sqlite_mode` is removed. It tested that the SQLite dialect has no `pg_class` and no `pg_namespace`, which is a property of the SQLite frontend. - `reset_reports_frontend_errors` is removed. It used a deferred foreign key to make `reset` fail. The PostgreSQL frontend rejects `DEFERRABLE` with 0A000, so a PostgreSQL database cannot reach that state. - The foreign key test in `embedded_errors` compared the rows and the transaction state with a SQLite database. It now states the expected rows and the transaction state directly. The values are the same as before.  `turso_pg` still depends on `turso_sqlite`: the frontend uses the SQLite dialect as the parser for internal SQL. It no longer opens a SQLite database.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
   **Post-Mortem & Fix Analysis**:
-  > <!-- Blacksmith CI Status --> Found 1 test failure on Blacksmith runners:  ### Failure  | Test | View Logs | | --- | --- | | <code>turso-dbhash/encoder::tests::test_float_nan</code> | [View Logs](https://app.blacksmith.sh/tursodatabase/runs/45920458736/jobs/140249682634?attempt=1&ref=gh_comment&autoLogin=true&tab=tests&status=failed#test=b3962372-cc94-4d9a-9ba6-8e52042862cb) |  <a href="https://app.blacksmith.sh/tursodatabase/codesmith/turso/pr/12591?prompt=Repository%3A+tursodatabase%2Fturso%0ABranch%3A+sqlite-float-core%0APR%3A+%2312591%0A%0AFix+these+failing+tests%3A%0A%0A1.+turso-dbhash%2Fencoder%3A%3Atests%3A%3Atest_float_nan%0A&amp;entry=pr_comment&amp;ref=gh_comment&amp;autoLogin=true&amp;autoSend=true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-dark-v2.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-light-v2.sv
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `4c34ca5eb65b` is [here](https://github.com/tursodatabase/turso/pull/12639#pullrequestreview-6095242095).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:ratings:eyJ2ZXJzaW9uIjoxLCJoZWFkU2hhIjoiNGMzNGNhNWViNjViZGQwZDU2MGJlZDAwMTA2NWIyMWExMDk1ODNiYSIsImltcGFjdCI6eyJjYXRlZ29yeSI6Ik9wZXJhdGlvbnMgYW5kIHRvb2xpbmciLCJyZWFjaCI6ImVkZ2UtY2FzZSJ9LCJyaXNrIjp7ImxldmVsIjoibG93IiwiYXJlYXMiOlt7ImFyZWEiOiJQb3N0Z3JlU1FMIGNvbXBhdGliaWxpdHkiLCJkb25lIjoxLCJvcGVuIjowfSx7ImFyZWEiOiJTUUxpdGUgb3IgUG9zdGdyZVNRTCBjb21wYXRpYmlsaXR5IiwiZG9uZSI6Miwib3BlbiI6MH0seyJhcmVhIjoid
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1469,1124 +1469,571 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fe9cba1` (2026-11-26)
-**Commit Message**: Merge 'core/translate: fix stack overflow on compounds nested in first terms' from app/turso-github-handyman
+### Incident Patch 1: `f1658dc4` (2026-11-28)
+**Commit Message**: Merge 'postgres: register the uuid type' from Glauber Costa
 
-## Problem
+tursopg did not have a uuid type of its own. It used the uuid type of
+core, which has no INPUT and reads text with the Rust `uuid` crate. That
+crate accepts `urn:uuid:` and refuses some forms that PostgreSQL reads.
+The frontend also had two hand-written checks, and `auth.uid()` had its
+own parser. Each of them read uuid text a little differently. A cast
+between uuid and a type with no cast in PostgreSQL, such as `5::uuid`,
+gave 22P02 or stored a wrong value, where PostgreSQL gives 42846.
 
-A compound SELECT whose first term reads another compound crashes the
-process once the nested term counts add up:
+This PR registers a uuid type in the frontend. It follows oid, the
+integer types and boolean, and it is part of the work that registers the
+types of `pg_type` explicitly. The INPUT is a line-by-line port of
+`string_to_uuid` from PostgreSQL 18, and DECODE is a port of `uuid_out`.
+So tursopg reads the same text as PostgreSQL does: braces, no hyphens, a
+hyphen after every four digits, upper case, and no surrounding space.
+The stored bytes sort as `uuid_cmp` orders the values, so the type needs
+no comparator.
 
-```sql
--- 10 levels, each: SELECT * FROM (<previous>) UNION ALL SELECT 1 ... (449 times)
-SELECT count(*) FROM (SELECT * FROM (... (SELECT 1) UNION ALL SELECT 1 ...) UNION ALL SELECT 1 ...);
--- Turso:  thread 'main' has overflowed its stack
--- SQLite: 4491
-```
+## Commits, in order
 
-`emit_compound_select` in `core/translate/compound_select.rs` writes the
-bytecode for a compound SELECT. It called itself once per term and
-emitted the first term in the deepest call. A compound nested in the
-first term was therefore emitted under one stack frame per term of every
-enclosing compound: here 10 × 450 frames. The limits on terms per
-compound and on nesting depth do not bound that sum.
+1. `postgres: register a uuid type with its own INPUT`. The type, with
+the ports and unit tests.
+2. `postgres: 
 
-While testing, a second bug turned up in the same function. It is on
-main too:
-
-```sql
-SELECT 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1);
--- Turso:  1
--- SQLite: 0
-```
-
-When a UNION or EXCEPT is the subquery of an IN,
-`destination_index_for_dedupe` makes it remove duplicates directly in
-the ephemeral in
-
-**File**: `core/translate/compound_select.rs` (modified, +272/-209)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -17,7 +17,7 @@ use crate::translate::result_row::emit_columns_to_destination;
- use crate::translate::subquery::emit_non_from_clause_subqueries_for_eval_at;
- use crate::vdbe::builder::{CursorType, ProgramBuilder};
- use crate::vdbe::insn::{Insn, SorterOpenData};
--use crate::vdbe::CursorID;
-+use crate::vdbe::{BranchOffset, CursorID};
- use crate::{emit_explain, LimboError};
- use tracing::instrument;
+@@ -7370,7 +7370,6 @@ dependencies = [
+  "turso_pg_catalog",
+  "turso_pg_parser",
+  "turso_sqlite",
+- "uuid",
+ ]
  
-@@ -349,8 +349,45 @@ fn finish_compound_select(
-     Ok(program.reg_result_cols_start)
+ [[package]]
+```
+
+**File**: `postgres/COMPAT.md` (modified, +2/-2)
+```diff
+@@ -78,7 +78,7 @@ Basics not enumerated by the official feature matrix.
+ | TRUNCATE | 🟡 Partial | Lowered to DELETE of one table; several tables, CASCADE and RESTART IDENTITY rejected |
+ | BEGIN / COMMIT / ROLLBACK | ✅ Supported | Every transaction is snapshot isolation, i.e. REPEATABLE READ; `ISOLATION LEVEL REPEATABLE READ` is accepted, every other level, DEFERRABLE and AND CHAIN are rejected. READ ONLY and READ WRITE are enforced, on BEGIN and on SET TRANSACTION; switching a READ ONLY transaction to READ WRITE after its first query is rejected with SQLSTATE 25001 like PostgreSQL. A statement error aborts the transaction but keeps its savepoints, so ROLLBACK TO recovers it; a failed COMMIT rolls the transaction back and returns the connection to idle |
+ | LOCK TABLE | 🟡 Partial | ACCESS SHARE without NOWAIT is accepted as a no-op inside a transaction for pg_dump compatibility; table names are not checked, no locks are acquired, and no read snapshot is started; other modes are rejected |
+-| Casts (`expr::type`, CAST) | 🟡 Partial | Also `int4(x)`-style cast functions. Casts to and from int2, int4, int8, float4, float8, bool and text follow `pg_cast`, which lists them: a pair PostgreSQL has no cast for fails with 42846. A cast to uuid gives a value of the uuid type, and fails with 22P02 when the text is not a UUID. A value written to a column by INSERT, UPDATE, ON CONFLICT DO UPDATE, a default or a stored generated column is converted to the column type as an assignment cast, and fails with 42804 when PostgreSQL has no assignment cast. CREATE TABLE and ALTER TABLE ADD COLUMN refuse a column default with no assignment cast to the column type, with 42804 and PostgreSQL's message, which names a real or numeric column as double precision. ADD COLUMN writes a default of another type, converted, into the rows that exist. A value is converted before NOT NULL is checked. Floats round to an integer half to even. A numeric literal and a numeric with a type modifier round half away from zero, as in PostgreSQL. A numeric column without a type modifier and numeric arithmetic are REAL, so they round half to even: 4.5 in a `numeric` column cast or written to an integer is 4, where PostgreSQL gives 5. The range of the target is checked. A float8 cast or written to text is in PostgreSQL's form, such as `3` and `1e+20`. regclass casts from text by looking the name up as PostgreSQL does (schema, search path, quoting, digits as an oid) and to text by printing the name, with `42P01` for a relation that does not exist. It finds the relations that `pg_class` lists (tables, views, sequences and indexes under the name `pg_class` gives them, and the catalogs) and the other PostgreSQL catalog tables by their PostgreSQL oid. A catalog view that `pg_class` does not list does not exist here, so its name fails with `42P01`. A regclass column prints the name in a result and in COPY, as PostgreSQL does, and the binary format sends the oid; a binary regclass parameter is refused with 0A000. `regclass[]` and a column of another reg type are still integers, and so is a regclass that goes through an expression such as `min`, `max`, `CASE`, `||`, `concat`, `format` or an array constructor: the engine, not PostgreSQL's rules, gives the expression its type, so it can print the number where PostgreSQL prints the name (`||`, `concat`, `format`, arrays) or the name where PostgreSQL prints the oid (`min`, `max`). A regclass constant that a view, a default, a check, an index, a policy or a materialized view stores is read as the oid of its relation when the statement runs, as in PostgreSQL, so renaming the relation does not break it and a name with no relation fails the statement with `42P01`. This covers a string constant cast to regclass and a string default of a regclass column, and not a name that reaches regclass another way, such as the argument of `nextval`. A constant that names the table the same statement creates keeps its name, because the table has no oid yet. The object keeps no dependency on the relation, so `DROP TABLE` of that relation is not refused, and the oid then prints as a number. For the same reason pg_dump does not order a table before the table that its default names, so such a dump may not restore. A domain over regclass does not read or print relation names yet: a string default or a text value of the domain fails, and its values print as numbers. A quoted schema name in a regclass matches without regard to case. The casts of date, json, jsonb, uuid, bytea, inet, cidr, macaddr, the reg types other than regclass, arrays, enums and domains are not in `pg_cast` yet: the engine decides them by its own rules, which accept some casts PostgreSQL refuses (`types/cast-matrix.sqltest` has a gap test for each). A cast of another built-in type, such as point or xid, fails with 0A000. Not covered: bytea, which is not a registered type yet, so its casts are not in `pg_cast` and a text literal is not read as bytea input; casts to numeri
+```
+
+**File**: `postgres/conformance/pg-sqltests/auth.sqltest` (modified, +0/-15)
+```diff
+@@ -153,7 +153,6 @@ expect {
  }
  
--// Emits bytecode for a compound SELECT statement. This function processes the rightmost part of
--// the compound SELECT and handles the left parts recursively based on the compound operator type.
-+/// What a compound operator emits after the term on its right.
-+enum CompoundArmRows {
-+    /// UNION ALL: the right term writes its rows to the destination of the operator.
-+    UnionAll,
-+    /// UNION or EXCEPT: both terms write to the index of `cursor_id`. `destination` is
-+    /// where the rows of the index go afterwards, or None when the index is the
-+    /// destination of the operator itself.
-+    Dedupe {
-+        cursor_id: usize,
-+        index: Arc<Index>,
-+        destination: Option<QueryDestination>,
-+    },
-+    /// INTERSECT: the left terms write to the index of `left_cursor_id`, the right term
-+    /// to the index of `right_cursor_id`, and the rows found in both go to `destination`.
-+    Intersect {
-+        left_cursor_id: usize,
-+        left_index: Arc<Index>,
-+        right_cursor_id: usize,
-+        destination: QueryDestination,
-+    },
-+}
-+
-+/// A compound operator whose right term is emitted after all the terms on its left.
-+struct CompoundArm {
-+    op: EqpCompoundOp,
-+    /// The label after the bytecode of the operator.
-+    end_label: BranchOffset,
-+    /// The LIMIT and OFFSET that apply to the rows of the operator.
-+    limit_ctx: Option<LimitCtx>,
-+    offset_reg: Option<usize>,
-+    rows: CompoundArmRows,
-+}
-+
-+// Emits bytecode for a compound SELECT statement. The first term is emitted first, and it can
-+// read a subquery that is itself a compound SELECT. A recursion with one call per term would emit
-+// that subquery below one stack frame per term of this compound, so the depth of the stack would
-+// be the sum of the term counts of the nested compounds. Thus a first loop sets the destinations
-+// of the operators from the last to the first, the first term is emitted, and a second loop emits
-+// the right term of each operator from the first to the last.
- #[allow(clippy::too_many_arguments)]
- fn emit_compound_select(
-     program: &mut ProgramBuilder,
-@@ -360,150 +397,77 @@ fn emit_compound_select(
-     offset: &Option<Box<Expr>>,
-     resolver: &Resolver,
-     collations: &[CollationSeq],
--    limit_ctx: Option<LimitCtx>,
--    offset_reg: Option<usize>,
-+    mut limit_ctx: Option<LimitCtx>,
-+    mut offset_reg: Option<usize>,
-     reg_result_cols_start: Option<usize>,
- ) -> crate::Result<()> {
--    let compound_select_end = program.allocate_label();
--    if let Some(limit_ctx) = &limit_ctx {
--        program.emit_insn(Insn::IfNot {
--            reg: limit_ctx.reg_limit,
--            target_pc: compound_select_end,
--            jump_if_null: false,
--        });
--    }
--    let mut right_most_ctx = TranslateCtx::new_boxed(
--        program,
--        resolver.fork_with_expr_cache(),
--        right_most.table_references.joined_tables().len(),
--        false,
--    );
--    right_most_ctx.reg_result_cols_start = reg_result_cols_start;
--    match left.split_last_mut() {
--        Some(((plan, operator), left)) => match operator {
-+    let mut arms = crate::alloc::Vec::try_with_capacity_ext(left.len())?;
-+    for term_idx in (1..=left.len()).rev() {
-+        let end_label = program.allocate_label();
-+        if let Some(limit_ctx) = &limit_ctx {
-+            program.emit_insn(Insn::IfNot {
-+                reg: limit_ctx.reg_limit,
-+                target_pc: end_label,
-+                jump_if_null: false,
-+            });
-+        }
-+        let (terms_before, terms_after) = left.split_at_mut(term_idx);
-+        let (plan, operator) = &mut terms_before[term_idx - 1];
-+        let right = match terms_after.first_mut() {
-+            Some((right, _)) => right,
-+            None => &mut *right_most,
-+        };
-+        let (op, rows) = match operator {
-             CompoundOperator::UnionAll => {
-                 if matches!(
--                    right_most.query_destination,
-+                    right.query_destination,
-                     QueryDestination::EphemeralIndex { .. }
-                         | QueryDestination::CoroutineYield { .. }
-                         | QueryDestination::EphemeralTable { .. }
-                         | QueryDestination::RecursiveCteQueue { .. }
-                 ) {
--                    plan.query_destination = right_most.query_destination.clone();
-+                    plan.query_destination = right.query_destination.clone();
-                 }
--              
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-a-uuid-with-a-hyphen-after-every-four-digits {
+     SELECT set_config('request.jwt.claim.sub', 'a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11', false);
+     SELECT auth.uid();
+@@ -162,13 +161,8 @@ expect {
+     a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+-@sqlstate 22P02
+-expect @tursopg error {
+-    invalid input syntax for type uuid: "a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11"
+-}
+ 
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-32-digits-in-braces {
+     SELECT set_config('request.jwt.claim.sub', '{a0eebc999c0b4ef8bb6d6bb9bd380a11}', false);
+     SELECT auth.uid();
+@@ -177,13 +171,8 @@ expect {
+     {a0eebc999c0b4ef8bb6d6bb9bd380a11}
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+-@sqlstate 22P02
+-expect @tursopg error {
+-    invalid input syntax for type uuid: ".a0eebc999c0b4ef8bb6d6bb9bd380a11."
+-}
+ 
+ @setup auth_functions
+-@compat-gap "type:uuid"
+ test auth-uid-of-a-urn {
+     SELECT set_config('request.jwt.claim.sub', 'urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', false);
+     SELECT auth.uid();
+@@ -192,10 +181,6 @@ test auth-uid-of-a-urn {
+ expect error {
+     invalid input syntax for type uuid: "urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+ }
+-expect @tursopg {
+-    urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+-    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+-}
+ 
+ @setup auth_functions
+ test auth-uid-of-text-that-is-not-a-uuid-errors {
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/compound-select-term-limit.sqltest` (modified, +35/-5)
+**File**: `postgres/conformance/pg-sqltests/types/cast-matrix.sqltest` (modified, +0/-15)
 ```diff
-@@ -2,14 +2,10 @@
- 
- # Regression test for https://github.com/tursodatabase/turso/issues/8104
- #
--# The code generator recurses one time for each term of a compound SELECT, so
--# a compound with many terms overflowed the stack. SQLite stops at 500 terms
-+# A compound with many terms overflowed the stack. SQLite stops at 500 terms
- # (SQLITE_MAX_COMPOUND_SELECT) with "too many terms in compound SELECT", and
- # Turso uses the same limit and the same message.
- 
--# CLI backend only: the rust backend executes queries on tokio worker threads,
--# and 500 terms do not fit in their stacks in a debug build.
--@backend cli
- test compound-select-with-500-terms {
-     SELECT count(*) FROM (SELECT 1{{repeat:499: UNION ALL SELECT 1}});
+@@ -831,32 +831,23 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
  }
-@@ -38,3 +34,37 @@ test values-with-600-rows-is-not-a-compound {
- expect {
-     600
+ 
+-@compat-gap "cast:uuid -> int4"
+ test cast-uuid-to-int4 {
+     SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid::int4;
  }
-+
-+# Regression tests for https://github.com/tursodatabase/turso/issues/12128
-+#
-+# Each compound has 450 terms, and each one is the first term of the next, 10
-+# levels deep. The code generator emits the first term of a compound before
-+# the other terms, so it emitted the nested compound inside the stack frames of
-+# the terms of the outer one: the 10 levels needed 4500 frames.
-+test union-all-compounds-nested-in-first-terms {
-+    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}});
-+}
-+expect {
-+    4491
-+}
-+
-+test union-compounds-nested-in-first-terms {
-+    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}});
-+}
-+expect {
-+    2
-+}
-+
-+test intersect-compounds-nested-in-first-terms {
-+    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}});
-+}
-+expect {
-+    1
-+}
-+
-+test except-compounds-nested-in-first-terms {
-+    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}});
-+}
-+expect {
-+    1
-+}
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test cast-int4-to-uuid {
+     SELECT 5::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:bool -> uuid"
+ test cast-bool-to-uuid {
+     SELECT true::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+ @compat-gap "type:bytea"
+ test cast-text-literal-to-bytea {
+@@ -2358,27 +2349,21 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test assign-int4-to-uuid-column {
+     CREATE TABLE t (c uuid);
+     INSERT INTO t VALUES (5);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:uuid -> int4"
+ test assign-uuid-to-int4-column {
+     CREATE TABLE t (c int);
+     INSERT INTO t VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 23000
+-expect @tursopg error {}
+ 
+ test assign-uuid-to-text-column {
+     CREATE TABLE t (c text);
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/in-subquery-compound-limit.sqltest` (added, +56/-0)
+**File**: `postgres/conformance/pg-sqltests/types/uuid.sqltest` (added, +356/-0)
 ```diff
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,356 @@
++# The uuid type is 16 bytes. It reads text as PostgreSQL does, writes it in the
++# canonical form, and sorts by its bytes.
++
 +@database :memory:
 +
-+# A UNION or EXCEPT that is the subquery of an IN applies its LIMIT and OFFSET
-+# while it reads its rows from its own index. It must not write its rows
-+# directly into the index of the IN, or the IN tests all rows of the compound.
-+test in-union-limit {
-+    SELECT 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1);
++test uuid-reads-the-forms-that-postgres-reads {
++    SELECT
++        'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11'::uuid,
++        '{a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11}'::uuid,
++        'a0eebc999c0b4ef8bb6d6bb9bd380a11'::uuid,
++        '{a0eebc999c0b4ef8bb6d6bb9bd380a11}'::uuid,
++        'a0ee-bc99-9c0b-4ef8-bb6d-6bb9-bd38-0a11'::uuid,
++        'a0eebc99-9c0b4ef8-bb6d6bb9-bd380a11'::uuid;
 +}
 +expect {
-+    0
++    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 +}
 +
-+test not-in-union-limit {
-+    SELECT 2 NOT IN (SELECT 1 UNION SELECT 2 LIMIT 1);
++test uuid-names-the-text-it-refuses {
++    SELECT 'nope'::uuid;
 +}
-+expect {
-+    1
-+}
-+
-+test in-union-offset {
-+    SELECT 1 IN (SELECT 1 UNION SELECT 2 LIMIT 1 OFFSET 1), 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1 OFFSET 1);
-+}
-+expect {
-+    0|1
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: "nope"
 +}
 +
-+test in-except-limit {
-+    SELECT 3 IN (SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 EXCEPT SELECT 4 LIMIT 2);
++test uuid-refuses-text-with-a-space-around-it {
++    SELECT ' a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
 +}
-+expect {
-+    0
-+}
-+
-+test in-except-offset {
-+    SELECT 1 IN (SELECT 1 UNION ALL SELECT 2 EXCEPT SELECT 4 LIMIT -1 OFFSET 1), 2 IN (SELECT 1 UNION ALL SELECT 2 EXCEPT SELECT 4 LIMIT -1 OFFSET 1);
-+}
-+expect {
-+    0|1
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: " a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
 +}
 +
-+test in-union-then-union-all-limit {
-+    SELECT 2 IN (SELECT 1 UNION SELECT 2 UNION ALL SELECT 3 LIMIT 1), 3 IN (SELECT 1 UNION SELECT 2 UNION ALL SELECT 3 LIMIT 3);
++test uuid-refuses-a-urn {
++    SELECT 'urn:uuid:a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
 +}
-+expect {
-+    0|1
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-a-hyphen-after-the-last-group {
++    SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11-'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-a-hyphen-inside-a-group {
++    SELECT 'a0eebc9-99c0b-4ef8-bb6d-6bb9bd380a11'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-unbalanced-braces {
++    SELECT (chr(123) || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11')::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-too-few-digits {
++    SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1'::uuid;
++}
++@sqlstate 22P02
++expect error {}
++
++test uuid-refuses-empty-text {
++    SELECT ''::uuid;
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: ""
 +}
 +
-+test where-in-union-limit {
-+    CREATE TABLE t(x);
-+    INSERT INTO t VALUES (1), (2), (3);
-+    SELECT x FROM t WHERE x IN (SELECT 3 UNION SELECT 1 UNION SELECT 2 LIMIT 2) ORDER BY x;
++test uuid-column-keeps-the-canonical-form {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES ('{A0EEBC999C0B4EF8BB6D6BB9BD380A11}');
++    SELECT u, u::text FROM t;
 +}
 +expect {
-+    1
-+    2
++    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11|a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 +}
++
++test uuid-column-refuses-text-that-is-not-a-uuid {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1');
++}
++@sqlstate 22P02
++expect error {
++    invalid input syntax for type uuid: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a1"
++}
++
++test uuid-column-takes-null {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES (NULL);
++    SELECT u IS NULL FROM t;
++}
++expect {
++    t
++}
++
++test uuid-compares-equal-across-spellings {
++    SELECT
++        'A0EEBC99-9C0B-4EF8-BB6D-6BB9BD380A11'::uuid = 'a0eebc999c0b4ef8bb6d6bb9bd380a11'::uuid,
++        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid <> 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12'::uuid;
++}
++expect {
++    t|t
++}
++
++test uuid-sorts-by-its-bytes {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('ffffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('00000000-0000-0000-0000-0000000000ff'),
++        ('80000000-0000-0000-0000-000000000000'),
++        ('00000000-0000-0000-0000-000000000001'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff');
++    SELECT u FROM t ORDER BY u;
++}
++expect {
++    00000000-0000-0000-0000-000000000001
++    00000000-0000-0000-0000-0000000000ff
++    7fffffff-ffff-ffff-ffff-ffffffffffff
++    80000000-0000-0000-0000-000000000000
++    ffffffff-ffff-ffff-ffff-ffffffffffff
++}
++
++test uuid-sorts-in-descending-order {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('80000000-0000-0000-0000-000000000000'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('00000000-0000-0000-0000-000000000001');
++    SELECT u FROM t ORDER BY u DESC;
++}
++expect {
++    80000000-0000-0000-0000-000000000000
++    7fffffff-ffff-ffff-ffff-ffffffffffff
++    00000000-0000-0000-0000-000000000001
++}
++
++test uuid-comparison-operators-follow-the-bytes {
++    SELECT
++        '80000000-0000-0000-0000-000000000000'::uuid > '7fffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid < '00000000-0000-0000-0000-0000000000ff'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid <= '00000000-0000-0000-0000-000000000001'::uuid,
++        '00000000-0000-0000-0000-000000000001'::uuid >= '00000000-0000-0000-0000-000000000002'::uuid;
++}
++expect {
++    t|t|t|f
++}
++
++test uuid-between-follows-the-bytes {
++    CREATE TABLE t (u uuid);
++    INSERT INTO t VALUES
++        ('00000000-0000-0000-0000-000000000001'),
++        ('7fffffff-ffff-ffff-ffff-ffffffffffff'),
++        ('80000000-0000-0000-0000-000000000000'),
++        ('ffffffff-ffff-ffff-ffff-ffffffffffff');
++    SELECT u FROM t
++    WHERE u BETWEEN '7fffffff-ffff-ffff-ffff-ffffffffffff' AND '80000000-0000-0000-0000-000000000000'
++    ORDER BY u;
++}
++expect {
++    7f
 ```
 
----
-
-### Incident Patch 2: `71ae9708` (2026-11-27)
-**Commit Message**: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
-
-Hey folks, a first-time contributor here. Perfloop has found an issue,
-but I have looked at it. Since I am not familiar with codebase, I can
-largely validate just symptoms; patch itself seems to make sense, but I
-defer to your thinking here.
-
-A database whose write-ahead log (WAL) still holds committed
-transactions loses them without any error. This gets triggered if a read
-of the 32-byte WAL header or a WAL frame returns fewer bytes than
-requested while more bytes are available. I was able to reproduce this
-locally (also in the patch attached).
-
-Write/prep files with SQLite, through the rusqlite crate, and then open
-them with Turso:
-
-  - set a 512-byte page size, switch to WAL mode, and run CREATE TABLE
-t(x). SQLite records the new table in the WAL file source.db-wal.
-  - run `PRAGMA wal_checkpoint(TRUNCATE)`, which copies every WAL frame
-into the main database file `source.db`, then shrinks `source.db-wal` to
-0 bytes.
-  - `INSERT INTO t VALUES (1)` and `INSERT INTO t VALUES (2)`. db-wal
-grows to 1,104 bytes. Rows 1 and 2 now exist only in source.db-wal, and
-source.db still holds an empty table.
-  - open 
-
-**File**: `core/storage/sqlite3_ondisk.rs` (modified, +41/-12)
+**File**: `postgres/frontend/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -1624,6 +1624,9 @@ impl BuildSharedWal {
-                     self.phase = BuildSharedWalPhase::AwaitHeader(c);
-                 }
-                 BuildSharedWalPhase::AwaitHeader(c) => {
-+                    if let Some(err) = c.get_error() {
-+                        return Err(err.into());
-+                    }
-                     if !c.succeeded() {
-                         io_yield_one!(c);
-                     }
-@@ -1651,6 +1654,9 @@ impl BuildSharedWal {
-                     };
-                 }
-                 BuildSharedWalPhase::AwaitChunk { completion, offset } => {
-+                    if let Some(err) = completion.get_error() {
-+                        return Err(err.into());
-+                    }
-                     if !completion.succeeded() {
-                         io_yield_one!(completion);
-                     }
-@@ -1742,8 +1748,7 @@ impl StreamingWalReader {
-         let reader = self.clone();
-         let completion: Box<ReadComplete> = Box::new(move |res| {
-             let _reader = reader.clone();
--            _reader.handle_header_read(res);
--            None
-+            _reader.handle_header_read(res)
-         });
-         let c = Completion::new_read(header_buf, completion);
-         self.file.pread(0, c)
-@@ -1777,22 +1782,31 @@ impl StreamingWalReader {
-         let completion: Box<ReadComplete> = Box::new(move |res| {
-             tracing::debug!("WAL chunk read complete");
-             let reader = me.clone();
--            reader.handle_chunk_read(res);
--            None
-+            reader.handle_chunk_read(offset, res)
-         });
-         let c = Completion::new_read(buf, completion);
-         let guard = self.file.pread(offset, c)?;
-         Ok((read_size, guard))
-     }
+@@ -30,7 +30,6 @@ turso_ext = { workspace = true, features = ["core_only"] }
+ turso_pg_catalog = { workspace = true }
+ turso_pg_parser = { workspace = true }
+ turso_sqlite = { workspace = true }
+-uuid = "1.11.0"
  
--    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-+    fn handle_header_read(
-+        self: Arc<Self>,
-+        res: Result<(Arc<Buffer>, i32), CompletionError>,
-+    ) -> Option<CompletionError> {
-         let Ok((buf, bytes_read)) = res else {
-             self.finalize_loading();
--            return;
-+            return None;
-         };
-+        // The file is at least as long as the header, so a read that returns
-+        // fewer bytes does not mean that the WAL has no header. If recovery
-+        // treated it that way, the committed frames would not be visible and
-+        // the next write would overwrite them.
-         if bytes_read != WAL_HEADER_SIZE as i32 {
--            self.finalize_loading();
--            return;
-+            return Some(CompletionError::ShortReadWalFrame {
-+                offset: 0,
-+                expected: WAL_HEADER_SIZE,
-+                actual: bytes_read as usize,
-+            });
-         }
- 
-         let (page_sz, c1, c2, use_native, ok) = {
-@@ -1836,7 +1850,7 @@ impl StreamingWalReader {
-         if PageSize::new(page_sz).is_none() || !ok {
-             *self.header.lock() = WalHeader::default();
-             self.finalize_loading();
--            return;
-+            return None;
-         }
-         {
-             let mut st = self.state.write();
-@@ -1849,14 +1863,28 @@ impl StreamingWalReader {
-         self.off_atomic
-             .store(WAL_HEADER_SIZE as u64, Ordering::Release);
-         self.page_atomic.store(page_sz as u64, Ordering::Release);
-+        None
-     }
- 
--    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
-+    fn handle_chunk_read(
-+        self: Arc<Self>,
-+        offset: u64,
-+        res: Result<(Arc<Buffer>, i32), CompletionError>,
-+    ) -> Option<CompletionError> {
-         let Ok((buf, bytes_read)) = res else {
-             self.finalize_loading();
--            return;
-+            return None;
-         };
--        let buf_slice = &buf.as_slice()[..bytes_read as usize];
-+        // The requested bytes are all inside the file, so a read that returns
-+        // fewer bytes does not show where the valid frames end.
-+        if bytes_read as usize != buf.len() {
-+            return Some(CompletionError::ShortReadWalFrame {
-+                offset,
-+                expected: buf.len(),
-+                actual: bytes_read as usize,
-+            });
-+        }
-+        let buf_slice = buf.as_slice();
-         // Snapshot salts/endianness once to avoid per-frame header locks
-         let (header_copy, use_native) = {
-             let st = self.state.read();
-@@ -1870,6 +1898,7 @@ impl StreamingWalReader {
-         if consumed < buf_slice.len() || self.off_atomic.load(Ordering::Acquire) >= self.file_size {
-             self.finalize_loading();
-         }
-+        None
-     }
- 
-     // Processes frames from a buffer, returns bytes processed
+ [dev-dependencies]
+ turso_core = { workspace = true, features = ["io_memory_yield", "test_helper"] }
 ```
 
-**File**: `tests/integration/queued_io.rs` (modified, +31/-1)
+**File**: `postgres/frontend/auth_functions.rs` (modified, +1/-14)
 ```diff
-@@ -87,6 +87,7 @@ struct QueuedIoState {
-     owner: Mutex<String>,
-     ordinals: Mutex<HashMap<String, u32>>,
-     fail_next: Mutex<Option<QueuedIoOpKind>>,
-+    wal_read_limit: Mutex<Option<usize>>,
+@@ -1,8 +1,7 @@
+-use crate::error::sqlstate_error;
+ use crate::functions::{invalid_json, pg_scalar_function, unsupported_unicode_escape, Uuid};
++use crate::pg_type::canonical_uuid;
+ use turso_core::native_ext::FunctionArity;
+ use turso_core::{Connection, OpenOptions, Result};
+-use turso_pg_parser::sqlstate::SQLSTATE_INVALID_TEXT_REPRESENTATION;
+ 
+ pub(crate) fn register_functions(options: OpenOptions) -> OpenOptions {
+     options
+@@ -44,18 +43,6 @@ fn claim(conn: &Connection, setting_name: &str, claim_name: &str) -> Result<Opti
+     })
  }
  
- impl QueuedIoState {
-@@ -99,6 +100,7 @@ impl QueuedIoState {
-             owner: Mutex::new("unowned".to_string()),
-             ordinals: Mutex::new(HashMap::new()),
-             fail_next: Mutex::new(None),
-+            wal_read_limit: Mutex::new(None),
-         }
-     }
- }
-@@ -120,6 +122,12 @@ impl QueuedIo {
-         }
-     }
- 
-+    #[cfg(not(feature = "checksum"))]
-+    pub(crate) fn limit_wal_reads(&self, bytes: usize) {
-+        assert!(bytes > 0);
-+        *self.state.wal_read_limit.lock().unwrap() = Some(bytes);
-+    }
-+
-     pub(crate) fn step_one(&self) -> turso_core::Result<Option<QueuedIoEvent>> {
-         self.step_at(0, false)
-     }
-@@ -429,9 +437,31 @@ impl File for QueuedFile {
-     fn pread(&self, pos: u64, completion: Completion) -> turso_core::Result<Completion> {
-         let inner = self.inner.clone();
-         let c = completion.clone();
-+        let limit = if self.path.ends_with("-wal") {
-+            *self.state.wal_read_limit.lock().unwrap()
-+        } else {
-+            None
-+        };
-         let len = completion.as_read().buf().len();
-         self.enqueue(QueuedIoOpKind::Pread, pos, len, completion, move || {
--            drop(inner.pread(pos, c)?);
-+            if let Some(limit) = limit {
-+                let len = c.as_read().buf().len().min(limit);
-+                let buf = Arc::new(Buffer::new_temporary(len));
-+                let read = Completion::new_read(buf, move |res| {
-+                    match res {
-+                        Ok((buf, n)) => {
-+                            c.as_read().buf().as_mut_slice()[..n as usize]
-+                                .copy_from_slice(&buf.as_slice()[..n as usize]);
-+                            c.complete(n);
-+                        }
-+                        Err(err) => c.error(err),
-+                    }
-+                    None
-+                });
-+                drop(inner.pread(pos, read)?);
-+            } else {
-+                drop(inner.pread(pos, c)?);
-+            }
-             Ok(())
-         })
-     }
-```
-
-**File**: `tests/integration/storage/short_read.rs` (modified, +114/-0)
-```diff
-@@ -234,3 +234,117 @@ fn test_zeroed_page_returns_corrupt_error() {
-             .contains("Invalid page type: 0");
-     }
- }
-+
-+#[test]
-+fn test_wal_short_reads_fail_open_without_losing_rows() {
-+    use crate::common::ExecRows;
-+    use crate::queued_io::QueuedIo;
-+    use std::sync::Arc;
-+    use turso_core::{
-+        Buffer, Completion, CompletionError, Database, IOResult, LimboError, OpenFlags,
-+        OpenOptions, WalFileShared, IO,
-+    };
-+    use turso_sqlite::SqliteDialect;
-+
-+    let dir = tempfile::tempdir().unwrap();
-+    let source_path = dir.path().join("source.db");
-+    let source = rusqlite::Connection::open(&source_path).unwrap();
-+    source
-+        .execute_batch(
-+            "PRAGMA page_size=512;
-+             PRAGMA journal_mode=WAL;
-+             CREATE TABLE t(x);
-+             PRAGMA wal_checkpoint(TRUNCATE);
-+             INSERT INTO t VALUES (1);
-+             INSERT INTO t VALUES (2);
-+             INSERT INTO t VALUES (3);
-+             INSERT INTO t VALUES (4);",
-+        )
-+        .unwrap();
-+    let db_bytes = std::fs::read(&source_path).unwrap();
-+    let wal_bytes = std::fs::read(dir.path().join("source.db-wal")).unwrap();
-+
-+    for limit in (1..=32).chain([33, 100, 535, 536, 600, 1100, 2143]) {
-+        let io = Arc::new(QueuedIo::new());
-+        let path = dir.path().join(format!("short-{limit}.db"));
-+        let path = path.to_str().unwrap();
-+        for (name, bytes) in [
-+            (path.to_owned(), &db_bytes),
-+            (format!("{path}-wal"), &wal_bytes),
-+        ] {
-+            let file = io.open_file(&name, OpenFlags::Create, false).unwrap();
-+            let c = file
-+                .pwrite(
-+                    0,
-+                    Arc::new(Buffer::new(bytes.clone())),
-+                    Completion::new_write(|_| {}),
-+                )
-+                .unwrap();
-+            io.wait_for_completion(c).unwrap();
-+        }
-+        io.limit_wal_reads(limit);
-+        let recovery_io: Arc<dyn IO> = io.clone();
-+        let mut recovery = WalFileShared::open_shared_if_exists_begin(
-+            &recovery_io,
-+            &format!("{path}-wal"),
-+            OpenFlags::Create,
-+        )
-+        .unwrap();
-+        let err = 'recovery: {
-+            for _ in 0..100 {
-+                match recovery.poll() {
-+                    Err(err) => break 'recovery err,
-+                    Ok(IOResult::Done(_)) => panic!("WAL read limit {limit}: recovery succeeded"),
-+                    Ok(IOResult::IO(c)) => {
-+                        while !c.finished() {
-+                            io.step().unwrap();
-+                        }
-+                    }
-+                }
-+            }
-+            panic!("WAL read limit {limit}: recovery did not finish");
-+        };
-+        assert!(
-+            matches!(
-+                *err,
-+                LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })
-+            ),
-+            "WAL read limit {limit}: unexpected recovery error {err:?}"
-+        );
-+        match Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))) {
-+            Err(LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })) => {}
-+            Err(err) => panic!("WAL read limit {limit}: unexpected open error {err:?}"),
-+            Ok(db) => {
-+                io.limit_wal_reads(usize::MAX);
-+                let conn = db
-+                    .connect(ConnectOpts::new(SessionRole::Superuser))
-+                    .unwrap();
-+                let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+                panic!("WAL read limit {limit}: open succeeded with rows {rows:?}");
-+            }
-+        }
-+        io.limit_wal_reads(usize::MAX);
-+        let db =
-+            Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
-+        let conn = db
-+            .connect(ConnectOpts::new(SessionRole::Superuser))
-+            .unwrap();
-+        let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+        assert_eq!(rows, vec![(1,), (2,), (3,), (4,)], "WAL read limit {limit}");
-+        if limit == 600 {
-+            conn.execute("INSERT INTO t VALUES (5)").unwrap();
-+            drop(conn);
-+            drop(db);
-+            let db = Database::open(io, path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
-+            let conn = db
-+                .connect(ConnectOpts::new(SessionRole::Superuser))
-+                .unwrap();
-+            let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
-+            assert_eq!(
-+                rows,
-+                vec![(1,), (2,), (3,), (4,), (5,)],
-+                "rows after writing and reopening"
-+            );
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `aea36732` (2026-11-26)
-**Commit Message**: Merge 'postgres: make pg_type one table of the built-in types' from Glauber Costa
-
-`pg_type` was served from a hand-written list of 21 built-in types in
-`catalog.rs` and a second hand-written list of their arrays. Some
-columns were the same for every row (`typispreferred` false, `typdelim`
-a comma). The types the frontend registers were in a third list that
-knew nothing of the rows.
-
-## What this does
-
-`BUILT_IN_TYPES` in `postgres/frontend/pg_type.rs` is now the one table,
-built like `pg_operator` and `pg_cast`.
-
-Each row has the values of PostgreSQL 18 (taken from a real server):
-`oid`, `typname`, `typcategory`, `typispreferred`, `typlen`, `typbyval`,
-`typalign`, `typstorage`, `typarray`, `typdelim`.
-
-Each row also says how tursopg has the type:
-
-| | Types |
-| --- | --- |
-| Registered by the frontend | bool, int2, int4, int8 |
-| Not registered yet | bytea, text, oid, json, jsonb, float4, float8,
-varchar, numeric, date, timestamp, timestamptz, uuid, inet, cidr,
-macaddr |
-
-Every row of the second kind has its own `FIXME(registered-types)` that
-says how tursopg has the type today. The list of these FIXMEs is the
-list of types still to be registered.
-
-The `pg_type` table lists the ro
-
-**File**: `postgres/COMPAT.md` (modified, +1/-1)
-```diff
-@@ -84,7 +84,7 @@ Basics not enumerated by the official feature matrix.
- ## Backend
- 
- The pg_catalog tables emulated (live, reflecting real schema): `pg_class`,
--`pg_namespace`, `pg_attribute`, `pg_type` (builtin + array + enum types),
-+`pg_namespace`, `pg_attribute`, `pg_type` (the built-in types that tursopg supports, with the values of PostgreSQL 18, the array of each, and the enum and domain types of the schema; a type without a row is not supported),
- `pg_index`, `pg_constraint`, `pg_attrdef`, `pg_tables`, `pg_sequence`, `pg_sequences`,
- `pg_database`, `pg_roles` (built-in `postgres` superuser and `pg_database_owner`, and roles from `CREATE ROLE`), `pg_auth_members` (memberships from `GRANT role TO role`), `pg_proc`, `pg_am`,
- `pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
-```
-
-**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +88/-0)
-```diff
-@@ -1216,6 +1216,94 @@ expect {
-     _text|1009|25
- }
- 
-+# The pg_type rows of the built-in types of tursopg and of their arrays have
-+# the values of PostgreSQL 18.
-+test pg-type-rows-of-built-in-types {
-+    SELECT oid, typname, typtype, typcategory, typispreferred, typlen, typbyval, typalign, typstorage,
-+        typarray, typdelim, typelem
-+    FROM pg_type
-+    WHERE typnamespace = 11 AND ltrim(typname, '_') IN (
-+        'bool', 'bytea', 'int8', 'int2', 'int4', 'text', 'oid', 'json', 'cidr', 'float4',
-+        'float8', 'macaddr', 'inet', 'varchar', 'numeric', 'uuid', 'jsonb'
-+    )
-+    ORDER BY oid;
-+}
-+expect {
-+    16|bool|b|B|t|1|t|c|p|1000|,|0
-+    17|bytea|b|U|f|-1|f|i|x|1001|,|0
-+    20|int8|b|N|f|8|t|d|p|1016|,|0
-+    21|int2|b|N|f|2|t|s|p|1005|,|0
-+    23|int4|b|N|f|4|t|i|p|1007|,|0
-+    25|text|b|S|t|-1|f|i|x|1009|,|0
-+    26|oid|b|N|t|4|t|i|p|1028|,|0
-+    114|json|b|U|f|-1|f|i|x|199|,|0
-+    199|_json|b|A|f|-1|f|i|x|0|,|114
-+    650|cidr|b|I|f|-1|f|i|m|651|,|0
-+    651|_cidr|b|A|f|-1|f|i|x|0|,|650
-+    700|float4|b|N|f|4|t|i|p|1021|,|0
-+    701|float8|b|N|t|8|t|d|p|1022|,|0
-+    829|macaddr|b|U|f|6|f|i|p|1040|,|0
-+    869|inet|b|I|t|-1|f|i|m|1041|,|0
-+    1000|_bool|b|A|f|-1|f|i|x|0|,|16
-+    1001|_bytea|b|A|f|-1|f|i|x|0|,|17
-+    1005|_int2|b|A|f|-1|f|i|x|0|,|21
-+    1007|_int4|b|A|f|-1|f|i|x|0|,|23
-+    1009|_text|b|A|f|-1|f|i|x|0|,|25
-+    1015|_varchar|b|A|f|-1|f|i|x|0|,|1043
-+    1016|_int8|b|A|f|-1|f|d|x|0|,|20
-+    1021|_float4|b|A|f|-1|f|i|x|0|,|700
-+    1022|_float8|b|A|f|-1|f|d|x|0|,|701
-+    1028|_oid|b|A|f|-1|f|i|x|0|,|26
-+    1040|_macaddr|b|A|f|-1|f|i|x|0|,|829
-+    1041|_inet|b|A|f|-1|f|i|x|0|,|869
-+    1043|varchar|b|S|f|-1|f|i|x|1015|,|0
-+    1231|_numeric|b|A|f|-1|f|i|x|0|,|1700
-+    1700|numeric|b|N|f|-1|f|i|m|1231|,|0
-+    2950|uuid|b|U|f|16|f|c|p|2951|,|0
-+    2951|_uuid|b|A|f|-1|f|i|x|0|,|2950
-+    3802|jsonb|b|U|f|-1|f|i|x|3807|,|0
-+    3807|_jsonb|b|A|f|-1|f|i|x|0|,|3802
-+}
-+
-+# tursopg has date, timestamp and timestamptz but not their arrays, so the
-+# three types have no array row and their typarray is 0.
-+@compat-gap "type:arrays of date, timestamp and timestamptz"
-+test pg-type-rows-of-date-and-timestamp-types {
-+    SELECT oid, typname, typtype, typcategory, typispreferred, typlen, typbyval, typalign, typstorage,
-+        typarray, typdelim, typelem
-+    FROM pg_type
-+    WHERE typnamespace = 11 AND ltrim(typname, '_') IN ('date', 'timestamp', 'timestamptz')
-+    ORDER BY oid;
-+}
-+expect {
-+    1082|date|b|D|f|4|t|i|p|1182|,|0
-+    1114|timestamp|b|D|f|8|t|d|p|1115|,|0
-+    1115|_timestamp|b|A|f|-1|f|d|x|0|,|1114
-+    1182|_date|b|A|f|-1|f|i|x|0|,|1082
-+    1184|timestamptz|b|D|t|8|t|d|p|1185|,|0
-+    1185|_timestamptz|b|A|f|-1|f|d|x|0|,|1184
-+}
-+expect @tursopg {
-+    1082|date|b|D|f|4|t|i|p|0|,|0
-+    1114|timestamp|b|D|f|8|t|d|p|0|,|0
-+    1184|timestamptz|b|D|t|8|t|d|p|0|,|0
-+}
-+
-+# A type that tursopg does not support has no row, so pg_type says which
-+# types tursopg has.
-+@compat-gap "type:pg_type rows of types tursopg does not support"
-+test pg-type-has-no-row-for-a-type-tursopg-does-not-support {
-+    SELECT count(*) FROM pg_type
-+    WHERE typname IN ('time', '_time', 'interval', 'timetz', 'point', 'box', 'xml', 'money', 'tsvector', 'jsonpath');
-+}
-+expect {
-+    10
-+}
-+expect @tursopg {
-+    0
-+}
-+
-+
- test pg-indexes-lists-index-definitions {
-     CREATE TABLE items (id INT, name TEXT, price INT);
-     CREATE INDEX items_name_idx ON items (name);
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +82/-347)
-```diff
-@@ -1,4 +1,5 @@
- use crate::functions::validate_pg_input;
-+use crate::pg_type::{built_in_type, BuiltInType, BUILT_IN_TYPES};
- use crate::roles::{connection_roles, schema_roles, Role, RoleCatalog};
- use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
- use std::borrow::Cow;
-@@ -1861,314 +1862,67 @@ impl SnapshotRows for PgIndexesTable {
- // pg_type
- // ──────────────────────────────────────────────────────────────────────
- 
-+/// A pg_type row of a built-in type or of the array of one.
- struct PgTypeInfo {
-     oid: i64,
--    name: &'static str,
--    typtype: &'static str,
-+    name: String,
-     typcategory: &'static str,
-+    typispreferred: bool,
-     typlen: i64,
-     typarray: i64,
-     typelem: i64,
-     typbyval: bool,
-     typalign: &'static str,
-     typstorage: &'static str,
-+    typdelim: &'static str,
- }
- 
--const PG_BASE_TYPES: &[PgTypeInfo] = &[
--    PgTypeInfo {
--        oid: 16,
--        name: "bool",
--        typtype: "b",
--        typcategory: "B",
--        typlen: 1,
--        typarray: 1000,
--        typelem: 0,
--        typbyval: true,
--        typalign: "c",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 17,
--        name: "bytea",
--        typtype: "b",
--        typcategory: "U",
--        typlen: -1,
--        typarray: 1001,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "x",
--    },
--    PgTypeInfo {
--        oid: 20,
--        name: "int8",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 8,
--        typarray: 1016,
--        typelem: 0,
--        typbyval: true,
--        typalign: "d",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 21,
--        name: "int2",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 2,
--        typarray: 1005,
--        typelem: 0,
--        typbyval: true,
--        typalign: "s",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 23,
--        name: "int4",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 4,
--        typarray: 1007,
--        typelem: 0,
--        typbyval: true,
--        typalign: "i",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 25,
--        name: "text",
--        typtype: "b",
--        typcategory: "S",
--        typlen: -1,
--        typarray: 1009,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "x",
--    },
--    PgTypeInfo {
--        oid: 26,
--        name: "oid",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 4,
--        typarray: 1028,
--        typelem: 0,
--        typbyval: true,
--        typalign: "i",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 114,
--        name: "json",
--        typtype: "b",
--        typcategory: "U",
--        typlen: -1,
--        typarray: 199,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "x",
--    },
--    PgTypeInfo {
--        oid: 650,
--        name: "cidr",
--        typtype: "b",
--        typcategory: "I",
--        typlen: -1,
--        typarray: 651,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "m",
--    },
--    PgTypeInfo {
--        oid: 700,
--        name: "float4",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 4,
--        typarray: 1021,
--        typelem: 0,
--        typbyval: true,
--        typalign: "i",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 701,
--        name: "float8",
--        typtype: "b",
--        typcategory: "N",
--        typlen: 8,
--        typarray: 1022,
--        typelem: 0,
--        typbyval: true,
--        typalign: "d",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 829,
--        name: "macaddr",
--        typtype: "b",
--        typcategory: "U",
--        typlen: 6,
--        typarray: 1040,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 869,
--        name: "inet",
--        typtype: "b",
--        typcategory: "I",
--        typlen: -1,
--        typarray: 1041,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "m",
--    },
--    PgTypeInfo {
--        oid: 1043,
--        name: "varchar",
--        typtype: "b",
--        typcategory: "S",
--        typlen: -1,
--        typarray: 1015,
--        typelem: 0,
--        typbyval: false,
--        typalign: "i",
--        typstorage: "x",
--    },
--    PgTypeInfo {
--        oid: 1082,
--        name: "date",
--        typtype: "b",
--        typcategory: "D",
--        typlen: 4,
--        typarray: 1182,
--        typelem: 0,
--        typbyval: true,
--        typalign: "i",
--        typstorage: "p",
--    },
--    PgTypeInfo {
--        oid: 1083,
--        name: "time",
--        typtype: "b",
--        typcategory: "D",
--        typlen: 8,
--        typarray: 1183,
--        typelem: 0,
--        typbyval: true,
--        typalign: 
-```
-
-**File**: `postgres/frontend/operators.rs` (modified, +3/-5)
-```diff
-@@ -5,7 +5,7 @@ use crate::casts::{resolve, wraps_negative_integers, CastType};
- use crate::catalog::{pg_type_category, pg_type_name, pg_type_oid};
- use crate::error::sqlstate_error;
- use crate::functions::{format_type, undefined_operator_of, validate_pg_input};
--use crate::pg_type::{IntegerOperator, IntegerType};
-+use crate::pg_type::{built_in_type, IntegerOperator, IntegerType};
- use turso_core::ast;
- use turso_core::dialect::{
-     CastContext, ChosenOperator, EngineType, OperandType, OperatorChoice, OperatorFunction,
-@@ -281,7 +281,7 @@ fn common_type(types: &[Option<i64>]) -> Option<i64> {
-         if pg_type_category(ty) != pg_type_category(current) {
-             return None;
-         }
--        if !PREFERRED_TYPES.contains(&current)
-+        if !built_in_type(current).is_some_and(|ty| ty.is_preferred)
-             && casts_implicitly(current, ty)
-             && !casts_implicitly(ty, current)
-         {
-@@ -300,7 +300,7 @@ fn casts_implicitly(from: i64, to: i64) -> bool {
-     IMPLICIT_CASTS.contains(&(from, to))
- }
- 
--/// FIXME(pg-catalog): This hand-codes the rows of pg_cast with castcontext 'i' between the types of `CHECKED_TYPES`, and `PREFERRED_TYPES` the pg_type rows with typispreferred. A lookup in pg_cast and pg_type replaces both, and `fits`, which takes the implicit casts to be every cast within a typcategory, uses the same lookup.
-+/// FIXME(pg-catalog): This hand-codes the rows of pg_cast with castcontext 'i' between the types of `CHECKED_TYPES`. A lookup in pg_cast replaces it, and `fits`, which takes the implicit casts to be every cast within a typcategory, uses the same lookup.
- const IMPLICIT_CASTS: [(i64, i64); 20] = [
-     (DATE, TIMESTAMP),
-     (DATE, TIMESTAMPTZ),
-@@ -324,8 +324,6 @@ const IMPLICIT_CASTS: [(i64, i64); 20] = [
-     (VARCHAR, TEXT),
- ];
- 
--const PREFERRED_TYPES: [i64; 4] = [BOOL, TEXT, FLOAT8, TIMESTAMPTZ];
+-fn canonical_uuid(text: &str) -> Result<String> {
+-    uuid::Uuid::parse_str(text)
+-        .map(|uuid| uuid.hyphenated().to_string())
+-        .map_err(|_| {
+-            sqlstate_error(
+-                SQLSTATE_INVALID_TEXT_REPRESENTATION,
+-                format!("invalid input syntax for type uuid: \"{text}\""),
+-                None,
+-            )
+-        })
+-}
 -
- /// The operand types whose operators are decided by core's operator signatures
- /// for the arithmetic and bit operators, and the prefix `-` and `~`. Core has
- /// no signature for a comparison, so `OPERATORS` decides every comparison.
+ fn jwt(conn: &Connection) -> Result<Option<String>> {
+     let Some(claims) =
+         setting(conn, "request.jwt.claim").or_else(|| setting(conn, "request.jwt.claims"))
 ```
 
-**File**: `postgres/frontend/pg_type.rs` (modified, +113/-9)
+**File**: `postgres/frontend/cast_planning.rs` (modified, +1/-1)
 ```diff
-@@ -16,18 +16,122 @@ pub(crate) use oid::parse_oid;
- use crate::session::relation_lookup_namespaces;
- use std::sync::Arc;
- use turso_core::schema::{RelationKind, SchemaBuilder};
-+use turso_core::types::Type;
- use turso_core::{Connection, Result};
+@@ -205,6 +205,7 @@ fn registered_cast_type(name: &str) -> Option<CastType> {
+         "boolean" => Bool,
+         "oid" => Oid,
+         "regclass" => RegClass,
++        "uuid" => Uuid,
+         "timestamp" => Timestamp,
+         "timestamptz" => TimestampTz,
+         // FIXME(pg-catalog): numeric is registered only with a type modifier. Without one it is REAL, which `is_lowered_type_name` leaves to the engine. A numeric type that needs no modifier lets every numeric go through CASTS.
+@@ -255,7 +256,6 @@ const ENGINE_RULE_TYPES: &[&str] = &[
+     "time",
+     "json",
+     "jsonb",
+-    "uuid",
+     "bytea",
+     "inet",
+     "cidr",
+```
+
+---
+
+### Incident Patch 2: `72d81ab5` (2026-11-28)
+**Commit Message**: postgres: put the casts of uuid under the cast table
+
+A cast from or to uuid was decided by the rules of the engine. So
+5::uuid, true::uuid and uuid::int4 gave 22P02 or stored the wrong
+thing, and INSERT of an integer into a uuid column gave 22P02 where
+PostgreSQL gives 42804.
+
+uuid is now a type of the cast table. PostgreSQL has no row of pg_cast
+for uuid, because its casts go through text: text to uuid is an
+explicit cast that reads the text with the INPUT, and uuid to text is
+an assignment cast. Any other pair fails with 42846 in a CAST and 42804
+when a value is written to a column. Because uuid has no row, pg_cast
+does not change.
+
+The five gap tests for these casts now pass, and their tags and the
+tursopg-only expectations are removed.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `postgres/conformance/pg-sqltests/types/cast-matrix.sqltest` (modified, +0/-15)
+```diff
+@@ -831,32 +831,23 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
  
--/// Adds the built-in types that PostgreSQL defines differently from core to
--/// `builder`. Each one replaces the type that core registered under the same
--/// name.
-+/// A row of `pg_type` for a built-in type that is not an array, and how
-+/// tursopg has the type.
-+pub(crate) struct BuiltInType {
-+    pub(crate) oid: i64,
-+    pub(crate) name: &'static str,
-+    pub(crate) category: &'static str,
-+    pub(crate) is_preferred: bool,
-+    pub(crate) len: i64,
-+    pub(crate) by_value: bool,
-+    pub(crate) align: &'static str,
-+    pub(crate) storage: &'static str,
-+    /// The oid of the pg_type row of the array of the type, which is named
-+    /// `_` and the name of the type. 0 when tursopg has no array of the type.
-+    pub(crate) array_oid: i64,
-+    pub(crate) delimiter: &'static str,
-+    pub(crate) support: Support,
-+}
-+
-+/// How tursopg has a built-in type.
-+pub(crate) enum Support {
-+    /// The frontend registers the type in the schema, in place of the type
-+    /// that core registers under the same name.
-+    Registered(&'static dyn Type),
-+    /// tursopg takes the type, but the frontend does not register it: it is
-+    /// a type that core registers, or the translator stores it as a type of
-+    /// the engine. The FIXME on the row says which.
-+    NotRegistered,
-+}
-+
-+macro_rules! built_in_types {
-+    ($((
-+        $oid:literal, $name:literal, $category:literal, $is_preferred:literal, $len:literal,
-+        $by_value:literal, $align:literal, $storage:literal, $array_oid:literal,
-+        $delimiter:literal, $support:expr
-+    ),)*) => {
-+        [$(BuiltInType {
-+            oid: $oid,
-+            name: $name,
-+            category: $category,
-+            is_preferred: $is_preferred,
-+            len: $len,
-+            by_value: $by_value,
-+            align: $align,
-+            storage: $storage,
-+            array_oid: $array_oid,
-+            delimiter: $delimiter,
-+            support: $support,
-+        },)*]
-+    };
-+}
-+
-+/// The built-in types that tursopg supports, with the values of their pg_type
-+/// rows in PostgreSQL 18: oid, typname, typcategory, typispreferred, typlen,
-+/// typbyval, typalign, typstorage, typarray and typdelim. The pg_type table
-+/// lists these rows and the row of the array of each type that has one.
-+///
-+/// A type has a row here only when tursopg supports it, so that pg_type says
-+/// which types tursopg has. A type that the translator only stores as
-+/// another type without reading its text, such as point, xml or money, and a
-+/// type that it refuses as the type of a column, such as interval or time,
-+/// has no row.
-+pub(crate) static BUILT_IN_TYPES: [BuiltInType; 20] = built_in_types! {
-+    (16, "bool", "B", true, 1, true, "c", "p", 1000, ",", Support::Registered(&boolean::Boolean)),
-+    // FIXME(registered-types): bytea: the frontend uses the type that core registers, which stores text as its bytes and does not read the hex and escape formats. A bytea type registered in the frontend, with its INPUT, replaces this.
-+    (17, "bytea", "U", false, -1, false, "i", "x", 1001, ",", Support::NotRegistered),
-+    (20, "int8", "N", false, 8, true, "d", "p", 1016, ",", Support::Registered(&IntegerType::Int8)),
-+    (21, "int2", "N", false, 2, true, "s", "p", 1005, ",", Support::Registered(&IntegerType::Int2)),
-+    (23, "int4", "N", false, 4, true, "i", "p", 1007, ",", Support::Registered(&IntegerType::Int4)),
-+    // FIXME(registered-types): text is the TEXT of the engine and has no registered type, so core cannot name the type of a text value to the dialect. A text type registered in the frontend, with its INPUT, replaces this.
-+    (25, "text", "S", true, -1, false, "i", "x", 1009, ",", Support::NotRegistered),
-+    (26, "oid", "N", true, 4, true, "i", "p", 1028, ",", Support::Registered(&oid::Oid)),
-+    // FIXME(registered-types): json: the frontend uses the type that core registers, which reads text in its ENCODE and has no INPUT. A json type registered in the frontend, with its INPUT, replaces this.
-+    (114, "json", "U", false, -1, false, "i", "x", 199, ",", Support::NotRegistered),
-+    // FIXME(registered-types): cidr: the frontend uses the type that core registers, which does not check its text. A cidr type registered in the frontend, with its INPUT, replaces this.
-+    (650, "cidr", "I", false, -1, false, "i", "m", 651, ",", Support::NotRegistered),
-+    // FIXME(registered-types): float4 is stored as the REAL of the engine, so it keeps the digits of a float8. A float4 type registered in the frontend, with its INPUT, replaces this.
-+    (700, "float4", "N", false, 4, true, "i", "p", 1021, ",", Support::NotRegistered),
-+    // FIXME(registered-types): float8 is the REAL of the engine and has no r
+-@compat-gap "cast:uuid -> int4"
+ test cast-uuid-to-int4 {
+     SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid::int4;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test cast-int4-to-uuid {
+     SELECT 5::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:bool -> uuid"
+ test cast-bool-to-uuid {
+     SELECT true::uuid;
+ }
+ @sqlstate 42846
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+ @compat-gap "type:bytea"
+ test cast-text-literal-to-bytea {
+@@ -2358,27 +2349,21 @@ expect {
+     a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+ }
+ 
+-@compat-gap "cast:int4 -> uuid"
+ test assign-int4-to-uuid-column {
+     CREATE TABLE t (c uuid);
+     INSERT INTO t VALUES (5);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 22P02
+-expect @tursopg error {}
+ 
+-@compat-gap "cast:uuid -> int4"
+ test assign-uuid-to-int4-column {
+     CREATE TABLE t (c int);
+     INSERT INTO t VALUES ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid);
+     SELECT c FROM t;
+ }
+ @sqlstate 42804
+ expect error {}
+-@sqlstate 23000
+-expect @tursopg error {}
+ 
+ test assign-uuid-to-text-column {
+     CREATE TABLE t (c text);
+```
+
+**File**: `postgres/frontend/cast_planning.rs` (modified, +1/-1)
+```diff
+@@ -205,6 +205,7 @@ fn registered_cast_type(name: &str) -> Option<CastType> {
+         "boolean" => Bool,
+         "oid" => Oid,
+         "regclass" => RegClass,
++        "uuid" => Uuid,
+         "timestamp" => Timestamp,
+         "timestamptz" => TimestampTz,
+         // FIXME(pg-catalog): numeric is registered only with a type modifier. Without one it is REAL, which `is_lowered_type_name` leaves to the engine. A numeric type that needs no modifier lets every numeric go through CASTS.
+@@ -255,7 +256,6 @@ const ENGINE_RULE_TYPES: &[&str] = &[
+     "time",
+     "json",
+     "jsonb",
+-    "uuid",
+     "bytea",
+     "inet",
+     "cidr",
+```
+
+**File**: `postgres/frontend/casts.rs` (modified, +3/-0)
+```diff
+@@ -33,6 +33,7 @@ pub(crate) enum CastType {
+     Bool,
+     Oid,
+     RegClass,
++    Uuid,
+     // FIXME(pg-catalog): bytea is not a registered type yet, so the engine casts it as before. It is listed here and in CASTS once bytea has a pg_type row.
+     Timestamp,
+     TimestampTz,
+@@ -51,6 +52,7 @@ impl CastType {
+             Self::Bool => "bool",
+             Self::Oid => "oid",
+             Self::RegClass => "regclass",
++            Self::Uuid => "uuid",
+             Self::Timestamp => "timestamp",
+             Self::TimestampTz => "timestamptz",
+         }
+@@ -73,6 +75,7 @@ impl CastType {
+             "bool" => Self::Bool,
+             "oid" => Self::Oid,
+             "regclass" => Self::RegClass,
++            "uuid" => Self::Uuid,
+             "timestamp" => Self::Timestamp,
+             "timestamptz" => Self::TimestampTz,
+             _ => return None,
+```
+
+---
+
+### Incident Patch 3: `e868ecfc` (2026-11-28)
+**Commit Message**: postgres: document the uuid type
+
+COMPAT.md now says that uuid is a registered type and which text it
+reads. The cast row describes the casts of uuid: they follow pg_cast,
+so a cast from or to a type other than text fails with 42846. uuid
+leaves the list of casts that the engine decides.
+
+The row for the uuid data type names the gaps that the conformance
+tests record: LIKE, max and a comparison with jsonb. It also keeps the
+existing limit that a uuid returned by a cast or a function is typed
+text, so a comparison with a text column is not refused.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `postgres/COMPAT.md` (modified, +2/-2)
+```diff
+@@ -73,7 +73,7 @@ Basics not enumerated by the official feature matrix.
+ | TRUNCATE | 🟡 Partial | Lowered to DELETE of one table; several tables, CASCADE and RESTART IDENTITY rejected |
+ | BEGIN / COMMIT / ROLLBACK | ✅ Supported | Every transaction is snapshot isolation, i.e. REPEATABLE READ; `ISOLATION LEVEL REPEATABLE READ` is accepted, every other level, DEFERRABLE and AND CHAIN are rejected. READ ONLY and READ WRITE are enforced, on BEGIN and on SET TRANSACTION; switching a READ ONLY transaction to READ WRITE after its first query is rejected with SQLSTATE 25001 like PostgreSQL. A statement error aborts the transaction but keeps its savepoints, so ROLLBACK TO recovers it; a failed COMMIT rolls the transaction back and returns the connection to idle |
+ | LOCK TABLE | 🟡 Partial | ACCESS SHARE without NOWAIT is accepted as a no-op inside a transaction for pg_dump compatibility; table names are not checked, no locks are acquired, and no read snapshot is started; other modes are rejected |
+-| Casts (`expr::type`, CAST) | 🟡 Partial | Also `int4(x)`-style cast functions. Casts to and from int2, int4, int8, float4, float8, bool and text follow `pg_cast`, which lists them: a pair PostgreSQL has no cast for fails with 42846. A cast to uuid gives a value of the uuid type, and fails with 22P02 when the text is not a UUID. A value written to a column by INSERT, UPDATE, ON CONFLICT DO UPDATE, a default or a stored generated column is converted to the column type as an assignment cast, and fails with 42804 when PostgreSQL has no assignment cast. CREATE TABLE and ALTER TABLE ADD COLUMN refuse a column default with no assignment cast to the column type, with 42804 and PostgreSQL's message, which names a real or numeric column as double precision. ADD COLUMN writes a default of another type, converted, into the rows that exist. A value is converted before NOT NULL is checked. Floats round to an integer half to even. A numeric literal and a numeric with a type modifier round half away from zero, as in PostgreSQL. A numeric column without a type modifier and numeric arithmetic are REAL, so they round half to even: 4.5 in a `numeric` column cast or written to an integer is 4, where PostgreSQL gives 5. The range of the target is checked. A float8 cast or written to text is in PostgreSQL's form, such as `3` and `1e+20`. regclass casts from text by looking the name up as PostgreSQL does (schema, search path, quoting, digits as an oid) and to text by printing the name, with `42P01` for a relation that does not exist. It finds the relations that `pg_class` lists (tables, views, sequences and indexes under the name `pg_class` gives them, and the catalogs) and the other PostgreSQL catalog tables by their PostgreSQL oid. A catalog view that `pg_class` does not list does not exist here, so its name fails with `42P01`. A regclass column prints the name in a result and in COPY, as PostgreSQL does, and the binary format sends the oid; a binary regclass parameter is refused with 0A000. `regclass[]` and a column of another reg type are still integers, and so is a regclass that goes through an expression such as `min`, `max`, `CASE`, `||`, `concat`, `format` or an array constructor: the engine, not PostgreSQL's rules, gives the expression its type, so it can print the number where PostgreSQL prints the name (`||`, `concat`, `format`, arrays) or the name where PostgreSQL prints the oid (`min`, `max`). A regclass constant that a view, a default, a check, an index, a policy or a materialized view stores is read as the oid of its relation when the statement runs, as in PostgreSQL, so renaming the relation does not break it and a name with no relation fails the statement with `42P01`. This covers a string constant cast to regclass and a string default of a regclass column, and not a name that reaches regclass another way, such as the argument of `nextval`. A constant that names the table the same statement creates keeps its name, because the table has no oid yet. The object keeps no dependency on the relation, so `DROP TABLE` of that relation is not refused, and the oid then prints as a number. For the same reason pg_dump does not order a table before the table that its default names, so such a dump may not restore. A domain over regclass does not read or print relation names yet: a string default or a text value of the domain fails, and its values print as numbers. A quoted schema name in a regclass matches without regard to case. The casts of date, json, jsonb, uuid, bytea, inet, cidr, macaddr, the reg types other than regclass, arrays, enums and domains are not in `pg_cast` yet: the engine decides them by its own rules, which accept some casts PostgreSQL refuses (`types/cast-matrix.sqltest` has a gap test for each). A cast of another built-in type, such as point or xid, fails with 0A000. Not covered: bytea, which is not a registered type yet, so its casts are not in `pg_cast` and a text literal is not read as bytea input; casts to numeri
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12593** (2026-11-27): core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints (@turso-github-handyman[bot])
-- **PR #12591** (closed): core: normalize sqlite nan values and generalize type ordering (@glommer)
-- **PR #12580** (2026-11-26): postgres/catalog: describe each catalog with a CatalogTable impl (@pedrocarlo)
-- **PR #12573** (2026-11-27): core/mvcc: return busy from a contended explicit checkpoint (@sAchin-680)
-- **PR #12569** (2026-11-26): postgres: make pg_type one table of the built-in types (@glommer)
-- **PR #12568** (2026-11-26): benches: add point and range seek benchmarks (@RandoomWalks)
+- **PR #12640** (closed): dialect-definitions: move the SQLite dialect to a crate that both frontends use (@glommer)
+- **PR #12639** (2026-11-28): postgres: open only PostgreSQL databases in the frontend tests (@glommer)
+- **PR #12634** (2026-11-28): postgres: add regtype, and give regclass and regtype an INPUT (@glommer)
+- **PR #12633** (2026-11-28): postgres: register the uuid type (@glommer)
+- **PR #12632** (2026-11-28): testing/sqltest: split the runner into one binary per dialect (@glommer)
+- **PR #12630** (2026-11-28): postgres: reject database attachment (@glommer)
 
 ---
 
@@ -2600,90 +2047,6 @@ The `pg_type` table lists the ro
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge 'core/translate: fix stack overflow on compounds nested in first terms' fr
-
-**RULE**:
-When implementing operations in `core/translate/compound_select.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `5fe9cba1`: Merge 'core/translate: fix stack overflow on compounds nested in first terms' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/compound_select.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-use crate::vdbe::{BranchOffset, CursorID};
-/// What a compound operator emits after the term on its right.
-enum CompoundArmRows {
-    /// UNION ALL: the right term writes its rows to the destination of the operator.
-    UnionAll,
-    /// UNION or EXCEPT: both terms write to the index of `cursor_id`. `destination` is
-    /// where the rows of the index go afterwards, or None when the index is the
-    /// destination of the operator itself.
-    Dedupe {
-        cursor_id: usize,
-        index: Arc<Index>,
-        destination: Option<QueryDestination>,
-    },
-    /// INTERSECT: the left terms write to the index of `left_cursor_id`, the right term
-    /// to the index of `right_cursor_id`, and the rows found in both go to `destination`.
-    Intersect {
-        left_cursor_id: usize,
-        left_index: Arc<Index>,
-        right_cursor_id: usize,
-        destination: QueryDestination,
-    },
-}
-
-/// A compound operator whose right term is emitted after all the terms on its left.
-struct CompoundArm {
-    op: EqpCompoundOp,
-    /// The label after the bytecode of the operator.
-    end_label: BranchOffset,
-    /// The LIMIT and OFFSET that apply to the rows of the operator.
-    limit_ctx: O
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-use crate::vdbe::CursorID;
-// Emits bytecode for a compound SELECT statement. This function processes the rightmost part of
-// the compound SELECT and handles the left parts recursively based on the compound operator type.
-    limit_ctx: Option<LimitCtx>,
-    offset_reg: Option<usize>,
-    let compound_select_end = program.allocate_label();
-    if let Some(limit_ctx) = &limit_ctx {
-        program.emit_insn(Insn::IfNot {
-            reg: limit_ctx.reg_limit,
-            target_pc: compound_select_end,
-            jump_if_null: false,
-        });
-    }
-    let mut right_most_ctx = TranslateCtx::new_boxed(
-        program,
-        resolver.fork_with_expr_cache(),
-        right_most.table_references.joined_tables().len(),
-        false,
-    );
-    right_most_ctx.reg_result_cols_start = reg_result_cols_start;
-    match left.split_last_mut() {
-        Some(((plan, operator), left)) => match operator {
-                    right_most.query_destination,
-                    plan.query_destination = right_most.query_destination.clone();
-              
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fe9cba1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

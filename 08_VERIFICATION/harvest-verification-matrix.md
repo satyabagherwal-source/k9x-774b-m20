@@ -13957,3 +13957,5 @@
 | `CYCLE-20261128-AVHS` | `2026-11-28T03:17:36.880Z` | `AtomicChat/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md` | Yes (`ad8a5595...`) |
 | `CYCLE-20261128-B8FC` | `2026-11-28T03:17:53.640Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11025` | Yes (`9f45e10f...`) |
 | `CYCLE-20261128-MD8B` | `2026-11-28T03:26:33.083Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11026` | Yes (`12eaf958...`) |
+| `CYCLE-20261128-XZVJ` | `2026-11-28T03:35:35.647Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | Yes (`d81ddb59...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T03:36:08.575Z` | `tursodatabase-limbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-089D64F0` [Domain D] | Yes (`21feb61a...`) |

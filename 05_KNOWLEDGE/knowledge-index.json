@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T03:26:39.553Z",
+  "last_updated": "2026-11-28T03:36:11.946Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113010,13 +113010,13 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "df7ba30c",
-      "content_hash": "57cf8b11d67f2a2cda00dcb2b45af3cb8e64fea67e86f61ddf8b95d87cf65775",
+      "source_version": "0dcd4f40",
+      "content_hash": "d94570d319c2905f313fa907e2c09a21d22073f4c148da1d45ae6deaf9fd7c26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T12:21:23.718Z"
+      "persisted_at": "2026-11-28T03:35:35.909Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -213796,13 +213796,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "df7ba30c",
-      "content_hash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "0dcd4f40",
+      "content_hash": "d81ddb59b2390cff398374f60b333d5ad36d309625c1083341fb7b562c0312c3",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213900,7 +213900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T12:21:22.983Z",
+      "verified_at": "2026-11-28T03:35:35.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230511,9 +230511,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f98f38151b309c50745c767a4807b70a0345d31e988b964024ddeac969dc32a",
+      "content_hash": "e17e00a9a78625361e561e272f363ddb959aa39225c7a02129ffa030621031ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:18:01.155Z"
+      "persisted_at": "2026-11-28T03:36:11.717Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230523,9 +230523,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "57f141f5e8e00680a8dd1cfb1381d99eb8f94bd2367d6d1b64552987709cd3a0",
+      "content_hash": "8f319a7ab439a12126b0423dbe412c2075c8e4399d66d25612d95c9855506673",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T03:18:01.441Z"
+      "persisted_at": "2026-11-28T03:36:11.946Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -240121,9 +240121,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "dade53691a5c0a7d414cc2de8c6d0bea44933c938c631691595194aa5838e4ee",
+      "content_hash": "db20326c0c7d7cc214836de2d9b706761326689bcb10405c49d5c32a5fe70726",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T02:32:23.946Z"
+      "persisted_at": "2026-11-28T03:36:10.709Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -261230,9 +261230,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9616fb3898173bf563e8a899751bb337722d2284ad062d7b5e79a28f897f4b4",
+      "content_hash": "b7a8a50e7eee4d15eccb0429110fc31e43c935ed7dcc91514e97eb19f1319e97",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T08:32:44.459Z"
+      "persisted_at": "2026-11-28T03:36:09.088Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
@@ -350875,13 +350875,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BE0E-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YRIO-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed432f2caa657b67f4143e2a4ec2a03fc26047cc7dc00938f6c7fc0308a2614d",
+      "content_hash": "98e1c344606302d7d0e70faf8cfd7c48c7f21375f22ab842863908d1532eb0e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T03:18:00.878Z"
+      "persisted_at": "2026-11-28T03:36:11.473Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T02:32:19.205Z",
+  "updated_at": "2026-11-28T03:36:08.572Z",
   "statistics": {
-    "total_nodes": 590,
+    "total_nodes": 591,
     "total_edges": 239,
     "domain_distribution": {
-      "D": 352,
+      "D": 353,
       "M": 1,
       "H": 114,
       "J": 23,
@@ -13165,6 +13165,28 @@
       ],
       "created_at": "2026-11-28T02:32:19.205Z",
       "updated_at": "2026-11-28T02:32:19.205Z"
+    },
+    "DOM-D-089D64F0": {
+      "id": "DOM-D-089D64F0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): tursodatabase/turso",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  \n> **Source**: github ([https://github.com/tursod -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  \n> **Source**: github ([https://github.com/tursod",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://tursodatabase-limbo/tursodatabase-limbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T03:35:38.804Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tursodatabase-limbo)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-28T03:36:08.572Z",
+      "updated_at": "2026-11-28T03:36:08.572Z"
     }
   },
   "edges": [

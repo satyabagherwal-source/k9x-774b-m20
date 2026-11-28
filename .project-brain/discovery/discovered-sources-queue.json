@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T03:26:36.860Z",
+  "updated_at": "2026-11-28T03:36:08.751Z",
   "stats": {
-    "total_discovered": 10714,
-    "approved_pending_harvest": 10169,
+    "total_discovered": 10715,
+    "approved_pending_harvest": 10170,
     "harvested_count": 0,
     "rejected_count": 545,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10182,
+      "COMMUNITY_AND_EXPERT": 10183,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231920,6 +231920,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
         "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-B7957C081911": {
+      "id": "SRC-B7957C081911",
+      "url": "https://github.com/tursodatabase/turso/pull/12639",
+      "title": "https://github.com/tursodatabase/turso/pull/12639",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T03:36:08.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

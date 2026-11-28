@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T03:26:33.104Z",
+  "last_updated": "2026-11-28T03:35:35.670Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
-      "verified_at": "2026-11-27T12:21:23.276Z",
+      "content_hash": "d81ddb59b2390cff398374f60b333d5ad36d309625c1083341fb7b562c0312c3",
+      "verified_at": "2026-11-28T03:35:35.670Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T12:21:23.276Z"
+      "last_updated": "2026-11-28T03:35:35.670Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

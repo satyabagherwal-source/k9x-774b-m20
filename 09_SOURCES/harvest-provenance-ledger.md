@@ -13990,3 +13990,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-inkling-2-mini-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-28T03:17:36.893Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `7ca0f9c3` | Multi-dimensional audit evidence | 2026-11-28T03:17:53.653Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1d83dbb9` | Multi-dimensional audit evidence | 2026-11-28T03:26:33.095Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `0dcd4f40` | Multi-dimensional audit evidence | 2026-11-28T03:35:35.661Z |
+| `learn-dom-d-089d64f0` | `project://tursodatabase-limbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md` | 2026-11-28T03:36:08.575Z |

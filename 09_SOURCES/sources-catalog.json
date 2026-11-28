@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "204997d8",
+    "sourceVersion": "0dcd4f40",
     "license": "MIT",
-    "contentHash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
-    "lastHarvestedAt": "2026-11-27T08:32:39.476Z",
+    "contentHash": "d81ddb59b2390cff398374f60b333d5ad36d309625c1083341fb7b562c0312c3",
+    "lastHarvestedAt": "2026-11-28T03:35:35.661Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
