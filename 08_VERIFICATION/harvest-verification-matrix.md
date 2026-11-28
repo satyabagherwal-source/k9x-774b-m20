@@ -14000,3 +14000,4 @@
 | `CYCLE-20261128-0HDC` | `2026-11-28T06:53:28.944Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11055` | Yes (`04132e9d...`) |
 | `CYCLE-20261128-0L9A` | `2026-11-28T06:53:33.982Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | Yes (`b5519ce8...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T06:54:07.244Z` | `tursodatabase-turso` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5456C5F2` [Domain D] | Yes (`13d6369e...`) |
+| `CYCLE-20261128-DJB4` | `2026-11-28T07:03:37.984Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11056` | Yes (`a3c5c053...`) |

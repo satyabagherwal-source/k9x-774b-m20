@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:53:33.997Z",
-  "total_cycles_completed": 13284,
-  "total_learnings_persisted": 13284,
-  "total_rules_promoted": 11976,
+  "last_updated": "2026-11-28T07:03:38.003Z",
+  "total_cycles_completed": 13285,
+  "total_learnings_persisted": 13285,
+  "total_rules_promoted": 11977,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:32:36.107Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:41:31.451Z",
       "repository": "Folkbench/folkbench",
@@ -1403,6 +1396,13 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T07:03:38.003Z",
+      "repository": "xevrion/hatchzip",
+      "learningId": "learn-github-xevrion-hatchzip",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

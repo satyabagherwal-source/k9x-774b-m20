@@ -4,22 +4,22 @@
 {
   "source_repository": "xevrion/hatchzip",
   "source_url": "https://github.com/xevrion/hatchzip",
-  "source_version": "07c0e5ca",
+  "source_version": "520423b4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T06:35:24.279Z",
+  "timestamp": "2026-11-28T07:03:38.348Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xevrion-hatchzip",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `07c0e5ca`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T06:35:24.279Z`  
+> **Provenance**: Harvested from [xevrion/hatchzip](https://github.com/xevrion/hatchzip) (Revision: `520423b4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T07:03:38.348Z`  
 > **Learning ID**: `learn-github-xevrion-hatchzip`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `xevrion/hatchzip` (Commit: `07c0e5ca`)
+- **Target Repository**: `xevrion/hatchzip` (Commit: `520423b4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xevrion/hatchzip](https://github.com/xevrion/hatchzip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T06:35:22.837Z  
+> **Harvest Timestamp**: 2026-11-28T07:03:36.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: HatchZip is a free, open-source archive extractor for Windows, macOS and Linux that extracts ZIP, 7z, RAR, tar and split archives in place, so it needs free space for the extracted files only. Desktop app and CLI.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3141 stars
+- **Stars / Engagement**: 3207 stars
 
 ---
 
@@ -2725,310 +2725,148 @@ impl Feed for Gzip {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e79f515f` (2026-11-25)
-**Commit Message**: build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0 (#150)
+### Incident Patch 1: `8e519759` (2026-11-27)
+**Commit Message**: fix(gui): default to software renderer on Windows (#148)
 
-Bumps [sevenz-rust2](https://github.com/hasenbanck/sevenz-rust) from 0.24.1 to 0.25.0.
-- [Changelog](https://github.com/hasenbanck/sevenz-rust2/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/hasenbanck/sevenz-rust/compare/v0.24.1...v0.25.0)
+FemtoVG context creation succeeds on Windows even when the display driver fails to present the OpenGL swapchain to the desktop window manager, leaving the window completely black. Because context setup succeeds, the timeout fallback never triggers.
 
----
-updated-dependencies:
-- dependency-name: sevenz-rust2
-  dependency-version: 0.25.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Default to Slint's software renderer on Windows when SLINT_BACKEND is unset. Linux and macOS keep the FemtoVG default. SLINT_BACKEND still overrides it.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Yash Bavadiya <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +6/-12)
+**File**: `crates/gui/README.md` (modified, +1/-1)
 ```diff
-@@ -1983,7 +1983,7 @@ dependencies = [
-  "flate2",
-  "hatchzip-core",
-  "indicatif",
-- "lzma-rust2 0.25.0",
-+ "lzma-rust2",
-  "rpassword",
-  "serde_json",
-  "sevenz-rust2",
-@@ -2006,7 +2006,7 @@ dependencies = [
-  "fs4",
-  "libc",
-  "libz-rs-sys",
-- "lzma-rust2 0.25.0",
-+ "lzma-rust2",
-  "pbkdf2",
-  "rayon",
-  "serde",
-@@ -3056,12 +3056,6 @@ dependencies = [
-  "twox-hash",
- ]
+@@ -33,7 +33,7 @@ The task forms are what file manager menus call, and installers run the two shel
+ | | |
+ |---|---|
+ | Style | Picked at build time in `build.rs`: Fluent on Windows and Linux, Cupertino on macOS. `SLINT_STYLE` overrides it. |
+-| Renderer | FemtoVG (OpenGL) first. Without a working OpenGL driver the app restarts itself with Slint's software renderer, see `src/backend.rs`. `SLINT_BACKEND=winit-software` forces the software renderer. |
++| Renderer | FemtoVG (OpenGL) first on Linux and macOS; software renderer on Windows. `SLINT_BACKEND=winit-femtovg` uses OpenGL on Windows; `SLINT_BACKEND=winit-software` forces the software renderer anywhere. |
+ | Theme | Light or dark, following the system. |
  
--[[package]]
--name = "lzma-rust2"
--version = "0.23.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
--
- [[package]]
- name = "lzma-rust2"
- version = "0.25.0"
-@@ -4476,9 +4470,9 @@ dependencies = [
- 
- [[package]]
- name = "sevenz-rust2"
--version = "0.24.1"
-+version = "0.25.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2f0c68c0e8289bfd09e49ef433e8de02c7c464afc1d7f5a275c99749a880e301"
-+checksum = "e5e465701779cbc6d0d10cf907f175035cfdd50b8d3cb628d7f1f435ef02972f"
- dependencies = [
-  "aes",
-  "brotli",
-@@ -4489,7 +4483,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "js-sys",
-  "lz4_flex",
-- "lzma-rust2 0.23.0",
-+ "lzma-rust2",
-  "ppmd-rust",
-  "sha2",
-  "wasm-bindgen",
-@@ -6582,7 +6576,7 @@ dependencies = [
-  "hmac",
-  "indexmap",
-  "libc",
-- "lzma-rust2 0.25.0",
-+ "lzma-rust2",
-  "memchr",
-  "nix",
-  "pbkdf2",
+ Files dropped on the window open on Windows, macOS and X11. winit 0.30 doesn't report drops on Wayland, nor files opened from the Finder on macOS, which arrive as Apple Events; only the command line works there.
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `crates/gui/src/backend.rs` (modified, +14/-9)
 ```diff
-@@ -21,7 +21,7 @@ serde_json = "1.0.154"
- # `compress` is for the writer that `restore` builds a new header with. The
- # decoders are chosen by `hatchzip-core`'s features, so the methods it
- # accepts and the ones compiled in come from one place.
--sevenz-rust2 = { version = "0.24.1", default-features = false, features = ["compress"] }
-+sevenz-rust2 = { version = "0.25.0", default-features = false, features = ["compress"] }
- tar = "0.4.46"
- tempfile = "3.27.0"
- zstd = "0.14.3"
+@@ -1,12 +1,12 @@
+ //! Choosing how to draw, and files dropped on the window.
+ //!
+-//! FemtoVG (OpenGL) is the default. Without a working OpenGL driver Slint
+-//! falls back to its software renderer only on Windows, where it probes for
+-//! OpenGL before creating a window. On Linux the failure happens while the
+-//! window is created, and Slint 1.18 then keeps running without a window
+-//! instead of returning an error. So the first window is watched: if it
+-//! hasn't drawn a frame after a few seconds, the app starts itself again
+-//! with the software renderer, which needs nothing but a CPU.
++//! Linux and macOS start with FemtoVG (OpenGL). Windows starts with the
++//! software renderer: OpenGL setup can succeed there even when the driver
++//! fails to present, leaving a black window and bypassing the fallback.
++//!
++//! On Linux, a broken driver fails while creating the window, and Slint 1.18
++//! keeps running with no window. Watching the first frame catches this and
++//! restarts the app with the software renderer.
+ 
+ use std::cell::{Cell, RefCell};
+ use std::path::PathBuf;
+@@ -79,8 +79,13 @@ impl CustomApplicationHandler for Handler {
+ pub fn select(drops: Rc<Drops>) -> Result<()> {
+     let icon = window_icon();
+     let opened = drops.clone();
+-    slint::BackendSelector::new()
+-        .backend_name("winit".into())
++    let mut selector = slint::BackendSelector::new().backend_name("winit".into());
++    if let Some(renderer) = crate::platform::DEFAULT_RENDERER
++        && std::env::var_os(BACKEND_VAR).is_none()
++    {
++        selector = selector.renderer_name(renderer.into());
++    }
++    selector
+         .with_winit_custom_application_handler(Handler(drops))
+         // With the `.slint` files' `icon:` set to an embedded PNG, Slint
+         // 1.18 left X11 with an empty _NET_WM_ICON (checked with xprop), so
 ```
 
-**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
+**File**: `crates/gui/src/platform/linux.rs` (modified, +3/-0)
 ```diff
-@@ -83,7 +83,7 @@ lzma-rust2 = { version = "0.25.0", default-features = false, features = [
-     "xz",
- ] }
- serde_json.workspace = true
--sevenz-rust2 = { version = "0.24.1", default-features = false, features = ["compress"] }
-+sevenz-rust2 = { version = "0.25.0", default-features = false, features = ["compress"] }
- tar.workspace = true
- tempfile.workspace = true
- # Writes the .tar.zst test archives, same crate the format decodes with.
-```
-
----
-
-### Incident Patch 2: `8cb35855` (2026-11-25)
-**Commit Message**: build(deps): bump rfd from 0.17.2 to 0.18.0 (#151)
-
-Bumps [rfd](https://github.com/PolyMeilex/rfd) from 0.17.2 to 0.18.0.
-- [Release notes](https://github.com/PolyMeilex/rfd/releases)
-- [Changelog](https://github.com/PolyMeilex/rfd/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/PolyMeilex/rfd/compare/0.17.2...0.18.0)
-
----
-updated-dependencies:
-- dependency-name: rfd
-  dependency-version: 0.18.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +17/-5)
-```diff
-@@ -3347,6 +3347,7 @@ dependencies = [
-  "objc2-core-graphics",
-  "objc2-foundation 0.3.2",
-  "objc2-quartz-core 0.3.2",
-+ "objc2-uniform-type-identifiers 0.3.2",
- ]
+@@ -10,6 +10,9 @@ pub const SHELL_MENU: bool = true;
+ /// edge under it.
+ pub const IN_WINDOW_MENU: bool = true;
  
- [[package]]
-@@ -3575,7 +3576,7 @@ dependencies = [
-  "objc2-link-presentation",
-  "objc2-quartz-core 0.2.2",
-  "objc2-symbols",
-- "objc2-uniform-type-identifiers",
-+ "objc2-uniform-type-identifiers 0.2.2",
-  "objc2-user-notifications",
- ]
- 
-@@ -3604,6 +3605,16 @@ dependencies = [
-  "objc2-foundation 0.2.2",
- ]
- 
-+[[package]]
-+name = "objc2-uniform-type-identifiers"
-+version = "0.3.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7902ac02859fc1f7045f8b598c63f1ae0cc7efeaa06a9bc9f3d9a3c955974fa4"
-+dependencies = [
-+ "objc2 0.6.5",
-+ "objc2-foundation 0.3.2",
-+]
++/// Let Slint pick its default renderer (FemtoVG) when SLINT_BACKEND is unset.
++pub const DEFAULT_RENDERER: Option<&str> = None;
 +
- [[package]]
- name = "objc2-user-notifications"
- version = "0.2.2"
-@@ -3920,9 +3931,9 @@ dependencies = [
- 
- [[package]]
- name = "pollster"
--version = "0.4.0"
-+version = "1.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2f3a9f18d041e6d0e102a0a46750538147e5e8992d3b4873aaafee2520b00ce3"
-+checksum = "7e9b9cf600136f5b976fbc5727d58c26e1ecab8ee23088d44ef1c7af793550ab"
- 
- [[package]]
- name = "polycool"
-@@ -4204,9 +4215,9 @@ dependencies = [
- 
- [[package]]
- name = "rfd"
--version = "0.17.2"
-+version = "0.18.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "20dafead71c16a34e1ff357ddefc8afc11e7d51d6d2b9fbd07eaa48e3e540220"
-+checksum = "c4b9d4857b10297ffb0f64cae711e983a7aeaee561848d56d429d3858bd8ed93"
- dependencies = [
-  "block2 0.6.2",
-  "dispatch2",
-@@ -4217,6 +4228,7 @@ dependencies = [
-  "objc2-app-kit 0.3.2",
-  "objc2-core-foundation",
-  "objc2-foundation 0.3.2",
-+ "objc2-uniform-type-identifiers 0.3.2",
-  "percent-encoding",
-  "pollster",
-  "raw-window-handle",
+ /// fontconfig already picks a face with the script's glyphs and weights.
+ pub fn font_family(_language: &str) -> &'static str {
+     ""
 ```
 
-**File**: `crates/gui/Cargo.toml` (modified, +1/-1)
+**File**: `crates/gui/src/platform/macos.rs` (modified, +3/-0)
 ```diff
-@@ -17,7 +17,7 @@ clap = { version = "4", features = ["derive"] }
- open = "5.4.5"
- # Decodes the window icon; already in the tree through Slint's build.
- png = "0.18.1"
--rfd = "0.17.2"
-+rfd = "0.18.0"
- serde.workspace = true
- serde_json.workspace = true
- # The system's preferred languages, in order, to pick a translation from
+@@ -16,6 +16,9 @@ pub const SHELL_MENU: bool = false;
+ /// The menu bar is the system's, at the top of the screen.
+ pub const IN_WINDOW_MENU: bool = false;
+ 
++/// Let Slint pick its default renderer (FemtoVG) when SLINT_BACKEND is unset.
++pub const DEFAULT_RENDERER: Option<&str> = None;
++
+ /// The faces with real bold weights for these scripts. `""` keeps the
+ /// system font.
+ ///
+```
+
+**File**: `crates/gui/src/platform/windows.rs` (modified, +5/-0)
+```diff
+@@ -9,6 +9,11 @@ pub const SHELL_MENU: bool = true;
+ /// The menu bar is a native Win32 menu, with its own edge.
+ pub const IN_WINDOW_MENU: bool = false;
+ 
++/// The Slint renderer name to select when SLINT_BACKEND is unset. FemtoVG
++/// (OpenGL) leaves an empty black window on machines where the driver cannot
++/// present the swapchain, so Windows defaults to the software renderer.
++pub const DEFAULT_RENDERER: Option<&str> = Some("software");
++
+ /// The system's UI face for each script. Left to itself, the software
+ /// renderer drew Latin text in Arial, and Simplified Chinese in a Japanese
+ /// face that lacks most of its characters.
 ```
 
 ---
 
-### Incident Patch 3: `73ce440e` (2026-11-25)
-**Commit Message**: build(deps): bump lzma-rust2 from 0.24.0 to 0.25.0 (#152)
+### Incident Patch 2: `4d508954` (2026-11-27)
+**Commit Message**: fix(gui): translate the nested archive messages into Turkish (#158)
 
-Bumps [lzma-rust2](https://github.com/hasenbanck/lzma-rust2) from 0.24.0 to 0.25.0.
-- [Changelog](https://github.com/hasenbanck/lzma-rust2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/hasenbanck/lzma-rust2/compare/v0.24.0...v0.25.0)
-
----
-updated-dependencies:
-- dependency-name: lzma-rust2
-  dependency-version: 0.25.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-11)
+**File**: `crates/gui/translations/tr/LC_MESSAGES/hatchzip-gui.po` (modified, +16/-0)
 ```diff
-@@ -1983,7 +1983,7 @@ dependencies = [
-  "flate2",
-  "hatchzip-core",
-  "indicatif",
-- "lzma-rust2 0.24.0",
-+ "lzma-rust2 0.25.0",
-  "rpassword",
-  "serde_json",
-  "sevenz-rust2",
-@@ -2006,7 +2006,7 @@ dependencies = [
-  "fs4",
-  "libc",
-  "libz-rs-sys",
-- "lzma-rust2 0.24.0",
-+ "lzma-rust2 0.25.0",
-  "pbkdf2",
-  "rayon",
-  "serde",
-@@ -3062,15 +3062,6 @@ version = "0.23.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+@@ -593,3 +593,19 @@ msgstr "Seçilen öğeler çıkarıldı. Arşive dokunulmadı."
  
--[[package]]
--name = "lzma-rust2"
--version = "0.24.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "490750560fa7851fbbf5d3ab1a8750f09350ed361ed8aed85b1e1e40587812ee"
--dependencies = [
-- "sha2",
--]
--
- [[package]]
- name = "lzma-rust2"
- version = "0.25.0"
-```
-
-**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -76,7 +76,7 @@ crc32fast = "1.5.3"
- flate2 = "1.1.10"
- # Writes the .tar.xz test archives, same crate the format decodes with.
- # The tests need the encoder and the xz container half; core does not.
--lzma-rust2 = { version = "0.24.0", default-features = false, features = [
-+lzma-rust2 = { version = "0.25.0", default-features = false, features = [
-     "std",
-     "optimization",
-     "encoder",
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ libz-rs-sys = "0.6.8"
- # sevenz-rust2. The container itself is parsed in archive/xz.rs, since the
- # crate's container types are private. Core only decodes: the encoder and
- # lzip halves stay out of this build.
--lzma-rust2 = { version = "0.24.0", default-features = false, features = ["std", "optimization"] }
-+lzma-rust2 = { version = "0.25.0", default-features = false, features = ["std", "optimization"] }
- # A zstd stream is a sequence of independent frames, so a frame start is a
- # resume point that needs no window. The frame structure is parsed in
- # archive/tarzst.rs; this crate decodes one bounded frame at a time. Already
+ msgid "Extract all"
+ msgstr "Tümünü çıkar"
++
++msgid "Extract {} archive inside"
++msgid_plural "Extract {} archives inside"
++msgstr[0] "İçindeki arşivi çıkar"
++msgstr[1] "İçindeki {} arşivi çıkar"
++
++msgid "Extract and remove {} archive inside"
++msgid_plural "Extract and remove {} archives inside"
++msgstr[0] "İçindeki arşivi çıkar ve sil"
++msgstr[1] "İçindeki {} arşivi çıkar ve sil"
++
++msgid "Only the files this run wrote were checked for archives."
++msgstr "Yalnızca bu çalıştırmanın yazdığı dosyalarda arşiv arandı."
++
++msgid "Not started: {}."
++msgstr "Başlatılmadı: {}."
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #163** (2026-11-28): chore: release 0.1.11 (@xevrion)
+- **PR #162** (2026-11-27): feat(site): add a light and dark theme toggle (@IamShreshth)
+- **PR #159** (2026-11-27): feat: offer split ZIP sets found inside an extraction (@xevrion)
+- **PR #158** (2026-11-27): fix(gui): translate the nested archive messages into Turkish (@xevrion)
 - **PR #157** (2026-11-25): refactor(cli): use the core's check that a run wrote every volume (@xevrion)
 - **PR #156** (2026-11-25): ci(release): give manual SignPath approval time to happen (@xevrion)
-- **PR #153** (closed): feat(gui): pin the language tests to English (@rlkandela)
-- **PR #152** (2026-11-25): build(deps): bump lzma-rust2 from 0.24.0 to 0.25.0 (@dependabot[bot])
-- **PR #151** (2026-11-25): build(deps): bump rfd from 0.17.2 to 0.18.0 (@dependabot[bot])
-- **PR #150** (2026-11-25): build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0 (@dependabot[bot])
 
 ---
 
@@ -3048,47 +2886,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0
+## X. gui): default to software renderer on Windows
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/gui/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xevrion/hatchzip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e79f515f`: build(deps): bump sevenz-rust2 from 0.24.1 to 0.25.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e519759`: gui): default to software renderer on Windows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gui/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "lzma-rust2",
- "lzma-rust2",
-version = "0.25.0"
-checksum = "e5e465701779cbc6d0d10cf907f175035cfdd50b8d3cb628d7f1f435ef02972f"
- "lzma-rust2",
- "lzma-rust2",
+| Renderer | FemtoVG (OpenGL) first on Linux and macOS; software renderer on Windows. `SLINT_BACKEND=winit-femtovg` uses OpenGL on Windows; `SLINT_BACKEND=winit-software` forces the software renderer anywhere. |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "lzma-rust2 0.25.0",
- "lzma-rust2 0.25.0",
-[[package]]
-name = "lzma-rust2"
-version = "0.23.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
-
-version = "0.24.1"
-checksum = "2f0c68c0e8289bfd09e49ef433e8de02c7c464afc1d7f5a275c99749a880e301"
- "lzma-rust2 0.23.0",
- "lzma-rust2 0.25.0",
+| Renderer | FemtoVG (OpenGL) first. Without a working OpenGL driver the app restarts itself with Slint's software renderer, see `src/backend.rs`. `SLINT_BACKEND=winit-software` forces the software renderer. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e79f515f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e519759` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

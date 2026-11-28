@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T06:53:34.000Z",
+  "last_updated": "2026-11-28T07:03:38.007Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19551,14 +19551,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xevrion-hatchzip",
-      "content_hash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
-      "verified_at": "2026-11-26T06:35:24.036Z",
+      "content_hash": "a3c5c053c6ad886a1a41bac365ba0c409444b3e140ccecbec2783bff1e91680b",
+      "verified_at": "2026-11-28T07:03:38.007Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:35:24.036Z"
+      "last_updated": "2026-11-28T07:03:38.007Z"
     },
     "thejagstudio/tessera-small": {
       "repository": "thejagstudio/tessera-small",

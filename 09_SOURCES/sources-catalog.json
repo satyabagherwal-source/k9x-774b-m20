@@ -12973,10 +12973,10 @@
     "repository": "xevrion/hatchzip",
     "platform": "github",
     "sourceUrl": "https://github.com/xevrion/hatchzip",
-    "sourceVersion": "07c0e5ca",
+    "sourceVersion": "520423b4",
     "license": "Apache-2.0",
-    "contentHash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
-    "lastHarvestedAt": "2026-11-26T06:35:24.019Z",
+    "contentHash": "a3c5c053c6ad886a1a41bac365ba0c409444b3e140ccecbec2783bff1e91680b",
+    "lastHarvestedAt": "2026-11-28T07:03:37.996Z",
     "learningId": "learn-github-xevrion-hatchzip"
   },
   "hf-thejagstudio-tessera-small": {

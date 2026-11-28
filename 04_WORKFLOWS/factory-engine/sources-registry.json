@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T06:53:36.957Z",
-    "lastVerified": "2026-11-28T06:53:36.957Z",
+    "lastChecked": "2026-11-28T07:03:47.385Z",
+    "lastVerified": "2026-11-28T07:03:47.385Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T06:22:10.396Z",
-    "lastVerified": "2026-11-28T06:22:10.396Z",
+    "lastChecked": "2026-11-28T07:03:47.373Z",
+    "lastVerified": "2026-11-28T07:03:47.373Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T02:50:08.907Z",
-    "lastVerified": "2026-11-28T02:50:08.907Z",
+    "lastChecked": "2026-11-28T07:03:42.329Z",
+    "lastVerified": "2026-11-28T07:03:42.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -1390,9 +1390,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-27T12:32:40.639Z",
+    "lastChecked": "2026-11-28T07:03:44.846Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-27T12:32:40.639Z"
+    "lastVerified": "2026-11-28T07:03:44.846Z"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -5887,9 +5887,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-27T14:05:00.081Z",
+    "lastChecked": "2026-11-28T07:03:39.980Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-27T14:05:00.081Z"
+    "lastVerified": "2026-11-28T07:03:39.980Z"
   },
   "apple-foundationdb": {
     "name": "foundationdb",
@@ -8363,22 +8363,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xevrion-hatchzip": {
-    "name": "hatchzip",
+    "name": "xevrion/hatchzip",
     "officialUrl": "https://github.com/xevrion/hatchzip",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:21:48.450Z",
-    "lastVerified": "2026-11-27T07:21:48.450Z",
+    "lastChecked": "2026-11-28T07:03:36.274Z",
+    "lastVerified": "2026-11-28T07:03:36.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
+    "contentHash": "a3c5c053c6ad886a1a41bac365ba0c409444b3e140ccecbec2783bff1e91680b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "07c0e5ca"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zenbu-labs-terminal-browser": {
     "name": "terminal-browser",
@@ -11543,9 +11542,9 @@
   "ming1016-swiftpamphletapp": {
     "name": "SwiftPamphletApp",
     "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
-    "lastChecked": "2026-11-26T04:56:05.038Z",
+    "lastChecked": "2026-11-28T07:03:37.337Z",
     "revisionIdentifier": "0d07d106",
-    "lastVerified": "2026-11-26T04:56:05.038Z"
+    "lastVerified": "2026-11-28T07:03:37.338Z"
   },
   "psf-requests": {
     "name": "requests",
@@ -11909,8 +11908,8 @@
     "officialUrl": "https://github.com/scrapinghub/dateparser",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T22:30:03.712Z",
-    "lastVerified": "2026-11-24T22:30:03.712Z",
+    "lastChecked": "2026-11-28T07:03:34.857Z",
+    "lastVerified": "2026-11-28T07:03:34.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapinghub-dateparser",

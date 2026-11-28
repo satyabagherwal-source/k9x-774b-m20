@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:53:38.541Z",
+  "last_updated": "2026-11-28T07:03:51.249Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-JY3K",
+      "id": "CD-DSA6",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JY3K-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DSA6-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -69127,11 +69127,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-JZCU",
+      "id": "CD-DTJL",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JZCU-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-DTJL-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -75185,6 +75185,46 @@
       "source_repo": "gocd-gocd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C5837D-build-deps-bump-yaml-plugin-to-latest-re.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-DJL2",
+      "directive_title": "default to software renderer on Windows",
+      "source_repo": "xevrion/hatchzip",
+      "source_commit": "520423b4",
+      "staged_file": "11_INBOX/candidate-directives/CD-DJL2-default-to-software-renderer-on-windows.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DR2B",
+      "directive_title": "gui): default to software renderer on Windows",
+      "source_repo": "xevrion-hatchzip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DR2B-gui-default-to-software-renderer-on-windows.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-DDEE03",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DDEE03-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-B047F0",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B047F0-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
       "staged_date": "2026-11-28"
     }
   ]

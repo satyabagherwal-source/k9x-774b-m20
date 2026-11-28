@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T06:54:07.689Z",
+  "last_updated": "2026-11-28T07:03:51.555Z",
   "total_records": 2880,
   "domains": {
     "A": {
@@ -34010,8 +34010,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "38ca6362a39d2343815f98e59e5a37d1f9e306f6c6f3b467eae7040b5b0f5d9a",
-      "created_at": "2026-11-28T06:40:39.407Z"
+      "content_hash": "f40a913d177ec383c174e118c1da7fea65884d49ccce3d14229c2a135b1a9a4c",
+      "created_at": "2026-11-28T07:03:51.555Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -40071,8 +40071,8 @@
       "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
       "repository": "xevrion/hatchzip",
-      "content_hash": "6a5e85908540154287dca9014477411c6876890bdac33753d6711681e6e4298f",
-      "created_at": "2026-11-26T06:35:24.490Z"
+      "content_hash": "35f3498c89b353cbd2f9c87d1d3e785dbbc99e6d33d5f9f3341ab0277556e083",
+      "created_at": "2026-11-28T07:03:38.624Z"
     },
     "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
@@ -40080,8 +40080,8 @@
       "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-learnings-architecture-intelligence-xevrion-hatchzip-learnings-.md",
       "repository": "xevrion-hatchzip-learnings",
-      "content_hash": "7bd0ab47720e4c2890234f28394586d50ac236ae235328463d6ced643c3a182e",
-      "created_at": "2026-11-26T06:35:33.759Z"
+      "content_hash": "97d233caa68ca38b1795f09b3800e38b33d574afa781d1394afc551ade22bb95",
+      "created_at": "2026-11-28T07:03:48.322Z"
     },
     "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
@@ -46827,8 +46827,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2b575f4c21e64f05fcb182601d64c7a2a5ff503982ed4b1f695d70379e45d2b7",
-      "created_at": "2026-11-28T06:40:37.756Z"
+      "content_hash": "61162944f1f7507e08336efb25185df25f71bfa9f724da1b733d453c53c99960",
+      "created_at": "2026-11-28T07:03:49.897Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
