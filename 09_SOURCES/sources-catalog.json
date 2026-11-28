@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "193d9422",
+    "sourceVersion": "9b58d05a",
     "license": "BSD-3-Clause",
-    "contentHash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
-    "lastHarvestedAt": "2026-11-26T02:09:40.477Z",
+    "contentHash": "98a422add2143b25d63c9b0091d44f47762018b48f861b315c1fca09746493d6",
+    "lastHarvestedAt": "2026-11-28T04:03:35.852Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "a35e6f4e",
+    "sourceVersion": "71c87d50",
     "license": "MIT",
-    "contentHash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
-    "lastHarvestedAt": "2026-11-24T19:09:50.066Z",
+    "contentHash": "ef13f5fc3db472ef9bcd879897ecd91f9370c42cba02377a601373b60ddf9650",
+    "lastHarvestedAt": "2026-11-28T04:03:33.063Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

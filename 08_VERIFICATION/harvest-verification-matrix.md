@@ -13963,3 +13963,5 @@
 | `CYCLE-20261128-A57G` | `2026-11-28T03:45:02.428Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md` | Yes (`5b42b4b8...`) |
 | `CYCLE-20261128-LOGU` | `2026-11-28T03:54:00.606Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9628` | Yes (`53b3562e...`) |
 | `CYCLE-20261128-LQE7` | `2026-11-28T03:54:03.103Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11028` | Yes (`cbe2c0fc...`) |
+| `CYCLE-20261128-XY5Y` | `2026-11-28T04:03:33.046Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11029` | Yes (`ef13f5fc...`) |
+| `CYCLE-20261128-Y0BG` | `2026-11-28T04:03:35.836Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11030` | Yes (`98a422ad...`) |

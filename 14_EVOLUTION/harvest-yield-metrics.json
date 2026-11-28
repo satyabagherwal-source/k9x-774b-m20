@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T03:54:03.121Z",
-  "total_cycles_completed": 13250,
-  "total_learnings_persisted": 13250,
-  "total_rules_promoted": 11948,
+  "last_updated": "2026-11-28T04:03:35.859Z",
+  "total_cycles_completed": 13252,
+  "total_learnings_persisted": 13252,
+  "total_rules_promoted": 11950,
   "history": [
-    {
-      "timestamp": "2026-11-27T09:44:54.980Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:01:40.094Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:01:40.356Z",
       "repository": "zed-industries/zed",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T03:54:03.121Z",
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:03:33.071Z",
+      "repository": "axios/axios",
+      "learningId": "learn-github-axios-axios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:03:35.859Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

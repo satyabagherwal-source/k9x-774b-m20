@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source**: github ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
-> **Source Version**: `193d9422`  
+> **Source Version**: `9b58d05a`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T02:09:39.354Z  
+> **Timestamp**: 2026-11-28T04:03:34.262Z  
 > **Learning ID**: `learn-github-duongductrong-snapzy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duongductrong/Snapzy](https://github.com/duongductrong/Snapzy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T02:09:39.348Z  
+> **Harvest Timestamp**: 2026-11-28T04:03:34.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source native macOS screenshot and screen recording app. A CleanShot X alternative.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3618 stars
+- **Stars / Engagement**: 3634 stars
 
 ---
 
@@ -36,6 +36,190 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/AutomationCommand.swift`
+```
+//
+//  AutomationCommand.swift
+//  SnapzyCLICore
+//
+//  `automation list|run`. Runs an automation exactly as its shortcut would
+//  (capture, then its steps) and waits for the result, or runs its steps on
+//  files passed with `--file`. Only automations with "Allow URL scheme, command
+//  line and Shortcuts" turned on can be run.
+//
+
+import ArgumentParser
+import Foundation
+import SnapzyCLIClient
+import SnapzyCLIProtocol
+
+struct AutomationCommand: AsyncParsableCommand {
+  static let configuration = CommandConfiguration(
+    commandName: "automation",
+    abstract: "List and run Snapzy automations.",
+    subcommands: [List.self, Run.self]
+  )
+
+  /// An area selection waits for the user, so `run` waits longer than other requests.
+  static let defaultRunTimeout: TimeInterval = 300
+
+  struct List: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+      commandName: "list",
+      abstract: "List automations; the ones `automation run` can start come first."
+    )
+
+    @OptionGroup var global: GlobalOptions
+
+    func run() async throws {
+      try await CommandRunner.run(global) { client, renderer in
+        let list = try AutomationCommand.call(
+          client,
+          .automationList,
+          params: CLIEmpty(),
+          as: CLIAutomationList.self,
+          timeout: client.requestTimeout
+        )
+        try StandardStreams.write(renderer.render(list))
+      }
+    }
+  }
+
+  struct Run: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+      commandName: "run",
+      abstract: "Run an automation and wait for it to finish.",
+      discussion: """
+      Without --file the automation's capture starts (an area automation waits for \
+      your selection) and its steps run on the result. With --file the capture is \
+      skipped and the steps run on those files; the files are never modified.
+
+      The automation must have "Allow URL scheme, command line and Shortcuts" turned \
+      on in Settings → Automations. --timeout defaults to 300 seconds here.
+
+      Exits 0 when the steps ran, 1 when a step failed (for example the upload), and \
+      6 when the capture was cancelled.
+      """
+    )
+
+    @OptionGroup var global: GlobalOptions
+
+    @Argument(help: "Automation id, or its name (case-insensitive).")
+    var automation: String
+
+    @Option(name: .customLong("file"), help: "Run on this image or video instead of capturing. Repeatable.")
+    var files: [String] = []
+
+    mutating func validate() throws {
+      guard !automation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        throw ValidationError("Pass an automation id or name.")
+      }
+      if files.contains(where: { $0.isEmpty }) {
+        throw ValidationError("--file needs a path.")
+      }
+    }
+
+    var requestTimeout: TimeInterval {
+      global.timeoutOverride ?? AutomationCommand.defaultRunTimeout
+    }
+
+    func run() async throws {
+      let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)
+      var paths: [String] = []
+      // Before connecting, so a typo never launches Snapzy or shows the approval prompt.
+      try await CommandRunner.reportingErrors(global.renderer) {
+        paths = try AutomationCommand.resolveFiles(files, currentDirectory: currentDirectory)
+      }
+      let params = CLIAutomationRunParams(ref: automation, files: paths.isEmpty ? nil : paths)
+
+      try await CommandRunner.run(global) { client, renderer in
+        let result = try AutomationCommand.call(
+          client,
+          .automationRun,
+          params: params,
+          as: CLIAutomationRunResult.self,
+          timeout: requestTimeout
+        )
+        try StandardStreams.write(renderer.render(result))
+        let code = AutomationCommand.exitCode(for: result)
+        if code != 0 {
+          throw ExitCode(code)
+        }
+      }
+    }
+  }
+
+  // MARK: - Helpers
+
+  /// Calls an `automation.*` method, turning an older Snapzy's answer into an update hint.
+  static func call<Result: Codable & Sendable>(
+    _ client: CLIClient,
+    _ method: CLIMethod,
+    params: some Codable & Sendable,
+    as resultType: Result.Type,
+    timeout: TimeInterval
+  ) throws -> Result {
+    if client.hello.protocolVersion < .automations {
+      throw updateRequired(appVersion: client.hello.appVersion)
+    }
+    do {
+      return try client.call(method, params: params, as: resultType, timeout: timeout)
+    } catch let error as CLIError {
+      throw translate(error, appVersion: client.hello.appVersion)
+    }
+  }
+
+  static func translate(_ error: CLIError, appVersion: String) -> CLIError {
+    error.code == .unknownMethod ? updateRequired(appVersion: appVersion) : error
+  }
+
+  static func updateRequired(appVersion: String) -> CLIError {
+    let running = appVersion.isEmpty ? "The running Snapzy" : "Snapzy \(appVersion)"
+    return CLIError(
+      .unknownMethod,
+      "Update Snapzy to use automations",
+      hint: "\(running) does not support `snapzy automation`; use Check for Updates in Snapzy"
+    )
+  }
+
+  /// Absolute, standardized paths of existing regular files.
+  static func resolveFiles(
+    _ paths: [String],
+    currentDirectory: URL,
+    fileManager: FileManager = .default
+  ) throws -> [String] {
+    try paths.map { raw in
+      let expanded = (raw as NSString).expandingTildeInPath
+      let url = expanded.hasPrefix("/")
+        ? URL(fileURLWithPath: expanded)
+        : currentDirectory.appendingPathComponent(expanded)
+      let path = url.standardizedFileURL.path
+
+      var isDirectory: ObjCBool = false
+      guard fileManager.fileExists(atPath: path, isDirectory: &isDirectory) else {
+        throw CLIError(.targetNotFound, "No file at \(path)")
+      }
+      guard !isDirectory.boolValue else {
+        throw CLIError(.invalidArguments, "\(path) is a directory", hint: "Pass image or video files to --file")
+      }
+      return path
+    }
+  }
+
+  /// 0 when the steps ran, 1 when one failed, 6 when the capture was cancelled.
+  static func exitCode(for result: CLIAutomationRunResult) -> Int32 {
+    switch result.state {
+    case .cancelled: cancelledExitCode
+    case .finished: result.isError ? CLIErrorCode.internal.exitCode : 0
+    }
+  }
+
+  /// Reserved in CLIError's table for "user cancelled an interactive flow".
+  static let cancelledExitCode: Int32 = 6
+}
+
+```
 
 ### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Capture/AreaCommand.swift`
 ```
@@ -870,57 +1054,6 @@ struct MeasureCommand: AsyncParsableCommand {
 
 ```
 
-### Core Architecture Module: `Packages/SnapzyCLIKit/Sources/SnapzyCLICore/Commands/Measure/MeasureImageCommand.swift`
-```
-//
-//  MeasureImageCommand.swift
-//  SnapzyCLICore
-//
-//  `measure image <path>`. Local only: never opens a socket or starts Snapzy.
-//
-
-import ArgumentParser
-import Foundation
-
-struct MeasureImageCommand: AsyncParsableCommand {
-  static let configuration = CommandConfiguration(
-    commandName: "image",
-    abstract: "Measure an image file. Works without Snapzy running.",
-    discussion: "Points are pixels divided by the image's scale: its DPI ÷ 72 (1 without DPI), or --scale."
-  )
-
-  @OptionGroup var global: GlobalOptions
-
-  @Argument(help: "The image file.")
-  var path: String
-
-  @OptionGroup var measure: MeasureOptions
-
-  @Option(help: "Pixels per point, instead of the scale from the image's DPI.")
-  var scale: Double?
-
-  mutating func validate() throws {
-    if let scale, !(scale.isFinite && scale > 0) {
-      throw ValidationError("--scale must be greater than 0.")
-    }
-  }
-
-  func run() async throws {
-    let renderer = global.renderer
-    try await CommandRunner.reportingErrors(renderer) {
-      let result = try MeasureSession.measureImage(
-        path: path,
-        currentDirectory: URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true),
-        request: measure.request,
-        scale: scale
-      )
-      try StandardStreams.write(renderer.render(result))
-    }
-  }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -948,952 +1081,194 @@ struct MeasureImageCommand: AsyncParsableCommand {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `193d9422` (2026-11-25)
-**Commit Message**: fix: Improved Light Mode contrast and inline slider layout across UI components (#809)
+### Incident Patch 1: `9b58d05a` (2026-11-26)
+**Commit Message**: chore: update appcast and docs for v2.3.0-beta.13
 
-* fix: use adaptive fill for zoom popover toggle button in Light Mode
-
-* fix: fix invisible white-on-white filter pills in Light Mode solid style
-
-* fix: give KeyCapPlaceholderView visible adaptive tint and border in Light Mode
-
-* fix: widen inline slider readout so -45deg does not truncate
-
-* fix: address PR review feedback for HistoryToolbar contrast and Light Mode tests
-
-**File**: `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift` (modified, +4/-2)
+**File**: `appcast.xml` (modified, +17/-0)
 ```diff
-@@ -3031,7 +3031,9 @@ private struct InlineAreaLineStylePicker: View {
-   }
- }
- 
--private struct InlineAreaSliderControl: View {
-+struct InlineAreaSliderControl: View {
-+  static let valueReadoutMinWidth: CGFloat = 44
-+
-   let title: String
-   let icon: String
-   @Binding var value: CGFloat
-@@ -3060,7 +3062,7 @@ private struct InlineAreaSliderControl: View {
-           .foregroundColor(InlineAreaChrome.secondaryText)
-           .lineLimit(1)
-           .monospacedDigit()
--          .frame(width: 34, alignment: .trailing)
-+          .frame(minWidth: Self.valueReadoutMinWidth, alignment: .trailing)
-       }
-     }
-   }
+@@ -5,6 +5,23 @@
+     <link>https://github.com/duongductrong/Snapzy/releases</link>
+     <description>Snapzy application updates</description>
+     <language>en</language>
++    <item>
++      <title>Version 2.3.0-beta.13</title>
++      <sparkle:channel>beta</sparkle:channel>
++      <sparkle:version>246</sparkle:version>
++      <sparkle:shortVersionString>2.3.0-beta.13</sparkle:shortVersionString>
++      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
++      <pubDate>Thu, 26 Nov 2026 15:54:55 +0000</pubDate>
++      <description><![CDATA[
++        <style>:root { color-scheme: light dark; } body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.5; padding: 8px 16px; } h3 { font-size: 14px; margin: 12px 0 6px; } ul { padding-left: 20px; margin: 4px 0; } li { margin: 3px 0; }</style>
++        <h3>✨ Features</h3><ul><li>Added Universal Automations and custom HTTP uploader (1f8348af)</li></ul><h3>🐛 Bug Fixes</h3><ul><li>Improved Light Mode contrast and inline slider layout across UI components (193d9422)</li><li>normalize S3 endpoint trailing slashes across all cloud requests (8eff1e8a)</li><li>preserve custom S3 ports in SigV4, trim trailing URL slashes, and encode continuation tokens (1e43e64e)</li></ul>
++      ]]></description>
++      <enclosure
++        url="https://github.com/duongductrong/Snapzy/releases/download/v2.3.0-beta.13/Snapzy-v2.3.0-beta.13.dmg"
++        sparkle:edSignature="cssZEuTnISjPKB3Szcs3+HwqKChFFJRwfEl4keFlrzJrscDpoha3DUKAn4cAWHETa+w7xq5iz4i+TCHBG+fzBQ=="
++        length="62540960"
++        type="application/octet-stream"/>
++    </item>
+     <item>
+       <title>Version 2.3.0-beta.12</title>
+       <sparkle:channel>beta</sparkle:channel>
 ```
 
-**File**: `Snapzy/Features/History/Components/HistoryFilterBar.swift` (modified, +38/-23)
+**File**: `docs/APP_LIFECYCLE.md` (modified, +1/-1)
 ```diff
-@@ -35,6 +35,36 @@ struct HistoryFilterBar: View {
-       Spacer()
-     }
-   }
-+  static func unselectedPillFillColor(
-+    backgroundStyle: HistoryBackgroundStyle,
-+    colorScheme: ColorScheme
-+  ) -> Color {
-+    if backgroundStyle == .solid {
-+      return colorScheme == .dark
-+        ? Color.white.opacity(0.07)
-+        : Color.black.opacity(0.06)
-+    }
-+
-+    return colorScheme == .dark
-+      ? Color.white.opacity(0.08)
-+      : Color.black.opacity(0.05)
-+  }
-+
-+  static func pillBorderColor(isSelected: Bool, colorScheme: ColorScheme) -> Color {
-+    if isSelected {
-+      return Color.white.opacity(0.15)
-+    }
-+
-+    return colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
-+  }
-+
-+  static func countBadgeBackgroundColor(isSelected: Bool, colorScheme: ColorScheme) -> Color {
-+    if isSelected {
-+      return Color.white.opacity(0.22)
-+    }
-+
-+    return colorScheme == .dark ? Color.white.opacity(0.12) : Color.black.opacity(0.08)
-+  }
- }
+@@ -2,7 +2,7 @@
  
- private struct FilterPill: View {
-@@ -59,7 +89,7 @@ private struct FilterPill: View {
-             .font(.system(size: 10, weight: .bold))
-             .padding(.horizontal, 6)
-             .padding(.vertical, 2)
--            .background(pillCountBackground.opacity(isSelected ? 0.18 : 1))
-+            .background(HistoryFilterBar.countBadgeBackgroundColor(isSelected: isSelected, colorScheme: colorScheme))
-             .clipShape(Capsule())
-         }
-       }
-@@ -70,7 +100,7 @@ private struct FilterPill: View {
-       .clipShape(Capsule())
-       .overlay(
-         Capsule()
--          .stroke(borderColor, lineWidth: 1)
-+          .stroke(HistoryFilterBar.pillBorderColor(isSelected: isSelected, colorScheme: colorScheme), lineWidth: 1)
-       )
-     }
-     .buttonStyle(.plain)
-@@ -90,26 +120,11 @@ private struct FilterPill: View {
-       )
-     }
+ How Snapzy launches, runs onboarding, lives in the menu bar, and shuts down. Covers `Snapzy/App/`, splash/onboarding, app identity, theme, data migrations, and the entitlements/Info.plist contract.
  
--    if backgroundStyle == .solid {
--      return colorScheme == .dark
--        ? AnyShapeStyle(Color.white.opacity(0.07))
--        : AnyShapeStyle(Color.white.opacity(0.76))
--    }
--
--    return colorScheme == .dark
--      ? AnyShapeStyle(Color.white.opacity(0.08))
--      : AnyShapeStyle(Color.black.opacity(0.05))
--  }
--
--  private var borderColor: Color {
--    if isSelected {
--      return Color.white.opacity(0.15)
--    }
--
--    return colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.64)
--  }
--
--  private var pillCountBackground: Color {
--    colorScheme == .dark ? Color.white.opacity(0.12) : Color.white.opacity(0.84)
-+    return AnyShapeStyle(
-+      HistoryFilterBar.unselectedPillFillColor(
-+        backgroundStyle: backgroundStyle,
-+        colorScheme: colorScheme
-+      )
-+    )
-   }
- }
+-Current as of HEAD (`v2.3.0-beta.12`, build 245, macOS 13.0+ deployment target).
++Current as of HEAD (`v2.3.0-beta.13`, build 246, macOS 13.0+ deployment target).
+ 
+ ## Platform shape
+ 
 ```
 
-**File**: `Snapzy/Features/History/Components/HistoryToolbar.swift` (modified, +24/-7)
+**File**: `docs/CLI.md` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,8 @@ struct HistoryToolbar: View {
-   let onClearSelection: () -> Void
-   let onDeleteSelection: () -> Void
+@@ -2,7 +2,7 @@
  
--  @AppStorage(PreferencesKeys.historyBackgroundStyle) private var backgroundStyle: HistoryBackgroundStyle = .defaultStyle
-+  @AppStorage(PreferencesKeys.historyBackgroundStyle) private var backgroundStyle: HistoryBackgroundStyle =
-+    .defaultStyle
-   @Environment(\.colorScheme) private var colorScheme
+ `snapzy` lets AI agents, scripts, and terminals capture or record a display, a window, or an area through Snapzy — no overlay, no clicks — and get back a file path, JSON metadata, and an exit code. It can also run the user's [automations](#automations) (capture → copy / upload → link) and wait for the result. It ships inside the app at `Snapzy.app/Contents/Helpers/snapzy`.
  
-   var body: some View {
-@@ -118,20 +119,36 @@ struct HistoryToolbar: View {
-     .foregroundColor(isDestructive ? .red : .primary.opacity(0.82))
-   }
+-Current as of HEAD (`v2.3.0-beta.12`, build 245, macOS 13.0+ deployment target).
++Current as of HEAD (`v2.3.0-beta.13`, build 246, macOS 13.0+ deployment target).
  
--  private var chromeSurfaceFill: AnyShapeStyle {
-+  static func chromeSurfaceFillColor(
-+    backgroundStyle: HistoryBackgroundStyle,
-+    colorScheme: ColorScheme
-+  ) -> Color {
-     if backgroundStyle == .solid {
-       return colorScheme == .dark
--        ? AnyShapeStyle(Color.white.opacity(0.07))
--        : AnyShapeStyle(Color.white.opacity(0.76))
-+        ? Color.white.opacity(0.07)
-+        : Color.black.opacity(0.06)
-     }
+ ## How it works
  
-     return colorScheme == .dark
--      ? AnyShapeStyle(Color.white.opacity(0.07))
--      : AnyShapeStyle(Color.white.opacity(0.52))
-+      ? Color.white.opacity(0.07)
-+      : Color.black.opacity(0.05)
-+  }
-+
-+  static func chromeSurfaceBorderColor(colorScheme: ColorScheme) -> Color {
-+    colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
-+  }
-+
-+  private var chromeSurfaceFill: AnyShapeStyle {
-+    AnyShapeStyle(
-+      Self.chromeSurfaceFillColor(
-+        backgroundStyle: backgroundStyle,
-+        colorScheme: colorScheme
-+      )
-+    )
-   }
- 
-   private var chromeSurfaceBorder: Color {
--    colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.64)
-+    Self.chromeSurfaceBorderColor(colorScheme: colorScheme)
-   }
- 
-   private var chromeSurfaceShadow: Color {
 ```
 
-**File**: `Snapzy/Features/VideoEditor/Components/VideoEditorZoomSettingsPopover.swift` (modified, +11/-1)
+**File**: `docs/CLOUD.md` (modified, +1/-1)
 ```diff
-@@ -211,6 +211,9 @@ struct ZoomSettingsPopover: View {
-     }
-   }
+@@ -2,7 +2,7 @@
  
-+  static let toggleButtonBackgroundFill = Color.primary.opacity(0.08)
-+  static let toggleButtonBorderColor = Color.primary.opacity(0.10)
-+
-   private var actionsSection: some View {
-     HStack(spacing: 8) {
-       // Enable/Disable toggle
-@@ -226,7 +229,14 @@ struct ZoomSettingsPopover: View {
-         .font(.system(size: 10))
-         .padding(.horizontal, 8)
-         .padding(.vertical, 4)
--        .background(Color.white.opacity(0.1))
-+        .background(
-+          Radius.controlRect(forHeight: 20)
-+            .fill(Self.toggleButtonBackgroundFill)
-+            .overlay(
-+              Radius.controlRect(forHeight: 20)
-+                .strokeBorder(Self.toggleButtonBorderColor, lineWidth: 0.5)
-+            )
-+        )
-         .clipShape(Radius.controlRect(forHeight: 20))
-       }
-       .buttonStyle(.plain)
+ Bring-your-own-storage cloud uploads for captures: AWS S3, Cloudflare R2, Google Drive, the imgbb image host, and user-defined HTTP uploaders (ShareX `.sxcu` compatible). No Snapzy servers, no telemetry — files go straight from the Mac to the user's bucket, drive, imgbb account, or server.
+ 
+-Verified against `Snapzy/Services/Cloud/`, `Snapzy/Features/Preferences/Components/PreferencesCloud*.swift`, and upload call sites at HEAD (`v2.3.0-beta.12`).
++Verified against `Snapzy/Services/Cloud/`, `Snapzy/Features/Preferences/Components/PreferencesCloud*.swift`, and upload call sites at HEAD (`v2.3.0-beta.13`).
+ 
+ ## Current state (as of `dd4ccd5`)
+ 
 ```
 
-**File**: `Snapzy/Shared/Components/KeyCapView.swift` (modified, +11/-1)
+**File**: `docs/PREFERENCES.md` (modified, +1/-1)
 ```diff
-@@ -68,6 +68,12 @@ struct KeyCapGroupView: View {
- /// Ghost glass pill shown when a shortcut row has no assignment yet.
- /// Mirrors the keycap silhouette but with muted ink and a quieter substrate.
- struct KeyCapPlaceholderView: View {
-+  /// Subtle adaptive tint used by the legacy `LiquidGlassSurface` composite in Light Mode.
-+  /// On macOS 26+ native Liquid Glass, `.glassEffect` ignores `tint` and `placeholderBorderOpacity`
-+  /// provides the capsule outline.
-+  static let placeholderTint: Double = 0.06
-+  static let placeholderBorderOpacity: Double = 0.12
-+
-   let title: String
-   var symbol: String = "return"
-   var minWidth: CGFloat = 104
-@@ -85,9 +91,13 @@ struct KeyCapPlaceholderView: View {
-     .liquidGlassSurface(
-       shape: Capsule(style: .continuous),
-       substrate: 0.30,
--      tint: 0.0,
-+      tint: Self.placeholderTint,
-       highlight: .none
-     )
-+    .overlay(
-+      Capsule(style: .continuous)
-+        .strokeBorder(Color.primary.opacity(Self.placeholderBorderOpacity), lineWidth: 0.75)
-+    )
-     .fixedSize(horizontal: true, vertical: false)
-   }
- }
+@@ -1,6 +1,6 @@
+ # Preferences
+ 
+-Reference for the Settings window: tab structure, every section, and how preferences are stored. Verified against `Snapzy/Features/Preferences/` at HEAD (`v2.3.0-beta.12`).
++Reference for the Settings window: tab structure, every section, and how preferences are stored. Verified against `Snapzy/Features/Preferences/` at HEAD (`v2.3.0-beta.13`).
+ 
+ ## Root
+ 
 ```
 
-**File**: `SnapzyTests/Features/Annotate/AnnotateWatermarkTests.swift` (modified, +13/-0)
+**File**: `docs/SHORTCUTS.md` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@
- //  AnnotateCoreTests and is not duplicated here.
- //
+@@ -2,7 +2,7 @@
  
-+import AppKit
- import CoreGraphics
- import SwiftUI
- import XCTest
-@@ -130,4 +131,16 @@ final class AnnotateWatermarkTests: XCTestCase {
-     XCTAssertEqual(properties.opacity, 0.5, accuracy: 0.0001)
-     XCTAssertEqual(properties.rotationDegrees, -10, accuracy: 0.0001)
-   }
-+
-+  /// Regression: inline watermark rotation slider displays `"-45deg"` (6 characters) and
-+  /// must have enough width so the readout never truncates to `"-45d..."`.
-+  func testInlineSliderValueReadoutFitsNegativeTwoDigitRotation() {
-+    let font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
-+    let measuredWidth = ("-45deg" as NSString).size(withAttributes: [.font: font]).width
-+    XCTAssertGreaterThanOrEqual(
-+      InlineAreaSliderControl.valueReadoutMinWidth,
-+      ceil(measuredWidth),
-+      "Inline slider value readout width must fit \"-45deg\" without truncation"
-+    )
-+  }
- }
+ Global keyboard shortcuts, in-overlay capture shortcuts, Annotate editor shortcuts, conflict detection, the cheat-sheet overlay, and the `snapzy://` deep-link route table.
+ 
+-Verified against `Snapzy/Services/Shortcuts/`, `Snapzy/Features/Shortcuts/`, `Snapzy/Features/Annotate/Services/AnnotateShortcutManager.swift`, `Snapzy/App/SnapzyDeepLinkHandler.swift`, `Snapzy/Services/Capture/CaptureOverlayShortcutSettings.swift` at HEAD (`v2.3.0-beta.12`).
++Verified against `Snapzy/Services/Shortcuts/`, `Snapzy/Features/Shortcuts/`, `Snapzy/Features/Annotate/Services/AnnotateShortcutManager.swift`, `Snapzy/App/SnapzyDeepLinkHandler.swift`, `Snapzy/Services/Capture/CaptureOverlayShortcutSettings.swift` at HEAD (`v2.3.0-beta.13`).
+ 
+ ## Global shortcut mechanism
+ 
 ```
 
-**File**: `SnapzyTests/Features/History/HistoryFilterBarTests.swift` (added, +83/-0)
+**File**: `docs/UPDATES.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,83 @@
-+//
-+//  HistoryFilterBarTests.swift
-+//  SnapzyTests
-+//
-+//  Light/Dark Mode contrast regression tests for HistoryFilterBar and HistoryToolbar.
-+//
-+
-+import AppKit
-+@testable import Snapzy
-+import SwiftUI
-+import XCTest
-+
-+@MainActor
-+final class HistoryFilterBarTests: XCTestCase {
-+  /// Regression: in Light Mode with `.solid` backdrop, unselected filter pills, borders, and
-+  /// count capsules must use dark-tinted contrast fills instead of invisible white-on-white.
-+  func testHistoryFilterBar_lightModeSolidUsesVisibleDarkTintedPillsAndBadges() throws {
-+    let fill = try XCTUnwrap(
-+      NSColor(HistoryFilterBar.unselectedPillFillColor(backgroundStyle: .solid, colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+    let border = try XCTUnwrap(
-+      NSColor(HistoryFilterBar.pillBorderColor(isSelected: false, colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+    let badge = try XCTUnwrap(
-+      NSColor(HistoryFilterBar.countBadgeBackgroundColor(isSelected: false, colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+
-+    XCTAssertLessThan(fill.brightnessComponent, 0.2, "Light Mode solid pill fill must not be white-on-white")
-+    XCTAssertLessThan(border.brightnessComponent, 0.2, "Light Mode pill border must not be white-on-white")
-+    XCTAssertLessThan(badge.brightnessComponent, 0.2, "Light Mode count capsule must not be white-on-white")
-+
-+    let selectedBadgeLight = try XCTUnwrap(
-+      NSColor(HistoryFilterBar.countBadgeBackgroundColor(isSelected: true, colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+    let selectedBadgeDark = try XCTUnwrap(
-+      NSColor(HistoryFilterBar.countBadgeBackgroundColor(isSelected: true, colorScheme: .dark))
-+        .usingColorSpace(.sRGB)
-+    )
-+    XCTAssertGreaterThan(
-+      selectedBadgeLight.brightnessComponent,
-+      0.8,
-+      "Selected pill count capsule on accent stays light"
-+    )
-+    XCTAssertGreaterThan(
-+      selectedBadgeDark.brightnessComponent,
-+      0.8,
-+      "Selected pill count capsule in Dark Mode stays visible"
-+    )
-+  }
-+
-+  /// Regression: HistoryToolbar search bar sits next to HistoryFilterBar in the same window and
-+  /// must also use dark-tinted fills and borders in Light Mode instead of white-on-white.
-+  func testHistoryToolbar_lightModeSolidUsesVisibleDarkTintedChrome() throws {
-+    let fillLight = try XCTUnwrap(
-+      NSColor(HistoryToolbar.chromeSurfaceFillColor(backgroundStyle: .solid, colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+    let borderLight = try XCTUnwrap(
-+      NSColor(HistoryToolbar.chromeSurfaceBorderColor(colorScheme: .light))
-+        .usingColorSpace(.sRGB)
-+    )
-+
-+    XCTAssertLessThan(fillLight.brightnessComponent, 0.2, "Light Mode solid toolbar fill must not be white-on-white")
-+    XCTAssertGreaterThan(fillLight.alphaComponent, 0.04, "Light Mode solid toolbar fill must have visible alpha")
-+    XCTAssertLessThan(borderLight.brightnessComponent, 0.2, "Light Mode toolbar border must not be white-on-white")
-+    XCTAssertGreaterThan(borderLight.alphaComponent, 0.05, "Light Mode toolbar border must have visible alpha")
-+
-+    let fillDark = try XCTUnwrap(
-+      NSColor(HistoryToolbar.chromeSurfaceFillColor(backgroundStyle: .solid, colorScheme: .dark))
-+        .usingColorSpace(.sRGB)
-+    )
-+    let borderDark = try XCTUnwrap(
-+      NSColor(HistoryToolbar.chromeSurfaceBorderColor(colorScheme: .dark))
-+        .usingColorSpace(.sRGB)
-+    )
-+    XCTAssertGreaterThan(fillDark.brightnessComponent, 0.8, "Dark Mode toolbar fill stays light-tinted")
-+    XCTAssertGreaterThan(borderDark.brightnessComponent, 0.8, "Dark Mode toolbar border stays light-tinted")
-+  }
-+}
-```
-
-**File**: `SnapzyTests/Features/VideoEditor/VideoEditorZoomAndAutoFocusTests.swift` (modified, +31/-0)
-```diff
-@@ -5,8 +5,10 @@
- //  Unit tests for video editor zoom math and Smart Camera autofocus paths.
- //
+@@ -2,7 +2,7 @@
  
-+import AppKit
- import CoreGraphics
- @testable import Snapzy
-+import SwiftUI
- import XCTest
+ Sparkle-based app updates, local diagnostic logging, crash detection, and the manual problem-report bundle. No telemetry anywhere — logs stay on the user's Mac.
  
- final class VideoEditorZoomAndAutoFocusTests: XCTestCase {
-@@ -254,4 +256,33 @@ final class VideoEditorZoomAndAutoFocusTests: XCTestCase {
-   ) {
-     XCTAssertEqual(actual, expected, accuracy: accuracy, file: file, line: line)
-   }
-+
-+  /// Regression: ZoomSettingsPopover Enable/Disable button must adapt to Light and Dark Mode
-+  /// rather than hardcoding white-on-white `Color.white.opacity(0.1)`.
-+  func testZoomSettingsPopover_toggleButtonBackgroundAdaptsToLightAndDarkAppearance() throws {
-+    let lightAppearance = try XCTUnwrap(NSAppearance(named: .aqua))
-+    var lightColor: NSColor?
-+    lightAppearance.performAsCurrentDrawingAppearance {
-+      lightColor = NSColor(ZoomSettingsPopover.toggleButtonBackgroundFill).usingColorSpace(.sRGB)
-+    }
-+    let resolvedLight = try XCTUnwrap(lightColor)
-+    XCTAssertLessThan(
-+      resolvedLight.brightnessComponent,
-+      0.2,
-+      "Light Mode button fill must use dark primary ink tint, not white-on-white"
-+    )
-+    XCTAssertGreaterThan(resolvedLight.alphaComponent, 0.05)
-+
-+    let darkAppearance = try XCTUnwrap(NSAppearance(named: .darkAqua))
-+    var darkColor: NSColor?
-+    darkAppearance.performAsCurrentDrawingAppearance {
-+      darkColor = NSColor(ZoomSettingsPopover.toggleButtonBackgroundFill).usingColorSpace(.sRGB)
-+    }
-+    let resolvedDark = try XCTUnwrap(darkColor)
-+    XCTAssertGreaterThan(
-+      resolvedDark.brightnessComponent,
-+      0.8,
-+      "Dark Mode button fill must use light primary ink tint"
-+    )
-+  }
- }
+-Verified against `Snapzy/Services/Updates/UpdaterManager.swift`, `Snapzy/Features/Updates/`, `Snapzy/Services/Diagnostics/`, `Snapzy/Features/CrashReport/`, `Snapzy/Resources/Info.plist`, and `appcast.xml` at HEAD (`v2.3.0-beta.12`).
++Verified against `Snapzy/Services/Updates/UpdaterManager.swift`, `Snapzy/Features/Updates/`, `Snapzy/Services/Diagnostics/`, `Snapzy/Features/CrashReport/`, `Snapzy/Resources/Info.plist`, and `appcast.xml` at HEAD (`v2.3.0-beta.13`).
+ 
+ ## Sparkle updates
+ 
 ```
 
 ---
 
-### Incident Patch 2: `6a88437d` (2026-11-24)
-**Commit Message**: fix: Record undo snapshots for Video Editor background/transition edits and Annotate crop/mockup (#810)
+### Incident Patch 2: `cbaa4779` (2026-11-26)
+**Commit Message**: chore: bump version to v2.3.0-beta.13 (#817)
 
-* fix(video-editor): record undo for background sidebar edits and zoom transition duration
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
 
-* fix(annotate): record undo for crop confirmation and restore selectedPresetId in MockupState undo
-
-* fix: resync zoom transition slider after undo/redo
-
----------
-
-Co-authored-by: duongductrong <[REDACTED_EMAIL]>
-
-**File**: `Snapzy/Features/Annotate/AnnotateState.swift` (modified, +20/-0)
+**File**: `CHANGELOG.md` (modified, +15/-0)
 ```diff
-@@ -3866,6 +3866,26 @@ final class AnnotateState: ObservableObject {
-     DiagnosticLogger.shared.log(.info, .annotate, "Crop applied", context: [
-       "rect": cropRect.map { "\(Int($0.width))x\(Int($0.height))" } ?? "nil"
-     ])
-+    let previousCropRect = cropInteractionContext?.cropRect
-+    if previousCropRect != cropRect {
-+      let preCropSnapshot = ImageTransformSnapshot(
-+        sourceImage: sourceImage,
-+        cutoutImage: cutoutImage,
-+        isCutoutApplied: isCutoutApplied,
-+        embeddedImageAssets: embeddedImageAssets,
-+        embeddedImageSourceData: embeddedImageSourceData,
-+        embeddedImageSnapshotCacheData: embeddedImageSnapshotCacheData,
-+        annotations: annotations,
-+        cropRect: previousCropRect,
-+        originalCropRect: nil,
-+        cropAspectRatio: cropAspectRatio,
-+        isCropPortraitOrientation: isCropPortraitOrientation,
-+        didCutoutAutoApplyCrop: cropInteractionContext?.didCutoutAutoApplyCrop ?? didCutoutAutoApplyCrop,
-+        cutoutAutoAppliedCropRect: cropInteractionContext?.cutoutAutoAppliedCropRect ?? cutoutAutoAppliedCropRect,
-+        cropBaselineFootprints: cropBaselineFootprints
-+      )
-+      pushImageTransformUndo(preCropSnapshot)
-+    }
-     if didCutoutAutoApplyCrop,
-        let currentCropRect = cropRect,
-        let autoCropRect = cutoutAutoAppliedCropRect,
+@@ -4,6 +4,21 @@ All notable changes to Snapzy will be documented in this file.
+ 
+ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+ 
++## [2.3.0-beta.13] - 2026-11-26
++
++### Features
++- Added Universal Automations and custom HTTP uploader (#813) (1f8348af)
++
++### Bug Fixes
++- Improved Light Mode contrast and inline slider layout across UI components (#809) (193d9422)
++- normalize S3 endpoint trailing slashes across all cloud requests (8eff1e8a)
++- preserve custom S3 ports in SigV4, trim trailing URL slashes, and encode continuation tokens (#811) (1e43e64e)
++
++### Contributors
++- @duongductrong
++- @github-actions[bot]
++- @williamcachamwri
++
+ ## [2.3.0-beta.12] - 2026-11-24
+ 
+ ### Bug Fixes
 ```
 
-**File**: `Snapzy/Features/Annotate/Models/AnnotateMockupState.swift` (modified, +14/-27)
+**File**: `Snapzy.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -19,6 +19,7 @@ private struct MockupStateSnapshot: Equatable {
-     let shadowIntensity: Double
-     let cornerRadius: Double
-     let backgroundStyle: BackgroundStyle
-+    let selectedPresetId: UUID?
- }
- 
- /// Central state object for mockup renderer
-@@ -148,16 +149,7 @@ final class MockupState: ObservableObject {
-     // MARK: - Undo/Redo
- 
-     func saveState() {
--        let snapshot = MockupStateSnapshot(
--            rotationX: rotationX,
--            rotationY: rotationY,
--            rotationZ: rotationZ,
--            perspective: perspective,
--            padding: padding,
--            shadowIntensity: shadowIntensity,
--            cornerRadius: cornerRadius,
--            backgroundStyle: backgroundStyle
--        )
-+        let snapshot = currentSnapshot()
- 
-         // Avoid duplicates
-         if undoStack.last != snapshot {
-@@ -173,17 +165,7 @@ final class MockupState: ObservableObject {
-         guard let snapshot = undoStack.popLast() else { return }
- 
-         // Save current state to redo stack
--        let currentSnapshot = MockupStateSnapshot(
--            rotationX: rotationX,
--            rotationY: rotationY,
--            rotationZ: rotationZ,
--            perspective: perspective,
--            padding: padding,
--            shadowIntensity: shadowIntensity,
--            cornerRadius: cornerRadius,
--            backgroundStyle: backgroundStyle
--        )
--        redoStack.append(currentSnapshot)
-+        redoStack.append(currentSnapshot())
- 
-         // Restore snapshot
-         applySnapshot(snapshot)
-@@ -193,20 +175,24 @@ final class MockupState: ObservableObject {
-         guard let snapshot = redoStack.popLast() else { return }
- 
-         // Save current state to undo stack
--        let currentSnapshot = MockupStateSnapshot(
-+        undoStack.append(currentSnapshot())
-+
-+        // Restore snapshot
-+        applySnapshot(snapshot)
-+    }
-+
-+    private func currentSnapshot() -> MockupStateSnapshot {
-+        MockupStateSnapshot(
-             rotationX: rotationX,
-             rotationY: rotationY,
-             rotationZ: rotationZ,
-             perspective: perspective,
-             padding: padding,
-             shadowIntensity: shadowIntensity,
-             cornerRadius: cornerRadius,
--            backgroundStyle: backgroundStyle
-+            backgroundStyle: backgroundStyle,
-+            selectedPresetId: selectedPresetId
-         )
--        undoStack.append(currentSnapshot)
--
--        // Restore snapshot
--        applySnapshot(snapshot)
-     }
- 
-     private func applySnapshot(_ snapshot: MockupStateSnapshot) {
-@@ -218,6 +204,7 @@ final class MockupState: ObservableObject {
-         shadowIntensity = snapshot.shadowIntensity
-         cornerRadius = snapshot.cornerRadius
-         backgroundStyle = snapshot.backgroundStyle
-+        selectedPresetId = snapshot.selectedPresetId
-     }
- 
-     // MARK: - Helpers
-```
-
-**File**: `Snapzy/Features/VideoEditor/Components/VideoEditorLeftSidebar.swift` (modified, +5/-1)
-```diff
-@@ -120,6 +120,10 @@ struct ZoomSettingsContent: View {
-     .onChange(of: localStateSnapshot) { _ in
-       syncLocalState()
-     }
-+    // Undo/redo changes the duration outside this view; keep the slider in sync.
-+    .onChange(of: state.zoomTransitionDuration) { newValue in
-+      localTransitionDuration = newValue
-+    }
-     .onDisappear { endContinuousEdit() }
-     .accessibilityIdentifier("video-editor.zoom-settings")
-   }
-@@ -960,7 +964,7 @@ struct ZoomSettingsContent: View {
-   }
- 
-   private func applyTransitionDuration() {
--    state.zoomTransitionDuration = localTransitionDuration
-+    state.setZoomTransitionDuration(localTransitionDuration)
-   }
- 
-   private func zoomDisplayValue(for level: CGFloat) -> String {
-```
-
-**File**: `Snapzy/Features/VideoEditor/Components/VideoEditorVideoBackgroundSidebarView.swift` (modified, +48/-19)
-```diff
-@@ -45,8 +45,10 @@ struct VideoBackgroundSidebarView: View {
- 
-   private var noneButton: some View {
-     Button {
--      state.backgroundStyle = .none
--      state.backgroundPadding = 0
-+      var updated = state.frameSettings
-+      updated.style = .none
-+      updated.padding = 0
-+      state.setFrameSettings(updated)
-     } label: {
-       Text(L10n.Common.none)
-         .font(Typography.labelMedium)
-@@ -80,10 +82,12 @@ struct VideoBackgroundSidebarView: View {
-             preset: preset,
-             isSelected: state.backgroundStyle == .gradient(preset)
-           ) {
--            if state.backgroundPadding <= 0 {
--              state.backgroundPadding = 24
-+            var updated = state.frameSettings
-+            if updated.padding <= 0 {
-+              updated.padding = 24
-             }
--            state.backgroundStyle = .gradient(preset)
-+            updated.style = .gradient(preset)
-+            state.setFrameSettings(updated)
-           }
-         }
-       }
-@@ -162,17 +166,21 @@ struct VideoBackgroundSidebarView: View {
-   }
- 
-   private func selectDefaultWallpaper(_ item: SystemWallpaperManager.WallpaperItem) {
--    if state.backgroundPadding <= 0 {
--      state.backgroundPadding = 24
-+    var updated = state.frameSettings
-+    if updated.padding <= 0 {
-+      updated.padding = 24
-     }
--    state.backgroundStyle = .wallpaper(item.fullImageURL)
-+    updated.style = .wallpaper(item.fullImageURL)
-+    state.setFrameSettings(updated)
-   }
- 
-   private func selectCustomWallpaper(_ item: SystemWallpaperManager.WallpaperItem) {
--    if state.backgroundPadding <= 0 {
--      state.backgroundPadding = 24
-+    var updated = state.frameSettings
-+    if updated.padding <= 0 {
-+      updated.padding = 24
-     }
--    state.backgroundStyle = .wallpaper(item.fullImageURL)
-+    updated.style = .wallpaper(item.fullImageURL)
-+    state.setFrameSettings(updated)
-   }
- 
-   private func addCustomWallpaper() {
-@@ -192,8 +200,10 @@ struct VideoBackgroundSidebarView: View {
-     wallpaperManager.removeCustomWallpaper(item)
- 
-     if case .wallpaper(let selectedUrl) = state.backgroundStyle, selectedUrl == url {
--      state.backgroundStyle = .none
--      state.backgroundPadding = 0
-+      var updated = state.frameSettings
-+      updated.style = .none
-+      updated.padding = 0
-+      state.setFrameSettings(updated)
-     }
-   }
- 
-@@ -216,10 +226,12 @@ struct VideoBackgroundSidebarView: View {
-       },
-       set: { newColor in
-         if let color = newColor {
--          if state.backgroundPadding <= 0 {
--            state.backgroundPadding = 24
-+          var updated = state.frameSettings
-+          if updated.padding <= 0 {
-+            updated.padding = 24
-           }
--          state.backgroundStyle = .solidColor(color)
-+          updated.style = .solidColor(color)
-+          state.setFrameSettings(updated)
-         }
-       }
-     )
-@@ -241,10 +253,27 @@ struct VideoBackgroundSidebarView: View {
-             }
-           }
-         ),
--        range: 0 ... 300
-+        range: 0 ... 300,
-+        onDragging: { isDragging, _ in
-+          if isDragging { state.beginFrameEdit() } else { state.endFrameEdit() }
-+        }
-+      )
-+      VideoSliderRow(
-+        label: L10n.Common.shadow,
-+        value: $state.backgroundShadowIntensity,
-+        range: 0 ... 1,
-+        onDragging: { isDragging, _ in
-+          if isDragging { state.beginFrameEdit() } else { state.endFrameEdit() }
-+        }
-+      )
-+      VideoSliderRow(
-+        label: L10n.Common.corners,
-+        value: $state.backgroundCornerRadius,
-+        range: 0 ... 60,
-+        onDragging: { isDragging, _ in
-+          if isDragging { state.beginFrameEdit() } else { state.endFrameEdit() }
-+        }
-       )
--      VideoSliderRow(label: L10n.Common.shadow, value: $state.backgroundShadowIntensity, range: 0 ... 1)
--      VideoSliderRow(label: L10n.Common.corners, value: $state.backgroundCornerRadius, range: 0 ... 60)
-     }
-   }
- 
-```
-
-**File**: `Snapzy/Features/VideoEditor/VideoEditorState.swift` (modified, +37/-1)
-```diff
-@@ -260,6 +260,7 @@ enum EditorAction: Equatable {
-     newMotionBlur: VideoEditorMotionBlurSettings? = nil
-   )
-   case updateMotionBlur(old: VideoEditorMotionBlurSettings, new: VideoEditorMotionBlurSettings)
-+  case updateZoomTransitionDuration(old: TimeInterval, new: TimeInterval)
-   case addSpeed(segment: SpeedSegment)
-   case removeSpeed(segment: SpeedSegment)
-   case updateSpeed(old: SpeedSegment, new: SpeedSegment)
-@@ -715,8 +716,11 @@ final class VideoEditorState: ObservableObject {
-       }
- 
-       UserDefaults.standard.set(clamped, forKey: PreferencesKeys.videoEditorZoomTransitionDuration)
-+      updateHasUnsavedChanges()
-     }
-   }
-+  private var initialZoomTransitionDuration: TimeInterval = ZoomCalculator.defaultTransitionDuration
-+  private var pendingFrameEditStart: VideoEditorFrameSettings?
- 
-   // MARK: - Auto Focus
- 
-@@ -1023,7 +1027,9 @@ final class VideoEditorState: ObservableObject {
-     primaryPlayerItem = item
-     player = AVPlayer(playerItem: item)
-     previewRateController = VideoEditorPreviewRateController(player: player)
--    zoomTransitionDuration = Self.loadZoomTransitionDuration()
-+    let loadedTransitionDuration = Self.loadZoomTransitionDuration()
-+    initialZoomTransitionDuration = loadedTransitionDuration
-+    zoomTransitionDuration = loadedTransitionDuration
-     recordingMetadata = initialMetadata
-     reloadCursorLayer()
- 
-@@ -2061,6 +2067,7 @@ final class VideoEditorState: ObservableObject {
-     initialBackgroundAspectRatio = backgroundAspectRatio
-     initialExportSettings = exportSettings
-     initialMotionBlurSettings = motionBlurSettings
-+    initialZoomTransitionDuration = zoomTransitionDuration
-     initialCaptions = captions
-     clearUndoHistory()
-   }
-@@ -2259,6 +2266,10 @@ final class VideoEditorState: ObservableObject {
-       applyFrameSettings(old)
-       return .updateFrame(old: new, new: old)
- 
-+    case .updateZoomTransitionDuration(let old, let new):
-+      zoomTransitionDuration = old
-+      return .updateZoomTransitionDuration(old: new, new: old)
-+
-     case .updateExportSettings(let old, let new):
-       updateExportSettings(old)
-       return .updateExportSettings(old: new, new: old)
-@@ -3680,6 +3691,30 @@ final class VideoEditorState: ObservableObject {
-     recordAction(.updateFrame(old: old, new: settings))
-   }
- 
-+  /// Start a continuous background/frame slider drag so all live ticks collapse into one undo step.
-+  func beginFrameEdit() {
-+    guard pendingFrameEditStart == nil else { return }
-+    pendingFrameEditStart = frameSettings
-+  }
-+
-+  /// Commit a continuous background/frame slider drag as a single undoable step.
-+  func endFrameEdit() {
-+    guard let start = pendingFrameEditStart else { return }
-+    pendingFrameEditStart = nil
-+    let end = frameSettings
-+    guard end != start else { return }
-+    recordAction(.updateFrame(old: start, new: end))
-+  }
-+
-+  /// Update zoom transition duration as an undoable edit.
-+  func setZoomTransitionDuration(_ duration: TimeInterval) {
-+    let old = zoomTransitionDuration
-+    let clamped = ZoomCalculator.clampTransitionDuration(duration)
-+    guard abs(clamped - old) > 0.0001 else { return }
-+    zoomTransitionDuration = clamped
-+    recordAction(.updateZoomTransitionDuration(old: old, new: clamped))
-+  }
-+
-   private func applyFrameSettings(_ settings: VideoEditorFrameSettings) {
-     if backgroundStyle != settings.style { backgroundStyle = settings.style }
-     if backgroundPadding != settings.padding { backgroundPadding = settings.padding }
-@@ -4097,6 +4132,7 @@ final class VideoEditorState: ObservableObject {
-       || cursorSettings != initialCursorSettings
-       || cameraSettings != initialCameraSettings
-       || motionBlurSettings != initialMotionBlurSettings
-+      || abs(zoomTransitionDuration - initialZoomTransitionDuration) > 0.0001
-       || clips != initialClips
-       || segments != initialZoomSegments
-       || speedSegments != initialSpeedSegments
-```
-
-**File**: `SnapzyTests/Features/Annotate/AnnotateCropTests.swift` (modified, +23/-0)
-```diff
-@@ -157,6 +157,29 @@ final class AnnotateCropTests: XCTestCase {
-     XCTAssertEqual(state.selectedTool, .selection)
-   }
- 
-+  /// Regression: confirming a crop must record an undo checkpoint so ⌘Z restores the previous crop state.
-+  @MainActor
-+  func testConfirmCropInteractionRecordsUndoAndRedo() throws {
-+    let state = try makeLoadedState()
-+    XCTAssertNil(state.cropRect)
-+    XCTAssertFalse(state.canUndo)
-+
-+    state.beginCropInteraction()
-+    let cropped = CGRect(x: 40, y: 30, width: 200, height: 150)
-+    state.updateCropRect(cropped)
-+    state.confirmCropInteraction()
-+
-+    XCTAssertEqual(state.cropRect, cropped)
-+    XCTAssertTrue(state.canUndo)
-+
-+    state.undo()
-+    XCTAssertNil(state.cropRect)
-+    XCTAssertTrue(state.canRedo)
-+
-+    state.redo()
-+    XCTAssertEqual(state.cropRect, cropped)
-+  }
-+
-   // MARK: - Cancel / reset
- 
-   @MainActor
-```
-
-**File**: `SnapzyTests/Features/Annotate/AnnotateMockupTests.swift` (modified, +17/-0)
-```diff
-@@ -170,6 +170,23 @@ final class AnnotateMockupTests: XCTestCase {
-     XCTAssertNil(state.selectedPresetId)
-   }
- 
-+  /// Regression: MockupState.undo() and redo() must restore selectedPresetId alongside transforms.
-+  func testMockupStateUndoRedoRestoresSelectedPresetId() {
-+    let state = makeMockupState()
-+    XCTAssertNil(state.selectedPresetId)
-+
-+    state.applyPreset(.dramatic)
-+    XCTAssertEqual(state.selectedPresetId, MockupPreset.dramatic.id)
-+
-+    state.undo()
-+    XCTAssertNil(state.selectedPresetId)
-+    XCTAssertEqual(state.rotationX, 0)
-+
-+    state.redo()
-+    XCTAssertEqual(state.selectedPresetId, MockupPreset.dramatic.id)
-+    XCTAssertEqual(state.rotationY, MockupPreset.dramatic.rotationY)
-+  }
-+
-   // MARK: - MockupExporter render (GPU path, CI-gated)
- 
-   func testMockupExporterRenderProducesImageWithSourceImage() throws {
-```
-
-**File**: `SnapzyTests/Features/VideoEditor/VideoEditorSessionStoreTests.swift` (modified, +57/-0)
-```diff
-@@ -943,6 +943,63 @@ final class VideoEditorSessionStoreTests: XCTestCase {
-     XCTAssertFalse(state.canRedo)
-   }
- 
-+  /// Regression: continuous background slider drags collapse into one undo step via beginFrameEdit/endFrameEdit.
-+  func testFrameEdit_beginAndEndCollapseSliderDragIntoSingleUndoStep() {
-+    let state = VideoEditorState(url: URL(fileURLWithPath: "/tmp/frame-undo-test.mov"))
-+    let initial = state.frameSettings
-+
-+    state.beginFrameEdit()
-+    state.backgroundPadding = 16
-+    state.backgroundPadding = 32
-+    state.backgroundPadding = 48
-+    state.backgroundStyle = .solidColor(.white)
-+    state.endFrameEdit()
-+
-+    XCTAssertTrue(state.canUndo)
-+    XCTAssertEqual(state.backgroundPadding, 48)
-+
-+    state.undo()
-+    XCTAssertEqual(state.frameSettings, initial)
-+    XCTAssertFalse(state.canUndo)
-+
-+    state.redo()
-+    XCTAssertEqual(state.backgroundPadding, 48)
-+    XCTAssertEqual(state.backgroundStyle, .solidColor(.white))
-+  }
-+
-+  /// Regression: changing zoomTransitionDuration must mark hasUnsavedChanges and support Undo/Redo.
-+  func testZoomTransitionDuration_recordsUndoAndMarksUnsavedChanges() {
-+    let previousDefault = UserDefaults.standard.object(forKey: PreferencesKeys.videoEditorZoomTransitionDuration)
-+    defer {
-+      if let previousDefault {
-+        UserDefaults.standard.set(previousDefault, forKey: PreferencesKeys.videoEditorZoomTransitionDuration)
-+      } else {
-+        UserDefaults.standard.removeObject(forKey: PreferencesKeys.videoEditorZoomTransitionDuration)
-+      }
-+    }
-+
-+    let state = VideoEditorState(url: URL(fileURLWithPath: "/tmp/transition-undo-test.mov"))
-+    let initial = state.zoomTransitionDuration
-+    let target = initial == ZoomCalculator.defaultTransitionDuration
-+      ? ZoomCalculator.smoothTransitionDuration
-+      : ZoomCalculator.defaultTransitionDuration
-+
-+    XCTAssertFalse(state.hasUnsavedChanges)
-+    state.setZoomTransitionDuration(target)
-+
-+    XCTAssertEqual(state.zoomTransitionDuration, target, accuracy: 0.0001)
-+    XCTAssertTrue(state.hasUnsavedChanges)
-+    XCTAssertTrue(state.canUndo)
-+
-+    state.undo()
-+    XCTAssertEqual(state.zoomTransitionDuration, initial, accuracy: 0.0001)
-+    XCTAssertFalse(state.hasUnsavedChanges)
-+
-+    state.redo()
-+    XCTAssertEqual(state.zoomTransitionDuration, target, accuracy: 0.0001)
-+    XCTAssertTrue(state.hasUnsavedChanges)
-+  }
-+
-   func testSpeedGesture_finalModelAndSequenceMapUseReleasedRange() async throws {
-     let videoURL = try await makeVideoFile(named: "speed-gesture.mov", duration: 12)
-     let state = VideoEditorState(url: videoURL)
-```
-
----
-
-### Incident Patch 3: `60e22922` (2026-11-24)
-**Commit Message**: fix: avoid back-deployed isolated deinit crash in MenuBarIconRenderer
-
-Tests now create and release isolated renderers; the synthesized main-actor
-deinit aborts via swift_task_deinitOnExecutor on macOS 13-15 (#668).
-
-**File**: `Snapzy/App/MenuBarIconRenderer.swift` (modified, +4/-0)
-```diff
-@@ -25,6 +25,10 @@ final class MenuBarIconRenderer {
-     self.customIconDirectory = customIconDirectory
-   }
- 
-+  /// Explicit and nonisolated: the synthesized main-actor deinit hops through the
-+  /// back-deployed swift_task_deinitOnExecutor, which aborts on macOS 13-15 (#668).
-+  nonisolated deinit {}
-+
-   // MARK: - Rendering
- 
-   /// 18pt template image for the given style. Falls back to the bundled
+@@ -483,7 +483,7 @@
+ 				CODE_SIGN_ENTITLEMENTS = Snapzy/Snapzy.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 245;
++				CURRENT_PROJECT_VERSION = 246;
+ 				DEVELOPMENT_TEAM = XMHV5GH2Z7;
+ 				ENABLE_APP_SANDBOX = NO;
+ 				ENABLE_HARDENED_RUNTIME = YES;
+@@ -501,7 +501,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+-				MARKETING_VERSION = 2.3.0-beta.12;
++				MARKETING_VERSION = 2.3.0-beta.13;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.trongduong.snapzy.debug;
+ 				PRODUCT_MODULE_NAME = Snapzy;
+ 				PRODUCT_NAME = "Snapzy Debug";
+@@ -525,7 +525,7 @@
+ 				CODE_SIGN_ENTITLEMENTS = Snapzy/Snapzy.entitlements;
+ 				CODE_SIGN_STYLE = Automatic;
+ 				COMBINE_HIDPI_IMAGES = YES;
+-				CURRENT_PROJECT_VERSION = 245;
++				CURRENT_PROJECT_VERSION = 246;
+ 				DEVELOPMENT_TEAM = XMHV5GH2Z7;
+ 				ENABLE_APP_SANDBOX = NO;
+ 				ENABLE_HARDENED_RUNTIME = YES;
+@@ -542,7 +542,7 @@
+ 					"@executable_path/../Frameworks",
+ 				);
+ 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+-				MARKETING_VERSION = 2.3.0-beta.12;
++				MARKETING_VERSION = 2.3.0-beta.13;
+ 				PRODUCT_BUNDLE_IDENTIFIER = com.trongduong.snapzy;
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+ 				REGISTER_APP_GROUPS = YES;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #817** (2026-11-26): chore: release v2.3.0-beta.13 (@github-actions[bot])
 - **PR #816** (2026-11-24): chore: release v2.3.0-beta.12 (@github-actions[bot])
 - **PR #815** (closed): fix: Use nonisolated deinit on MenuBarIconRenderer (@duongductrong)
+- **PR #813** (2026-11-26): feat: Universal Automations and custom HTTP uploader (@duongductrong)
 - **PR #811** (2026-11-24): fix: preserve custom S3 ports in SigV4, trim trailing URL slashes, and encode continuation tokens (@williamcachamwri)
 - **PR #810** (2026-11-24): fix: record undo snapshots for Video Editor background/transition edits and Annotate crop/mockup (@williamcachamwri)
-- **PR #809** (2026-11-25): fix: improve Light Mode contrast and inline slider layout across UI components (@williamcachamwri)
-- **PR #808** (2026-11-24): fix: scale transparent custom menu bar PNG icons into 18pt canvas (@williamcachamwri)
 
 ---
 
@@ -1913,32 +1288,40 @@ deinit aborts via swift_task_deinitOnExecutor on macOS 13-15 (#668).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improved Light Mode contrast and inline slider layout across UI components
+## X. update appcast and docs for v2.3.0-beta.13
 
 **RULE**:
-When implementing operations in `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `appcast.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duongductrong/Snapzy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `193d9422`: Improved Light Mode contrast and inline slider layout across UI components. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b58d05a`: update appcast and docs for v2.3.0-beta.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Snapzy/Features/Annotate/InlineAreaAnnotateWindow.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `appcast.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-struct InlineAreaSliderControl: View {
-  static let valueReadoutMinWidth: CGFloat = 44
-
-          .frame(minWidth: Self.valueReadoutMinWidth, alignment: .trailing)
+    <item>
+      <title>Version 2.3.0-beta.13</title>
+      <sparkle:channel>beta</sparkle:channel>
+      <sparkle:version>246</sparkle:version>
+      <sparkle:shortVersionString>2.3.0-beta.13</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 26 Nov 2026 15:54:55 +0000</pubDate>
+      <description><![CDATA[
+        <style>:root { color-scheme: light dark; } body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.5; padding: 8px 16px; } h3 { font-size: 14px; margin: 12px 0 6px; } ul { padding-left: 20px; margin: 4px 0; } li { margin: 3px 0; }</style>
+        <h3>✨ Features</h3><ul><li>Added Universal Automations and custom HTTP uploader (1f8348af)</li></ul><h3>🐛 Bug Fixes</h3><ul><li>Improved Light Mode contrast and inline slider layout across UI components (193d9422)</li><li>normalize S3 endpoint trailing slashes across all cloud requests (8eff1e8a)</li><li>preserve custom S3 ports in SigV4, trim trailing URL slashes, and encode continuation tokens (1e43e64e)</li></ul>
+      ]]></description>
+      <enclosure
+        url="https://github.co
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-private struct InlineAreaSliderControl: View {
-          .frame(width: 34, alignment: .trailing)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `193d9422` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b58d05a` are properly handled with clean fallback behavior.

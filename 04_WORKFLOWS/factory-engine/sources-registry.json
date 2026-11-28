@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T03:54:06.743Z",
-    "lastVerified": "2026-11-28T03:54:06.743Z",
+    "lastChecked": "2026-11-28T04:03:40.967Z",
+    "lastVerified": "2026-11-28T04:03:40.967Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-28T03:26:36.419Z",
+    "lastChecked": "2026-11-28T04:03:40.951Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-28T03:26:36.419Z"
+    "lastVerified": "2026-11-28T04:03:40.951Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1092,9 +1092,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-27T23:48:43.465Z",
+    "lastChecked": "2026-11-28T04:03:36.327Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-27T23:48:43.465Z"
+    "lastVerified": "2026-11-28T04:03:36.327Z"
   },
   "chroma-core-chroma": {
     "name": "chroma-core/chroma",
@@ -4630,9 +4630,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-27T10:43:02.820Z",
+    "lastChecked": "2026-11-28T04:03:33.664Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-27T10:43:02.820Z"
+    "lastVerified": "2026-11-28T04:03:33.664Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbaseio/trailbase",
@@ -7181,9 +7181,9 @@
   "alexpasmantier-television": {
     "name": "television",
     "officialUrl": "https://github.com/alexpasmantier/television",
-    "lastChecked": "2026-11-27T04:18:13.063Z",
+    "lastChecked": "2026-11-28T04:03:25.952Z",
     "revisionIdentifier": "d91ab5b6",
-    "lastVerified": "2026-11-27T04:18:13.063Z"
+    "lastVerified": "2026-11-28T04:03:25.952Z"
   },
   "hf-baai-bge-large-en-v1.5": {
     "name": "BAAI/bge-large-en-v1.5",
@@ -7862,9 +7862,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-11-27T09:08:09.121Z",
+    "lastChecked": "2026-11-28T04:03:38.585Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-27T09:08:09.121Z"
+    "lastVerified": "2026-11-28T04:03:38.586Z"
   },
   "jhspetersson-fselect": {
     "name": "fselect",
@@ -11059,14 +11059,14 @@
     "officialUrl": "https://github.com/duongductrong/Snapzy",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-26T02:09:39.348Z",
-    "lastVerified": "2026-11-26T02:09:39.348Z",
+    "lastChecked": "2026-11-28T04:03:34.252Z",
+    "lastVerified": "2026-11-28T04:03:34.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duongductrong-snapzy",
-    "contentHash": "7b26159bd7abbfe638d03dc2ea323dae0f503aa7d324c2dba6a56e20a1bd1f97",
+    "contentHash": "98a422add2143b25d63c9b0091d44f47762018b48f861b315c1fca09746493d6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11515,12 +11515,12 @@
     "officialUrl": "https://github.com/axios/axios",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T19:09:48.453Z",
-    "lastVerified": "2026-11-24T19:09:48.453Z",
+    "lastChecked": "2026-11-28T04:03:31.385Z",
+    "lastVerified": "2026-11-28T04:03:31.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-axios-axios",
-    "contentHash": "793d480012c671dc5e7e7f99a42f57170d60735631693608b54d9544a31bd0eb",
+    "contentHash": "ef13f5fc3db472ef9bcd879897ecd91f9370c42cba02377a601373b60ddf9650",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,

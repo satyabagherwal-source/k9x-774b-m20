@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T03:54:08.756Z",
+  "updated_at": "2026-11-28T04:03:44.882Z",
   "stats": {
-    "total_discovered": 10718,
-    "approved_pending_harvest": 10172,
+    "total_discovered": 10732,
+    "approved_pending_harvest": 10186,
     "harvested_count": 0,
     "rejected_count": 546,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10186,
+      "COMMUNITY_AND_EXPERT": 10200,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -232001,6 +232001,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
         "fileName": "dosco-deeporg-learnings.md"
+      }
+    },
+    "SRC-BE55522E2212": {
+      "id": "SRC-BE55522E2212",
+      "url": "https://github.com/axios/axios/pull/11389",
+      "title": "https://github.com/axios/axios/pull/11389",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-4C82F9B619A5": {
+      "id": "SRC-4C82F9B619A5",
+      "url": "https://github.com/axios/axios/pull/11401",
+      "title": "https://github.com/axios/axios/pull/11401",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-AD5427784DE9": {
+      "id": "SRC-AD5427784DE9",
+      "url": "https://github.com/axios/axios/pull/11500",
+      "title": "https://github.com/axios/axios/pull/11500",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-0F5C32DDA42E": {
+      "id": "SRC-0F5C32DDA42E",
+      "url": "https://github.com/axios/axios/pull/11488",
+      "title": "https://github.com/axios/axios/pull/11488",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-B0C785E3F029": {
+      "id": "SRC-B0C785E3F029",
+      "url": "https://opensource.sap.com/",
+      "title": "https://opensource.sap.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-8478C4AA0BD7": {
+      "id": "SRC-8478C4AA0BD7",
+      "url": "https://avatars.githubusercontent.com/u/2531208?s=200&v=4",
+      "title": "https://avatars.githubusercontent.com/u/2531208?s=200&v=4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-AB04B4EABA7F": {
+      "id": "SRC-AB04B4EABA7F",
+      "url": "https://www.descope.com/",
+      "title": "https://www.descope.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:42.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-BA0ADF234485": {
+      "id": "SRC-BA0ADF234485",
+      "url": "https://poprey.com/",
+      "title": "https://poprey.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:43.026Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-A4FA8215E42B": {
+      "id": "SRC-A4FA8215E42B",
+      "url": "https://www.jbo88b.com/vn",
+      "title": "https://www.jbo88b.com/vn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:43.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-CC7F5DF0EF46": {
+      "id": "SRC-CC7F5DF0EF46",
+      "url": "https://www.jbo579.com/th",
+      "title": "https://www.jbo579.com/th",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:43.248Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-510646CEB9E5": {
+      "id": "SRC-510646CEB9E5",
+      "url": "https://www.herodevs.com/support/nes-for-axios?amp%3Butm_medium=referral&amp%3Butm_campaign=nes-for-axios_global&amp%3Butm_content=landing-page_none_20260924_a",
+      "title": "https://www.herodevs.com/support/nes-for-axios?amp%3Butm_medium=referral&amp%3Butm_campaign=nes-for-axios_global&amp%3Butm_content=landing-page_none_20260924_a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:43.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-F07E03FE5D1A": {
+      "id": "SRC-F07E03FE5D1A",
+      "url": "https://opencollective.com/sweepico-promo-code",
+      "title": "https://opencollective.com/sweepico-promo-code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:43.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/axios-axios-learnings.md",
+        "fileName": "axios-axios-learnings.md"
+      }
+    },
+    "SRC-38243DD7D973": {
+      "id": "SRC-38243DD7D973",
+      "url": "https://github.com/duongductrong/Snapzy/releases",
+      "title": "https://github.com/duongductrong/Snapzy/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:44.782Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+        "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-76849C6A5DDA": {
+      "id": "SRC-76849C6A5DDA",
+      "url": "https://github.com/duongductrong/Snapzy/releases/download/v2.3.0-beta.13/Snapzy-v2.3.0-beta.13.dmg",
+      "title": "https://github.com/duongductrong/Snapzy/releases/download/v2.3.0-beta.13/Snapzy-v2.3.0-beta.13.dmg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T04:03:44.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
+        "fileName": "duongductrong-snapzy-learnings.md"
       }
     }
   }

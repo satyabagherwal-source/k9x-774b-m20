@@ -13996,3 +13996,5 @@ Every entry in this ledger must capture:
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `17261594` | Multi-dimensional audit evidence | 2026-11-28T03:45:02.439Z |
 | `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `f7a6f8f8` | Multi-dimensional audit evidence | 2026-11-28T03:54:00.618Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `7ada323a` | Multi-dimensional audit evidence | 2026-11-28T03:54:03.114Z |
+| `learn-github-axios-axios` | `https://github.com/axios/axios` | `71c87d50` | Multi-dimensional audit evidence | 2026-11-28T04:03:33.063Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `9b58d05a` | Multi-dimensional audit evidence | 2026-11-28T04:03:35.852Z |
