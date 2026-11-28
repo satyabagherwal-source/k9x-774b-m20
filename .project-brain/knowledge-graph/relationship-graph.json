@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T07:59:29.635Z",
+  "updated_at": "2026-11-28T08:17:34.007Z",
   "statistics": {
-    "total_nodes": 598,
+    "total_nodes": 600,
     "total_edges": 240,
     "domain_distribution": {
       "D": 358,
       "M": 1,
-      "H": 116,
+      "H": 118,
       "J": 23,
       "K": 35,
       "L": 9,
@@ -13342,6 +13342,50 @@
       ],
       "created_at": "2026-11-28T07:59:29.634Z",
       "updated_at": "2026-11-28T07:59:29.634Z"
+    },
+    "DOM-H-34761320": {
+      "id": "DOM-H-34761320",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "CLI Buffer Truncation Under Force Exit (BUG-ROLLUP-6691)",
+      "summary": "Node's `Writable.prototype.write()` does not guarantee that bytes are flushed to the OS kernel immediately; if the stream's internal highWat -> Never invoke `process.exit()` while writable streams are active without explicitly awaiting an empty chunk drain write (`stream.write('', ca",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://rollup-rollup/rollup-rollup-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:16:34.098Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rollup-rollup)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T08:17:01.429Z",
+      "updated_at": "2026-11-28T08:17:01.429Z"
+    },
+    "DOM-H-AA0E6A7E": {
+      "id": "DOM-H-AA0E6A7E",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Watch Hook Subprocess Output Polluting stdout (BUG-ROLLUP-HOOKS-01)",
+      "summary": "Failure to configure the file descriptor mapping in `child_process.execSync`. In POSIX systems, file descriptor 1 (`stdout`) must be reserve -> Subprocess file descriptors must be strictly partitioned: map child FD 1 and FD 2 directly to parent FD 2 (`process.stderr`) when the tool a",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://rollup-rollup/rollup-rollup-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:16:34.098Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rollup-rollup)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T08:17:34.007Z",
+      "updated_at": "2026-11-28T08:17:34.007Z"
     }
   },
   "edges": [

@@ -14017,3 +14017,7 @@
 | `CYCLE-20261128-C09A` | `2026-11-28T07:58:25.870Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`48bf9b5b...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:58:56.048Z` | `webpack-webpack` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-5CC5EBBF` [Domain H] | Yes (`76a34ea7...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T07:59:29.637Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3BCEAD45` [Domain D] | Yes (`957d5c5a...`) |
+| `CYCLE-20261128-WCX8` | `2026-11-28T08:14:15.404Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11066` | Yes (`fd4dc9d5...`) |
+| `CYCLE-20261128-Z8TZ` | `2026-11-28T08:16:30.071Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11067, Rule 11068, Rule 11069` | Yes (`68011006...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:17:01.432Z` | `rollup-rollup` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-34761320` [Domain H] | Yes (`dc0be6ec...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T08:17:34.010Z` | `rollup-rollup` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-AA0E6A7E` [Domain H] | Yes (`8a796279...`) |

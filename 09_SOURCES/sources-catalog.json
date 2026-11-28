@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "173cfd3a",
+    "sourceVersion": "73d63952",
     "license": "NOASSERTION",
-    "contentHash": "f57ea7152a5989c5e1e8fdce1f78ddd368b322d723acefc9df44877d342d5f87",
-    "lastHarvestedAt": "2026-11-24T23:33:22.390Z",
+    "contentHash": "68011006157b47d9c83090a2f5697217f8e7cd5b57b52cef1bb55ebc15a05207",
+    "lastHarvestedAt": "2026-11-28T08:16:30.076Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
@@ -9683,10 +9683,10 @@
     "repository": "iPlug2/iPlug2",
     "platform": "github",
     "sourceUrl": "https://github.com/iPlug2/iPlug2",
-    "sourceVersion": "a6186c7a",
+    "sourceVersion": "15279358",
     "license": "NOASSERTION",
-    "contentHash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
-    "lastHarvestedAt": "2026-11-26T06:10:30.901Z",
+    "contentHash": "fd4dc9d5386fb36612e8e20ac68da0f5b9669f50729c5bc2063b010dc9511bc5",
+    "lastHarvestedAt": "2026-11-28T08:14:15.408Z",
     "learningId": "learn-github-iplug2-iplug2"
   },
   "digitalbazaar-jsonld.js": {

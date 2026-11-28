@@ -14050,3 +14050,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c56f9f1a` | Multi-dimensional audit evidence | 2026-11-28T07:58:25.884Z |
 | `learn-dom-h-5cc5ebbf` | `project://webpack-webpack` | `d099046f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webpack-webpack-learnings.md` | 2026-11-28T07:58:56.048Z |
 | `learn-dom-d-3bcead45` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-28T07:59:29.637Z |
+| `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `15279358` | Multi-dimensional audit evidence | 2026-11-28T08:14:15.408Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `73d63952` | Multi-dimensional audit evidence | 2026-11-28T08:16:30.076Z |
+| `learn-dom-h-34761320` | `project://rollup-rollup` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md` | 2026-11-28T08:17:01.432Z |
+| `learn-dom-h-aa0e6a7e` | `project://rollup-rollup` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md` | 2026-11-28T08:17:34.010Z |

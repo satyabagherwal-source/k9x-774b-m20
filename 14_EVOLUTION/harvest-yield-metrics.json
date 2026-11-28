@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T07:58:25.911Z",
-  "total_cycles_completed": 13297,
-  "total_learnings_persisted": 13297,
-  "total_rules_promoted": 11986,
+  "last_updated": "2026-11-28T08:16:30.081Z",
+  "total_cycles_completed": 13299,
+  "total_learnings_persisted": 13299,
+  "total_rules_promoted": 11990,
   "history": [
-    {
-      "timestamp": "2026-11-27T14:05:10.691Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T14:06:59.271Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T14:16:53.153Z",
       "repository": "max-sixty/worktrunk",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T08:14:15.414Z",
+      "repository": "iPlug2/iPlug2",
+      "learningId": "learn-github-iplug2-iplug2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T08:16:30.081Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

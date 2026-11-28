@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T07:59:30.394Z",
-  "total_records": 2884,
+  "last_updated": "2026-11-28T08:17:37.717Z",
+  "total_records": 2888,
   "domains": {
     "A": {
       "total": 27,
@@ -1776,7 +1776,7 @@
       ]
     },
     "H": {
-      "total": 697,
+      "total": 699,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2474,11 +2474,13 @@
         "DOM-H-797E7DCD",
         "DOM-H-6F2C6AB3",
         "DOM-H-3B7BECBA",
-        "DOM-H-5CC5EBBF"
+        "DOM-H-5CC5EBBF",
+        "DOM-H-34761320",
+        "DOM-H-AA0E6A7E"
       ]
     },
     "I": {
-      "total": 167,
+      "total": 169,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2646,7 +2648,9 @@
         "domain_intelligence-content-information-intelligence-zulip-zulip-core-invariants",
         "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants",
-        "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-iplug2-iplug2-core-invariants",
+        "domain_intelligence-content-information-intelligence-iplug2-iplug2-learnings-core-invariants"
       ]
     },
     "J": {
@@ -12275,8 +12279,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "811da2ede4f18235de0cf62635a06b28c59cf14d611576d9482cf6f4a01444b2",
-      "created_at": "2026-11-28T06:13:26.383Z"
+      "content_hash": "89a1607013502a629926a8edfd0849ee80e61b245342bead1a6357007237b81d",
+      "created_at": "2026-11-28T08:17:37.717Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -26686,8 +26690,8 @@
       "title": "Technical Construction Intelligence: rollup/rollup Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-technical-construction-intelligence-rollup-rollup-core-invariants.md",
       "repository": "rollup/rollup",
-      "content_hash": "0a5ce1c95599cff7dda0e485f705e9c3ecc90337f6f26e8c2fee46e10644d465",
-      "created_at": "2026-11-20T23:47:47.126Z"
+      "content_hash": "4f713cdb998628f5287b37ed8fa3b48a970015e56bf31da09b155840faf760be",
+      "created_at": "2026-11-28T08:16:30.869Z"
     },
     "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rollup-rollup-learnings-core-invariants",
@@ -26695,8 +26699,8 @@
       "title": "Technical Construction Intelligence: rollup-rollup-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rollup-rollup-learnings-technical-construction-intelligence-rollup-rollup-learni.md",
       "repository": "rollup-rollup-learnings",
-      "content_hash": "4b89f8181347f26996c120825e0d2afdcea6dadb3ebd9497504d47f7cfaa6db0",
-      "created_at": "2026-11-20T23:47:53.723Z"
+      "content_hash": "c695cfee5df91a9fc25186b6e14955b3f033060fde0c6c1417f718bd98895041",
+      "created_at": "2026-11-28T08:17:35.039Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-1-7b-gguf-core-invariants",
@@ -48957,6 +48961,92 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T07:59:29.597Z"
+    },
+    "domain_intelligence-content-information-intelligence-iplug2-iplug2-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-iplug2-iplug2-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: iPlug2/iPlug2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iplug2-iplug2-content-information-intelligence-iplug2-iplug2-core-invariants.md",
+      "repository": "iPlug2/iPlug2",
+      "content_hash": "6b565175c1a55c76e533b5936f404c231980db3f7995bd4586fb9f2603f7a77a",
+      "created_at": "2026-11-28T08:14:15.854Z"
+    },
+    "DOM-H-34761320": {
+      "record_id": "DOM-H-34761320",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "CLI Buffer Truncation Under Force Exit (BUG-ROLLUP-6691)",
+      "content": "Never invoke `process.exit()` while writable streams are active without explicitly awaiting an empty chunk drain write (`stream.write('', callback)`).",
+      "content_hash": "dc0be6ec682bc02edb304687c9614d5e2c728180a0ecf3173292a984dd28c3f1",
+      "summary": "Node's `Writable.prototype.write()` does not guarantee that bytes are flushed to the OS kernel immediately; if the stream's internal highWat -> Never invoke `process.exit()` while writable streams are active without explicitly awaiting an empty chunk drain write (`stream.write('', ca",
+      "provenance": {
+        "source_uri": "project://rollup-rollup/rollup-rollup-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:16:34.098Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rollup-rollup)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `d0d69693`, PR #6691, tests `force-exit-stderr-file`, `force-exit-stdout-asset`, `force-exit-stdout-code`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T08:17:01.401Z"
+    },
+    "DOM-H-AA0E6A7E": {
+      "record_id": "DOM-H-AA0E6A7E",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Watch Hook Subprocess Output Polluting stdout (BUG-ROLLUP-HOOKS-01)",
+      "content": "Subprocess file descriptors must be strictly partitioned: map child FD 1 and FD 2 directly to parent FD 2 (`process.stderr`) when the tool allows FD 1 to serve as a data pipeline.",
+      "content_hash": "8a7962799e85e26798076ff7a55caaae24103e0542778d523cd8a71a3643fcfa",
+      "summary": "Failure to configure the file descriptor mapping in `child_process.execSync`. In POSIX systems, file descriptor 1 (`stdout`) must be reserve -> Subprocess file descriptors must be strictly partitioned: map child FD 1 and FD 2 directly to parent FD 2 (`process.stderr`) when the tool a",
+      "provenance": {
+        "source_uri": "project://rollup-rollup/rollup-rollup-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T08:16:34.098Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rollup-rollup)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`cli/run/watchHooks.ts`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-28T08:17:33.979Z"
+    },
+    "domain_intelligence-content-information-intelligence-iplug2-iplug2-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-iplug2-iplug2-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: iplug2-iplug2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iplug2-iplug2-learnings-content-information-intelligence-iplug2-iplug2-learnings.md",
+      "repository": "iplug2-iplug2-learnings",
+      "content_hash": "70e0aee1f9342500f5a27764ad8a30efe71c3036c36afea90b92340ace91efbb",
+      "created_at": "2026-11-28T08:17:36.509Z"
     }
   }
 }

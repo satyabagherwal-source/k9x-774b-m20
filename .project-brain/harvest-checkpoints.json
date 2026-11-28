@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T07:58:25.914Z",
+  "last_updated": "2026-11-28T08:16:30.084Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2991,14 +2991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rollup-rollup",
-      "content_hash": "f57ea7152a5989c5e1e8fdce1f78ddd368b322d723acefc9df44877d342d5f87",
-      "verified_at": "2026-11-24T23:33:22.404Z",
+      "content_hash": "68011006157b47d9c83090a2f5697217f8e7cd5b57b52cef1bb55ebc15a05207",
+      "verified_at": "2026-11-28T08:16:30.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:33:22.404Z"
+      "last_updated": "2026-11-28T08:16:30.084Z"
     },
     "rmax/scrapy-redis": {
       "repository": "rmax/scrapy-redis",
@@ -14571,14 +14571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iplug2-iplug2",
-      "content_hash": "554a559b644e725328e2ce24b1cde591afa29fd72ffad69fe20a664097cc8bcf",
-      "verified_at": "2026-11-26T06:10:30.917Z",
+      "content_hash": "fd4dc9d5386fb36612e8e20ac68da0f5b9669f50729c5bc2063b010dc9511bc5",
+      "verified_at": "2026-11-28T08:14:15.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:10:30.917Z"
+      "last_updated": "2026-11-28T08:14:15.417Z"
     },
     "digitalbazaar/jsonld.js": {
       "repository": "digitalbazaar/jsonld.js",

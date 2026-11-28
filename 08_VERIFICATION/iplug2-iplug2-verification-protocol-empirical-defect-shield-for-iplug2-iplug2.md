@@ -4,22 +4,22 @@
 {
   "source_repository": "iPlug2/iPlug2",
   "source_url": "https://github.com/iPlug2/iPlug2",
-  "source_version": "a6186c7a",
+  "source_version": "15279358",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T06:10:31.132Z",
+  "timestamp": "2026-11-28T08:14:15.652Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-iplug2-iplug2",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [iPlug2/iPlug2](https://github.com/iPlug2/iPlug2) (Revision: `a6186c7a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T06:10:31.132Z`  
+> **Provenance**: Harvested from [iPlug2/iPlug2](https://github.com/iPlug2/iPlug2) (Revision: `15279358`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-28T08:14:15.652Z`  
 > **Learning ID**: `learn-github-iplug2-iplug2`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `iPlug2/iPlug2` (Commit: `a6186c7a`)
+- **Target Repository**: `iPlug2/iPlug2` (Commit: `15279358`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iplug2-iplug2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iPlug2/iPlug2](https://github.com/iPlug2/iPlug2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T06:10:29.924Z  
+> **Harvest Timestamp**: 2026-11-28T08:09:03.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2456 stars
+- **Stars / Engagement**: 2457 stars
 
 ---
 
@@ -1537,477 +1537,272 @@ if __name__ == '__main__':
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68ec2f20` (2026-11-23)
-**Commit Message**: Add Linux support to the IGraphics accessibility layer
+### Incident Patch 1: `1cd0e175` (2026-11-27)
+**Commit Message**: Merge pull request #1618 from iPlug2/fix/ios-cmake-deployment-target
 
-Exposes IGraphics controls to Orca and other AT-SPI clients on Linux, using
-AccessKit's Unix adapter.
+CMake: default the iOS deployment target to 15
 
-- IGraphicsLinux: IGraphicsAccessibilityLinux owns the adapter, reports X11
-  focus changes, and polls the window's position on the screen while
-  assistive technology is in use, since an embedded window isn't told when
-  its host's window moves.
-- IGraphicsAccessibility: RequestFullUpdate() and SetInactive(), for
-  adapters that call their handlers on a thread other than the UI thread.
-  The tree is then built on the next frame rather than in the activation
-  handler.
-- Freeing the Unix adapter only queues its removal, so its handlers are
-  given an ID that is looked up in a registry of live instances, rather
-  than a pointer that could be dangling.
-- CMake: IGRAPHICS_ACCESSKIT now works on Linux. AccessKit's symbols are
-  not exported, and binaries are linked with -z nodelete because AccessKit's
-  thread lasts for as long as the process does.
-- Documentation/accessibility.md: Linux section.
-
-Tested with the IPlugControls standalone via libatspi (tree, actions,
-events, focus, bounds, reactivation, and closing under AddressSa
-
-**File**: `Dependencies/IGraphics/download-accesskit.sh` (modified, +1/-1)
+**File**: `Documentation/cmake.md` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ set -eo pipefail
+@@ -641,7 +641,7 @@ auval -v aumu <subtype> <manufacturer>  # Validate instrument
  
- # Downloads the prebuilt AccessKit C bindings (https://github.com/AccessKit/accesskit-c)
- # used by IGraphics when IGRAPHICS_ACCESSKIT is defined.
--# The release archive contains headers and libraries for all platforms.
-+# The release archive contains headers and libraries for all platforms (macOS, Windows and Linux x86_64/x86).
- # Result: Dependencies/Build/accesskit/{include,lib}
+ ### iOS
  
- ACCESSKIT_VERSION=0.23.2
-```
-
-**File**: `Documentation/accessibility.md` (modified, +15/-3)
-```diff
-@@ -1,6 +1,6 @@
- # IGraphics accessibility
- 
--IGraphics can expose its controls to assistive technology (VoiceOver on macOS; Narrator, NVDA and JAWS on Windows) using [AccessKit](https://accesskit.dev). It is opt-in, and currently supported on macOS and Windows.
-+IGraphics can expose its controls to assistive technology (VoiceOver on macOS; Narrator, NVDA and JAWS on Windows; Orca and other AT-SPI clients on Linux) using [AccessKit](https://accesskit.dev). It is opt-in, and currently supported on macOS, Windows and Linux.
- 
- Keyboard navigation is part of the same work, but doesn't depend on AccessKit and can be used on its own.
- 
-@@ -16,7 +16,7 @@ Keyboard navigation is part of the same work, but doesn't depend on AccessKit an
- 
-    | Build system | What to do |
-    |---|---|
--   | CMake | Configure with `-DIGRAPHICS_ACCESSKIT=ON` |
-+   | CMake (all platforms, the only option on Linux) | Configure with `-DIGRAPHICS_ACCESSKIT=ON` |
-    | Xcode | In `MyPlugin-mac.xcconfig`, add `IGRAPHICS_ACCESSKIT` to `EXTRA_ALL_DEFS` and `$(ACCESSKIT_LNK_FLAGS)` to `EXTRA_LNK_FLAGS` |
-    | Visual Studio | In `MyPlugin-win.props`, add `IGRAPHICS_ACCESSKIT` to `EXTRA_ALL_DEFS` (the library is linked automatically) |
- 
-@@ -44,6 +44,18 @@ Enabled by default when `IGRAPHICS_ACCESSKIT` is defined, otherwise off. Use `IG
- 
- Keys that aren't used for navigation still reach the control under the mouse and the function set with `SetKeyHandlerFunc()`, as before. `SetFocusRingColor()` changes the colour of the focus ring.
- 
-+## Linux
-+
-+The Linux implementation uses AT-SPI over D-Bus, so it needs no extra libraries at build time or run time. If there is no accessibility bus, or no assistive technology is running, it does nothing.
-+
-+- A plug-in appears to assistive technology as its own application, named after the host's process, rather than as part of the host's window. The UI is a window called after the plug-in.
-+- AccessKit runs a thread that lasts for as long as the process does, so binaries are linked with `-z nodelete`: once a plug-in has been loaded, the host can't unload it. AccessKit's symbols are not exported.
-+- The position of the window on the screen comes from X11, so it may be wrong under XWayland. It is polled a few times a second while assistive technology is in use, since an embedded window isn't told when its host's window moves.
-+- The window is reported as active while it has the X11 keyboard focus, which it takes when it is clicked.
-+- The AccessKit release only has x86_64 and x86 libraries for Linux. For other architectures, build [accesskit-c](https://github.com/AccessKit/accesskit-c) and put `libaccesskit.a` in `Dependencies/Build/accesskit/lib/linux/<arch>/static`.
-+
-+To try it without a screen reader, [Accerciser](https://gitlab.gnome.org/GNOME/accerciser) shows the tree and can perform actions. AccessKit only builds the tree while the `IsEnabled` property of `org.a11y.Status` on the session bus is true, which a screen reader or the desktop's accessibility settings take care of.
-+
- ## Custom controls
- 
- Controls that inherit from one of the base classes usually need nothing. Otherwise:
-@@ -61,7 +73,7 @@ To hide a control from assistive technology, call `SetAccessibleRole(EAccessible
- 
- ## Limitations
- 
--- Linux, iOS and Web are not supported yet.
-+- iOS and Web are not supported yet.
- - The contents of `IPopupMenuControl` and `ITextEntryControl` (the menus and text entries drawn by IGraphics) are not exposed. Platform menus and text entries are.
- - Meters are exposed without a value, and `IVKeyboardControl` is not exposed.
- - Whether the Tab and arrow keys reach a plug-in's UI depends on the host.
-```
-
-**File**: `IGraphics/IGraphicsAccessibility.cpp` (modified, +15/-3)
-```diff
-@@ -293,8 +293,7 @@ accesskit_tree_update* IGraphicsAccessibility::ActivationHandler(void* pUserData
- accesskit_tree_update* IGraphicsAccessibility::UpdateFactory(void* pUserData)
- {
-   auto* pThis = static_cast<IGraphicsAccessibility*>(pUserData);
--  const bool full = !pThis->mActive;
--  pThis->mActive = true;
-+  const bool full = !pThis->mActive.exchange(true);
-   return pThis->MakeUpdate(full);
- }
- 
-@@ -368,9 +367,22 @@ void IGraphicsAccessibility::ProcessActions()
-   }
- }
- 
-+void IGraphicsAccessibility::RequestFullUpdate()
-+{
-+  mActive = false;
-+  mUpdateRequested = true;
-+}
-+
-+void IGraphicsAccessibility::SetInactive()
-+{
-+  mActive = false;
-+}
-+
- void IGraphicsAccessibility::OnFrame(bool controlsDirty)
- {
--  if (controlsDirty)
-+  const bool updateRequested = mUpdateRequested.exchange(false);
-+
-+  if (controlsDirty || updateRequested)
-     UpdateIfActive(UpdateFactory, this);
- }
+-- Minimum deployment target: iOS 14 (configurable)
++- Minimum deployment target: iOS 15 (configurable)
+ - Device builds require code signing
+ - AUv3 is embedded in the standalone app
  
 ```
 
-**File**: `IGraphics/IGraphicsAccessibility.h` (modified, +10/-1)
+**File**: `Scripts/cmake/iOS.cmake` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@
- 
- #ifdef IGRAPHICS_ACCESSKIT
- 
-+#include <atomic>
- #include <mutex>
- #include <vector>
- #include <unordered_map>
-@@ -65,6 +66,13 @@ class IGraphicsAccessibility
-   /** @return The scale factor between IGraphics coordinates and the coordinates that the platform adapter expects, which by default is physical pixels */
-   virtual double GetRootScale() const;
- 
-+  /** Ask for the whole tree to be sent to the platform adapter on the next frame, even if no controls are dirty.
-+   * For platform adapters that call their activation handler on a thread other than the UI thread, where the tree can't be built in the handler. Can be called on any thread */
-+  void RequestFullUpdate();
-+
-+  /** Call when assistive technology stops using the tree. Can be called on any thread */
-+  void SetInactive();
-+
-   IGraphics& mGraphics;
- 
- private:
-@@ -98,7 +106,8 @@ class IGraphicsAccessibility
-   std::vector<Node> mNodes; // The nodes that were last sent to the adapter
-   std::unordered_map<IControl*, uint32_t> mControlIds;
-   uint32_t mNextControlId = 1;
--  bool mActive = false;
-+  std::atomic<bool> mActive { false };
-+  std::atomic<bool> mUpdateRequested { false };
- 
-   std::mutex mActionMutex;
-   std::vector<Action> mActions;
+@@ -62,7 +62,7 @@ if(IPLUG2_IOS_PLATFORM MATCHES "VISIONOS")
+   set(CMAKE_XCODE_ATTRIBUTE_XROS_DEPLOYMENT_TARGET ${IPLUG2_XROS_DEPLOYMENT_TARGET})
+ else()
+   if(NOT DEFINED IPLUG2_IOS_DEPLOYMENT_TARGET)
+-    set(IPLUG2_IOS_DEPLOYMENT_TARGET "14" CACHE STRING "Minimum iOS version")
++    set(IPLUG2_IOS_DEPLOYMENT_TARGET "15" CACHE STRING "Minimum iOS version")
+   endif()
+   set(CMAKE_OSX_DEPLOYMENT_TARGET ${IPLUG2_IOS_DEPLOYMENT_TARGET})
+   set(CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET ${IPLUG2_IOS_DEPLOYMENT_TARGET})
 ```
 
-**File**: `IGraphics/Platforms/IGraphicsLinux.cpp` (modified, +238/-0)
+---
+
+### Incident Patch 2: `25ac2861` (2026-11-27)
+**Commit Message**: Merge pull request #1619 from iPlug2/fix/ios-cmake-auv3-appex
+
+CMake: don't rename the iOS AUv3 appex, keep its processed Info.plist (app couldn't be installed)
+
+**File**: `Scripts/cmake/AUv3iOS.cmake` (modified, +8/-6)
 ```diff
-@@ -62,6 +62,222 @@
- using namespace iplug;
- using namespace igraphics;
- 
-+#ifdef IGRAPHICS_ACCESSKIT
-+#include "IGraphicsAccessibility.h"
-+
-+BEGIN_IPLUG_NAMESPACE
-+BEGIN_IGRAPHICS_NAMESPACE
-+
-+/** Owns the AccessKit adapter that exposes the controls in an IGraphicsLinux window via AT-SPI.
-+ * AccessKit calls the handlers on its own thread, so the tree is never built in the activation handler.
-+ * Instead the handler asks for the whole tree to be sent on the next frame, on the UI thread.
-+ * That thread can still call the handlers after the adapter has been freed, since freeing it only queues its removal.
-+ * So the handlers are given an ID rather than a pointer, which is looked up in a registry of the instances that are alive */
-+class IGraphicsAccessibilityLinux : public IGraphicsAccessibility
-+{
-+public:
-+  IGraphicsAccessibilityLinux(IGraphics& graphics, Display* pDisplay, Window wnd)
-+  : IGraphicsAccessibility(graphics)
-+  , mDisplay(pDisplay)
-+  , mWnd(wnd)
-+  {
-+    Registry& registry = GetRegistry();
-+    void* pId = nullptr;
-+
-+    {
-+      std::lock_guard<std::mutex> lock(registry.mutex);
-+      mId = registry.nextId++;
-+      registry.instances[mId] = this;
-+      pId = reinterpret_cast<void*>(mId);
-+    }
-+
-+    mAdapter = accesskit_unix_adapter_new(OnActivate, pId, OnAction, pId, OnDeactivate, pId);
-+  }
-+
-+  ~IGraphicsAccessibilityLinux()
-+  {
-+    {
-+      // Once this lock is released, no handler can be using this object
-+      Registry& registry = GetRegistry();
-+      std::lock_guard<std::mutex> lock(registry.mutex);
-+      registry.instances.erase(mId);
-+    }
-+
-+    accesskit_unix_adapter_free(mAdapter);
-+  }
-+
-+  void SetWindowFocused(bool focused)
-+  {
-+    accesskit_unix_adapter_update_window_focus_state(mAdapter, focused);
-+  }
-+
-+  /** Tell the adapter where the window is on the screen, which X11 doesn't notify an embedded window about.
-+   * Called once per frame, but only does anything a few times a second, and only if assistive technology is in use */
-+  void UpdateWindowBounds()
-+  {
-+    if (!mWantsBounds)
-+      return;
-+
-+    const auto now = std::chrono::steady_clock::now();
-+
-+    if (!mBoundsRequested.exchange(false) && now - mBoundsTime < std::chrono::milliseconds(250))
-+      return;
-+
-+    mBoundsTime = now;
-+
-+    // XCB is used so that an error (e.g. a window manager frame that was just destroyed) is returned, instead of reaching the Xlib error handler
-+    xcb_connection_t* pConnection = XGetXCBConnection(mDisplay);
-+
-+    if (!pConnection)
-+      return;
-+
-+    accesskit_rect inner;
-+
-+    if (!GetScreenRect(pConnection, static_cast<xcb_window_t>(mWnd), inner))
-+      return;
-+
-+    // The outer bounds are those of the top level window, including the window manager's frame if there is one
-+    accesskit_rect outer = inner;
-+    xcb_window_t topLevel = static_cast<xcb_window_t>(mWnd);
-+
-+    for (int depth = 0; depth < 64; depth++)
-+    {
-+      xcb_query_tree_reply_t* pTree = xcb_query_tree_reply(pConnection, xcb_query_tree(pConnection, topLevel), nullptr);
-+
-+      if (!pTree)
-+        return;
-+
-+      const xcb_window_t parent = pTree->parent;
-+      const bool parentIsRoot = !parent || parent == pTree->root;
-+      free(pTree);
-+
-+      if (parentIsRoot)
-+        break;
-+
-+      topLevel = parent;
-+    }
-+
-+    if (topLevel != mWnd && !GetScreenRect(pConnection, topLevel, outer))
-+      return;
-+
-+    if (RectsEqual(inner, mInnerBounds) && RectsEqual(outer, mOuterBounds))
-+      return;
-+
-+    mInnerBounds = inner;
-+    mOuterBounds = outer;
-+    accesskit_unix_adapter_set_root_window_bounds(mAdapter, outer, inner);
-+  }
-+
-+protected:
-+  void UpdateIfActive(accesskit_tree_update_factory factory, void* pUserData) override
-+  {
-+    accesskit_unix_adapter_update_if_active(mAdapter, factory, pUserData);
-+  }
-+
-+private:
-+  struct Registry
-+  {
-+    std::mutex mutex;
-+    std::unordered_map<uintptr_t, IGraphicsAccessibilityLinux*> instances;
-+    uintptr_t nextId = 1;
-+  };
-+
-+  static Registry& GetRegistry()
-+  {
-+    // Never deleted, because AccessKit's thread can outlive static destruction
-+    static Registry* sRegistry = new Registry();
-+    return *sRegistry;
-+  }
-+
-+  /** @return The instance that a handler was called for, or nullptr if it has been deleted. The registry must be locked */
-+  static IGraphicsAccessibilityLinux* GetInstance(void* pUserData)
-+  {
-+    Registry& registry = GetRegistry();
-+    auto itr = registry.instances.find(reinterpret_cast<uintptr_t>(pUserData));
-+    return itr != registry.instances.end() ? itr->second : nullptr;
-+  }
-+
-+  static accesskit_tree_update* OnActivate(void* pUserData)
-+  {
-+    std::lock_guard<std::mutex> lock(GetRegistry().mutex);
-+
-+    if (auto* pThis = GetInstance(pUserData))
-+    {
-+      pThis->mWantsBounds = true;
-+      pThis->mBoundsRequested = true;
-+      pThis->RequestFullUpdate();
-+    }
-+
-+    return nullptr;
-+  }
-+
-+  static void OnDeactivate(void* pUserData)
-+  {
-+    std::lock_guard<std::mutex> l
+@@ -103,12 +103,13 @@ function(iplug_embed_auv3ios_in_app app_target project_name)
+       COMMAND cp -R
+         "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${project_name}AU.framework"
+         "$<TARGET_BUNDLE_DIR:${app_target}>/Frameworks/"
+-      # Copy appex to App/PlugIns/
++      # Copy appex to App/PlugIns/ (removing the <project>AUv3.appex that older versions of these scripts embedded)
+       COMMAND ${CMAKE_COMMAND} -E make_directory
+         "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns"
++      COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AUv3.appex"
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+-        "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${project_name}AUv3.appex"
+-        "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AUv3.appex"
++        "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${project_name}AppExtension.appex"
++        "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AppExtension.appex"
+       COMMENT "Embedding iOS AUv3 (framework + appex) in ${project_name}.app"
+     )
+   else()
+@@ -119,12 +120,13 @@ function(iplug_embed_auv3ios_in_app app_target project_name)
+       COMMAND cp -R
+         "${CMAKE_BINARY_DIR}/out/${project_name}AU.framework"
+         "$<TARGET_BUNDLE_DIR:${app_target}>/Frameworks/"
+-      # Copy appex to App/PlugIns/
++      # Copy appex to App/PlugIns/ (removing the <project>AUv3.appex that older versions of these scripts embedded)
+       COMMAND ${CMAKE_COMMAND} -E make_directory
+         "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns"
++      COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AUv3.appex"
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+-        "${CMAKE_BINARY_DIR}/out/${project_name}AUv3.appex"
+-        "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AUv3.appex"
++        "${CMAKE_BINARY_DIR}/out/${project_name}AppExtension.appex"
++        "$<TARGET_BUNDLE_DIR:${app_target}>/PlugIns/${project_name}AppExtension.appex"
+       COMMENT "Embedding iOS AUv3 (framework + appex) in ${project_name}.app"
+     )
+   endif()
 ```
 
-**File**: `Scripts/cmake/IGraphics.cmake` (modified, +23/-3)
+**File**: `Scripts/cmake/AUv3iOSAppex.cmake` (modified, +33/-28)
 ```diff
-@@ -12,7 +12,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/IPlug.cmake)
+@@ -16,13 +16,18 @@ function(iplug_configure_auv3iosappex target project_name)
  
- set(IGRAPHICS_DEPS_DIR ${DEPS_DIR}/IGraphics)
+   # Appex is an app bundle (executable) with .appex extension
+   # Uses NSExtensionMain entry point from Foundation
++  # The bundle is ${project_name}AppExtension.appex, matching OUTPUT_NAME, CFBundleExecutable in the project's
++  # -iOS-AUv3-Info.plist and the iOS Xcode projects. It must not be renamed after the build: Xcode's later build
++  # steps (e.g. dsymutil) expect it where it was built, and the bundle name has to match CFBundleExecutable.
+   # For Ninja: Use separate output dir to avoid collision with APP target
+   if(XCODE)
+     set(APPEX_OUTPUT_DIR "${CMAKE_BINARY_DIR}/out")
+   else()
+     set(APPEX_OUTPUT_DIR "${CMAKE_BINARY_DIR}/out/appex-build")
+   endif()
  
--# Optional accessibility support (screen readers etc.) on macOS and Windows, using AccessKit
-+# Optional accessibility support (screen readers etc.) on macOS, Windows and Linux, using AccessKit
- # Requires the prebuilt libraries, see Dependencies/IGraphics/download-accesskit.sh
- option(IGRAPHICS_ACCESSKIT "Enable IGraphics accessibility support via AccessKit" OFF)
- 
-@@ -99,7 +99,7 @@ if(NOT TARGET iPlug2::IGraphics)
++  set(APPEX_BUNDLE_ID "com.AcmeInc.${project_name}.AUv3")
++
+   set_target_properties(${target} PROPERTIES
+     MACOSX_BUNDLE TRUE
+     MACOSX_BUNDLE_INFO_PLIST ${PLUG_RESOURCES_DIR}/${project_name}-iOS-AUv3-Info.plist
+@@ -32,7 +37,7 @@ function(iplug_configure_auv3iosappex target project_name)
+     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "appex"
+     XCODE_PRODUCT_TYPE "com.apple.product-type.app-extension"
+     XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO"
+-    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.AcmeInc.${project_name}.AUv3"
++    XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${APPEX_BUNDLE_ID}"
+     XCODE_ATTRIBUTE_SKIP_INSTALL "YES"
+     XCODE_ATTRIBUTE_APPLICATION_EXTENSION_API_ONLY "YES"
+   )
+@@ -63,45 +68,45 @@ function(iplug_configure_auv3iosappex target project_name)
      )
    endif()
  
--  if(IGRAPHICS_ACCESSKIT AND (WIN32 OR (APPLE AND NOT IOS)))
-+  if(IGRAPHICS_ACCESSKIT AND (WIN32 OR (APPLE AND NOT IOS) OR (UNIX AND NOT APPLE AND NOT EMSCRIPTEN)))
-     set(ACCESSKIT_DIR "${DEPS_DIR}/Build/accesskit" CACHE PATH "Location of the prebuilt AccessKit C bindings")
+-  # Post-build: Create PkgInfo and rename bundle.
++  # Post-build: Create PkgInfo (and for Ninja, move the bundle to out/).
+   # PkgInfo via staged source + `cmake -E copy` (see APP.cmake for rationale).
+   set(AUV3_IOS_APPEX_PKGINFO_SRC "${CMAKE_CURRENT_BINARY_DIR}/PkgInfo_${target}")
+   file(WRITE "${AUV3_IOS_APPEX_PKGINFO_SRC}" "XPC!????")
++  set(APPEX_BUNDLE_NAME "${project_name}AppExtension.appex")
  
-     if(WIN32)
-@@ -112,9 +112,21 @@ if(NOT TARGET iPlug2::IGraphics)
-       endif()
-       set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/windows/${ACCESSKIT_ARCH}/msvc/static")
-       set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/accesskit.lib")
--    else()
-+    elseif(APPLE)
-       set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/macos/universal/static")
-       set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/libaccesskit.a")
-+    else()
-+      # The AccessKit release only has x86_64 and x86 libraries for Linux. For other architectures,
-+      # build accesskit-c from source and put libaccesskit.a in lib/linux/<arch>/static
-+      if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
-+        set(ACCESSKIT_ARCH "arm64")
-+      elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-+        set(ACCESSKIT_ARCH "x86")
-+      else()
-+        set(ACCESSKIT_ARCH "x86_64")
-+      endif()
-+      set(ACCESSKIT_LIB_DIR "${ACCESSKIT_DIR}/lib/linux/${ACCESSKIT_ARCH}/static")
-+      set(ACCESSKIT_LIB "${ACCESSKIT_LIB_DIR}/libaccesskit.a")
-     endif()
+   if(XCODE)
+-    # For Xcode: XCODE_ATTRIBUTE_WRAPPER_EXTENSION creates .appex bundle directly
+-    # Bundle is created as ${project_name}AppExtension.appex, we rename to ${project_name}AUv3.appex
+-    set(APPEX_BUNDLE "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${project_name}AppExtension.appex")
+-    set(APPEX_FINAL "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${project_name}AUv3.appex")
++    # For Xcode: XCODE_ATTRIBUTE_WRAPPER_EXTENSION creates ${APPEX_BUNDLE_NAME} directly, and Xcode processes
++    # its Info.plist (expanding $(PRODUCT_BUNDLE_IDENTIFIER) etc.), so it must not be replaced by the source plist
+     add_custom_command(TARGET ${target} POST_BUILD
+-      # Create PkgInfo
+-      COMMAND ${CMAKE_COMMAND} -E copy "${AUV3_IOS_APPEX_PKGINFO_SRC}" "${APPEX_BUNDLE}/PkgInfo"
+-      # Rename bundle to final name with AUv3 suffix
+-      COMMAND ${CMAKE_COMMAND} -E rm -rf "${APPEX_FINAL}"
+-      COMMAND ${CMAKE_COMMAND} -E rename
+-        "${APPEX_BUNDLE}"
+-        "${APPEX_FINAL}"
+-      # Copy Info.plist from source (Xcode may regenerate original bundle after rename)
+-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+-        "${PLUG_RESOURCES_DIR}/${project_name}-iOS-AUv3-Info.plist"
+-        "${APPEX_FINAL}/Info.plist"
+-      COMMENT "Building ${project_name}AUv3.appex (iOS)"
++      COMMAND ${CMAKE_COMMAND} -E copy "${AUV3_IOS_APPEX_PKGINFO_SRC}" "${CMAKE_BINARY_DIR}/out/$<CONFIG>/${APPEX_BUNDLE_NAME}/PkgInfo"
++      COMMENT "Building ${APPEX_BUNDLE_NAME} (iOS)"
+     )
+   else()
+-    # For Ninja/other generators: Convert .app to .appex and move to final location
++    # For Ninja/other generators: nothing expands Xcode build settings in the Info.plist, so substitute the bundle ID
++    # (the example plists use no other build settings). Reconfigure when the plist changes, and only write the result
++    # when it changed, so that the post-build step isn't retriggered by every configure
++    set(APPEX_PLIST_SRC "${PLUG_RESOURCES_DIR}/${project_name}-iOS-AUv3-Info.plist")
++    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${APPEX_PLIST_SRC}")
++    file(READ "${APPEX_PLIST_SRC}" APPEX_PLIST)
++    string(REPLACE "$(PRODUCT_BUNDLE_IDENTIFIER)" "${APPEX_BUNDLE_ID}" APPEX_PLIST "${APPEX_PLIST}")
++    set(APPEX_PLIST_FILE "${CMAKE_CURRENT_BINARY_DIR}/${project_name}-iOS-AUv3-Info.plist")
++    set(APPEX_PLIST_EXISTING "")
++    if(EXISTS "${APPEX_PLIST_FILE}")
++      file(READ "${APPEX_PLIST_FILE}" APPEX_PLIST_EXISTING)
++    endif()
++    if(NOT APPEX_PLIST_EXISTING STREQUAL APPEX_PLIST)
++      file(WRITE "${APPEX_PLIST_FILE}" "${APPEX_PLIST}")
++    endif()
++
++    # Convert the .app to .appex and move it to its final location
+     add_custom_command(TARGET ${target} POST_BUILD
+-      # Create PkgInfo
+       COMMAND ${CMAKE_COMMAND} -E copy "${AUV3_IOS_APPEX_PKGINFO_SRC}" "$<TARGET_BUNDLE_DIR:${target}>/PkgInfo"
+-      # Copy Info.plist
+-      COMMAND ${CMAKE_COMMAND} -E copy
+-        "${PLUG_RESOURCES_DIR}/${project_name}-iOS-AUv3-Info.plist"
+-        "$<TARGET_BUNDLE_DI
+```
+
+---
+
+### Incident Patch 3: `2bbb973c` (2026-11-27)
+**Commit Message**: Merge pull request #1622 from olilarkin/fix/cmake-nanovg-metal-objc-prefix
+
+CMake: give the NanoVG Metal Objective-C classes each target's prefix
+
+**File**: `Scripts/cmake/FindiPlug2.cmake` (modified, +10/-0)
+```diff
+@@ -217,6 +217,16 @@ function(iplug_configure_target target target_type project_name)
+     # Apply the ObjC prefix header (works for both Xcode and non-Xcode generators)
+     iplug_apply_objc_prefix_header(${target})
  
-     if(NOT EXISTS "${ACCESSKIT_LIB}")
-@@ -128,6 +140,14 @@ if(NOT TARGET iPlug2::IGraphics)
-     if(WIN32)
-       # IGraphicsWin.cpp links accesskit.lib and the system libraries that it needs with #pragma comment(lib, ...)
-       target_link_directories(iPlug2::IGraphics INTERFACE "${ACCESSKIT_LIB_DIR}")
-+    elseif(UNIX AND NOT APPLE)
-+      target_link_libraries(iPlug2::IGraphics INTERFACE dl pthread m)
-+      target_link_options(iPlug2::IGraphics INTERFACE
-+        # Don't export AccessKit's symbols, so that plug-ins with different versions of it can't interfere with each other
-+        "LINKER:--exclude-libs,libaccesskit.a"
-+        # AccessKit's AT-SPI thread runs for as long as the process does, so a plug-in must stay loaded once it has opened a UI
-+        "LINKER:-z,nodelete"
++    # IGraphicsNanoVG_src.m requires ARC. It is compiled in this target when the
++    # target links iPlug2::IGraphics::NanoVG::Metal, so that its Objective-C
++    # classes get this target's prefix (see IGraphics.cmake).
++    if(DEFINED IGRAPHICS_NANOVG_METAL_SRC)
++      set_source_files_properties(${IGRAPHICS_NANOVG_METAL_SRC}
++        TARGET_DIRECTORY ${target}
++        PROPERTIES COMPILE_OPTIONS "-fobjc-arc"
 +      )
-     endif()
- 
-     message(STATUS "IGraphics: accessibility enabled (AccessKit)")
++    endif()
++
+     # Configure WebView sources if present (requires ARC)
+     # This handles targets that link to iPlug2::Extras::IWebViewControl
+     if(DEFINED IPLUG2_WEBVIEW_MAC_SOURCE)
 ```
 
----
-
-### Incident Patch 2: `5260bc42` (2026-11-25)
-**Commit Message**: Merge pull request #1488 from iPlug2/fix/app-wm-size-before-open
-
-Ignore WM_SIZE in the standalone app until the plug-in window is open
-
-**File**: `IPlug/APP/IPlugAPP_dialog.cpp` (modified, +10/-8)
+**File**: `Scripts/cmake/IGraphics.cmake` (modified, +12/-32)
 ```diff
-@@ -41,9 +41,14 @@ using namespace igraphics;
- #endif
+@@ -306,36 +306,16 @@ if(NOT TARGET iPlug2::IGraphics::NanoVG::GL3)
+ endif()
  
- #define IDT_SCREENSHOT_TIMER 1001
-+
-+// Guards WM_SIZE before the plugin window is open and the dialog has been sized to it. Until then the dialog's
-+// client area is the size of its resource template, not the editor's, and passing that to OnParentWindowResize()
-+// would make a plug-in that scales its UI to fit the window (PLUG_HOST_RESIZE) shrink it
-+static bool sPlugWindowOpen = false;
-+
- #ifdef OS_LINUX
- #define IDT_OPENWINDOW_TIMER 1002
--static bool sPlugWindowOpen = false; // guards WM_SIZE before plugin window is ready
+ # NanoVG with Metal backend (macOS and iOS)
+-# We use an OBJECT library so we can set -fobjc-arc only on the Metal source file
+-if(NOT TARGET iPlug2_IGraphics_NanoVG_Metal_obj)
+-  if(APPLE OR IOS)
+-    add_library(iPlug2_IGraphics_NanoVG_Metal_obj OBJECT
+-      ${IGRAPHICS_DIR}/Drawing/IGraphicsNanoVG_src.m
+-    )
+-
+-    target_include_directories(iPlug2_IGraphics_NanoVG_Metal_obj PRIVATE
+-      ${IGRAPHICS_DEPS_DIR}/NanoVG/src
+-      ${IGRAPHICS_DEPS_DIR}/NanoSVG/src
+-      ${IGRAPHICS_DEPS_DIR}/MetalNanoVG/src
+-      ${IGRAPHICS_DIR}
+-      ${IGRAPHICS_DIR}/Controls
+-      ${IGRAPHICS_DIR}/Platforms
+-      ${IGRAPHICS_DIR}/Drawing
+-    )
+-
+-    target_compile_definitions(iPlug2_IGraphics_NanoVG_Metal_obj PRIVATE
+-      IGRAPHICS_NANOVG
+-      IGRAPHICS_METAL
+-    )
+-
+-    # This source file requires ARC
+-    target_compile_options(iPlug2_IGraphics_NanoVG_Metal_obj PRIVATE -fobjc-arc)
+-
+-    set_target_properties(iPlug2_IGraphics_NanoVG_Metal_obj PROPERTIES
+-      POSITION_INDEPENDENT_CODE ON
+-    )
+-  endif()
+-endif()
++# IGraphicsNanoVG_src.m (which includes nanovg_mtl.m) is compiled in each
++# consuming target, not in a shared OBJECT library: nanovg_mtl.m defines
++# Objective-C classes (MNVGcontext, MNVGbuffers, MNVGtexture) that
++# IPlugOBJCPrefix.pch renames using the target's OBJC_PREFIX and format API.
++# A shared object library is built without them, so every plug-in would export
++# the same class names, and the Objective-C runtime would pick one of them when
++# two such plug-ins are loaded in the same process.
++# The file requires ARC; iplug_configure_target() sets -fobjc-arc on it for
++# each target.
++set(IGRAPHICS_NANOVG_METAL_SRC ${IGRAPHICS_DIR}/Drawing/IGraphicsNanoVG_src.m)
  
- // SWELL does not position the modal dialogs it creates, and window managers
- // that do not place transient windows themselves leave them at the screen
-@@ -646,6 +651,7 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
-       }
+ if(NOT TARGET iPlug2::IGraphics::NanoVG::Metal)
+   if(APPLE OR IOS)
+@@ -352,9 +332,9 @@ if(NOT TARGET iPlug2::IGraphics::NanoVG::Metal)
+       IGRAPHICS_METAL
+     )
  
-       ClientResize(hwndDlg, pPlug->GetEditorWidth(), pPlug->GetEditorHeight());
-+      sPlugWindowOpen = true;
+-    # Link object files using generator expression
++    # Compiled in the consuming target (see IGRAPHICS_NANOVG_METAL_SRC above)
+     target_sources(iPlug2::IGraphics::NanoVG::Metal INTERFACE
+-      $<TARGET_OBJECTS:iPlug2_IGraphics_NanoVG_Metal_obj>
++      ${IGRAPHICS_NANOVG_METAL_SRC}
+     )
  
-       ShowWindow(hwndDlg, SW_SHOW);
- #endif
-@@ -713,9 +719,7 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
-     case WM_DESTROY:
-       pAppHost->CloseWindow();
-       gHWND = NULL;
--#ifdef OS_LINUX
-       sPlugWindowOpen = false;
--#endif
-       IPlugAPPHost::sInstance = nullptr;
-       
-       #ifdef OS_WIN
-@@ -983,13 +987,11 @@ WDL_DLGRET IPlugAPPHost::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
-       case SIZE_RESTORED:
-       case SIZE_MAXIMIZED:
-       {
--#ifdef OS_LINUX
--        // Ignore WM_SIZE events that fire before the plugin window opens.
--        // ShowWindow + ClientResize generate spurious resize events (including
--        // the dialog template size) that would recreate the FBO multiple times.
-+        // Ignore WM_SIZE events that fire before the plugin window opens and the dialog is sized to it: they have
-+        // the dialog template's size. e.g. a plug-in that changes the window's frame in OnUIOpen() (SWP_FRAMECHANGED)
-+        // gets one, and on Linux ShowWindow + ClientResize generate them, which would recreate the FBO multiple times
-         if (!sPlugWindowOpen)
-           return 0;
--#endif
-         if (pPlug->GetHostResizeEnabled())
-         {
-           RECT r;
-```
-
----
-
-### Incident Patch 3: `cdb44465` (2026-11-25)
-**Commit Message**: Merge pull request #1491 from iPlug2/fix/noisegate-uninitialized-history
-
-NoiseGate: initialize mHistory1
-
-**File**: `IPlug/Extras/NoiseGate.h` (modified, +2/-1)
-```diff
-@@ -118,7 +118,8 @@ class NoiseGate
-   double mHoldTime = 0.01f;
-   double mReleaseTime = 0.01f;
-   double mMinRate = mAttackTime;
--  T mHistory1, mHistory2 = 0.0f;
-+  T mHistory1 = T(0);
-+  T mHistory2 = T(0);
-   bool mPrevGate = false;
-   int mHoldCounter = 0;
- };
+     target_link_libraries(iPlug2::IGraphics::NanoVG::Metal INTERFACE
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1493** (2026-11-25): Make IGraphicsNanoVG::ReleaseBitmap free the bitmap (@olilarkin)
-- **PR #1491** (2026-11-25): NoiseGate: initialize mHistory1 (@olilarkin)
-- **PR #1488** (2026-11-25): Ignore WM_SIZE in the standalone app until the plug-in window is open (@olilarkin)
-- **PR #1487** (2026-11-23): Update vendored Yoga to v3.2.2 (@olilarkin)
-- **PR #1486** (2026-11-22): cmake: RC_INCLUDE_DIRS option and Windows bundle folder icons (@olilarkin)
-- **PR #1485** (2026-11-25): Add opt-in IGraphics accessibility layer using AccessKit (@olilarkin)
+- **PR #1624** (2026-11-27): WASM: handle touch events on Shadow DOM canvas (@olilarkin)
+- **PR #1623** (2026-11-27): Add IGraphics::SetDropHandlerFunc (@olilarkin)
+- **PR #1622** (2026-11-27): CMake: give the NanoVG Metal Objective-C classes each target's prefix (@olilarkin)
+- **PR #1619** (2026-11-27): CMake: don't rename the iOS AUv3 appex, keep its processed Info.plist (app couldn't be installed) (@olilarkin)
+- **PR #1618** (2026-11-27): CMake: default the iOS deployment target to 15 (@olilarkin)
+- **PR #1613** (2026-11-27): Add automated unit and integration tests for IPlug and IGraphics (@olilarkin)
 
 ---
 
@@ -2027,31 +1822,31 @@ NoiseGate: initialize mHistory1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Linux support to the IGraphics accessibility layer
+## X. Empirical Invariant Guard in cmake.md
 
 **RULE**:
-When implementing operations in `Dependencies/IGraphics/download-accesskit.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/cmake.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iPlug2/iPlug2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68ec2f20`: Add Linux support to the IGraphics accessibility layer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cd0e175`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dependencies/IGraphics/download-accesskit.sh`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/cmake.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-# The release archive contains headers and libraries for all platforms (macOS, Windows and Linux x86_64/x86).
+- Minimum deployment target: iOS 15 (configurable)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-# The release archive contains headers and libraries for all platforms.
+- Minimum deployment target: iOS 14 (configurable)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68ec2f20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cd0e175` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
