@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "35922adf",
+    "sourceVersion": "0c0198d2",
     "license": "NOASSERTION",
-    "contentHash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
-    "lastHarvestedAt": "2026-11-27T15:36:45.214Z",
+    "contentHash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
+    "lastHarvestedAt": "2026-11-28T00:09:43.205Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T23:39:23.124Z",
+  "updated_at": "2026-11-28T00:09:47.525Z",
   "stats": {
-    "total_discovered": 10635,
+    "total_discovered": 10636,
     "approved_pending_harvest": 10095,
     "harvested_count": 0,
-    "rejected_count": 540,
+    "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10104,
+      "COMMUNITY_AND_EXPERT": 10105,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230217,6 +230217,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
         "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-AAE90541D294": {
+      "id": "SRC-AAE90541D294",
+      "url": "http://127.0.0.1:14318/",
+      "title": "http://127.0.0.1:14318/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T00:09:47.525Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

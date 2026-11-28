@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T23:57:45.339Z",
-    "lastVerified": "2026-11-27T23:57:45.339Z",
+    "lastChecked": "2026-11-28T00:09:47.096Z",
+    "lastVerified": "2026-11-28T00:09:47.096Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T23:30:36.503Z",
-    "lastVerified": "2026-11-27T23:30:36.503Z",
+    "lastChecked": "2026-11-28T00:09:38.173Z",
+    "lastVerified": "2026-11-28T00:09:38.173Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1278,22 +1278,21 @@
     "revisionIdentifier": "549d8f57"
   },
   "freenet-freenet-core": {
-    "name": "freenet-core",
+    "name": "freenet/freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T19:52:16.693Z",
-    "lastVerified": "2026-11-27T19:52:16.693Z",
+    "lastChecked": "2026-11-28T00:09:41.331Z",
+    "lastVerified": "2026-11-28T00:09:41.331Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
+    "contentHash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "35922adf"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -3047,12 +3046,12 @@
     "lastVerified": "2026-11-26T20:31:40.812Z"
   },
   "litmuschaos-litmus": {
-    "name": "litmuschaos/litmus",
+    "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T06:06:08.459Z",
-    "lastVerified": "2026-11-27T06:06:08.459Z",
+    "lastChecked": "2026-11-28T00:09:30.705Z",
+    "lastVerified": "2026-11-28T00:09:30.705Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-litmuschaos-litmus",
@@ -3061,7 +3060,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "434832d4"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -5445,9 +5445,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-27T00:07:11.643Z",
+    "lastChecked": "2026-11-28T00:09:23.089Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-27T00:07:11.643Z"
+    "lastVerified": "2026-11-28T00:09:23.089Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -6319,9 +6319,9 @@
   "pingcap-talent-plan": {
     "name": "talent-plan",
     "officialUrl": "https://github.com/pingcap/talent-plan",
-    "lastChecked": "2026-11-27T05:02:45.483Z",
+    "lastChecked": "2026-11-28T00:09:35.533Z",
     "revisionIdentifier": "8e91311a",
-    "lastVerified": "2026-11-27T05:02:45.483Z"
+    "lastVerified": "2026-11-28T00:09:35.533Z"
   },
   "u-root-u-root": {
     "name": "u-root",
@@ -10532,8 +10532,8 @@
     "officialUrl": "https://github.com/yshrsmz/BuildKonfig",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T15:29:56.298Z",
-    "lastVerified": "2026-11-25T15:29:56.298Z",
+    "lastChecked": "2026-11-28T00:09:28.035Z",
+    "lastVerified": "2026-11-28T00:09:28.035Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yshrsmz-buildkonfig",
@@ -11029,9 +11029,9 @@
   "jina-ai-reader": {
     "name": "reader",
     "officialUrl": "https://github.com/jina-ai/reader",
-    "lastChecked": "2026-11-24T15:53:29.979Z",
+    "lastChecked": "2026-11-28T00:09:25.505Z",
     "revisionIdentifier": "1574bfd3",
-    "lastVerified": "2026-11-24T15:53:29.979Z"
+    "lastVerified": "2026-11-28T00:09:25.505Z"
   },
   "johnbean393-sidekick": {
     "name": "Sidekick",

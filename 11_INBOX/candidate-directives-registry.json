@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:57:48.514Z",
+  "last_updated": "2026-11-28T00:09:51.397Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,14 +54516,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-ULBW",
+      "id": "CD-LEZO",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-permissions-learnings",
+      "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ULBW-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-LEZO-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-27",
+      "date_staged": "2026-11-28",
       "domain_letter": "H"
     },
     {
@@ -69127,14 +69127,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-45X5",
+      "id": "CD-LDPI",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-45X5-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-LDPI-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-27",
+      "date_staged": "2026-11-28",
       "domain_letter": "G"
     },
     {
@@ -73357,6 +73357,44 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-92E2DE-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-LCAA",
+      "directive_title": "stop a PUT at a relay only when no connected peer is closer to the key",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LCAA-stop-a-put-at-a-relay-only-when-no-connected-peer-is-closer-to-the-key.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D72176",
+      "directive_title": "stop a PUT at a relay only when no connected peer is closer to the key",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D72176-stop-a-put-at-a-relay-only-when-no-conne.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-D043FC",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D043FC-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-8F5E7E",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8F5E7E-bump-version-number.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T23:57:48.728Z",
+  "last_updated": "2026-11-28T00:09:51.676Z",
   "total_records": 2864,
   "domains": {
     "A": {
@@ -10230,8 +10230,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "038d75e11e23afa8d124014f6a97786f119af26dc658f305ea76c3d6e5d5d716",
-      "created_at": "2026-11-27T15:36:45.710Z"
+      "content_hash": "1c00d7b624ac765b76c3cd0a4984c51d26ca0f257fabd0e5312bed3d26318429",
+      "created_at": "2026-11-28T00:09:43.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10308,8 +10308,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "ae0cae4d2d66f9b2a4430f5ccb90e46e8c61b94c395b76e5bdc72c5f46537632",
-      "created_at": "2026-11-27T15:36:50.903Z"
+      "content_hash": "186abe5c8dae4ac5550495cbdc882fa7dafffb7ee0e45c4bb2c2de5bde124eae",
+      "created_at": "2026-11-28T00:09:48.174Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -15655,8 +15655,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "1f6ed699e91d90fad99b894d3890d7a0368e3902fda3323beb58576a3b4702ea",
-      "created_at": "2026-11-27T23:39:25.204Z"
+      "content_hash": "c1572843a2bab2ad04328f027f9c984da583dc583872df279e1ecbe7438b2b48",
+      "created_at": "2026-11-28T00:09:51.676Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -33994,8 +33994,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a0785900b24c981546b5a18812e5cf2b5f963339c182f6f24902bdf6b28d7899",
-      "created_at": "2026-11-27T19:44:30.170Z"
+      "content_hash": "ea465c2c9b553b8ff680d004c3e453458647adf14a57f74722331b78dedc8ee6",
+      "created_at": "2026-11-28T00:09:50.006Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

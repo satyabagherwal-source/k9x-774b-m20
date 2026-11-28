@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T23:57:48.957Z",
+  "last_updated": "2026-11-28T00:09:51.946Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26835,
+  "total_items": 26837,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2319f916f2c25a295449fb7940ed47f09ed1a4598c8acd10133a01ef27e9be34",
+      "content_hash": "bba37c47bea781d1cb4aa1325c25b1397564ecfcc6c4d7c566737a891c3481d8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:44:30.381Z"
+      "persisted_at": "2026-11-28T00:09:50.285Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "df89bc27d09313ffdfb2354d0a4140927a3c136fd276ad4bbcadb7574a099471",
+      "content_hash": "5c397d8fa7e9ee2564e5cd394453ef8e2e6f95694fbfb19fcbf8a96cd9604e9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:44:30.566Z"
+      "persisted_at": "2026-11-28T00:09:50.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "35922adf",
-      "content_hash": "038d75e11e23afa8d124014f6a97786f119af26dc658f305ea76c3d6e5d5d716",
+      "source_version": "0c0198d2",
+      "content_hash": "1c00d7b624ac765b76c3cd0a4984c51d26ca0f257fabd0e5312bed3d26318429",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:45.710Z"
+      "persisted_at": "2026-11-28T00:09:43.818Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "35922adf",
-      "content_hash": "89994d6d40fe4660d2f19eed10c16c931b47fe77b6c45e98698c96762d3b391f",
+      "source_version": "0c0198d2",
+      "content_hash": "de36a5fd4be554cbee18f31d8a7b4c96452db551cb5c87578ccf45d0bac7f5a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:36:46.167Z"
+      "persisted_at": "2026-11-28T00:09:44.309Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae0cae4d2d66f9b2a4430f5ccb90e46e8c61b94c395b76e5bdc72c5f46537632",
+      "content_hash": "186abe5c8dae4ac5550495cbdc882fa7dafffb7ee0e45c4bb2c2de5bde124eae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:50.903Z"
+      "persisted_at": "2026-11-28T00:09:48.174Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "e136577b56a1c8f200a93975a336a8c6f8f0b6b5668b21984dc9431ba353bc35",
+      "content_hash": "56d2396b4c1c3bb4b6722eefc1d4994421f4712301deaf32122bf275df4d02d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:36:51.301Z"
+      "persisted_at": "2026-11-28T00:09:48.698Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221441,8 +221441,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "35922adf",
-      "content_hash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
+      "source_version": "0c0198d2",
+      "content_hash": "e7725e55c0b2062a6708acb334715a5abc5431b84b56cf18302a27d3c1f1616d",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221645,6 +221645,11 @@
           "number": 10918,
           "title": "remove native-connect demotion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10994,
+          "title": "stop a PUT at a relay only when no connected peer is closer to the key",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221652,7 +221657,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T15:36:44.928Z",
+      "verified_at": "2026-11-28T00:09:42.853Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230481,9 +230486,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f6ed699e91d90fad99b894d3890d7a0368e3902fda3323beb58576a3b4702ea",
+      "content_hash": "c1572843a2bab2ad04328f027f9c984da583dc583872df279e1ecbe7438b2b48",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:39:25.204Z"
+      "persisted_at": "2026-11-28T00:09:51.676Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230493,9 +230498,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "933241469061311b600a20525ad5e4d53d221d7aa220426dda71a08d89709766",
+      "content_hash": "85ae51e96204580ac62fc3a4560cb3c5a7541b12afdfb082a8ae553576082ea6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T23:39:25.421Z"
+      "persisted_at": "2026-11-28T00:09:51.946Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -301431,9 +301436,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0785900b24c981546b5a18812e5cf2b5f963339c182f6f24902bdf6b28d7899",
+      "content_hash": "ea465c2c9b553b8ff680d004c3e453458647adf14a57f74722331b78dedc8ee6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:44:30.170Z"
+      "persisted_at": "2026-11-28T00:09:50.006Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -334385,10 +334390,10 @@
       "relative_path": "12_DECISIONS/ADR-freenet-freenet-core-adr-subsystem-boundary-modular-decoupling-in-freenet-freene.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "35922adf",
-      "content_hash": "bb3a05c644c4a7a5582cb8f775979ac6a8fb225924ad080367859e7cb0ef53aa",
+      "source_version": "0c0198d2",
+      "content_hash": "31cbead98511c1a1d19acdfd6b7288a97ef612adc1db0ef6b4dc65fda05368d4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:45.940Z"
+      "persisted_at": "2026-11-28T00:09:44.084Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
@@ -334422,9 +334427,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "30f91976e8c36c1c596370793f1f9a06a2da1c217429bebe95a86b2a22644437",
+      "content_hash": "1b5a504b24833dff50bac17c75500f1ac99e6d23be0de24322c1bfe7e4669d8a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:36:51.118Z"
+      "persisted_at": "2026-11-28T00:09:48.461Z"
     },
     "rule-10131": {
       "learning_id": "rule-10131",
@@ -350710,13 +350715,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ULBW-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LEZO-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "165a6ad03b793dec51ae0b242c913dd276e71dcccdb87d14276c5cada5942d48",
+      "content_hash": "f054688f2afb9149ec49a39b018517ece99af3c4c4a7fab931c90fa3075395ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T23:48:59.900Z"
+      "persisted_at": "2026-11-28T00:09:51.397Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363202,13 +363207,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-45X5-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LDPI-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "346a386ec012b18a70dd172d926cd785537a155b349c074c5ec039672a0562af",
+      "content_hash": "458ed2ea062011c682c60eabbf430465b4d6373b1133b8d515ea86f8c531bcda",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:44:29.946Z"
+      "persisted_at": "2026-11-28T00:09:49.735Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -368619,6 +368624,32 @@
       "content_hash": "9a48582587c04a523055ccb43d9841ecb637f8e3014d4359939f94129cb8566b",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T23:57:47.330Z"
+    },
+    "rule-10994": {
+      "learning_id": "rule-10994",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10994,
+      "title": "stop a PUT at a relay only when no connected peer is closer to the key",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "0c0198d2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T00:09:42.853Z"
+    },
+    "candidate_directive-stop-a-put-at-a-relay-only-when-no-connected-peer-is-closer-to-the-key": {
+      "item_id": "candidate_directive-stop-a-put-at-a-relay-only-when-no-connected-peer-is-closer-to-the-key",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LCAA-stop-a-put-at-a-relay-only-when-no-connected-peer-is-closer-to-the-key.md",
+      "title": "stop a PUT at a relay only when no connected peer is closer to the key",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9be6f2a1c952527196a979347bb7dd398e795a9847a6518dbb3646fd6b37f0a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T00:09:47.895Z"
     }
   },
   "ai-builder-brain": {

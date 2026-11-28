@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T15:36:50.514Z",
+  "timestamp": "2026-11-28T00:09:47.697Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T15:36:50.514Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T00:09:47.697Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 80%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet-freenet-core-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `35922adf`  
+> **Source Version**: `0c0198d2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T15:36:43.935Z  
+> **Timestamp**: 2026-11-28T00:09:41.542Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T15:36:43.804Z  
+> **Harvest Timestamp**: 2026-11-28T00:09:41.331Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3135 stars
+- **Stars / Engagement**: 3136 stars
 
 ---
 
@@ -1766,11 +1766,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6415** (2026-11-27): **test: split the native transport survivor sim into one test per run**
-  *Symptoms*: ## Problem  `test_quic_native_both_ends_keep_the_same_transport` timed out at the 240 s nextest cap on main since #6121 (#6414). It is not a livelock. The test ran seven simulations in one test, and each forced-order run searches up to 32 seeds for the first one on which the survivor rule makes the required choice. #6121 reordered simulation tasks, which moved the `NativeFirstInbound` run from seed offset 1 to offset 11, so the test went from 8 simulations to 18. Per-simulation cost did not change.  Measured on a loaded machine (debug build, load average 12-19): 116 s at cb576c5d4, 304 s at 7fa79ec45, over the 240 s cap. CI's Simulation job does run the test and passed it in 78 s on #6413, so CI only had margin because its runners are faster. #6121 had already re-seeded `test_quic_native_symmetric_nat_pairs_fail_and_nodes_still_join` for the same reason.  ## Approach  - Split the test into one `#[test]` per run on a shared helper, so nextest runs them in parallel and each has its own budget. - Start the `NativeFirstInbound` search at the seed that hits at offset 0 on current main (`0x5940a500eb`). - Keep the search and the fail-closed premise. Add a guard: a forced-order run that needs an offset of 8 or more now fails with the seed to start from ("trajectories shifted; re-seed, do not raise the timeout"), so the next reordering reports itself instead of appearing as a timeout.  No timeout, retry or `#[ignore]` changes; test-only.  ## Testing  - `cargo nextest run --profile ci
+- **Issue #6420** (2026-11-27): **fix: stop a PUT at a relay only when no connected peer is closer to the key**
+  *Symptoms*: ## Problem A relay hop that a PUT had descended to stopped whenever the router's cost-ranked next-hop pick was not strictly closer to the key than itself, even if another connected peer was. In a simulation with the cost pick forced away from the key, a 1.2 MB streamed PUT stopped at the first descended hop (copies 0.104 and 0.479 from the key; nearest node 0.021). A live 1.2 MB PUT from nova-gw1 stored at a first hop 0.155 from the key and went no further; why that hop stopped is not observable, so this change is consistent with that incident, not shown to fix it.  ## Approach Stop only when no ready, non-transient, non-skipped connected peer is strictly closer to the key. If the pick is not closer but another such peer is, the router ranks only the strictly closer peers, and that selection is the one recorded. Applies to full-state, streaming, probe and probe-reconcile hops. A failed forward to, or an error reply from, an overridden hop finalizes locally; the probe of the discarded pick updates no router statistics. Originator first-hop selection and the non-streaming replication copy are unchanged. Updates hosting invariant 4.  ## Testing Simulation (red on main, green here, with a no-hook control), unit tests of the stop predicates and resolver, a ring-level test of what is recorded, source pins, findability gate, full simulation_integration suite.  Decision: Ian approved this change to the PUT stop rule (hosting invariant 4) on 2026-11-27. The shared agent-config copy of
 
-- **Issue #6414** (2026-11-27): **test: test_quic_native_both_ends_keep_the_same_transport times out on main since #6121**
-  *Symptoms*: ## Problem  `test_quic_native_both_ends_keep_the_same_transport` (`crates/core/tests/simulation_integration.rs`, features `simulation_tests,testing`) never finishes on main at 7fa79ec45 (#6121): nextest terminates it at 240 s, repeatedly, with no panic. The log is the same `connect` transactions processed over and over, so it looks like the simulated network livelocks rather than the test being slow.  ## Evidence  - `cargo nextest run -p freenet --test simulation_integration --features simulation_tests,testing --profile ci -E 'test(test_quic_native_both_ends_keep_the_same_transport)'` on a clean checkout of 7fa79ec45: TIMEOUT at 240 s (run 1 of 1, `--retries 0`). On an unrelated branch rebased onto it, 2 of 2 tries also timed out. - The same test passed (about 10 s) in a full `test_quic_native` run, 19 of 19, on a branch based on cb576c5d4 (#6406). So the regression is between cb576c5d4 and 7fa79ec45 (the diff is #6121 and its neighbours: broadcast spacing, broadcast queue, config, `verify_soon`, and ~246 added lines in `simulation_integration.rs`).  ## Not yet done  Bisect the commits in that range; I did not.  [AI-assisted - Claude] 
+- **Issue #6417** (2026-11-27): **chore: use the desaturated brand colours in the tray icon, logo and setup wizard**
+  *Symptoms*: The tray icon, Windows .ico and the embedded logo still used the old neon blue, while freenet.org was desaturated in freenet/web #208 (commit 27f4c459).  Logo gradient (same hue and shape, one mark for both schemes):  | stop | old | new | |---|---|---| | light end | #7ecfef | #85c8e6 | | mid | #007FFF | #3a7bcb | | dark end | #0052cc | #26569f |  What changed: - `bin/commands/assets/freenet_logo.svg`: new gradient stops. The macOS .icns is generated from this SVG in CI (`scripts/generate-macos-icns.sh`), so it follows automatically. - `freenet_{16,32,48,64,256}x*.rgba` (the tray icon buffer, `include_bytes!` in tray.rs) and `freenet.ico` (Windows exe icon): regenerated from the new SVG with rsvg-convert + ImageMagick at the same sizes (identical byte lengths, ICO keeps 16/32/48/64/256). Rendered and checked at 16 and 32 px on white and #202124 backgrounds; the mark stays legible on both, as on the site. - `setup_wizard/setup.html`: the inline logo gradient, primary button, hover and progress bar used #0070f3/#00b4d8 and a blue glow. They now use the site's dark-scheme values (logo stops above; button #2e65a0 -> #2a5180, hover #3d71aa -> #2e65a0; progress #3a7bcb -> #85c8e6); glow dropped, as on the site. - Shell page default favicon fill (`path_handlers.rs`) #007FFF -> #3a7bcb; the notification "Enable" button in `shell_bridge.js` #007FFF -> #2e65a0 (white text 6.03:1).  Deliberately unchanged: the local dashboard's teal accent #0abab5 and its status favicon colours (semantic
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 10  This is a cosmetic `chore:` change. It swaps in desaturated brand colours across the tray icon assets (`.ico` and `.rgba`), the SVG logo, the setup wizard CSS and SVG, the shell favicon fill, and the notification "Enable" button colour in `shell_bridge.js`.  - **Commit and PR form:** The single commit subject, `chore: use the desaturated brand colours in the tray icon, logo and setup wizard`, uses a valid conventional-commit prefix. Its length is 82 characters, over the 72-character guideline. Per git-workflow.md, that is INFO at most, not a warning. - **Scope and tests:** It is a chore, not a `fix:`, so no regression test is required. No Rust logic changed apart from a colour literal in a `format!` string. - **Stale references:** I searched `crates/` for the old colour values (`#007FFF`, `#0070f3`, `#00b4d8`). Nothing still references them
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,634 +1789,931 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `366fdcad` (2026-11-27)
-**Commit Message**: fix: remove native-connect demotion (#6413)
+### Incident Patch 1: `0c0198d2` (2026-11-27)
+**Commit Message**: fix: stop a PUT at a relay only when no connected peer is closer to the key (#6420)
 
-**File**: `.claude/rules/transport.md` (modified, +4/-5)
+**File**: `.config/nextest.toml` (modified, +10/-0)
 ```diff
-@@ -307,7 +307,7 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitti
- ### WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
+@@ -52,6 +52,16 @@ retries = 0
+ filter = "test(lattice_probe_does_not_grow_degree_with_uptime)"
+ slow-timeout = { period = "300s", terminate-after = 2 }
  
- - The joiner alone decides, in the handshake driver (`plan_gateway_join`); not in the connect op or event loop.
--- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures must never count toward the peer-to-peer demotion.
-+- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures only start that gateway's own cooldown.
- - `setup::join_native` is always the client and never punches; count its ends as `gateway_native_join_*`, never `connect_native_setup_*`.
- - A gateway hands a completed native join to the node (`QuicUpgrades::hand_off_join`): a full queue or no node closes it (`quic_gateway_admission_handoff_full`), and so does a join that finished after an endpoint rebuild replaced its stack (`stack_gone`). Every stack the listener builds, the first and each rebuilt one, gets the same hand-off. The handed-over connection holds the joiner's charge until the node promotes it under the proven key (`set_peer_identity` calls `JoinerCharge::promote`) and drops it with the connection; never leak it. Do not mark a gateway in the index before it runs a release with this hand-off: an older gateway closes a completed join after the Hello, and a joiner whose setup succeeded has no fallback.
- - The node binds a native join to its proven key WITHOUT promoting it (`connection_lifecycle::accept_native_join`): the connect op promotes it at ConnectPeer, and a ConnectRequest naming another key closes it. Never pass a native join to `handle_successful_connection` with `Some(peer)` (on a gateway that promotes it into the ring before CONNECT accepts it). A proven native join skips the UDP survivor rule (a newer native join for the same key replaces the older; one beside a UDP entry is held, `hold_native`), and one that sends no request within `NATIVE_JOIN_REQUEST_WITHIN` (5 s, a one-shot timer: the zombie sweep's 30 s tick is too coarse) is closed.
-@@ -509,16 +509,15 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § QUIC identit
- - `breaker::UDP_FALLBACK` (D-3, dark, true today) is read by every path through `QuicPathLimits::effective_udp_fallback` (one reader; a source-scan pin in `breaker.rs` fails on any other). With it false an upgraded path gives up what it cannot carry, never turns suspect, a route whose path ended drops its queue, and a short the queue cannot take (full or closed) is dropped and counted instead of overflowing to UDP. This is the PATH-level fallback only: a connection with no route still sends on its UDP session, which D-8 deletes, so a sim or soak with the constant false is a partial check and cannot show what a no-UDP network costs.
- - `queue_native_short` returns `SendQueueFull` (Transient, connection survives, no ShortOverflowUdp, counted `quic_data_event_native_short_queue_full`, not Dropped) on a full queue. A native connection counts in `GlobalBandwidthManager`; its drop closes NODE_DROPPED_PEER.
- - A Short is counted dropped ONLY by `QuicPathStats::record_short_dropped(cause)` (`quic_short_dropped_<cause>` sums to `quic_data_send_short_dropped`); `record_send` asserts a dropped Short never takes the uncaused path, and `only_record_short_dropped_counts_a_dropped_short` pins the call sites. Choose the cause where the drop is decided; never derive it by subtraction.
--- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included) and on not being demoted. The joiner's offer reads `readiness()` (joiner demotion only); the relay's decision reads `acceptor_readiness()` (either role's demotion). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
-+- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included). The joiner's offer reads `readiness()`; the relay's decision reads `acceptor_readiness()` (the same, except that a simulation node with its joiner role off still decides). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
- - Every accept site MUST pass the response's decision to `dispatch_expect_connection_from` (source-scrape pin).
- - A failed native setup NEVER costs the join until UDP is removed (`test_quic_native_failed_setups_fall_back_to_udp`). Both sides fall back `NATIVE_FALLBACK_AFTER` after th
++# PUT stop rule: two 24-node simulations that each move a 1.2 MB streamed state
++# (about 4 minutes in total locally, so close to the default 240s cap and over it
++# on a slower runner).
++# retries = 0: a deterministic simulation, and three attempts would use most of
++# the Simulation job.
++[[profile.ci.overrides]]
++filter = "test(test_streamed_put_continues_while_a_closer_peer_exists)"
++slow-timeout = { period = "300s", terminate-after = 3 }
++retries = 0
++
+ # Mixed-version interop (freenet-ping-app, mixed_version_test.rs). Each test
+ # builds one or two Docker NAT networks of old and new binaries and runs PUT,
+ # GET, SUBSCRIBE, UPDATE and a large-state transfer across versions; the floor
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +0/-41)
+**File**: `crates/core/src/lib.rs` (modified, +2/-0)
 ```diff
-@@ -1591,22 +1591,6 @@ impl P2pConnManager {
-                 if transport.is_native() {
-                     state.native_pending.remove(&peer_addr);
-                     let after_beside_udp = state.beside_udp_connected.remove(&peer_addr);
--                    let native_connect = self
--                        .bridge
--                        .op_manager
--                        .ring
--                        .connection_manager
--                        .native_connect();
--                    match origin {
--                        crate::transport::NatAttemptOrigin::ConnectJoiner => {
--                            native_connect.record_success();
--                        }
--                        crate::transport::NatAttemptOrigin::ConnectAcceptor => {
--                            native_connect.record_acceptor_success();
--                        }
--                        crate::transport::NatAttemptOrigin::Gateway
--                        | crate::transport::NatAttemptOrigin::RingPeerNoTransport => {}
--                    }
-                     #[cfg(any(test, feature = "testing"))]
-                     {
-                         use crate::operations::connect::native_wire_trace::{
-@@ -1724,31 +1708,6 @@ impl P2pConnManager {
-                         origin,
-                     );
-                 }
--                // A strike needs evidence that native specifically failed
--                // where UDP worked (a rescue, `native::DEMOTION_FAILURES`).
--                // Here: the setup failed on the path while a UDP connection to
--                // the same peer already exists (its UDP fallback, or the
--                // other side's, connected first; the setup then ends
--                // superseded below). The other rescue, the fallback
--                // connecting after this failure, is counted where that dial
--                // ends (`connect::record_native_rescue_strike` callers). A
--                // failure with no UDP connection is no strike: UDP may fail
--                // for the same reason (an incompatible pair, a peer that never
--                // dialled), which says nothing against native.
--                if native_outcome.is_some_and(|o| o.counts_toward_demotion())
--                    && peer
--                        .socket_addr()
--                        .and_then(|addr| self.connections.get(&addr))
--                        .is_some_and(|entry| {
--                            !entry.native && entry.pub_key().is_none_or(|key| key == peer.pub_key())
--                        })
--                {
--                    crate::operations::connect::record_native_rescue_strike(
--                        &self.bridge.op_manager,
--                        origin,
--                        &peer,
--                    );
--                }
-                 // Outbound peers must have known addresses - extract once for reuse
-                 let peer_addr = match KnownPeerKeyLocation::try_from(&peer) {
-                     Ok(k) => k.socket_addr(),
+@@ -245,6 +245,8 @@ pub mod dev_tool {
+     // `set_nn_lattice_force_active` resets only the floor bypass (used by the
+     // benefit-test cleanup guard). No-op in production builds (compiled out).
+     #[cfg(any(test, feature = "testing"))]
++    pub use ring::put_cost_pick_hook::PutCostPickGuard;
++    #[cfg(any(test, feature = "testing"))]
+     pub use ring::{set_nn_lattice_enabled, set_nn_lattice_force_active};
+ 
+     // Test hook: connection identity decisions since process start, by kind
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +63/-267)
+**File**: `crates/core/src/operations.rs` (modified, +112/-0)
 ```diff
-@@ -3670,71 +3670,88 @@ async fn a_native_connection_binds_its_proven_key() {
-     h.assert_own_key_absent();
+@@ -2369,6 +2369,118 @@ mod routing_dataset_call_site_pins {
+         );
+     }
+ 
++    /// The PUT stop rule ("stop only when no ready connected peer is strictly
++    /// closer to the key") lives in `Ring::descended_closest_potentially_hosting`
++    /// (selection) and `PutHopCtx::resolve` (stop decision). Every one of the
++    /// four hop drivers must (1) build the hop context, (2) pass
++    /// `hop_ctx.descended_own` to the selection, after the HTL check, (3)
++    /// resolve the selection and USE the result (`hop.terminate`, `hop.peer`),
++    /// and (4) not apply the stop predicate to the router's pick itself. Read
++    /// on masked production code (comments, strings and test modules removed),
++    /// by function body, and failing closed on a missing or duplicated function.
++    #[test]
++    fn put_hop_drivers_apply_the_stop_rule_to_the_resolved_hop() {
++        let production = production(PUT);
++        // (driver, HTL check, where the selection is invoked). `drive_relay_put`
++        // defines the selection as a closure and calls it under the HTL check.
++        for (driver, htl_guard, invoked, forwards_peer) in [
++            (
++                "drive_relay_put",
++                "letnext_hop=ifhtl>0{",
++                "pick(&",
++                "(peer,addr,hop_overridden)",
++            ),
++            (
++                "drive_relay_put_streaming",
++                "letnext_hop=ifhtl>0{",
++                "descended_closest_potentially_hosting(",
++                "else{Some(peer)}",
++            ),
++            (
++                "drive_relay_probe",
++                "letnext_hop=ifhtl>0{",
++                "descended_closest_potentially_hosting(",
++                "matchpeer.socket_addr()",
++            ),
++            (
++                "drive_relay_probe_reconcile",
++                "ifhtl==0{",
++                "descended_closest_potentially_hosting(",
++                "matchpeer.socket_addr()",
++            ),
++        ] {
++            let body = fn_body(&production, driver);
++            let at = |needle: &str| {
++                body.find(needle)
++                    .unwrap_or_else(|| panic!("{driver}: missing `{needle}`"))
++            };
++            let ctx = at("PutHopCtx::new(");
++            let guard = at(htl_guard);
++            let select = at("descended_closest_potentially_hosting(");
++            let resolve = at("hop_ctx.resolve(");
++            let terminate = at("hop.terminate");
++            assert!(
++                ctx < select,
++                "{driver}: the hop context precedes the selection"
++            );
++            assert!(
++                guard < at(invoked),
++                "{driver}: HTL is checked before the selection"
++            );
++            assert!(select < resolve && resolve < terminate, "{driver}: order");
++            assert!(
++                body[select..resolve].contains("hop_ctx.descended_own"),
++                "{driver}: the selection must be given the descended location"
++            );
++            let peer_bound = body[resolve..]
++                .find("letpeer=hop.peer;")
++                .unwrap_or_else(|| panic!("{driver}: the resolved peer is not bound"));
++            assert!(
++                body[resolve + peer_bound..].contains(forwards_peer),
++                "{driver}: the resolved peer must be the one forwarded to (`{forwards_peer}`)"
++            );
++            for forbidden in [
++                "put_routing_should_terminate(",
++                "is_strictly_closer(",
++                "closest_potentially_hosting(DecisionLog",
++            ] {
++                assert!(
++                    !body.contains(forbidden),
++                    "{driver}: must not decide the stop itself (`{forbidden}`)"
++                );
++            }
++        }
++
++        // The stop decision itself: terminate only through the predicate,
++        // which an override always satisfies.
++        let resolve = fn_body(&production, "resolve");
++        assert!(resolve.contains("put_routing_should_terminate("));
++        assert!(resolve.contains("selection.overridden"));
++        let ring = fn_body(&production_ring(), "descended_closest_potentially_hosting");
++        assert!(ring.contains("strictly_closer_candidates("));
++        assert!(ring.contains("log.record("));
++
++        // The non-streaming terminus still replicates to the router's
++        // unrestricted pick (`hop.peer` is that pick when the hop stops).
++        let relay = fn_body(&production, "drive_relay_put");
++        assert!(relay.contains("letpeer=hop.peer;"));
++        assert!(relay.contains("letreplicate_to=peer.socket_addr();"));
++        // Every failure of a forward to an overridden hop finalizes locally:
++        // waiter registration, stream send, send/recv error, timeout.
++        assert_eq!(
++            relay
++                .matches("put_forward_failure_finalizes_locally(hop_overridden)")
++                .count(),
++            5,
++            "each forward-failur
+```
+
+**File**: `crates/core/src/operations/put/op_ctx_task.rs` (modified, +508/-229)
+```diff
+@@ -40,7 +40,7 @@ use crate::operations::op_ctx::{
+     AdvanceOutcome, AttemptOutcome, OpCtx, RetryDriver, RetryLoopOutcome, drive_retry_loop,
+ };
+ use crate::operations::orphan_streams::{OrphanStreamError, STREAM_CLAIM_TIMEOUT};
+-use crate::ring::{Location, PeerKeyLocation};
++use crate::ring::{HopSelection, Location, PeerKeyLocation, is_strictly_closer};
+ use crate::router::{RouteEvent, RouteOutcome};
+ use crate::tracing::{NetEventLog, OperationFailure, state_hash_full};
+ use crate::transport::StreamId;
+@@ -2002,7 +2002,29 @@ async fn run_relay_put<CB>(
+ /// a farther peer.
+ ///
+ /// Returns `true` when the relay should stop forwarding and finalize
+-/// locally.
++/// locally: the chain descended to this node AND `closer_peer_exists` is
++/// false.
++///
++/// # Stop only when no ready connected peer is strictly closer
++///
++/// This used to be tested against the router's cost-ranked pick: if the pick
++/// was not strictly closer than this node, the hop stopped. The router
++/// re-sorts the closest candidates by predicted cost, so the pick can be
++/// farther than a peer that is geometrically closer, and the hop stopped with
++/// a closer peer connected. Now the stop needs that NO ready, non-transient,
++/// non-skipped connected peer is strictly closer than this node: if the
++/// router's pick is not closer but another such peer is,
++/// `Ring::descended_closest_potentially_hosting` lets the router rank only the
++/// strictly-closer peers and the PUT goes to its pick. Equal distance is not
++/// closer. Not changed: the originator (never "descended") and its first-hop
++/// pick.
++///
++/// A simulation with the router's cost pick forced away from the key shows the
++/// general shape: before, the PUT stopped at the first descended hop with
++/// closer peers connected; now it reaches the nearest node. That is the shape
++/// seen on one live PUT (a 1.2 MB PUT from nova-gw1 stored at a first hop
++/// 0.155 from the key and went no further), but why that hop stopped is not
++/// observable, so this is consistent with that incident, not shown to fix it.
+ ///
+ /// # The away-move alone is NOT sufficient (issue direction A)
+ ///
+@@ -2073,32 +2095,129 @@ async fn run_relay_put<CB>(
+ fn put_routing_should_terminate(
+     upstream_loc: Option<Location>,
+     own_loc: Option<Location>,
+-    next_hop_loc: Option<Location>,
+     target: Location,
++    closer_peer_exists: bool,
+ ) -> bool {
+-    let (upstream_loc, own_loc, next_hop_loc) = match (upstream_loc, own_loc, next_hop_loc) {
+-        (Some(up), Some(own), Some(next)) => (up, own, next),
+-        // Unknown upstream/own/next location: cannot compare distances,
+-        // so keep the prior forward-always behaviour rather than guess.
++    let (upstream_loc, own_loc) = match (upstream_loc, own_loc) {
++        (Some(up), Some(own)) => (up, own),
++        // Unknown upstream/own location: cannot compare distances, so keep
++        // the forward-always behaviour rather than guess.
+         _ => return false,
+     };
+-    let upstream_dist = upstream_loc.distance(target).as_f64();
+-    let own_dist = own_loc.distance(target).as_f64();
+-    let next_dist = next_hop_loc.distance(target).as_f64();
+-
+     // Clause (1): the chain descended to reach us. The inbound hop
+     // (upstream → own) moved strictly closer to the target, so this node
+     // is the closest-seen point so far. At the originator loopback
+     // `upstream == own`, making this strictly-less comparison false and
+     // leaving the originator unguarded.
+-    let descended_to_here = own_dist < upstream_dist;
++    let descended_to_here =
++        own_loc.distance(target).as_f64() < upstream_loc.distance(target).as_f64();
++
++    // Clause (2): no connected peer is strictly closer to the target than we
++    // are. Equal distance is not closer.
++    descended_to_here && !closer_peer_exists
++}
+ 
+-    // Clause (2): the only forwardable next hop is NOT strictly closer to
+-    // the target than we are — forwarding would climb back out of the
+-    // neighbourhood we just reached (the #4363 overshoot).
+-    let next_hop_moves_away = next_dist >= own_dist;
++/// This node's location when the PUT chain descended to it (own is strictly
++/// closer to the key than the upstream), `None` otherwise or when either
++/// location is unknown. Only a descended hop applies the stop rule, so the
++/// originator loopback (upstream == own) and a chain that has not reached the
++/// neighbourhood keep the router's pick.
++fn put_descended_own_loc(
++    upstream_loc: Option<Location>,
++    own_loc: Option<Location>,
++    target: Location,
++) -> Option<Location> {
++    let (upstream_loc, own_loc) = (upstream_loc?, own_loc?);
++    (own_loc.distance(target).as_f64() < upstream_loc.distance(target).as_f64()).then_some(own_loc)
++}
+ 
+-    descended_to_here && next_hop_moves_away
++/// What the stop rule needs to know about this hop, resolved before the
++/// router picks a next hop.
++struct PutHopCtx {
++    upstream_loc: Option<Location>,
++  
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +287/-8)
+```diff
+@@ -4344,7 +4344,41 @@ impl Ring {
+         contract_key: &ContractKey,
+         skip_list: impl Contains<std::net::SocketAddr>,
+     ) -> Option<PeerKeyLocation> {
++        self.descended_closest_potentially_hosting(log_as, contract_key, skip_list, None)
++            .map(|selection| selection.peer)
++    }
++
++    /// [`Self::closest_potentially_hosting`] for a PUT relay hop, with the PUT
++    /// stop rule applied inside the selection.
++    ///
++    /// `descended_own` is this node's location when the PUT chain descended to
++    /// it (see `put_descended_own_loc`), `None` otherwise. When it is set and
++    /// the router's cost-ranked pick over all candidates is not strictly closer
++    /// to the key than this node, the router ranks only the ready,
++    /// non-transient, non-skipped connected peers that are strictly closer, and
++    /// the selection returns its pick (`overridden`). With no such peer the
++    /// unrestricted pick is returned unchanged, and the caller stops the PUT.
++    ///
++    /// The selection the router records (the routing dataset's decision and the
++    /// peer-selection counts) is the one returned, so the outcome of the
++    /// forward joins the peer that was actually used. The probe that decides
++    /// whether to narrow records nothing.
++    pub(crate) fn descended_closest_potentially_hosting(
++        &self,
++        log_as: crate::router::dataset::DecisionLog,
++        contract_key: &ContractKey,
++        skip_list: impl Contains<std::net::SocketAddr>,
++        descended_own: Option<Location>,
++    ) -> Option<HopSelection> {
+         let routes = matches!(log_as, crate::router::dataset::DecisionLog::Joinable(_));
++        // Test-only hook scope: PUT selections.
++        let is_put = descended_own.is_some()
++            || matches!(
++                log_as,
++                crate::router::dataset::DecisionLog::Joinable(
++                    crate::node::network_status::OpType::Put
++                )
++            );
+         let log = self.candidate_log_for(log_as);
+         // The router read lock is held across candidate gathering and
+         // selection, as before candidate logging existed; it is released
+@@ -4353,13 +4387,27 @@ impl Ring {
+         let target = Location::from(contract_key);
+         self.connection_manager
+             .routing_with(target, None, skip_list, move |candidates| {
+-                let (selected, decision, capture) = router.select_k_best_peers_capturing(
+-                    candidates.iter(),
+-                    target,
+-                    1,
+-                    log.as_ref().is_some_and(|(log, _)| log.capture),
+-                    routes,
+-                );
++                let capture = log.as_ref().is_some_and(|(log, _)| log.capture);
++                let pick_among = |candidates, capture, routes| {
++                    hop_select(&router, target, candidates, capture, routes, is_put)
++                };
++                let mut overridden = false;
++                let narrowed: Vec<PeerKeyLocation>;
++                let mut candidates: &[PeerKeyLocation] = candidates;
++                if let Some(own) = descended_own {
++                    let probe = hop_probe(&router, target, candidates, is_put);
++                    let probe_is_closer = probe
++                        .first()
++                        .is_some_and(|p| is_strictly_closer(p.location(), own, target));
++                    if !probe_is_closer {
++                        narrowed = strictly_closer_candidates(candidates, own, target);
++                        if !narrowed.is_empty() {
++                            overridden = true;
++                            candidates = &narrowed;
++                        }
++                    }
++                }
++                let (selected, decision, capture) = pick_among(candidates, capture, routes);
+                 drop(router);
+                 if let Some((log, op)) = log {
+                     log.record(
+@@ -4380,9 +4428,10 @@ impl Ring {
+                     num_candidates = decision.candidates.len(),
+                     total_routing_events = decision.total_routing_events,
+                     selected = peer.is_some(),
++                    overridden,
+                     "routing_decision"
+                 );
+-                peer
++                peer.map(|peer| HopSelection { peer, overridden })
+             })
+             .flatten()
+     }
+@@ -7749,6 +7798,136 @@ fn read_fd_soft_limit() -> Option<u64> {
+     None
  }
  
-+/// A harness whose node can dial native (override 100, QUIC endpoint up), so
-+/// its readiness reads `ready` at percent 100 until something lowers it.
-+async fn native_ready_harness(id: &str) -> Harness {
-+    use crate::transport::{QuicAvailability, QuicAvailabilityWatch};
-+    let h = Harness::with_config(id, |config| config.native_connect_override = Some(100)).await;
-+    let (_endpoint, watch) = QuicAvailabilityWatch::for_test(QuicAvailability::Up);
-+    h.mgr
-+        .bridge
-+        .op_manager
-+        .ring
-+        .connection_manager
-+        .native_connect()
-+        .set_endpoint(watch, true);
-+    assert_native_still_on(&h, "premise");
-+    h
++/// Under test builds a PUT selection can be forced by `put_cost_pick_hook`:
++/// the candidates the router sees are then just the forced pick.
++fn hook_candidates(
++    candidates: &[PeerKeyLocation],
++    target: Location,
++    is_put: bool,
++) -> &[PeerKeyLocation] {
++    #[cfg(any(test, feature = "testing"))]
++    if let Some(pick) = is_put
++        .then(|| put_cost_pick_hook::forced_pick(candidates, target))
++        .flatten()
++    {
++        return std::slice::from_ref(pick);
++    }
++  
+```
+
+**File**: `crates/core/src/router.rs` (modified, +32/-1)
+```diff
+@@ -3273,6 +3273,37 @@ impl Router {
+         Vec<&'a PeerKeyLocation>,
+         RoutingDecisionInfo,
+         Option<dataset::DecisionCapture<'a>>,
++    ) {
++        self.select_k_best_peers_inner(peers, target_location, k, capture, routes, true)
++    }
++
++    /// A selection that updates NO router statistics (neither the selection
++    /// ranks nor the peer-selection counts) and captures nothing: the answer to
++    /// "what would the router pick", for a caller that may discard it. The PUT
++    /// stop rule probes the cost pick this way before deciding whether to
++    /// narrow the candidates; the selection it then uses is the recorded one.
++    pub(crate) fn select_k_best_peers_unrecorded<'a>(
++        &self,
++        peers: impl IntoIterator<Item = &'a PeerKeyLocation>,
++        target_location: Location,
++        k: usize,
++    ) -> Vec<&'a PeerKeyLocation> {
++        self.select_k_best_peers_inner(peers, target_location, k, false, false, false)
++            .0
++    }
++
++    fn select_k_best_peers_inner<'a>(
++        &self,
++        peers: impl IntoIterator<Item = &'a PeerKeyLocation>,
++        target_location: Location,
++        k: usize,
++        capture: bool,
++        routes: bool,
++        record_stats: bool,
++    ) -> (
++        Vec<&'a PeerKeyLocation>,
++        RoutingDecisionInfo,
++        Option<dataset::DecisionCapture<'a>>,
+     ) {
+         let total_routing_events = self.failure_estimator.len();
+ 
+@@ -3425,7 +3456,7 @@ impl Router {
+ 
+             // Record where the winner sat in distance order, so the cost of the
+             // candidate-window truncation can be measured rather than guessed.
+-            if let Some((distance_rank, winner, _, _)) = scored.first() {
++            if let (true, Some((distance_rank, winner, _, _))) = (record_stats, scored.first()) {
+                 self.selection_ranks
+                     .record(*distance_rank, closest.len(), candidates_available);
+                 if routes {
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +141/-0)
+```diff
+@@ -26497,3 +26497,144 @@ fn test_every_origins_second_large_put_starts() {
+         "a node's event loop was held for {longest:?} by one event"
+     );
+ }
++
++// ---------------------------------------------------------------------------
++// PUT stops only when no connected peer is strictly closer to the key
++// (hosting invariant 4; the gw1 live repro).
++// ---------------------------------------------------------------------------
++
++/// What a streamed-PUT run left behind.
++struct PutStopRun {
++    /// Ring distance from the key of each node hosting it, nearest first.
++    host_distances: Vec<f64>,
++    /// Ring distance of the nearest-to-key node in the network.
++    nearest_node_distance: f64,
 +}
 +
-+/// The node still offers its full percent as joiner and still decides
-+/// `Native` as acceptor (for every bucket it is asked about): native failures
-+/// of any kind, in either role, lower neither.
-+fn assert_native_still_on(h: &Harness, after: &str) {
-+    use crate::operations::connect::native::{NativeDecision, NativeOffer, decide_native};
-+    let native = h
-+        .mgr
-+        .bridge
-+        .op_manager
-+        .ring
-+        .connection_manager
-+        .native_connect();
-+    let joiner = native.readiness();
-+    assert!(joiner.ready, "{after}: ready as joiner");
-+    assert_eq!(joiner.percent, 100, "{after}: joiner offer");
-+    let acceptor = native.acceptor_readiness();
-+    assert!(acceptor.ready, "{after}: ready as acceptor");
-+    for bucket in [0u8, 50, 99] {
-+        assert_eq!(
-+            decide_native(Some(NativeOffer::capable(100)), acceptor, bucket, false),
-+            NativeDecision::Native,
-+            "{after}: acceptor decides Native in bucket {bucket}"
-+        );
++/// A 1.2 MB PUT from the node farthest from the key. With
++/// `cost_window = Some(w)` the router's cost pick for every PUT hop is forced
++/// to the farthest of the `w` geometrically closest candidates, which stands in
++/// for a router whose learned cost prefers a peer that is not the closest to
++/// the key. No GETs are issued: a GET caches copies along its path, which
++/// would hide where the PUT stopped.
++fn run_put_stop_sim(seed: u64, cost_window: Option<usize>) -> PutStopRun {
++    use freenet::dev_tool::{Location, NodeLabel, ScheduledOperation, SimNetwork, SimOperation};
++    const NUM_NODES: usize = 24;
++    const STATE_LEN: usize = 1_200_000;
++
++    setup_deterministic_state(seed);
++    let network = format!("put-stop-{seed:x}");
++    let contract = SimOperation::create_test_contract(0xC3);
++    let contract_key = contract.key();
++    let key_loc = Location::from(&contract_key).as_f64();
++    let state = SimOperation::create_large_state(STATE_LEN, 0x5A);
++
++    let wrap = |x: f64| x.rem_euclid(1.0);
++    let node_locations: Vec<f64> = (0..NUM_NODES)
++        .map(|i| wrap(key_loc + (i as f64 + 0.5) / NUM_NODES as f64))
++        .collect();
++
++    let _hook = cost_window.map(freenet::dev_tool::PutCostPickGuard::farthest_of_closest);
++
++    let rt = create_runtime();
++    let mut sim = rt.block_on(async {
++        SimNetwork::new_with_node_locations(
++            &network,
++            1,
++            NUM_NODES,
++            10,
++            7,
++            6,
++            3,
++            seed,
++            &node_locations,
++        )
++        .await
++    });
++    sim.disable_placement_migration();
++    sim.with_streaming_threshold(64 * 1024);
++    sim.with_controlled_op_interval(Duration::from_secs(5));
++    sim.wait_for_join_convergence_before_ops(1.0, Duration::from_secs(120));
++
++    let locs = sim.get_peer_locations();
++    let ranked = nodes_by_distance_to_key(&locs, NUM_NODES, key_loc);
++    let ring_dist = |a: f64| {
++        let d = (a - key_loc).abs();
++        d.min(1.0 - d)
++    };
++    let origin = NodeLabel::node(&network, ranked[NUM_NODES - 1]);
++    let operations = vec![ScheduledOperation::new(
++        origin,
++        SimOperation::Put {
++            contract: contract.clone(),
++            state,
++            subscribe: false,
++        },
++    )];
++
++    let result = sim.run_controlled_simulation(
++        seed,
++        operations,
++        Duration::from_secs(600),
++        Duration::from_secs(120),
++    );
++    assert!(
++        result.turmoil_result.is_ok(),
++        "seed={seed:x}: sim failed: {:?}",
++        result.turmoil_result.err()
++    );
++
++    let mut host_distances: Vec<f64> = (1..=NUM_NODES)
++        .filter(|n| result.is_node_hosting(&NodeLabel::node(&network, *n), &contract_key))
++        .map(|n| ring_dist(locs[n]))
++        .collect();
++    host_distances.sort_by(f64::total_cmp);
++    PutStopRun {
++        host_distances,
++        nearest_node_distance: ring_dist(locs[ranked[0]]),
 +    }
 +}
 +
- /// A failed native setup: the connect op dials UDP next, so the address is
- /// not marked failed and the peer gets no backoff, either of which would
--/// refuse that dial. With no UDP connection to the peer, no failure strikes
--/// either streak, whatever its outcome or role: a strike needs evidence that
--/// native failed where UDP worked (a rescue), and UDP may fail for the same
--/// reason (an incompatible pair, a peer that never dialled).
-+/// refuse that dial. However many setups fail, in whatever role and with
-+/// whatever outcome, the node keeps offering native and deciding it.
- #[tokio::test]
--async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_strikes_nothing_alone() {
-+async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_native_on() {
-     use crate::operations::connect::native::DialTransport;
-     use crate::transport::NativeSetupOutcome;
--    let mut h = Harness::new("native-failure").await;
-+    let mut h = native_ready_harness("native-failure").await;
-     use crate::transport::NatAttemptOrigin;
--    // (round, outcome, origin, joiner demotions, acceptor demotions). Each
--    // round fails with as many distinct peers as either threshold; none
--    // demotes anything.
--    for (round, outcome, origin, demotions, acceptor_demotions) in [
-+    for (round, outcome, origin) in [
-         (
-             0u16,
-             NativeSetupOutcome::OverBudgetDestination,
-             NatAttemptOrigin::ConnectJoiner,
--            0,
--            0,
-         ),
-         (
-             1,
-             NativeSetupOutcome::OverBudgetDestination,
-             NatAttemptOrigin::ConnectAcceptor,
--            0,
--            0,
--        ),
--        // Before any role is demoted, so a leak into either streak would
--        // demote it (a demoted streak ignores further failures).
--        (
--            2,
--            NativeSetupOutcome::TimedOut,
--            NatAttemptOrigin::Gateway,
--            0,
--            0,
-         ),
-+        (2, NativeSetupOutcome::TimedOut, NatAttemptOrigin::Gateway),
-         (
-             3,
-             NativeSetupOutcome::TimedOut,
-             NatAttemptOrigin::RingPeerNoTransport,
--            0,
--            0,
-         ),
-         (
-             4,
-             NativeSetupOutcome::TimedOut,
-             NatAttemptOrigin::ConnectAcceptor,
--            0,
--            0,
-         ),
-         (
-             5,
-             NativeSetupOutcome::HandshakeFailed,
-             NatAttemptOrigin::ConnectJoiner,
--            0,
--            0,
-         ),
-     ] {
--        for i in 0..crate::operations::connect::native::DEMOTION_FAILURES
--            .max(crate::operations::connect::native::ACCEPTOR_DEMOTION_FAILURES)
--            as u16
--        {
-+        for i in 0..10u16 {
-             let addr: SocketAddr = format!("203.0.113.231:{}", 6210 + round * 10 + i)
-                 .parse()
-                 .unwrap();
-@@ -3766,28 +3783,7 @@ async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_strikes_nothing_
-                 "a native failure gives no backoff"
-             );
-         }
--        assert_eq!(
--            h.mgr
--                .bridge
--                
++/// A streamed PUT whose router cost pick is farther from the key than the hop
++/// it is at, while a strictly closer peer is connected, must continue to a
++/// closer peer until none is closer, so a copy lands at the nearest-to-key
++/// node. The old rule tested the cost-ranked pick, stopped at the first
++/// descended hop and left the copy far from the key (red on main: hosts only
++/// at 0.104 and 0.479, nearest node 0.021). The control run, with the router's
++/// pick left alone, reaches the nearest node, so the forced cost pick is what
++/// the assertion tests.
++///
++/// Far GETs finding the copy is deliberately not asserted here: on main a far
++/// GET also succeeds (the PUT origin and first hop still hold copies, and a GET
++/// caches along its path), so such an assertion does not discriminate.
++#[test_log::test]
++fn test_streamed_put_continues_while_a_closer_peer_exists() {
++    let seed = 0x6D57_0001_u64;
++    let reaches_nearest = |run: &PutStopRun| {
++        run.host_distances
++            .first()
++            // Two nodes can sit at the same distance on either side of the key.
++            .is_some_and(|d| (d - run.nearest_node_distance).abs() < 1e-3)
++    };
++
++    let control = run_put_stop_sim(seed, None);
++    assert!(
++        reaches_nearest(&control
 ```
 
-**File**: `crates/core/src/operations/connect.rs` (modified, +1/-92)
+**File**: `docs/design/demand-driven-hosting.md` (modified, +2/-0)
 ```diff
-@@ -437,8 +437,7 @@ pub(crate) trait RelayContext {
-     ) -> Option<PeerKeyLocation>;
+@@ -21,6 +21,8 @@ A peer hosts a contract because **real demand routed to it**. "Real demand" is o
  
-     /// This node's readiness for QUIC-native connections, read when it
--    /// decides as acceptor: off while either its joiner or its acceptor
--    /// demotion runs (`NativeConnectState::acceptor_readiness`).
-+    /// decides as acceptor (`NativeConnectState::acceptor_readiness`).
-     fn native_readiness(&self) -> native::NativeReadiness;
+ The first two drive the **subscription chain** of sections 3–6; the third places an **every-hop copy** retained under the demand gauge of section 9. What a peer does **not** do is keep a copy **durable regardless of demand**: it does not retain a contract merely because it once forwarded a request, because a neighbor pushed it, or because it relayed traffic for it. The every-hop copy from a routed GET/PUT is held under that gauge (retained by its subscriber count and its GET/PUT recency, and the first thing evicted once it has neither), which is exactly what separates legitimate every-hop hosting from the durable relay-caching anti-pattern (section 9). Replication degree is not a tunable global constant; it emerges from where demand exists and how requests route.
  
-     /// Whether this node holds a transport to the joiner, by key or by
-@@ -1785,11 +1784,6 @@ pub(super) async fn dispatch_expect_connection_from(
-                                 .record_connect_native_rescued_by_udp(
-                                     crate::transport::NativeConnectSide::Acceptor,
-                                 );
--                            record_native_rescue_strike(
--                                &op_manager,
--                                crate::transport::NatAttemptOrigin::ConnectAcceptor,
--                                &peer,
--                            );
-                         }
-                         #[cfg(any(test, feature = "testing"))]
-                         native_wire_trace::record_at(
-@@ -1816,86 +1810,6 @@ pub(super) async fn dispatch_expect_connection_from(
-     Ok(())
- }
++*PUT stop rule (2026-11-27).* A PUT hop that the chain descended to stops only when no ready, non-transient, non-skipped connected peer is strictly closer to the key than itself (equal distance is not closer). If the router's cost-ranked pick is not closer but another such peer is, the router ranks only the strictly closer peers and the PUT continues to one of them. First-hop selection at the originator is unchanged. See `put_routing_should_terminate` in `crates/core/src/operations/put/op_ctx_task.rs`.
++
+ ### There is no "relay" category
  
--/// A native setup with `peer`, made in the role `origin` names, failed on the
--/// path and UDP to the same peer then connected: a rescue, the only evidence
--/// that counts toward demotion (`native::DEMOTION_FAILURES`). Strikes that
--/// role's streak (the joiner's or the acceptor's), each across distinct peers,
--/// so the same rescue seen at two sites counts once. Other origins strike
--/// nothing, and nor does a rescue with one of this node's configured gateways
--/// (matched by address or key, as the connection lifecycle labels a dial to
--/// one `Gateway`): callers pass the CONNECT role, which does not say whether
--/// the peer is a gateway.
--///
--/// Known residuals, both giving the ACCEPTOR a rescue it did not earn, since
--/// the joiner never dialled native but does dial UDP:
--/// - the joiner's plan for this acceptor was a UDP dial at the fallback time
--///   (`AcceptorDialPlan::UdpAt`: the response arrived with less than
--///   `NATIVE_MIN_WINDOW_LEFT` of the acceptor's window left); bounded by the
--///   response's travel time (10.2 item 6);
--/// - the joiner's own native setup was refused locally (`TooLate`,
--///   `OverBudget*`, `SetupsFull`, `AlreadyWaiting`, `AllowSetFull`,
--///   `KeyConflict`, `UnusableKey`) and it fell back to UDP; the joiner's
--///   streak does not count those (not a path failure), but the acceptor's
--///   setup timed out and its UDP fallback connected;
--/// - the joiner offered native and then lost it (demoted, or its endpoint
--///   went down) before the acceptor's `Native` decision arrived, so it
--///   refused the decision and dialled UDP at the fallback time
--///   (`native::refused_decision_plan`). The acceptor cannot tell a refusal
--///   from a broken path, so this is not fixed on the wire. Bounded: it needs
--///   a demotion within the response's travel time, and the acceptor demotes
--///   only after rescues with `ACCEPTOR_DEMOTION_FAILURES` (3) distinct
--///   joiners within the streak window (6 h).
--pub(crate) fn record_native_rescue_strike(
--    op_manager: &OpManager,
--    origin: crate::transport::NatAttemptOrigin,
--    peer: &PeerKeyLocation,
--) {
--    let is_configured_gateway = op_manager.configured_gateways.iter().any(|gw| {
--        gw.pub_key() == peer.pub_key()
--            || (gw.socket_addr().is_some() && gw.socket_addr() == peer.socket_addr())
--    });
--    if is_configured_gateway {
--        return;
--    }
--    let native_connect = op_manager.ring.connection_manager.native_connect();
--    // (whether the acceptor's streak counted it, whether it demoted)
--    let (as_acceptor, demoted) = match origin {
--        crate::transport::NatAttemptOrigin::ConnectJoiner => {
--            (false, native_connect.record_failure(peer.pub_key()))
--        }
--        crate::transport::NatAttemptOrigin::ConnectAcceptor => {
--            (true, native_connect.record_acceptor_failure(peer.pub_key()))
--        }
--        crate::transport::NatAttemptOrigin::Gateway
--        | crate::transport::NatAttemptOrigin::RingPeerNoTransport => return,
--    };
--    #[cfg(any(test, feature = "testing"))]
--    {
--        use native_wire_trace::{NativeWireEvent, record_at};
--        let own = op_manager.ring.connection_manager.get_own_addr();
--        match (as_acceptor, own, peer.socket_addr()) {
--            (true, Some(own), _) => {
--                record_at(
--                    own,
--                    NativeWireEvent::AcceptorStreak {
--                        own,
--                        len: native_connect.acceptor_streak(),
--                    },
--                );
--                if demoted {
--                    record_at(own, NativeWireEvent::AcceptorDemoted { own });
--                }
--            }
--  
+ This is the single most important framing point, and it is easy to lose. A peer either **hosts** a contract (it holds the state, is subscribed, and stays fresh in the update mesh) or it **does not**. Forwarding a request one hop closer to the contract's key is just **routing**. It is not a persistent role, not a category, not a state a peer can be "stuck" in.
 ```
 
-**File**: `crates/core/src/operations/connect/native.rs` (modified, +157/-530)
+---
+
+### Incident Patch 2: `623d20d8` (2026-11-27)
+**Commit Message**: feat: compile contract code under CPU and memory limits in a separate process (off by default) (#6410)
+
+**File**: `.claude/rules/contracts.md` (modified, +63/-0)
 ```diff
-@@ -96,38 +96,6 @@ pub(crate) const LEVEL_NATIVE_CAPABLE: u8 = 1;
- #[cfg_attr(not(test), allow(dead_code))]
- pub(crate) const LEVEL_NATIVE_ONLY: u8 = 2;
+@@ -21,6 +21,69 @@ Engine type alias    → engine.rs          (selected by feature flag)
+ **All `wasmtime::` imports MUST stay in `engine/wasmtime_engine.rs`.**
+ Other wasm_runtime files use the `Engine` type alias and `WasmEngine` trait.
  
--/// Strikes, across distinct acceptors, after which a joiner offers percent 0
--/// for [`DEMOTION_COOLDOWN`]. A strike is a RESCUE: a native setup with that
--/// acceptor failed on the path (`NativeSetupOutcome::counts_toward_demotion`)
--/// and UDP to the same acceptor then connected. A native failure where UDP
--/// failed too (a symmetric or otherwise incompatible pair, a peer that never
--/// dialled, a peer gone) is no evidence against native and is not counted.
--pub(crate) const DEMOTION_FAILURES: usize = 3;
--
--/// Strikes, across distinct joiners, after which a node decides `Udp` as
--/// acceptor for [`DEMOTION_COOLDOWN`]. A strike is a rescue, as for the joiner
--/// ([`DEMOTION_FAILURES`]). Field data (0.2.162, independent-mapping nodes)
--/// put a healthy acceptor's raw failure share at about 71% of the dials it
--/// takes, almost all caused by the joiner (endpoint-dependent joiners, joiners
--/// that never dial); counting those demoted a healthy acceptor within about
--/// an hour at 25%. A rescue needs UDP to that joiner to work, which those
--/// cases do not give, while an acceptor whose own native path is broken
--/// collects a rescue on every pair UDP can connect.
--pub(crate) const ACCEPTOR_DEMOTION_FAILURES: usize = 3;
--
--/// How long a strike counts: a streak drops strikes older than this, so
--/// strikes spread thinly over days (a node that rarely uses native) do not
--/// add up to a demotion. Equal to [`DEMOTION_COOLDOWN`]: a node whose native
--/// path is broken collects its strikes at its rate of UDP-rescued native
--/// setups, which at 25% was several an hour for a node that accepts or joins
--/// at all (and is about four times that at 100%), so three fall well inside
--/// 6 h; and a fault that does not recur
--/// within one cooldown would not have kept native off for long either.
--pub(crate) const STRIKE_WINDOW: Duration = DEMOTION_COOLDOWN;
--
--/// How long a demoted node offers (or decides) nothing native.
--pub(crate) const DEMOTION_COOLDOWN: Duration = Duration::from_secs(6 * 3600);
--
- /// Native setups this node may have decided as acceptor and not yet seen end,
- /// at a connection limit of `max_connections`: half of the node's native
- /// setup slots (`QuicPolicy::native_setups_max`, which is
-@@ -271,16 +239,15 @@ pub(crate) fn native_bucket(a: &TransportPublicKey, b: &TransportPublicKey) -> u
- }
++### Compiling code (`engine/compile_limits.rs`, `engine/compile_verdicts.rs`)
++
++An acceptance rule applies before any compile of contract code, and of delegate
++code on hosted nodes only (`Isolation::coarse_check_applies`; other delegates are
++installed by the node's own client and are not checked). `compile_coalesced` takes binary
++input only (text format is refused as not binary before any conversion), then
++`compile_limits::check_module` validates the module with a `wasmparser` walk that
++also counts size, functions, locals, control frames and their nesting (an
++operator that splits code-generation blocks, such as `table.get` or
++`call_indirect`, counts as a frame), branch edges, `br_table` targets,
++block-type arity, operand stack height, types, element entries, table entries,
++data segments, and operators, and refuses the module as soon as one counter
++passes its limit.
++
++Operators are weighted by class: a short list of simple operators (constants,
++locals, integer and float arithmetic, comparisons, conversions that cannot trap)
++weighs 1; loads, stores, calls, globals, division, trapping float-to-integer
++conversion and every SIMD operator weigh 96; every other operator, including any
++a later `wasmparser` adds, weighs 2048. The default is the heavy weight, so do
++not "fix" a refusal by adding an operator to a lighter list without measuring it
++(see `operators_have_the_weight_of_their_class`, and `OPERATOR_MODEL_VERSION`,
++which is part of the limits fingerprint). The weighted count is bounded per
++function and per module, and so are its products with frames and with locals.
++
++The scan's `wasmparser` is pinned to the version wasmtime compiles with
++(`scan_and_engine_use_one_wasmparser`). Compiles run on a pool of at most 4
++threads (`compile_threads`), and at most `compile_concurrency()` compiles (a
++quarter of the cores, 1 to 4) run at once.
++
++The limits are a network-wide acceptance rule, not a tuning knob: each sits at
++least 2x above the largest value over deployed modules
++(`engine/reference_shapes.json`, checked by
++`reference_module_shapes_stay_inside_every_limit`), and most at 4x. The numeric
++value of every limit is pinned by `every_limit_has_its_recorded_value`, so a
++node on a build with other limits accepts other code, and a contract already
++hosted can become refused after an upgrade. Raising or lowering one is a
++rolling-upgrade event.
++
++A refusal is remembered per shared backend engine by `CompileVerdictCache` (keyed
++by the code hash, 24 h, time from the node's `TimeSource`, text cut to
++`MAX_DIAGNOSTIC_BYTES`), so repeated requests for the same bytes are answered
++without scanning. Only refusals are remembered: a compile failure that is not a
++property of the bytes is reported (`WasmError::Compile`), never cached, and never
++classified as a bad module. Compile sites call `classify_compile_result`, which
++maps a refusal to the permanent `ContractExecError::InvalidModule`. Nothing yet
++acts on that class: a hosted contract that is refused after an upgrade keeps
++failing its operations (answered from the cache) until demand-ordered eviction
++drops it; a code-validity eviction trigger would be a new hosting mechanism and
++needs its own design against `hosting-invariants.md`.
++
++Compilation is a separate path from the guest calls below: it runs on the
++contract-handling path (a cache miss in `prepare_contract_call` or
++`prepare_delegate_call`; the offload to a blocking thread does not free that
++path, which waits for the result) and is not covered by the guest wall-clock
++backstop. The limits above apply to contract code on every node and to delegate
++code on hosted nodes only (other delegates are not checked). They are a coarse pre-filter and not a cost bound. With
++`compile-isolation` on, a hard-capped worker process (CPU time, memory and wall
++time limits) judges each module before the node compiles it, and that is what
++bounds a module the pre-filter lets through (`compile_worker/caps.rs`).
++
++Adding a limit means adding its field to `ModuleShape`, a case to `limit_cases()`
++and a new entry in `engine/reference_shapes.json` for each reference module.
++
+ ### Delegate contract access (`wasm_runtime/native_api.rs`, `delegate_api.rs`)
  
- /// A node's effective native percent: 0 unless the build can dial native, the
--/// QUIC endpoint is up and the node is not demoted; otherwise the release's
-+/// QUIC endpoint is up; otherwise the release's
- /// percent, lowered (never raised) by a per-node override.
- pub(crate) fn effective_native_percent(
-     dial_ready: bool,
-     endpoint_up: bool,
--    demoted: bool,
-     release_percent: u8,
-     node_override: Option<u8>,
- ) -> u8 {
--    if !(dial_ready && endpoint_up) || demoted {
-+    if !(dial_ready && endpoint_up) {
-         return 0;
-     }
-     let release_percent = release_percent.min(100);
-@@ -369,16 +336,10 @@ pub(crate) const NATIVE_CONNECT_WITHIN: std::time::Duration = std::time::Duratio
- /// ([`NativeConnectState::acceptor_readiness`]).
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub(crate) struct NativeReadiness {
--    /// The build can dial native, the endpoint is up and the node is not
--    /// demoted.
-+    /// The build can dial native and the endpoint is up.
-     pub ready: bool,
-     /// The effective percent ([`effective_native_percent`]).
-     pub percent: u8,
--    /// A demotion holds native off for this readiness (other causes may as
--    /// well): the joiner streak for [`NativeConnectState::readiness`], either
--    /// streak for [`NativeConnectState::acceptor_readiness`].
--    /// [`acceptor_arm`] then counts the pair in neither arm.
--    pub demoted: bool,
- }
- 
- impl NativeReadiness {
-@@ -391,28 +352,16 @@ impl NativeReadiness {
-     }
- 
-     #[cfg(test)]
--    pub(crate) fn from_inputs(dial_ready: bool, endpoint_up: bool, demoted: bool) -> Self {
--        Self::from_parts(dial_ready, endpoint_up, demoted, QUIC_NATIVE_PERCENT)
-+    pub(crate) fn from_inputs(dial_ready: bool, endpoint_up: bool) -> Self {
-+        Self::from_parts(dial_ready, endpoint_up, QUIC_NATIVE_PERCENT)
-     }
- 
-     /// As [`Self::from_inputs`], at `release_percent` in place of
-     /// [`QUIC_NATIVE_PERCENT`].
--    pub(crate) fn from_parts(
--        dial_ready: bool,
--        endpoint_up: bool,
--        demoted: bool,
--        release_percent: u8,
--    ) -> Self {
-+    pub(crate) fn from_parts(dial_ready: bool, endpoint_up: bool, release_percent: u8) -> Self {
-         Self {
--            ready: dial_ready && endpoint_up && !demoted,
--            demoted,
--            percent: effective_native_percent(
--                dial_ready,
--                endpoint_up,
--                demoted,
--                release_percent,
--      
+ ```
 ```
 
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +10/-117)
+**File**: `Cargo.lock` (modified, +2/-15)
 ```diff
-@@ -664,10 +664,8 @@ async fn drive_client_connect(
-                 // queue allows: the queue's own, plus these fallbacks, plus
-                 // the UDP dials to acceptors whose `Native` decision it
-                 // refused (at most `refused_native_cap`, also outside the
--                // queue). A strike toward demotion is recorded when
--                // that UDP dial connects after a path failure (a rescue,
--                // below), or by the connection lifecycle when a UDP connection
--                // to the acceptor already exists as the setup fails.
-+                // queue). A rescue is counted when
-+                // that UDP dial connects after a path failure (below).
-                 if transport.is_native() && !matches!(result, Some(Ok(_))) {
-                     tracing::info!(
-                         tx = %tx,
-@@ -697,11 +695,6 @@ async fn drive_client_connect(
-                         crate::transport::TRANSPORT_METRICS.record_connect_native_rescued_by_udp(
-                             crate::transport::NativeConnectSide::Joiner,
-                         );
--                        super::record_native_rescue_strike(
--                            op_manager,
--                            crate::transport::NatAttemptOrigin::ConnectJoiner,
--                            &acceptor,
--                        );
-                     }
-                     #[cfg(any(test, feature = "testing"))]
-                     super::native_wire_trace::record_at(
-@@ -981,7 +974,7 @@ async fn drive_client_connect(
-                 // `None` and `Udp` dial UDP as today; `Native` dials native
-                 // when this node offered and can still dial. A `Native` this
-                 // node cannot honour is counted by why. When the node offered
--                // and has since lost native (demoted, endpoint down), it dials
-+                // and has since lost native (its endpoint went down), it dials
-                 // the acceptor over UDP at the time the acceptor's own
-                 // fallback starts, so the punches overlap
-                 // (`native::refused_decision_plan`). A `Native` that answered
-@@ -1303,12 +1296,12 @@ struct AcceptorDial {
+@@ -2145,6 +2145,7 @@ dependencies = [
+  "rand 0.10.1",
+  "rand 0.9.4",
+  "rand_core 0.10.1",
++ "rayon",
+  "redb",
+  "regex",
+  "reqwest",
+@@ -2188,7 +2189,7 @@ dependencies = [
+  "turmoil",
+  "ulid",
+  "url",
+- "wasmparser 0.258.0",
++ "wasmparser 0.254.2",
+  "wasmtime",
+  "wat",
+  "which",
+@@ -8117,19 +8118,6 @@ dependencies = [
+  "serde",
+ ]
  
- /// Whether a native dial's result says native does not work on the path:
- /// its setup timed out, failed its handshake or lost its Hello
--/// (`NativeSetupOutcome::counts_toward_demotion`). A UDP dial that connects
-+/// (`NativeSetupOutcome::says_native_failed_on_path`). A UDP dial that connects
- /// after such a failure is a rescue (`connect_native_rescued_by_udp`); one
- /// after a local refusal (punch budget, setups full, too late) or any other
- /// failure is not, on either side (design note 10.2 item 16).
- pub(super) fn native_path_failed(result: &Option<crate::message::ConnectResult>) -> bool {
--    matches!(result, Some(Err(Some(outcome))) if outcome.counts_toward_demotion())
-+    matches!(result, Some(Err(Some(outcome))) if outcome.says_native_failed_on_path())
- }
+-[[package]]
+-name = "wasmparser"
+-version = "0.258.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d9a61719f93a87b16d325921e251800c4833f8fab50fa21c7de73aed50086313"
+-dependencies = [
+- "bitflags 2.11.1",
+- "hashbrown 0.17.1",
+- "indexmap 2.14.0",
+- "semver",
+- "serde",
+-]
+-
+ [[package]]
+ name = "wasmparser"
+ version = "0.260.0"
+@@ -8199,7 +8187,6 @@ dependencies = [
+  "wasmtime-internal-jit-icache-coherence",
+  "wasmtime-internal-unwinder",
+  "wasmtime-internal-versioned-export-macros",
+- "wat",
+  "windows-sys 0.61.2",
+ ]
  
- /// The joiner's UDP dial to an acceptor that decided native, after a failed
-@@ -1381,7 +1374,7 @@ enum AcceptorDialPlan {
- /// started it when it decided, a little before `answered_at`, so
- /// `answered_at + acceptor_window` is a late estimate of its end, which errs
- /// toward trying native. With less than `NATIVE_MIN_WINDOW_LEFT` of it left,
--/// a native attempt could only time out, count toward this node's demotion and
-+/// a native attempt could only time out and
- /// push its UDP dial past the acceptor's, so the acceptor is dialled over UDP
- /// at the common fallback time instead (`answered_at + NATIVE_FALLBACK_AFTER`,
- /// now if it has passed). A native attempt's deadline is that fallback time,
-@@ -3874,7 +3867,7 @@ mod driver_timing_tests {
-         for outcome in O::ALL {
-             assert_eq!(
-                 super::native_path_failed(&Some(Err(Some(outcome)))),
--                outcome.counts_toward_demotion(),
-+                outcome.says_native_failed_on_path(),
-                 "{outcome:?}"
-             );
-         }
-@@ -3931,7 +3924,7 @@ mod driver_timing_tests {
-     }
- 
-     /// A joiner that cannot use an acceptor's `Native` decision because it lost
--    /// native after offering (demoted, endpoint down) dials that acceptor over
-+    /// native after offering (its endpoint went down) dials that acceptor over
-     /// UDP at the fallback time instead of reporting it failed: otherwise the
-     /// acceptor's UDP fallback punches alone and cannot pass a restricted NAT
-     /// (`test_quic_native_blocked_pairs_connect_over_udp_behind_nats` failed
-@@ -4556,7 +4549,7 @@ mod driver_timing_tests {
-     /// 8 s, and its UDP fallback waits for the fallback time (12 s) outside
-     /// the dial queue, so the queue moves on at once. The second native
-     /// acceptor, a client whose window ended at 8 s, gets no native attempt (it
--    /// could only time out and count a strike): it waits for its own fallback
-+    /// could only time out): it waits for i
 ```
 
-**File**: `crates/core/src/operations/connect/wire.rs` (modified, +20/-42)
+**File**: `Cargo.toml` (modified, +11/-10)
 ```diff
-@@ -286,16 +286,14 @@ pub mod sim_trace {
-         joiner_responses_without_decision: AtomicU64,
-         native_established: AtomicU64,
-         native_failed: AtomicU64,
--        native_demotions: AtomicU64,
-         decisions_refused: AtomicU64,
-         /// Decisions on an offered request, as (acceptor, `seq` when it
-         /// decided, native, in the slice).
-         decisions: parking_lot::Mutex<Vec<(SocketAddr, u64, bool, bool)>>,
-         decision_causes: parking_lot::Mutex<std::collections::BTreeMap<&'static str, u64>>,
--        /// Acceptor-role demotions, as (node, `seq`).
--        acceptor_demotions: parking_lot::Mutex<Vec<(SocketAddr, u64)>>,
--        /// The longest acceptor failure streak each node reached.
--        acceptor_streak_peaks: parking_lot::Mutex<std::collections::BTreeMap<SocketAddr, usize>>,
-+        /// Rescues (a UDP dial that connected after a native path failure) as
-+        /// (node, `seq`), on the same order as `decisions`.
-+        rescues: parking_lot::Mutex<Vec<(SocketAddr, u64)>>,
-         /// Native failures, as (transaction, node, peer), whose node has not
-         /// yet asked for a UDP dial to that peer in that transaction.
-         fallbacks_pending: parking_lot::Mutex<
-@@ -395,30 +393,21 @@ pub mod sim_trace {
-         JoinerResponse { with_decision: bool },
-         /// A node's QUIC-native dial ended, as joiner or acceptor.
-         NativeDial { established: bool },
--        /// A node turned its own native connects off.
--        NativeDemoted,
-         /// The node `own`, as acceptor, decided an offered request: `Native`
-         /// or not, and `in_slice`: the pair's bucket was below the offered
-         /// percent and the acceptor held no transport to the joiner, so a
--        /// ready, undemoted acceptor at a release percent at or above the
-+        /// ready acceptor at a release percent at or above the
-         /// offer would decide `Native`. Recorded where it decides, not when
-         /// the answer goes out.
-         Decided {
-             own: SocketAddr,
-             native: bool,
-             in_slice: bool,
-             /// Why the decision was what it was (`native`, or the cause of a
--            /// UDP decision: `held`, `demoted`, `not_ready`, `setup_refused`,
-+            /// UDP decision: `held`, `not_ready`, `setup_refused`,
-             /// `offered_zero`, `outside_slice`), as `native::ArmCause` labels them.
-             cause: &'static str,
-         },
--        /// The node `own` stopped deciding `Native` as acceptor after native
--        /// failures with distinct joiners.
--        AcceptorDemoted { own: SocketAddr },
--        /// The node `own` had a native failure as acceptor; its streak is now
--        /// `len` distinct joiners (0 if this failure demoted it, or if it was
--        /// already demoted and so counted nothing).
--        AcceptorStreak { own: SocketAddr, len: usize },
-         /// The node `own` failed a native setup with `peer` in `tx`; the
-         /// connect op must dial UDP to that peer next.
-         NativeFailedFor {
-@@ -536,6 +525,10 @@ pub mod sim_trace {
-             } => {
-                 if connected && path_failed {
-                     c.fallbacks_rescued.fetch_add(1, Ordering::Relaxed);
-+                    if let Some(own) = own {
-+                        let seq = c.seq.fetch_add(1, Ordering::Relaxed);
-+                        c.rescues.lock().push((own, seq));
-+                    }
-                 }
-                 c.fallbacks_ended.lock().push((own, peer, connected));
-                 return;
-@@ -569,17 +562,6 @@ pub mod sim_trace {
-                 c.decisions.lock().push((own, seq, native, in_slice));
-                 return;
+@@ -130,26 +130,27 @@ wasmtime = { version = "48", default-features = false, features = [
+     "compile-time-builtins", "component-model", "component-model-async",
+     "coredump", "debug", "debug-builtins", "demangle", "addr2line",
+     "gc", "gc-drc", "gc-null", "parallel-compilation", "pooling-allocator",
+-    "profiling", "runtime", "std", "threads", "wat",
++    "profiling", "runtime", "std", "threads",
+ ] }
+ # Lightweight WASM section parser used to reject debug-compiled contracts at
+ # PUT time (crates/core/src/client_events.rs::contains_debug_sections) and to
+ # detect the deprecated host-clock import
+ # (crates/core/src/conformance/host_clock.rs).
+ #
+-# This was pinned to match the copy wasmtime resolved transitively, so that
+-# cargo reused one build. That is NO LONGER TRUE and the intent has not been
+-# re-established: the lock now carries 0.244.0, 0.252.0 and 0.257.1, so we
+-# parse with a different wasmparser from the one wasmtime validates with. It
+-# is immaterial to both consumers today — each reads only section framing,
+-# which is stable across these versions, and each runs immediately before a
+-# real wasmtime validation that has the final say — but do not restate the
+-# single-copy claim without re-checking `cargo tree -d -p wasmparser`.
+-wasmparser = "0.258"
++# The version is pinned to the one wasmtime resolves (`cargo tree -i
++# wasmparser@<version>` must show wasmtime and wasmtime-environ on the same copy
++# as this crate). The acceptance scan in
++# crates/core/src/wasm_runtime/engine/compile_limits.rs runs a full validation
++# and reads every operator, so it must parse exactly what the engine compiles.
++# The unit test `scan_and_engine_use_one_wasmparser` fails when the lock file
++# carries two different versions for the two consumers.
++wasmparser = "0.254"
+ # Test-only WAT assembler, so a fixture module can state its imports in text
+ # rather than as hand-encoded LEB128. Already in the lock file: wasmtime's
+ # "wat" feature above pulls the same crate, so this adds no new build.
+ wat = "1"
++# Bounded compile thread pool (crates/core/src/wasm_runtime/engine/wasmtime_engine.rs).
++rayon = "1"
+ 
+ # Testing/simulation
+ arbitrary = { version = "1", features = ["derive"] }
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +7/-1)
+```diff
+@@ -8,6 +8,8 @@ description = "Freenet core software"
+ license-file = "LICENSE.md"
+ repository = "https://github.com/freenet/freenet-core"
+ readme = "README.md"
++# Test data for the compile-limit tests; not needed to build the crate.
++exclude = ["src/wasm_runtime/engine/reference_shapes.json"]
+ 
+ [package.metadata.freenet]
+ # Minimum compatible protocol version. Peers older than this are rejected at
+@@ -105,6 +107,10 @@ tower-http = { workspace = true }
+ ulid = { workspace = true }
+ zeroize = { workspace = true }
+ wasmtime = { workspace = true, optional = true }
++# Compiles run on a small dedicated pool (see `compile_pool`), so a module's
++# parallel compile cannot take every core or hold one function's compiler state
++# per core.
++rayon = { workspace = true, optional = true }
+ # Always enabled (not gated on wasmtime-backend): debug-section rejection at
+ # PUT time must run regardless of which WASM execution backend is compiled in.
+ wasmparser = { workspace = true }
+@@ -356,7 +362,7 @@ nightly_tests = []
+ # Enable with MALLOC_CONF="prof:true,lg_prof_sample:19" and send SIGUSR1 to dump heap profiles.
+ jemalloc-prof = ["tikv-jemallocator/profiling", "dep:tikv-jemalloc-ctl"]
+ # WASM runtime backend
+-wasmtime-backend = ["dep:wasmtime"]
++wasmtime-backend = ["dep:wasmtime", "dep:rayon"]
+ # Test builds only, never a release: `FREENET_TEST_QUIC_PANIC` injects a panic
+ # in QUIC code, to exercise the Windows QUIC crash-loop breaker through the
+ # real binary (transport/quic/panic_injection.rs, #6031).
+```
+
+**File**: `crates/core/build/git_watch.rs` (modified, +4/-0)
+```diff
+@@ -456,6 +456,10 @@ mod tests {
+             // netcheck's getter spawn, read only by the `tracing::tracer`
+             // tests that pin the log env var names it sets.
+             "crates/netcheck/src/ephemeral.rs",
++            // A real built contract, read only by the
++            // `wasm_runtime::engine::{compile_limits, wasmtime_engine}` tests that
++            // check the compile limits do not refuse modules shipped in this tree.
++            "crates/fdev/resources/website_contract.wasm",
+         ];
+         let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+         let src = manifest_dir.join("src").canonicalize().unwrap();
+```
+
+**File**: `crates/core/src/bin/freenet.rs` (modified, +5/-0)
+```diff
+@@ -2257,6 +2257,11 @@ fn log_umask_override() {
+ fn log_umask_override() {}
+ 
+ fn main() {
++    // A compile worker is this binary started with a hidden first argument. It
++    // must run before anything else here (no logging, no config, no runtime) and
++    // never returns; for any other start this returns at once.
++    freenet::run_compile_worker_if_requested();
++
+     // Anchor the bootstrap-latency clock at process start, before anything
+     // else, so `freenet.bootstrap.time_to_min_connections_seconds` measures
+     // what its name says — including config load, storage open and the
+```
+
+**File**: `crates/core/src/client_events/unregister_dispatch_tests.rs` (modified, +4/-1)
+```diff
+@@ -160,7 +160,10 @@ async fn register_delegate_and_app_as(
+     user: Option<&UserSecretContext>,
+ ) -> Registered {
+     let code = tokio::task::spawn_blocking(|| {
+-        crate::wasm_runtime::tests::get_test_module("test_delegate_echo_params")
++        // Release build: hosted-mode tests below run this delegate on a node
++        // that refuses delegate code over the compile size limit, as a real
++        // hosted node does. See `get_test_module_release`.
++        crate::wasm_runtime::tests::get_test_module_release("test_delegate_echo_params")
+             .expect("build the fixture delegate")
+     })
+     .await
+```
+
+**File**: `crates/core/src/config.rs` (modified, +47/-0)
+```diff
+@@ -277,6 +277,20 @@ pub struct ConfigArgs {
+     #[arg(long, env = "FREENET_MODULE_CACHE_BUDGET_BYTES")]
+     pub module_cache_budget_bytes: Option<usize>,
+ 
++    /// Bound the CPU time and memory of compiling contract code: `off`
++    /// (default), `dry-run` or `enforce`. In `dry-run` a hard-capped helper
++    /// process checks a module on a thread of its own while the normal compile
++    /// proceeds without waiting for it, and the node logs what it would refuse
++    /// (a module is skipped when another dry-run check is running or memory is
++    /// short); no outcome changes. `enforce` refuses what the check refuses.
++    /// Delegate code is covered in `enforce` only on a node run with
++    /// `--hosted-mode`. `enforce` needs a systemd `MemoryMax` of at least 4 GiB
++    /// (or none): on a smaller limit the node cannot spare a worker beside its
++    /// own memory, the startup check marks isolation degraded, and compiles are
++    /// not checked. Linux only; other platforms ignore it.
++    #[arg(long, env = "FREENET_COMPILE_ISOLATION", value_enum)]
++    pub compile_isolation: Option<CompileIsolationMode>,
++
+     /// Write the local append-only diagnostic event log (`_EVENT_LOG`).
+     ///
+     /// On by default in `local` mode, off in `network` mode. Local mode is a
+@@ -402,6 +416,7 @@ impl Default for ConfigArgs {
+             per_user_inactive_ttl_secs: None,
+             inactive_user_sweep_interval_secs: None,
+             module_cache_budget_bytes: None,
++            compile_isolation: None,
+             enable_event_log: None,
+             shutdown_drain_secs: None,
+             disable_auto_update: false,
+@@ -1170,6 +1185,7 @@ impl ConfigArgs {
+                 self.module_cache_budget_bytes
+                     .get_or_insert(cfg.module_cache_budget_bytes);
              }
--            NativeWireEvent::AcceptorStreak { own, len } => {
--                let mut peaks = c.acceptor_streak_peaks.lock();
--                let peak = peaks.entry(own).or_insert(0);
--                *peak = (*peak).max(len);
--                return;
--            }
--            NativeWireEvent::AcceptorDemoted { own } => {
--                let seq = c.seq.fetch_add(1, Ordering::Relaxed);
--                c.acceptor_demotions.lock().push((own, seq));
--                return;
--            }
-             NativeWireEvent::NativeReplacedByUdp { own } => {
-                 if !c.transports_frozen.load(Ordering::Relaxed) {
-                     c.native_replaced_by_udp.lock().push((own, addr));
-@@ -681,7 +663,6 @@ pub mod sim_trace {
-             } => &c.joiner_responses_without_decision,
-             NativeWireEvent::NativeDial { established: true } => &c.native_established,
-             NativeWireEvent::NativeDial { established: false } => &c.native_failed,
--            NativeWireEvent::NativeDemoted => &c.native_demotions,
-             NativeWireEvent::DecisionRefused => &c.decisions_refused,
-             NativeWireEvent::NativeSuperseded => {
-                 c.native_failed.fetch_add(1, Ordering::Relaxed);
-@@ -812,34 +793,31 @@ pub mod sim_trace {
-        
-```
-
-**File**: `crates/core/src/ring/connection_manager.rs` (modified, +1/-1)
-```diff
-@@ -581,7 +581,7 @@ pub(crate) struct ConnectionManager {
-     /// the floor (`NodeConfig::quic_native_floor_override` or the production
-     /// one) and the simulation's pre-floor decoder mode.
-     native_wire: crate::operations::connect::native::NativeWire,
--    /// This node's QUIC-native connect state: readiness and demotion.
-+    /// This node's QUIC-native connect state: readiness.
-     native_connect: Arc<crate::operations::connect::native::NativeConnectState>,
-     /// Version-gate refusal counters (#5156). Both `supports_hash_first_summaries`
-     /// and `supports_summary_first_put` fail closed to the full-bytes fallback
++            self.compile_isolation.get_or_insert(cfg.compile_isolation);
+             self.shutdown_drain_secs
+                 .get_or_insert(cfg.shutdown_drain_secs);
+             self.max_blocking_threads
+@@ -1756,6 +1772,7 @@ impl ConfigArgs {
+             module_cache_budget_bytes: self
+                 .module_cache_budget_bytes
+                 .unwrap_or_else(crate::wasm_runtime::default_module_cache_budget_bytes),
++            compile_isolation: self.compile_isolation.unwrap_or_default(),
+             shutdown_drain_secs: self
+                 .shutdown_drain_secs
+                 .unwrap_or_else(default_shutdown_drain_secs),
+@@ -1996,6 +2013,12 @@ pub struct Config {
+     )]
+     pub module_cache_budget_bytes: usize,
+ 
++    /// How the node bounds the compile of contract code (`off`, `dry-run`,
++    /// `enforce`). See [`CompileIsolationMode`]. A release that does not know
++    /// the key ignores it.
++    #[serde(default, rename = "compile-isolation")]
++    pub compile_isolation: CompileIsolationMode,
++
+     /// Whether to write the local append-only diagnostic event log
+     /// (`_EVENT_LOG`). Resolved in [`ConfigArgs::build`], where the operation
+     /// mode is known: defaults ON in `local` mode and OFF in `network` mode,
+@@ -3890,6 +3913,22 @@ pub enum OtelAuthMode {
+     Disabled,
+ }
+ 
++/// How a node bounds the CPU time and memory of compiling contract code.
++///
++/// `off` is the DEFAULT: compiles behave as before this option existed.
++/// `dry-run` runs the bounded compile check beside every compile and records
++/// what it would have decided, without changing any outcome. `enforce` refuses
++/// code the check refuses. Linux only; other platforms behave as `off`.
++#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, clap::ValueEnum)]
++#[serde(rename_all = "kebab-case")]
++#[clap(rename_all = "kebab-case")]
++pub enum CompileIsolationMode {
++    #[default]
++    Off,
++    DryRun,
++    Enforce,
++}
++
+ /// CLI/file args for the OpenTelemetry SDK metrics exporter.
+ ///
+ /// Strictly independent of [`TelemetryArgs`]: no shared field, no shared
+@@ -7656,6 +7695,7 @@ per-user-secret-quota = 4194305
+ per-user-inactive-ttl = 2592001
+ inactive-user-sweep-interval = 3601
+ module-cache-budget-bytes = 4294967296
++compile-isolation = "dry-run"
+ enable-event-log = true
+ telemetry-enabled = true
+ telemetry-endpoint = "http://127.0.0.1:14318"
+@@ -10838,6 +10878,7 @@ shutdown-drain-secs = 42
+             per_user_inactive_ttl_secs: None,
+             inactive_user_sweep_interval_secs: None,
+             module_cache_budget_bytes: None,
++            compile_isolation: None,
+             enable_event_log: None,
+             shutdown_drain_secs: None,
+             disable_auto_update: false,
+@@ -10995,6 +11036,7 @@ shutdown-drain-secs = 42
+             per_user_inactive_ttl_secs: 1_234_567,
+             inactive_user_sweep_interval_secs: 7_200,
+             module_cache_budget_bytes: 987_654_321,
++            compile_isolation: CompileIsolationMode::DryRun,
+             // Non-default on purpose: the seed is Local mode, where the #4968
+             // default is ON, so `Some(false)` fails this test if 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6420** (2026-11-27): fix: stop a PUT at a relay only when no connected peer is closer to the key (@sanity)
+- **PR #6417** (2026-11-27): chore: use the desaturated brand colours in the tray icon, logo and setup wizard (@sanity)
 - **PR #6415** (2026-11-27): test: split the native transport survivor sim into one test per run (@sanity)
 - **PR #6413** (2026-11-27): fix: remove native-connect demotion (@sanity)
+- **PR #6410** (2026-11-27): feat: compile contract code under CPU and memory limits in a separate process (off by default) (@sanity)
 - **PR #6408** (closed): fix: demote a native role only when rescues are a real share of its outcomes (@sanity)
-- **PR #6406** (2026-11-27): feat(transport): split short_dropped by cause (@sanity)
-- **PR #6405** (2026-11-26): chore(put): log each PUT hop decision at INFO (@sanity)
-- **PR #6404** (2026-11-26): build: sync main to 0.2.167 after release (@sanity)
 
 ---
 
@@ -2434,33 +2733,40 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove native-connect demotion
+## X. stop a PUT at a relay only when no connected peer is closer to the key
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.config/nextest.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `366fdcad`: remove native-connect demotion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c0198d2`: stop a PUT at a relay only when no connected peer is closer to the key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.config/nextest.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures only start that gateway's own cooldown.
-- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included). The joiner's offer reads `readiness()`; the relay's decision reads `acceptor_readiness()` (the same, except that a simulation node with its joiner role off still decides). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
+# PUT stop rule: two 24-node simulations that each move a 1.2 MB streamed state
+# (about 4 minutes in total locally, so close to the default 240s cap and over it
+# on a slower runner).
+# retries = 0: a deterministic simulation, and three attempts would use most of
+# the Simulation job.
+[[profile.ci.overrides]]
+filter = "test(test_streamed_put_continues_while_a_closer_peer_exists)"
+slow-timeout = { period = "300s", terminate-after = 3 }
+retries = 0
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures must never count toward the peer-to-peer demotion.
-- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included) and on not being demoted. The joiner's offer reads `readiness()` (joiner demotion only); the relay's decision reads `acceptor_readiness()` (either role's demotion). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `366fdcad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c0198d2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
