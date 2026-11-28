@@ -14091,3 +14091,5 @@
 | `CYCLE-20261128-L3EE` | `2026-11-28T17:25:22.166Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11125` | Yes (`e9569129...`) |
 | `CYCLE-20261128-L8IK` | `2026-11-28T17:25:28.796Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11126` | Yes (`d6b661a1...`) |
 | `CYCLE-20261128-LA9T` | `2026-11-28T17:25:31.073Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11127` | Yes (`56943b34...`) |
+| `CYCLE-20261128-WEP9` | `2026-11-28T17:34:10.029Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11128` | Yes (`8e626c54...`) |
+| `CYCLE-20261128-WHWA` | `2026-11-28T17:34:14.170Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11129` | Yes (`8fd637b6...`) |

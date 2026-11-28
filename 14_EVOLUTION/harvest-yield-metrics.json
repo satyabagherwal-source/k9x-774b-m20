@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:25:31.085Z",
-  "total_cycles_completed": 13360,
-  "total_learnings_persisted": 13360,
-  "total_rules_promoted": 12053,
+  "last_updated": "2026-11-28T17:34:14.178Z",
+  "total_cycles_completed": 13362,
+  "total_learnings_persisted": 13362,
+  "total_rules_promoted": 12055,
   "history": [
-    {
-      "timestamp": "2026-11-27T20:47:01.317Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T20:47:02.829Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T21:11:19.788Z",
       "repository": "erkamyaman/rust-anything",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T17:25:31.085Z",
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:34:10.036Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:34:14.178Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

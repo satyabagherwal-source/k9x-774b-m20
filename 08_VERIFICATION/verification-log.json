@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-D9JH",
-    "timestamp": "2026-11-26T20:31:53.741Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-O4SP",
-    "timestamp": "2026-11-26T20:40:20.809Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "8b864472b4b53fbb5843a5c2aced0cff86a82926f5f88dc703385abb1a2da226",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-OASF",
     "timestamp": "2026-11-26T20:40:28.575Z",
     "repository": "software-mansion/react-native-reanimated",
@@ -7490,6 +7460,36 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "56943b34ee4b09d20cd9338eb915da0ce861b11626eeaabb7aa221c55ca486ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-WEP9",
+    "timestamp": "2026-11-28T17:34:10.029Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "8e626c54e1969094de1cc8641ef4656f1a5a4b23a9366397906112c1fc841bab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-WHWA",
+    "timestamp": "2026-11-28T17:34:14.170Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "8fd637b6d2c454e35888ba32878f20b3624a6c7db7cef36beb98a530ce021a7d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

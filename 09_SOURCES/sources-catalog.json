@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "541579bf",
+    "sourceVersion": "e7b98db1",
     "license": "Apache-2.0",
-    "contentHash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
-    "lastHarvestedAt": "2026-11-27T14:16:53.143Z",
+    "contentHash": "8e626c54e1969094de1cc8641ef4656f1a5a4b23a9366397906112c1fc841bab",
+    "lastHarvestedAt": "2026-11-28T17:34:10.032Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "c868ce68",
+    "sourceVersion": "9379ff12",
     "license": "Apache-2.0",
-    "contentHash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
-    "lastHarvestedAt": "2026-11-26T11:39:46.077Z",
+    "contentHash": "8fd637b6d2c454e35888ba32878f20b3624a6c7db7cef36beb98a530ce021a7d",
+    "lastHarvestedAt": "2026-11-28T17:34:14.173Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {

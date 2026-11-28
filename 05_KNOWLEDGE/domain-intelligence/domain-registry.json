@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T17:25:39.204Z",
-  "total_records": 2920,
+  "last_updated": "2026-11-28T17:34:22.685Z",
+  "total_records": 2922,
   "domains": {
     "A": {
       "total": 29,
@@ -2510,7 +2510,7 @@
       ]
     },
     "I": {
-      "total": 169,
+      "total": 171,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2680,7 +2680,9 @@
         "domain_intelligence-content-information-intelligence-geoportapp-geoport-core-invariants",
         "domain_intelligence-content-information-intelligence-geoportapp-geoport-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-iplug2-iplug2-core-invariants",
-        "domain_intelligence-content-information-intelligence-iplug2-iplug2-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-iplug2-iplug2-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-tauri-apps-tauri-core-invariants",
+        "domain_intelligence-content-information-intelligence-tauri-apps-tauri-learnings-core-invariants"
       ]
     },
     "J": {
@@ -18877,8 +18879,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "b30f67c6636f11f3b9cc4291e80d0171eb01d7224363826d1479f50cdb36e713",
-      "created_at": "2026-11-27T14:16:53.604Z"
+      "content_hash": "3584ae0316e6aed0d6fa55d6844c6885cf85eac7e90537bb068331b5e3615981",
+      "created_at": "2026-11-28T17:34:10.502Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18886,8 +18888,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "f3186078ff547e80f66e83f97b2d2b788eca3c91cf6f339a3166b50a33ec5662",
-      "created_at": "2026-11-27T14:17:03.833Z"
+      "content_hash": "0e6ad9d2b5da8af6c7745bf721799782e5a3b3e89366545f93a61eeb65c7c2fd",
+      "created_at": "2026-11-28T17:34:19.980Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -46867,8 +46869,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "d0c46db682040f7b9c4a5bd1d8171b811d512679382fc71030ed37af46c86310",
-      "created_at": "2026-11-28T17:10:32.096Z"
+      "content_hash": "9b077c8e4afe6b8dd58e7737e72821591a52377f98991b1cafaf55bb8ae3bb92",
+      "created_at": "2026-11-28T17:34:22.685Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -49632,6 +49634,24 @@
       "repository": "callstack-react-native-builder-bob-learnings",
       "content_hash": "7a2c2c656c1e5ae1fbc7ddeb6f835740dac15539b9e3b23a7df27d3f39d44fdc",
       "created_at": "2026-11-28T17:10:30.864Z"
+    },
+    "domain_intelligence-content-information-intelligence-tauri-apps-tauri-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-tauri-apps-tauri-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tauri-apps/tauri Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tauri-apps-tauri-content-information-intelligence-tauri-apps-tauri-core-invarian.md",
+      "repository": "tauri-apps/tauri",
+      "content_hash": "044c1a1fd9e7b6906082518fcb0a7d1beabc0c820fe67e305b1db101e1119232",
+      "created_at": "2026-11-28T17:34:14.659Z"
+    },
+    "domain_intelligence-content-information-intelligence-tauri-apps-tauri-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-tauri-apps-tauri-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: tauri-apps-tauri-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tauri-apps-tauri-learnings-content-information-intelligence-tauri-apps-tauri-lea.md",
+      "repository": "tauri-apps-tauri-learnings",
+      "content_hash": "2ec675efe0aa3b24ec676a87080d6fbf34230afd1d31aa613a52a75f8fc02bf9",
+      "created_at": "2026-11-28T17:34:21.540Z"
     }
   }
 }

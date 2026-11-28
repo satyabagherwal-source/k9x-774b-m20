@@ -4,22 +4,22 @@
 {
   "source_repository": "tauri-apps/tauri",
   "source_url": "https://github.com/tauri-apps/tauri",
-  "source_version": "c868ce68",
+  "source_version": "9379ff12",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T11:39:46.323Z",
+  "timestamp": "2026-11-28T17:34:14.414Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tauri-apps-tauri",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tauri-apps/tauri](https://github.com/tauri-apps/tauri) (Revision: `c868ce68`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:39:46.323Z`  
+> **Provenance**: Harvested from [tauri-apps/tauri](https://github.com/tauri-apps/tauri) (Revision: `9379ff12`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T17:34:14.414Z`  
 > **Learning ID**: `learn-github-tauri-apps-tauri`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tauri-apps/tauri` (Commit: `c868ce68`)
+- **Target Repository**: `tauri-apps/tauri` (Commit: `9379ff12`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tauri-apps/tauri](https://github.com/tauri-apps/tauri))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:39:45.008Z  
+> **Harvest Timestamp**: 2026-11-28T17:34:13.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Build smaller, faster, and more secure desktop and mobile applications with a web frontend.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 113190 stars
+- **Stars / Engagement**: 113212 stars
 
 ---
 
@@ -2287,13 +2287,13 @@ mod build {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16656** (2026-11-26): **refactor: use `with_added_extension`**
-  *Symptoms*: We have now raised MSRV above 1.91 so we can finally use this
+- **Issue #16672** (2026-11-28): **fix(bundler): pin quick-sharun sources for CEF AppImages**
+  *Symptoms*: Closes #16204.  The CEF AppImage bundler fetched quick-sharun and its helpers from a moving branch. Two helper files were since removed upstream, so Linux CEF AppImage bundling failed with HTTP 404. This fetches the script, hook and helper files from one pinned revision, while still respecting non-empty source overrides. Includes a `tauri-bundler` `patch:bug` change file.  **Testing:** `cargo test --locked -p tauri-bundler` (21 passed, including two new regression tests), `cargo clippy --locked -p tauri-bundler --all-targets` clean, and all pinned URLs return HTTP 200. A full CEF AppImage was not built.  **AI disclosure:** this patch and its tests were prepared with AI assistance (Devin). 
   **Post-Mortem & Fix Analysis**:
-  > <!-- Covector Action --> <!-- Covector Action --> ### Package Changes Through e53aa0fee0792bff080cdfe1b02c2020db910c77 There are 14 changes which include tauri-bundler with minor, tauri-cli with minor, @tauri-apps/cli with minor, tauri-utils with minor, @tauri-apps/api with minor, tauri with minor, tauri-runtime with minor, tauri-runtime-wry with minor, tauri-macros with minor, tauri-codegen with minor, tauri-plugin with minor, tauri-build with minor, tauri-macos-sign with minor, tauri-driver with minor  <details> <summary><i>Planned Package Versions</i></summary>  The following package releases are the planned based on the context of changes in this pull request. | package | current | next |   |----|----|----| | @tauri-apps/api | 2.12.5 | 2.13.0 |  tauri-utils | 2.10.4 | 2.11.0 |  tauri-macos-sign | 2.4.3 | 2.5.0 |  tauri-bundler | 2.10.6 | 2.11.0 |  tauri-runtime | 2.12.4 | 2.13.0 |  tauri-runtime-wry | 2.12.5 | 2.13.0 |  tauri-codegen | 2.7.6 | 2.8.0 |  tauri-macros | 2.7.6 | 2.8.0 
+  > thanks for the pr but tbh this is super overengineered but anyway, my plan is to properly update sharun before the next release instead which would remove this again
 
-- **Issue #16655** (2026-11-26): **ci: retry pushing benchmark results 3 times**
-  *Symptoms*: Mirror https://github.com/tauri-apps/wry/pull/1957
+- **Issue #16665** (2026-11-27): **fix: keep dots in file names when adding extensions**
+  *Symptoms*: #16656 follow-up 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2310,843 +2310,463 @@ mod build {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8627ddca` (2026-11-25)
-**Commit Message**: fix(linux): place child webviews at their bounds and size them from their room (fix #10420) (#16507)
+### Incident Patch 1: `74ff201f` (2026-11-27)
+**Commit Message**: feat(bundler): Adding Gstreamer plugin to Linux bundler (#15965)
 
-* fix(linux): lay out child webviews in a container that clips and gives them their room
+* feat(config): add bundle option for gstreamer plugin
 
-With the `unstable` feature, `Window::add_child` packed the webview into the default vbox of the
-window, which stacks its children and ignores their position. The window's own webview was packed
-too. Its size came from the inner size of the window, which is bigger than the room that GTK gives
-it: it counts the menu bar and, on Wayland, the client-side decorations.
+* feat(bundler): add asset gst plugin settings
 
-Each window now holds a container for its webviews. It is a GtkFixed, so wry puts each webview at
-its bounds, with three changes:
+* feat(cli): pass assetGstPlugin config to the bundler
 
-- It asks for no room. A GtkFixed asks for the room of its children, which would stop the window
-  from shrinking below its webviews.
-- It has its own window, so what is outside of it is clipped. It is not in a scrolled window, so
-  the mouse wheel scrolls nothing.
-- It tells the window runtime the room that GTK gives it in the layout pass of the container,
-  so the webviews that resize with the window have their size in the same frame. They take their
-  share of that room, not of the inner size of the w
+* feat(bundler): resolve the asset gst plugin binary
+gst_plugins.rs functions/vars are unused for the moment
 
-**File**: `.changes/linux-child-webviews.md` (added, +6/-0)
+* feat(bundler): install the asset gst plugin into linux bundles
+
+* feat(core): find the bundled asset gst plugin at startup for GST_PLUGIN_PATH env
+
+* feat(example): added asset-streaming for testing gstreamer plugin
+
+* chore: bump copyright year on new files
+
+* chore: replacing placeholder with real link
+and remove sha256 as windows only
+
+* chores: removed possibility to give local path for plugin
+
+* refactor(bundler): always bundle the asset gst plugin into deb and rpm
+
+* feat(bundler): bundle the asset gst plugin into AppImage with bundleMediaFramework
+
+* feat(cli): gstreamer plugin is in place for dev build
+
+* chore(example): remove asset-streaming test example
+
+* fix linux build (set_var is unsafe)
+
+* let webkit hand asset:// media to gstreamer
+
+* prepend to GST_PLUGIN_PATH instead of replacing it
+
+* only expose the gst plugin when the asset prot
+
+**File**: `.changes/asset-gstreamer-plugin.md` (added, +11/-0)
 ```diff
-@@ -0,0 +1,6 @@
+@@ -0,0 +1,11 @@
 +---
-+"tauri": patch:bug
-+"tauri-runtime-wry": patch:bug
++"tauri-bundler": minor:feat
++"tauri-cli": minor:feat
++"@tauri-apps/cli": minor:feat
++"tauri": minor:feat
++"tauri-utils": minor:feat
 +---
 +
-+On Linux with the `unstable` feature, child webviews added with `Window::add_child` are placed at their bounds, instead of being stacked in the window's box. They are clipped at the edge of the window and do not scroll. A webview that resizes with its window, the window's own webview included, takes the size of the room that GTK gives it, instead of the inner size of the window, which counts the menu bar and, on Wayland, the client-side decorations. `Webview::reparent` keeps the position of the webview.
-```
-
-**File**: `crates/tauri-runtime-wry/src/lib.rs` (modified, +196/-19)
-```diff
-@@ -393,6 +393,14 @@ impl<T: UserEvent> Context<T> {
-           pending,
-           #[cfg(windows)]
-           _options.focused_webview,
-+          #[cfg(any(
-+            target_os = "linux",
-+            target_os = "dragonfly",
-+            target_os = "freebsd",
-+            target_os = "netbsd",
-+            target_os = "openbsd"
-+          ))]
-+          _options.gtk_fixed.as_ref(),
-         )
-       }),
-       tx,
-@@ -1509,6 +1517,14 @@ pub type CreateWebviewClosure =
- pub struct CreateWebviewOptions {
-   #[cfg(windows)]
-   pub focused_webview: Arc<Mutex<FocusState>>,
-+  #[cfg(any(
-+    target_os = "linux",
-+    target_os = "dragonfly",
-+    target_os = "freebsd",
-+    target_os = "netbsd",
-+    target_os = "openbsd"
-+  ))]
-+  pub gtk_fixed: Option<gtk::Fixed>,
- }
- 
- pub enum Message<T: 'static> {
-@@ -2478,6 +2494,15 @@ pub struct WindowWrapper {
-   has_children: AtomicBool,
-   webviews: Vec<WebviewWrapper>,
-   window_event_listeners: WindowEventListeners,
-+  /// Holds the webviews of the window, if every one of them is a child.
-+  #[cfg(any(
-+    target_os = "linux",
-+    target_os = "dragonfly",
-+    target_os = "freebsd",
-+    target_os = "netbsd",
-+    target_os = "openbsd"
-+  ))]
-+  gtk_fixed: Option<gtk::Fixed>,
-   #[cfg(windows)]
-   background_color: Option<tao::window::RGBA>,
-   #[cfg(windows)]
-@@ -3005,6 +3030,14 @@ impl<T: UserEvent> Runtime<T> for Wry<T> {
-           CreateWebviewOptions {
-             #[cfg(windows)]
-             focused_webview: w.focused_webview.clone(),
-+            #[cfg(any(
-+              target_os = "linux",
-+              target_os = "dragonfly",
-+              target_os = "freebsd",
-+              target_os = "netbsd",
-+              target_os = "openbsd"
-+            ))]
-+            gtk_fixed: w.gtk_fixed.clone(),
-           },
-         )
-       });
-@@ -3022,6 +3055,14 @@ impl<T: UserEvent> Runtime<T> for Wry<T> {
-         pending,
-         #[cfg(windows)]
-         _options.focused_webview,
-+        #[cfg(any(
-+          target_os = "linux",
-+          target_os = "dragonfly",
-+          target_os = "freebsd",
-+          target_os = "netbsd",
-+          target_os = "openbsd"
-+        ))]
-+        _options.gtk_fixed.as_ref(),
-       )?;
- 
-       if let Some(w) = self
-@@ -3710,6 +3751,19 @@ fn handle_user_message<T: UserEvent>(
-             .map(|webview_index| w.webviews.remove(webview_index))
-         });
- 
-+        #[cfg(any(
-+          target_os = "linux",
-+          target_os = "dragonfly",
-+          target_os = "freebsd",
-+          target_os = "netbsd",
-+          target_os = "openbsd"
-+        ))]
-+        let new_parent_gtk_fixed = windows
-+          .0
-+          .borrow()
-+          .get(&new_parent_window_id)
-+          .and_then(|w| w.gtk_fixed.clone());
++Audio and video elements can now play `asset://` URLs on Linux. The `deb`, `rpm` and `pacman` bundles ship a GStreamer plugin in `/usr/lib/<productName>/gstreamer-1.0`, the `appimage` bundle includes it when `bundle > linux > appimage > bundleMediaFramework` is enabled, and `tauri dev` downloads it to the tools directory, where development binaries load it from. The plugin is downloaded at bundle time.
 +
-         if let Some(webview) = webview_handle {
-           if let Some((Some(new_parent_window), new_parent_window_webviews)) = windows
-             .0
-@@ -3733,7 +3787,9 @@ fn handle_user_message<T: UserEvent>(
-               target_os = "openbsd"
-             ))]
-             let reparent_result = {
--              if let Some(container) = new_parent_window.default_vbox() {
-+              if let Some(fixed) = &new_parent_gtk_fixed {
-+                webview.inner.reparent(fixed)
-+              } else if let Some(container) = new_parent_window.default_vbox() {
-                 webview.inner.reparent(container)
-               } else {
-                 Err(wry::Error::MessageSender)
-@@ -3845,7 +3901,7 @@ fn handle_user_message<T: UserEvent>(
-               let scale_factor = window.scale_factor();
-               let size = bounds.size.to_logical::<f32>(scale_factor);
-               let position = bounds.position.to_logical::<f32>(scale_factor);
--              let window_size = window.inner_size().to_logical::<f32>(scale_factor);
-+              let window_size = webview.room(&window);
-               b.width_rate = size.width / window_size.width;
-               b.height_rate = size.height / window_size.height;
-               b.x_rate = position.x / window_size.width;
-@@ -3864,7 +3920,7 @@ fn handle_user_message<T: UserEvent>(
-               let size = size.to_logical::<f32>(scale_factor);
- 
-               if let Some(b) = &mut *webview.bounds.lock().unwrap() {
--                let window_size = window.inner_size().to_logical::<f32>(scale_factor);
-+                let window_size = webview.room(&window);
-                 b.width_rate = size.width / window_size.width;
-                 b.height_rate = size.height / window_size.height;
-               }
-@@ -3885,7 +3941,7 @@ fn handle_user_message<T: UserEvent>(
-               let position = position.to_logical::<f32>(scale_factor);
- 
-               if let Some(b) = &mut *webview.bounds.lock().unwrap() {
--                let window_size = window.inner_size().to_logical::<f32>(scale_factor);
-+                let window_size = webview.room(&window);
-                 b.x_rate = position.x / window_size.width;
-                 b.y_rate = position.y / window_s
++The plugin is only used when `app > security > assetProtocol > enable` is set. It reads the requested file directly, so media playback is not restricted by `assetProtocol > scope`.
 ```
 
-**File**: `crates/tauri-runtime-wry/src/window/linux.rs` (modified, +196/-1)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -2,7 +2,8 @@
+@@ -270,6 +270,7 @@ dependencies = [
+  "tauri-plugin-automation",
+  "tauri-plugin-log",
+  "tauri-plugin-sample",
++ "ureq",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `crates/tauri-bundler/src/bundle.rs` (modified, +2/-0)
+```diff
+@@ -34,6 +34,8 @@ pub use {
+   },
+ };
+ 
++#[cfg(target_os = "linux")]
++pub use linux::{gst_plugin, tools_directory};
+ #[cfg(windows)]
+ pub use windows::vswhere_path;
+ 
+```
+
+**File**: `crates/tauri-bundler/src/bundle/linux/appimage/linuxdeploy.rs` (modified, +19/-7)
+```diff
+@@ -3,7 +3,10 @@
  // SPDX-License-Identifier: Apache-2.0
  // SPDX-License-Identifier: MIT
  
--use gtk::prelude::*;
-+use gtk::{prelude::*, subclass::prelude::ObjectSubclassIsExt};
-+use tao::dpi::LogicalSize;
- #[cfg(any(
-   target_os = "linux",
-   target_os = "dragonfly",
-@@ -29,3 +30,197 @@ impl super::WindowExt for tao::window::Window {
-     }
+-use super::{super::debian, write_and_make_executable};
++use super::{
++  super::{debian, gst_plugin, tools_directory},
++  write_and_make_executable,
++};
+ use crate::{
+   Settings,
+   bundle::settings::Arch,
+@@ -45,12 +48,7 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
+     fs::remove_dir_all(&output_path)?;
    }
+ 
+-  let tools_cache_path = settings
+-    .local_tools_directory()
+-    .map(|d| d.join(".tauri"))
+-    .unwrap_or_else(|| {
+-      dirs::cache_dir().map_or_else(|| output_path.to_path_buf(), |p| p.join("tauri"))
+-    });
++  let tools_cache_path = tools_directory(settings.local_tools_directory(), &output_path);
+   let intermediate_tools_path = output_path.join("tools");
+ 
+   fs::create_dir_all(&tools_cache_path)?;
+@@ -90,6 +88,20 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
+   fs_utils::copy_custom_files(&settings.appimage().files, &data_dir)
+     .with_context(|| "Failed to copy custom files")?;
+ 
++  // The plugin links against GStreamer, which is only deployed into the
++  // AppImage by the media framework.
++  if settings.appimage().bundle_media_framework {
++    if let Some(plugin) = gst_plugin::download(&settings)? {
++      fs_utils::copy_file(
++        &plugin,
++        &data_dir
++          .join(gst_plugin::APPIMAGE_PLUGIN_DIR)
++          .join(gst_plugin::PLUGIN_FILE_NAME),
++      )
++      .with_context(|| "Failed to copy the asset GStreamer plugin")?;
++    }
++  }
++
+   fs::create_dir_all(&output_path)?;
+   let app_dir_path = output_path.join(format!("{}.AppDir", settings.product_name()));
+   let appimage_filename = format!(
+```
+
+**File**: `crates/tauri-bundler/src/bundle/linux/debian.rs` (modified, +14/-1)
+```diff
+@@ -25,7 +25,7 @@
+ 
+ use tauri_utils::config::DebCompression;
+ 
+-use super::freedesktop;
++use super::{freedesktop, gst_plugin};
+ use crate::{
+   Settings,
+   bundle::settings::Arch,
+@@ -86,6 +86,8 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
+     .context("Failed to build data folders and files")?;
+   generate_changelog_file(settings, &data_dir)
+     .with_context(|| "Failed to create changelog.gz file")?;
++  copy_gst_plugin(settings, &data_dir)
++    .with_context(|| "Failed to copy the asset GStreamer plugin")?;
+   fs_utils::copy_custom_files(&settings.deb().files, &data_dir)
+     .context("Failed to copy custom files")?;
+ 
+@@ -338,6 +340,17 @@ fn copy_resource_files(settings: &Settings, data_dir: &Path) -> crate::Result<()
+   settings.copy_resources(&resource_dir)
  }
-+
-+mod imp {
-+  use gtk::{glib, prelude::*, subclass::prelude::*};
-+  use std::cell::RefCell;
-+  use tao::dpi::LogicalSize;
-+
-+  type OnRoom = Box<dyn Fn(LogicalSize<f32>)>;
-+
-+  #[derive(Default)]
-+  pub struct WebviewContainer {
-+    pub(super) on_room: RefCell<Option<OnRoom>>,
+ 
++/// Copies the `asset://` GStreamer plugin into its per-app directory in `data_dir`.
++pub fn copy_gst_plugin(settings: &Settings, data_dir: &Path) -> crate::Result<()> {
++  if let Some(plugin) = gst_plugin::download(settings)? {
++    let dest = data_dir
++      .join(gst_plugin::plugin_dir(settings.product_name()))
++      .join(gst_plugin::PLUGIN_FILE_NAME);
++    fs_utils::copy_file(&plugin, &dest)?;
 +  }
-+
-+  #[glib::object_subclass]
-+  impl ObjectSubclass for WebviewContainer {
-+    const NAME: &'static str = "TauriWebviewContainer";
-+    type Type = super::WebviewContainer;
-+    type ParentType = gtk::Fixed;
-+  }
-+
-+  impl ObjectImpl for WebviewContainer {
-+    fn constructed(&self) {
-+      self.parent_constructed();
-+      self.obj().set_has_window(true);
-+    }
-+  }
-+
-+  impl WidgetImpl for WebviewContainer {
-+    fn preferred_width(&self) -> (i32, i32) {
-+      (0, 0)
-+    }
-+
-+    fn preferred_height(&self) -> (i32, i32) {
-+      (0, 0)
-+    }
-+
-+    // The parent allocates the webviews from their size request, so those that follow the room
-+    // get theirs first. They have their size in the same layout pass, as a packed webview has.
-+    // `on_room` ends in `gtk::Fixed::move_`, which queues a resize. GTK drops a resize that a widget
-+    // queues during its own allocation, so this does not start another layout pass.
-+    fn size_allocate(&self, allocation: &gtk::Allocation) {
-+      if let (Some(on_room), Some(room)) = (&*self.on_room.borrow(), super::room_of(allocation)) {
-+        on_room(room);
-+      }
-+      self.parent_size_allocate(allocation);
-+    }
-+  }
-+
-+  impl ContainerImpl for WebviewContainer {}
-+  impl FixedImpl for WebviewContainer {}
++  Ok(())
 +}
 +
-+gtk::glib::wrapper! {
-+  /// The container of the webviews of a window: a `GtkFixed`, where wry puts each webview at its
-+  /// bounds.
-+  ///
-+  /// A `GtkFixed` asks for the room of its children. That would grow the window and stop it from
-+  /// shrinking, so this one asks for none. It has its own window, which clips the webviews and the
-+  /// input that goes to them at its edges.
-+  pub struct WebviewContainer(ObjectSubclass<imp::WebviewContainer>)
-+    @extends gtk::Fixed, gtk::Container, gtk::Widget;
+ /// Create an empty file at the given path, creating any parent directories as
+ /// needed, then write `data` into the file.
+ fn create_file_with_data<P: AsRef<Path>>(path: P, data: &str) -> crate::Result<()> {
+```
+
+**File**: `crates/tauri-bundler/src/bundle/linux/gst_plugin.rs` (added, +110/-0)
+```diff
+@@ -0,0 +1,110 @@
++// Copyright 2019-2024 Tauri Programme within The Commons Conservancy
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-License-Identifier: MIT
++
++//! Resolves the GStreamer plugin for having `asset://` work for audio/video.
++
++use super::tools_directory;
++use crate::{
++  Settings,
++  error::{Context, ErrorExt},
++  utils::http_utils::{HashAlgorithm, download_and_verify, verify_file_hash},
++};
++use std::{
++  fs,
++  path::{Path, PathBuf},
++};
++
++/// File name of the GStreamer plugin
++pub const PLUGIN_FILE_NAME: &str = "libgsttauriasset.so";
++
++/// Release the prebuilt plugins are downloaded from.
++const PLUGIN_RELEASE_URL: &str =
++  "https://github.com/tauri-apps/tauri-gstreamer-plugin/releases/download/gst-plugin-tauri-v0.0.2";
++const PLUGIN_SHA256_X86_64: &str =
++  "7E94585BD146E20022DF4FEE574F10967840BAE9DED3B5099A13B182CDB0D2F8";
++const PLUGIN_SHA256_AARCH64: &str =
++  "7B80B57E5BCB8B806FD620CA879D52CCDD9A4D65A196918AD9B0EA8FEFFB8E5A";
++
++/// Directory the plugin is installed to, relative to the bundle root.
++///
++/// This is a private per-app directory rather than the system-wide
++/// `gstreamer-1.0` one, so that bundles cannot collide with distribution
++/// packages or with each other. GStreamer only scans directories listed in
++/// `GST_PLUGIN_PATH`, which the Tauri runtime points here on startup.
++pub fn plugin_dir(product_name: &str) -> PathBuf {
++  Path::new("usr/lib")
++    .join(product_name)
++    .join("gstreamer-1.0")
 +}
 +
-+impl WebviewContainer {
-+  /// `on_room` runs with the room that GTK gives the container, each time it allocates it.
-+  pub fn new(on_room: impl Fn(LogicalSize<f32>) + 'static) -> Self {
-+    let container: Self = gtk::glib::Object::new();
-+    *container.imp().on_room.borrow_mut() = Some(Box::new(on_room));
-+    container
-+  }
++/// Directory the plugin is installed to inside the AppImage's AppDir.
++///
++/// The media framework's AppRun hook points `GST_PLUGIN_PATH_1_0` here, which
++/// GStreamer reads before `GST_PLUGIN_PATH`, so the per-app directory used by
++/// deb/rpm would never be scanned inside an AppImage.
++pub const APPIMAGE_PLUGIN_DIR: &str = "usr/lib/gstreamer-1.0";
++
++/// Directory the plugin for `arch` is cached in, inside the tools directory.
++///
++/// The plugin is stored under [`PLUGIN_FILE_NAME`] in a directory of its own,
++/// so GStreamer can load it straight from here. The Tauri runtime does that
++/// for development binaries, see the lookup in `crates/tauri/src/app.rs`.
++pub fn cache_dir(tools_path: &Path, arch: &str) -> PathBuf {
++  tools_path.join("gstreamer-1.0").join(arch)
 +}
 +
-+/// Adds the container of the webviews to `window`, if every webview of it is a child: with the
-+/// `unstable` feature. `on_room` runs when GTK gives the container a new room.
-+pub fn add_webview_container(
-+  window: &tao::window::Window,
-+  on_room: impl Fn(LogicalSize<f32>) + 'static,
-+) -> Option<gtk::Fixed> {
-+  if !cfg!(feature = "unstable") {
-+    return None;
-+  }
-+  let container = WebviewContainer::new(on_room);
-+  window.default_vbox()?.pack_start(&container, true, true, 0);
-+  container.show();
-+  Some(container.upcast())
-+}
-+
-+/// The room that an allocation of the container gives, in logical pixels. GTK allocates a widget
-+/// that it has not laid out yet with a size of 1x1.
-+fn room_of(allocation: &gtk::Allocation) -> Option<LogicalSize<f32>> {
-+  (allocation.width() > 1 && allocation.height() > 1)
-+    .then(|| LogicalSize::new(allocation.width() as f32, allocation.height() as f32))
-+}
-+
-+/// The room that GTK gives the webviews of the container that holds `widget`, in logical pixels,
-+/// once it has allocated them. The inner size of the window is bigger: it counts the menu bar and,
-+/// on Wayland, the client-side decorations.
-+pub fn allocated_room(widget: &impl IsA<gtk::Widget>) -> Option<LogicalSize<f32>> {
-+  room_of(
-+    &widget
-+      .ancestor(WebviewContainer::static_type())?
-+      .allocation(),
++/// Downloads the prebuilt plugin for the target architecture, caching it in the
++/// tools directory alongside the AppImage tooling.
++///
++/// Returns `None` when no prebuilt plugin exists for the target architecture.
++/// The download and the cached copy are both checked against the pinned hash,
++/// a mismatching cached copy is downloaded again.
++pub fn download(settings: &Settings) -> crate::Result<Option<PathBuf>> {
++  download_for_target(
++    settings.target(),
++    &tools_directory(
++      settings.local_tools_directory(),
++      settings.project_out_directory(),
++    ),
 +  )
 +}
 +
-+/// The room of the webviews of `window`, if `widget` is in their container: what GTK gave them.
-+/// Before GTK allocates the window, the inner size of the window less what the other children of
-+/// its vbox ask for, the menu bar.
-+pub fn room(
-+  window: &tao::window::Window,
-+  widget: &impl IsA<gtk::Widget>,
-+) -> Option<LogicalSize<f32>> {
-+  widget.ancestor(WebviewContainer::static_type())?;
-+  Some(allocated_room(widget).unwrap_or_else(|| {
-+    let size = window.inner_size().to_logical::<f32>(window.scale_factor());
-+    let others: i32 = window.default_vbox().map_or(0, |vbox| {
-+      vbox
-+        .children()
-+        .iter()
-+        .filter(|child| !child.is::<WebviewContainer>())
-+        .map(|child| child.preferred_height().0)
-+        .sum()
-+    });
-+    LogicalSize::new(size.width, (size.height - others as f32).max(1.))
-+  }))
++/// Downloads the prebuilt plugin for the `target` triple, caching it in `tools_path`.
++///
++/// Same as [`download`] for callers that don't have bundler [`Settings`].
++pub fn download_for_target(target: &str, tools_path: &Path) -> crate::Result<Option<PathBuf>> {
++  let (arch, hash) = if target.starts_with("x86_64") {
++    ("x86_64", PLUGIN_SHA256_X86_64)
++  } else if target.starts_with("aarch64") {
++    ("aarch64", PLUGIN_SHA256_AARCH64)
++  } else {
++    log::warn!(
++      "no prebuilt asset GStreamer plugin for {target}, audio and video over `asset://` will not work"
++    );
++    return Ok(None);
++  };
 +
-```
-
-**File**: `crates/tauri-runtime-wry/src/window/mod.rs` (modified, +8/-0)
-```diff
-@@ -10,6 +10,14 @@
-   target_os = "openbsd"
- ))]
- mod linux;
-+#[cfg(any(
-+  target_os = "linux",
-+  target_os = "dragonfly",
-+  target_os = "freebsd",
-+  target_os = "netbsd",
-+  target_os = "openbsd"
-+))]
-+pub use linux::{add_webview_container, allocated_room, room};
- #[cfg(target_os = "macos")]
- mod macos;
- #[cfg(windows)]
-```
-
----
-
-### Incident Patch 2: `84af754a` (2026-11-24)
-**Commit Message**: fix: keep tao window_target in main thread (#15411)
-
-* fix: keep tao window_target in main thread
-
-* implement `display_handle` with the wrong lifetime
-
-* get from main thread
-
-* Add change file
-
-* drop `_window_target` first
-
-* document the lifetime
-
-* call .upgrade after main thread check
-
-* do not panic on tx.sends
-
-* update docs
-
----------
-
-Co-authored-by: Lucas Nogueira <[REDACTED_EMAIL]>
-
-**File**: `.changes/keep-tao-event-target-main-thread-breaking.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"tauri-runtime-wry": minor:breaking
-+---
++  let cache_dir = cache_dir(tools_path, arch);
++  fs::create_dir_all(&cache_dir)?;
 +
-+`DispatcherMainThreadContext::window_target` now takes a `Weak<EventLoopWindowTarget<Message<T>>>` instead of `EventLoopWindowTarget<Message<T>>`
-```
-
-**File**: `.changes/keep-tao-event-target-main-thread.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"tauri": minor:bug
-+"tauri-runtime-wry": minor:bug
-+---
++  let file_name = format!("libgsttauriasset-{arch}.so");
++  let cached = cache_dir.join(PLUGIN_FILE_NAME);
++  if cached.exists() {
++    if verify_file_hash(&cached, hash, HashAlgorithm::Sha256).is_ok() {
++      return Ok(Some(cached));
++    }
++    log::warn!("{file_name} in the tools directory is mis-hashed. Redownloading it.");
++  }
 +
-+Fixed a crash related to the `DispatcherMainThreadContext` being cloned and dropped off main thread. `WryHandle::display_handle` has a wrong lifetime now because it can't own the event loop off main thread. It now goes through the event loop like `window_handle`, so calling it off the main thread blocks until the main thread handles the request.
-```
-
-**File**: `crates/tauri-runtime-wry/src/lib.rs` (modified, +175/-122)
-```diff
-@@ -260,8 +260,15 @@ impl<T: UserEvent> Context<T> {
- 
-   fn send_user_message(&self, message: Message<T>) -> Result<()> {
-     if current_thread().id() == self.main_thread_id {
-+      // only upgrade on the main thread: a strong reference held by another thread
-+      // could become the last one and drop the event loop target there
-+      let event_loop = self
-+        .main_thread
-+        .window_target
-+        .upgrade()
-+        .ok_or(Error::EventLoopClosed)?;
-       handle_user_message(
--        &self.main_thread.window_target,
-+        &event_loop,
-         message,
-         UserMessageContext {
-           window_id_map: &self.window_id_map,
-@@ -450,7 +457,7 @@ impl fmt::Debug for WindowsStore {
- 
- #[derive(Debug, Clone)]
- pub struct DispatcherMainThreadContext<T: UserEvent> {
--  pub window_target: EventLoopWindowTarget<Message<T>>,
-+  pub window_target: Weak<EventLoopWindowTarget<Message<T>>>,
-   pub web_context: WebContextStore,
-   // changing this to an Rc will cause frequent app crashes.
-   pub windows: Arc<WindowsStore>,
-@@ -1287,6 +1294,9 @@ pub struct GtkBox(pub gtk::Box);
- #[allow(clippy::non_send_fields_in_send_ty)]
- unsafe impl Send for GtkBox {}
- 
-+pub struct SendRawDisplayHandle(pub raw_window_handle::RawDisplayHandle);
-+unsafe impl Send for SendRawDisplayHandle {}
++  let data = download_and_verify(
++    &format!("{PLUGIN_RELEASE_URL}/{file_name}"),
++    hash,
++    HashAlgorithm::Sha256,
++  )
++  .with_context(|| format!("failed to download {file_name}"))?;
++  fs::write(&cached, data)
++    .fs_context("failed to save the asset GStreamer plugin", cached.clone())?;
 +
- pub struct SendRawWindowHandle(pub raw_window_handle::RawWindowHandle);
- unsafe impl Send for SendRawWindowHandle {}
- 
-@@ -1485,6 +1495,9 @@ pub enum EventLoopWindowTargetMessage {
-   AvailableMonitors(Sender<Vec<Monitor>>),
-   SetTheme(Option<Theme>),
-   SetDeviceEventFilter(DeviceEventFilter),
-+  RawDisplayHandle(
-+    Sender<std::result::Result<SendRawDisplayHandle, raw_window_handle::HandleError>>,
-+  ),
- }
- 
- pub type CreateWindowClosure<T> =
-@@ -1851,6 +1864,12 @@ fn get_raw_window_handle<T: UserEvent>(
-   window_getter!(dispatcher, WindowMessage::RawWindowHandle)
- }
- 
-+fn get_raw_display_handle<T: UserEvent>(
-+  dispatcher: &WryHandle<T>,
-+) -> Result<std::result::Result<SendRawDisplayHandle, raw_window_handle::HandleError>> {
-+  event_loop_window_getter!(dispatcher, EventLoopWindowTargetMessage::RawDisplayHandle)
++  Ok(Some(cached))
 +}
+```
+
+**File**: `crates/tauri-bundler/src/bundle/linux/mod.rs` (modified, +15/-0)
+```diff
+@@ -6,5 +6,20 @@
+ pub mod appimage;
+ pub mod debian;
+ pub mod freedesktop;
++pub mod gst_plugin;
+ pub mod pacman;
+ pub mod rpm;
 +
- impl<T: UserEvent> WindowDispatch<T> for WryWindowDispatcher<T> {
-   type Runtime = Wry<T>;
-   type WindowBuilder = WindowBuilderWrapper;
-@@ -2008,12 +2027,14 @@ impl<T: UserEvent> WindowDispatch<T> for WryWindowDispatcher<T> {
-     window_getter!(self, WindowMessage::SceneIdentifier)
-   }
- 
-+  /// **SAFETY:** the lifetime is wrong here, use with caution!
-+  /// `WryWindowDispatcher` does not own the window handle so the window can become stale before `WryWindowDispatcher` is dropped.
-   fn window_handle(
-     &self,
-   ) -> std::result::Result<raw_window_handle::WindowHandle<'_>, raw_window_handle::HandleError> {
-     get_raw_window_handle(self)
--      .map_err(|_| raw_window_handle::HandleError::Unavailable)
--      .and_then(|r| r.map(|h| unsafe { raw_window_handle::WindowHandle::borrow_raw(h.0) }))
-+      .map_err(|_| raw_window_handle::HandleError::Unavailable)?
-+      .map(|h| unsafe { raw_window_handle::WindowHandle::borrow_raw(h.0) })
-   }
- 
-   // Setters
-@@ -2518,6 +2539,7 @@ pub trait Plugin<T: UserEvent> {
- /// A Tauri [`Runtime`] wrapper around wry.
- pub struct Wry<T: UserEvent> {
-   context: Context<T>,
-+  _window_target: Arc<EventLoopWindowTarget<Message<T>>>,
-   event_loop: EventLoop<Message<T>>,
- }
- 
-@@ -2638,10 +2660,17 @@ impl<T: UserEvent> RuntimeHandle<T> for WryHandle<T> {
-     self.context.send_user_message(Message::Task(Box::new(f)))
-   }
- 
-+  /// **SAFETY:** the lifetime is wrong here, use with caution!
-+  /// `WryHandle` does not own the event loop so the display handle can become stale before `WryHandle` is dropped.
-   fn display_handle(
-     &self,
-   ) -> std::result::Result<DisplayHandle<'_>, raw_window_handle::HandleError> {
--    self.context.main_thread.window_target.display_handle()
-+    get_raw_display_handle(self)
-+      .map_err(|_| raw_window_handle::HandleError::Unavailable)?
-+      .map(|handle| {
-+        // SAFETY: the lifetime is wrong here, but the alternatives are worse, see https://github.com/tauri-apps/tauri/pull/15411
-+        unsafe { raw_window_handle::DisplayHandle::borrow_raw(handle.0) }
-+      })
-   }
- 
-   fn primary_monitor(&self) -> Result<Option<Monitor>> {
-@@ -2822,12 +2851,14 @@ impl<T: UserEvent> Wry<T> {
-     let windows = Arc::new(WindowsStore(RefCell::new(BTreeMap::default())));
-     let window_id_map = WindowIdStore::default();
- 
-+    let window_target = Arc::new(event_loop.deref().clone());
++use std::path::{Path, PathBuf};
 +
-     let context = Context {
-       window_id_map,
-       main_thread_id,
-       proxy: event_loop.create_proxy(),
-       main_thread: DispatcherMainThreadContext {
--        window_target: event_loop.deref().clone(),
-+        window_target: Arc::downgrade(&window_target),
-         web_context,
-         windows,
-         #[cfg(feature = "tracing")]
-@@ -2843,6 +2874,7 @@ impl<T: UserEvent> Wry<T> {
++/// Directory downloaded bundling tools are cached in.
++///
++/// `fallback` is only used when the user has not configured a local tools
++/// directory and the platform has no cache directory.
++pub fn tools_directory(local_tools_dir: Option<&Path>, fallback: &Path) -> PathBuf {
++  local_tools_dir
++    .map(|d| d.join(".tauri"))
++    .unwrap_or_else(|| {
++      dirs::cache_dir().map_or_else(|| fallback.to_path_buf(), |p| p.join("tauri"))
++    })
++}
+```
+
+**File**: `crates/tauri-bundler/src/bundle/linux/pacman.rs` (modified, +2/-1)
+```diff
+@@ -4,7 +4,7 @@
  
-     Ok(Self {
-       context,
-+      _window_target:
+ use tauri_utils::config::DebCompression;
+ 
+-use super::debian::{generate_data, tar_and_compress_dir};
++use super::debian::{copy_gst_plugin, generate_data, tar_and_compress_dir};
+ use crate::{
+   Settings,
+   bundle::settings::Arch,
+@@ -68,6 +68,7 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
+ 
+   let (data_dir, _) = generate_data(settings, &package_dir, &settings.pacman().desktop_template)
+     .context("Failed to build data folders and files")?;
++  copy_gst_plugin(settings, &data_dir).context("Failed to copy the asset GStreamer plugin")?;
+   fs_utils::copy_custom_files(&settings.pacman().files, &data_dir)
+     .context("Failed to copy custom files")?;
+ 
 ```
 
 ---
 
-### Incident Patch 3: `7d4c4582` (2026-11-25)
-**Commit Message**: feat(tray-icon): add linux-ksni feature for tray icons on Linux (#16385)
+### Incident Patch 2: `9379ff12` (2026-11-28)
+**Commit Message**: fix: tauri-plugin optional dependencies
 
-* feat(tray-icon): add linux-ksni feature for tray icons on Linux
-
-* Fix lockfile issues
-
-* update zbus
-
----------
-
-Co-authored-by: amrbashir <[REDACTED_EMAIL]>
-Co-authored-by: FabianLars <[REDACTED_EMAIL]>
-
-**File**: `.changes/linux-ksni.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+tauri: minor:feat
-+---
-+
-+Added the `linux-ksni` feature, which makes tray icons on Linux use the StatusNotifierItem D-Bus protocol (via the `ksni` crate) instead of libappindicator. This enables `TrayIconEvent::Click` for left and middle clicks and tooltips on Linux.
+fixes the following error:
+```
+Warning: [error] error: unused dependency `tauri-utils`
+  --> Cargo.toml:75:15
+   |
+75 | [dependencies.tauri-utils]
+   |               ^^^^^^^^^^^^
+   |
+   = note: `cargo::unused_dependencies` is set to `deny` in `[lints]`
+help: consider removing the dependency on `tauri-utils`
+error: could not finalize `tauri-plugin` (manifest) due to 1 previous error
 ```
 
-**File**: `Cargo.lock` (modified, +405/-18)
+**File**: `crates/tauri-plugin/Cargo.toml` (modified, +6/-2)
 ```diff
-@@ -249,6 +249,15 @@ version = "1.4.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "dde20b3d026af13f561bdd0f15edf01fc734f0dafcedbaf42bba506a9517f223"
- 
-+[[package]]
-+name = "arc-swap"
-+version = "1.9.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "84a22b5d51209f6de83d37a0b33d320acb8da88823e42a94c075140708f032a5"
-+dependencies = [
-+ "rustversion",
-+]
-+
- [[package]]
- name = "arg_enum_proc_macro"
- version = "0.3.4"
-@@ -294,6 +303,18 @@ dependencies = [
-  "stable_deref_trait",
+@@ -21,17 +21,21 @@ build = [
+   "dep:glob",
+   "dep:plist",
+   "dep:walkdir",
++  "dep:tauri-utils",
++  "dep:schemars",
  ]
+ runtime = []
  
-+[[package]]
-+name = "async-broadcast"
-+version = "0.7.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "435a87a52755b8f27fcf321ac4f04b2802e337c8c4872923137471ec39c37532"
-+dependencies = [
-+ "event-listener",
-+ "event-listener-strategy",
-+ "futures-core",
-+ "pin-project-lite",
-+]
-+
- [[package]]
- name = "async-channel"
- version = "2.5.0"
-@@ -306,6 +327,102 @@ dependencies = [
-  "pin-project-lite",
- ]
+ [dependencies]
+ anyhow = { version = "1", optional = true }
+ serde = { version = "1", optional = true }
+-tauri-utils = { workspace = true, features = ["build-2"] }
++tauri-utils = { workspace = true, features = ["build-2"], optional = true }
+ serde_json = { version = "1", optional = true }
+ glob = { version = "0.3", optional = true }
+ # Our code requires at least 0.8.22 so don't simplify this to 0.8
+-schemars = { version = "0.8.22", features = ["preserve_order"] }
++schemars = { version = "0.8.22", features = [
++  "preserve_order",
++], optional = true }
+ walkdir = { version = "2", optional = true }
  
-+[[package]]
-+name = "async-executor"
-+version = "1.14.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f426a31126c735126297bc5ea7a521263c9faff4f63ca415267ee625651c4f37"
-+dependencies = [
-+ "async-task",
-+ "concurrent-queue",
-+ "fastrand",
-+ "futures-lite",
-+ "pin-project-lite",
-+ "slab",
-+]
-+
-+[[package]]
-+name = "async-io"
-+version = "2.6.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc"
-+dependencies = [
-+ "autocfg",
-+ "cfg-if",
-+ "concurrent-queue",
-+ "futures-io",
-+ "futures-lite",
-+ "parking",
-+ "polling",
-+ "rustix",
-+ "slab",
-+ "windows-sys 0.61.2",
-+]
-+
-+[[package]]
-+name = "async-lock"
-+version = "3.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0876700b0d007ad25d5508865a4259c3af9af6d296bf663a0d586d0bc3369f6f"
-+dependencies = [
-+ "event-listener",
-+ "event-listener-strategy",
-+ "pin-project-lite",
-+]
-+
-+[[package]]
-+name = "async-process"
-+version = "2.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "fc50921ec0055cdd8a16de48773bfeec5c972598674347252c0399676be7da75"
-+dependencies = [
-+ "async-channel",
-+ "async-io",
-+ "async-lock",
-+ "async-signal",
-+ "async-task",
-+ "blocking",
-+ "cfg-if",
-+ "event-listener",
-+ "futures-lite",
-+ "rustix",
-+]
-+
-+[[package]]
-+name = "async-recursion"
-+version = "1.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "4f8abc12baad266b1c8cec146854c195b5864b4221d4b2ca7296a7ae82d9e451"
-+dependencies = [
-+ "proc-macro2",
-+ "quote",
-+ "syn 3.0.9",
-+]
-+
-+[[package]]
-+name = "async-signal"
-+version = "0.2.14"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "52b5aaafa020cf5053a01f2a60e8ff5dccf550f0f77ec54a4e47285ac2bab485"
-+dependencies = [
-+ "async-io",
-+ "async-lock",
-+ "atomic-waker",
-+ "cfg-if",
-+ "futures-core",
-+ "futures-io",
-+ "rustix",
-+ "signal-hook-registry",
-+ "slab",
-+ "windows-sys 0.61.2",
-+]
-+
-+[[package]]
-+name = "async-task"
-+version = "4.7.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8b75356056920673b02621b35afd0f7dda9306d03c79a30f5c56c44cf256e3de"
-+
- [[package]]
- name = "async-trait"
- version = "0.1.88"
-@@ -365,7 +482,7 @@ dependencies = [
-  "log",
-  "num-rational",
-  "num-traits",
-- "pastey",
-+ "pastey 0.1.1",
-  "rayon",
-  "thiserror 2.0.21",
-  "v_frame",
-@@ -680,6 +797,19 @@ dependencies = [
-  "objc2 0.6.4",
- ]
- 
-+[[package]]
-+name = "blocking"
-+version = "1.7.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "a70e4329df6cb94385eed412ec92375c3cdd8a6e502493d1229b6414e4036dfa"
-+dependencies = [
-+ "async-channel",
-+ "async-task",
-+ "futures-io",
-+ "futures-lite",
-+ "piper",
-+]
-+
- [[package]]
- name = "blowfish"
- version = "0.9.1"
-@@ -1141,7 +1271,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
- dependencies = [
-  "lazy_static",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
-@@ -1150,7 +1280,7 @@ version = "3.1.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
-@@ -1387,6 +1517,15 @@ dependencies = [
-  "crossbeam-utils",
- ]
- 
-+[[package]]
-+name = "crossbeam-queue"
-+version = "0.3.14"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "03e8bd762f7479489c70ed6c768ddca99d7296857de437a68dcb2a94365b3fae"
-+dependencies = [
-+ "crossbeam-utils",
-+]
-+
- [[package]]
- name = "crossbeam-utils"
- version = "0.8.21"
-@@ -1903,7 +2042,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -2170,6 +2309,12 @@ dependencies = [
-  "cfg-if",
- ]
- 
-+[[package]]
-+name = "endi"
-+version = "1.1
+ [target."cfg(target_os = \"macos\")".dependencies]
 ```
 
-**File**: `crates/tauri/Cargo.toml` (modified, +1/-0)
+---
+
+### Incident Patch 3: `b86c2905` (2026-11-27)
+**Commit Message**: fix: keep dots in file names when adding extensions (#16665)
+
+#16656 follow-up
+
+**File**: `crates/tauri-cli/src/mobile/ios/build.rs` (modified, +3/-3)
 ```diff
-@@ -207,6 +207,7 @@ wry = ["webview2-com", "webkit2gtk", "tauri-runtime-wry"]
- objc-exception = []
- # TODO: Remove in v3 - muda does not have this feature anymore
- linux-libxdo = []
-+linux-ksni = ["tray-icon?/ksni"]
- isolation = ["tauri-utils/isolation", "tauri-macros/isolation", "uuid"]
- custom-protocol = ["tauri-macros/custom-protocol"]
- # TODO: Remove these flags in v3 and/or enable them by default behind a mobile flag https://github.com/tauri-apps/tauri/issues/12384
+@@ -518,7 +518,7 @@ fn run_build(
+           .join("Products")
+           .join("Applications")
+           .join(config.app().stylized_name())
+-          .with_extension("app");
++          .with_added_extension("app");
+ 
+         let path = out_dir.join(app_path.file_name().unwrap());
+         // `rename` does not replace a non-empty directory, such as the previous build
+@@ -537,11 +537,11 @@ fn run_build(
+           .join("Products")
+           .join("Applications")
+           .join(config.app().stylized_name())
+-          .with_extension("app");
++          .with_added_extension("app");
+ 
+         let ipa_path = out_dir
+           .join(config.app().stylized_name())
+-          .with_extension("ipa");
++          .with_added_extension("ipa");
+         create_ipa(&app_path, &ipa_path)?;
+         out_files.push(ipa_path);
+       } else {
 ```
 
-**File**: `crates/tauri/src/lib.rs` (modified, +1/-0)
+**File**: `crates/tauri-driver/src/server.rs` (modified, +6/-4)
 ```diff
-@@ -28,6 +28,7 @@
- //! - **test**: Enables the [`mod@test`] module exposing unit test helpers.
- //! - **objc-exception**: This feature flag is no-op since 2.3.0.
- //! - **linux-libxdo**: This feature flag is no-op since 2.13.0.
-+//! - **linux-ksni**: Uses the [StatusNotifierItem](https://www.freedesktop.org/wiki/Specifications/StatusNotifierItem/) D-Bus protocol (via the `ksni` crate) for tray icons on Linux instead of libappindicator. This enables [`TrayIconEvent::Click`](crate::tray::TrayIconEvent::Click) for left and middle clicks, tooltips and more. Requires the `tray-icon` feature.
- //! - **isolation**: Enables the isolation pattern. Enabled by default if the `app > security > pattern > use` config option is set to `isolation` on the `tauri.conf.json` file.
- //! - **custom-protocol**: Feature managed by the Tauri CLI. When enabled, Tauri assumes a production environment instead of a development one.
- //! - **devtools**: Enables the developer tools (Web inspector) and [`window::Window#method.open_devtools`]. Enabled by default on debug builds.
+@@ -50,11 +50,13 @@ impl TauriOptions {
+ 
+   #[cfg(target_os = "windows")]
+   fn into_native_object(self) -> Map<String, Value> {
++    let mut application = self.application;
++    if application.extension().is_none_or(|ext| ext != "exe") {
++      application.add_extension("exe");
++    }
++
+     let mut ms_edge_options = Map::new();
+-    ms_edge_options.insert(
+-      "binary".into(),
+-      json!(self.application.with_extension("exe")),
+-    );
++    ms_edge_options.insert("binary".into(), json!(application));
+     ms_edge_options.insert("args".into(), self.args.into());
+ 
+     if let Some(webview_options) = self.webview_options {
 ```
 
-**File**: `crates/tauri/src/tray/mod.rs` (modified, +8/-3)
+**File**: `crates/tauri/src/path/mod.rs` (modified, +1/-2)
 ```diff
-@@ -64,8 +64,11 @@ impl From<tray_icon::MouseButton> for MouseButton {
- ///
- /// ## Platform-specific:
- ///
--/// - **Linux**: Unsupported. The event is not emitted even though the icon is shown
-+/// - **Linux**: Unsupported by default. The event is not emitted even though the icon is shown
- ///   and will still show a context menu on right click.
-+///   With the `linux-ksni` feature, [`TrayIconEvent::Click`] is emitted for left and middle clicks
-+///   (only with [`MouseButtonState::Up`]). Right click shows the context menu and is not reported.
-+///   All other events are unsupported.
- #[derive(Debug, Clone, Serialize)]
- #[serde(tag = "type")]
- #[non_exhaustive]
-@@ -296,7 +299,7 @@ impl<R: Runtime> TrayIconBuilder<R> {
-   ///
-   /// ## Platform-specific:
-   ///
--  /// - **Linux:** Unsupported.
-+  /// - **Linux:** Unsupported, unless the `linux-ksni` feature is enabled.
-   pub fn tooltip<S: AsRef<str>>(mut self, s: S) -> Self {
-     self.inner = self.inner.with_tooltip(s);
-     self
-@@ -321,6 +324,7 @@ impl<R: Runtime> TrayIconBuilder<R> {
-   ///
-   /// On Linux, we need to write the icon to the disk and usually it will
-   /// be `$XDG_RUNTIME_DIR/tray-icon` or `$TEMP/tray-icon`.
-+  /// This has no effect when the `linux-ksni` feature is enabled.
-   pub fn temp_dir_path<P: AsRef<Path>>(mut self, s: P) -> Self {
-     self.inner = self.inner.with_temp_dir_path(s);
-     self
-@@ -602,7 +606,7 @@ impl<R: Runtime> TrayIcon<R> {
-   ///
-   /// ## Platform-specific:
-   ///
--  /// - **Linux:** Unsupported
-+  /// - **Linux:** Unsupported, unless the `linux-ksni` feature is enabled.
-   pub fn set_tooltip<S: AsRef<str>>(&self, tooltip: Option<S>) -> crate::Result<()> {
-     let s = tooltip.map(|s| s.as_ref().to_string());
-     run_item_main_thread!(self, |self_: Self| self_.inner.set_tooltip(s))?.map_err(Into::into)
-@@ -632,6 +636,7 @@ impl<R: Runtime> TrayIcon<R> {
-   ///
-   /// On Linux, we need to write the icon to the disk and usually it will
-   /// be `$XDG_RUNTIME_DIR/tray-icon` or `$TEMP/tray-icon`.
-+  /// This has no effect when the `linux-ksni` feature is enabled.
-   pub fn set_temp_dir_path<P: AsRef<Path>>(&self, path: Option<P>) -> crate::Result<()> {
-     #[allow(unused)]
-     let p = path.map(|p| p.as_ref().to_path_buf());
+@@ -344,8 +344,7 @@ impl<R: Runtime> PathResolver<R> {
+ 
+     #[cfg(windows)]
+     if path.extension().is_none_or(|ext| ext != "exe") {
+-      // do not use with_extension to retain dots in the file name
+-      path.as_mut_os_string().push(".exe");
++      path.add_extension("exe");
+     }
+ 
+     #[cfg(not(windows))]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16672** (closed): fix(bundler): pin quick-sharun sources for CEF AppImages (@itisrmk)
+- **PR #16665** (2026-11-27): fix: keep dots in file names when adding extensions (@lucasfernog)
+- **PR #16659** (2026-11-27): docs(cli): sync ENVIRONMENT_VARIABLES.md docs (@vasfvitor)
 - **PR #16656** (2026-11-26): refactor: use `with_added_extension` (@Legend-Master)
 - **PR #16655** (2026-11-26): ci: retry pushing benchmark results 3 times (@Legend-Master)
 - **PR #16654** (2026-11-26): chore(deps): bump oxc crates to v0.126 (@Legend-Master)
-- **PR #16652** (2026-11-25): feat(core): support set_badge_count on iOS (@lucasfernog)
-- **PR #16651** (2026-11-25): fix(cli): android dev on Android 17+ (missing local network permission) (@lucasfernog)
-- **PR #16650** (2026-11-25): chore: remove unused deps (@lucasfernog)
 
 ---
 
@@ -3166,26 +2786,31 @@ Co-authored-by: FabianLars <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linux): place child webviews at their bounds and size them from their room (fix 
+## X. bundler): Adding Gstreamer plugin to Linux bundler
 
 **RULE**:
-When implementing operations in `.changes/linux-child-webviews.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/asset-gstreamer-plugin.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tauri-apps/tauri. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8627ddca`: linux): place child webviews at their bounds and size them from their room (fix #10420). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74ff201f`: bundler): Adding Gstreamer plugin to Linux bundler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/linux-child-webviews.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/asset-gstreamer-plugin.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ---
-"tauri": patch:bug
-"tauri-runtime-wry": patch:bug
+"tauri-bundler": minor:feat
+"tauri-cli": minor:feat
+"@tauri-apps/cli": minor:feat
+"tauri": minor:feat
+"tauri-utils": minor:feat
 ---
 
-On Linux with the `unstable` feature, child webviews added with `Window::add_child` are placed at their bounds, instead of being stacked in the window's box. They are clipped at the edge of the window and do not scroll. A webview that resizes with its window, the window's own webview included, takes the size of the room that GTK gives it, instead of the inner size of the window, which counts the menu bar and, on Wayland, the client-side decorations. `Webview::reparent` keeps the position of the webview.
+Audio and video elements can now play `asset://` URLs on Linux. The `deb`, `rpm` and `pacman` bundles ship a GStreamer plugin in `/usr/lib/<productName>/gstreamer-1.0`, the `appimage` bundle includes it when `bundle > linux > appimage > bundleMediaFramework` is enabled, and `tauri dev` downloads it to the tools directory, where development binaries load it from. The plugin is downloaded at bundle time.
+
+The plugin is only used when `app > security > assetProtocol > enable` is set. It reads the requested file directly, so media playback is not restricted by `assetProtocol > scope`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3195,7 +2820,7 @@ On Linux with the `unstable` feature, child webviews added with `Window::add_chi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8627ddca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74ff201f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

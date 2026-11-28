@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T17:25:38.538Z",
+  "updated_at": "2026-11-28T17:34:21.090Z",
   "stats": {
-    "total_discovered": 11029,
-    "approved_pending_harvest": 10470,
+    "total_discovered": 11039,
+    "approved_pending_harvest": 10480,
     "harvested_count": 0,
     "rejected_count": 559,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10486,
+      "COMMUNITY_AND_EXPERT": 10496,
       "OFFICIAL_DOCUMENTATION": 300,
       "STANDARDS_AND_SPECIFICATIONS": 166,
       "ENGINEERING_BLOGS": 7,
@@ -238752,6 +238752,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
         "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-86F33DB80A0A": {
+      "id": "SRC-86F33DB80A0A",
+      "url": "https://worktrunk.dev/step",
+      "title": "https://worktrunk.dev/step",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:18.906Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-C9B403592D6F": {
+      "id": "SRC-C9B403592D6F",
+      "url": "https://github.com/max-sixty/worktrunk.git",
+      "title": "https://github.com/max-sixty/worktrunk.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:18.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-6784EF442C9D": {
+      "id": "SRC-6784EF442C9D",
+      "url": "https://github.com/a/b.git",
+      "title": "https://github.com/a/b.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-AD5263F5B8C9": {
+      "id": "SRC-AD5263F5B8C9",
+      "url": "https://gitlab.com/c/d.git",
+      "title": "https://gitlab.com/c/d.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.119Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-8511E810BBAF": {
+      "id": "SRC-8511E810BBAF",
+      "url": "https://github.com/old/x.git",
+      "title": "https://github.com/old/x.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-44407804089A": {
+      "id": "SRC-44407804089A",
+      "url": "https://github.com/new/y.git",
+      "title": "https://github.com/new/y.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-9600884E3D5D": {
+      "id": "SRC-9600884E3D5D",
+      "url": "https://gitlab.com/mirror/y.git",
+      "title": "https://gitlab.com/mirror/y.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.336Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-52DDA6DB917F": {
+      "id": "SRC-52DDA6DB917F",
+      "url": "https://github.com/gone/z.git",
+      "title": "https://github.com/gone/z.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-AE157342C529": {
+      "id": "SRC-AE157342C529",
+      "url": "https://github.com/Azure/azure-devops-cli-extension/blob/master/azure-devops/azext_devops/dev/pipelines/pipeline_run.py",
+      "title": "https://github.com/Azure/azure-devops-cli-extension/blob/master/azure-devops/azext_devops/dev/pipelines/pipeline_run.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:19.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-8473C6C7EA60": {
+      "id": "SRC-8473C6C7EA60",
+      "url": "https://github.com/tauri-apps/tauri-gstreamer-plugin/releases/download/gst-plugin-tauri-v0.0.2",
+      "title": "https://github.com/tauri-apps/tauri-gstreamer-plugin/releases/download/gst-plugin-tauri-v0.0.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T17:34:21.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
+        "fileName": "tauri-apps-tauri-learnings.md"
       }
     }
   }

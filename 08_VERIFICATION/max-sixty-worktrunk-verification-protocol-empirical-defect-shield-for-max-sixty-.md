@@ -4,22 +4,22 @@
 {
   "source_repository": "max-sixty/worktrunk",
   "source_url": "https://github.com/max-sixty/worktrunk",
-  "source_version": "541579bf",
+  "source_version": "e7b98db1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T14:16:53.400Z",
+  "timestamp": "2026-11-28T17:34:10.271Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `541579bf`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T14:16:53.400Z`  
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `e7b98db1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T17:34:10.271Z`  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `max-sixty/worktrunk` (Commit: `541579bf`)
+- **Target Repository**: `max-sixty/worktrunk` (Commit: `e7b98db1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T14:16:51.802Z  
+> **Harvest Timestamp**: 2026-11-28T17:34:08.731Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12789 stars
+- **Stars / Engagement**: 12814 stars
 
 ---
 
@@ -739,7 +739,7 @@ impl HookOptions {
 //! (`handle_cache_get`) and dropped by `wt config state cache clear`
 //! (`handle_cache_clear`), which needs no prompt:
 //!
-//! - Previous branch (git config `worktrunk.history`, with `worktrunk.history-path`)
+//! - Previous branch (`.git/wt/switch-history.json`)
 //! - CI status cache (`.git/wt/cache/ci-status/`, plus the PR-number width
 //!   ratchet in `.git/wt/cache/pr-number/`)
 //! - Summary cache (`.git/wt/cache/summary/`)
@@ -747,6 +747,7 @@ impl HookOptions {
 //!   — one user-facing category covering every SHA-keyed disk cache, even
 //!   when implementation lives in different modules (`sha_cache` for parsed
 //!   results, `commands::picker::preview_cache` for rendered previews)
+//! - Status explanations (`.git/wt/cache/status-explanations/shown.json`)
 //! - Hints (git config `worktrunk.hints.*`)
 //!
 //! Each category has a `clear_*_reported` helper that clears it and prints its
@@ -806,6 +807,7 @@ use crate::output::prompt::{PromptResponse, prompt_yes_no_preview};
 use worktrunk::utils::epoch_now;
 
 use super::super::list::ci_status::{CachedCiStatus, CiBranchName, MaxPrNumber};
+use super::super::list::{ShownExplanations, status_explanations_path};
 use crate::display::format_relative_time_short;
 use crate::help_pager::show_help_in_pager;
 use crate::summary::CachedSummary;
@@ -948,10 +950,7 @@ fn list_trash_entries(repo: &Repository) -> anyhow::Result<Vec<TrashEntry>> {
 
     let mut out: Vec<TrashEntry> = std::fs::read_dir(&trash_dir)?
         .filter_map(|entry| entry.ok())
-        .filter_map(|entry| {
-            let metadata = entry.metadata().ok()?;
-            Some(TrashEntry {
-                nam
+        .filter_
 ```
 
 ### Core Architecture Module: `src/commands/hook_announcement.rs`
@@ -2028,690 +2027,657 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fba1cb9` (2026-11-27)
-**Commit Message**: fix(config): report a bare root's missing default-branch worktree without panicking (#4925)
+### Incident Patch 1: `e97b6cd1` (2026-11-28)
+**Commit Message**: fix: store switch history outside the shared git config (#4928)
 
-At a bare repository's root, `wt config create --project` panicked in
-debug builds and printed a generic `✗ Command failed` gutter in release
-builds when no worktree held the default branch. This PR replaces that
-with an error and hint that name the default branch. Three new
-integration snapshots cover the cases; before the fix, all three
-panicked. A fourth covers an empty `WORKTRUNK_PROJECT_CONFIG_PATH`,
-which also makes `project_config_path()` return `None`.
+`wt switch` recorded the worktree it left in `worktrunk.history` and
+`worktrunk.history-path` in the repository's shared `.git/config`. #4866
+skipped unchanged writes, but every changed value still took
+`config.lock`, so switches in parallel worktrees could fail concurrent
+config writers elsewhere.
 
-**Why it broke.** The bare-root branch returned a two-line `anyhow!`
-error. `main.rs`'s renderer treats a multi-line error with no context as
-a bug: it hits `debug_assert!(false, "Multiline error without
-CommandError or context")` and otherwise falls back to `Command failed`
-with the text in a gutter. Nothing tested this path. The wording was
-also wrong. `project_config_path()` returns `None` here when no worktree
-holds the default branch, which includes repos that already have
-feature-branch worktrees. Those users were told the repo "has no linked
-worktrees yet", and following the hint by switching to another branch
-didn't help.
+Switch history now lives in `.git/wt/switch-history.json`, replaced
+atomically through `utils::write_atomically` without any lock. Branch
+and path are written together, so they can no longer disagree. The
+`Repository` API (`record_switch_source`, `set_switch_previous`,
+`clear_switch_previous`, `switch_previous`, `switch_previous_worktree`)
+keeps its signatures, so callers are unchanged.
 
-**
+Values recorded in git config by older versions are no longer read: the
+first `wt switch -` after upgrading finds no history, and the next
+switch records it again.
 
-**File**: `src/commands/config/create.rs` (modified, +48/-10)
+Tests: the three `config.lock` unit tests from #4866 are replaced by one
+that holds `config.lock` while recording, reading and clearing history,
+and asserts `.git/config` is byte-identical afterwards. Integration
+tests that seeded history with `git config worktrunk.history` now
+
+**File**: `docs/src/content/docs/faq.md` (modified, +2/-1)
 ```diff
-@@ -6,9 +6,11 @@ use anyhow::Context;
- use color_print::cformat;
- use std::path::PathBuf;
- use worktrunk::config::{ConfigFileKind, require_config_path};
--use worktrunk::git::Repository;
-+use worktrunk::git::{Repository, WorktrunkError};
- use worktrunk::path::format_path_for_display;
--use worktrunk::styling::{eprintln, hint_message, info_message, success_message};
-+use worktrunk::styling::{
-+    eprintln, error_message, hint_message, info_message, success_message, suggest_command,
-+};
+@@ -136,7 +136,8 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
  
- /// Example user configuration file content (displayed in help with values uncommented)
- const USER_CONFIG_EXAMPLE: &str = include_str!("../../../dev/config.example.toml");
-@@ -43,16 +45,52 @@ pub(super) fn comment_out_config(content: &str) -> String {
- pub fn handle_config_create(project: bool) -> anyhow::Result<()> {
-     if project {
-         let repo = Repository::current()?;
--        let config_path = repo.project_config_path()?.ok_or_else(|| {
-+        let Some(config_path) = repo.project_config_path()? else {
-+            // An empty override disables project config before any worktree
-+            // is consulted, so no worktree state explains the `None`.
-+            if std::env::var_os("WORKTRUNK_PROJECT_CONFIG_PATH").is_some_and(|p| p.is_empty()) {
-+                eprintln!(
-+                    "{}",
-+                    error_message(cformat!(
-+                        "Cannot create project config — <bold>WORKTRUNK_PROJECT_CONFIG_PATH</> is empty, which disables project config"
-+                    ))
-+                );
-+                eprintln!(
-+                    "{}",
-+                    hint_message(cformat!(
-+                        "Unset <underline>WORKTRUNK_PROJECT_CONFIG_PATH</> or set it to a file path"
-+                    ))
-+                );
-+                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
-+            }
-             if repo.is_bare().unwrap_or(false) {
--                anyhow::anyhow!(
--                    "Bare repository has no linked worktrees yet.\n\
--                     Run `wt switch <branch>` to create a worktree first, then run `wt config create --project` from inside it."
--                )
--            } else {
--                anyhow::anyhow!("Cannot determine project config location — no worktree found")
-+                // At a bare root the project config path is the default
-+                // branch's worktree, so a worktree on another branch doesn't
-+                // supply one; running from inside that worktree does.
-+                let (error, hint) = match repo.default_branch() {
-+                    Some(branch) => {
-+                        let switch = suggest_command("switch", &[&branch], &[]);
-+                        (
-+                            cformat!(
-+                                "Cannot create project config — no worktree holds the default branch <bold>{branch}</>"
-+                            ),
-+                            cformat!(
-+                                "Run from inside a worktree, or to create the default branch's worktree, run <underline>{switch}</>"
-+                            ),
-+                        )
-+                    }
-+                    None => (
-+                        "Cannot create project config — could not determine the default branch"
-+                            .to_string(),
-+                        "Run from inside a worktree".to_string(),
-+                    ),
-+                };
-+                eprintln!("{}", error_message(error));
-+                eprintln!("{}", hint_message(hint));
-+                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
-             }
--        })?;
-+            anyhow::bail!("Cannot determine project config location — no worktree found");
-+        };
-         let user_config_exists = require_config_path().map(|p| p.exists()).unwrap_or(false);
-         create_config_file(
-             config_path,
+ | Location | Purpose | Created by |
+ |----------|---------|------------|
+-| `git config worktrunk.*` | Cached default branch, switch history, branch markers, custom variables | Various commands |
++| `git config worktrunk.*` | Cached default branch, branch markers, custom variables | Various commands |
++| `.git/wt/switch-history.json` | The worktree `wt switch -` returns to | `wt switch` |
+ | `refs/wt-backup/<branch>` | [Squash backups](/step/#wt-step-squash--recovering-staged-changes) and backups of changes discarded by `wt remove --force`; preserved by state clearing | `wt step squash`, `wt merge`, `wt remove --force` |
+ | `.git/wt/cache/{kind}/*.json` | Cached CI status, the largest PR/MR number seen (sizes the `wt list` CI column), and git command results (merge-tree, integration probes, diff stats, ancestry checks, ahead/behind counts, merge bases) | `wt list`, `wt merge`, `wt remove` |
+ | `.git/wt/cache/summary/{branch}/{hash}.json` | Cached LLM branch summaries, content-addressed by diff hash | `wt list --full`, `wt switch` (when `[list] summary = true`) |
 ```
 
-**File**: `tests/integration_tests/bare_repository.rs` (modified, +58/-0)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/faq.md` (modified, +2/-1)
 ```diff
-@@ -2445,3 +2445,61 @@ mod bare_repo_prompt_pty {
-         });
+@@ -132,7 +132,8 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
+ 
+ | Location | Purpose | Created by |
+ |----------|---------|------------|
+-| `git config worktrunk.*` | Cached default branch, switch history, branch markers, custom variables | Various commands |
++| `git config worktrunk.*` | Cached default branch, branch markers, custom variables | Various commands |
++| `.git/wt/switch-history.json` | The worktree `wt switch -` returns to | `wt switch` |
+ | `refs/wt-backup/<branch>` | [Squash backups](https://worktrunk.dev/step/#wt-step-squash--recovering-staged-changes) and backups of changes discarded by `wt remove --force`; preserved by state clearing | `wt step squash`, `wt merge`, `wt remove --force` |
+ | `.git/wt/cache/{kind}/*.json` | Cached CI status, the largest PR/MR number seen (sizes the `wt list` CI column), and git command results (merge-tree, integration probes, diff stats, ancestry checks, ahead/behind counts, merge bases) | `wt list`, `wt merge`, `wt remove` |
+ | `.git/wt/cache/summary/{branch}/{hash}.json` | Cached LLM branch summaries, content-addressed by diff hash | `wt list --full`, `wt switch` (when `[list] summary = true`) |
+```
+
+**File**: `skills/worktrunk/reference/faq.md` (modified, +2/-1)
+```diff
+@@ -132,7 +132,8 @@ Worktrunk stores repository state, caches, and logs under `.git/`:
+ 
+ | Location | Purpose | Created by |
+ |----------|---------|------------|
+-| `git config worktrunk.*` | Cached default branch, switch history, branch markers, custom variables | Various commands |
++| `git config worktrunk.*` | Cached default branch, branch markers, custom variables | Various commands |
++| `.git/wt/switch-history.json` | The worktree `wt switch -` returns to | `wt switch` |
+ | `refs/wt-backup/<branch>` | [Squash backups](https://worktrunk.dev/step/#wt-step-squash--recovering-staged-changes) and backups of changes discarded by `wt remove --force`; preserved by state clearing | `wt step squash`, `wt merge`, `wt remove --force` |
+ | `.git/wt/cache/{kind}/*.json` | Cached CI status, the largest PR/MR number seen (sizes the `wt list` CI column), and git command results (merge-tree, integration probes, diff stats, ancestry checks, ahead/behind counts, merge bases) | `wt list`, `wt merge`, `wt remove` |
+ | `.git/wt/cache/summary/{branch}/{hash}.json` | Cached LLM branch summaries, content-addressed by diff hash | `wt list --full`, `wt switch` (when `[list] summary = true`) |
+```
+
+**File**: `src/cli/config.rs` (modified, +1/-1)
+```diff
+@@ -1074,7 +1074,7 @@ Enables `wt switch -` to return to the previous worktree, similar to `cd -` or `
+ 
+ ## How it works
+ 
+-Updated automatically on every `wt switch`. Stored in git config as `worktrunk.history`, with the worktree's path in `worktrunk.history-path`.
++Updated automatically on every `wt switch`. Stored with the worktree's path in `.git/wt/switch-history.json`.
+ 
+ Without a subcommand, runs `get`. Use `set` to override or `clear` to reset."#
+     )]
+```
+
+**File**: `src/commands/config/state.rs` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@
+ //! (`handle_cache_get`) and dropped by `wt config state cache clear`
+ //! (`handle_cache_clear`), which needs no prompt:
+ //!
+-//! - Previous branch (git config `worktrunk.history`, with `worktrunk.history-path`)
++//! - Previous branch (`.git/wt/switch-history.json`)
+ //! - CI status cache (`.git/wt/cache/ci-status/`, plus the PR-number width
+ //!   ratchet in `.git/wt/cache/pr-number/`)
+ //! - Summary cache (`.git/wt/cache/summary/`)
+```
+
+**File**: `src/git/repository/config.rs` (modified, +131/-125)
+```diff
+@@ -321,89 +321,105 @@ impl Repository {
+     /// Record the worktree `wt switch` is leaving, so `wt switch -` can
+     /// return to it.
+     ///
+-    /// The branch goes in `worktrunk.history` and the path in
+-    /// `worktrunk.history-path`. The branch alone can't name a detached
+-    /// worktree, or the second checkout of a branch checked out twice; the
+-    /// path can. A detached worktree clears the branch, so the two keys always
+-    /// describe the same worktree, which is what
++    /// The branch and path go in
++    /// [`switch_history_path`](Self::switch_history_path). The branch alone
++    /// can't name a detached worktree, or the second checkout of a branch
++    /// checked out twice; the path can. A detached worktree records no branch,
++    /// so both fields always describe the same worktree, which is what
+     /// [`switch_previous_worktree`](Self::switch_previous_worktree) checks.
+     ///
+-    /// Each key is written only when its value changes: the keys live in the
+-    /// repository's shared config, and a redundant write still takes
+-    /// `config.lock`, failing a concurrent config writer in another worktree.
+-    /// The comparison reads the shared config fresh rather than the
+-    /// process-lifetime snapshot, which another `wt` may have outdated by
+-    /// recording a different source since this process loaded it. A skipped
+-    /// write still refreshes this instance's snapshot with the fresh value.
++    /// History lives in its own file rather than the repository's shared git
++    /// config: every config write takes `config.lock`, so switches in parallel
++    /// worktrees would fail concurrent config writers elsewhere. The file is
++    /// replaced atomically, without a lock; concurrent switches leave the last
++    /// writer's record, which is all a single-slot history can hold.
+     pub fn record_switch_source(&self, path: &Path, branch: Option<&str>) -> anyhow::Result<()> {
+-        let recorded = self.config_regexp_entries(r"^worktrunk\.history(-path)?$")?;
+-        let recorded_value = |key: &str| {
+-            recorded
+-                .iter()
+-                .rev()
+-                .find(|(k, _)| k == key)
+-                .map(|(_, v)| v.as_str())
+-        };
+-        let recorded_branch = recorded_value("worktrunk.history");
+-        match branch {
+-            Some(branch) if recorded_branch != Some(branch) => {
+-                self.set_config_value("worktrunk.history", branch)?
+-            }
+-            None if recorded_branch.is_some() => {
+-                self.unset_config("worktrunk.history")?;
+-            }
+-            _ => self.cache_config_value("worktrunk.history", branch),
+-        }
+-        let path = path.to_string_lossy();
+-        if recorded_value("worktrunk.history-path") != Some(&*path) {
+-            self.set_config_value("worktrunk.history-path", &path)?;
+-        } else {
+-            self.cache_config_value("worktrunk.history-path", Some(&path));
+-        }
+-        Ok(())
++        self.save_switch_history(&SwitchHistory {
++            branch: branch.map(str::to_owned),
++            path: Some(path.to_string_lossy().into_owned()),
++        })
      }
- }
-+
-+#[derive(Clone, Copy)]
-+enum BareCreateSetup {
-+    NoWorktrees,
-+    FeatureWorktree,
-+    NoDefaultBranch,
-+    /// `main` has a worktree, but an empty `WORKTRUNK_PROJECT_CONFIG_PATH`
-+    /// disables project config before any worktree is consulted.
-+    EmptyOverride,
-+}
-+
-+/// `wt config create --project` at a bare repo's root has nowhere to write
-+/// when no worktree holds the default branch, whether or not other worktrees
-+/// exist. The error names that state and both ways out. An empty
-+/// `WORKTRUNK_PROJECT_CONFIG_PATH` is reported as such, not as a missing
-+/// worktree.
-+#[rstest]
-+#[case::no_worktrees("no_worktrees", BareCreateSetup::NoWorktrees)]
-+#[case::only_a_feature_worktree("only_feature_worktree", BareCreateSetup::FeatureWorktree)]
-+#[case::no_default_branch("no_default_branch", BareCreateSetup::NoDefaultBranch)]
-+#[case::empty_override("empty_override", BareCreateSetup::EmptyOverride)]
-+fn test_bare_repo_config_create_project_without_default_branch_worktree(
-+    #[case] name: &str,
-+    #[case] setup: BareCreateSetup,
-+) {
-+    let test = bare_repo_without_worktrees();
-+    let bare = test.bare_repo_path();
-+    match setup {
-+        BareCreateSetup::NoWorktrees => {}
-+        BareCreateSetup::FeatureWorktree => {
-+            test.run_git_in(bare, &["worktree", "add", "feature", "feature"]);
+ 
+     /// Set the previous branch outright (`wt config state previous-branch
+     /// set`), dropping the path a switch recorded alongside the old one.
+     pub fn set_switch_previous(&self, branch: &str) -> anyhow::Result<()> {
+-        self.set_config_value("worktrunk.history", branch)?;
+-        self.unset_config("worktrunk.history-path")?;
+-        Ok(())
++        self.save_switch_history(&SwitchHistory {
++            branch: Some(branch.to_owned()),
++            path: None,
++        })
+     }
+ 
+     /// Forget the previous worktree. Returns whether anything was recorded.
++    ///
++    /// Also unsets the `worktrunk.history` and `worktrunk.history-path` keys
++    /// older versions stored history in, which nothing else removes. Each is
++    /// checked in the config snapshot first: `git config --unset-all` takes
++    /// `config.lock` even for a missing key.
+     pub fn clear_switch_previous(&self) -> anyhow::Result<bool> {
+-        let branch = self.unset_config("worktrunk.history")?;
+-        let path = self.unset_config("worktrunk.history-path")?;
+-        Ok(branch || path)
++        let mut legacy = false;
++        for key in ["worktrunk.history", "worktrunk.history-path"] {
++            if self.config_last(key)?.is_some() {
++                legacy |= self.unset_config(key)?;
++            }
 +        }
-+        // Detached HEAD and no conventionally named branch: nothing names a
-+        // default branch.
-+        BareCreateSetup::NoDefaultBranch => {
-+            test.run_git_in(bare, &["update-ref", "--no-deref", "HEAD", "feature"]);
-+            test.run_git_in(bare, &["branch", "-m", "main", "other"]);
-+        }
-+        BareCreateSetup::EmptyOverride => {
-+            test.run_git_in(bare, &["worktree", "add", "main", "main"]);
-+        }
++        let file = self.switch_history_path();
++        let removed = match std::fs::remove_file(&file) {
++            Ok(()) => true,
++            Err(e) if e.kind() == std::io::ErrorKind::NotFound => false,
++            Err(e) => {
++                return Err(e).with_context(|| {
++                    format!("Failed to remove {}", format_path_for_display(&file))
++                });
++            }
++        };
++        Ok(legacy || removed)
+     }
+ 
+     /// The worktree `wt switc
+```
+
+**File**: `src/git/repository/mod.rs` (modified, +7/-0)
+```diff
+@@ -1560,6 +1560,13 @@ impl Repository {
+         self.wt_dir().join("trash")
+     }
+ 
++    /// The file recording the worktree `wt switch` last left, for `wt switch -`.
++    ///
++    /// Returns `<git-common-dir>/wt/switch-history.json`.
++    pub fn switch_history_path(&self) -> PathBuf {
++        self.wt_dir().join("switch-history.json")
 +    }
 +
-+    let settings = setup_temp_snapshot_settings(test.temp_path());
-+    settings.bind(|| {
-+        let mut cmd = wt_command();
-+        test.configure_wt_cmd(&mut cmd);
-+        if matches!(setup, BareCreateSetup::EmptyOverride) {
-+            cmd.env("WORKTRUNK_PROJECT_CONFIG_PATH", "");
-+        }
-+        cmd.args(["config", "create", "--project"])
-+            .current_dir(test.bare_repo_path());
-+
-+        assert_cmd_snapshot!(format!("bare_repo_config_create_project_{name}"), cmd);
-+    });
-+    assert!(!test.bare_repo_path().join(".config").exists());
-+    assert!(!test.bare_repo_path().join("main/.config").exists());
-+}
+     /// The repository root path (the main worktree directory).
+     ///
+     /// - Normal repositories: the main worktree directory (parent of .git)
 ```
 
-**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_empty_override.snap` (added, +58/-0)
+**File**: `src/git/repository/worktrees.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,58 @@
-+---
-+source: tests/integration_tests/bare_repository.rs
-+info:
-+  program: wt
-+  args:
-+    - config
-+    - create
-+    - "--project"
-+  env:
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    TERM: alacritty
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_PROJECT_CONFIG_PATH: "[TEST_PROJECT_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OMP_INSTALLED: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_PI_INSTALLED: "0"
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+---
-+success: false
-+exit_code: 1
-+----- stdout -----
-+
-+----- stderr -----
-+✗ Cannot create project config — WORKTRUNK_PROJECT_CONFIG_PATH is empty, which disables project config
-+↳ Unset WORKTRUNK_PROJECT_CONFIG_PATH or set it to a file path
-```
-
-**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_no_default_branch.snap` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+---
-+source: tests/integration_tests/bare_repository.rs
-+info:
-+  program: wt
-+  args:
-+    - config
-+    - create
-+    - "--project"
-+  env:
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    TERM: alacritty
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OMP_INSTALLED: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_PI_INSTALLED: "0"
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+---
-+success: false
-+exit_code: 1
-+----- stdout -----
-+
-+----- stderr -----
-+✗ Cannot create project config — could not determine the default branch
-+↳ Run from inside a worktree
-```
-
-**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_no_worktrees.snap` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+---
-+source: tests/integration_tests/bare_repository.rs
-+info:
-+  program: wt
-+  args:
-+    - config
-+    - create
-+    - "--project"
-+  env:
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    TERM: alacritty
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OMP_INSTALLED: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_PI_INSTALLED: "0"
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+---
-+success: false
-+exit_code: 1
-+----- stdout -----
-+
-+----- stderr -----
-+✗ Cannot create project config — no worktree holds the default branch main
-+↳ Run from inside a worktree, or to create the default branch's worktree, run wt switch main
-```
-
-**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_only_feature_worktree.snap` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+---
-+source: tests/integration_tests/bare_repository.rs
-+info:
-+  program: wt
-+  args:
-+    - config
-+    - create
-+    - "--project"
-+  env:
-+    COLUMNS: "500"
-+    GIT_ALLOW_PROTOCOL: file
-+    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
-+    GIT_AUTHOR_EMAIL: test@example.com
-+    GIT_AUTHOR_NAME: Test User
-+    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
-+    GIT_COMMITTER_EMAIL: test@example.com
-+    GIT_COMMITTER_NAME: Test User
-+    GIT_CONFIG_COUNT: "2"
-+    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_KEY_0: user.useConfigOnly
-+    GIT_CONFIG_KEY_1: rerere.enabled
-+    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
-+    GIT_CONFIG_VALUE_0: "true"
-+    GIT_CONFIG_VALUE_1: "false"
-+    GIT_TERMINAL_PROMPT: "0"
-+    LANG: C
-+    LC_ALL: C
-+    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
-+    TERM: alacritty
-+    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
-+    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
-+    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
-+    WORKTRUNK_TEST_BASH_INSTALLED: "0"
-+    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
-+    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
-+    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
-+    WORKTRUNK_TEST_EPOCH: "1735776000"
-+    WORKTRUNK_TEST_FISH_INSTALLED: "0"
-+    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
-+    WORKTRUNK_TEST_NUSHELL_ENV: "0"
-+    WORKTRUNK_TEST_OMP_INSTALLED: "0"
-+    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
-+    WORKTRUNK_TEST_PARENT_SHELL: ""
-+    WORKTRUNK_TEST_PI_INSTALLED: "0"
-+    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
-+    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
-+    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
-+    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
-+    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
-+---
-+success: false
-+exit_code: 1
-+----- stdout -----
-+
-+----- stderr -----
-+✗ Cannot create project config — no worktree holds the default branch main
-+↳ Run from inside a worktree, or to create the default branch's worktree, run wt switch main
+@@ -503,7 +503,7 @@ impl Repository {
+                 .into()
+             }),
+             "-" => {
+-                // Read from worktrunk.history (recorded by wt switch operations)
++                // Read from the switch history (recorded by wt switch operations)
+                 self.switch_previous().ok_or_else(|| {
+                     GitError::Other {
+                         message: cformat!(
 ```
 
 ---
 
-### Incident Patch 2: `413cda94` (2026-11-27)
-**Commit Message**: fix(shell): report a failed directory change from the PowerShell wrapper (#4926)
+### Incident Patch 2: `17cbdf8f` (2026-11-28)
+**Commit Message**: fix(git): read a remote's first url, the one git fetches from (#4930)
 
-After a `cd` directive, the PowerShell wrapper reported success even
-when the directory change failed, for example after `wt switch` to a
-worktree whose directory had been removed. The shell stayed where it was
-and `$LASTEXITCODE` was still 0. This PR makes the wrapper report 1 in
-that case, matching the bash, zsh and fish wrappers, which return `cd`'s
-status. Nushell raises the `cd` error instead.
+When a remote has more than one `url` (`git remote set-url --add`), git
+fetches from the first one, but `remote_url()` and `all_remote_urls()`
+read the last one. So the `repo` object in `wt list --format=json`, the
+project identifier, template variables such as `{{ remote_url }}`, and
+PR lookups could all name the push mirror, while CI detection, which
+follows git, named the fetch repository. Both functions now go through a
+new `first_remote_url()`. Like git, it treats an empty value as clearing
+the values before it, so the first URL after the last empty value wins.
+I checked that rule against git 2.56's `git remote get-url`.
 
-**Cause.** After `Set-Location`, the wrapper ran `$exitCode =
-$LASTEXITCODE`
-([`templates/powershell.ps1`](https://github.com/max-sixty/worktrunk/blob/deec05a63bc3a67021a321eb5516f16de5d7dbdc/templates/powershell.ps1#L53-L56)).
-`Set-Location` is a cmdlet and never sets `$LASTEXITCODE`, so the line
-just copied wt's own status back. The wrapper now checks `$?` after
-`Set-Location` and sets 1 when wt itself succeeded. A non-zero status
-from wt still wins, as before.
+As max-sixty asked in #4899, there's no legacy alias for the old
+last-URL project identifier.
 
-**Test.** The new `test_powershell_wrapper_reports_failed_cd` runs the
-generated wrapper under `pwsh` with a mock `wt` that writes a missing
-directory to the cd file and exits 0. It asserts `$LASTEXITCODE` is 1
-and the location is unchanged. It f
+**Changelog entry for the release** (changelog entries are written at
+release time, so the text is here and in the commit message instead of
+in `CHANGELOG.md`):
 
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_powershell.snap` (modified, +9/-7)
+> Breaking for remotes with several URLs: Worktrunk now reads the first
+`url`, as git does, instead of the last. For such a remote the project
+identifier changes, so Worktrunk asks for its hook approvals again, and
+`[projects."…"]` user 
+
+**File**: `src/git/repository/remotes.rs` (modified, +26/-8)
 ```diff
-@@ -55,8 +55,10 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
-                 $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
--                    if ($exitCode -eq 0) {
--                        $exitCode = $LASTEXITCODE
-+                    # Set-Location is a cmdlet: a failure clears $? but leaves
-+                    # $LASTEXITCODE at wt's own status.
-+                    if (-not $? -and $exitCode -eq 0) {
-+                        $exitCode = 1
-                     }
-                 }
-             }
-@@ -72,13 +74,13 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
-         # stray exit-code line (e.g. `0`) after the real command output — that
-         # corrupts captures like `$out = wt list --format json`. Setting
-         # $global:LASTEXITCODE is what propagates the failure; the Write-Error
--        # below surfaces a visible error record. Note: because this is a simple
--        # function, Write-Error does NOT set the caller's $?, so don't rely on
--        # $? reflecting a wt failure.
-+        # below only records it in $Error, printing nothing. Note: because this
-+        # is a simple function, Write-Error does NOT set the caller's $?, so
-+        # don't rely on $? reflecting a wt failure.
-         $global:LASTEXITCODE = $exitCode
-         if ($exitCode -ne 0) {
--            # Surface a visible error record without throwing (does not set the
--            # caller's $? from a simple function; $LASTEXITCODE carries the code)
-+            # SilentlyContinue keeps the record out of the output and does not
-+            # throw; $LASTEXITCODE carries the code
-             Write-Error "wt exited with code $exitCode" -ErrorAction SilentlyContinue
-         }
-     }
-```
-
-**File**: `templates/powershell.ps1` (modified, +9/-7)
-```diff
-@@ -51,8 +51,10 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
-                 $target = Get-Content -LiteralPath $cdFile -Raw
-                 if ($target) {
-                     Set-Location -LiteralPath $target
--                    if ($exitCode -eq 0) {
--                        $exitCode = $LASTEXITCODE
-+                    # Set-Location is a cmdlet: a failure clears $? but leaves
-+                    # $LASTEXITCODE at wt's own status.
-+                    if (-not $? -and $exitCode -eq 0) {
-+                        $exitCode = 1
-                     }
-                 }
-             }
-@@ -68,13 +70,13 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
-         # stray exit-code line (e.g. `0`) after the real command output — that
-         # corrupts captures like `$out = wt list --format json`. Setting
-         # $global:LASTEXITCODE is what propagates the failure; the Write-Error
--        # below surfaces a visible error record. Note: because this is a simple
--        # function, Write-Error does NOT set the caller's $?, so don't rely on
--        # $? reflecting a wt failure.
-+        # below only records it in $Error, printing nothing. Note: because this
-+        # is a simple function, Write-Error does NOT set the caller's $?, so
-+        # don't rely on $? reflecting a wt failure.
-         $global:LASTEXITCODE = $exitCode
-         if ($exitCode -ne 0) {
--            # Surface a visible error record without throwing (does not set the
--            # caller's $? from a simple function; $LASTEXITCODE carries the code)
-+            # SilentlyContinue keeps the record out of the output and does not
-+            # throw; $LASTEXITCODE carries the code
-             Write-Error "wt exited with code $exitCode" -ErrorAction SilentlyContinue
-         }
-     }
-```
-
-**File**: `tests/integration_tests/shell_powershell.rs` (modified, +52/-0)
-```diff
-@@ -236,6 +236,58 @@ exit $LASTEXITCODE
-     assert_eq!(std::fs::read_dir(&temp_path).unwrap().count(), 0);
- }
+@@ -67,15 +67,29 @@ use crate::config::ProjectId;
+ use crate::git::error::RefType;
+ use crate::git::{legacy_project_identifier, url_path_segments_eq};
  
-+/// A directive naming a directory that no longer exists leaves the shell where
-+/// it was, so the wrapper reports failure even though `wt` itself exited 0, as
-+/// the bash, zsh and fish wrappers do.
-+#[test]
-+fn test_powershell_wrapper_reports_failed_cd() {
-+    let temp_dir = worktrunk::testing::test_tempdir();
-+    let missing = temp_dir.path().join("removed-worktree");
-+
-+    let mock_bin = temp_dir.path().join("mock-wt.ps1");
-+    std::fs::write(
-+        &mock_bin,
-+        r#"
-+if ($env:COMPLETE) { exit 0 }
-+[IO.File]::WriteAllText($env:WORKTRUNK_DIRECTIVE_CD_FILE, $env:WORKTRUNK_TEST_TARGET)
-+exit 0
-+"#,
-+    )
-+    .unwrap();
-+
-+    let wrapper = ShellInit::with_prefix(Shell::PowerShell, "wt".to_string())
-+        .generate()
-+        .unwrap();
-+    let mock_bin_escaped = mock_bin.display().to_string().replace('\'', "''");
-+    let script = format!(
-+        r#"
-+$env:WORKTRUNK_BIN = '{mock_bin_escaped}'
-+{wrapper}
-+$before = (Get-Location).Path
-+wt switch feature
-+$code = $LASTEXITCODE
-+Write-Output "code=$code"
-+Write-Output "moved=$((Get-Location).Path -ne $before)"
-+"#
-+    );
-+
-+    let output = Command::new("pwsh")
-+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
-+        .env("WORKTRUNK_TEST_TARGET", &missing)
-+        .output()
-+        .expect("Failed to run pwsh");
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        stdout.contains("code=1"),
-+        "a failed cd must set $LASTEXITCODE to 1.\nstdout: {stdout}\nstderr: {stderr}",
-+    );
-+    assert!(
-+        stdout.contains("moved=False"),
-+        "the shell must stay put.\nstdout: {stdout}\nstderr: {stderr}",
-+    );
-+}
-+
- /// Write a `wt` into `dir` that appends `<label> <args>` to the file named by
- /// `WORKTRUNK_TEST_CALL_LOG`, so the log shows which `wt` each call reached.
- fn write_logging_wt(dir: &std::path::Path, label: &str) {
-```
-
----
-
-### Incident Patch 3: `541579bf` (2026-11-27)
-**Commit Message**: fix(remove): scrub inherited git discovery vars when stopping fsmonitor (#4923)
-
-**File**: `src/git/remove.rs` (modified, +3/-0)
-```diff
-@@ -158,9 +158,12 @@ const FSMONITOR_LSOF_TIMEOUT: Duration = Duration::from_secs(2);
- /// only ever reach that worktree's own daemon, never another worktree's.
- pub fn stop_fsmonitor_daemon(worktree: &WorkingTree) {
-     // Graceful path first: a healthy daemon exits cleanly on this IPC request.
-+    // `worktree` is a `wt`-chosen worktree, so an inherited `GIT_DIR` would
-+    // address the invoking worktree's daemon instead.
-     let _ = Cmd::new("git")
-         .args(["fsmonitor--daemon", "stop"])
-         .current_dir(worktree.path())
-+        .scrub_git_discovery_env()
-         .context(crate::git::repository::path_to_logging_context(
-             worktree.path(),
-         ))
-```
-
-**File**: `tests/integration_tests/remove.rs` (modified, +66/-0)
-```diff
-@@ -4930,6 +4930,72 @@ fn test_remove_drains_trash_under_inherited_git_dir(mut repo: TestRepo) {
-     });
- }
- 
-+/// `wt remove` stops the removed worktree's fsmonitor daemon with that
-+/// worktree as cwd, so the stop must not forward an inherited `GIT_DIR`. A
-+/// `!wt` alias from linked worktree `l1` exports `GIT_DIR` as `l1`'s private
-+/// gitdir, and `git fsmonitor--daemon stop` run in `l2` with that `GIT_DIR`
-+/// stops `l1`'s daemon and leaves `l2`'s running.
+-/// The remote name and URL of a bulk-config `remote.<name>.url` entry whose
+-/// last value is non-empty, or `None` for any other key.
++/// The URL git fetches from, given every value of a `remote.<name>.url` key
++/// in config order: the first value, or `None` when there is none.
 +///
-+/// A `git` shim on `PATH` records the `GIT_DIR` the stop receives and exits
-+/// without contacting a daemon.
++/// A remote set up with `git remote set-url --add` has several values; git
++/// fetches from the first and pushes to all. An empty value clears the
++/// values before it, so only those after the last empty value count.
++fn first_remote_url(values: &[String]) -> Option<&str> {
++    let start = values
++        .iter()
++        .rposition(String::is_empty)
++        .map_or(0, |i| i + 1);
++    let url = values.get(start)?.trim();
++    (!url.is_empty()).then_some(url)
++}
++
++/// The remote name and URL of a bulk-config `remote.<name>.url` entry with a
++/// URL per [`first_remote_url`], or `None` for any other key.
+ ///
+ /// Remote names can contain dots (e.g., "my.remote"); the `.url` suffix is
+ /// stripped from the right, so the last `.url` is always the suffix.
+ fn remote_url_entry<'a>(key: &'a str, values: &'a [String]) -> Option<(&'a str, &'a str)> {
+     let name = key.strip_prefix("remote.")?.strip_suffix(".url")?;
+-    let url = values.last()?.trim();
+-    (!url.is_empty()).then_some((name, url))
++    Some((name, first_remote_url(values)?))
+ }
+ 
+ impl Repository {
+@@ -137,12 +151,16 @@ impl Repository {
+     /// rewrites. Use [`effective_remote_url`](Self::effective_remote_url) when you
+     /// need forge detection to work with `insteadOf` aliases.
+     ///
++    /// A remote with several URLs reports the first, the one git fetches from.
++    ///
+     /// Resolved from the bulk config map — O(1) once populated.
+     pub fn remote_url(&self, remote: &str) -> Option<String> {
+-        self.config_last(&format!("remote.{remote}.url"))
+-            .ok()
+-            .flatten()
+-            .filter(|url| !url.is_empty())
++        let key = super::canonical_config_key(&format!("remote.{remote}.url"));
++        let guard = self.all_config().ok()?.read().unwrap();
++        guard
++            .get(&key)
++            .and_then(|values| first_remote_url(values))
++            .map(str::to_string)
+     }
+ 
+     /// Get the effective URL for a remote, with `url.insteadOf` rewrites applied.
+```
+
+**File**: `tests/integration_tests/repository.rs` (modified, +70/-0)
+```diff
+@@ -1529,3 +1529,73 @@ fn test_primary_remote_skips_remote_with_empty_url() {
+         Some("https://github.com/max-sixty/worktrunk.git")
+     );
+ }
++
++/// A remote with several `url` values (`git remote set-url --add`) fetches
++/// from the first, so Worktrunk reads the first too. An empty value resets
++/// the list, as in git, so the first URL after it wins.
++#[test]
++fn test_remote_url_reads_first_of_multiple_urls() {
++    let repo = TestRepo::new();
++    repo.run_git(&["remote", "add", "origin", "https://github.com/a/b.git"]);
++    repo.run_git(&[
++        "remote",
++        "set-url",
++        "--add",
++        "origin",
++        "https://gitlab.com/c/d.git",
++    ]);
++    repo.run_git(&[
++        "config",
++        "--add",
++        "remote.reset.url",
++        "https://github.com/old/x.git",
++    ]);
++    repo.run_git(&["config", "--add", "remote.reset.url", ""]);
++    repo.run_git(&[
++        "config",
++        "--add",
++        "remote.reset.url",
++        "https://github.com/new/y.git",
++    ]);
++    repo.run_git(&[
++        "config",
++        "--add",
++        "remote.reset.url",
++        "https://gitlab.com/mirror/y.git",
++    ]);
++    repo.run_git(&[
++        "config",
++        "--add",
++        "remote.cleared.url",
++        "https://github.com/gone/z.git",
++    ]);
++    repo.run_git(&["config", "--add", "remote.cleared.url", ""]);
++
++    let r = Repository::at(repo.root_path().to_path_buf()).unwrap();
++    assert_eq!(
++        r.remote_url("origin").as_deref(),
++        Some("https://github.com/a/b.git")
++    );
++    assert_eq!(
++        r.remote_url("reset").as_deref(),
++        Some("https://github.com/new/y.git")
++    );
++    assert_eq!(r.remote_url("cleared"), None);
++
++    let mut all = r.all_remote_urls();
++    all.sort();
++    assert_eq!(
++        all,
++        vec![
++            (
++                "origin".to_string(),
++                "https://github.com/a/b.git".to_string()
++            ),
++            (
++                "reset".to_string(),
++                "https://github.com/new/y.git".to_string()
++            ),
++        ]
++    );
++    assert_eq!(r.project_identifier().unwrap(), "github.com/a/b");
++}
+```
+
+---
+
+### Incident Patch 3: `d4436f4f` (2026-11-28)
+**Commit Message**: fix(list): keep a sibling repository's pipeline run off Azure DevOps CI status (#4916)
+
+`wt list --full` could show another repository's pipeline run as a
+branch's CI status in an Azure DevOps project with several repositories.
+The no-PR fallback ran `az pipelines runs list --branch
+refs/heads/<branch> --top 1`, which spans every repository in the
+project — the extension's
+[`pipeline_run_list`](https://github.com/Azure/azure-devops-cli-extension/blob/master/azure-devops/azext_devops/dev/pipelines/pipeline_run.py)
+takes no repository argument — so the newest run of any same-named
+branch (usually `main`) won.
+
+The lookup now fetches the branch's 20 newest runs and reports the first
+whose `repository.name` matches this repository's name
+(case-insensitively, since the clone URL's casing can differ). When all
+20 come from sibling repositories, the row shows no CI rather than a
+sibling's verdict.
+
+The new test `test_list_full_azure_pipeline_skips_sibling_repository`
+feeds the mock `az` a newer failed run from `other-repo` ahead of this
+repository's passing run. Before the change every row showed the
+sibling's failure; now the output matches the `azure_pipeline_passed`
+snapshot. The exist
+
+**File**: `src/commands/list/ci_status/azure.rs` (modified, +31/-6)
+```diff
+@@ -164,12 +164,23 @@ pub(super) fn detect_azure_pr(
+     })
+ }
+ 
++/// How many of a branch's newest runs [`detect_azure_pipeline`] fetches while
++/// looking for one from this repository.
++const AZURE_PIPELINE_RUN_WINDOW: &str = "20";
++
+ /// Detect Azure Pipelines status for a branch (fallback when no PR exists).
+ ///
+-/// Uses `az pipelines runs list --branch <branch>` to get the most recent run.
+-/// Note: `--top 1` returns the most recently queued run, which may be a retry
+-/// from a different SHA than `local_head`; `is_stale` flags that case so the UI
+-/// can dim the indicator rather than reporting fresh status against stale data.
++/// Uses `az pipelines runs list --branch <branch>` and reports the most recent
++/// run from this repository. That command has no repository filter, so the
++/// list spans every repository in the project and a sibling's same-named
++/// branch (`main`, most often) shows up in it. `--top` applies on the server,
++/// so the lookup fetches a window of runs and keeps the first whose
++/// `repository.name` matches; a window filled entirely by siblings' runs
++/// reports no CI rather than their verdict.
++///
++/// The run kept may be a retry from a different SHA than `local_head`;
++/// `is_stale` flags that case so the UI can dim the indicator rather than
++/// reporting fresh status against stale data.
+ pub(super) fn detect_azure_pipeline(
+     repo: &Repository,
+     branch: &CiBranchName,
+@@ -187,7 +198,7 @@ pub(super) fn detect_azure_pipeline(
+             "--branch",
+             &branch_ref,
+             "--top",
+-            "1",
++            AZURE_PIPELINE_RUN_WINDOW,
+             "--project",
+             &ctx.project,
+             "--org",
+@@ -217,7 +228,13 @@ pub(super) fn detect_azure_pipeline(
+ 
+     let runs: Vec<AzPipelineRun> =
+         parse_json(&output.stdout, "az pipelines runs list", &branch.full_name)?;
+-    let run = runs.first()?;
++    // Azure DevOps repository names are case-insensitive, and the clone URL
++    // that `ctx.repository` comes from need not match the canonical casing.
++    let run = runs.iter().find(|run| {
++        run.repository
++            .as_ref()
++            .is_some_and(|r| r.name.eq_ignore_ascii_case(&ctx.repository))
++    })?;
+ 
+     let ci_status = parse_azure_pipeline_status(run.status.as_deref(), run.result.as_deref());
+ 
+@@ -340,6 +357,14 @@ struct AzPipelineRun {
+     result: Option<String>,
+     #[serde(default)]
+     source_version: Option<String>,
++    /// Repository the run built; the run list spans the whole project.
++    #[serde(default)]
++    repository: Option<AzBuildRepository>,
++}
++
++#[derive(Debug, Deserialize)]
++struct AzBuildRepository {
++    name: String,
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `src/testing/mod.rs` (modified, +2/-1)
+```diff
+@@ -2835,7 +2835,8 @@ impl TestRepo {
+     ///   should include `pullRequestId`, optionally `mergeStatus`,
+     ///   `lastMergeSourceCommit.commitId`, and `repository.{name,project.name}`.
+     /// * `runs_json` - JSON for `az pipelines runs list --output json`. Each entry
+-    ///   should include `id`, optionally `status`, `result`, and `sourceVersion`.
++    ///   should include `id` and `repository.name` (runs from another repository
++    ///   are skipped), optionally `status`, `result`, and `sourceVersion`.
+     pub fn setup_mock_az_with_ci_data(&mut self, pr_list_json: &str, runs_json: &str) {
+         let mock_bin = self.temp_dir.path().join("mock-bin");
+         std::fs::create_dir_all(&mock_bin).unwrap();
+```
+
+**File**: `tests/integration_tests/ci_status.rs` (modified, +36/-2)
+```diff
+@@ -1309,14 +1309,47 @@ fn test_list_full_with_azure_passed_pipeline(mut repo: TestRepo) {
+         "id": 4242,
+         "status": "completed",
+         "result": "succeeded",
+-        "sourceVersion": "{}"
++        "sourceVersion": "{}",
++        "repository": {{"id": "1111", "type": "TfsGit", "name": "test-repo"}}
+     }}]"#,
+         head_sha
+     );
+ 
+     run_azure_ci_status_test(&mut repo, "azure_pipeline_passed", "[]", &runs_json);
+ }
+ 
++/// `az pipelines runs list` has no repository filter, so a project's runs on a
++/// same-named branch arrive from every repository in it. A newer run from a
++/// sibling repository must not stand in for this repository's own run.
 +#[rstest]
-+#[cfg(unix)]
-+fn test_remove_fsmonitor_stop_drops_inherited_git_dir(mut repo: TestRepo) {
-+    use std::os::unix::fs::PermissionsExt;
++fn test_list_full_azure_pipeline_skips_sibling_repository(mut repo: TestRepo) {
++    let head_sha = setup_azure_repo_with_feature(&mut repo);
 +
-+    let l1 = repo.add_worktree("l1");
-+    let l2 = repo.add_worktree("l2");
-+    let l1_git_dir = fs::read_to_string(l1.join(".git")).unwrap();
-+    let l1_git_dir = l1_git_dir.trim().strip_prefix("gitdir: ").unwrap();
-+
-+    let scratch = crate::common::test_tempdir();
-+    let marker = scratch.path().join("stop-git-dir");
-+    let bin_dir = scratch.path().join("bin");
-+    fs::create_dir(&bin_dir).unwrap();
-+    let shim = bin_dir.join("git");
-+    fs::write(
-+        &shim,
-+        format!(
-+            r#"#!/bin/sh
-+if [ "$1 $2" = 'fsmonitor--daemon stop' ]; then
-+  printf '%s' "$GIT_DIR" > {marker}
-+  exit 0
-+fi
-+exec {real_git} "$@"
-+"#,
-+            marker = shell_escape::unix::escape(marker.to_string_lossy()),
-+            real_git = shell_escape::unix::escape(which::which("git").unwrap().to_string_lossy()),
-+        ),
-+    )
-+    .unwrap();
-+    fs::set_permissions(&shim, fs::Permissions::from_mode(0o755)).unwrap();
-+    let mut path = vec![bin_dir];
-+    path.extend(std::env::split_paths(&std::env::var_os("PATH").unwrap()));
-+
-+    let output = repo
-+        .wt_command()
-+        .current_dir(&l1)
-+        .args(["remove", "l2"])
-+        .env("PATH", std::env::join_paths(path).unwrap())
-+        .env("GIT_DIR", l1_git_dir)
-+        .output()
-+        .unwrap();
-+    assert!(
-+        output.status.success(),
-+        "wt remove failed: {}",
-+        String::from_utf8_lossy(&output.stderr)
++    let runs_json = format!(
++        r#"[{{
++        "id": 5000,
++        "status": "completed",
++        "result": "failed",
++        "sourceVersion": "0000000000000000000000000000000000000000",
++        "repository": {{"id": "2222", "type": "TfsGit", "name": "other-repo"}}
++    }}, {{
++        "id": 4242,
++        "status": "completed",
++        "result": "succeeded",
++        "sourceVersion": "{}",
++        "repository": {{"id": "1111", "type": "TfsGit", "name": "test-repo"}}
++    }}]"#,
++        head_sha
 +    );
 +
-+    let seen = fs::read_to_string(&marker)
-+        .unwrap_or_else(|e| panic!("no fsmonitor daemon stop ran for {}: {e}", l2.display()));
-+    assert_eq!(
-+        seen,
-+        "",
-+        "fsmonitor daemon stop in {} inherited GIT_DIR",
-+        l2.display()
++    run_azure_ci_status_test(
++        &mut repo,
++        "azure_pipeline_skips_sibling_repository",
++        "[]",
++        &runs_json,
 +    );
 +}
 +
- /// `wt remove -vv` resolves every fsmonitor daemon in ONE `lsof` spawn and
- /// traces the sweep.
- ///
+ /// A pipeline run from a different SHA than local HEAD is marked stale (dimmed).
+ #[rstest]
+ fn test_list_full_with_azure_stale_pipeline(mut repo: TestRepo) {
+@@ -1326,7 +1359,8 @@ fn test_list_full_with_azure_stale_pipeline(mut repo: TestRepo) {
+         "id": 4242,
+         "status": "completed",
+         "result": "succeeded",
+-        "sourceVersion": "0000000000000000000000000000000000000000"
++        "sourceVersion": "0000000000000000000000000000000000000000",
++        "repository": {"id": "1111", "type": "TfsGit", "name": "test-repo"}
+     }]"#;
+ 
+     run_azure_ci_status_test(&mut repo, "azure_stale_pipeline", "[]", runs_json);
+```
+
+**File**: `tests/snapshots/integration__integration_tests__ci_status__azure_pipeline_skips_sibling_repository.snap` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++---
++source: tests/integration_tests/ci_status.rs
++info:
++  program: wt
++  args:
++    - list
++    - "--full"
++  env:
++    APPDATA: "[TEST_CONFIG_HOME]"
++    CLAUDE_CONFIG_DIR: "[TEST_CLAUDE_CONFIG]"
++    CLICOLOR_FORCE: "1"
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    HOME: "[TEST_HOME]"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    OPENCODE_CONFIG_DIR: "[TEST_OPENCODE_CONFIG]"
++    PATH: "[PATH]"
++    TERM: alacritty
++    USERPROFILE: "[TEST_HOME]"
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_MOCK_CONFIG_DIR: "[TEST_MOCK_CONFIG]"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OMP_INSTALLED: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_PI_INSTALLED: "0"
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++    XDG_CONFIG_HOME: "[TEST_CONFIG_HOME]"
++---
++success: true
++exit_code: 0
++----- stdout -----
++  [1mBranch[0m     [1mStatus[0m       [1m@±[0m        [1m^↕[0m        [1m^…±[0m     [1mRemote⇅[0m  [1mCI[0m     [1mPath[0m               [1mCommit[0m    [1mAge[0m  [1mMessage[0m
++@ main           [2m^[22m[2m|[22m                                      [2m|[0m     [32m#[0m      .                  [2m05a4a45[0m   [2m16h[0m  [2mInitial commit[0m
+++ [2mfeature[0m        [2m_[22m[2m|[22m                                      [2m|[0m     [32m#[0m      [2m../repo.feature[0m    [2m05a4a45[0m   [2m16h[0m  [2mInitial commit[0m
+++ feature-a      [2m↑[22m[2m|[22m                [32m↑1[0m        [32m+1[0m          [2m|[0m     [2m[32m#[0m      ../repo.feature-a  [2m1b87d47[0m   [2m16h[0m  [2mAdd feature-a file[0m
+++ feature-b      [2m↑[22m[2m|[22m                [32m↑1[0m        [32m+1[0m          [2m|[0m     [2m[32m#[0m      ../repo.feature-b  [2mf62940f[0m   [2m16h[0m  [2mAdd feature-b file[0m
+++ feature-c      [2m↑[22m[2m|[22m                [32m↑1[0m        [32m+1[0m          [2m|[0m     [2m[32m#[0m      ../repo.feature-c  [2m345c7c9[0m   [2m16h[0m  [2mAdd feature-c file[0m
++
++----- stderr -----
++
++[2m○[22m [2mShowing 5 worktrees, 3 ahead  (^ main worktree  | in sync with remote  _ clean at default commit  ↑ ahead of default)[0m
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4935** (2026-11-28): test: make three completion and shell-install assertions able to fail (@worktrunk-bot)
+- **PR #4934** (2026-11-28): docs(hook): say that declining or --no-hooks skips user hooks too, and that base is unset outside switch (@worktrunk-bot)
+- **PR #4930** (2026-11-28): fix(git): read a remote's first url, the one git fetches from (@worktrunk-bot)
+- **PR #4928** (2026-11-28): fix: store switch history outside the shared git config (@Oseenix)
 - **PR #4926** (2026-11-27): fix(shell): report a failed directory change from the PowerShell wrapper (@worktrunk-bot)
 - **PR #4925** (2026-11-27): fix(config): report a bare root's missing default-branch worktree without panicking (@worktrunk-bot)
-- **PR #4924** (2026-11-27): chore: bump jdx/packslip from 1.11.4 to 1.11.5 (@dependabot[bot])
-- **PR #4923** (2026-11-27): fix(remove): scrub inherited git discovery vars when stopping fsmonitor (@chuenchen309)
-- **PR #4920** (2026-11-26): fix(test): let a caught SIGINT reach the hook trap on macOS sh (@Jack-mi)
-- **PR #4919** (2026-11-26): chore: correct stale doc comments and drop the numstat parser's dead graph handling (@worktrunk-bot)
 
 ---
 
@@ -2731,63 +2697,32 @@ and the location is unchanged. It f
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. config): report a bare root's missing default-branch worktree without panicking
+## X. store switch history outside the shared git config
 
 **RULE**:
-When implementing operations in `src/commands/config/create.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/content/docs/faq.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fba1cb9`: config): report a bare root's missing default-branch worktree without panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e97b6cd1`: store switch history outside the shared git config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/config/create.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/faq.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use worktrunk::git::{Repository, WorktrunkError};
-use worktrunk::styling::{
-    eprintln, error_message, hint_message, info_message, success_message, suggest_command,
-};
-        let Some(config_path) = repo.project_config_path()? else {
-            // An empty override disables project config before any worktree
-            // is consulted, so no worktree state explains the `None`.
-            if std::env::var_os("WORKTRUNK_PROJECT_CONFIG_PATH").is_some_and(|p| p.is_empty()) {
-                eprintln!(
-                    "{}",
-                    error_message(cformat!(
-                        "Cannot create project config — <bold>WORKTRUNK_PROJECT_CONFIG_PATH</> is empty, which disables project config"
-                    ))
-                );
-                eprintln!(
-                    "{}",
-                    hint_message(cformat!(
-                        "Unset <underline>WORKTRUNK_PROJECT_CONFIG_PATH</> or set it to a file path"
-                    ))
-                );
-                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
-            }
-                // At a bare root the project config path is the default
-                // branch's wor
+| `git config worktrunk.*` | Cached default branch, branch markers, custom variables | Various commands |
+| `.git/wt/switch-history.json` | The worktree `wt switch -` returns to | `wt switch` |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use worktrunk::git::Repository;
-use worktrunk::styling::{eprintln, hint_message, info_message, success_message};
-        let config_path = repo.project_config_path()?.ok_or_else(|| {
-                anyhow::anyhow!(
-                    "Bare repository has no linked worktrees yet.\n\
-                     Run `wt switch <branch>` to create a worktree first, then run `wt config create --project` from inside it."
-                )
-            } else {
-                anyhow::anyhow!("Cannot determine project config location — no worktree found")
-        })?;
+| `git config worktrunk.*` | Cached default branch, switch history, branch markers, custom variables | Various commands |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fba1cb9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e97b6cd1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

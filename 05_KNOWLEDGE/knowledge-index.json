@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T17:25:39.495Z",
+  "last_updated": "2026-11-28T17:34:22.898Z",
   "total_verified_learnings": 9154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27216,
+  "total_items": 27223,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "27d5ee7a009da5d0b3a392db46919cdf13bcb637240d4ca767a3e0bb51b0aaa1",
+      "content_hash": "00a603091f31e0841e9ab66424275cc6ba38345234b2c53bbbadc5b91341e061",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T17:10:32.321Z"
+      "persisted_at": "2026-11-28T17:34:22.898Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -241790,8 +241790,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "541579bf",
-      "content_hash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
+      "source_version": "e7b98db1",
+      "content_hash": "8e626c54e1969094de1cc8641ef4656f1a5a4b23a9366397906112c1fc841bab",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -241849,6 +241849,11 @@
           "number": 10914,
           "title": "report a bare root's missing default-branch worktree without panicking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11128,
+          "title": "store switch history outside the shared git config",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241856,7 +241861,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T14:16:52.881Z",
+      "verified_at": "2026-11-28T17:34:09.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241898,10 +241903,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "541579bf",
-      "content_hash": "b30f67c6636f11f3b9cc4291e80d0171eb01d7224363826d1479f50cdb36e713",
+      "source_version": "e7b98db1",
+      "content_hash": "3584ae0316e6aed0d6fa55d6844c6885cf85eac7e90537bb068331b5e3615981",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T14:16:53.604Z"
+      "persisted_at": "2026-11-28T17:34:10.502Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -241910,10 +241915,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "541579bf",
-      "content_hash": "11a647e0797aeea15afec0f9a3ff481bc9d1f21babad3b3d4c70d32f4196651f",
+      "source_version": "e7b98db1",
+      "content_hash": "d403b256f067205b34d4ae24bc14ec9798c2b6ecdf74e673bd1b2b1ff3ac3949",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:16:53.802Z"
+      "persisted_at": "2026-11-28T17:34:10.699Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -241935,9 +241940,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3186078ff547e80f66e83f97b2d2b788eca3c91cf6f339a3166b50a33ec5662",
+      "content_hash": "0e6ad9d2b5da8af6c7745bf721799782e5a3b3e89366545f93a61eeb65c7c2fd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T14:17:03.833Z"
+      "persisted_at": "2026-11-28T17:34:19.980Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -241947,9 +241952,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d049895c424594a55b519f6f796f61177ac90e865f8e03ac28f5445727795ee",
+      "content_hash": "5e37775208574f9fd378723c3db7772aea5c6117ed0059ca37a03ebdf1effa3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:17:04.041Z"
+      "persisted_at": "2026-11-28T17:34:20.181Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -272619,8 +272624,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "c868ce68",
-      "content_hash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
+      "source_version": "9379ff12",
+      "content_hash": "8fd637b6d2c454e35888ba32878f20b3624a6c7db7cef36beb98a530ce021a7d",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -272643,6 +272648,11 @@
           "number": 10665,
           "title": "place child webviews at their bounds and size them from their room (fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11129,
+          "title": "Adding Gstreamer plugin to Linux bundler",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272650,7 +272660,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:39:45.841Z",
+      "verified_at": "2026-11-28T17:34:13.952Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272704,10 +272714,10 @@
       "relative_path": "08_VERIFICATION/tauri-apps-tauri-verification-protocol-empirical-defect-shield-for-tauri-apps-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps/tauri",
       "repository": "tauri-apps/tauri",
-      "source_version": "c868ce68",
-      "content_hash": "844a13ee0d7d76e0d90de8f9b3733c612e61e6a19d067aae4f9b8480cced7aec",
+      "source_version": "9379ff12",
+      "content_hash": "efa5b1cf4f9356b9a5f6f059a114e232b46139398317862f5a5b1708dfa808bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:39:46.709Z"
+      "persisted_at": "2026-11-28T17:34:14.846Z"
     },
     "rule-8866": {
       "learning_id": "rule-8866",
@@ -272815,9 +272825,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tauri-apps-tauri-learnings",
       "repository": "tauri-apps-tauri-learnings",
       "source_version": "HEAD",
-      "content_hash": "31564b668fdae66a6f1805f0f9dba490dd60421dbd38b1f2eea6cf95487fa9f4",
+      "content_hash": "d102a6a19b4a2487b197ab414b1a600ab96b87fe2a349114fd0c4401a01a906f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:40:00.469Z"
+      "persisted_at": "2026-11-28T17:34:21.744Z"
     },
     "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries": {
       "item_id": "candidate_directive-shacl-hide-provenance-from-scoped-prebound-union-queries",
@@ -359384,13 +359394,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-20G1-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WO9H-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "27e6402c8285a1e3f68eef7f42a09f02a9f330ac6d5503276ca4e6e2afe16bf0",
+      "content_hash": "8208d8e5ddb55b384602b69433ab80739804cb72402cf2e1447cb8ddacef98fe",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T17:10:31.880Z"
+      "persisted_at": "2026-11-28T17:34:22.426Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359400,9 +359410,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0c46db682040f7b9c4a5bd1d8171b811d512679382fc71030ed37af46c86310",
+      "content_hash": "9b077c8e4afe6b8dd58e7737e72821591a52377f98991b1cafaf55bb8ae3bb92",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T17:10:32.096Z"
+      "persisted_at": "2026-11-28T17:34:22.685Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -374271,6 +374281,94 @@
       "content_hash": "2e03302d9e3b6f26e7963c2254de57c6db280be3b2088438ad49bea820d49e72",
       "domain_letter": "K",
       "persisted_at": "2026-11-28T17:25:37.540Z"
+    },
+    "rule-11128": {
+      "learning_id": "rule-11128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11128,
+      "title": "store switch history outside the shared git config",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "e7b98db1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:34:09.778Z"
+    },
+    "candidate_directive-store-switch-history-outside-the-shared-git-config": {
+      "item_id": "candidate_directive-store-switch-history-outside-the-shared-git-config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WM7N-store-switch-history-outside-the-shared-git-config.md",
+      "title": "store switch history outside the shared git config",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b5616b92dbf43d071ed5abab995648452cadfc449d069be7a01e95888d079ea",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T17:34:19.770Z"
+    },
+    "rule-11129": {
+      "learning_id": "rule-11129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11129,
+      "title": "Adding Gstreamer plugin to Linux bundler",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "9379ff12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T17:34:13.952Z"
+    },
+    "candidate_directive-adding-gstreamer-plugin-to-linux-bundler": {
+      "item_id": "candidate_directive-adding-gstreamer-plugin-to-linux-bundler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WI2W-adding-gstreamer-plugin-to-linux-bundler.md",
+      "title": "Adding Gstreamer plugin to Linux bundler",
+      "repository": "tauri-apps/tauri",
+      "source_version": "9379ff12",
+      "content_hash": "f1e235c87ca9795a9d6238b5a936f5bfacc7d35e9c50b6994eaf20422f881c5a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T17:34:14.414Z"
+    },
+    "domain_intelligence-content-information-intelligence-tauri-apps-tauri-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-tauri-apps-tauri-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tauri-apps-tauri-content-information-intelligence-tauri-apps-tauri-core-invarian.md",
+      "title": "Content & Information Intelligence: tauri-apps/tauri Core Invariants",
+      "repository": "tauri-apps/tauri",
+      "source_version": "9379ff12",
+      "content_hash": "044c1a1fd9e7b6906082518fcb0a7d1beabc0c820fe67e305b1db101e1119232",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T17:34:14.659Z"
+    },
+    "candidate_directive-bundler-adding-gstreamer-plugin-to-linux-bundler": {
+      "item_id": "candidate_directive-bundler-adding-gstreamer-plugin-to-linux-bundler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WNFJ-bundler-adding-gstreamer-plugin-to-linux-bundler.md",
+      "title": "bundler): Adding Gstreamer plugin to Linux bundler",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0071bf591ee2ab323a2d8e81dd128dc9cca01121c24cdbef3be06276229f310e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T17:34:21.349Z"
+    },
+    "domain_intelligence-content-information-intelligence-tauri-apps-tauri-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-tauri-apps-tauri-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-tauri-apps-tauri-learnings-content-information-intelligence-tauri-apps-tauri-lea.md",
+      "title": "Content & Information Intelligence: tauri-apps-tauri-learnings Core Invariants",
+      "repository": "tauri-apps-tauri-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ec675efe0aa3b24ec676a87080d6fbf34230afd1d31aa613a52a75f8fc02bf9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T17:34:21.540Z"
     }
   },
   "ai-builder-brain": {

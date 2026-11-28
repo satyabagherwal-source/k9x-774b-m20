@@ -14124,3 +14124,5 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `ff22a642` | Multi-dimensional audit evidence | 2026-11-28T17:25:22.171Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `d9ffcbf8` | Multi-dimensional audit evidence | 2026-11-28T17:25:28.801Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `1152132c` | Multi-dimensional audit evidence | 2026-11-28T17:25:31.078Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `e7b98db1` | Multi-dimensional audit evidence | 2026-11-28T17:34:10.032Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `9379ff12` | Multi-dimensional audit evidence | 2026-11-28T17:34:14.173Z |
