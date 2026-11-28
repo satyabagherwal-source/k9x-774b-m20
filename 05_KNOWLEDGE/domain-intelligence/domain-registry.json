@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T04:21:21.448Z",
-  "total_records": 2871,
+  "last_updated": "2026-11-28T04:30:08.651Z",
+  "total_records": 2873,
   "domains": {
     "A": {
       "total": 27,
@@ -2900,7 +2900,7 @@
       ]
     },
     "L": {
-      "total": 30,
+      "total": 32,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2931,7 +2931,9 @@
         "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-nginx-kubernetes-ingress-learnings-core-invar",
         "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-siderolabs-talos-learnings-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-learnings-core-invariants"
       ]
     },
     "M": {
@@ -24756,8 +24758,8 @@
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "repository": "RevenueCat/purchases-ios",
-      "content_hash": "6aee47cfc050ba1c1dea1392caf7217151ac643db249ed317c9b35ae4062797d",
-      "created_at": "2026-11-26T02:38:17.918Z"
+      "content_hash": "3622387d5956a426fbfc927340fd41911eef0600a7de9db39ff517aebc5f2858",
+      "created_at": "2026-11-28T04:30:00.107Z"
     },
     "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-facebook-folly-learnings-core-invariants",
@@ -24774,8 +24776,8 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-learnings-architecture-intelligence-revenuecat-purchase.md",
       "repository": "revenuecat-purchases-ios-learnings",
-      "content_hash": "5bd9b9ea73c3c3916424c3564bd98b1592cd12a51034eaa3f405cb9e14a2d426",
-      "created_at": "2026-11-26T02:38:23.674Z"
+      "content_hash": "70588121c2612b7390e869579288eb8486621cb7f2ad971dcaab87358e13b027",
+      "created_at": "2026-11-28T04:30:07.668Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -25684,8 +25686,8 @@
       "title": "Content & Information Intelligence: encode/httpx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-content-information-intelligence-encode-httpx-core-invariants.md",
       "repository": "encode/httpx",
-      "content_hash": "9977512caac3d3015ef719ebfee17e6b69406443d57ea5227c148d66329e1f6f",
-      "created_at": "2026-11-16T23:22:25.210Z"
+      "content_hash": "3aead8dba368507ba9d06ad55803178d884d992084369c07ed17e48f6e91a610",
+      "created_at": "2026-11-28T04:29:56.848Z"
     },
     "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-core-invariants",
@@ -25702,8 +25704,8 @@
       "title": "Content & Information Intelligence: encode-httpx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-learnings-content-information-intelligence-encode-httpx-learnings-c.md",
       "repository": "encode-httpx-learnings",
-      "content_hash": "e20786bd50cece0d19d581dad42bdfb31906d7b69e87a9665740280ad98bdef4",
-      "created_at": "2026-11-16T23:22:39.033Z"
+      "content_hash": "ce0cdc322f1049d9398f59711cbe34021b3dff929c12472014aef4569d00aaac",
+      "created_at": "2026-11-28T04:30:06.649Z"
     },
     "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
@@ -48604,6 +48606,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-28T03:36:08.536Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: clastix/kamaji Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-clastix-kamaji-deployment-operations-intelligence-clastix-kamaji-core-invariants.md",
+      "repository": "clastix/kamaji",
+      "content_hash": "7e580e99abf8b8b1982c043d73cd2285c0abaffe14310208855db58b05c88e6f",
+      "created_at": "2026-11-28T04:30:02.293Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: clastix-kamaji-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-clastix-kamaji-learnings-deployment-operations-intelligence-clastix-kamaji-learn.md",
+      "repository": "clastix-kamaji-learnings",
+      "content_hash": "867ed961884c46579d203a4b753b565be4a77f45fbbf2db318d950e69ae740f0",
+      "created_at": "2026-11-28T04:30:08.651Z"
     }
   }
 }

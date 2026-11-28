@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-XLRK",
-    "timestamp": "2026-11-26T15:11:47.312Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-XRTK",
-    "timestamp": "2026-11-26T15:11:55.160Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "113824aa67d4feeb7815f74d2fb2ad5031193ddf375e7c78c14767da7a53dead",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-ARB9",
-    "timestamp": "2026-11-26T15:22:01.029Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "1216e9f9e75e7296958b32b95904148f8007537ccc24f2a36ca2dd6f70523e3a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-ASYJ",
     "timestamp": "2026-11-26T15:22:03.163Z",
     "repository": "cachix/devenv",
@@ -7490,6 +7445,51 @@
     "repository": "apache/pinot",
     "learningId": "learn-github-apache-pinot",
     "contentHash": "cbc5f78aad5158f1b2d9279985fa77013d85ff238eaefe68f608269e47437c90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-VVU1",
+    "timestamp": "2026-11-28T04:29:56.329Z",
+    "repository": "encode/httpx",
+    "learningId": "learn-github-encode-httpx",
+    "contentHash": "30e623b5f083edbed693e592f6d9b764d582c27fdad7b9fd0f16f86a63751e47",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-VYCQ",
+    "timestamp": "2026-11-28T04:29:59.594Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "e6d496ff7c4abb92682f42316a21ad0abb04fc38d5c37ed4308c316ecacdc27b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-W025",
+    "timestamp": "2026-11-28T04:30:01.805Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "2594db83aacedb87e552960e8d1d6d598f522a7687ade3e9020e386062261f7b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

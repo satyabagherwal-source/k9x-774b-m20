@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `8c1ff472`  
+> **Source Version**: `67040db0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T02:38:16.316Z  
+> **Timestamp**: 2026-11-28T04:29:58.246Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T02:38:16.311Z  
+> **Harvest Timestamp**: 2026-11-28T04:29:58.239Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3099 stars
+- **Stars / Engagement**: 3100 stars
 
 ---
 
@@ -527,1497 +527,1917 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f27f02e` (2026-11-25)
-**Commit Message**: fix(paywalls): use the selected tab’s sheet price (RevenueCat/purchases-ios_internal#78)
-
-GitOrigin-RevId: 7ed9e3c9efd6b47ff2818517e9161870e855662a
-
-**File**: `RevenueCatUI/Templates/V2/Components/Root/RootView.swift` (modified, +1/-1)
-```diff
-@@ -267,7 +267,7 @@ struct RootPackageSelectionSheetModifier: ViewModifier {
-                         : self.sheetPackageContext?.variableContext ?? self.packageContext.variableContext,
-                     isReconcile: true
-                 )
--                self.packageContext.presentedSheetContext = nil
-+                self.packageContext.dismissSheet(retainingSelection: !self.hasNonSheetPackages)
-                 self.sheetPackageContext = nil
-                 self.variableContextBeforeOpeningSheet = nil
-                 self.packageBeforeOpeningSheet = nil
-```
-
-**File**: `RevenueCatUI/Templates/V2/Components/Tabs/TabsComponentView.swift` (modified, +5/-0)
-```diff
-@@ -440,6 +440,11 @@ struct LoadedTabsComponentView: View {
-                     if activeTabViewModel.packages.isEmpty {
-                         self.selectionState.parentOwnedPackage = self.packageContext.package
-                         self.selectionState.parentOwnedVariableContext = self.packageContext.variableContext
-+                    } else {
-+                        tierPackageContext.adoptRetainedSheetPackage(
-+                            from: self.packageContext,
-+                            tabPackages: activeTabViewModel.packages
-+                        )
-                     }
-                     self.reconcileSelection(tierPackageContext, tabViewModel: activeTabViewModel)
-                 }
-```
-
-**File**: `RevenueCatUI/Templates/V2/Components/Tabs/TabsComponentViewModel.swift` (modified, +5/-5)
-```diff
-@@ -152,11 +152,12 @@ class TabViewModel {
-     let tab: PaywallComponent.TabsComponent.Tab
-     let uiConfigProvider: UIConfigProvider
-     let stackViewModel: StackComponentViewModel
--    let packages: [Package]
-+    private(set) lazy var packages = self.packageValidator.packages
- 
-     /// Held rather than pre-resolved because a package's visibility can depend on custom variables and
-     /// offer eligibility, which are only known at render time.
--    private let packageValidator: PackageValidator
-+    private lazy var packageValidator = self.resolvePackageValidator()
-+    private let resolvePackageValidator: () -> PackageValidator
- 
-     var name: String? {
-         return self.tab.name
-@@ -165,13 +166,12 @@ class TabViewModel {
-     init(
-         tab: PaywallComponent.TabsComponent.Tab,
-         stackViewModel: StackComponentViewModel,
--        packageValidator: PackageValidator,
-+        resolvePackageValidator: @escaping () -> PackageValidator,
-         uiConfigProvider: UIConfigProvider
-     ) {
-         self.tab = tab
-         self.stackViewModel = stackViewModel
--        self.packageValidator = packageValidator
--        self.packages = packageValidator.packages
-+        self.resolvePackageValidator = resolvePackageValidator
-         self.uiConfigProvider = uiConfigProvider
-     }
- 
-```
-
-**File**: `RevenueCatUI/Templates/V2/EnvironmentObjects/PackageContext.swift` (modified, +25/-0)
-```diff
-@@ -150,11 +150,36 @@ class PackageContext: ObservableObject {
-                 showZeroDecimalPlacePrices: self.variableContext.showZeroDecimalPlacePrices
-             )
-         )
-+        self.retainedSheetSelection = nil
-         self.presentedSheetContext = context
-         self.update(package: context.package, variableContext: context.variableContext, isReconcile: true)
-         return context
-     }
- 
-+    /// A sheet-only paywall keeps the sheet's final package for the purchase button.
-+    /// Let the active tab adopt it even when dismissal does not change the parent's package.
-+    private var retainedSheetSelection: (package: Package, wasManuallySelected: Bool)?
-+
-+    func dismissSheet(retainingSelection: Bool) {
-+        if retainingSelection, let sheet = self.presentedSheetContext, let package = sheet.package {
-+            self.retainedSheetSelection = (package, sheet.manuallySelectedPackage?.identifier == package.identifier)
-+        } else {
-+            self.retainedSheetSelection = nil
-+        }
-+        self.presentedSheetContext = nil
-+    }
-+
-+    @MainActor
-+    func adoptRetainedSheetPackage(from parent: PackageContext, tabPackages: [Package]) {
-+        guard let selection = parent.retainedSheetSelection,
-+              tabPackages.contains(where: { $0.identifier == selection.package.identifier }) else { return }
-+        self.update(
-+            package: selection.package,
-+            variableContext: self.variableContext,
-+            isReconcile: !selection.wasManuallySelected
-+        )
-+    }
-+
-     func clearManualSelection() {
-         self.manuallySelectedPackage = nil
-     }
-```
-
-**File**: `RevenueCatUI/Templates/V2/ViewModelHelpers/PackageValidator.swift` (modified, +26/-6)
-```diff
-@@ -71,13 +71,19 @@ class PackageValidator {
-         case tab
-     }
- 
--    private var scopedPackageInfos: [(info: PackageInfo, scope: Scope)] = []
-+    private struct ScopedPackageInfo {
-+        var info: PackageInfo
-+        let scope: Scope
-+        let isInitialSelectionCandidate: Bool
-+    }
-+
-+    private var scopedPackageInfos: [ScopedPackageInfo] = []
- 
-     var packageInfos: [PackageInfo] {
-         self.scopedPackageInfos.map(\.info)
-     }
- 
--    private var hasPageScopedPackages: Bool {
-+    var hasPageScopedPackages: Bool {
-         self.scopedPackageInfos.contains { $0.scope == .page }
-     }
- 
-@@ -89,11 +95,24 @@ class PackageValidator {
-     private var loggedWarnings: Set<String> = []
- 
-     func add(_ packageInfo: PackageInfo) {
--        self.scopedPackageInfos.append((packageInfo, .page))
-+        self.scopedPackageInfos.append(.init(info: packageInfo, scope: .page, isInitialSelectionCandidate: true))
-+    }
-+
-+    func addTabScoped(_ packageInfo: PackageInfo, isInitialSelectionCandidate: Bool = true) {
-+        self.scopedPackageInfos.append(.init(
-+            info: packageInfo,
-+            scope: .tab,
-+            isInitialSelectionCandidate: isInitialSelectionCandidate
-+        ))
-     }
- 
--    func addTabScoped(_ packageInfo: PackageInfo) {
--        self.scopedPackageInfos.append((packageInfo, .tab))
-+    func addTabPackages(from tab: PackageValidator, initiallySelected: Bool) {
-+        for entry in tab.scopedPackageInfos {
-+            self.addTabScoped(
-+                entry.info,
-+                isInitialSelectionCandidate: initiallySelected && entry.isInitialSelectionCandidate
-+            )
-+        }
-     }
- 
-     func addAncestorStack(
-@@ -148,7 +167,8 @@ class PackageValidator {
-     /// 2. otherwise the first visible package in document order
-     /// 3. otherwise `nil`
-     func defaultSelectedPackage(in context: PackageSelectionContext) -> Package? {
--        return self.defaultSelectedPackage(among: self.packageInfos, in: context)
-+        let candidates = self.scopedPackageInfos.filter(\.isInitialSelectionCandidate).map(\.info)
-+        return self.defaultSelectedPackage(among: candidates, in: context)
-     }
- 
-     /// The selection that should be in effect, or `nil` when nothing needs to change: only moves a
-```
-
-**File**: `RevenueCatUI/Templates/V2/ViewModelHelpers/ViewModelFactory.swift` (modified, +15/-7)
-```diff
-@@ -30,7 +30,7 @@ struct ViewModelFactory {
- 
-     let packageValidator = PackageValidator()
-     /// Sheet inventory also provides the initial selection when the page has no packages.
--    let sheetPackageValidator = PackageValidator()
-+    private(set) var sheetPackageValidator = PackageValidator()
- 
-     /// Closed sheets supply the root selection when the page has no package components.
-     var rootSelectionValidator: PackageValidator {
-@@ -397,7 +397,10 @@ struct ViewModelFactory {
-             let tabViewModels: [TabViewModel] = try component.tabs.map { tab in
-                 let tabPackageValidator = PackageValidator()
- 
--                let stackViewModel = try toStackViewModel(
-+                var tabFactory = self
-+                let tabSheets = PackageValidator()
-+                tabFactory.sheetPackageValidator = tabSheets
-+                let stackViewModel = try tabFactory.toStackViewModel(
-                     component: tab.stack,
-                     packageValidator: tabPackageValidator,
-                     purchaseButtonCollector: purchaseButtonCollector,
-@@ -413,15 +416,20 @@ struct ViewModelFactory {
-                     discardRules: discardRules
-                 )
- 
--                // Merging into entire paywall package validator
--                for packageInfo in tabPackageValidator.packageInfos {
--                    packageValidator.addTabScoped(packageInfo)
--                }
-+                let initiallySelected = tab.id == (component.defaultTabId ?? component.tabs.first?.id)
-+                packageValidator.addTabPackages(from: tabPackageValidator, initiallySelected: initiallySelected)
-+                self.sheetPackageValidator.addTabPackages(from: tabSheets, initiallySelected: initiallySelected)
- 
-+                // The root inventory is complete only after later siblings and the footer are built.
-+                let pagePackages = self.packageValidator
-                 return .init(
-                     tab: tab,
-                     stackViewModel: tabsStackViewModel.copy(withViewModels: [.stack(stackViewModel)]),
--                    packageValidator: tabPackageValidator,
-+                    resolvePackageValidator: {
-+                        pagePackages.hasPageScopedPackages || tabPackageValidator.isValid
-+                            ? tabPackageValidator
-+                            : tabSheets
-+                    },
-                     uiConfigProvider: uiConfigProvider
-                 )
-             }
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/PackageResolutionTestFixture.swift` (modified, +24/-5)
-```diff
-@@ -25,7 +25,13 @@ struct PackageResolutionTestFixture {
-     let offering: Offering
-     let context: PackageContext
- 
--    init(competingDefaults: Bool = false) throws {
-+    enum SheetPlacement {
-+        case none
-+        case bothTabs
-+        case secondTab
-+    }
-+
-+    init(competingDefaults: Bool = false, sheets: SheetPlacement = .none) throws {
-         var monthlyXL = TestData.monthlyProduct
-         monthlyXL.price = 29.99
-         monthlyXL.localizedPriceString = "$29.99"
-@@ -51,11 +57,13 @@ struct PackageResolutionTestFixture {
-             ? [Self.package("monthly_xl", selected: true)]
-             : [Self.package("monthly_xl", selected: true), Self.package("annual_xl", selected: false)]
-         var components: [PaywallComponent] = competingDefaults ? [Self.package("$rc_monthly", selected: true)] : []
-+        let firstTab = sheets == .bothTabs ? [Self.sheet("standard", standard)] : standard
-+        let secondTab = sheets != .none ? [Self.sheet("xl", xlComponents)] : xlComponents
-         components.append(.tabs(.init(
-             control: .init(type: .buttons, stack: .init(components: [])),
--            tabs: [.init(id: "tab-1", stack: .init(components: standard)),
--                   .init(id: "tab-2", stack: .init(components: xlComponents))],
--            defaultTabId: "tab-1"
-+            tabs: [.init(id: "tab-1", stack: .init(components: firstTab)),
-+                   .init(id: "tab-2", stack: .init(components: secondTab))],
-+            defaultTabId: sheets != .none ? "tab-2" : "tab-1"
-         )))
-         if competingDefaults {
-             let sheet = PaywallComponent.ButtonComponent.Sheet(
-@@ -92,7 +100,9 @@ struct PackageResolutionTestFixture {
-             return nil
-         }.first)
-         self.context = PackageContext(
--            package: self.state.viewModelFactory.packageValidator.defaultSelectedPackage(in: .provisional),
-+            package: PaywallsV2View.defaultSelectedPackage(
-+                in: self.state.viewModelFactory, context: .provisional, workflowDefaultPackage: nil
-+            ),
-             variableContext: .init(packages: packages, showZeroDecimalPlacePrices: false)
-         )
-     }
-@@ -134,6 +144,15 @@ struct PackageResolutionTestFixture {
- @available(iOS 15.0, *)
- private extension PackageResolutionTestFixture {
- 
-+    static func sheet(_ id: String, _ components: [PaywallComponent]) -> PaywallComponent {
-+        let sheet = PaywallComponent.ButtonComponent.Sheet(
-+            id: id, name: id, stack: .init(components: components),
-+            backgroundBlur: false, size: .init(width: .fill, height: .fit(nil))
-+        )
-+        return .button(.init(action: .navigateTo(destination: .sheet(sheet: sheet)),
-+                             stack: .init(components: [Self.text("Open sheet")])))
-+    }
-+
-     static func package(_ identifier: String, selected: Bool) -> PaywallComponent {
-         .package(.init(packageID: identifier, isSelectedByDefault: selected, applePromoOfferProductCode: nil,
-                        stack: .init(components: [Self.text("Package")])))
-```
-
-**File**: `Tests/RevenueCatUITests/PaywallsV2/PackageValidatorTests.swift` (modified, +19/-0)
-```diff
-@@ -654,6 +654,25 @@ final class PackageValidatorTests: TestCase {
- 
-     // MARK: - Mixed page and tab scopes
- 
-+    func testNestedTabPackageIsAnInitialCandidateOnlyWhenBothTabsAreSelected() {
-+        let inner = PackageValidator()
-+        inner.add(Self.makePackageInfo(package: TestData.annualPackage, isSelectedByDefault: true, visible: true))
-+
-+        for innerSelected in [false, true] {
-+            let outer = PackageValidator()
-+            outer.addTabPackages(from: inner, initiallySelected: innerSelected)
-+            for outerSelected in [false, true] {
-+                let root = PackageValidator()
-+                root.addTabPackages(from: outer, initiallySelected: outerSelected)
-+
-+                XCTAssertFalse(root.hasPageScopedPackages)
-+                XCTAssertEqual(root.packages.map(\.identifier), [TestData.annualPackage.identifier])
-+                XCTAssertEqual(root.defaultSelectedPackage(in: Self.context())?.identifier,
-+                               innerSelected && outerSelected ? TestData.annualPackage.identifier : nil)
-+            }
-+        }
-+    }
-+
-     /// A package inside a tab must not stop the page from reconciling its own packages, and must not be
-     /// picked as the replacement either: the user may be on a different tab.
-     func testReconcileFallsBackToAPageScopedPackageWhenTabsAlsoHoldPackages() {
-```
-
----
-
-### Incident Patch 2: `8f857110` (2026-11-25)
-**Commit Message**: [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-ios_internal#74)
+### Incident Patch 1: `67040db0` (2026-11-27)
+**Commit Message**: [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-ios_internal#168)
 
 Co-authored-by: facumenzella <[REDACTED_EMAIL]>
-GitOrigin-RevId: ef24bf743933bada08b9b9694aafe94a684d7571
+GitOrigin-RevId: 84d97605e1138551290df6e03390175a952590ed
 
-**File**: `Sources/CodableExtensions/Store+Extensions.swift` (modified, +2/-2)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/all_purchased_product_ids.json` (added, +293/-0)
 ```diff
-@@ -35,7 +35,7 @@ extension Store: Decodable {
-         self = type
-     }
- 
--    private static let mapping: [String: Self] = Self.allCases
-+    static let mapping: [String: Self] = Self.allCases
-         .reduce(into: [:]) { result, store in
-             if let name = store.name { result[name] = store }
-         }
-@@ -52,7 +52,7 @@ extension Store: Encodable {
- 
- }
- 
--private extension Store {
-+extension Store {
- 
-     var name: String? {
-         switch self {
+@@ -0,0 +1,293 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "allPurchasedProductIds/is/premium/new",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}]}]}]}]}",
++      "expected": false
++    },
++    {
++      "id": "allPurchasedProductIds/is/premium/subscription_then_product",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "subscription_then_product",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}]}]}]}]}",
++      "expected": false
++    },
++    {
++      "id": "allPurchasedProductIds/is/premium/promotional_subscription",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "promotional_subscription",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}]}]}]}]}",
++      "expected": true
++    },
++    {
++      "id": "allPurchasedProductIds/is/lifetime/new",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}]}]}]}]}",
++      "expected": false
++    },
++    {
++      "id": "allPurchasedProductIds/is/lifetime/subscription_then_product",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "subscription_then_product",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}]}]}]}]}",
++      "expected": false
++    },
++    {
++      "id": "allPurchasedProductIds/is/lifetime/promotional_subscription",
++      "field": "allPurchasedProductIds",
++      "operator": "is",
++      "profile": "promotional_subscription",
++      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"lifetime\"]}]}]}]}]}",
++      "expected": false
++    },
++    {
++      "id": "allPurchasedProductIds/isNot/premium/new",
++      "field": "allPurchasedProductIds",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"or\": [{\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=
 ```
 
-**File**: `Sources/LocalRules/CustomerInfoDimensionProvider.swift` (modified, +5/-6)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/is_rc_promo.json` (added, +197/-0)
 ```diff
-@@ -67,20 +67,21 @@ private extension CustomerInfoDimensionProvider {
-     struct DatedPurchase {
- 
-         let purchaseDate: Date
--        let store: Store
-+        let storeIdentifier: String?
-         let values: [String: DimensionValue]
-     }
- 
-     static func purchases(from customerInfo: CustomerInfo, at date: Date) -> [[String: DimensionValue]] {
-         // Only a CustomerInfo computed offline can hold a purchase the backend has not been told about.
-         let unsyncedProductIdentifiers = customerInfo.unsyncedProductIdentifiers
- 
-+        let subscriptionResponses = customerInfo.subscriber.subscriptions
-         let subscriptions = customerInfo.subscriptionsByProductIdentifier.values
-             .sorted { $0.productIdentifier < $1.productIdentifier }
-             .map { subscription in
-                 DatedPurchase(
-                     purchaseDate: subscription.purchaseDate,
--                    store: subscription.store,
-+                    storeIdentifier: subscriptionResponses[subscription.productIdentifier]?.storeIdentifier,
-                     values: Self.values(
-                         for: subscription,
-                         at: date,
-@@ -92,7 +93,7 @@ private extension CustomerInfoDimensionProvider {
-         let nonSubscriptions = customerInfo.nonSubscriptions.map { transaction in
-             DatedPurchase(
-                 purchaseDate: transaction.purchaseDate,
--                store: transaction.store,
-+                storeIdentifier: transaction.store.dimensionValue,
-                 values: Self.values(
-                     for: transaction,
-                     isSynced: !unsyncedProductIdentifiers.contains(transaction.productIdentifier)
-@@ -114,9 +115,7 @@ private extension CustomerInfoDimensionProvider {
-             .map { indexedPurchase in
-                 let purchase = indexedPurchase.element
-                 var values = purchase.values
--                if let store = purchase.store.dimensionValue {
--                    values["store"] = .string(store)
--                }
-+                values.set("store", string: purchase.storeIdentifier)
-                 return values
-             }
-     }
+@@ -0,0 +1,197 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "isRcPromo/is/true/new",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/is/true/renewed",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/is/true/first_purchase",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/is/true/unavailable",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/is/true/subscription_then_product",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "subscription_then_product",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/is/true/promotional_subscription",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "promotional_subscription",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, true]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/new",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/renewed",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/first_purchase",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/unavailable",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/subscription_then_product",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "subscription_then_product",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/is/false/promotional_subscription",
++      "field": "isRcPromo",
++      "operator": "is",
++      "profile": "promotional_subscription",
++      "predicate": "{\"==\": [{\"var\": \"is_rc_promo\"}, false]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/isNot/true/new",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/isNot/true/renewed",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "renewed",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/isNot/true/first_purchase",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "first_purchase",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/isNot/true/unavailable",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "unavailable",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/isNot/true/subscription_then_product",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "subscription_then_product",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "isRcPromo/isNot/true/promotional_subscription",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "promotional_subscription",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, true]}]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/isNot/false/new",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"is_rc_promo\"}, false]}]}",
++      "expected": false
++    },
++    {
++      "id": "isRcPromo/isNot/false/renewed",
++      "field": "isRcPromo",
++      "operator": "isNot",
++      "profile": "renewed",
++      "p
 ```
 
-**File**: `Sources/Networking/Responses/CustomerInfoResponse.swift` (modified, +17/-4)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_product.json` (added, +293/-0)
 ```diff
-@@ -54,8 +54,11 @@ extension CustomerInfoResponse {
-         var purchaseDate: Date
-         var originalPurchaseDate: Date?
-         var expiresDate: Date?
--        @IgnoreDecodeErrors<Store>
--        var store: Store
-+        @IgnoreDecodeErrors<String?>
-+        var storeIdentifier: String?
-+        var store: Store {
-+            return storeIdentifier.flatMap { Store.mapping[$0] } ?? .unknownStore
+@@ -0,0 +1,293 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "latestProduct/isEmpty//new",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/isEmpty//renewed",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isEmpty//first_purchase",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isEmpty//unavailable",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/isEmpty//subscription_then_product",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "subscription_then_product",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isEmpty//promotional_subscription",
++      "field": "latestProduct",
++      "operator": "isEmpty",
++      "profile": "promotional_subscription",
++      "predicate": "{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isNotEmpty//new",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "new",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isNotEmpty//renewed",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "renewed",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/isNotEmpty//first_purchase",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "first_purchase",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/isNotEmpty//unavailable",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "unavailable",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/isNotEmpty//subscription_then_product",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "subscription_then_product",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/isNotEmpty//promotional_subscription",
++      "field": "latestProduct",
++      "operator": "isNotEmpty",
++      "profile": "promotional_subscription",
++      "predicate": "{\"!=\": [{\"var\": [\"latest_product_identifier\", null]}, null]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/contains/premium/new",
++      "field": "latestProduct",
++      "operator": "contains",
++      "profile": "new",
++      "predicate": "{\"in\": [{\"rc.lower\": \"premium\"}, {\"rc.lower\": {\"if\": [{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}, \"\", {\"var\": [\"latest_product_identifier\", null]}]}}]}",
++      "expected": false
++    },
++    {
++      "id": "latestProduct/contains/premium/renewed",
++      "field": "latestProduct",
++      "operator": "contains",
++      "profile": "renewed",
++      "predicate": "{\"in\": [{\"rc.lower\": \"premium\"}, {\"rc.lower\": {\"if\": [{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}, \"\", {\"var\": [\"latest_product_identifier\", null]}]}}]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/contains/premium/first_purchase",
++      "field": "latestProduct",
++      "operator": "contains",
++      "profile": "first_purchase",
++      "predicate": "{\"in\": [{\"rc.lower\": \"premium\"}, {\"rc.lower\": {\"if\": [{\"==\": [{\"var\": [\"latest_product_identifier\", null]}, null]}, \"\", {\"var\": [\"latest_product_identifier\", null]}]}}]}",
++      "expected": true
++    },
++    {
++      "id": "latestProduct/contains/premium/unavailable",
++      "field": "latestProduct",
++      "operator": "contains",
++      "profile": "unavailable",
++      "predicate": "{\"in\": [{\"rc.lower\": \"premium\"}, {\"rc.lower\": {\"if\": [{\"==\": [{\"var\": [\"latest_product_identifier\", nu
+```
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/coverage.json` (modified, +39/-21)
+```diff
+@@ -1,18 +1,21 @@
+ {
+   "schema_version": 1,
+   "required_fields": [
++    "allPurchasedProductIds",
+     "anyActiveStore",
+     "appVersion",
+     "country",
+     "customerId",
+     "firstPurchaseAt",
+     "firstSeenAt",
++    "isRcPromo",
+     "lastSeenAppConfigId",
+     "latestAutoRenewIntent",
+     "latestExpirationAt",
+     "latestOffer",
+     "latestOfferType",
+     "latestOwnershipType",
++    "latestProduct",
+     "latestPurchasedOffering",
+     "latestStore",
+     "locale",
+@@ -28,18 +31,21 @@
+     "trialStartAt"
+   ],
+   "condition_files": [
++    "conditions/all_purchased_product_ids.json",
+     "conditions/any_active_store.json",
+     "conditions/app_version.json",
+     "conditions/country.json",
+     "conditions/customer_id.json",
+     "conditions/first_purchase_at.json",
+     "conditions/first_seen_at.json",
++    "conditions/is_rc_promo.json",
+     "conditions/last_seen_app_config_id.json",
+     "conditions/latest_auto_renew_intent.json",
+     "conditions/latest_expiration_at.json",
+     "conditions/latest_offer.json",
+     "conditions/latest_offer_type.json",
+     "conditions/latest_ownership_type.json",
++    "conditions/latest_product.json",
+     "conditions/latest_purchased_offering.json",
+     "conditions/latest_store.json",
+     "conditions/locale.json",
+@@ -1606,49 +1612,61 @@
+     {
+       "field": "latestProduct",
+       "operator": "is",
+-      "status": "unverified",
+-      "errors": []
++      "status": "unsupported",
++      "errors": [
++        "Path \"latest_product_id\" is not in the SDK facts contract",
++        "Path \"latest_product_id\" is not in the SDK facts contract"
++      ]
+     },
+     {
+       "field": "latestProduct",
+       "operator": "isNot",
+-      "status": "unverified",
+-      "errors": []
++      "status": "unsupported",
++      "errors": [
++        "Path \"latest_product_id\" is not in the SDK facts contract",
++        "Path \"latest_product_id\" is not in the SDK facts contract"
++      ]
+     },
+     {
+       "field": "latestProduct",
+       "operator": "isAnyOf",
+-      "status": "unverified",
+-      "errors": []
++      "status": "unsupported",
++      "errors": [
++        "Path \"latest_product_id\" is not in the SDK facts contract",
++        "Path \"latest_product_id\" is not in the SDK facts contract"
++      ]
+     },
+     {
+       "field": "latestProduct",
+       "operator": "isNotAnyOf",
+-      "status": "unverified",
+-      "errors": []
++      "status": "unsupported",
++      "errors": [
++        "Path \"latest_product_id\" is not in the SDK facts contract",
++        "Path \"latest_product_id\" is not in the SDK facts contract"
++      ]
+     },
+     {
+       "field": "latestProduct",
+       "operator": "isEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestProduct",
+       "operator": "isNotEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestProduct",
+       "operator": "contains",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "latestProduct",
+       "operator": "doesNotContain",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+@@ -2392,13 +2410,13 @@
+     {
+       "field": "isRcPromo",
+       "operator": "is",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "isRcPromo",
+       "operator": "isNot",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+@@ -2650,43 +2668,43 @@
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "is",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "isNot",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "contains",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "doesNotContain",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "containsAnyOf",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "isEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "allPurchasedProductIds",
+       "operator": "isNotEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+```
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/profiles.json` (modified, +156/-0)
+```diff
+@@ -5716,6 +5716,162 @@
+         "as_of": 1717113600000
+       }
+     },
++    "subscription_then_product": {
++      "app_user_id": "compatibility-user",
++      "evaluated_at": 1717200000,
++      "device": {
++        "app_version": "1.0.0",
++        "platform": "ios",
++        "platform_version": [
++          26,
++          0,
++          0
++        ],
++        "sdk_version": "10.0.0",
++        "locale": null
++      },
++      "store_country": null,
++      "attributes": {},
++      "customer_info": {
++        "request_date": "2024-06-01T00:00:00+00:00",
++        "subscriber": {
++          "first_seen": "1970-01-01T00:00:01Z",
++          "original_app_user_id": "compatibility-user",
++          "original_application_version": "1.0",
++          "subscriptions": {
++            "premium": {
++              "purchase_date": "2024-05-25T00:00:00Z",
++              "original_purchase_date": "2024-05-18T00:00:00Z",
++              "expires_date": "2024-05-29T00:00:00Z",
++              "store": "app_store",
++              "is_sandbox": false,
++              "period_type": "normal"
++            }
++          },
++          "non_subscriptions": {
++            "lifetime": [
++              {
++                "id": "0",
++                "store_transaction_id": "store-0",
++                "purchase_date": "2024-05-30T00:00:00Z",
++                "store": "app_store",
++                "is_sandbox": false
++              }
++            ]
++          },
++          "entitlements": {}
 +        }
-         @DefaultDecodable.False
-         var isSandbox: Bool
-         var unsubscribeDetectedAt: Date?
-@@ -132,7 +135,17 @@ extension CustomerInfoResponse {
- // MARK: - Codable
- 
- extension CustomerInfoResponse.Subscriber: Codable, Hashable {}
--extension CustomerInfoResponse.Subscription: Codable, Hashable {}
-+extension CustomerInfoResponse.Subscription: Codable, Hashable {
-+    // Keep the raw store ID under the JSON key "store" so audience rules can use IDs the SDK does not recognize.
-+    // With an explicit CodingKeys enum, every field we encode or decode needs a key here.
-+    private enum CodingKeys: String, CodingKey {
-+        case storeIdentifier = "store"
-+        case periodType, purchaseDate, originalPurchaseDate, expiresDate, isSandbox
-+        case unsubscribeDetectedAt, billingIssuesDetectedAt, ownershipType, productPlanIdentifier
-+        case metadata, gracePeriodExpiresDate, refundedAt, storeTransactionId, autoResumeDate
-+        case displayName, price, managementUrl
-+    }
-+}
- extension CustomerInfoResponse.PurchasePaidPrice: Codable, Hashable {}
- 
- extension CustomerInfoResponse.Entitlement: Hashable {}
-@@ -330,7 +343,7 @@ extension CustomerInfoResponse.Subscription {
-         self.purchaseDate = purchaseDate
-         self.originalPurchaseDate = originalPurchaseDate
-         self.expiresDate = expiresDate
--        self.store = store
-+        self.storeIdentifier = store.name
-         self.isSandbox = isSandbox
-         self.unsubscribeDetectedAt = unsubscribeDetectedAt
-         self.billingIssuesDetectedAt = billingIssuesDetectedAt
++      },
++      "subscriber_dimensions": {
++        "dimensions": {
++          "country": null,
++          "sdk_flavor": null,
++          "app_config_public_id": null,
++          "last_seen_at": null,
++          "subscription_status": "expired",
++          "total_renewals": 1,
++          "total_spent": 0,
++          "first_purchase_at": 1715990400000,
++          "most_recent_purchase_at": 1717027200000,
++          "most_recent_renewal_at": 1716595200000,
++          "latest_expiration_at": 1716940800000,
++          "trial_start_at": null,
++          "trial_end_at": null,
++          "subscription_opt_out_at": null,
++          "trial_opt_out_at": null,
++          "latest_product_identifier": "lifetime",
++          "latest_offer": null,
++          "latest_store": "app_store",
++          "is_rc_promo": false,
++          "latest_ownership_type": "PURCHASED",
++          "latest_purchased_offering": null,
++          "price_experiment_id": null,
++          "price_experiment_variant": null,
++          "latest_auto_renew_intent": false,
++          "latest_offer_type": "no_offer",
++          "latest_store_country": null,
++          "total_ad_impressions": null,
++          "total_ad_revenue": null,
++          "total_rewarded_ad_completions": null,
++          "last_ad_impression_at": null,
++          "last_rewarded_ad_completion_at": null
++        },
++        "as_of": 1717027200000
++      }
++    },
++    "promotional_subscription": {
++      "app_user_id": "compatibility-user",
++      "evaluated_at": 1717200000,
++      "device": {
++        "app_version": "1.0.0",
++        "platform": "ios",
++        "platform_version": [
++          26,
++          0,
++          0
++        ],
++        "sdk_version": "10.0.0",
++        "locale": null
++      },
++      "store_country": null,
++      "attributes": {},
++      "customer_info": {
++        "request_date": "2024-06-01T00:00:00+00:00",
++        "subscriber": {
++          "first_seen": "1970-01-01T00:00:01Z",
++          "original_app_user_id": "compatibility-user",
++          "original_application_version": "1.0",
++          "subscriptions": {
++            "premium": {
++              "purchase_date": "1970-01-01T00:01:40Z",
++              "original_purchase_date": "1970-01-01T00:01:40Z",
++              "expires_date": "2024-06-02T00:00:00Z",
++              "store": "promotional",
++              "is_sandbox": false,
++              "period_type": "normal"
++            }
++          },
++          "non_subscriptions": {},
++          "entitlements": {}
++        }
++      },
++      "subscriber_dimensions": {
++        "dimensions": {
++          "country": null,
++          "sdk_flavor": null,
++          "app_config_public_id": null,
++          "last_seen_at": null,
++          "subscription_status": "active",
++          "total_renewals": 1,
++          "total_spent": 0,
++          "first_purchase_at": 100000,
++          "most_recent_purchase_at": 100000,
++          "most_recent_renewal_at": 100000,
++          "latest_expiration_at": 1717286400000,
++          "trial_start_at": null,
++          "trial_end_at": null,
++          "subscription_opt_out_at": null,
++          "trial_opt_out_at": null,
++          "latest_product_identifier": "premium",
++          "latest_offer": null,
++          "latest_store": "promotional",
++          "is_rc_promo": true,
++          "latest_ownership_type": "PURCHASED",
++          "latest_purchased_offering": null,
++          "price_experiment_id": null,
++          "price_experiment_variant": null,
++          "
 ```
 
-**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/app_version.json` (added, +709/-0)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibilityTests.swift` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,709 @@
-+{
-+  "schema_version": 1,
-+  "cases": [
-+    {
-+      "id": "appVersion/equal/1.2.0/new",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "appVersion/equal/1.2.0/renewed",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/equal/1.2.0/first_purchase",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "first_purchase",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/equal/1.2.0/unavailable",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "unavailable",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/equal/1.10.0/new",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/equal/1.10.0/renewed",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "appVersion/equal/1.10.0/first_purchase",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "first_purchase",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/equal/1.10.0/unavailable",
-+      "field": "appVersion",
-+      "operator": "equal",
-+      "profile": "unavailable",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"==\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.2.0/new",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.2.0/renewed",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.2.0/first_purchase",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "first_purchase",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.2.0/unavailable",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "unavailable",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.2.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.10.0/new",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.10.0/renewed",
-+      "field": "appVersion",
-+      "operator": "notEqual",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": [\"app_version\", null]}, null]}, {\"!=\": [{\"rc.semverCompare\": [{\"var\": \"app_version\"}, \"1.10.0\"]}, 0]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "appVersion/notEqual/1.10.0/first_purchase
-```
-
-**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/first_purchase_at.json` (added, +1013/-0)
-```diff
-@@ -0,0 +1,1013 @@
-+{
-+  "schema_version": 1,
-+  "cases": [
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/new",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/renewed",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/first_purchase",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "first_purchase",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/unavailable",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "unavailable",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/purchase_history",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "purchase_history",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-18/one_time_only",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "one_time_only",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1715990400000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/new",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/renewed",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/first_purchase",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "first_purchase",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/unavailable",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "unavailable",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/purchase_history",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "purchase_history",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-25/one_time_only",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "one_time_only",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1716595200000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-30/new",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "new",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1717027200000]}]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-30/renewed",
-+      "field": "firstPurchaseAt",
-+      "operator": "before",
-+      "profile": "renewed",
-+      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_purchase_at\"}, null]}, {\"<\": [{\"var\": \"first_purchase_at\"}, 1717027200000]}]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "firstPurchaseAt/before/2024-05-30/first_purchase",
-+      "field": "firstPurchaseAt",
-+      "operator": "before"
-```
-
-**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_offer.json` (added, +789/-0)
-```diff
-@@ -0,0 +1,789 @@
-+{
-+  "schema_version": 1,
-+  "cases": [
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/new",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/renewed",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/first_purchase",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/unavailable",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/intro_offer",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/latest_promo",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/Intro Offer (premium)/latest_intro",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"Intro Offer (premium)\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/new",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/renewed",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/first_purchase",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/unavailable",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/intro_offer",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/latest_promo",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOffer/is/spring (lifetime)/latest_intro",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring (lifetime)\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring/new",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring/renewed",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring/first_purchase",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring/unavailable",
-+      "field": "latestOffer",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer\"}, \"spring\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOffer/is/spring/intro_offer
-```
-
-**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_offer_type.json` (added, +1013/-0)
-```diff
-@@ -0,0 +1,1013 @@
-+{
-+  "schema_version": 1,
-+  "cases": [
-+    {
-+      "id": "latestOfferType/is/no_offer/new",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/renewed",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/first_purchase",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/unavailable",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/intro_offer",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/latest_promo",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/no_offer/latest_intro",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"no_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/new",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/renewed",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/first_purchase",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/unavailable",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/intro_offer",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/latest_promo",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/introductory_offer/latest_intro",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"introductory_offer\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestOfferType/is/promotional_offer/new",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"promotional_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/promotional_offer/renewed",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"promotional_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/promotional_offer/first_purchase",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_offer_type\"}, \"promotional_offer\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestOfferType/is/promotional_offer/unavailable",
-+      "field": "latestOfferType",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"
-```
-
-**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_purchased_offering.json` (added, +789/-0)
-```diff
-@@ -0,0 +1,789 @@
-+{
-+  "schema_version": 1,
-+  "cases": [
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/new",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/renewed",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/first_purchase",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/unavailable",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/intro_offer",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/latest_promo",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/welcome/latest_intro",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"welcome\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/new",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/renewed",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/first_purchase",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/unavailable",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "unavailable",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/intro_offer",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "intro_offer",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/latest_promo",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "latest_promo",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": true
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/seasonal/latest_intro",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "latest_intro",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"seasonal\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/season/new",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "new",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"season\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/season/renewed",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "renewed",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"season\"]}",
-+      "expected": false
-+    },
-+    {
-+      "id": "latestPurchasedOffering/is/season/first_purchase",
-+      "field": "latestPurchasedOffering",
-+      "operator": "is",
-+      "profile": "first_purchase",
-+      "predicate": "{\"==\": [{\"var\": \"latest_purchased_offering\"}, \"season\"]}",
-+      "expected": false
-+    },
-+
+@@ -31,6 +31,8 @@ struct AudienceCompatibilityTests {
+                 let cases = bundle.cases.filter { $0.field == row.field && $0.operator == row.operator }
+                 #expect(row.status == "unverified", "\(condition)")
+                 #expect(Set(cases.map(\.expected)) == [row.operator == "isNotEmpty"], "\(condition)")
++            } else if row.field == "latestProduct", ["is", "isNot", "isAnyOf", "isNotAnyOf"].contains(row.operator) {
++                #expect(row.status == "unsupported", "\(condition): \(row.status)")
+             } else {
+                 #expect(row.status == "covered", "\(condition): \(row.status)")
+             }
 ```
 
 ---
 
-### Incident Patch 3: `f36ed805` (2026-11-25)
-**Commit Message**: fix(customer-center): preserve purchase presentation context (RevenueCat/purchases-ios_internal#42)
+### Incident Patch 2: `39bac3c3` (2026-11-27)
+**Commit Message**: fix(tests): avoid duplicate events manager integration tests (RevenueCat/purchases-ios_internal#166)
 
-GitOrigin-RevId: 115e0b6d7708ff4cbd4e7467cbb5fc71d8bbdb0c
+GitOrigin-RevId: 848e605719ab14c90ee0e3be5f58d108ce2d796b
 
-**File**: `RevenueCat.xcodeproj/project.pbxproj` (modified, +2/-0)
+**File**: `BackendIntegrationTests/BackendIntegrationTests-SK1.xctestplan` (modified, +1/-0)
 ```diff
-@@ -3689,6 +3689,7 @@
- 		E0C5D92DA02C4041B4420237 /* CustomerCenterInjectedPaywall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterInjectedPaywall.swift; sourceTree = "<group>"; };
- 		AE841F7F44424C93CF2B7314 /* CustomerCenterDataStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterDataStateTests.swift; sourceTree = "<group>"; };
- 		5CFC0D5799A0F95C634C8B5E /* CustomerCenterPreviewProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterPreviewProviderTests.swift; sourceTree = "<group>"; };
-+		CC0000000000000000000001 /* CustomerCenterPurchasesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterPurchasesTests.swift; sourceTree = "<group>"; };
- 		5FE4A197DECF4510AAF4573D /* CustomerCenterPreviewActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterPreviewActionsTests.swift; sourceTree = "<group>"; };
- 		6AB7056A482B4E098D3131B8 /* CustomerCenterViewModel+Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomerCenterViewModel+Presentation.swift"; sourceTree = "<group>"; };
- 		5051D25707904187B344ABB3 /* CustomerCenterPreviewPaywallTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerCenterPreviewPaywallTests.swift; sourceTree = "<group>"; };
-@@ -5435,6 +5436,7 @@
- 		3544DA6B2C2C848E00704E9D /* CustomerCenter */ = {
- 			isa = PBXGroup;
- 			children = (
-+				CC0000000000000000000001 /* CustomerCenterPurchasesTests.swift */,
- 				5051D25707904187B344ABB3 /* CustomerCenterPreviewPaywallTests.swift */,
- 				5CFC0D5799A0F95C634C8B5E /* CustomerCenterPreviewProviderTests.swift */,
- 				5FE4A197DECF4510AAF4573D /* CustomerCenterPreviewActionsTests.swift */,
+@@ -89,6 +89,7 @@
+         "DynamicModeSignatureVerificationIntegrationTests",
+         "EnforcedProductionRemoteConfigIntegrationTests",
+         "EnforcedSignatureVerificationIntegrationTests",
++        "EventsManagerIntegrationTests",
+         "FallbackURLSignedBackendStoreKit2IntegrationTests",
+         "FallbackURLUnsignedBackendStoreKit2IntegrationTests",
+         "InformationalSignatureVerificationIntegrationTests",
 ```
 
-**File**: `RevenueCatUI/CustomerCenter/Abstractions/CustomerCenterPurchasesType.swift` (modified, +10/-0)
+**File**: `BackendIntegrationTests/BackendIntegrationTests-SK2.xctestplan` (modified, +1/-0)
 ```diff
-@@ -15,6 +15,9 @@ import Foundation
- @_spi(Internal) import RevenueCat
- import StoreKit
- import SwiftUI
-+#if canImport(UIKit) && !os(watchOS)
-+import UIKit
-+#endif
- 
- // swiftlint:disable missing_docs
- 
-@@ -58,13 +61,20 @@ import SwiftUI
- ///   - promotionalOffer: An optional `PromotionalOffer` to apply
- /// - Returns: A `PurchaseResultData` object containing the result of the purchase.
- /// - Throws: An error if the purchase flow fails or is cancelled.
-+    @MainActor
-     func purchase(
-         product: StoreProduct,
-         promotionalOffer: PromotionalOffer?
-     ) async throws -> PurchaseResultData
- 
-+    @MainActor
-     func purchase(package: Package) async throws -> PurchaseResultData
- 
-+    #if canImport(UIKit) && !os(watchOS)
-+    @MainActor
-+    func updatePresentationWindow(_ window: UIWindow?, reportedBy owner: AnyObject)
-+    #endif
-+
-     func track(customerCenterEvent: any CustomerCenterEventType)
- 
-     func loadCustomerCenter() async throws -> CustomerCenterConfigData
+@@ -90,6 +90,7 @@
+         "DynamicModeSignatureVerificationIntegrationTests",
+         "EnforcedProductionRemoteConfigIntegrationTests",
+         "EnforcedSignatureVerificationIntegrationTests",
++        "EventsManagerIntegrationTests",
+         "FallbackURLSignedBackendStoreKit1IntegrationTests",
+         "FallbackURLUnsignedBackendStoreKit1IntegrationTests",
+         "InformationalSignatureVerificationIntegrationTests",
 ```
 
-**File**: `RevenueCatUI/CustomerCenter/Data/CustomerCenterPurchases.swift` (modified, +47/-8)
+---
+
+### Incident Patch 3: `fe353583` (2026-11-27)
+**Commit Message**: [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-ios_internal#119)
+
+Co-authored-by: facumenzella <[REDACTED_EMAIL]>
+GitOrigin-RevId: 7a4bb401a8bd24c9d9aede6ca0ee5fd4f8bcdd21
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/customer_id.json` (added, +677/-0)
 ```diff
-@@ -20,6 +20,24 @@ import Foundation
- @available(watchOS, unavailable)
- final class CustomerCenterPurchases: CustomerCenterPurchasesType {
- 
-+    typealias PurchaseAction = @Sendable (PurchaseParams) async throws -> PurchaseResultData
-+
-+    private let purchaseAction: PurchaseAction
-+
-+    #if canImport(UIKit) && !os(watchOS)
-+    private let presentationWindowStore = PresentationWindowStore()
-+    #endif
-+
-+    init() {
-+        self.purchaseAction = { params in
-+            try await Purchases.shared.purchase(params)
-+        }
-+    }
-+
-+    init(purchaseAction: @escaping PurchaseAction) {
-+        self.purchaseAction = purchaseAction
-+    }
-+
-     var isSandbox: Bool {
-         return Purchases.shared.isSandbox
-     }
-@@ -56,24 +74,32 @@ final class CustomerCenterPurchases: CustomerCenterPurchasesType {
-                                                     product: product)
-     }
- 
-+    @MainActor
-     func purchase(
-         product: StoreProduct,
-         promotionalOffer: PromotionalOffer?
-     ) async throws -> PurchaseResultData {
--        if let promotionalOffer = promotionalOffer {
--            return try await Purchases.shared.purchase(
--                product: product,
--                promotionalOffer: promotionalOffer
--            )
--        } else {
--            return try await Purchases.shared.purchase(product: product)
-+        let builder = PurchaseParams.Builder(product: product)
-+        if let promotionalOffer {
-+            _ = builder.with(promotionalOffer: promotionalOffer)
-         }
-+
-+        return try await self.purchaseAction(self.purchaseParams(from: builder))
-     }
- 
-+    @MainActor
-     func purchase(package: Package) async throws -> PurchaseResultData {
--        return try await Purchases.shared.purchase(package: package)
-+        let builder = PurchaseParams.Builder(package: package)
-+        return try await self.purchaseAction(self.purchaseParams(from: builder))
-     }
- 
-+    #if canImport(UIKit) && !os(watchOS)
-+    @MainActor
-+    func updatePresentationWindow(_ window: PurchasePresentationWindow?, reportedBy owner: AnyObject) {
-+        self.presentationWindowStore.update(window, reportedBy: owner)
-+    }
-+    #endif
-+
-     func track(customerCenterEvent: any CustomerCenterEventType) {
-         Purchases.shared.track(customerCenterEvent: customerCenterEvent)
-     }
-@@ -114,4 +140,17 @@ final class CustomerCenterPurchases: CustomerCenterPurchasesType {
-         try await Purchases.shared.beginRefundRequest(forProduct: productID)
-     }
-     #endif
-+
-+    /// Builds purchase parameters anchored to the Customer Center's current presentation window.
-+    @MainActor
-+    private func purchaseParams(from builder: PurchaseParams.Builder) -> PurchaseParams {
-+        #if canImport(UIKit) && !os(watchOS)
-+        if let presentationContext = self.presentationWindowStore.presentationContext {
-+            _ = builder.with(presentationContext: presentationContext)
-+        }
-+        #endif
-+
-+        return builder.build()
-+    }
-+
- }
+@@ -0,0 +1,677 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "customerId/is/signed-in-user/before_first_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/signed-in-user/alias_without_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "customerId/is/signed-in-user/identified_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/signed-in-user/older_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "older_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/signed-in-user/two_identified_ids",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "two_identified_ids",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "customerId/is/signed-in-user/identified_after_install",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_after_install",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"signed-in-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "customerId/is/original-user/before_first_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/original-user/alias_without_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/original-user/identified_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "customerId/is/original-user/older_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "older_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/original-user/two_identified_ids",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "two_identified_ids",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/original-user/identified_after_install",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_after_install",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/before_first_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/alias_without_customer_info",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/identified_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/older_customer",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "older_customer",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/two_identified_ids",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "two_identified_ids",
++      "predicate": "{\"==\": [{\"var\": \"app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "customerId/is/user/identified_after_install",
++      "field": "customerId",
++      "operator": "is",
++      "profile": "identified_after_install",
++   
 ```
 
-**File**: `RevenueCatUI/CustomerCenter/Mocks/MockCustomerCenterPurchases.swift` (modified, +9/-0)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/first_seen_at.json` (added, +1013/-0)
 ```diff
-@@ -103,6 +103,15 @@ final class MockCustomerCenterPurchases: @unchecked Sendable, CustomerCenterPurc
-         return try (purchasePackageResult ?? purchaseResult).get()
-     }
- 
-+    #if canImport(UIKit) && !os(watchOS)
-+    private(set) var presentationWindow: PurchasePresentationWindow?
-+    private(set) var presentationWindowOwner: AnyObject?
-+    func updatePresentationWindow(_ window: PurchasePresentationWindow?, reportedBy owner: AnyObject) {
-+        self.presentationWindow = window
-+        self.presentationWindowOwner = owner
-+    }
-+    #endif
-+
-     var trackCallCount = 0
-     var trackError: Error?
-     var trackedEvents: [CustomerCenterEventType] = []
+@@ -0,0 +1,1013 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "firstSeenAt/before/2024-05-18/before_first_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-18/alias_without_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-18/identified_customer",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "identified_customer",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-18/older_customer",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "older_customer",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": true
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-18/two_identified_ids",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "two_identified_ids",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-18/identified_after_install",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "identified_after_install",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/before_first_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/alias_without_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/identified_customer",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "identified_customer",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": true
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/older_customer",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "older_customer",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": true
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/two_identified_ids",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "two_identified_ids",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-25/identified_after_install",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "identified_after_install",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-30/before_first_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1717027200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "firstSeenAt/before/2024-05-30/alias_without_customer_info",
++      "field": "firstSeenAt",
++      "operator": "before",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"first_seen_at\"}, null]}, {\"<\": [{\"var\": \"first_seen_at\"}, 1717027200000]}]}",
++      "expected": false
++    },
++    {
++     
 ```
 
-**File**: `RevenueCatUI/CustomerCenter/ViewModels/CustomerCenterViewModel+Presentation.swift` (modified, +4/-0)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/last_seen_app_config_id.json` (added, +453/-0)
 ```diff
-@@ -88,6 +88,10 @@ extension CustomerCenterViewModel {
-             await loadScreen()
-         }
-     }
-+
-+    func updatePresentationWindow(_ window: PurchasePresentationWindow?, reportedBy owner: AnyObject) {
-+        self.purchasesProvider.updatePresentationWindow(window, reportedBy: owner)
-+    }
- }
- 
- private extension VirtualCurrencies {
+@@ -0,0 +1,453 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "lastSeenAppConfigId/is/1/new",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_1\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/is/1/renewed",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_1\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/1/first_purchase",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_1\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/1/unavailable",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_1\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/2/new",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_2\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/2/renewed",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_2\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/is/2/first_purchase",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_2\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/2/unavailable",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_2\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/3/new",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_3\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/3/renewed",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_3\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/3/first_purchase",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_3\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/is/3/unavailable",
++      "field": "lastSeenAppConfigId",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"app_config_public_id\"}, \"app_public_3\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/1/new",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\", null]}, \"app_public_1\"]}",
++      "expected": false
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/1/renewed",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "renewed",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\", null]}, \"app_public_1\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/1/first_purchase",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "first_purchase",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\", null]}, \"app_public_1\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/1/unavailable",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "unavailable",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\", null]}, \"app_public_1\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/2/new",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\", null]}, \"app_public_2\"]}",
++      "expected": true
++    },
++    {
++      "id": "lastSeenAppConfigId/isNot/2/renewed",
++      "field": "lastSeenAppConfigId",
++      "operator": "isNot",
++      "profile": "renewed",
++      "predicate": "{\"!=\": [{\"var\": [\"app_config_public_id\",
 ```
 
-**File**: `RevenueCatUI/CustomerCenter/Views/CustomerCenterView.swift` (modified, +3/-0)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_auto_renew_intent.json` (added, +261/-0)
 ```diff
-@@ -120,6 +120,9 @@ public struct CustomerCenterView: View {
-     // swiftlint:disable:next missing_docs
-     public var body: some View {
-         navigationContent
-+            .modifier(PresentationContextModifier { window, owner in
-+                self.viewModel.updatePresentationWindow(window, reportedBy: owner)
-+            })
-             .task {
-                 await loadInformationIfNeeded()
-                 await viewModel.observePreviewCustomerInfoUpdates()
+@@ -0,0 +1,261 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "latestAutoRenewIntent/is/true/new",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/renewed",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/first_purchase",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/unavailable",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/renewing_subscription",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "renewing_subscription",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/older_trial",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "older_trial",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/latest_trial_cancelled",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "latest_trial_cancelled",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/true/cancelled_after_latest_trial",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "cancelled_after_latest_trial",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/new",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "new",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/renewed",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "renewed",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/first_purchase",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "first_purchase",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/unavailable",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "unavailable",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/renewing_subscription",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "renewing_subscription",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": false
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/older_trial",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "older_trial",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/latest_trial_cancelled",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "latest_trial_cancelled",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/is/false/cancelled_after_latest_trial",
++      "field": "latestAutoRenewIntent",
++      "operator": "is",
++      "profile": "cancelled_after_latest_trial",
++      "predicate": "{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, false]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/isNot/true/new",
++      "field": "latestAutoRenewIntent",
++      "operator": "isNot",
++      "profile": "new",
++      "predicate": "{\"!\": [{\"==\": [{\"var\": \"latest_auto_renew_intent\"}, true]}]}",
++      "expected": true
++    },
++    {
++      "id": "latestAutoRenewIntent/isNot/true/renewed",
++      "field": "latestAuto
 ```
 
-**File**: `RevenueCatUI/Purchasing/PresentationContextModifier.swift` (modified, +60/-2)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/latest_expiration_at.json` (added, +1349/-0)
 ```diff
-@@ -11,6 +11,7 @@
- //
- //  Created by Rick van der Linden on 10/9/26.
- 
-+@_spi(Internal) import RevenueCat
- import SwiftUI
- 
- #if canImport(UIKit) && !os(watchOS)
-@@ -19,16 +20,73 @@ import UIKit
- import AppKit
- #endif
- 
-+#if canImport(UIKit) && !os(watchOS)
-+typealias PurchasePresentationWindow = UIWindow
-+#elseif canImport(AppKit)
-+typealias PurchasePresentationWindow = NSWindow
-+#endif
-+
-+#if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-+final class PresentationWindowStore: Sendable {
-+
-+    // Keep the window weak because its view hierarchy owns the object using this store.
-+    @MainActor private(set) weak var window: PurchasePresentationWindow?
-+    @MainActor private weak var owner: AnyObject?
-+
-+    @MainActor
-+    var presentationContext: PresentationContext? {
-+        #if canImport(UIKit) && !os(watchOS)
-+        return self.window.flatMap {
-+            PresentationContext(window: $0, allowsDefaultPresentationFallback: true)
-+        }
-+        #elseif canImport(AppKit)
-+        return self.window.map {
-+            PresentationContext(window: $0, allowsDefaultPresentationFallback: true)
-+        }
-+        #endif
-+    }
-+
-+    @MainActor
-+    func update(_ window: PurchasePresentationWindow?, reportedBy owner: AnyObject) {
-+        if let window {
-+            self.window = window
-+            self.owner = owner
-+        } else if self.owner === owner {
-+            self.window = nil
-+            self.owner = nil
-+        }
-+    }
-+
-+}
-+#endif
-+
- @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
- struct PresentationContextModifier: ViewModifier {
- 
--    let purchaseHandler: PurchaseHandler
-+    #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-+    private let onWindowChange: @MainActor (PurchasePresentationWindow?, AnyObject) -> Void
-+    #endif
-+
-+    init(purchaseHandler: PurchaseHandler) {
-+        #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-+        self.onWindowChange = { window, owner in
-+            purchaseHandler.updatePresentationWindow(window, reportedBy: owner)
-+        }
-+        #endif
-+    }
-+
-+    #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-+    init(onWindowChange: @escaping @MainActor (PurchasePresentationWindow?, AnyObject) -> Void) {
-+        self.onWindowChange = onWindowChange
-+    }
-+    #endif
- 
-     func body(content: Content) -> some View {
-         #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-         content.background {
-             PresentationContextReader { window, owner in
--                self.purchaseHandler.updatePresentationWindow(window, reportedBy: owner)
-+                self.onWindowChange(window, owner)
-             }
-             .frame(width: 0, height: 0)
-         }
+@@ -0,0 +1,1349 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "latestExpirationAt/before/2024-05-18/new",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/renewed",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "renewed",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": true
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/first_purchase",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "first_purchase",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": true
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/unavailable",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "unavailable",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/renewing_subscription",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "renewing_subscription",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/older_trial",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "older_trial",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/latest_trial_cancelled",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "latest_trial_cancelled",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-18/cancelled_after_latest_trial",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "cancelled_after_latest_trial",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/new",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/renewed",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "renewed",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1716595200000]}]}",
++      "expected": true
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/first_purchase",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "first_purchase",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1716595200000]}]}",
++      "expected": true
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/unavailable",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "unavailable",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/renewing_subscription",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "renewing_subscription",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"latest_expiration_at\"}, null]}, {\"<\": [{\"var\": \"latest_expiration_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "latestExpirationAt/before/2024-05-25/older_trial",
++      "field": "latestExpirationAt",
++      "operator": "before",
++      "profile": "older_trial",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"late
 ```
 
-**File**: `RevenueCatUI/Purchasing/PurchaseHandler.swift` (modified, +9/-25)
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/original_app_user_id.json` (added, +485/-0)
 ```diff
-@@ -23,12 +23,6 @@ import UIKit
- import AppKit
- #endif
- 
--#if canImport(UIKit) && !os(watchOS)
--typealias PurchasePresentationWindow = UIWindow
--#elseif canImport(AppKit)
--typealias PurchasePresentationWindow = NSWindow
--#endif
--
- // swiftlint:disable file_length
- 
- private struct TerminalOfferingWorkflowError: Error {}
-@@ -59,11 +53,8 @@ final class PurchaseHandler: ObservableObject {
-     private let paywallEventTracker: PaywallEventTracker
-     private let keyWindowFocusResigner: KeyWindowFocusResigning
- 
--    // Keep the host weak because its view hierarchy owns this handler. A strong
--    // PresentationContext here would retain that hierarchy through its scene or window.
-     #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
--    private(set) weak var presentationWindow: PurchasePresentationWindow?
--    private weak var presentationWindowOwner: AnyObject?
-+    private let presentationWindowStore = PresentationWindowStore()
-     #endif
- 
-     /// Side-by-side paywalls should use separate `PurchaseHandler` instances so each keeps its own session.
-@@ -388,15 +379,14 @@ final class PurchaseHandler: ObservableObject {
- @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
- extension PurchaseHandler {
- 
-+    @MainActor
-+    var presentationWindow: PurchasePresentationWindow? {
-+        return self.presentationWindowStore.window
-+    }
-+
-     @MainActor
-     func updatePresentationWindow(_ window: PurchasePresentationWindow?, reportedBy owner: AnyObject) {
--        if let window {
--            self.presentationWindow = window
--            self.presentationWindowOwner = owner
--        } else if self.presentationWindowOwner === owner {
--            self.presentationWindow = nil
--            self.presentationWindowOwner = nil
--        }
-+        self.presentationWindowStore.update(window, reportedBy: owner)
-     }
- 
- }
-@@ -1412,14 +1402,8 @@ private extension PurchaseHandler {
- 
-     @MainActor
-     var presentationContext: PresentationContext? {
--        #if canImport(UIKit) && !os(watchOS)
--        return self.presentationWindow.flatMap {
--            PresentationContext(window: $0, allowsDefaultPresentationFallback: true)
--        }
--        #elseif canImport(AppKit)
--        return self.presentationWindow.map {
--            PresentationContext(window: $0, allowsDefaultPresentationFallback: true)
--        }
-+        #if (canImport(UIKit) && !os(watchOS)) || canImport(AppKit)
-+        return self.presentationWindowStore.presentationContext
-         #else
-         return nil
-         #endif
+@@ -0,0 +1,485 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "originalAppUserId/is/original-user/before_first_customer_info",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/original-user/alias_without_customer_info",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/original-user/identified_customer",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "identified_customer",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "originalAppUserId/is/original-user/older_customer",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "older_customer",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/original-user/two_identified_ids",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "two_identified_ids",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "originalAppUserId/is/original-user/identified_after_install",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "identified_after_install",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/before_first_customer_info",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/alias_without_customer_info",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/identified_customer",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "identified_customer",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/older_customer",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "older_customer",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/two_identified_ids",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "two_identified_ids",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/is/user/identified_after_install",
++      "field": "originalAppUserId",
++      "operator": "is",
++      "profile": "identified_after_install",
++      "predicate": "{\"==\": [{\"var\": \"original_app_user_id\"}, \"user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/isNot/original-user/before_first_customer_info",
++      "field": "originalAppUserId",
++      "operator": "isNot",
++      "profile": "before_first_customer_info",
++      "predicate": "{\"!=\": [{\"var\": [\"original_app_user_id\", null]}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "originalAppUserId/isNot/original-user/alias_without_customer_info",
++      "field": "originalAppUserId",
++      "operator": "isNot",
++      "profile": "alias_without_customer_info",
++      "predicate": "{\"!=\": [{\"var\": [\"original_app_user_id\", null]}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "originalAppUserId/isNot/original-user/identified_customer",
++      "field": "originalAppUserId",
++      "operator": "isNot",
++      "profile": "identified_customer",
++      "predicate": "{\"!=\": [{\"var\": [\"original_app_user_id\", null]}, \"original-user\"]}",
++      "expected": false
++    },
++    {
++      "id": "originalAppUserId/isNot/original-user/older_customer",
++      "field": "originalAppUserId",
++      "operator": "isNot",
++      "profile": "older_customer",
++      "predicate": "{\"!=\": [{\"var\": [\"original_app_user_id\", null]}, \"original-user\"]}",
++      "expected": true
++    },
++    {
++      "id": "originalAppUserId/isNot/original-user
+```
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/subscription_opt_out_at.json` (added, +1349/-0)
+```diff
+@@ -0,0 +1,1349 @@
++{
++  "schema_version": 1,
++  "cases": [
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/new",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/renewed",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "renewed",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/first_purchase",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "first_purchase",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/unavailable",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "unavailable",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/renewing_subscription",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "renewing_subscription",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/older_trial",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "older_trial",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": true
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/latest_trial_cancelled",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "latest_trial_cancelled",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-18/cancelled_after_latest_trial",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "cancelled_after_latest_trial",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1715990400000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/new",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "new",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/renewed",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "renewed",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/first_purchase",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "first_purchase",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/unavailable",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "unavailable",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/renewing_subscription",
++      "field": "subscriptionOptOutAt",
++      "operator": "before",
++      "profile": "renewing_subscription",
++      "predicate": "{\"and\": [{\"!=\": [{\"var\": \"subscription_opt_out_at\"}, null]}, {\"<\": [{\"var\": \"subscription_opt_out_at\"}, 1716595200000]}]}",
++      "expected": false
++    },
++    {
++      "id": "subscriptionOptOutAt/before/2024-05-25/older_trial",
++      "field": "subscr
+```
+
+**File**: `Tests/UnitTests/LocalRules/AudienceCompatibility/coverage.json` (modified, +65/-51)
+```diff
+@@ -4,7 +4,12 @@
+     "anyActiveStore",
+     "appVersion",
+     "country",
++    "customerId",
+     "firstPurchaseAt",
++    "firstSeenAt",
++    "lastSeenAppConfigId",
++    "latestAutoRenewIntent",
++    "latestExpirationAt",
+     "latestOffer",
+     "latestOfferType",
+     "latestOwnershipType",
+@@ -13,8 +18,10 @@
+     "locale",
+     "mostRecentPurchaseAt",
+     "mostRecentRenewalAt",
++    "originalAppUserId",
+     "status",
+     "storefront",
++    "subscriptionOptOutAt",
+     "totalRenewals",
+     "trialEndAt",
+     "trialOptOutAt",
+@@ -24,7 +31,12 @@
+     "conditions/any_active_store.json",
+     "conditions/app_version.json",
+     "conditions/country.json",
++    "conditions/customer_id.json",
+     "conditions/first_purchase_at.json",
++    "conditions/first_seen_at.json",
++    "conditions/last_seen_app_config_id.json",
++    "conditions/latest_auto_renew_intent.json",
++    "conditions/latest_expiration_at.json",
+     "conditions/latest_offer.json",
+     "conditions/latest_offer_type.json",
+     "conditions/latest_ownership_type.json",
+@@ -33,8 +45,10 @@
+     "conditions/locale.json",
+     "conditions/most_recent_purchase_at.json",
+     "conditions/most_recent_renewal_at.json",
++    "conditions/original_app_user_id.json",
+     "conditions/status.json",
+     "conditions/storefront.json",
++    "conditions/subscription_opt_out_at.json",
+     "conditions/total_renewals.json",
+     "conditions/trial_end_at.json",
+     "conditions/trial_opt_out_at.json",
+@@ -80,25 +94,25 @@
+     {
+       "field": "customerId",
+       "operator": "is",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "customerId",
+       "operator": "isNot",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "customerId",
+       "operator": "contains",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "customerId",
+       "operator": "doesNotContain",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+@@ -188,37 +202,37 @@
+     {
+       "field": "originalAppUserId",
+       "operator": "is",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "originalAppUserId",
+       "operator": "isNot",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "originalAppUserId",
+       "operator": "contains",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "originalAppUserId",
+       "operator": "doesNotContain",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "originalAppUserId",
+       "operator": "isEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "originalAppUserId",
+       "operator": "isNotEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+@@ -626,67 +640,67 @@
+     {
+       "field": "firstSeenAt",
+       "operator": "before",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "beforeOrOn",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "on",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "after",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "afterOrOn",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "within",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "notWithin",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "between",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "notBetween",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "isEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+       "field": "firstSeenAt",
+       "operator": "isNotEmpty",
+-      "status": "unverified",
++      "status": "covered",
+       "errors": []
+     },
+     {
+@@ -890,67 +904,67 @@
+     {
+       "field": "latestExpirationAt",
+       "operator": "before",
+-      "status": "unverified",
++      "status": "cove
 ```
 
 #### Recent Merged Pull Requests:
@@ -2046,28 +2466,44 @@ GitOrigin-RevId: 115e0b6d7708ff4cbd4e7467cbb5fc71d8bbdb0c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paywalls): use the selected tab’s sheet price (RevenueCat/purchases-ios_internal
+## X. [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-
 
 **RULE**:
-When implementing operations in `RevenueCatUI/Templates/V2/Components/Root/RootView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/all_purchased_product_ids.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f27f02e`: paywalls): use the selected tab’s sheet price (RevenueCat/purchases-ios_internal#78). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `67040db0`: [AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-ios_internal#168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Templates/V2/Components/Root/RootView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/UnitTests/LocalRules/AudienceCompatibility/conditions/all_purchased_product_ids.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                self.packageContext.dismissSheet(retainingSelection: !self.hasNonSheetPackages)
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "allPurchasedProductIds/is/premium/new",
+      "field": "allPurchasedProductIds",
+      "operator": "is",
+      "profile": "new",
+      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is_sandbox\"}, false]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, null]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"\"]}, {\"!=\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}]}]}]}]}",
+      "expected": false
+    },
+    {
+      "id": "allPurchasedProductIds/is/premium/subscription_then_product",
+      "field": "allPurchasedProductIds",
+      "operator": "is",
+      "profile": "subscription_then_product",
+      "predicate": "{\"and\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"purchased_product_identifier\"}, \"premium\"]}, {\"==\": [{\"var\": \"is_sandbox\"}, false]}]}]}, {\"!\": [{\"some\": [{\"var\": \"purchases\"}, {\"and\": [{\"==\": [{\"var\": \"is
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                self.packageContext.presentedSheetContext = nil
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f27f02e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `67040db0` are properly handled with clean fallback behavior.

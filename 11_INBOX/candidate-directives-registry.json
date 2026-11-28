@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:21:20.355Z",
+  "last_updated": "2026-11-28T04:30:08.396Z",
   "directives": [
     {
       "id": "CD-001",
@@ -74550,6 +74550,68 @@
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D8A4A4-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-W3LM",
+      "directive_title": "Python version in publish.yml",
+      "source_repo": "encode-httpx-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W3LM-python-version-in-publish-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-W4E5",
+      "directive_title": "[AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-",
+      "source_repo": "revenuecat-purchases-ios-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W4E5-automatic-test-sync-audience-fixtures-from-khepri-main-revenuecat-purchases.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-W09K",
+      "directive_title": "reject reserved container names on creation",
+      "source_repo": "clastix/kamaji",
+      "source_commit": "27a50820",
+      "staged_file": "11_INBOX/candidate-directives/CD-W09K-reject-reserved-container-names-on-creation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-F9EF8F",
+      "directive_title": "Python version in publish.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "encode-httpx",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F9EF8F-python-version-in-publish-yml.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-15B2D6",
+      "directive_title": "[AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "revenuecat-purchases-ios",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-15B2D6--automatic-test-sync-audience-fixtures-f.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-W558",
+      "directive_title": "webhook): reject reserved container names on creation",
+      "source_repo": "clastix-kamaji-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W558-webhook-reject-reserved-container-names-on-creation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "L"
     }
   ]
 }

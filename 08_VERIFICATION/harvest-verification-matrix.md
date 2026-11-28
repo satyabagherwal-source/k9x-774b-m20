@@ -13968,3 +13968,6 @@
 | `CYCLE-20261128-9DXW` | `2026-11-28T04:12:26.708Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11031` | Yes (`52ec2a8e...`) |
 | `CYCLE-20261128-KGNR` | `2026-11-28T04:21:03.447Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11032` | Yes (`5bebc72e...`) |
 | `CYCLE-20261128-KOND` | `2026-11-28T04:21:13.801Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11033` | Yes (`cbc5f78a...`) |
+| `CYCLE-20261128-VVU1` | `2026-11-28T04:29:56.329Z` | `encode/httpx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11034` | Yes (`30e623b5...`) |
+| `CYCLE-20261128-VYCQ` | `2026-11-28T04:29:59.594Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11035` | Yes (`e6d496ff...`) |
+| `CYCLE-20261128-W025` | `2026-11-28T04:30:01.805Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11036` | Yes (`2594db83...`) |

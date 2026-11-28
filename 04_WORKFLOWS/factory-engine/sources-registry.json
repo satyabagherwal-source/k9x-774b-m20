@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-27T09:44:47.684Z",
-    "lastVerified": "2026-11-27T09:44:47.684Z",
+    "lastChecked": "2026-11-28T04:30:01.370Z",
+    "lastVerified": "2026-11-28T04:30:01.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T04:21:17.206Z",
-    "lastVerified": "2026-11-28T04:21:17.206Z",
+    "lastChecked": "2026-11-28T04:30:05.263Z",
+    "lastVerified": "2026-11-28T04:30:05.263Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T03:54:05.622Z",
-    "lastVerified": "2026-11-28T03:54:05.622Z",
+    "lastChecked": "2026-11-28T04:30:03.737Z",
+    "lastVerified": "2026-11-28T04:30:03.737Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1384,9 +1384,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-28T00:19:21.627Z",
+    "lastChecked": "2026-11-28T04:29:58.725Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-28T00:19:21.627Z"
+    "lastVerified": "2026-11-28T04:29:58.725Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4828,22 +4828,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clastix-kamaji": {
-    "name": "kamaji",
+    "name": "clastix/kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T11:14:29.367Z",
-    "lastVerified": "2026-11-27T11:14:29.367Z",
+    "lastChecked": "2026-11-28T04:30:00.430Z",
+    "lastVerified": "2026-11-28T04:30:00.430Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
+    "contentHash": "2594db83aacedb87e552960e8d1d6d598f522a7687ade3e9020e386062261f7b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7a53df4a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -7400,9 +7399,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-27T04:53:49.903Z",
+    "lastChecked": "2026-11-28T04:29:48.541Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-27T04:53:49.903Z"
+    "lastVerified": "2026-11-28T04:29:48.541Z"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -11132,14 +11131,14 @@
     "officialUrl": "https://github.com/RevenueCat/purchases-ios",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-26T02:38:16.311Z",
-    "lastVerified": "2026-11-26T02:38:16.311Z",
+    "lastChecked": "2026-11-28T04:29:58.239Z",
+    "lastVerified": "2026-11-28T04:29:58.239Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
+    "contentHash": "e6d496ff7c4abb92682f42316a21ad0abb04fc38d5c37ed4308c316ecacdc27b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11574,11 +11573,21 @@
     "lastVerified": "2026-11-26T05:17:05.607Z"
   },
   "encode-httpx": {
-    "name": "httpx",
+    "name": "encode/httpx",
     "officialUrl": "https://github.com/encode/httpx",
-    "lastChecked": "2026-11-24T19:35:57.072Z",
-    "revisionIdentifier": "7cff5f79",
-    "lastVerified": "2026-11-24T19:35:57.072Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-28T04:29:54.764Z",
+    "lastVerified": "2026-11-28T04:29:54.764Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-encode-httpx",
+    "contentHash": "30e623b5f083edbed693e592f6d9b764d582c27fdad7b9fd0f16f86a63751e47",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "jasonjmcghee-rem": {
     "name": "rem",

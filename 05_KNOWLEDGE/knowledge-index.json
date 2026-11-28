@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T04:21:21.448Z",
+  "last_updated": "2026-11-28T04:30:08.882Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26944,
+  "total_items": 26953,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -257558,8 +257558,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "7a53df4a",
-      "content_hash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
+      "source_version": "27a50820",
+      "content_hash": "2594db83aacedb87e552960e8d1d6d598f522a7687ade3e9020e386062261f7b",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -257587,6 +257587,11 @@
           "number": 10564,
           "title": "remove RBAC phase temp directory",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11036,
+          "title": "reject reserved container names on creation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257594,7 +257599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:09:27.887Z",
+      "verified_at": "2026-11-28T04:30:01.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257648,10 +257653,10 @@
       "relative_path": "08_VERIFICATION/clastix-kamaji-verification-protocol-empirical-defect-shield-for-clastix-kamaji.md",
       "title": "Verification Protocol: Empirical Defect Shield for clastix/kamaji",
       "repository": "clastix/kamaji",
-      "source_version": "7a53df4a",
-      "content_hash": "fff3774e2845f2358dff71385e7c44b77a6aa89be53f5f82741a5f05e354c1c9",
+      "source_version": "27a50820",
+      "content_hash": "b80c12d499f48ae8c92effa4acad80a244f416ba5054e62b8946f5d1958cbad7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:09:29.076Z"
+      "persisted_at": "2026-11-28T04:30:02.520Z"
     },
     "candidate_directive-datastore-exclusive-etcd-datastore": {
       "item_id": "candidate_directive-datastore-exclusive-etcd-datastore",
@@ -257685,9 +257690,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clastix-kamaji-learnings",
       "repository": "clastix-kamaji-learnings",
       "source_version": "HEAD",
-      "content_hash": "39bbe136da926903b572a9928484ab30a744d14e4f4734a641b8dbebbaa087c3",
+      "content_hash": "867499205cf95d6bd4e09e829aab1933f282a64af2d033c4821ead4ad23a971e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:09:38.789Z"
+      "persisted_at": "2026-11-28T04:30:08.882Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-trinodb-trino-learnings-core-invariants",
@@ -262551,8 +262556,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "8c1ff472",
-      "content_hash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
+      "source_version": "67040db0",
+      "content_hash": "e6d496ff7c4abb92682f42316a21ad0abb04fc38d5c37ed4308c316ecacdc27b",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -262575,6 +262580,11 @@
           "number": 10588,
           "title": "use the selected tab’s sheet price (RevenueCat/purchases-ios_internal",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11035,
+          "title": "[AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262582,7 +262592,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T02:38:17.221Z",
+      "verified_at": "2026-11-28T04:29:59.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262624,10 +262634,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-revenuecat-purchases-ios-architecture-intelligence-revenuecat-purchases-ios-core.md",
       "title": "Architecture Intelligence: RevenueCat/purchases-ios Core Invariants",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "8c1ff472",
-      "content_hash": "6aee47cfc050ba1c1dea1392caf7217151ac643db249ed317c9b35ae4062797d",
+      "source_version": "67040db0",
+      "content_hash": "3622387d5956a426fbfc927340fd41911eef0600a7de9db39ff517aebc5f2858",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T02:38:17.918Z"
+      "persisted_at": "2026-11-28T04:30:00.107Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios",
@@ -262636,10 +262646,10 @@
       "relative_path": "08_VERIFICATION/revenuecat-purchases-ios-verification-protocol-empirical-defect-shield-for-reven.md",
       "title": "Verification Protocol: Empirical Defect Shield for RevenueCat/purchases-ios",
       "repository": "RevenueCat/purchases-ios",
-      "source_version": "8c1ff472",
-      "content_hash": "30625456fe105fb61b3ff1e3fef8903b2bb9a314367381c9f1bf35e130dde8fe",
+      "source_version": "67040db0",
+      "content_hash": "04d012d3a14cc69b3dbab27ac16416efb6b40c9b4f40755b9942763aa8e7f08b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:38:18.100Z"
+      "persisted_at": "2026-11-28T04:30:00.331Z"
     },
     "learn-github-qdrant-qdrant": {
       "learning_id": "learn-github-qdrant-qdrant",
@@ -262732,9 +262742,9 @@
       "title": "Architecture Intelligence: revenuecat-purchases-ios-learnings Core Invariants",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bd9b9ea73c3c3916424c3564bd98b1592cd12a51034eaa3f405cb9e14a2d426",
+      "content_hash": "70588121c2612b7390e869579288eb8486621cb7f2ad971dcaab87358e13b027",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T02:38:23.674Z"
+      "persisted_at": "2026-11-28T04:30:07.668Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-revenuecat-purchases-ios-learn",
@@ -262744,9 +262754,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for revenuecat-purchases-ios-learnings",
       "repository": "revenuecat-purchases-ios-learnings",
       "source_version": "HEAD",
-      "content_hash": "e93da34a91969cfdfdc72718a739c6127281a0bb7e8925887e9df9e0db04b89d",
+      "content_hash": "6a4f07af63151afd60b5af78d46c1409daa175907d3e594812b59dcb0269b6d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:38:23.861Z"
+      "persisted_at": "2026-11-28T04:30:07.893Z"
     },
     "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-qdrant-qdrant-learnings-core-invariants",
@@ -268123,17 +268133,23 @@
       "slug": "encode-httpx",
       "platform": "github",
       "source_url": "https://github.com/encode/httpx",
-      "source_version": "7cff5f79",
-      "content_hash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
+      "source_version": "e347fb5e",
+      "content_hash": "30e623b5f083edbed693e592f6d9b764d582c27fdad7b9fd0f16f86a63751e47",
       "dossier_path": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encode-httpx-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 11034,
+          "title": "Python version in publish.yml",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:22:24.760Z",
+      "verified_at": "2026-11-28T04:29:56.004Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268161,10 +268177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-encode-httpx-content-information-intelligence-encode-httpx-core-invariants.md",
       "title": "Content & Information Intelligence: encode/httpx Core Invariants",
       "repository": "encode/httpx",
-      "source_version": "7cff5f79",
-      "content_hash": "9977512caac3d3015ef719ebfee17e6b69406443d57ea5227c148d66329e1f6f",
+      "source_version": "e347fb5e",
+      "content_hash": "3aead8dba368507ba9d06ad55803178d884d992084369c07ed17e48f6e91a610",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:22:25.210Z"
+      "persisted_at": "2026-11-28T04:29:56.848Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx",
@@ -268173,10 +268189,10 @@
       "relative_path": "08_VERIFICATION/encode-httpx-verification-protocol-empirical-defect-shield-for-encode-httpx.md",
       "title": "Verification Protocol: Empirical Defect Shield for encode/httpx",
       "repository": "encode/httpx",
-      "source_version": "7cff5f79",
-      "content_hash": "a36dae1b718b422516631fd0f8af04655e89069cd172c2785d8cae3793a9a28b",
+      "source_version": "e347fb5e",
+      "content_hash": "b3ad5285d1b6b90813922481a2d5c7476e7ee3ab3efdc596ea08866288209d3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:22:25.319Z"
+      "persisted_at": "2026-11-28T04:29:57.074Z"
     },
     "learn-github-chaos-mesh-chaos-mesh": {
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
@@ -268342,9 +268358,9 @@
       "title": "Content & Information Intelligence: encode-httpx-learnings Core Invariants",
       "repository": "encode-httpx-learnings",
       "source_version": "HEAD",
-      "content_hash": "e20786bd50cece0d19d581dad42bdfb31906d7b69e87a9665740280ad98bdef4",
+      "content_hash": "ce0cdc322f1049d9398f59711cbe34021b3dff929c12472014aef4569d00aaac",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:22:39.033Z"
+      "persisted_at": "2026-11-28T04:30:06.649Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-encode-httpx-learnings",
@@ -268354,9 +268370,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for encode-httpx-learnings",
       "repository": "encode-httpx-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b6210598932b02f2efc48e749a8e999fe1ff53d912b67b60d335875369a3ea1",
+      "content_hash": "b167e23f83709b6de4a89db9dcd08e06d581a6b5af574a15a7643084758a132c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:22:39.145Z"
+      "persisted_at": "2026-11-28T04:30:06.874Z"
     },
     "candidate_directive-httpchaos-upgrade-chaos-tproxy-to-0-6-0": {
       "item_id": "candidate_directive-httpchaos-upgrade-chaos-tproxy-to-0-6-0",
@@ -370233,6 +370249,120 @@
       "content_hash": "cca08f4605cee3185dc499c1f93f0b9f21614f106a918fde71ac369f699d15fe",
       "domain_letter": "I",
       "persisted_at": "2026-11-28T04:21:19.775Z"
+    },
+    "rule-11034": {
+      "learning_id": "rule-11034",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11034,
+      "title": "Python version in publish.yml",
+      "source_url": "https://github.com/encode/httpx",
+      "source_version": "e347fb5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:29:56.004Z"
+    },
+    "candidate_directive-python-version-in-publish-yml": {
+      "item_id": "candidate_directive-python-version-in-publish-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3LM-python-version-in-publish-yml.md",
+      "title": "Python version in publish.yml",
+      "repository": "encode-httpx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5336161e96a4b1c74b783279c782bfa9ccac5dd3f5cbf67ffd322581b0df2add",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-28T04:30:06.398Z"
+    },
+    "rule-11035": {
+      "learning_id": "rule-11035",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11035,
+      "title": "[AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "67040db0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:29:59.301Z"
+    },
+    "candidate_directive-automatic-test-sync-audience-fixtures-from-khepri-main-revenuecat-purchases": {
+      "item_id": "candidate_directive-automatic-test-sync-audience-fixtures-from-khepri-main-revenuecat-purchases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4E5-automatic-test-sync-audience-fixtures-from-khepri-main-revenuecat-purchases.md",
+      "title": "[AUTOMATIC] test: sync audience fixtures from Khepri main (RevenueCat/purchases-",
+      "repository": "revenuecat-purchases-ios-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab2db80680bbc27330012a4b878f7ad0816f5c5625cd3316b988aae094a17d30",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-28T04:30:07.424Z"
+    },
+    "rule-11036": {
+      "learning_id": "rule-11036",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11036,
+      "title": "reject reserved container names on creation",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "27a50820",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T04:30:01.518Z"
+    },
+    "candidate_directive-reject-reserved-container-names-on-creation": {
+      "item_id": "candidate_directive-reject-reserved-container-names-on-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W09K-reject-reserved-container-names-on-creation.md",
+      "title": "reject reserved container names on creation",
+      "repository": "clastix/kamaji",
+      "source_version": "27a50820",
+      "content_hash": "58e9b5c818792b73f857215d340a5df4cf809fabd0d2be7bcc806dc36b6b78ec",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-28T04:30:02.073Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-clastix-kamaji-deployment-operations-intelligence-clastix-kamaji-core-invariants.md",
+      "title": "Deployment & Operations Intelligence: clastix/kamaji Core Invariants",
+      "repository": "clastix/kamaji",
+      "source_version": "27a50820",
+      "content_hash": "7e580e99abf8b8b1982c043d73cd2285c0abaffe14310208855db58b05c88e6f",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-28T04:30:02.293Z"
+    },
+    "candidate_directive-webhook-reject-reserved-container-names-on-creation": {
+      "item_id": "candidate_directive-webhook-reject-reserved-container-names-on-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W558-webhook-reject-reserved-container-names-on-creation.md",
+      "title": "webhook): reject reserved container names on creation",
+      "repository": "clastix-kamaji-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da29014f0a0a3c0d2d080f9d8ded1cc7e817c6052e7e03f1836b1a72c5f85555",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-28T04:30:08.396Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-learnings-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-clastix-kamaji-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-clastix-kamaji-learnings-deployment-operations-intelligence-clastix-kamaji-learn.md",
+      "title": "Deployment & Operations Intelligence: clastix-kamaji-learnings Core Invariants",
+      "repository": "clastix-kamaji-learnings",
+      "source_version": "HEAD",
+      "content_hash": "867ed961884c46579d203a4b753b565be4a77f45fbbf2db318d950e69ae740f0",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-28T04:30:08.651Z"
     }
   },
   "ai-builder-brain": {

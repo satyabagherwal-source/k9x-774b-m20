@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T00:09:38.117Z",
+  "timestamp": "2026-11-28T04:30:08.251Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clastix-kamaji-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clastix-kamaji-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T00:09:38.117Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T04:30:08.251Z`  
 > **Learning ID**: `LEARN-EVO-clastix-kamaji-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `7a53df4a`  
+> **Source Version**: `27a50820`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T00:09:26.597Z  
+> **Timestamp**: 2026-11-28T04:30:00.436Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T00:09:26.589Z  
+> **Harvest Timestamp**: 2026-11-28T04:30:00.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2100 stars
+- **Stars / Engagement**: 2104 stars
 
 ---
 
@@ -771,150 +771,565 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a53df4a` (2026-11-25)
-**Commit Message**: fix(kubeadm): remove RBAC phase temp directory (#1437)
+### Incident Patch 1: `27a50820` (2026-11-27)
+**Commit Message**: fix(webhook): reject reserved container names on creation (#1441)
 
-The cluster-admin RBAC phase writes the admin and super-admin
-kubeconfig files into a directory created with os.MkdirTemp, and
-cleans it up with os.Remove. os.Remove only deletes empty
-directories, so the call fails and the error is discarded: the
-directory and both files are left behind at every run.
+A same-named additional container is only refused on update, by the
+dry-run of the resulting Deployment. On creation there is no Deployment
+yet: an additional container named kube-apiserver passes the dry-run, the
+builder enriches it in place, and the next reconciliation carries over
+the managed kube-apiserver next to it, failing on a duplicate name.
 
-The phase has no checksum, so it runs at every reconciliation of
-the TenantControlPlane. With the chart mounting /tmp as a
-memory-backed emptyDir, the leftovers are charged to the pod memory
-and survive container restarts, until the controller is OOM killed.
+Add a validating handler rejecting additional containers and init
+containers named after the ones built by Kamaji, both on creation and
+when an update introduces them. Container names are unique across
+containers and init containers, so the kine container is reserved for
+init containers and chmod for containers. The kine container and the
+chmod init container stay allowed where they override the built ones.
 
-Use os.RemoveAll and cover it with a test.
+On update only the newly introduced names are checked, so a
+TenantControlPlane already declaring a reserved name keeps accepting
+unrelated updates, such as the finalizer removal upon deletion.
 
-Signed-off-by: 박범균 <[REDACTED_EMAIL]>
-Co-authored-by: 박범균 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `internal/resources/kubeadm_phases.go` (modified, +1/-1)
+**File**: `cmd/manager/cmd.go` (modified, +1/-0)
 ```diff
-@@ -180,7 +180,7 @@ func (r *KubeadmPhase) GetKubeadmFunction(ctx context.Context, tcp *kamajiv1alph
- 				return nil, err
- 			}
- 
--			defer func() { _ = os.Remove(tmp) }()
-+			defer func() { _ = os.RemoveAll(tmp) }()
- 
- 			var caSecret corev1.Secret
- 			if err = r.Client.Get(ctx, types.NamespacedName{Name: tcp.Status.Certificates.CA.SecretName, Namespace: tcp.Namespace}, &caSecret); err != nil {
+@@ -290,6 +290,7 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 					handlers.TenantControlPlaneName{},
+ 					handlers.TenantControlPlaneVersion{},
+ 					handlers.TenantControlPlaneDataStore{Client: mgr.GetClient()},
++					handlers.TenantControlPlaneReservedContainerNames{},
+ 					handlers.TenantControlPlaneDeployment{
+ 						Client: mgr.GetClient(),
+ 						DeploymentBuilder: controlplane.Deployment{
 ```
 
-**File**: `internal/resources/kubeadm_phases_test.go` (added, +100/-0)
+**File**: `e2e/tcp_validation_reserved_container_names_test.go` (added, +69/-0)
 ```diff
-@@ -0,0 +1,100 @@
+@@ -0,0 +1,69 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package resources
++package e2e
 +
 +import (
-+	"os"
-+	"path/filepath"
-+	"testing"
++	"context"
 +
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
 +	corev1 "k8s.io/api/core/v1"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	k8sfake "k8s.io/client-go/kubernetes/fake"
-+	kubeadmconstants "k8s.io/kubernetes/cmd/kubeadm/app/constants"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	pointer "k8s.io/utils/ptr"
++	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 +
-+	"github.com/clastix/kamaji/api/v1alpha1"
-+	"github.com/clastix/kamaji/internal/kubeadm"
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
 +)
 +
-+// TestClusterAdminRBACPhaseRemovesTemporaryDirectory verifies that the
-+// cluster-admin RBAC phase leaves nothing behind in the temporary directory.
-+// The phase has no checksum, so it runs at every reconciliation, and it writes
-+// the admin and super-admin kubeconfig files there: anything left over piles
-+// up for the lifetime of the pod.
-+func TestClusterAdminRBACPhaseRemovesTemporaryDirectory(t *testing.T) {
-+	pkiDir := filepath.Join(t.TempDir(), "pki")
-+	workDir := t.TempDir()
-+	// os.MkdirTemp("", ...) resolves the base directory through TMPDIR.
-+	t.Setenv("TMPDIR", workDir)
++var _ = Describe("using a container name reserved by Kamaji", func() {
++	newTCP := func(name string) *kamajiv1alpha1.TenantControlPlane {
++		return &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      name,
++				Namespace: "default",
++			},
++			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++				ControlPlane: kamajiv1alpha1.ControlPlane{
++					Deployment: kamajiv1alpha1.DeploymentSpec{
++						Replicas: pointer.To(int32(1)),
++					},
++					Service: kamajiv1alpha1.ServiceSpec{
++						ServiceType: "ClusterIP",
++					},
++				},
++				Kubernetes: kamajiv1alpha1.KubernetesSpec{
++					Version: kamajiv1alpha1.DefaultKubernetesVersion,
++				},
++			},
++		}
++	}
 +
-+	tcp := &v1alpha1.TenantControlPlane{}
-+	tcp.SetName("test-tcp")
-+	tcp.SetNamespace("default")
-+	tcp.SetUID("7c0f8a52-6a6c-4b55-9f0e-3f6f2d1c9b11")
-+	tcp.Spec.NetworkProfile.Port = 6443
-+	tcp.Status.Certificates.CA.SecretName = "test-tcp-ca"
++	// There is no Deployment yet on creation: the dry-run of the resulting Deployment can't
++	// catch the duplicate name, so the reserved names must be rejected upfront.
++	It("should block an additional container on creation", func() {
++		tcp := newTCP("reserved-additional-container")
++		tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{
++			Name:  "kube-apiserver",
++			Image: "mocked",
++		}}
++		DeferCleanup(func() {
++			Expect(ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp))).To(Succeed())
++		})
 +
-+	config, err := kubeadm.CreateKubeadmInitConfiguration(kubeadm.Parameters{
-+		TenantControlPlaneName:          tcp.GetName(),
-+		TenantControlPlaneNamespace:     tcp.GetNamespace(),
-+		TenantControlPlaneEndpoint:      "1.2.3.4:6443",
-+		TenantControlPlaneAddress:       "1.2.3.4",
-+		TenantControlPlanePort:          6443,
-+		TenantControlPlaneClusterDomain: "cluster.local",
-+		TenantControlPlanePodCIDR:       []string{"10.244.0.0/16"},
-+		TenantControlPlaneServiceCIDR:   []string{"10.96.0.0/12"},
-+		TenantControlPlaneVersion:       "v1.34.0",
-+		ETCDs:                           []string{"https://etcd.example:2379"},
++		Expect(k8sClient.Create(context.Background(), tcp)).To(MatchError(ContainSubstring(`"kube-apiserver" is reserved`)))
 +	})
-+	if err != nil {
-+		t.Fatalf("creating kubeadm configuration: %v", err)
++
++	It("should block an additional init container on creation", func() {
++		tcp := newTCP("reserved-additional-init-container")
++		tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers = []corev1.Container{{
++			Name:  "kine",
++			Image: "mocked",
++		}}
++		DeferCleanup(func() {
++			Expect(ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp))).To(Succeed())
++		})
++
++		Expect(k8sClient.Create(context.Background(), tcp)).To(MatchError(ContainSubstring(`"kine" is reserved`)))
++	})
++})
+```
+
+**File**: `internal/builders/controlplane/deployment.go` (modified, +19/-0)
+```diff
+@@ -62,6 +62,25 @@ var managedContainerNames = []string{
+ 	apiServerContainerName, controlPlaneContainerName, schedulerContainerName, kineContainerName, konnectivityServerName,
+ }
+ 
++// ReservedContainerNames returns the names an additional container cannot use: a Pod requires
++// container names to be unique across its containers and init containers, so they would collide
++// with the ones built by Kamaji. kine is left out, since an additional container named kine
++// overrides the built one (see kineImage).
++func ReservedContainerNames() []string {
++	names := slices.DeleteFunc(slices.Clone(managedContainerNames), func(name string) bool {
++		return name == kineContainerName
++	})
++
++	return append(names, kineInitContainerName)
++}
++
++// ReservedInitContainerNames returns the names an additional init container cannot use, for the
++// same reason as ReservedContainerNames. chmod is left out, since an additional init container
++// named chmod overrides the built one (see kineImage).
++func ReservedInitContainerNames() []string {
++	return slices.Clone(managedContainerNames)
++}
++
+ func applyProbeOverrides(probe *corev1.Probe, spec *kamajiv1alpha1.ProbeSpec) {
+ 	if probe == nil || spec == nil {
+ 		return
+```
+
+**File**: `internal/webhook/handlers/tcp_reserved_container_names.go` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package handlers
++
++import (
++	"context"
++	"fmt"
++	"slices"
++
++	"gomodules.xyz/jsonpatch/v2"
++	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/builders/controlplane"
++	"github.com/clastix/kamaji/internal/webhook/utils"
++)
++
++// TenantControlPlaneReservedContainerNames rejects additional containers and init containers
++// named after the ones built by Kamaji. Without it, the collision is only caught on update,
++// by the dry-run of the resulting Deployment: on creation there is no Deployment yet, so the
++// TenantControlPlane is accepted and its first update reconciliation fails on a duplicate name.
++type TenantControlPlaneReservedContainerNames struct{}
++
++func (t TenantControlPlaneReservedContainerNames) OnCreate(object runtime.Object) AdmissionResponse {
++	return func(context.Context, admission.Request) ([]jsonpatch.JsonPatchOperation, error) {
++		tcp := object.(*kamajiv1alpha1.TenantControlPlane) //nolint:forcetypeassert
++
++		return nil, validateReservedContainerNames(tcp, &kamajiv1alpha1.TenantControlPlane{})
++	}
++}
++
++func (t TenantControlPlaneReservedContainerNames) OnDelete(runtime.Object) AdmissionResponse {
++	return utils.NilOp()
++}
++
++func (t TenantControlPlaneReservedContainerNames) OnUpdate(newObject, oldObject runtime.Object) AdmissionResponse {
++	return func(context.Context, admission.Request) ([]jsonpatch.JsonPatchOperation, error) {
++		tcp, previousTCP := newObject.(*kamajiv1alpha1.TenantControlPlane), oldObject.(*kamajiv1alpha1.TenantControlPlane) //nolint:forcetypeassert
++
++		return nil, validateReservedContainerNames(tcp, previousTCP)
++	}
++}
++
++// validateReservedContainerNames only checks the names the update introduces: a TenantControlPlane
++// declaring a reserved name before this validation existed keeps accepting unrelated updates,
++// such as the finalizer removal upon deletion.
++func validateReservedContainerNames(tcp, previousTCP *kamajiv1alpha1.TenantControlPlane) error {
++	deployment, previousDeployment := tcp.Spec.ControlPlane.Deployment, previousTCP.Spec.ControlPlane.Deployment
++
++	if err := validateAddedContainerNames("additionalContainers", deployment.AdditionalContainers, previousDeployment.AdditionalContainers, controlplane.ReservedContainerNames()); err != nil {
++		return err
 +	}
 +
-+	config.InitConfiguration.CertificatesDir = pkiDir
++	return validateAddedContainerNames("additionalInitContainers", deployment.AdditionalInitContainers, previousDeployment.AdditionalInitContainers, controlplane.ReservedInitContainerNames())
++}
 +
-+	ca, err := kubeadm.GenerateCACertificatePrivateKeyPair(kubeadmconstants.CACertAndKeyBaseName, config)
-+	if err != nil {
-+		t.Fatalf("generating CA: %v", err)
-+	}
-+
-+	caSecret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      tcp.Status.Certificates.CA.SecretName,
-+			Namespace: tcp.GetNamespace(),
-+		},
-+		Data: map[string][]byte{
-+			kubeadmconstants.CACertName: ca.Certificate,
-+			kubeadmconstants.CAKeyName:  ca.PrivateKey,
-+		},
-+	}
-+
-+	phase := &KubeadmPhase{
-+		Client: fake.NewClientBuilder().WithScheme(kubeadmUtilsTestScheme(t)).WithObjects(caSecret).Build(),
-+		Phase:  PhaseClusterAdminRBAC,
-+	}
-+
-+	fn, err := phase.GetKubeadmFunction(t.Context(), tcp)
-+	if err != nil {
-+		t.Fatalf("retrieving kubeadm function: %v", err)
-+	}
-+
-+	if _, err = fn(k8sfake.NewClientset(), config); err != nil {
-+		t.Fatalf("running the cluster-admin RBAC phase: %v", err)
-+	}
-+
-+	entries, err := os.ReadDir(workDir)
-+	if err != nil {
-+		t.Fatalf("reading temporary directory: %v", err)
-+	}
-+
-+	if len(entries) != 0 {
-+		names := make([]string, 0, len(entries))
-+		for _, entry := range entries {
-+			names = append(names, entry.Name())
++func validateAddedContainerNames(field string, containers, previousContainers []corev1.Container, reserved []string) error {
++	for i, container := range containers {
++		if !slices.Contains(reserved, container.Name) {
++			continue
 +		}
 +
-+		t.Fatalf("expected the phase to remove its temporary directory, found %v", names)
++		if slices.ContainsFunc(previousContainers, func(previous corev1.Container) bool { return previous.Name == container.Name }) {
++			continue
++		}
++
++		return fmt.Errorf("spec.controlPlane.deployment.%s[%d].name: %q is reserved for a container built by Kamaji", field, i, container.Name)
 +	}
++
++	return nil
 +}
 ```
 
+**File**: `internal/webhook/handlers/tcp_reserved_container_names_test.go` (added, +103/-0)
+```diff
+@@ -0,0 +1,103 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package handlers_test
++
++import (
++	"context"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/webhook/handlers"
++)
++
++var _ = Describe("TCP reserved container names Validation Webhook", func() {
++	var (
++		ctx     context.Context
++		handler handlers.TenantControlPlaneReservedContainerNames
++		tcp     *kamajiv1alpha1.TenantControlPlane
++	)
++
++	BeforeEach(func() {
++		ctx = context.Background()
++
++		handler = handlers.TenantControlPlaneReservedContainerNames{}
++
++		tcp = &kamajiv1alpha1.TenantControlPlane{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "test-tcp",
++				Namespace: "default",
++			},
++		}
++	})
++
++	Context("on creation", func() {
++		It("should allow additional containers with non-reserved names", func() {
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{Name: "sidecar"}}
++			tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers = []corev1.Container{{Name: "init-sidecar"}}
++
++			_, err := handler.OnCreate(tcp)(ctx, admission.Request{})
++			Expect(err).ToNot(HaveOccurred())
++		})
++
++		It("should allow overriding the kine container and the chmod init container", func() {
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{Name: "kine", Image: "ghcr.io/k3s-io/kine:v0.17.6"}}
++			tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers = []corev1.Container{{Name: "chmod", Image: "ghcr.io/k3s-io/kine:v0.17.6"}}
++
++			_, err := handler.OnCreate(tcp)(ctx, admission.Request{})
++			Expect(err).ToNot(HaveOccurred())
++		})
++
++		DescribeTable("should deny an additional container with a reserved name",
++			func(name string) {
++				tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{Name: "sidecar"}, {Name: name}}
++
++				_, err := handler.OnCreate(tcp)(ctx, admission.Request{})
++				Expect(err).To(MatchError(ContainSubstring(`spec.controlPlane.deployment.additionalContainers[1].name: "` + name + `" is reserved`)))
++			},
++			Entry("kube-apiserver", "kube-apiserver"),
++			Entry("kube-controller-manager", "kube-controller-manager"),
++			Entry("kube-scheduler", "kube-scheduler"),
++			Entry("konnectivity-server", "konnectivity-server"),
++			Entry("chmod, the kine init container", "chmod"),
++		)
++
++		DescribeTable("should deny an additional init container with a reserved name",
++			func(name string) {
++				tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers = []corev1.Container{{Name: name}}
++
++				_, err := handler.OnCreate(tcp)(ctx, admission.Request{})
++				Expect(err).To(MatchError(ContainSubstring(`spec.controlPlane.deployment.additionalInitContainers[0].name: "` + name + `" is reserved`)))
++			},
++			Entry("kube-apiserver", "kube-apiserver"),
++			Entry("kube-controller-manager", "kube-controller-manager"),
++			Entry("kube-scheduler", "kube-scheduler"),
++			Entry("konnectivity-server", "konnectivity-server"),
++			Entry("kine", "kine"),
++		)
++	})
++
++	Context("on update", func() {
++		It("should deny introducing a reserved name", func() {
++			oldTCP := tcp.DeepCopy()
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{Name: "kube-apiserver", Image: "mocked"}}
++
++			_, err := handler.OnUpdate(tcp, oldTCP)(ctx, admission.Request{})
++			Expect(err).To(MatchError(ContainSubstring(`"kube-apiserver" is reserved`)))
++		})
++
++		It("should allow updates to a TenantControlPlane already declaring a reserved name", func() {
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{{Name: "kube-apiserver", Image: "mocked"}}
++			oldTCP := tcp.DeepCopy()
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = append(tcp.Spec.ControlPlane.Deployment.AdditionalContainers, corev1.Container{Name: "sidecar"})
++
++			_, err := handler.OnUpdate(tcp, oldTCP)(ctx, admission.Request{})
++			Expect(err).ToNot(HaveOccurred())
++		})
++	})
++})
+```
+
+---
+
+### Incident Patch 2: `9a59feab` (2026-11-27)
+**Commit Message**: fix(deployment): dedupe additional containers (#1440)
+
+* fix(deployment): dedupe additional containers
+
+Co-authored-by: Tristan Smagghe <[REDACTED_EMAIL]>
+
+* fix(deployment): carry over only managed containers
+
+Replace the carry-over boundary heuristic with a selection by name: only
+the Kamaji-built containers are carried over from the existing Deployment,
+the user-space ones being rebuilt from the spec at every reconcile. This
+makes the result independent from the position of the user-space
+containers, so entries declared after a kube-apiserver override no longer
+survive their removal from the spec, and the declared init container order
+is preserved.
+
+Only kine can be replaced by an additional container: other managed
+containers, such as the Konnectivity server enriched by a separate
+resource, are kept and a same-named duplicate is refused by the webhook.
+
+---------
+
+Co-authored-by: Tristan Smagghe <[REDACTED_EMAIL]>
+
+**File**: `internal/builders/controlplane/deployment.go` (modified, +33/-2)
+```diff
+@@ -56,6 +56,12 @@ const (
+ 	kineInitContainerName     = "chmod"
+ )
+ 
++// managedContainerNames are the containers built by Kamaji, including the Konnectivity server
++// which is enriched by a separate resource.
++var managedContainerNames = []string{
++	apiServerContainerName, controlPlaneContainerName, schedulerContainerName, kineContainerName, konnectivityServerName,
++}
++
+ func applyProbeOverrides(probe *corev1.Probe, spec *kamajiv1alpha1.ProbeSpec) {
+ 	if probe == nil || spec == nil {
+ 		return
+@@ -173,7 +179,15 @@ func (d Deployment) setInitContainers(podSpec *corev1.PodSpec, tcp kamajiv1alpha
+ 
+ 	found, index := utilities.HasNamedContainer(podSpec.InitContainers, kineInitContainerName)
+ 	if found {
+-		initContainers = append(initContainers, podSpec.InitContainers[index:]...)
++		for _, c := range podSpec.InitContainers[index:] {
++			// Same rule as setAdditionalContainers: an additional init container named chmod
++			// replaces the managed one, the others are rebuilt from the spec.
++			if userFound, _ := utilities.HasNamedContainer(initContainers, c.Name); c.Name != kineInitContainerName || userFound {
++				continue
++			}
++
++			initContainers = append(initContainers, c)
++		}
+ 	}
+ 
+ 	podSpec.InitContainers = initContainers
+@@ -186,7 +200,24 @@ func (d Deployment) setAdditionalContainers(podSpec *corev1.PodSpec, tcp kamajiv
+ 
+ 	found, index := utilities.HasNamedContainer(podSpec.Containers, apiServerContainerName)
+ 	if found {
+-		containers = append(containers, podSpec.Containers[index:]...)
++		for _, c := range podSpec.Containers[index:] {
++			// Only the Kamaji-built containers are carried over: the user-space ones are rebuilt
++			// from the spec, whatever their position, so they vanish once removed from it.
++			if !slices.Contains(managedContainerNames, c.Name) {
++				continue
++			}
++			// An additional container can only replace the kine container: buildKine rebuilds it
++			// within the same Build and preserves the user-provided image (see #1254). Any other
++			// managed container is kept, and a same-named additional container results in a duplicate
++			// the validating webhook refuses: this protects containers enriched by separate
++			// resources, such as the Konnectivity server, from being persisted before their own
++			// reconciliation runs.
++			if userFound, _ := utilities.HasNamedContainer(containers, c.Name); c.Name == kineContainerName && userFound {
++				continue
++			}
++
++			containers = append(containers, c)
++		}
+ 	}
+ 
+ 	podSpec.Containers = containers
+```
+
+**File**: `internal/builders/controlplane/deployment_additional_containers_test.go` (added, +217/-0)
+```diff
+@@ -0,0 +1,217 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package controlplane
++
++import (
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++)
++
++var _ = Describe("Controlplane Deployment additional containers", func() {
++	var d Deployment
++
++	BeforeEach(func() {
++		d = Deployment{}
++	})
++
++	// helper: find a container by name in a built PodSpec
++	containerByName := func(spec *corev1.PodSpec, name string) corev1.Container {
++		for _, c := range spec.Containers {
++			if c.Name == name {
++				return c
++			}
++		}
++		Fail("container not found: " + name)
++
++		return corev1.Container{}
++	}
++
++	Describe("setAdditionalContainers", func() {
++		existingPodSpec := func() *corev1.PodSpec {
++			return &corev1.PodSpec{
++				Containers: []corev1.Container{
++					{Name: "kube-apiserver", Image: "kamaji:latest"},
++					{Name: "kube-controller-manager", Image: "kamaji:latest"},
++					{Name: "kube-scheduler", Image: "kamaji:latest"},
++					{Name: "kine", Image: "rancher/kine:v0.13.9"},
++					{Name: "konnectivity-server", Image: "registry.k8s.io/kas-network-proxy/proxy-server:v0.0.37"},
++				},
++			}
++		}
++
++		It("drops the Kamaji-built container already provided as additional container", func() {
++			podSpec := existingPodSpec()
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "kine", Image: "ghcr.io/k3s-io/kine:v0.17.6"},
++			}
++
++			d.setAdditionalContainers(podSpec, tcp)
++
++			Expect(podSpec.Containers).To(HaveLen(5))
++			Expect(containerByName(podSpec, "kine").Image).To(Equal("ghcr.io/k3s-io/kine:v0.17.6"))
++			Expect(containerByName(podSpec, "kube-apiserver").Image).To(Equal("kamaji:latest"))
++			Expect(containerByName(podSpec, "konnectivity-server").Image).To(Equal("registry.k8s.io/kas-network-proxy/proxy-server:v0.0.37"))
++		})
++
++		It("keeps every existing container when no additional container collides", func() {
++			podSpec := existingPodSpec()
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "sidecar", Image: "busybox:1.36"},
++			}
++
++			d.setAdditionalContainers(podSpec, tcp)
++
++			Expect(podSpec.Containers).To(HaveLen(6))
++			Expect(containerByName(podSpec, "kine").Image).To(Equal("rancher/kine:v0.13.9"))
++			Expect(containerByName(podSpec, "sidecar").Image).To(Equal("busybox:1.36"))
++		})
++
++		It("does not replace the Konnectivity server, which a separate resource enriches", func() {
++			podSpec := existingPodSpec()
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "konnectivity-server", Image: "custom-proxy-server:latest"},
++			}
++
++			d.setAdditionalContainers(podSpec, tcp)
++
++			// The Konnectivity server is enriched by its own resource in a separate
++			// write: replacing it here would persist a bare container, so the managed
++			// one is kept and the resulting duplicate is left to the validating
++			// webhook to refuse.
++			declared := 0
++			for _, c := range podSpec.Containers {
++				if c.Name == "konnectivity-server" {
++					declared++
++				}
++			}
++			Expect(podSpec.Containers).To(HaveLen(6))
++			Expect(declared).To(Equal(2))
++		})
++
++		It("keeps the managed kube-apiserver when the user declares an additional one", func() {
++			podSpec := existingPodSpec()
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "kube-apiserver", Image: "mocked"},
++			}
++
++			d.setAdditionalContainers(podSpec, tcp)
++
++			// Only kine can be replaced: the carried-over kube-apiserver stays, and the
++			// resulting duplicate is refused by the validating webhook, as the e2e
++			// tcp_additional_resources_blocked_test.go expects.
++			declared := 0
++			for _, c := range podSpec.Containers {
++				if c.Name == "kube-apiserver" {
++					declared++
++				}
++			}
++			Expect(podSpec.Containers).To(HaveLen(6))
++			Expect(declared).To(Equal(2))
++		})
++
++		It("drops user containers declared after a kube-apiserver override once removed from the spec", func() {
++			// On creation, a kube-apiserver override is enriched in place by the builder:
++			// only the Kamaji-built containers are carried over, whatever the position of the
++			// user-space ones, so the sidecar must not survive its removal from the spec.
++			podSpec := &corev1.PodSpec{}
++			tcp := kamajiv1alpha1.TenantControlPlane{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "kube-apiserver", Image: "custom-apiserver:latest"},
++				{Name: "sidecar", Image: "busybox:1.36"},
++			}
++
++			d.setAdditionalContainers(podSpec, tcp)
++
++			names := make([]string, 0, len(podSpec.Containers))
++			for _, c := range podSpec.Containers {
++				names = append(names, c.N
+```
+
 #### Recent Merged Pull Requests:
+- **PR #1441** (2026-11-27): fix(webhook): reject reserved container names on creation (@prometherion)
+- **PR #1440** (2026-11-27): fix(deployment): dedupe additional containers (@Zerka30)
 - **PR #1439** (closed): Add CODEOWNERS for the Voltage Park repo (@robTheBuildr)
 - **PR #1438** (2026-11-24): fix(kubeadm): write RBAC phase kubeconfigs as 0600 (@forq999)
 - **PR #1437** (2026-11-25): fix(kubeadm): remove RBAC phase temp directory (@forq999)
 - **PR #1434** (2026-11-24): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
-- **PR #1433** (2026-11-24): fix(api): default networkProfile so its port default applies (@lachgar-Azzeddine)
-- **PR #1432** (2026-11-24): docs(guides): run tenant control planes under the restricted pod security standard (@lachgar-Azzeddine)
 
 ---
 
@@ -934,31 +1349,31 @@ Co-authored-by: 박범균 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. kubeadm): remove RBAC phase temp directory
+## X. webhook): reject reserved container names on creation
 
 **RULE**:
-When implementing operations in `internal/resources/kubeadm_phases.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/manager/cmd.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a53df4a`: kubeadm): remove RBAC phase temp directory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27a50820`: webhook): reject reserved container names on creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/kubeadm_phases.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/manager/cmd.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			defer func() { _ = os.RemoveAll(tmp) }()
+					handlers.TenantControlPlaneReservedContainerNames{},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			defer func() { _ = os.Remove(tmp) }()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a53df4a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27a50820` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

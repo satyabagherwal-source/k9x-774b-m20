@@ -14001,3 +14001,6 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `280caf35` | Multi-dimensional audit evidence | 2026-11-28T04:12:26.721Z |
 | `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `3db5970f` | Multi-dimensional audit evidence | 2026-11-28T04:21:03.459Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `5260361d` | Multi-dimensional audit evidence | 2026-11-28T04:21:13.813Z |
+| `learn-github-encode-httpx` | `https://github.com/encode/httpx` | `e347fb5e` | Multi-dimensional audit evidence | 2026-11-28T04:29:56.343Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `67040db0` | Multi-dimensional audit evidence | 2026-11-28T04:29:59.608Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `27a50820` | Multi-dimensional audit evidence | 2026-11-28T04:30:01.818Z |

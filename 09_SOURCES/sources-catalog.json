@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "7a53df4a",
+    "sourceVersion": "27a50820",
     "license": "Apache-2.0",
-    "contentHash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
-    "lastHarvestedAt": "2026-11-26T00:09:28.202Z",
+    "contentHash": "2594db83aacedb87e552960e8d1d6d598f522a7687ade3e9020e386062261f7b",
+    "lastHarvestedAt": "2026-11-28T04:30:01.818Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "8c1ff472",
+    "sourceVersion": "67040db0",
     "license": "MIT",
-    "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
-    "lastHarvestedAt": "2026-11-26T02:38:17.461Z",
+    "contentHash": "e6d496ff7c4abb92682f42316a21ad0abb04fc38d5c37ed4308c316ecacdc27b",
+    "lastHarvestedAt": "2026-11-28T04:29:59.608Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {
@@ -9653,10 +9653,10 @@
     "repository": "encode/httpx",
     "platform": "github",
     "sourceUrl": "https://github.com/encode/httpx",
-    "sourceVersion": "7cff5f79",
+    "sourceVersion": "e347fb5e",
     "license": "BSD-3-Clause",
-    "contentHash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
-    "lastHarvestedAt": "2026-11-16T23:22:24.903Z",
+    "contentHash": "30e623b5f083edbed693e592f6d9b764d582c27fdad7b9fd0f16f86a63751e47",
+    "lastHarvestedAt": "2026-11-28T04:29:56.343Z",
     "learningId": "learn-github-encode-httpx"
   },
   "elai950-alerttoast": {

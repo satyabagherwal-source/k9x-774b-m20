@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T04:21:13.819Z",
-  "total_cycles_completed": 13255,
-  "total_learnings_persisted": 13255,
-  "total_rules_promoted": 11953,
+  "last_updated": "2026-11-28T04:30:01.824Z",
+  "total_cycles_completed": 13258,
+  "total_learnings_persisted": 13258,
+  "total_rules_promoted": 11956,
   "history": [
-    {
-      "timestamp": "2026-11-27T10:16:50.584Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:25:51.813Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T10:25:53.483Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T10:34:17.806Z",
       "repository": "oven-sh/bun",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T04:21:13.819Z",
       "repository": "apache/pinot",
       "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:29:56.350Z",
+      "repository": "encode/httpx",
+      "learningId": "learn-github-encode-httpx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:29:59.614Z",
+      "repository": "RevenueCat/purchases-ios",
+      "learningId": "learn-github-revenuecat-purchases-ios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T04:30:01.824Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T04:21:13.822Z",
+  "last_updated": "2026-11-28T04:30:01.828Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "1299bfdf8044c91e9bf5596d7559a0577a3388749f14354cb63743f962ee103d",
-      "verified_at": "2026-11-26T00:09:28.224Z",
+      "content_hash": "2594db83aacedb87e552960e8d1d6d598f522a7687ade3e9020e386062261f7b",
+      "verified_at": "2026-11-28T04:30:01.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:09:28.224Z"
+      "last_updated": "2026-11-28T04:30:01.827Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -13866,14 +13866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-revenuecat-purchases-ios",
-      "content_hash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
-      "verified_at": "2026-11-26T02:38:17.483Z",
+      "content_hash": "e6d496ff7c4abb92682f42316a21ad0abb04fc38d5c37ed4308c316ecacdc27b",
+      "verified_at": "2026-11-28T04:29:59.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T02:38:17.483Z"
+      "last_updated": "2026-11-28T04:29:59.617Z"
     },
     "reflection/Beam-1.0-501B-A23B": {
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -14526,14 +14526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encode-httpx",
-      "content_hash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
-      "verified_at": "2026-11-16T23:22:24.921Z",
+      "content_hash": "30e623b5f083edbed693e592f6d9b764d582c27fdad7b9fd0f16f86a63751e47",
+      "verified_at": "2026-11-28T04:29:56.353Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:22:24.921Z"
+      "last_updated": "2026-11-28T04:29:56.353Z"
     },
     "elai950/AlertToast": {
       "repository": "elai950/AlertToast",
