@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T02:03:38.764Z",
+  "last_updated": "2026-11-28T02:13:28.141Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
-      "verified_at": "2026-11-27T06:55:06.390Z",
+      "content_hash": "8af96167231c1385c16fc569725e94ebece4199f3339f6580631f45bfeacfcd8",
+      "verified_at": "2026-11-28T02:13:28.140Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T06:55:06.390Z"
+      "last_updated": "2026-11-28T02:13:28.140Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",
@@ -9111,14 +9111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nezhahq-nezha",
-      "content_hash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
-      "verified_at": "2026-11-22T04:29:03.659Z",
+      "content_hash": "119eaf39da7e5cd9e560086cff5a4defe3b6510304f12b816d406c49c74aa9c7",
+      "verified_at": "2026-11-28T02:13:16.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:29:03.659Z"
+      "last_updated": "2026-11-28T02:13:16.031Z"
     },
     "tiajinsha/JKVideo": {
       "repository": "tiajinsha/JKVideo",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
-      "verified_at": "2026-11-27T10:34:23.903Z",
+      "content_hash": "214cd4b63e2b24fc810854bbdd4980306a298141582706d7f0e693fa23f3c331",
+      "verified_at": "2026-11-28T02:13:23.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T10:34:23.903Z"
+      "last_updated": "2026-11-28T02:13:23.488Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",
@@ -20181,14 +20181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-ernie-5-5-flash-preview",
-      "content_hash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
-      "verified_at": "2026-11-24T17:42:31.331Z",
+      "content_hash": "4b1bb68e82c342dbcd3ec49d1d2866e25cf6d08e39bdd740fcc20a50282d694b",
+      "verified_at": "2026-11-28T02:13:12.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:42:31.331Z"
+      "last_updated": "2026-11-28T02:13:12.554Z"
     },
     "AtomicChat/Inkling-2-Mini-GGUF": {
       "repository": "AtomicChat/Inkling-2-Mini-GGUF",

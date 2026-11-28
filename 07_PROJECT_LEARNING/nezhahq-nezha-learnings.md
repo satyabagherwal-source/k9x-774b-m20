@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `22f2184e`  
+> **Source Version**: `13366231`  
 > **License**: WTFPL  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T04:29:02.656Z  
+> **Timestamp**: 2026-11-28T02:13:14.449Z  
 > **Learning ID**: `learn-github-nezhahq-nezha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:29:02.651Z  
+> **Harvest Timestamp**: 2026-11-28T02:13:14.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10425 stars
+- **Stars / Engagement**: 10437 stars
 
 ---
 
@@ -958,17 +958,14 @@ func (w *GinCustomWriter) WriteHeader(code int) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1252** (2026-11-27): **feat(backup): encrypted dashboard backups to S3-compatible storage, with restore / 面板加密备份到 S3 兼容存储，并支持恢复**
+  *Symptoms*: 关联 PR：管理后台 nezhahq/admin-frontend#222，文档 nezhahq/nezhahq.github.io#176。  ## 功能 面板内置备份与恢复： - **备份**：管理员可以在后台手动或定时备份面板数据。备份在面板运行时直接生成，不需要停服务；生成后加密并上传到 S3 兼容存储（AWS S3、Cloudflare R2、MinIO 等），也可以在后台下载。 - **恢复**：可以选择存储中的备份，也可以上传 `.nzbak` 文件；全新的面板在未配置备份时也能通过上传恢复。恢复前自动生成一份“恢复前备份”，启动失败时自动回滚。  备份只覆盖面板本身（数据库和 `config.yaml`），不包括 TSDB 和部署相关的文件（compose、反向代理配置等）。  ## 阅读顺序 PR 较大（约 4 成是测试），建议按以下顺序阅读： 1. **文件格式与加密**：`pkg/backup/format.go`、`keys.go`、`archive.go`。 2. **备份**：`pkg/backup/manager.go`（配置、密码、备份、保留份数清理、列表）、`settings.go`、`storage*.go`、`s3store/`。 3. **恢复**：`pkg/backup/restore.go`（预检、执行）、`boot.go`（启动时换入与回滚）。 4. **接入**：`cmd/dashboard/controller/backup.go`（接口、重新验证身份、错误翻译）、`cmd/dashboard/main.go` 与 `restore_startup.go`（启动顺序）、`service/singleton/backup.go`。  ## 设计 - **一致性快照**：运行中用 `VACUUM INTO` 生成 SQLite 快照并做 `integrity_check`，与 `config.yaml` 一起打包为 tar.gz。 - **加密**：设置备份密码时生成一对 X25519 密钥（age）。私钥用备份密码经 scrypt（`logN=18`）封装后保存，服务端只用公钥加密，所以定时备份不需要密码。恢复密钥（原始私钥）只展示一次，可以代替密码。忘记密码又没有恢复密钥时，备份无法恢复。 - **文件格式 `.nzbak`**：`NZBAK1\n` + 明文 header（名称、时间、触发方式、版本、密钥指纹、被封装的私钥）+ age 密文（manifest、数据库、配置）。manifest 重复 header 的字段，并带 HMAC 用于校验来源。 - **存储**：抽象为 `Storage` 接口，首个实现是 S3 兼容存储（minio-go）。本地只在数据目录下临时生成，上传后删除，Docker 部署不需要新增挂载。endpoint 只接受 https。 - **定时与保留**：6 段 cron（与计划任务相同）；保留份数只清理定时备份。下载由面板代理，不使用预签名 URL。 - **设置**：保存在数据目录下单独的 `backup.yaml`（权限 0600，带格式版本），不写入 `config.yaml`，也不随备份恢复。S3 字段可以用 `NZ_BACKUP_S3_*` 环境变量覆盖。 - **恢复流程**：   1. **预检**：按“名称 + sha256”绑定选中的备份，解密并校验 manifest、来源、版本、数据库完整性，以及是否有管理员账号，然后暂存。返回的一次性 tok
+
 - **Issue #1245** (2026-10-24): **perf(dashboard): 压缩并缓存静态资源，为轮询接口增加 ETag**
   *Symptoms*: ## 背景  dashboard 之前以未压缩方式提供静态资源，且没有任何缓存策略，导致每次页面跳转都要重新下载并校验完整资源包。两个前端界面还会定时轮询 `/api/v1/service` 和 `/api/v1/server`，每次轮询都返回完整快照，且不支持条件请求。  ## 改动  - 对静态资源按 `Accept-Encoding` 协商提供 brotli/gzip，编码结果按文件 mtime 缓存（`cmd/dashboard/controller/static_compress.go`）。 - 对带哈希的 `/assets/` 返回 `Cache-Control: immutable`，其余返回 `ETag` + `no-cache`，重复加载变为 304。 - 不再记录静态资源请求日志。 - 用按 viewer 加锁的 singleflight 合并并发的 `/api/v1/server` 快照（`cmd/dashboard/controller/controller.go`）。 - 为 `/api/v1/service` 与 `/api/v1/server` 增加 `ETag`/304 支持。 - 新增 `script/build-frontends.sh`，用于可复现的 dist 构建。  ## 说明  - `go.mod` 新增依赖 `github.com/andybalholm/brotli`。  ## 测试  `go test ./cmd/dashboard/controller/...` 覆盖编码协商以及 ETag / singleflight 路径（`static_compress_test.go`、`api_etag_test.go`）。
   **Post-Mortem & Fix Analysis**:
   > ### Code review  发现 4 个需要在合并前修复的问题：  1. **[P1] singleflight 共享的服务器切片会被权限过滤原地修改。** 合并的请求获得同一底层数组，随后 `filter` 使用 `slices.DeleteFunc` 删除无权限项并清零尾部。同一普通用户或受限 PAT 的并发请求仍持有原长度，可能对尾部 `nil` 调用 `HasPermission`，导致 panic/500；过滤与序列化之间也可能发生数据竞争。建议请求级克隆切片，或将完整的过滤与响应生成放入正确隔离、不可变的共享结果中，并增加真实并发响应测试。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/server.go#L38-L54  2. **[P2] 压缩缓存没有按本地文件版本失效。** 缓存键只有模板根、来源、路径和编码，`modTime` 没有参与。运行期间更新同路径的 `index.html` 后，gzip/br 请求仍可能命中旧正文，响应 ETag 却来自新文件元数据。应将文件版本纳入缓存键，并测试同一路径内容更新后返回新正文。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go#L150-L168  3. **[P2] 嵌入资源等长更新会复用旧 ETag。** 当前验证器只依赖文件名、长度和 mtime，而 `embed.FS` 的 mtime 为零。两次发布仅替换等长 chunk 哈希时，首页 ETag 不变，客户端可能收到错误的 304，继续使用引用旧资源的 HTML。建议采用内容摘要或构建版本，并覆盖同名、同长度、内容不同的升级场景。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go#L177
   > 转向自建二开版本，本 PR 不再提交上游。
-
-- **Issue #1243** (2026-10-16): **feat(server): online session history with configurable stats window (7-3650 days)**
-  *Symptoms*: ## 功能  为每台服务器记录**在线/离线会话历史**,并提供可配置窗口的查询 API,供前端展示在线率、每日在线时段与精确到秒的在线明细:  - agent 每次状态流建立/断开即产生会话(`ReportSystemState` attach/clear),≥30s 节流落盘 `last_active_at` 用于崩溃恢复,dashboard 重启后从 `online_sessions` 表恢复进行中会话,时间线不断裂; - 游客限制与 `getServerMetrics` 语义一致:超过 1 天返回 `unauthorized: only 1d data available for guests`(报错而非 clamp); - 管理员可配置统计窗口 `online_stats_days`(7~3650,默认 7),经 `PATCH /api/v1/setting` 修改,响应中 `max_days` 下发给前端控制可选档位。  ## API  `GET /api/v1/server/{id}/online-history?days={n}`  返回 `window_start/window_end`、`online_rate`、`total_online_seconds`、`currently_online`、`last_active`、逐日聚合 `daily[]`、会话明细 `periods[]`(UTC RFC3339)以及面板时区 `timezone`/`tz_offset`(前端按面板时区拆日渲染)。  ## 持久化与内存数据清单  **持久化(SQLite,经 gorm):** 1. 新表 `online_sessions`:`id`、`created_at`、`updated_at`(内联,对齐 ServiceHistory 先例)、`server_id`、`started_at`、`ended_at`(进行中为零值)、`last_active_at`(≥30s 节流,崩溃恢复用)、`ongoing`;复合索引 `idx_online_sessions_server_started(server_id, started_at)`。保留策略:每日 04:30 分批(1 万行/批)修剪至 `online_stats_days` 窗口,并清理已删服务器的孤儿行。 2. `config.yaml`:`online_stats_days`(dashboard 段,默认 7,合法 7~3650;本 PR 修复后为显式落盘,不再依赖 MCP 过渡块的保存副作用)。  **内存(进程内,不落盘):** 1. `OnlineHistoryRecorder.open map[uint64]*onlineSessionRuntime`(键=服务器 ID,值=会话行 ID + lastPersist 时间戳,`sync.Mutex` 保护;体量与当前在线服务器数线性;启动时由构造器从表恢复)。 2. 上游既有 `Server.LastActive`(`gorm:"-"`):`currently_online` = 距今 ≤30s。 3. 聚合查询按请求实时读表计算,无额外缓存,不依赖 TSDB。  ## 自查与修复(10 项审查发现 + 3 项过程中新发现)  审查报告(含 8 场景压测)发现的问题已全部处理,详见仓库外审查文档;摘要:  - **F1** `DailyOnlineBreakdown` O(时段×天数) → `sort.Search` 
-  **Post-Mortem & Fix Analysis**:
-  > 不要内嵌 html，接到前台或后台前端里，pr描述改成中文，列出持久化或内存数据
-  > ok👌    ---Original--- From: ***@***.***&gt; Date: Wed, Oct 14, 2026 08:47 AM To: ***@***.***&gt;; Cc: ***@***.******@***.***&gt;; Subject: Re: [nezhahq/nezha] feat(server): online session history with configurable stats window (7-3650 days) (PR #1243)   naiba left a comment (nezhahq/nezha#1243)   不要内嵌 html，接到前台或后台前端里，pr描述改成中文，列出持久化或内存数据   — Reply to this email directly, view it on GitHub, or unsubscribe. Triage notifications, keep track of coding agent tasks and review pull requests on the go with GitHub Mobile for iOS and Android. Download it today!  You are receiving this because you authored the thread.Message ID: ***@***.***&gt;
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -985,856 +982,869 @@ func (w *GinCustomWriter) WriteHeader(code int) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9339e68` (2026-11-21)
-**Commit Message**: fix: remove the user deletion deadlock and reject a second connection to a stream
+### Incident Patch 1: `520bc369` (2026-11-27)
+**Commit Message**: security: revoked API tokens still ran requests whose body was held back
 
-Deleting a user cleaned up its servers while holding the user lock, taking
-the alerts lock and the server list lock. The alert check and monitor result
-handling take those first and the user lock second, so the two sides waited
-for each other forever and every Agent login hung with them. The cleanup now
-runs after the user lock is released.
+REST credentials were checked when the request head arrived and the body
+was read later, so a request held open across a password change still
+ran. Read the (size-limited) /api/v1 body before authentication. The MCP
+body-time recheck now also compares the token version, which matters
+once the revocation tombstone has expired.
 
-A second WebSocket opened with the same session ID replaced the first user
-connection and started a second pair of relay goroutines over one buffer; a
-large Agent frame then indexed past the slice and took the dashboard down.
-A stream now accepts one user connection.
+Reported by @joostgrunwald (GHSA-8wph-pwrm-7r32).
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `service/rpc/io_stream_duplicate_user_test.go` (added, +36/-0)
+**File**: `cmd/dashboard/controller/held_body_token_revocation_test.go` (added, +94/-0)
 ```diff
-@@ -0,0 +1,36 @@
-+package rpc
-+
-+import (
-+	"errors"
-+	"testing"
-+)
-+
-+// A second WebSocket opened with the same session ID used to replace the first
-+// connection and start a second pair of relay goroutines over the same buffer.
-+// A large Agent frame then indexed past the slice and took the whole dashboard
-+// process down.
-+func TestUserConnectedRejectsASecondConnectionToTheSameStream(t *testing.T) {
-+	handler := NewNezhaHandler()
-+	const streamID = "11111111-1111-1111-1111-111111111111"
-+	handler.CreateStream(streamID, 100, 0)
-+	first, second := newPipeReadWriter(), newPipeReadWriter()
-+	defer first.Close()
-+	defer second.Close()
-+
-+	if err := handler.UserConnected(streamID, first); err != nil {
-+		t.Fatalf("first connection: %v", err)
-+	}
-+	err := handler.UserConnected(streamID, second)
-+
-+	if !errors.Is(err, ErrUserStreamAlreadyConnected) {
-+		t.Fatalf("second connection err = %v, want ErrUserStreamAlreadyConnected", err)
-+	}
-+	stream, getErr := handler.GetStream(streamID)
-+	if getErr != nil {
-+		t.Fatalf("GetStream: %v", getErr)
-+	}
-+	attached, _ := handler.streamEndpoints(stream)
-+	if attached != first {
-+		t.Fatal("the second connection replaced the first one")
-+	}
-+}
-```
-
-**File**: `service/rpc/io_stream_registry.go` (modified, +10/-0)
-```diff
-@@ -7,6 +7,9 @@ import (
- 
- var ErrAgentStreamAlreadyConnected = errors.New("agent stream already connected")
- 
-+// ErrUserStreamAlreadyConnected is returned when a stream already has its user connection.
-+var ErrUserStreamAlreadyConnected = errors.New("user stream already connected")
-+
- func (s *NezhaHandler) IsStreamAuthorizedForAgent(streamId string, agentServerID uint64) bool {
- 	s.ioStreamMutex.RLock()
- 	defer s.ioStreamMutex.RUnlock()
-@@ -55,6 +58,13 @@ func (s *NezhaHandler) UserConnected(streamId string, userIo io.ReadWriteCloser)
- 		s.ioStreamMutex.Unlock()
- 		return errors.New("stream not found")
- 	}
-+	// 一条流只能附着一个用户连接。覆盖已有连接的话，同一个会话 ID 再连一次就会
-+	// 让 StartStream 再起一对中继协程，两对协程并发读同一个缓冲区，切片越界后
-+	// 整个面板进程退出。
-+	if stream.userIo != nil {
-+		s.ioStreamMutex.Unlock()
-+		return ErrUserStreamAlreadyConnected
-+	}
- 	stream.userIo = userIo
- 	s.ioStreamMutex.Unlock()
- 	stream.userIoChOnce.Do(func() { close(stream.userIoConnectCh) })
-```
-
-**File**: `service/singleton/user.go` (modified, +29/-17)
-```diff
-@@ -100,6 +100,34 @@ func OnUserDelete(id []uint64, errorFunc func(string, ...any) error) error {
- 		}
- 	}()
- 
-+	// 被删用户名下服务器的内存清理同样要等 UserLock 释放之后再做（defer 后进先出，
-+	// 这一段在下面的 UserLock.Unlock 之后执行）。这些清理要拿告警锁和服务器列表锁，
-+	// 而告警检查、监控结果处理是先拿那些锁再读 UserLock：在 UserLock 里面去拿，
-+	// 两边就会互相等待，UserLock 永不释放，所有 agent 认证跟着卡死，只能重启面板。
-+	var deletedServers []uint64
-+	defer func() {
-+		if len(deletedServers) == 0 {
-+			return
-+		}
-+		AlertsLock.Lock()
-+		for _, sid := range deletedServers {
-+			for _, alert := range Alerts {
-+				if AlertsCycleTransferStatsStore[alert.ID] != nil {
-+					delete(AlertsCycleTransferStatsStore[alert.ID].ServerName, sid)
-+					delete(AlertsCycleTransferStatsStore[alert.ID].Transfer, sid)
-+					delete(AlertsCycleTransferStatsStore[alert.ID].NextUpdate, sid)
-+				}
-+			}
-+		}
-+		AlertsLock.Unlock()
-+		// Cancel pending transfers before ServerShared drops the
-+		// in-memory entry: same ordering rationale as batchDeleteServer.
-+		if ServerTransferShared != nil {
-+			ServerTransferShared.OnServersDeleted(deletedServers)
-+		}
-+		ServerShared.Delete(deletedServers)
-+	}()
-+
- 	if len(id) < 1 {
- 		return Localizer.ErrorT("user id not specified")
- 	}
-@@ -169,23 +197,7 @@ func OnUserDelete(id []uint64, errorFunc func(string, ...any) error) error {
- 		}
- 
- 		if server {
--			AlertsLock.Lock()
--			for _, sid := range servers {
--				for _, alert := range Alerts {
--					if AlertsCycleTransferStatsStore[alert.ID] != nil {
--						delete(AlertsCycleTransferStatsStore[alert.ID].ServerName, sid)
--						delete(AlertsCycleTransferStatsStore[alert.ID].Transfer, sid)
--						delete(AlertsCycleTransferStatsStore[alert.ID].NextUpdate, sid)
--					}
--				}
--			}
--			AlertsLock.Unlock()
--			// Cancel pending transfers before ServerShared drops the
--			// in-memory entry: same ordering rationale as batchDeleteServer.
--			if ServerTransferShared != nil {
--				ServerTransferShared.OnServersDeleted(servers)
--			}
--			ServerShared.Delete(servers)
-+			deletedServers = append(deletedServers, servers...)
- 		}
- 
- 		secret := UserInfoMap[uid].AgentSecret
-```
-
-**File**: `service/singleton/user_delete_lock_order_test.go` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+package singleton
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/nezhahq/nezha/model"
-+)
-+
-+// The alert check holds the alerts lock and then reads the user table for every
-+// server; handling a monitor result takes the server list lock first. Deleting
-+// a user took those locks while it still held the user lock, so the two sides
-+// waited for each other forever and every Agent login hung with them.
-+func TestOnUserDeleteDoesNotHoldUserLockWhileWaitingForTheAlertsLock(t *testing.T) {
-+	_, cleanup := setupOnUserDeleteFixture(t)
-+	defer cleanup()
-+	const user = uint64(100)
-+	const serverID = uint64(1)
-+	seedServerForTransfer(t, serverID, user)
-+	require.NoError(t, DB.AutoMigrate(&model.User{}))
-+	require.NoError(t, DB.Create(&model.User{Common: model.Common{ID: user}, Username: "alice", AgentSecret: "alice-secret"}).Error)
-+	UserLock.Lock()
-+	UserInfoMap[user] = model.UserInfo{Role: model.RoleMember, Username: "alice", AgentSecret: "alice-secret"}
-+	UserLock.Unlock()
-+
-+	// An alert check is in flight.
-+	AlertsLock.RLock()
-+	alertCheckFinished := false
-+	defer func() {
-+		if !alertCheckFinished {
-+			AlertsLock.RUnlock()
-+		}
-+	}()
-+	done := make(chan error, 1)
-+	go func() {
-+		done <- OnUserDelete([]uint64{user}, func(string, ...any) error { return nil })
-+	}()
-+
-+	// The check reaches its user lookup once the user is gone from the table.
-+	awaitWhileUnregistering(t, func() bool {
-+		_, known := lookupServerOwner(user)
-+		return !known
-+	}, "the alert check's user lookup is blocked behind the deletion: both sides wait for each other")
-+	select {
-+	case err := <-done:
-+		t.Fatalf("OnUserDelete returned %v while the alert check still held the alerts lock", err)
-+	case <-time.After(50 * time.Millisecond):
-+	}
-+	_, stillListed := ServerShared.Get(serverID)
-+	require.True(t, stillListed, "test setup: the server is removed only after the alert check lets go")
-+
-+	AlertsLock.RUnlock()
-+	alertCheckFinished = true
-+	select {
-+	case err := <-done:
-+		require.NoError(t, err)
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("OnUserDelete did not finish after the alert check released the alerts lock")
-+	}
-+	_, listed := ServerShared.Get(serverID)
-+	require.False(t, listed, "the deleted user's server must be removed from the server list")
-+}
-```
-
----
-
-### Incident Patch 2: `84cd474c` (2026-11-21)
-**Commit Message**: fix: bound task notifications and release the statistics lock on panic
-
-Scheduled task notifications were sent from one goroutine per reported result
-with no limit, each holding the result text for as long as a slow webhook
-takes. A task stream now sends at most four at a time and sends the rest from
-its own receive loop, which slows only the Agent that floods.
-
-The cycle transfer statistics lock was released without defer inside a
-function that recovers panics, so one panic during evaluation left it held
-and hung every later evaluation and the /service endpoint.
-
-The concurrency test now drives the real evaluator and the truncation test
-cuts inside a multi-byte character; both passed before with the guarded code
-removed.
-
-Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
-
-**File**: `service/rpc/nezha.go` (modified, +31/-4)
-```diff
-@@ -54,6 +54,26 @@ func truncateTaskResultText(text string) string {
- 	return text[:keep] + taskResultTruncatedSuffix
- }
- 
-+// maxPendingTaskNotificationsPerStream 是一条 agent 任务流上同时在发的通知数上限。
-+const maxPendingTaskNotificationsPerStream = 4
-+
-+// dispatchTaskNotification 异步发送一条通知，但同一条任务流上最多同时发
-+// cap(pending) 条；名额用完后在调用方（这条流的接收循环）里同步发送。
-+// 结果上报的频率由 agent 决定：不设上限的话，一台 agent 连续上报失败结果就能
-+// 堆出任意多个各持有 64KiB 文本、最长挂 10 分钟的协程。超额时只让这台 agent
-+// 自己的接收循环慢下来，不丢通知，也不影响其他 agent。
-+func dispatchTaskNotification(pending chan struct{}, send func()) {
-+	select {
-+	case pending <- struct{}{}:
-+		go func() {
-+			defer func() { <-pending }()
-+			send()
-+		}()
-+	default:
-+		send()
-+	}
-+}
-+
- type NezhaHandler struct {
- 	Auth                   *authHandler
- 	ioStreams              map[string]*ioStreamContext
-@@ -151,6 +171,7 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
- 	// Returning the handler cancels the real gRPC stream and wakes a blocked Send.
- 	// A single receiver allows the handler to observe send-side failure while Recv waits.
- 	failed := server.TaskStreamFailure(stream)
-+	pendingTaskNotifications := make(chan struct{}, maxPendingTaskNotificationsPerStream)
- 	type taskReception struct {
- 		result *pb.TaskResult
- 		err    error
-@@ -219,12 +240,18 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
- 				// 通知必须异步发：webhook 最长会等 10 分钟，同步发送会把这台 agent 的
- 				// 接收循环卡住，期间它的探测结果和 MCP 调用结果都收不进来。
- 				if cr.PushSuccessful && result.GetSuccessful() {
--					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
--						cr.Name, server.Name, result.GetData()), "", &curServer)
-+					message := fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
-+						cr.Name, server.Name, result.GetData())
-+					dispatchTaskNotification(pendingTaskNotifications, func() {
-+						singleton.NotificationShared.SendNotification(cr.NotificationGroupID, message, "", &curServer)
-+					})
- 				}
- 				if !result.GetSuccessful() {
--					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
--						cr.Name, server.Name, result.GetData()), "", &curServer)
-+					message := fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
-+						cr.Name, server.Name, result.GetData())
-+					dispatchTaskNotification(pendingTaskNotifications, func() {
-+						singleton.NotificationShared.SendNotification(cr.NotificationGroupID, message, "", &curServer)
-+					})
- 				}
- 				singleton.DB.Model(cr).Updates(model.Cron{
- 					LastExecutedAt: time.Now().Add(time.Second * -1 * time.Duration(result.GetDelay())),
-```
-
-**File**: `service/rpc/request_task_result_size_test.go` (modified, +12/-3)
-```diff
-@@ -16,13 +16,22 @@ func TestTruncateTaskResultTextKeepsShortOutputAndCutsOnRuneBoundary(t *testing.
- 		t.Fatal("output at the limit must be kept unchanged")
- 	}
- 
--	// "界" is three bytes; the limit is not a multiple of three once one ASCII
--	// byte is put in front, so a plain byte cut would split a character.
--	oversized := "a" + strings.Repeat("界", maxTaskResultTextBytes)
-+	// "界" is three bytes. With two ASCII bytes in front the limit falls inside a
-+	// character (the limit minus two is not a multiple of three), so a plain byte
-+	// cut would split it. One byte in front would not: the limit minus one is.
-+	const asciiPrefix = "ab"
-+	if (maxTaskResultTextBytes-len(asciiPrefix))%len("界") == 0 {
-+		t.Fatal("test setup: the limit must fall inside a multi-byte character")
-+	}
-+	oversized := asciiPrefix + strings.Repeat("界", maxTaskResultTextBytes)
- 	got := truncateTaskResultText(oversized)
- 	if !utf8.ValidString(got) {
- 		t.Fatal("truncated output is not valid UTF-8")
- 	}
-+	kept := strings.TrimSuffix(got, taskResultTruncatedSuffix)
-+	if len(kept) >= maxTaskResultTextBytes || len(kept) < maxTaskResultTextBytes-len("界") {
-+		t.Fatalf("kept %d bytes, want the last whole character below the %d byte limit", len(kept), maxTaskResultTextBytes)
-+	}
- 	if !strings.HasSuffix(got, taskResultTruncatedSuffix) {
- 		t.Fatal("truncated output does not say it was truncated")
- 	}
-```
-
-**File**: `service/rpc/task_notification_dispatch_test.go` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+package rpc
-+
-+import (
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+)
-+
-+// The Agent decides how often it reports results. Every failed scheduled task
-+// used to start its own notification goroutine, each holding the result text
-+// for as long as a slow webhook takes, with no limit.
-+func TestDispatchTaskNotificationBoundsConcurrentSendsAndThenAppliesBackPressure(t *testing.T) {
-+	pending := make(chan struct{}, maxPendingTaskNotificationsPerStream)
-+	release := make(chan struct{})
-+	var sending, finished atomic.Int32
-+	slowWebhook := func() {
-+		sending.Add(1)
-+		<-release
-+		finished.Add(1)
-+	}
-+
-+	for range maxPendingTaskNotificationsPerStream {
-+		returned := make(chan struct{})
-+		go func() {
-+			dispatchTaskNotification(pending, slowWebhook)
-+			close(returned)
-+		}()
-+		select {
-+		case <-returned:
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("a notification within the limit blocked the receive loop")
-+		}
-+	}
-+
-+	overLimitReturned := make(chan struct{})
-+	go func() {
-+		dispatchTaskNotification(pending, slowWebhook)
-+		close(overLimitReturned)
-+	}()
-+	deadline := time.Now().Add(5 * time.Second)
-+	for sending.Load() != maxPendingTaskNotificationsPerStream+1 {
-+		if time.Now().After(deadline) {
-+			t.Fatalf("%d notifications started, want every one of them to be sent", sending.Load())
-+		}
-+		time.Sleep(time.Millisecond)
-+	}
-+	select {
-+	case <-overLimitReturned:
-+		t.Fatal("a notification over the limit returned while its webhook was still pending: nothing bounds the goroutines")
-+	case <-time.After(50 * time.Millisecond):
-+	}
-+
-+	close(release)
-+	select {
-+	case <-overLimitReturned:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("the over-limit notification never finished")
-+	}
-+	for finished.Load() != maxPendingTaskNotificationsPerStream+1 {
-+		if time.Now().After(deadline) {
-+			t.Fatalf("%d notifications finished, want all %d", finished.Load(), maxPendingTaskNotificationsPerStream+1)
-+		}
-+		time.Sleep(time.Millisecond)
-+	}
-+	// Every slot is free again for the next results.
-+	for len(pending) != 0 {
-+		if time.Now().After(deadline) {
-+			t.Fatalf("%d notification slots still taken after every send finished", len(pending))
-+		}
-+		time.Sleep(time.Millisecond)
-+	}
-+}
-```
-
-**File**: `service/singleton/alertsentinel.go` (modified, +7/-3)
-```diff
-@@ -362,9 +362,13 @@ func checkStatusForServer(alert *model.AlertRule, server *model.Server) {
- 	}
- 	// 评估周期流量规则会改写统计里的 map，而这里和读取方都只持有 AlertsLock 的读锁，
- 	// 必须另外互斥（见 cycleTransferStatsMu）。
--	cycleTransferStatsMu.Lock()
--	point, known := alert.SnapshotStatusWithRuntime(AlertsCycleTransferStatsStore[alert.ID], server, runtime, DB)
--	cycleTransferStatsMu.Unlock()
-+	// 解锁必须用 defer：本函数开头会 recover 评估过程中的 panic，不用 defer 的话
-+	// 一次 panic 就让这把锁永远不释放，之后所有规则评估和 /service 接口全部卡死。
-+	point, known := func() ([]bool, bool) {
-+		cycleTransferStatsMu.Lock()
-+		defer cycleTransferStatsMu.Unlock()
-+		return alert.SnapshotStatusWithRuntime(AlertsCycleTransferStatsStore[alert.ID], server, runtime, DB)
-+	}()
- 	if !known {
- 		alertsStore[alert.ID][server.ID] = nil
- 		return
-```
-
-**File**: `service/singleton/cycle_transfer_stats_concurrency_test.go` (modified, +83/-20)
-```diff
-@@ -8,48 +8,111 @@ import (
- 	"github.com/nezhahq/nezha/model"
- )
- 
-+func cycleTransferRuleFixture(t *testing.T, stats *model.CycleTransferStats) (*model.AlertRule, *model.Server) {
-+	t.Helper()
-+	t.Cleanup(setupTestDB(t))
-+	if err := DB.AutoMigrate(model.Transfer{}); err != nil {
-+		t.Fatalf("migrate transfer table: %v", err)
-+	}
-+	previousStore, previousPrev, previousLast, previousCycle := alertsStore, alertsPrevState, alertsLastMetricSeq, AlertsCycleTransferStatsStore
-+	t.Cleanup(func() {
-+		alertsStore, alertsPrevState, alertsLastMetricSeq, AlertsCycleTransferStatsStore = previousStore, previousPrev, previousLast, previousCycle
-+	})
-+	alertsStore = map[uint64]map[uint64][]model.TimedAlertPoint{1: {1: nil}}
-+	alertsPrevState = map[uint64]map[uint64]uint8{1: {}}
-+	alertsLastMetricSeq = map[uint64]map[uint64]uint64{1: {}}
-+	AlertsCycleTransferStatsStore = map[uint64]*model.CycleTransferStats{1: stats}
-+
-+	cycleStart := time.Now().Add(-time.Hour)
-+	alert := &model.AlertRule{
-+		Common: model.Common{ID: 1},
-+		Rules: []*model.Rule{{
-+			Type: "transfer_all_cycle", Max: 1 << 40, CycleStart: &cycleStart, CycleInterval: 1, CycleUnit: "day", Cover: model.RuleCoverAll,
-+		}},
-+	}
-+	server := &model.Server{Common: model.Common{ID: 1}, Name: "server"}
-+	model.InitServer(server)
-+	return alert, server
-+}
-+
- // The alert evaluator rewrites the per-server maps of a cycle transfer rule
- // while the public /service endpoint reads them. Run with -race: an unguarded
- // read is reported here, and in production it aborts the dashboard process.
-+// The writer is the real evaluator, so removing its lock fails this test.
- func TestCopyCycleTransferStatsIsSafeAgainstTheAlertEvaluator(t *testing.T) {
--	previous := AlertsCycleTransferStatsStore
--	t.Cleanup(func() { AlertsCycleTransferStatsStore = previous })
--	AlertsCycleTransferStatsStore = map[uint64]*model.CycleTransferStats{
--		1: {Name: "monthly", ServerName: map[uint64]string{}, Transfer: map[uint64]uint64{}, NextUpdate: map[uint64]time.Time{}},
--	}
-+	stats := &model.CycleTransferStats{Name: "monthly", ServerName: map[uint64]string{}, Transfer: map[uint64]uint64{}, NextUpdate: map[uint64]time.Time{}}
-+	alert, server := cycleTransferRuleFixture(t, stats)
-+	lease := server.AttachStateStream(alertTestStateStream{})
- 
-+	const rounds = 300
- 	var evaluator sync.WaitGroup
- 	evaluator.Add(1)
- 	go func() {
- 		defer evaluator.Done()
--		for round := uint64(0); round < 2000; round++ {
--			// What checkStatusForServer does while it evaluates a rule.
-+		for round := uint64(1); round <= rounds; round++ {
-+			if !lease.UpdateState(&model.HostState{NetInTransfer: round, NetOutTransfer: round}, time.Now()) {
-+				t.Error("state update rejected")
-+				return
-+			}
-+			// The rule skips evaluation until its next check time; clear it so
-+			// every round writes the statistics.
-+			alert.Rules[0].NextTransferAt = nil
- 			AlertsLock.RLock()
--			cycleTransferStatsMu.Lock()
--			stats := AlertsCycleTransferStatsStore[1]
--			stats.ServerName[round%50] = "server"
--			stats.Transfer[round%50] = round
--			stats.NextUpdate[round%50] = time.Now()
--			cycleTransferStatsMu.Unlock()
-+			checkStatusForServer(alert, server)
- 			AlertsLock.RUnlock()
- 		}
- 	}()
--	for round := 0; round < 2000; round++ {
--		for _, stats := range CopyCycleTransferStats() {
--			for serverID := range stats.Transfer {
--				_ = stats.ServerName[serverID]
-+	for round := 0; round < rounds; round++ {
-+		for _, copied := range CopyCycleTransferStats() {
-+			for serverID := range copied.Transfer {
-+				_ = copied.ServerName[serverID]
- 			}
- 		}
- 	}
- 	evaluator.Wait()
- 
-+	// The first report is the baseline the cycle counts from.
-+	if got, want := stats.Transfer[1], uint64(2*(rounds-1)); got != want {
-+		t.Fatalf("the evaluator recorded %d transferred bytes, want %d: it did not write the statistics every round", got, want)
-+	}
- 	// The copy must not share maps with the store: callers filter it per viewer.
- 	copied := CopyCycleTransferStats()
- 	copied[1].Transfer[999] = 1
--	if _, leaked := AlertsCycleTransferStatsStore[1].Transfer[999]; leaked {
-+	if _, leaked := stats.Transfer[999]; leaked {
- 		t.Fatal("the returned statistics share a map with the store")
- 	}
--	if len(copied[1].Transfer) != 51 || copied[1].Name != "monthly" {
--		t.Fatalf("copy = %d transfer entries, name %q; want the 50 written entries plus the probe and the rule name", len(copied[1].Transfer), copied[1].Name)
-+	if copied[1].Name != "monthly" || copied[1].ServerName[1] != "server" {
-+		t.Fatalf("copy = name %q, server name %q; want the rule name and the evaluated server", copied[1].Name, copied[1].ServerName[1])
-+	}
-+}
-+
-+// checkStatusForServer recovers panics. A panic while it held the statistics
-+// lock used to leave the lock taken for good, hanging every later evaluation
-+// and the public /service endpoint.
-+func TestCycleTransferStatsLockIsReleasedWhenEvaluationPanics(t *testing.T) {
-+	// Statistics without maps make the evaluator panic when it records the result.
-
-```
-
----
-
-### Incident Patch 3: `c2e23ad7` (2026-11-21)
-**Commit Message**: fix: stop DDNS record loss, a /service crash and oversized agent results
-
-DDNS: a server's address is kept in memory only and is empty after a
-dashboard restart or while the agent is offline. Saving the server in
-that window started an update with no address, which the updater treats
-as "delete the record", removing the A and AAAA records of a healthy
-server. An update is no longer started while the address is unknown.
-
-/service: the alert evaluator writes the per-server maps of cycle
-transfer rules while the public /service endpoint reads them, both under
-a read lock. Go aborts the process on a concurrent map read and write.
-The maps now have their own mutex and the endpoint works on a copy.
-
-Agent results: the output of scheduled tasks and service monitors was
-stored and forwarded at whatever size the agent sent, up to megabytes
-per message. It is now cut to 64 KiB. Scheduled-task notifications are
-sent in the background so a slow webhook no longer blocks the agent's
-result stream.
-
-Workflows: release, sync-code and sync-release declare the token
-permissions they need; yq is pinned and checksum-verified, swag is
-pinned to the version CI uses, and the GitLab sync action is pinned 
-
-**File**: `.github/workflows/release.yml` (modified, +16/-2)
-```diff
-@@ -7,6 +7,11 @@ on:
-     branches:
-       - dev
- 
-+# 仓库的默认 workflow 权限是可写。构建会执行第三方主题的下载脚本和大量依赖代码，
-+# 默认只给读权限，发版和推镜像的 job 再各自申请需要的那一项。
-+permissions:
-+  contents: read
-+
- jobs:
-   build:
-     strategy:
-@@ -28,7 +33,10 @@ jobs:
-       - name: Install dependencies
-         run: |
-           apt update && apt install unzip curl -y
--          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-+          # 固定版本并校验摘要：这个二进制随后就在发版构建里执行，
-+          # 不能跟着上游的 latest 走。
-+          wget https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64 -O /usr/bin/yq
-+          echo "129534601871538efe0ba4c5e62a34fb1d5f469bcb975c4fddeb467d82974973  /usr/bin/yq" | sha256sum -c -
-           chmod +x /usr/bin/yq
- 
-       - run: git config --global --add safe.directory /__w/nezha/nezha
-@@ -53,7 +61,7 @@ jobs:
- 
-       - name: generate swagger docs
-         run: |
--          go install github.com/swaggo/swag/cmd/swag@latest
-+          go install github.com/swaggo/swag/cmd/swag@v1.16.6
-           swag init --pd -d cmd/dashboard -g main.go -o cmd/dashboard/docs
-           go mod tidy
- 
-@@ -130,6 +138,9 @@ jobs:
-     if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-     needs: build
-     name: Release
-+    permissions:
-+      contents: write # 创建 release、上传产物
-+      actions: write # 触发镜像站同步 workflow
-     steps:
-       - name: Download artifacts
-         uses: actions/download-artifact@v8
-@@ -177,6 +188,9 @@ jobs:
-     if: github.event_name == 'push'
-     needs: build
-     name: Release Docker images
-+    permissions:
-+      contents: read
-+      packages: write # 推送 GHCR 镜像
-     steps:
-       - uses: actions/checkout@v7.0.1
- 
-```
-
-**File**: `.github/workflows/sync-code-atomgit.yml` (modified, +7/-1)
-```diff
-@@ -4,12 +4,18 @@ on:
-   push:
-     branches: [master]
- 
-+# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
-+permissions:
-+  contents: read
-+
- jobs:
-   sync-code-to-atomgit:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7.0.1
--      - uses: adambirds/sync-github-to-gitlab-action@v1.1.0
-+      # 这个第三方 action 会拿到镜像仓库的 SSH 私钥，固定到提交 SHA，
-+      # tag 被改写时不会跟着执行新代码。
-+      - uses: adambirds/sync-github-to-gitlab-action@654ee4b668b2746fe8367c7c3c254b6575ee1bab # v1.1.0
-         with:
-           destination_repository: git@atomgit.com:naiba/nezha-dashboard.git
-           destination_branch_name: master
-```
-
-**File**: `.github/workflows/sync-code.yml` (modified, +7/-1)
-```diff
-@@ -4,12 +4,18 @@ on:
-   push:
-     branches: [master]
- 
-+# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
-+permissions:
-+  contents: read
-+
- jobs:
-   sync-to-jihulab:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v7.0.1
--      - uses: adambirds/sync-github-to-gitlab-action@v1.1.0
-+      # 这个第三方 action 会拿到镜像仓库的 SSH 私钥，固定到提交 SHA，
-+      # tag 被改写时不会跟着执行新代码。
-+      - uses: adambirds/sync-github-to-gitlab-action@654ee4b668b2746fe8367c7c3c254b6575ee1bab # v1.1.0
-         with:
-           destination_repository: git@gitee.com:naibahq/nezha.git
-           destination_branch_name: master
-```
-
-**File**: `.github/workflows/sync-release-atomgit.yml` (modified, +4/-0)
-```diff
-@@ -3,6 +3,10 @@ name: Sync Release to AtomGit
- on:
-   workflow_dispatch:
- 
-+# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
-+permissions:
-+  contents: read
-+
- jobs:
-   sync-release-to-atomgit:
-     runs-on: ubuntu-latest
-```
-
-**File**: `.github/workflows/sync-release.yml` (modified, +4/-0)
-```diff
-@@ -3,6 +3,10 @@ name: Sync Release to Gitee
- on:
-   workflow_dispatch:
-     
-+# 仓库的默认 workflow 权限是可写；同步只需要读代码，显式收紧。
-+permissions:
-+  contents: read
-+
- jobs:
-   sync-release-to-gitee:
-     runs-on: ubuntu-latest
-```
-
-**File**: `cmd/dashboard/controller/nat_update_ownership_test.go` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,94 @@
 +package controller
 +
 +import (
-+	"strconv"
++	"bytes"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"sync"
 +	"testing"
++	"time"
 +
-+	"github.com/gin-gonic/gin"
 +	"github.com/stretchr/testify/require"
++	"gorm.io/gorm"
 +
 +	"github.com/nezhahq/nezha/model"
 +	"github.com/nezhahq/nezha/service/singleton"
 +)
 +
-+// updateNAT checks two owners: the target server and the NAT profile being
-+// edited. Only the first one was covered; with the profile check removed a
-+// member could re-point another member's tunnel at a server of their own and
-+// every test stayed green.
-+func TestUpdateNATRejectsProfileOwnedByAnotherMember(t *testing.T) {
-+	defer setupTenancyTest(t)()
-+	oldConf, oldNAT, oldUsers := singleton.Conf, singleton.NATShared, singleton.UserInfoMap
-+	defer func() { singleton.Conf, singleton.NATShared, singleton.UserInfoMap = oldConf, oldNAT, oldUsers }()
-+	singleton.UserInfoMap = map[uint64]model.UserInfo{10: {Role: model.RoleMember}, 20: {Role: model.RoleMember}}
-+	singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{DashboardHost: "panel.example.invalid"}, NATMemberDomains: []string{"victim.example.invalid"}}}
-+	require.NoError(t, singleton.DB.AutoMigrate(&model.NAT{}))
-+	singleton.NATShared = singleton.NewNATClass()
-+	singleton.ServerShared.InsertForTest(&model.Server{Common: model.Common{ID: 1, UserID: 10}, Name: "victim-server"})
-+	singleton.ServerShared.InsertForTest(&model.Server{Common: model.Common{ID: 2, UserID: 20}, Name: "attacker-server"})
++// heldRequestBody delivers its data only after release is closed, like a
++// client that sends the request head now and the body later.
++type heldRequestBody struct {
++	reader  *bytes.Reader
++	started chan struct{}
++	release chan struct{}
++	once    sync.Once
++}
 +
-+	victimProfileID, err := createNAT(ctxAsMemberWithBody(10, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 1, "host": "203.0.113.7:80", "domain": "victim.example.invalid"}))
-+	require.NoError(t, err)
++func newHeldRequestBody(data []byte) *heldRequestBody {
++	return &heldRequestBody{reader: bytes.NewReader(data), started: make(chan struct{}), release: make(chan struct{})}
++}
 +
-+	hijack := ctxAsMemberWithBody(20, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 2, "host": "203.0.113.9:80", "domain": "victim.example.invalid"})
-+	hijack.Params = gin.Params{{Key: "id", Value: strconv.FormatUint(victimProfileID, 10)}}
-+	_, err = updateNAT(hijack)
++func (b *heldRequestBody) Read(p []byte) (int, error) {
++	b.once.Do(func() { close(b.started) })
++	<-b.release
++	return b.reader.Read(p)
++}
 +
-+	require.Error(t, err, "a member must not edit another member's NAT profile")
-+	var stored model.NAT
-+	require.NoError(t, singleton.DB.First(&stored, victimProfileID).Error)
-+	require.Equal(t, uint64(1), stored.ServerID, "the profile must still point at its owner's server")
-+	require.Equal(t, "203.0.113.7:80", stored.Host)
-+	routed := singleton.NATShared.GetNATConfigByDomain("victim.example.invalid")
-+	require.NotNil(t, routed)
-+	require.Equal(t, uint64(1), routed.ServerID, "live routing must still use the owner's server")
++func (b *heldRequestBody) Close() error { return nil }
 +
-+	// Control: the owner can still edit it.
-+	ownerEdit := ctxAsMemberWithBody(10, map[string]any{"name": "victim-tunnel", "enabled": true, "server_id": 1, "host": "203.0.113.8:80", "domain": "victim.example.invalid"})
-+	ownerEdit.Params = gin.Params{{Key: "id", Value: strconv.FormatUint(victimProfileID, 10)}}
-+	_, err = updateNAT(ownerEdit)
-+	require.NoError(t, err)
++// A password/profile change revokes the user's API tokens. A REST request
++// whose head was authenticated before the change must not run once its body
++// arrives afterwards: the credential has to be checked with the whole
++// request in hand.
++func TestRESTRequestWithHeldBodyFailsAfterTokenRevocation(t *testing.T) {
++	env := newBackupTestEnv(t)
++	require.NoError(t, singleton.DB.AutoMigrate(&model.ServerGroup{}, &model.ServerGroupServer{}))
++
++	body := newHeldRequestBody([]byte(`{"name":"created-by-revoked-token","servers":[]}`))
++	req := httptest.NewRequest(http.MethodPost, "https://example.com/api/v1/server-group", nil)
++	req.Body = body
++	req.ContentLength = -1
++	req.Header.Set("Content-Type", "application/json")
++	req.Header.Set("Authorization", "Bearer "+env.pat)
++	rec := httptest.NewRecorder()
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		env.router.ServeHTTP(rec, req)
++	}()
++
++	select {
++	case <-body.started:
++	case <-done:
++		t.Fatalf("request finished before reading its body: %d %s", rec.Code, rec.Body.String())
++	case <-time.After(5 * time.Second):
++		t.Fatal("the body was never read")
++	}
++	// The owner changes the password while the body is still on its way.
++	require.NoError(t, singleton.DB.Model(&model.User{}).Where("id = ?", 1).
++		Update("token_version", gorm.Expr("token_version + 1")).Error)
++	close(body.release)
++	<-done
++
++	var groups int64
++	require.NoError(t, singleton.DB.Model(&model.ServerGroup{}).Count(&groups).Error)
++	require.Zero(t, groups, "the revoked token still created a server group: %d %s", rec.Code, rec.Body.String())
++	require.Equal(t, http.StatusUnauthorized, rec.Code, rec.Body.String())
++	_, _ = io.Copy(io.Discard, rec.Body)
++}
++
++// The MCP route re-checks the credential when the body arrives; that check
++// must also refuse a token revoked by a password/profile change, after the
++// short-lived revocation tombstone is gone.
++func TestMCPCallRecheckRefusesTokenRevokedByCredentialChange(t *testing.T) {
++	cleanup, uid := setupMCPTest(t)
++	defer cleanup()
++	tok, _ := mkToken(t, uid, []string{model.ScopeNezhaAll}, nil)
++	c, _ := mcpCallCtx(t, tok, uid, map[string]any{})
++	require.NoError(t, revalidateMCPCallCredential(c, tok))
++
++	require.NoError(t, singleton.DB.Model(&model.User{}).Where("id = ?", uid).
++		Update("token_version", gorm.Expr("token_version + 1")).Error)
++	require.ErrorIs(t, revalidateMCPCallCredential(c, tok), errMCPCredentialInvalid)
 +}
 ```
 
-**File**: `cmd/dashboard/controller/service.go` (modified, +1/-5)
+**File**: `cmd/dashboard/controller/mcp.go` (modified, +5/-1)
 ```diff
-@@ -27,13 +27,9 @@ import (
- // @Router /service [get]
- func showService(c *gin.Context) (*model.ServiceResponse, error) {
- 	res, err, _ := requestGroup.Do(serviceResponseCacheKey(c), func() (any, error) {
--		singleton.AlertsLock.RLock()
--		defer singleton.AlertsLock.RUnlock()
- 		stats := filterServiceStatsForViewer(c, singleton.ServiceSentinelShared.CopyStats())
--		var cycleTransferStats map[uint64]model.CycleTransferStats
--		copier.Copy(&cycleTransferStats, singleton.AlertsCycleTransferStatsStore)
- 		return []any{
--			stats, filterCycleTransferStatsForViewer(c, cycleTransferStats),
-+			stats, filterCycleTransferStatsForViewer(c, singleton.CopyCycleTransferStats()),
- 		}, nil
- 	})
- 	if err != nil {
+@@ -451,7 +451,11 @@ func revalidateMCPCallCredential(c *gin.Context, tok *model.APIToken) error {
+ 		return errMCPCredentialInvalid
+ 	}
+ 	var owner model.User
+-	if singleton.DB.Select("id").First(&owner, tok.UserID).Error != nil {
++	// The token version must still match: a password/profile change revokes
++	// the user's tokens, and the revocation tombstone that cancels calls in
++	// flight expires after a few minutes. Without this check a call whose
++	// body was held back past that point still ran with the revoked token.
++	if singleton.DB.Select("id", "token_version").First(&owner, tok.UserID).Error != nil || owner.TokenVersion != current.UserVersion {
+ 		return errMCPCredentialInvalid
+ 	}
+ 	return nil
 ```
 
-**File**: `service/rpc/nezha.go` (modified, +30/-2)
+**File**: `cmd/dashboard/controller/resource_reference_limits.go` (modified, +24/-6)
+```diff
+@@ -1,6 +1,8 @@
+ package controller
+ 
+ import (
++	"bytes"
++	"io"
+ 	"net/http"
+ 
+ 	"github.com/gin-gonic/gin"
+@@ -33,18 +35,34 @@ const (
+ 	maxRulesPerAlertRule = 64
+ )
+ 
+-// restRequestBodyLimitMiddleware 在 handler 解析请求体前装上 MaxBytesReader。
+-// 必须挂在路由组上：gin 的 ShouldBindJSON 会完整读取请求体。
++// restRequestBodyLimitMiddleware limits the request body and reads it
++// completely before the next middlewares run. It must be mounted on the
++// /api/v1 group, ahead of authentication.
++//
++// Reading the body here is what makes authentication see the request as a
++// whole: the credential (PAT or JWT session) used to be checked when the
++// request head arrived, while the handler read the body later. A client
++// could send the head, hold the body back across a password change that
++// revoked its token, and still have the request executed.
+ func restRequestBodyLimitMiddleware(maxBytes int64) gin.HandlerFunc {
+ 	return func(c *gin.Context) {
+ 		if c.Request.Body != nil && c.Request.Body != http.NoBody {
+-			limit := maxBytes
+ 			// The restore upload carries a whole backup file; it streams the
+-			// body to disk with its own limit instead of binding it.
++			// body to disk with its own limit instead of binding it, so it
++			// cannot be buffered here. It only accepts administrators' login
++			// sessions (no API tokens), and applying a restore re-verifies the
++			// administrator.
+ 			if c.Request.Method == http.MethodPost && c.FullPath() == backupUploadPath {
+-				limit = backupUploadBodyLimit()
++				c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, backupUploadBodyLimit())
++				c.Next()
++				return
++			}
++			body, err := io.ReadAll(http.MaxBytesReader(c.Writer, c.Request.Body, maxBytes))
++			if err != nil {
++				c.AbortWithStatusJSON(http.StatusBadRequest, model.CommonResponse[any]{Error: err.Error()})
++				return
+ 			}
+-			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, limit)
++			c.Request.Body = io.NopCloser(bytes.NewReader(body))
+ 		}
+ 		c.Next()
+ 	}
+```
+
+---
+
+### Incident Patch 2: `7ddeef81` (2026-11-27)
+**Commit Message**: security: server ID routes told members which foreign servers exist
+
+Terminal, file manager, server edit and batch delete, NAT, server group
+and API token routes checked existence (and, for terminal and file
+manager, the agent connection) before ownership, so unknown and foreign
+IDs answered differently. Check ownership first and give unknown and
+foreign IDs one response; a server batch delete is now all or nothing.
+
+Reported by @joostgrunwald (GHSA-59m8-2mwm-q7wr).
+
+Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
+
+**File**: `cmd/dashboard/controller/api_token.go` (modified, +4/-2)
+```diff
+@@ -122,10 +122,12 @@ func createAPIToken(c *gin.Context) (*model.APITokenCreateResponse, error) {
+ 			seenSrv[sid] = struct{}{}
+ 			deduped = append(deduped, sid)
+ 			server, _ := singleton.ServerShared.Get(sid)
+-			if server == nil {
++			if server == nil && callerIsAdmin(c) {
+ 				return nil, errors.New("server not found")
+ 			}
+-			if !callerIsAdmin(c) && !server.HasPermission(c) {
++			// For members, unknown and foreign IDs share one response so they
++			// cannot enumerate other users' server IDs through token creation.
++			if server == nil || (!callerIsAdmin(c) && !server.HasPermission(c)) {
+ 				return nil, errors.New("permission denied on server")
+ 			}
+ 		}
+```
+
+**File**: `cmd/dashboard/controller/api_token_test.go` (modified, +3/-1)
+```diff
+@@ -219,7 +219,9 @@ func TestCreateAPIToken_MemberCannotIncludeNonexistentServerID(t *testing.T) {
+ 	})
+ 	_, err := createAPIToken(c)
+ 	require.Error(t, err)
+-	require.Contains(t, err.Error(), "server not found")
++	// Same answer as for a foreign server: members must not learn which
++	// server IDs exist.
++	require.EqualError(t, err, "permission denied on server")
+ }
+ 
+ func TestCreateAPIToken_AdminCanIncludeAnyServerID(t *testing.T) {
+```
+
+**File**: `cmd/dashboard/controller/batch_delete_fresh_rows_test.go` (modified, +18/-7)
+```diff
+@@ -38,28 +38,32 @@ func TestBatchDeleteNeverRemovesOtherUsersFreshRows(t *testing.T) {
+ 		// checkedBySelect: the handler checks ownership with a SELECT, so the
+ 		// victim's row is committed right after that query (the race window).
+ 		checkedBySelect bool
++		// allOrNothing: the handler refuses the whole request when it names a
++		// row the caller cannot delete (servers, so unknown and foreign IDs
++		// look the same); the caller's own row is then deleted on its own.
++		allOrNothing bool
+ 	}{
+ 		{"cron", func(id, owner uint64) any {
+ 			return &model.Cron{Common: model.Common{ID: id, UserID: owner}, Name: "c", Scheduler: "@every 1h"}
+-		}, batchDeleteCron, false},
++		}, batchDeleteCron, false, false},
+ 		{"service", func(id, owner uint64) any {
+ 			return &model.Service{Common: model.Common{ID: id, UserID: owner}, Name: "s", Type: model.TaskTypeHTTPGet}
+-		}, batchDeleteService, false},
++		}, batchDeleteService, false, false},
+ 		{"notification", func(id, owner uint64) any {
+ 			return &model.Notification{Common: model.Common{ID: id, UserID: owner}, Name: "n"}
+-		}, batchDeleteNotification, false},
++		}, batchDeleteNotification, false, false},
+ 		{"nat", func(id, owner uint64) any {
+ 			return &model.NAT{Common: model.Common{ID: id, UserID: owner}, Name: "nat", Domain: "nat-" + strconv.FormatUint(id, 10) + ".example"}
+-		}, batchDeleteNAT, false},
++		}, batchDeleteNAT, false, false},
+ 		{"alert-rule", func(id, owner uint64) any {
+ 			return &model.AlertRule{Common: model.Common{ID: id, UserID: owner}, Name: "a"}
+-		}, batchDeleteAlertRule, true},
++		}, batchDeleteAlertRule, true, false},
+ 		{"server-group", func(id, owner uint64) any {
+ 			return &model.ServerGroup{Common: model.Common{ID: id, UserID: owner}, Name: "g"}
+-		}, batchDeleteServerGroup, true},
++		}, batchDeleteServerGroup, true, false},
+ 		{"server", func(id, owner uint64) any {
+ 			return &model.Server{Common: model.Common{ID: id, UserID: owner}, Name: "srv", UUID: "uuid-" + strconv.FormatUint(id, 10)}
+-		}, batchDeleteServer, false},
++		}, batchDeleteServer, false, true},
+ 	}
+ 	for index, tc := range cases {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -81,6 +85,13 @@ func TestBatchDeleteNeverRemovesOtherUsersFreshRows(t *testing.T) {
+ 			require.NoError(t, singleton.DB.Create(tc.row(ownID, member)).Error)
+ 
+ 			_, err := tc.delete(ctxAsMemberWithBody(member, []uint64{foreignID, ownID}))
++			if tc.allOrNothing {
++				require.EqualError(t, err, "permission denied")
++				var count int64
++				require.NoError(t, singleton.DB.Model(tc.row(0, 0)).Where("id = ?", ownID).Count(&count).Error)
++				require.Equal(t, int64(1), count, "a refused request must not delete anything")
++				_, err = tc.delete(ctxAsMemberWithBody(member, []uint64{ownID}))
++			}
+ 			require.NoError(t, err)
+ 
+ 			var count int64
+```
+
+**File**: `cmd/dashboard/controller/batch_delete_scope.go` (modified, +6/-0)
+```diff
+@@ -1,10 +1,16 @@
+ package controller
+ 
+ import (
++	"errors"
++
+ 	"github.com/gin-gonic/gin"
+ 	"gorm.io/gorm"
+ )
+ 
++// errBatchDeleteForeignServer rolls back a server batch delete that names a
++// server the caller may not delete or that does not exist.
++var errBatchDeleteForeignServer = errors.New("batch delete names a server the caller cannot delete")
++
+ // deletableRowIDs returns the IDs among ids that the caller may delete,
+ // read inside the deleting transaction tx: every existing row for an
+ // administrator, only the caller's own rows for anyone else.
+```
+
+**File**: `cmd/dashboard/controller/fm.go` (modified, +4/-6)
+```diff
+@@ -47,17 +47,15 @@ func createFM(c *gin.Context) (*model.CreateFMResponse, error) {
+ 	}
+ 
+ 	server, _ := singleton.ServerShared.Get(id)
+-	if server == nil {
+-		return nil, singleton.Localizer.ErrorT("server not found or not connected")
++	// Ownership first, as in createTerminal: unknown and foreign IDs share one
++	// response and a foreign agent's connection state stays hidden.
++	if server == nil || !server.HasPermission(c) {
++		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 	if server.GetTaskStream() == nil {
+ 		return nil, singleton.Localizer.ErrorT("server not found or not connected")
+ 	}
+ 
+-	if !server.HasPermission(c) {
+-		return nil, singleton.Localizer.ErrorT("permission denied")
+-	}
+-
+ 	releaseControl, controlErr := beginServerControl(c, server.ID)
+ 	if controlErr != nil {
+ 		return nil, controlErr
+```
+
+**File**: `cmd/dashboard/controller/nat.go` (modified, +8/-4)
+```diff
+@@ -58,8 +58,11 @@ func createNAT(c *gin.Context) (uint64, error) {
+ 		return 0, singleton.Localizer.ErrorT("have invalid server id")
+ 	}
+ 	server, ok := singleton.ServerShared.Get(nf.ServerID)
+-	if !ok {
+-		return 0, singleton.Localizer.ErrorT("have invalid server id")
++	// Ownership before the control lease: its transition error only exists
++	// for real servers, so checking it first told members which foreign
++	// server IDs exist. Unknown and foreign IDs share one response.
++	if !ok || !server.HasPermission(c) {
++		return 0, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 	releaseControl, controlErr := beginServerControl(c, server.ID)
+ 	if controlErr != nil {
+@@ -120,8 +123,9 @@ func updateNAT(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("have invalid server id")
+ 	}
+ 	server, ok := singleton.ServerShared.Get(nf.ServerID)
+-	if !ok {
+-		return nil, singleton.Localizer.ErrorT("have invalid server id")
++	// Ownership before the control lease, as in createNAT.
++	if !ok || !server.HasPermission(c) {
++		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 	releaseControl, controlErr := beginServerControl(c, server.ID)
+ 	if controlErr != nil {
+```
+
+**File**: `cmd/dashboard/controller/server.go` (modified, +16/-6)
+```diff
+@@ -77,11 +77,9 @@ func updateServer(c *gin.Context) (any, error) {
+ 	}
+ 
+ 	var s model.Server
+-	if err := singleton.DB.First(&s, id).Error; err != nil {
+-		return nil, singleton.Localizer.ErrorT("server id %d does not exist", id)
+-	}
+-
+-	if !s.HasPermission(c) || !serverRecordWritable(c, s.ID) {
++	// Unknown and foreign IDs share one response so server IDs cannot be
++	// enumerated across tenants.
++	if err := singleton.DB.First(&s, id).Error; err != nil || !s.HasPermission(c) || !serverRecordWritable(c, s.ID) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 
+@@ -160,9 +158,18 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 	var deleted []uint64
+ 	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
+ 		var err error
+-		if deleted, err = deletableRowIDs(tx, c, &model.Server{}, servers); err != nil || len(deleted) == 0 {
++		if deleted, err = deletableRowIDs(tx, c, &model.Server{}, servers); err != nil {
+ 			return err
+ 		}
++		// All or nothing: an unknown ID is refused like a foreign one (the
++		// registry check above skips both), so the answer does not reveal
++		// which server IDs exist.
++		if len(deleted) != len(slices.Compact(slices.Sorted(slices.Values(servers)))) {
++			return errBatchDeleteForeignServer
++		}
++		if len(deleted) == 0 {
++			return nil
++		}
+ 		if err := tx.Unscoped().Delete(&model.Server{}, "id in (?)", deleted).Error; err != nil {
+ 			return err
+ 		}
+@@ -172,6 +179,9 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 		return nil
+ 	})
+ 
++	if errors.Is(err, errBatchDeleteForeignServer) {
++		return nil, singleton.Localizer.ErrorT("permission denied")
++	}
+ 	if err != nil {
+ 		return nil, newGormError("%v", err)
+ 	}
+```
+
+**File**: `cmd/dashboard/controller/server_group.go` (modified, +27/-16)
+```diff
+@@ -103,6 +103,11 @@ func createServerGroup(c *gin.Context) (uint64, error) {
+ 	}
+ 	sgf.Servers = slices.Compact(sgf.Servers)
+ 
++	if ok, err := serversUsableByCaller(c, sgf.Servers); err != nil {
++		return 0, newGormError("%v", err)
++	} else if !ok {
++		return 0, singleton.Localizer.ErrorT("permission denied")
++	}
+ 	if !singleton.ServerShared.CheckPermission(c, slices.Values(sgf.Servers)) {
+ 		return 0, singleton.Localizer.ErrorT("permission denied")
+ 	}
+@@ -113,14 +118,6 @@ func createServerGroup(c *gin.Context) (uint64, error) {
+ 	sg.Name = sgf.Name
+ 	sg.UserID = uid
+ 
+-	var count int64
+-	if err := singleton.DB.Model(&model.Server{}).Where("id in (?)", sgf.Servers).Count(&count).Error; err != nil {
+-		return 0, newGormError("%v", err)
+-	}
+-	if count != int64(len(sgf.Servers)) {
+-		return 0, singleton.Localizer.ErrorT("have invalid server id")
+-	}
+-
+ 	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
+ 		if err := tx.Create(&sg).Error; err != nil {
+ 			return err
+@@ -171,6 +168,11 @@ func updateServerGroup(c *gin.Context) (any, error) {
+ 	}
+ 	sg.Servers = slices.Compact(sg.Servers)
+ 
++	if ok, err := serversUsableByCaller(c, sg.Servers); err != nil {
++		return nil, newGormError("%v", err)
++	} else if !ok {
++		return nil, singleton.Localizer.ErrorT("permission denied")
++	}
+ 	if !singleton.ServerShared.CheckPermission(c, slices.Values(sg.Servers)) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+@@ -190,14 +192,6 @@ func updateServerGroup(c *gin.Context) (any, error) {
+ 
+ 	sgDB.Name = sg.Name
+ 
+-	var count int64
+-	if err := singleton.DB.Model(&model.Server{}).Where("id in (?)", sg.Servers).Count(&count).Error; err != nil {
+-		return nil, err
+-	}
+-	if count != int64(len(sg.Servers)) {
+-		return nil, singleton.Localizer.ErrorT("have invalid server id")
+-	}
+-
+ 	uid := getUid(c)
+ 
+ 	err = singleton.DB.Transaction(func(tx *gorm.DB) error {
+@@ -281,3 +275,20 @@ func batchDeleteServerGroup(c *gin.Context) (any, error) {
+ 
+ 	return nil, nil
+ }
++
++// serversUsableByCaller reports whether every ID in ids is a server the
++// caller may put into a group: any existing server for an administrator,
++// only their own servers otherwise. Unknown and foreign IDs give the same
++// answer; the registry check skips unknown IDs and the old existence count
++// ran separately, so the two errors told members which server IDs exist.
++func serversUsableByCaller(c *gin.Context, ids []uint64) (bool, error) {
++	query := singleton.DB.Model(&model.Server{}).Where("id in (?)", ids)
++	if !callerIsAdmin(c) {
++		query = query.Where("user_id = ?", getUid(c))
++	}
++	var count int64
++	if err := query.Count(&count).Error; err != nil {
++		return false, err
++	}
++	return count == int64(len(ids)), nil
++}
+```
+
+---
+
+### Incident Patch 3: `a694bc4b` (2026-11-27)
+**Commit Message**: security: batch deletes could remove other users' freshly created rows
+
+The ownership checks of the batch deletes ran on a snapshot (registries
+skip IDs they do not hold yet, a SELECT cannot see later commits), then
+an unscoped DELETE removed every requested ID. Delete, and drop from
+memory, only the rows the caller may remove, read inside the deleting
+transaction.
+
+Reported by @joostgrunwald (GHSA-wx5f-wmgm-ghf4).
+
+Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
+
+**File**: `cmd/dashboard/controller/alertrule.go` (modified, +12/-2)
 ```diff
 @@ -7,6 +7,7 @@ import (
- 	"log"
- 	"sync"
- 	"time"
-+	"unicode/utf8"
  
+ 	"github.com/gin-gonic/gin"
  	"github.com/jinzhu/copier"
- 	"github.com/nezhahq/nezha/pkg/tsdb"
-@@ -34,6 +35,25 @@ const maxConfigReportBytes = 64 * 1024
- // a report, or a failure reason, longer than maxConfigReportBytes.
- var ErrConfigReportTooLarge = errors.New("agent config report too large")
++	"gorm.io/gorm"
  
-+// maxTaskResultTextBytes bounds the Agent-chosen output of scheduled tasks and
-+// service monitors. Both are meant for a human to read in a notification.
-+const maxTaskResultTextBytes = 64 * 1024
-+
-+const taskResultTruncatedSuffix = "\n...(truncated)"
-+
-+// truncateTaskResultText cuts oversized output on a rune boundary so the kept
-+// part stays valid UTF-8 for JSON and the database.
-+func truncateTaskResultText(text string) string {
-+	if len(text) <= maxTaskResultTextBytes {
-+		return text
-+	}
-+	keep := maxTaskResultTextBytes
-+	for keep > 0 && !utf8.RuneStart(text[keep]) {
-+		keep--
-+	}
-+	return text[:keep] + taskResultTruncatedSuffix
-+}
-+
- type NezhaHandler struct {
- 	Auth                   *authHandler
- 	ioStreams              map[string]*ioStreamContext
-@@ -181,6 +201,12 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
- 		if result != nil {
- 			result.Delay = float32(model.FiniteStateValue(float64(result.Delay)))
+ 	"github.com/nezhahq/nezha/model"
+ 	"github.com/nezhahq/nezha/service/singleton"
+@@ -158,11 +159,20 @@ func batchDeleteAlertRule(c *gin.Context) (any, error) {
  		}
-+		// Scheduled-task and service-monitor results end up in notification
-+		// bodies, monitor history and the service API. The agent chooses their
-+		// length, so an agent could push megabytes per message into all three.
-+		if result.GetType() == model.TaskTypeCommand || model.IsServiceSentinelNeeded(result.GetType()) {
-+			result.Data = truncateTaskResultText(result.GetData())
+ 	}
+ 
+-	if err := singleton.DB.Unscoped().Delete(&model.AlertRule{}, "id in (?)", ar).Error; err != nil {
++	// Only the caller's rows: see deletableRowIDs.
++	var deleted []uint64
++	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
++		var err error
++		if deleted, err = deletableRowIDs(tx, c, &model.AlertRule{}, ar); err != nil || len(deleted) == 0 {
++			return err
 +		}
- 		switch result.GetType() {
- 		case model.TaskTypeCommand:
- 			// 处理上报的计划任务
-@@ -190,12 +216,14 @@ func (s *NezhaHandler) RequestTask(stream pb.NezhaService_RequestTaskServer) err
- 				// 保存当前服务器状态信息
- 				var curServer model.Server
- 				copier.Copy(&curServer, server)
-+				// 通知必须异步发：webhook 最长会等 10 分钟，同步发送会把这台 agent 的
-+				// 接收循环卡住，期间它的探测结果和 MCP 调用结果都收不进来。
- 				if cr.PushSuccessful && result.GetSuccessful() {
--					singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
-+					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Successfully"),
- 						cr.Name, server.Name, result.GetData()), "", &curServer)
- 				}
- 				if !result.GetSuccessful() {
--					singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
-+					go singleton.NotificationShared.SendNotification(cr.NotificationGroupID, fmt.Sprintf("[%s] %s, %s\n%s", singleton.Localizer.T("Scheduled Task Executed Failed"),
- 						cr.Name, server.Name, result.GetData()), "", &curServer)
- 				}
- 				singleton.DB.Model(cr).Updates(model.Cron{
++		return tx.Unscoped().Delete(&model.AlertRule{}, "id in (?)", deleted).Error
++	})
++	if err != nil {
+ 		return nil, newGormError("%v", err)
+ 	}
+ 
+-	singleton.OnDeleteAlert(ar)
++	singleton.OnDeleteAlert(deleted)
+ 	return nil, nil
+ }
+ 
+```
+
+**File**: `cmd/dashboard/controller/batch_delete_fresh_rows_test.go` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++package controller
++
++import (
++	"strconv"
++	"sync/atomic"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/require"
++	"gorm.io/gorm"
++
++	"github.com/nezhahq/nezha/model"
++	"github.com/nezhahq/nezha/service/singleton"
++)
++
++// Every create handler commits the row before it registers it in memory,
++// and the SELECT-based checks cannot see a row committed after they ran.
++// Either way the ownership check passes for another user's new row, so the
++// DELETE itself must be limited to rows the caller may remove: a member
++// looping over the next IDs must never remove another user's fresh row.
++func TestBatchDeleteNeverRemovesOtherUsersFreshRows(t *testing.T) {
++	setupCoverPATFixture(t)
++	require.NoError(t, singleton.DB.AutoMigrate(
++		&model.Notification{}, &model.NotificationGroupNotification{}, &model.NAT{},
++		&model.AlertRule{}, &model.ServerGroup{}, &model.ServerGroupServer{}, &model.Transfer{},
++	))
++	originalNAT := singleton.NATShared
++	singleton.NATShared = singleton.NewNATClass()
++	originalTransfer := singleton.ServerTransferShared
++	singleton.ServerTransferShared = singleton.NewServerTransferClass()
++	t.Cleanup(func() { singleton.NATShared, singleton.ServerTransferShared = originalNAT, originalTransfer })
++
++	const victim, member = uint64(1), uint64(100)
++	cases := []struct {
++		name   string
++		row    func(id, owner uint64) any
++		delete func(*gin.Context) (any, error)
++		// checkedBySelect: the handler checks ownership with a SELECT, so the
++		// victim's row is committed right after that query (the race window).
++		checkedBySelect bool
++	}{
++		{"cron", func(id, owner uint64) any {
++			return &model.Cron{Common: model.Common{ID: id, UserID: owner}, Name: "c", Scheduler: "@every 1h"}
++		}, batchDeleteCron, false},
++		{"service", func(id, owner uint64) any {
++			return &model.Service{Common: model.Common{ID: id, UserID: owner}, Name: "s", Type: model.TaskTypeHTTPGet}
++		}, batchDeleteService, false},
++		{"notification", func(id, owner uint64) any {
++			return &model.Notification{Common: model.Common{ID: id, UserID: owner}, Name: "n"}
++		}, batchDeleteNotification, false},
++		{"nat", func(id, owner uint64) any {
++			return &model.NAT{Common: model.Common{ID: id, UserID: owner}, Name: "nat", Domain: "nat-" + strconv.FormatUint(id, 10) + ".example"}
++		}, batchDeleteNAT, false},
++		{"alert-rule", func(id, owner uint64) any {
++			return &model.AlertRule{Common: model.Common{ID: id, UserID: owner}, Name: "a"}
++		}, batchDeleteAlertRule, true},
++		{"server-group", func(id, owner uint64) any {
++			return &model.ServerGroup{Common: model.Common{ID: id, UserID: owner}, Name: "g"}
++		}, batchDeleteServerGroup, true},
++		{"server", func(id, owner uint64) any {
++			return &model.Server{Common: model.Common{ID: id, UserID: owner}, Name: "srv", UUID: "uuid-" + strconv.FormatUint(id, 10)}
++		}, batchDeleteServer, false},
++	}
++	for index, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			foreignID, ownID := uint64(500+index*2), uint64(501+index*2)
++			foreign := tc.row(foreignID, victim)
++			if tc.checkedBySelect {
++				var inserted atomic.Bool
++				callback := "insert_victim_row_after_check_" + tc.name
++				require.NoError(t, singleton.DB.Callback().Query().After("gorm:query").Register(callback, func(tx *gorm.DB) {
++					if inserted.CompareAndSwap(false, true) {
++						require.NoError(t, tx.Session(&gorm.Session{NewDB: true}).Create(foreign).Error)
++					}
++				}))
++				t.Cleanup(func() { _ = singleton.DB.Callback().Query().Remove(callback) })
++			} else {
++				// Committed but not registered in memory yet.
++				require.NoError(t, singleton.DB.Create(foreign).Error)
++			}
++			require.NoError(t, singleton.DB.Create(tc.row(ownID, member)).Error)
++
++			_, err := tc.delete(ctxAsMemberWithBody(member, []uint64{foreignID, ownID}))
++			require.NoError(t, err)
++
++			var count int64
++			require.NoError(t, singleton.DB.Model(tc.row(0, 0)).Where("id = ?", foreignID).Count(&count).Error)
++			require.Equal(t, int64(1), count, "another user's row was deleted")
++			require.NoError(t, singleton.DB.Model(tc.row(0, 0)).Where("id = ?", ownID).Count(&count).Error)
++			require.Equal(t, int64(0), count, "the member's own row must still be deleted")
++		})
++	}
++}
+```
+
+**File**: `cmd/dashboard/controller/batch_delete_scope.go` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++package controller
++
++import (
++	"github.com/gin-gonic/gin"
++	"gorm.io/gorm"
++)
++
++// deletableRowIDs returns the IDs among ids that the caller may delete,
++// read inside the deleting transaction tx: every existing row for an
++// administrator, only the caller's own rows for anyone else.
++//
++// Batch deletes must DELETE exactly these IDs and drop only them from the
++// in-memory registries. Their ownership checks run on a snapshot: the
++// registries skip IDs they do not hold yet (create handlers commit the row
++// before registering it) and a SELECT cannot see a row committed after it.
++// An unscoped "DELETE ... WHERE id IN (?)" therefore let a member delete
++// another user's freshly created rows by looping over the next IDs.
++func deletableRowIDs(tx *gorm.DB, c *gin.Context, table any, ids []uint64) ([]uint64, error) {
++	deletable := []uint64{}
++	if len(ids) == 0 {
++		return deletable, nil
++	}
++	query := tx.Model(table).Where("id IN (?)", ids)
++	if !callerIsAdmin(c) {
++		query = query.Where("user_id = ?", getUid(c))
++	}
++	err := query.Pluck("id", &deletable).Error
++	return deletable, err
++}
+```
+
+**File**: `cmd/dashboard/controller/cron.go` (modified, +12/-2)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/jinzhu/copier"
++	"gorm.io/gorm"
+ 
+ 	"github.com/nezhahq/nezha/model"
+ 	"github.com/nezhahq/nezha/service/singleton"
+@@ -288,10 +289,19 @@ func batchDeleteCron(c *gin.Context) (any, error) {
+ 		}
+ 	}
+ 
+-	if err := singleton.DB.Unscoped().Delete(&model.Cron{}, "id in (?)", cr).Error; err != nil {
++	// Only the caller's rows: see deletableRowIDs.
++	var deleted []uint64
++	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
++		var err error
++		if deleted, err = deletableRowIDs(tx, c, &model.Cron{}, cr); err != nil || len(deleted) == 0 {
++			return err
++		}
++		return tx.Unscoped().Delete(&model.Cron{}, "id in (?)", deleted).Error
++	})
++	if err != nil {
+ 		return nil, newGormError("%v", err)
+ 	}
+ 
+-	singleton.CronShared.Delete(cr)
++	singleton.CronShared.Delete(deleted)
+ 	return nil, nil
+ }
+```
+
+**File**: `cmd/dashboard/controller/nat.go` (modified, +12/-2)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/jinzhu/copier"
++	"gorm.io/gorm"
+ 
+ 	"github.com/nezhahq/nezha/model"
+ 	"github.com/nezhahq/nezha/pkg/utils"
+@@ -182,10 +183,19 @@ func batchDeleteNAT(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 
+-	if err := singleton.DB.Unscoped().Delete(&model.NAT{}, "id in (?)", n).Error; err != nil {
++	// Only the caller's rows: see deletableRowIDs.
++	var deleted []uint64
++	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
++		var err error
++		if deleted, err = deletableRowIDs(tx, c, &model.NAT{}, n); err != nil || len(deleted) == 0 {
++			return err
++		}
++		return tx.Unscoped().Delete(&model.NAT{}, "id in (?)", deleted).Error
++	})
++	if err != nil {
+ 		return nil, newGormError("%v", err)
+ 	}
+ 
+-	singleton.NATShared.Delete(n)
++	singleton.NATShared.Delete(deleted)
+ 	return nil, nil
+ }
+```
+
+**File**: `cmd/dashboard/controller/notification.go` (modified, +9/-3)
+```diff
+@@ -188,11 +188,17 @@ func batchDeleteNotification(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 
++	// Only the caller's rows: see deletableRowIDs.
++	var deleted []uint64
+ 	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
+-		if err := tx.Unscoped().Delete(&model.Notification{}, "id in (?)", n).Error; err != nil {
++		var err error
++		if deleted, err = deletableRowIDs(tx, c, &model.Notification{}, n); err != nil || len(deleted) == 0 {
+ 			return err
+ 		}
+-		if err := tx.Unscoped().Delete(&model.NotificationGroupNotification{}, "notification_id in (?)", n).Error; err != nil {
++		if err := tx.Unscoped().Delete(&model.Notification{}, "id in (?)", deleted).Error; err != nil {
++			return err
++		}
++		if err := tx.Unscoped().Delete(&model.NotificationGroupNotification{}, "notification_id in (?)", deleted).Error; err != nil {
+ 			return err
+ 		}
+ 		return nil
+@@ -202,6 +208,6 @@ func batchDeleteNotification(c *gin.Context) (any, error) {
+ 		return nil, newGormError("%v", err)
+ 	}
+ 
+-	singleton.NotificationShared.Delete(n)
++	singleton.NotificationShared.Delete(deleted)
+ 	return nil, nil
+ }
+```
+
+**File**: `cmd/dashboard/controller/server.go` (modified, +15/-6)
+```diff
+@@ -155,11 +155,18 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 
++	// Only the caller's rows: see deletableRowIDs. Everything below works on
++	// the deleted IDs, so another user's server is never dropped from memory.
++	var deleted []uint64
+ 	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
+-		if err := tx.Unscoped().Delete(&model.Server{}, "id in (?)", servers).Error; err != nil {
++		var err error
++		if deleted, err = deletableRowIDs(tx, c, &model.Server{}, servers); err != nil || len(deleted) == 0 {
+ 			return err
+ 		}
+-		if err := tx.Unscoped().Delete(&model.ServerGroupServer{}, "server_id in (?)", servers).Error; err != nil {
++		if err := tx.Unscoped().Delete(&model.Server{}, "id in (?)", deleted).Error; err != nil {
++			return err
++		}
++		if err := tx.Unscoped().Delete(&model.ServerGroupServer{}, "server_id in (?)", deleted).Error; err != nil {
+ 			return err
+ 		}
+ 		return nil
+@@ -170,7 +177,7 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 	}
+ 
+ 	singleton.AlertsLock.Lock()
+-	for _, sid := range servers {
++	for _, sid := range deleted {
+ 		for _, alert := range singleton.Alerts {
+ 			if singleton.AlertsCycleTransferStatsStore[alert.ID] != nil {
+ 				delete(singleton.AlertsCycleTransferStatsStore[alert.ID].ServerName, sid)
+@@ -179,7 +186,9 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 			}
+ 		}
+ 	}
+-	singleton.DB.Unscoped().Delete(&model.Transfer{}, "server_id in (?)", servers)
++	if len(deleted) > 0 {
++		singleton.DB.Unscoped().Delete(&model.Transfer{}, "server_id in (?)", deleted)
++	}
+ 	singleton.AlertsLock.Unlock()
+ 
+ 	// Cancel any in-flight transfers BEFORE the in-memory ServerShared
+@@ -189,8 +198,8 @@ func batchDeleteServer(c *gin.Context) (any, error) {
+ 	// transferID-guarded delete inside OnServersDeleted is the
+ 	// authoritative protection against that race; the ordering here is
+ 	// belt and braces.
+-	singleton.ServerTransferShared.OnServersDeleted(servers)
+-	singleton.ServerShared.Delete(servers)
++	singleton.ServerTransferShared.OnServersDeleted(deleted)
++	singleton.ServerShared.Delete(deleted)
+ 	return nil, nil
+ }
+ 
+```
+
+**File**: `cmd/dashboard/controller/server_group.go` (modified, +7/-2)
+```diff
+@@ -260,11 +260,16 @@ func batchDeleteServerGroup(c *gin.Context) (any, error) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+ 	}
+ 
++	// Only the caller's rows: see deletableRowIDs.
+ 	err := singleton.DB.Transaction(func(tx *gorm.DB) error {
+-		if err := tx.Unscoped().Delete(&model.ServerGroup{}, "id in (?)", sgs).Error; err != nil {
++		deleted, err := deletableRowIDs(tx, c, &model.ServerGroup{}, sgs)
++		if err != nil || len(deleted) == 0 {
+ 			return err
+ 		}
+-		if err := tx.Unscoped().Delete(&model.ServerGroupServer{}, "server_group_id in (?)", sgs).Error; err != nil {
++		if err := tx.Unscoped().Delete(&model.ServerGroup{}, "id in (?)", deleted).Error; err != nil {
++			return err
++		}
++		if err := tx.Unscoped().Delete(&model.ServerGroupServer{}, "server_group_id in (?)", deleted).Error; err != nil {
+ 			return err
+ 		}
+ 		return nil
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1252** (2026-11-27): feat(backup): encrypted dashboard backups to S3-compatible storage, with restore / 面板加密备份到 S3 兼容存储，并支持恢复 (@AkkiaS7)
 - **PR #1245** (closed): perf(dashboard): 压缩并缓存静态资源，为轮询接口增加 ETag (@CyL-Cly)
 - **PR #1243** (2026-10-16): feat(server): online session history with configurable stats window (7-3650 days) (@Sam5440)
 - **PR #1242** (2026-10-01): fix(alerts): evaluate fresh reports and order notification delivery (@cantoblanco)
 - **PR #1241** (2026-10-01): fix(nat): strip only dashboard-issued Authorization credentials at NAT ingress (@xvkong233)
 - **PR #1238** (closed): Fixed: An issue where deleting DNS records for domains hosted on Cloudflare did not work. (@77-QiQi)
-- **PR #1237** (2026-09-14): Improve: Delete the corresponding DNS record if the IPv4/IPv6 address is empty. (@77-QiQi)
 
 ---
 
@@ -1854,56 +1864,65 @@ pinned to the version CI uses, and the GitLab sync action is pinned
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove the user deletion deadlock and reject a second connection to a stream
+## X. security: revoked API tokens still ran requests whose body was held back
 
 **RULE**:
-When implementing operations in `service/rpc/io_stream_duplicate_user_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dashboard/controller/held_body_token_revocation_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9339e68`: remove the user deletion deadlock and reject a second connection to a stream. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `520bc369`: security: revoked API tokens still ran requests whose body was held back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/rpc/io_stream_duplicate_user_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/held_body_token_revocation_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package rpc
+package controller
 
 import (
-	"errors"
+	"bytes"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"sync"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
+
+	"github.com/nezhahq/nezha/model"
+	"github.com/nezhahq/nezha/service/singleton"
 )
 
-// A second WebSocket opened with the same session ID used to replace the first
-// connection and start a second pair of relay goroutines over the same buffer.
-// A large Agent frame then indexed past the slice and took the whole dashboard
-// process down.
-func TestUserConnectedRejectsASecondConnectionToTheSameStream(t *testing.T) {
-	handler := NewNezhaHandler()
-	const streamID = "11111111-1111-1111-1111-111111111111"
-	handler.CreateStream(streamID, 100, 0)
-	first, second := newPipeReadWriter(), newPipeReadWriter()
-	defer first.Close()
-	defer second.Close()
-
-	if err := handler.UserConnected(streamID, first); err != nil {
-		t.Fatalf("first connection: %v", err)
-	}
-	err := handler.UserConnected(streamID, second)
-
-	if !errors.Is(err, ErrUserStreamAlreadyConnected) {
-		t.Fatalf("second connection err = %v, want ErrUserStreamAlreadyConnected", err)
-	}
-	stream, getErr := handler.GetStream(streamID)
-	if getErr != nil {
-		t.Fatalf("GetStream: %v", getErr)
-	}
-	attached, _ := handler.streamEndpoints(stream)
-	if attached != first {
-		t.Fatal("the second connection replaced the first one")
-	}
+// heldRequestBody delivers its data only after release is closed, like a
+// client that sends the request head now and the body later.
+type heldRequestBody struct {
+	reader  *bytes.Reader
+	started chan struct{}
+	release chan struct{}
+	once    sync.Once
 }
+
+func newHeldRequestBody(data []byte) *heldRequestBody {
+	return &heldRequestBody{reader: bytes.NewReader(data), started: make(chan struct{}), release: make(chan struct{})}
+}
+
+func (b *heldRequestBody) Read(p []byte) (int, error) {
+	b.once.Do(func() { close(b.started) })
+	<-b.release
+	return b.reader.Read(p)
+}
+
+func (b *heldRequestBody) Close() error { return nil }
+
+// A password/profile change revokes the user's API tokens. A REST request
+// whose head was authenticated before the change must not run once its body
+// arrives afterwards: the credential has to be checked with the whole
+// request in hand.
+func TestRESTRequestWithHeldBodyFailsAfterTokenRevocation(t *testing.T) {
+	env := newBac
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1913,4 +1932,4 @@ func TestUserConnectedRejectsASecondConnectionToTheSameStream(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9339e68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `520bc369` are properly handled with clean fallback behavior.

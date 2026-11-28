@@ -3,7 +3,7 @@
 > **Source Version**: `hf-baidu-ern`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:42:30.801Z  
+> **Timestamp**: 2026-11-28T02:13:11.772Z  
 > **Learning ID**: `learn-huggingface-baidu-ernie-5-5-flash-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview](https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:42:30.625Z  
+> **Harvest Timestamp**: 2026-11-28T02:13:11.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 75 downloads | 213 likes
+- **Stars / Engagement**: 2609 downloads | 392 likes
 
 ---
 

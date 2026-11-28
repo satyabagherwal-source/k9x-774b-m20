@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T02:03:48.590Z",
+  "updated_at": "2026-11-28T02:13:32.316Z",
   "stats": {
-    "total_discovered": 10686,
-    "approved_pending_harvest": 10145,
+    "total_discovered": 10687,
+    "approved_pending_harvest": 10146,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10154,
+      "COMMUNITY_AND_EXPERT": 10155,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231332,6 +231332,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
         "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-3D6C28D2C12F": {
+      "id": "SRC-3D6C28D2C12F",
+      "url": "https://example.com/api/v1/server-group",
+      "title": "https://example.com/api/v1/server-group",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:13:32.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+        "fileName": "nezhahq-nezha-learnings.md"
       }
     }
   }

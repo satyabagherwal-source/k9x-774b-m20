@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T02:03:51.424Z",
+  "last_updated": "2026-11-28T02:13:35.159Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26897,
+  "total_items": 26904,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -233327,9 +233327,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "02f028e0b0a49c7e8c6c332b7b41a69ca286040cfee03e94da9a157d90cdd9de",
+      "content_hash": "a4738eea7d13579ba6c667f1418729ac6c599dec7ded7ea8a8a5bb04498901a9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-27T08:14:50.211Z"
+      "persisted_at": "2026-11-28T02:13:34.868Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -233339,9 +233339,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "d251405245e94ad555fcf8221ffa20968349f695daa214191fde33a548d8eabd",
+      "content_hash": "76a25254eda93955e1ae98e7a6b22f03872e3da760c7231393a88fd635581898",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T08:14:50.529Z"
+      "persisted_at": "2026-11-28T02:13:35.159Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -260087,8 +260087,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "d2844a41",
-      "content_hash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
+      "source_version": "a452de5f",
+      "content_hash": "8af96167231c1385c16fc569725e94ebece4199f3339f6580631f45bfeacfcd8",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -260116,6 +260116,11 @@
           "number": 10845,
           "title": "MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11017,
+          "title": "11.8 build with system PCRE2 on FreeBSD",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260123,7 +260128,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T06:55:06.124Z",
+      "verified_at": "2026-11-28T02:13:27.780Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260165,10 +260170,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "repository": "MariaDB/server",
-      "source_version": "d2844a41",
-      "content_hash": "1bb75491c74203982a96d00cb0c7834fc11e6814b756aeeda55e14f53050fb8c",
+      "source_version": "a452de5f",
+      "content_hash": "023a53822a5077a12bb8b99b69d8a17a7f22ec1d44567f86e6a9dcc3d5029a30",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T06:55:06.799Z"
+      "persisted_at": "2026-11-28T02:13:28.776Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server",
@@ -260177,10 +260182,10 @@
       "relative_path": "08_VERIFICATION/mariadb-server-verification-protocol-empirical-defect-shield-for-mariadb-server.md",
       "title": "Verification Protocol: Empirical Defect Shield for MariaDB/server",
       "repository": "MariaDB/server",
-      "source_version": "d2844a41",
-      "content_hash": "e215ae95c90fed97c8cefd0872ef8545f620733458559b4194f0cc25d188e142",
+      "source_version": "a452de5f",
+      "content_hash": "1873ca04fbe71cebe27512b4951b1cf542bfe6a39de2121775954ae979314c04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:55:06.989Z"
+      "persisted_at": "2026-11-28T02:13:29.054Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -299077,8 +299082,8 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "22f2184e",
-      "content_hash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
+      "source_version": "13366231",
+      "content_hash": "119eaf39da7e5cd9e560086cff5a4defe3b6510304f12b816d406c49c74aa9c7",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
@@ -299096,6 +299101,11 @@
           "number": 9894,
           "title": "remove the user deletion deadlock and reject a second connection to a stream",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11015,
+          "title": "revoked API tokens still ran requests whose body was held back",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -299103,7 +299113,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:29:03.453Z",
+      "verified_at": "2026-11-28T02:13:15.645Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -299145,10 +299155,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
       "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
       "repository": "nezhahq/nezha",
-      "source_version": "76b07b58",
-      "content_hash": "80bc5643d7079c5b92694b63f03b9157c8886f269d289a22f83aa69d9d89be88",
+      "source_version": "13366231",
+      "content_hash": "01878c3cce04c56050bebf76a52d6cc973c8c09316679f965475a2effb8138c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:58:46.886Z"
+      "persisted_at": "2026-11-28T02:13:16.678Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha",
@@ -299157,10 +299167,10 @@
       "relative_path": "08_VERIFICATION/nezhahq-nezha-verification-protocol-empirical-defect-shield-for-nezhahq-nezha.md",
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq/nezha",
       "repository": "nezhahq/nezha",
-      "source_version": "22f2184e",
-      "content_hash": "d15876eea449dc9e1c94f63d85d29280a9e5862d02761b5c501396ea378b2c50",
+      "source_version": "13366231",
+      "content_hash": "644c10fa742d284f4454c2bf2136987ca128cb4894e2dfeb28163675f7aa5d6b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:29:04.181Z"
+      "persisted_at": "2026-11-28T02:13:16.962Z"
     },
     "candidate_directive-security-bound-persisted-resource-reference-collections": {
       "item_id": "candidate_directive-security-bound-persisted-resource-reference-collections",
@@ -299182,9 +299192,9 @@
       "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
       "repository": "nezhahq-nezha-learnings",
       "source_version": "HEAD",
-      "content_hash": "e47e6e86a4d132b1f045fdfda7258ec2595bbc069f349a4324076642979ba0a6",
+      "content_hash": "a3cc588d2111edd4250426d247dbd333bd40a3140c38427fc3d438b70c34e5bb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:58:50.322Z"
+      "persisted_at": "2026-11-28T02:13:32.986Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings",
@@ -299194,9 +299204,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nezhahq-nezha-learnings",
       "repository": "nezhahq-nezha-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d74f9f853e3b7e12acba9ee23216b132e613c05f4474ec7d0dccb97ae78bc68",
+      "content_hash": "a52c846e79be6132dddc849ad3da12cd7b2bba79ea31d2bc1f306e5d6e7c89d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:29:14.371Z"
+      "persisted_at": "2026-11-28T02:13:33.256Z"
     },
     "rule-9316": {
       "learning_id": "rule-9316",
@@ -315824,13 +315834,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "91c1df80",
-      "content_hash": "4a8d177911fab45e6b97fe22ac3a4f6a9eb0a3dbf7679ae4648752d6abfb04b9",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "d721e1f9",
+      "content_hash": "214cd4b63e2b24fc810854bbdd4980306a298141582706d7f0e693fa23f3c331",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -315871,6 +315881,11 @@
           "number": 10860,
           "title": "a server install is healthy before setup and the image is reachable; add the Set",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 11016,
+          "title": "bump version to v3.27.0 [skip-release] [skip ci]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -315878,7 +315893,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:34:23.631Z",
+      "verified_at": "2026-11-28T02:13:23.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -315903,13 +315918,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "91c1df80",
-      "content_hash": "436eb6fa36f8b39e20fbb4c49bb9cd9631d182f3c54340d6e00a3bc1439d1d55",
+      "source_version": "d721e1f9",
+      "content_hash": "d2bd924f0b028f126e47070840e37121e32d1310409ee9d344572ad18f44a36e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:34:24.522Z"
+      "persisted_at": "2026-11-28T02:13:24.479Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -323767,10 +323782,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "7e3f05c1",
-      "content_hash": "a47fb2d16d85642962b13da321ac97ed79cf4f6e4f3ba8044309e42c056a4c6a",
+      "source_version": "d721e1f9",
+      "content_hash": "7c8581b1a92ca246e130f3e4405b64e99181ce4ffe58bc567e2df6a63c04ea62",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T15:22:12.971Z"
+      "persisted_at": "2026-11-28T02:13:24.144Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -342098,7 +342113,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
       "source_version": "hf-baidu-ernie-5.5-flash-preview",
-      "content_hash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+      "content_hash": "4b1bb68e82c342dbcd3ec49d1d2866e25cf6d08e39bdd740fcc20a50282d694b",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md",
       "promoted_rules": [],
@@ -342107,7 +342122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:42:31.078Z",
+      "verified_at": "2026-11-28T02:13:12.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -342124,9 +342139,9 @@
       "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Preview Core Invariants",
       "repository": "baidu/ERNIE-5.5-Flash-Preview",
       "source_version": "hf-baidu-ernie-5.5-flash-preview",
-      "content_hash": "acea43ca5192f7d84a41a547908b720e16c7b379e97ee875d921d00205de5c96",
+      "content_hash": "01d269e70883b70fadf9daaf62fb1b747708e6257860f00521b2c9479ffa57b1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:42:31.530Z"
+      "persisted_at": "2026-11-28T02:13:12.879Z"
     },
     "rule-10321": {
       "learning_id": "rule-10321",
@@ -342188,9 +342203,9 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-preview-learnings Core Invariants",
       "repository": "hf-baidu-ernie-5.5-flash-preview-learnings",
       "source_version": "HEAD",
-      "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
+      "content_hash": "f4978e5f0820947a088c34ac31e5bd2bb6e305499cd601f6e558522494f2ff73",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:43:21.818Z"
+      "persisted_at": "2026-11-28T02:13:33.878Z"
     },
     "rule-10323": {
       "learning_id": "rule-10323",
@@ -369531,6 +369546,96 @@
       "content_hash": "217a1b44f5d2b8846a40302a02a813966139ca31a0b4174190acce6bdbc996d2",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T02:03:48.899Z"
+    },
+    "rule-11015": {
+      "learning_id": "rule-11015",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11015,
+      "title": "revoked API tokens still ran requests whose body was held back",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "13366231",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:13:15.645Z"
+    },
+    "candidate_directive-revoked-api-tokens-still-ran-requests-whose-body-was-held-back": {
+      "item_id": "candidate_directive-revoked-api-tokens-still-ran-requests-whose-body-was-held-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-04PI-revoked-api-tokens-still-ran-requests-whose-body-was-held-back.md",
+      "title": "revoked API tokens still ran requests whose body was held back",
+      "repository": "nezhahq/nezha",
+      "source_version": "13366231",
+      "content_hash": "7fb6cf00cdc7a0d8f3096b7276fd43f951a241f48c2073f152db9c0f47e7b99d",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-28T02:13:16.381Z"
+    },
+    "rule-11016": {
+      "learning_id": "rule-11016",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11016,
+      "title": "bump version to v3.27.0 [skip-release] [skip ci]",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "d721e1f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:13:23.106Z"
+    },
+    "candidate_directive-bump-version-to-v3-27-0-skip-release-skip-ci": {
+      "item_id": "candidate_directive-bump-version-to-v3-27-0-skip-release-skip-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0IRD-bump-version-to-v3-27-0-skip-release-skip-ci.md",
+      "title": "bump version to v3.27.0 [skip-release] [skip ci]",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3bf374fc0a23b2d980b2cf3709ab5ac3c59a7f35abfa0f7323e70f030db57d67",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T02:13:34.592Z"
+    },
+    "rule-11017": {
+      "learning_id": "rule-11017",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11017,
+      "title": "11.8 build with system PCRE2 on FreeBSD",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "a452de5f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T02:13:27.780Z"
+    },
+    "candidate_directive-11-8-build-with-system-pcre2-on-freebsd": {
+      "item_id": "candidate_directive-11-8-build-with-system-pcre2-on-freebsd",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0E2I-11-8-build-with-system-pcre2-on-freebsd.md",
+      "title": "11.8 build with system PCRE2 on FreeBSD",
+      "repository": "MariaDB/server",
+      "source_version": "a452de5f",
+      "content_hash": "836e5c3eddfc5d75d107c9501627395c554aa1e0e09a40bd901689215fa0770b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T02:13:28.507Z"
+    },
+    "candidate_directive-security-revoked-api-tokens-still-ran-requests-whose-body-was-held-back": {
+      "item_id": "candidate_directive-security-revoked-api-tokens-still-ran-requests-whose-body-was-held-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0HB0-security-revoked-api-tokens-still-ran-requests-whose-body-was-held-back.md",
+      "title": "security: revoked API tokens still ran requests whose body was held back",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "654b3aa9a5034f8a96232238341888dde148bfc29712455cc4f119590c1c949f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-28T02:13:32.707Z"
     }
   },
   "ai-builder-brain": {

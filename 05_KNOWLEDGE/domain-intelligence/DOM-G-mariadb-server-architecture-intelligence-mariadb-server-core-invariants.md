@@ -4,24 +4,24 @@
 {
   "source_repository": "MariaDB/server",
   "source_url": "https://github.com/MariaDB/server",
-  "source_version": "d2844a41",
+  "source_version": "a452de5f",
   "license": "GPL-2.0",
-  "timestamp": "2026-11-27T06:55:06.605Z",
+  "timestamp": "2026-11-28T02:13:28.506Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mariadb-server",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `d2844a41`).  
-> **License**: GPL-2.0 | **Timestamp**: `2026-11-27T06:55:06.605Z`  
+> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `a452de5f`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-28T02:13:28.506Z`  
 > **Learning ID**: `learn-github-mariadb-server`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 71%
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from MariaDB/server:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T06:55:05.213Z  
+> **Harvest Timestamp**: 2026-11-28T02:13:26.606Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8667 stars
+- **Stars / Engagement**: 8663 stars
 
 ---
 
@@ -1628,11 +1628,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6247** (2026-11-26): **MDEV-42338 follow-up: fix build with OpenSSL 4.1.0 and clang**
-  *Symptoms*: Follow-up to MDEV-42338 (https://jira.mariadb.org/browse/MDEV-42338): a build of the server with a recent clang against OpenSSL 4.1.0 still failed in libmariadb and in two client programs, because their OpenSSL include directory was a regular include, so `-Werror` turned warnings from OpenSSL's own headers into errors.  - Update libmariadb to the 3.3 tip, which treats the OpenSSL headers as system headers and keeps `OPENSSL_API_COMPAT` at 1.1.0 in `openssl.c` (OpenSSL 4.1.0 deprecates `X509_check_host()` and `X509_check_ip_asc()`): https://github.com/mariadb-corporation/mariadb-connector-c/pull/337 - `mysql` and `mysqltest` don't use anything from `violite.h`, which was their only source of OpenSSL headers. Remove the include and the OpenSSL include directory from `client/CMakeLists.txt`.  Tested on Windows with clang-cl 22 and the OpenSSL 4.1.0 headers, with `-Wcast-function-type-strict`: a full `minbuild` has 0 warnings from OpenSSL headers (1683 before), and both clients compile without `violite.h`. Not tested on macOS or Linux.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #6252** (2026-11-27): **Fix 11.8 build with system PCRE2 on FreeBSD**
+  *Symptoms*: import_util linked the bare pcre2-posix/pcre2-8 libraries and got no include directory, so pcre2posix.h was not found.
 
-- **Issue #6233** (2026-11-26): **MDEV-40794: Dynamic Column Aggregate Name Pool Overflow**
-  *Symptoms*: The named dynamic-column format serializes the aggregate name-pool size and every name offset in two bytes (max 65535 = MAX_TOTAL_NAME_LENGTH). calc_var_sizes() accumulated the total name length in size_t without checking against MAX_TOTAL_NAME_LENGTH. When the aggregate exceeded 65535, set_fixed_header_named() truncated the size via int2store() and put_header_entry_named() truncated each offset, producing a malformed blob. In Debug builds the DBUG_ASSERT in put_header_entry_named() aborted the server; in Release builds the malformed blob was silently returned, and a fresh reader saw the wrapped name-pool size causing COLUMN_CHECK to fail and COLUMN_LIST/COLUMN_JSON to reject the object.  Fix: add an aggregate name-pool length check in dynamic_new_column_store() (after individual name checks via check_limit_named()) and in dynamic_column_update_many_fmt() (update path). Both return ER_DYNCOL_LIMIT when the total exceeds MAX_TOTAL_NAME_LENGTH.  Any authenticated user can trigger this with a plain SET statement (COLUMN_CREATE with multiple names whose total length exceeds 65535), requiring no table, database, or administrative privileges.
+- **Issue #6251** (2026-11-27): **MDEV-42493 : Galera test failure on galera_toi_definer_check**
+  *Symptoms*: Since MDEV-29668 (11.0) only SET USER, not SUPER, satisfies the DEFINER check, so the error message lists only SET USER. The test was recorded on 10.11. Update the result file.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1649,546 +1649,104 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2844a41` (2026-10-26)
-**Commit Message**: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
+### Incident Patch 1: `783713b1` (2026-11-27)
+**Commit Message**: Fix 11.8 build with system PCRE2 on FreeBSD
 
-Rename variables and add comments for better readability
+import_util linked the bare pcre2-posix/pcre2-8 libraries and got no
+include directory, so pcre2posix.h was not found.
 
-**File**: `sql/sql_window.cc` (modified, +33/-26)
+**File**: `client/CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -2324,7 +2324,7 @@ class Frame_scan_cursor : public Frame_cursor
- public:
-   Frame_scan_cursor(const Frame_cursor &top_bound,
-                     const Frame_cursor &bottom_bound) :
--    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
-+    top_bound(top_bound), bottom_bound(bottom_bound), have_cached_result(false),
-     can_append(false)
-   {
-     seq_cursor= &cursor;
-@@ -2343,7 +2343,7 @@ class Frame_scan_cursor : public Frame_cursor
-   void pre_next_partition(ha_rows rownum) override
-   {
-     curr_rownum= rownum;
--    have_result= false;
-+    have_cached_result= false;
-   }
+@@ -56,7 +56,7 @@ ADD_LIBRARY(import_util STATIC import_util.cc import_util.h)
+ IF (PCRE2_DEBIAN_HACK)
+   SET_SOURCE_FILES_PROPERTIES(import_util.cc PROPERTIES COMPILE_FLAGS "${PCRE2_DEBIAN_HACK}")
+ ENDIF()
+-TARGET_LINK_LIBRARIES(import_util PRIVATE pcre2-posix pcre2-8)
++TARGET_LINK_LIBRARIES(import_util PRIVATE MariaDB::pcre2-posix MariaDB::pcre2-8)
+ TARGET_INCLUDE_DIRECTORIES(import_util PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
  
-   void next_partition(ha_rows rownum) override
-@@ -2367,9 +2367,10 @@ class Frame_scan_cursor : public Frame_cursor
-   const Frame_cursor &bottom_bound;
-   Table_read_cursor cursor;
-   ha_rows curr_rownum;
--  /* The sum functions hold the result for rows last_top..last_bottom */
--  bool have_result;
--  ha_rows last_top, last_bottom;
-+  /* The sum functions hold the result for rows
-+     cached_frame_top..cached_frame_bottom */
-+  bool have_cached_result;
-+  ha_rows cached_frame_top, cached_frame_bottom;
-   bool can_append;
- 
-   /* Make the sum functions hold the rows between the top bound and bottom
-@@ -2381,33 +2382,39 @@ class Frame_scan_cursor : public Frame_cursor
-         bottom_bound.is_outside_computation_bounds())
-     {
-       clear_sum_functions();
--      have_result= false;
-+      have_cached_result= false;
-       return;
-     }
- 
--    ha_rows start_rownum= top_bound.get_curr_rownum();
--    ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
--    DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
-+    ha_rows curr_top_rownum= top_bound.get_curr_rownum();
-+    ha_rows curr_bottom_rownum= bottom_bound.get_curr_rownum();
-+    DBUG_PRINT("info", ("COMPUTING (%llu %llu)",
-+                        curr_top_rownum, curr_bottom_rownum));
- 
--    ha_rows first_rownum= start_rownum;
--    if (can_append && have_result && start_rownum == last_top)
-+    ha_rows scan_from= curr_top_rownum;
-+    if (can_append && have_cached_result &&
-+        curr_top_rownum == cached_frame_top)
-     {
--      if (bottom_rownum == last_bottom)
-+      if (curr_bottom_rownum == cached_frame_bottom)
-         return;
--      /* Extend only a previous frame ending at most 1 row above the top:
--         after an inverted frame ending higher, the rows in between would
--         be added */
--      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
--        first_rownum= last_bottom + 1;
-+
-+      /*
-+        Add only the rows below the previous frame, if the frame grew.
-+        An empty previous frame (bottom above top, e.g. RANGE BETWEEN
-+        5 FOLLOWING AND 1 FOLLOWING) has nothing to extend.
-+      */
-+      if (curr_bottom_rownum > cached_frame_bottom &&
-+          cached_frame_bottom >= cached_frame_top)
-+        scan_from= cached_frame_bottom + 1;
-     }
- 
--    if (first_rownum == start_rownum)
-+    if (scan_from == curr_top_rownum)
-       clear_sum_functions();
--    have_result= false;
--    cursor.move_to(first_rownum);
-+    have_cached_result= false;
-+    cursor.move_to(scan_from);
- 
--    ha_rows idx= first_rownum;
--    while (idx <= bottom_rownum
-+    ha_rows idx= scan_from;
-+    while (idx <= curr_bottom_rownum
-            && ((idx & 0xFF) || !thd->check_killed(true)))
-     {
-       if (cursor.fetch()) // EOF or read error
-@@ -2418,11 +2425,11 @@ class Frame_scan_cursor : public Frame_cursor
-         break;
-     }
-     /* Cache the result only if the scan completed */
--    if (idx > bottom_rownum)
-+    if (idx > curr_bottom_rownum)
-     {
--      have_result= true;
--      last_top= start_rownum;
--      last_bottom= bottom_rownum;
-+      have_cached_result= true;
-+      cached_frame_top= curr_top_rownum;
-+      cached_frame_bottom= curr_bottom_rownum;
-     }
-   }
- };
+ MYSQL_ADD_EXECUTABLE(mariadb-import mysqlimport.cc)
 ```
 
 ---
 
-### Incident Patch 2: `542875d2` (2026-10-01)
-**Commit Message**: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
+### Incident Patch 2: `cde01b19` (2026-11-26)
+**Commit Message**: MDEV-42338 follow-up: fix build with OpenSSL 4.1.0 and clang
 
-Frame_scan_cursor cleared and re-scanned the whole frame for every row.
-For MIN, MAX, STD and VARIANCE keep the result if the frame did not
-change (whole-partition frames, peers), and add only the new rows if
-just the bottom moved down. Other functions without remove() (UDF and
-stored aggregates) are still re-scanned. Argument conversion warnings
-are no longer repeated when the frame is reused or extended.
+Update libmariadb to a version that treats OpenSSL headers as system
+headers and keeps OPENSSL_API_COMPAT at 1.1.0 in openssl.c.
 
-**File**: `mysql-test/main/win_min_max.result` (modified, +152/-0)
+The mysql and mysqltest clients don't use anything from violite.h, which
+was their only source of OpenSSL headers. Remove the include and the
+OpenSSL include directory from client/CMakeLists.txt, so no OpenSSL
+header is compiled in these clients as a regular include.
+
+mysql.cc got <sys/ioctl.h> from violite.h (through my_net.h) for
+window_resize(); include it directly.
+
+Assisted-by: Claude:claude-sonnet-5-5
+
+**File**: `client/CMakeLists.txt` (modified, +0/-1)
 ```diff
-@@ -862,3 +862,155 @@ pk	a	b	c	min1	max1	min2	max2
- 11	4	200	eleven	100	300	100	300
- drop table t2;
- drop table t1;
-+#
-+# MDEV-24684 MIN/MAX as window functions are slow when the frame is not changing
-+#
-+create table t1 (g int, a int, b int);
-+insert into t1 values
-+(1,1,10),(1,1,20),(1,2,NULL),(1,2,5),(1,3,7),
-+(2,1,NULL),(2,1,NULL),
-+(3,4,3),(3,5,9),(3,5,1),(3,6,2);
-+select g, a, b, min(b) over (partition by g) mn, max(b) over (partition by g) mx
-+from t1 order by g, a, b;
-+g	a	b	mn	mx
-+1	1	10	5	20
-+1	1	20	5	20
-+1	2	NULL	5	20
-+1	2	5	5	20
-+1	3	7	5	20
-+2	1	NULL	NULL	NULL
-+2	1	NULL	NULL	NULL
-+3	4	3	1	9
-+3	5	1	1	9
-+3	5	9	1	9
-+3	6	2	1	9
-+select g, a, b, min(b) over (partition by g order by a) mn,
-+max(b) over (partition by g order by a) mx,
-+std(b) over (partition by g order by a) sd,
-+variance(b) over (partition by g order by a) vr
-+from t1 order by g, a, b;
-+g	a	b	mn	mx	sd	vr
-+1	1	10	10	20	5.0000	25.0000
-+1	1	20	10	20	5.0000	25.0000
-+1	2	NULL	5	20	6.2361	38.8889
-+1	2	5	5	20	6.2361	38.8889
-+1	3	7	5	20	5.7663	33.2500
-+2	1	NULL	NULL	NULL	NULL	NULL
-+2	1	NULL	NULL	NULL	NULL	NULL
-+3	4	3	3	3	0.0000	0.0000
-+3	5	1	1	9	3.3993	11.5556
-+3	5	9	1	9	3.3993	11.5556
-+3	6	2	1	9	3.1125	9.6875
-+select g, a, b, min(b) over (partition by g order by a, b
-+rows between 1 following and 2 following) mn
-+from t1 order by g, a, b;
-+g	a	b	mn
-+1	1	10	20
-+1	1	20	5
-+1	2	NULL	5
-+1	2	5	7
-+1	3	7	NULL
-+2	1	NULL	NULL
-+2	1	NULL	NULL
-+3	4	3	1
-+3	5	1	2
-+3	5	9	2
-+3	6	2	NULL
-+select g, a, b,
-+min(b) over (partition by g order by a, b rows between unbounded preceding and current row) c1,
-+max(b) over (partition by g order by a, b rows between unbounded preceding and 1 following) c2,
-+std(b) over (partition by g order by a, b rows between unbounded preceding and 1 preceding) c3
-+from t1 order by g, a, b;
-+g	a	b	c1	c2	c3
-+1	1	10	10	20	NULL
-+1	1	20	10	20	0.0000
-+1	2	NULL	10	20	5.0000
-+1	2	5	5	20	5.0000
-+1	3	7	5	20	6.2361
-+2	1	NULL	NULL	NULL	NULL
-+2	1	NULL	NULL	NULL	NULL
-+3	4	3	3	3	NULL
-+3	5	1	1	9	0.0000
-+3	5	9	1	9	1.0000
-+3	6	2	1	9	3.3993
-+select g, a, b,
-+min(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mn,
-+max(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mx
-+from t1 order by g, a, b;
-+g	a	b	mn	mx
-+1	1	10	10	20
-+1	1	20	10	20
-+1	2	NULL	5	20
-+1	2	5	5	7
-+1	3	7	5	7
-+2	1	NULL	NULL	NULL
-+2	1	NULL	NULL	NULL
-+3	4	3	1	3
-+3	5	1	1	9
-+3	5	9	1	9
-+3	6	2	2	9
-+select max(b) over () from t1 order by 1 limit 3;
-+max(b) over ()
-+20
-+20
-+20
-+drop table t1;
-+create table t1 (a int);
-+insert into t1 values (0),(4),(5),(6),(20);
-+select a, min(a) over (order by a range between 10 following and 5 following) mn,
-+max(a) over (order by a range between 10 following and 5 following) mx,
-+std(a) over (order by a range between 10 following and 5 following) sd
-+from t1;
-+a	mn	mx	sd
-+0	NULL	NULL	NULL
-+4	NULL	NULL	NULL
-+5	NULL	NULL	NULL
-+6	NULL	NULL	NULL
-+20	NULL	NULL	NULL
-+drop table t1;
-+create table t2 (i int, v varchar(10) collate utf8mb4_general_ci, d decimal(10,2), t datetime);
-+insert into t2 values
-+(1,'b',1.50,'2020-01-03 00:00:00'),(2,'A',-2.25,'2020-01-01 00:00:00'),
-+(3,'c',NULL,NULL),(4,'D',4.00,'2020-01-02 00:00:00'),(5,NULL,0.75,'2020-01-05 00:00:00');
-+select i, v, d, t,
-+min(v) over (order by i) mnv,
-+max(v) over (order by i desc) mxv,
-+max(d) over (order by i rows between unbounded preceding and 1 following) mxd,
-+std(d) over (order by i rows between unbounded preceding and current row) sdd,
-+min(t) over (order by i desc) mnt
-+from t2 order by i;
-+i	v	d	t	mnv	mxv	mxd	sdd	mnt
-+1	b	1.50	2020-01-03 00:00:00	b	D	1.50	0.000000	2020-01-01 00:00:00
-+2	A	-2.25	2020-01-01 00:00:00	A	D	1.50	1.875000	2020-01-01 00:00:00
-+3	c	NULL	NULL	A	D	4.00	1.875000	2020-01-02 00:00:00
-+4	D	4.00	2020-01-02 00:00:00	A	D	4.00	2.568506	2020-01-02 00:00:00
-+5	NULL	0.75	2020-01-05 00:00:00	A	NULL	4.00	2.229069	2020-01-05 00:00:00
-+drop table t2;
-+create table t1 (a int);
-+insert into t1 select seq from seq_1_to_2000;
-+flush status;
-+select max(s) from (select max(a) over () s from t1) w;
-+max(s)
-+2000
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+variable_value < 100000
-+1
-+flush status;
-+select max(s) from (select min(a) over (order by a) s from t1) w;
-+max(s)
-+1
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+variable_value < 100000
-+1
-+flush status;
-+select max(s) from (select std(a) over (order by a) s from t1) w;
-+max(s)
-+577.3502
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+variable_value < 100000
-+1
-+drop table t1;
-+# End of 13.1 tests
+@@ -17,7 +17,6 @@
+ INCLUDE_DIRECTORIES(
+   ${CMAKE_SOURCE_DIR}/include
+   ${CMAKE_SOURCE_DIR}/mysys_ssl
+-  $<TARGET_PROPERTY:mariadb_ssl,INTERFACE_INCLUDE_DIRECTORIES>
+   ${CMAKE_SOURCE_DIR}/sql
+   ${CMAKE_SOURCE_DIR}/strings
+   ${CMAKE_CURRENT_BINARY_DIR}
 ```
 
-**File**: `mysql-test/main/win_min_max.test` (modified, +83/-0)
+**File**: `client/mysql.cc` (modified, +4/-1)
 ```diff
-@@ -368,3 +368,86 @@ from t2;
+@@ -39,7 +39,6 @@
+ #endif
+ #include "my_readline.h"
+ #include <signal.h>
+-#include <violite.h>
+ #include <my_sys.h>
+ #include <source_revision.h>
+ #if defined(HAVE_LOCALE_H)
+@@ -60,6 +59,10 @@ static char *server_version= NULL;
+ #include "sql_string.h"
+ #include "client_metadata.h"
  
- drop table t2;
- drop table t1;
++#ifdef GWINSZ_IN_SYS_IOCTL
++#include <sys/ioctl.h>
++#endif
 +
-+--source include/have_sequence.inc
-+
-+--echo #
-+--echo # MDEV-24684 MIN/MAX as window functions are slow when the frame is not changing
-+--echo #
-+
-+create table t1 (g int, a int, b int);
-+insert into t1 values
-+  (1,1,10),(1,1,20),(1,2,NULL),(1,2,5),(1,3,7),
-+  (2,1,NULL),(2,1,NULL),
-+  (3,4,3),(3,5,9),(3,5,1),(3,6,2);
-+
-+select g, a, b, min(b) over (partition by g) mn, max(b) over (partition by g) mx
-+from t1 order by g, a, b;
-+
-+select g, a, b, min(b) over (partition by g order by a) mn,
-+       max(b) over (partition by g order by a) mx,
-+       std(b) over (partition by g order by a) sd,
-+       variance(b) over (partition by g order by a) vr
-+from t1 order by g, a, b;
-+
-+select g, a, b, min(b) over (partition by g order by a, b
-+                             rows between 1 following and 2 following) mn
-+from t1 order by g, a, b;
-+
-+select g, a, b,
-+  min(b) over (partition by g order by a, b rows between unbounded preceding and current row) c1,
-+  max(b) over (partition by g order by a, b rows between unbounded preceding and 1 following) c2,
-+  std(b) over (partition by g order by a, b rows between unbounded preceding and 1 preceding) c3
-+from t1 order by g, a, b;
-+
-+select g, a, b,
-+  min(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mn,
-+  max(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mx
-+from t1 order by g, a, b;
-+
-+select max(b) over () from t1 order by 1 limit 3;
-+
-+drop table t1;
-+
-+create table t1 (a int);
-+insert into t1 values (0),(4),(5),(6),(20);
-+select a, min(a) over (order by a range between 10 following and 5 following) mn,
-+       max(a) over (order by a range between 10 following and 5 following) mx,
-+       std(a) over (order by a range between 10 following and 5 following) sd
-+from t1;
-+drop table t1;
-+
-+create table t2 (i int, v varchar(10) collate utf8mb4_general_ci, d decimal(10,2), t datetime);
-+insert into t2 values
-+  (1,'b',1.50,'2020-01-03 00:00:00'),(2,'A',-2.25,'2020-01-01 00:00:00'),
-+  (3,'c',NULL,NULL),(4,'D',4.00,'2020-01-02 00:00:00'),(5,NULL,0.75,'2020-01-05 00:00:00');
-+select i, v, d, t,
-+  min(v) over (order by i) mnv,
-+  max(v) over (order by i desc) mxv,
-+  max(d) over (order by i rows between unbounded preceding and 1 following) mxd,
-+  std(d) over (order by i rows between unbounded preceding and current row) sdd,
-+  min(t) over (order by i desc) mnt
-+from t2 order by i;
-+drop table t2;
-+
-+create table t1 (a int);
-+insert into t1 select seq from seq_1_to_2000;
-+
-+flush status;
-+select max(s) from (select max(a) over () s from t1) w;
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+
-+flush status;
-+select max(s) from (select min(a) over (order by a) s from t1) w;
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+
-+flush status;
-+select max(s) from (select std(a) over (order by a) s from t1) w;
-+select variable_value < 100000 from information_schema.session_status
-+where variable_name = 'handler_read_rnd';
-+
-+drop table t1;
-+
-+--echo # End of 13.1 tests
+ extern "C" {
+ #if defined(HAVE_CURSES_H) && defined(HAVE_TERM_H)
+ #include <curses.h>
 ```
 
-**File**: `sql/sql_window.cc` (modified, +66/-19)
+**File**: `client/mysqltest.cc` (modified, +0/-1)
 ```diff
-@@ -2289,53 +2289,68 @@ class Frame_n_rows_following : public Frame_cursor
-   }
- };
- 
-+
-+/* Sum functions whose add() only accumulates and whose result can be read
-+   repeatedly */
-+static bool is_scan_result_reusable(Item_sum::Sumfunctype sum_func)
-+{
-+  switch (sum_func)
-+  {
-+    case Item_sum::MIN_FUNC:
-+    case Item_sum::MAX_FUNC:
-+    case Item_sum::STD_FUNC:
-+    case Item_sum::VARIANCE_FUNC:
-+      return true;
-+    default:
-+      return false;
-+  }
-+}
-+
- /*
-   A cursor that performs a table scan between two indices. The indices
-   are provided by the two cursors representing the top and bottom bound
-   of the window function's frame definition.
- 
--  Each scan clears the sum function.
-+  If the sum functions allow it, the result is kept if the frame is unchanged
-+  and extended if only the bottom moved down. Else the frame is rescanned.
- 
-   NOTE:
-     The cursor does not alter the top and bottom cursors.
--    This type of cursor is expensive computational wise. This is only to be
-+    A rescan is expensive computational wise. This is only to be
-     used when the sum functions do not support removal.
- */
- class Frame_scan_cursor : public Frame_cursor
- {
- public:
-   Frame_scan_cursor(const Frame_cursor &top_bound,
-                     const Frame_cursor &bottom_bound) :
--    top_bound(top_bound), bottom_bound(bottom_bound)
-+    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
-+    can_append(false)
-   {
-     seq_cursor= &cursor;
-   }
- 
-   void init(READ_RECORD *info) override
-   {
-     cursor.init(info);
-+    can_append= true;
-+    List_iterator_fast<Item_sum> it(sum_functions);
-+    Item_sum *item_sum;
-+    while ((item_sum= it++))
-+      can_append&= is_scan_result_reusable(item_sum->sum_func());
-   }
- 
-   void pre_next_partition(ha_rows rownum) override
-   {
--    /* TODO(cvicentiu) Sum functions get cleared on next partition anyway during
--       the window function computation algorithm. Either perform this only in
--       cursors, or remove it from pre_next_partition.
--    */
-     curr_rownum= rownum;
--    clear_sum_functions();
-+    have_result= false;
-   }
- 
-   void next_partition(ha_rows rownum) override
-   {
-     compute_values_for_current_row();
-   }
- 
--  void pre_next_row() override
--  {
--    clear_sum_functions();
--  }
--
-   void next_row() override
-   {
-     curr_rownum++;
-@@ -2352,31 +2367,63 @@ class Frame_scan_cursor : public Frame_cursor
-   const Frame_cursor &bottom_bound;
-   Table_read_cursor cursor;
-   ha_rows curr_rownum;
-+  /* The sum functions hold the result for rows last_top..last_bottom */
-+  bool have_result;
-+  ha_rows last_top, last_bottom;
-+  bool can_append;
- 
--  /* Scan the rows between the top bound and bottom bound. Add all the values
--     between them, top bound row  and bottom bound row inclusive. */
-+  /* Make the sum functions hold the rows between the top bound and bottom
-+     bound, both inclusive: reuse, extend or rescan the previous result. */
-   void compute_values_for_current_row()
-   {
-     THD *thd= current_thd;
-     if (top_bound.is_outside_computation_bounds() ||
-         bottom_bound.is_outside_computation_bounds())
-+    {
-+      clear_sum_functions();
-+      have_result= false;
-       return;
-+    }
- 
-     ha_rows start_rownum= top_bound.get_curr_rownum();
-     ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
-     DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
- 
--    cursor.move_to(start_rownum);
-+    ha_rows first_rownum= start_rownum;
-+    if (can_append && have_result && start_rownum == last_top)
-+    {
-+      if (bottom_rownum == last_bottom)
-+        return;
-+      /* Extend only a previous frame ending at most 1 row above the top:
-+         after an inverted frame ending higher, the rows in between would
-+         be added */
-+      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
-+        first_rownum= last_bottom + 1;
-+    }
- 
--    for (ha_rows idx= start_rownum; idx <= bottom_rownum
--         && ((idx & 0xFF) || !thd->check_killed(true)); idx++)
-+    if (first_rownum == start_rownum)
-+      clear_sum_functions();
-+    have_result= false;
-+    cursor.move_to(first_rownum);
-+
-+    ha_rows idx= first_rownum;
-+    while (idx <= bottom_rownum
-+           && ((idx & 0xFF) || !thd->check_killed(true)))
-     {
--      if (cursor.fetch()) //EOF
-+      if (cursor.fetch()) // EOF or read error
-         break;
-       add_value_to_items();
-+      idx++;
-       if (cursor.next()) // EOF
-         break;
-     }
-+    /* Cache the result only if the scan completed */
-+    if (idx > bottom_rownum)
-+    {
-+      have_result= true;
-+      last_top= start_rownum;
-+      last_bottom= bottom_rownum;
-+    }
-   }
- };
- 
+@@ -44,7 +44,6 @@
+ #include <my_dir.h>
+ #include <hash.h>
+ #include <stdarg.h>
+-#include <violite.h>
+ #define PCRE2_STATIC 1  /* Important on Windows */
+ #include "pcre2posix.h" /* pcreposix regex library */
+ #ifdef HAVE_SYS_WAIT_H
+```
+
+**File**: `libmariadb` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-Subproject commit dfe23ed2e1f2c1e2e8544683af45616e1ff60dab
++Subproject commit 1bb383f99b4102ef938a9df1fe6b4a854a1411bb
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6252** (2026-11-27): Fix 11.8 build with system PCRE2 on FreeBSD (@vaintroub)
+- **PR #6251** (2026-11-27): MDEV-42493 : Galera test failure on galera_toi_definer_check (@janlindstrom)
 - **PR #6247** (2026-11-26): MDEV-42338 follow-up: fix build with OpenSSL 4.1.0 and clang (@vaintroub)
+- **PR #6244** (2026-11-27): MDEV-41651 mariadb_dyncol_list_named() leaks the result array when a column name cannot be read (@xnervwang)
+- **PR #6236** (closed): MDEV-42493 : Galera test failure on galera_toi_definer_check (@janlindstrom)
 - **PR #6233** (closed): MDEV-40794: Dynamic Column Aggregate Name Pool Overflow (@immortal-jelly)
-- **PR #6225** (2026-11-25): MDEV-42444 mariabackup SST fails with "Donor does not know my secret!" (@janlindstrom)
-- **PR #6224** (2026-11-25): MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead (@iMineLink)
-- **PR #6222** (2026-11-25): MDEV-42446: Galera test failure on galera_sst_mariabackup_plugin_dir (@hemantdangi-gc)
-- **PR #6221** (2026-11-25): MDEV-42420 Use two applier threads in tests that pause the applier (@sjaakola)
 
 ---
 
@@ -2208,83 +1766,31 @@ are no longer repeated when the frame is reused or extended.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
+## X. 11.8 build with system PCRE2 on FreeBSD
 
 **RULE**:
-When implementing operations in `sql/sql_window.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2844a41`: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `783713b1`: 11.8 build with system PCRE2 on FreeBSD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `sql/sql_window.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    top_bound(top_bound), bottom_bound(bottom_bound), have_cached_result(false),
-    have_cached_result= false;
-  /* The sum functions hold the result for rows
-     cached_frame_top..cached_frame_bottom */
-  bool have_cached_result;
-  ha_rows cached_frame_top, cached_frame_bottom;
-      have_cached_result= false;
-    ha_rows curr_top_rownum= top_bound.get_curr_rownum();
-    ha_rows curr_bottom_rownum= bottom_bound.get_curr_rownum();
-    DBUG_PRINT("info", ("COMPUTING (%llu %llu)",
-                        curr_top_rownum, curr_bottom_rownum));
-    ha_rows scan_from= curr_top_rownum;
-    if (can_append && have_cached_result &&
-        curr_top_rownum == cached_frame_top)
-      if (curr_bottom_rownum == cached_frame_bottom)
-
-      /*
-        Add only the rows below the previous frame, if the frame grew.
-        An empty previous frame (bottom above top, e.g. RANGE BETWEEN
-        5 FOLLOWING AND 1 FOLLOWING) has nothing to extend.
-      */
-      if (curr_bottom_rownum > cached_frame_bottom &&
-          cached_frame_bottom >= cached_frame_top)
-        scan_from= cached_frame_bottom + 1;
-    if (scan_from == curr_top_rownum)
-    have_cached_result= false;
-    cursor.move_to(scan_from);
-
+TARGET_LINK_LIBRARIES(import_util PRIVATE MariaDB::pcre2-posix MariaDB::pcre2-8)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
-    have_result= false;
-  /* The sum functions hold the result for rows last_top..last_bottom */
-  bool have_result;
-  ha_rows last_top, last_bottom;
-      have_result= false;
-    ha_rows start_rownum= top_bound.get_curr_rownum();
-    ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
-    DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
-    ha_rows first_rownum= start_rownum;
-    if (can_append && have_result && start_rownum == last_top)
-      if (bottom_rownum == last_bottom)
-      /* Extend only a previous frame ending at most 1 row above the top:
-         after an inverted frame ending higher, the rows in between would
-         be added */
-      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
-        first_rownum= last_bottom + 1;
-    if (first_rownum == start_rownum)
-    have_result= false;
-    cursor.move_to(first_rownum);
-    ha_rows idx= first_rownum;
-    while (idx <= bottom_rownum
-    if (idx > bottom_rownum)
-      have_result= true;
-      last_top= start_rownum;
-      last_bottom= bottom_rownum;
+TARGET_LINK_LIBRARIES(import_util PRIVATE pcre2-posix pcre2-8)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2844a41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `783713b1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

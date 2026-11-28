@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "91c1df80",
+    "sourceVersion": "d721e1f9",
     "license": "Apache-2.0",
-    "contentHash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
-    "lastHarvestedAt": "2026-11-27T08:14:44.981Z",
+    "contentHash": "214cd4b63e2b24fc810854bbdd4980306a298141582706d7f0e693fa23f3c331",
+    "lastHarvestedAt": "2026-11-28T02:13:23.471Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "d2844a41",
+    "sourceVersion": "a452de5f",
     "license": "GPL-2.0",
-    "contentHash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
-    "lastHarvestedAt": "2026-11-27T06:55:06.377Z",
+    "contentHash": "8af96167231c1385c16fc569725e94ebece4199f3339f6580631f45bfeacfcd8",
+    "lastHarvestedAt": "2026-11-28T02:13:28.130Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "22f2184e",
+    "sourceVersion": "13366231",
     "license": "WTFPL",
-    "contentHash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
-    "lastHarvestedAt": "2026-11-22T04:29:03.652Z",
+    "contentHash": "119eaf39da7e5cd9e560086cff5a4defe3b6510304f12b816d406c49c74aa9c7",
+    "lastHarvestedAt": "2026-11-28T02:13:16.019Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {
@@ -13375,8 +13375,8 @@
     "sourceUrl": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview",
     "sourceVersion": "hf-baidu-ernie-5.5-flash-preview",
     "license": "Open-Source",
-    "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
-    "lastHarvestedAt": "2026-11-24T17:42:31.323Z",
+    "contentHash": "4b1bb68e82c342dbcd3ec49d1d2866e25cf6d08e39bdd740fcc20a50282d694b",
+    "lastHarvestedAt": "2026-11-28T02:13:12.543Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview"
   },
   "hf-atomicchat-inkling-2-mini-gguf": {

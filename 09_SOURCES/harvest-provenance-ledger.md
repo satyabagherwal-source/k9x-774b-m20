@@ -13970,3 +13970,7 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `4e3fd8c9` | Multi-dimensional audit evidence | 2026-11-28T01:54:57.211Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `091ebe85` | Multi-dimensional audit evidence | 2026-11-28T01:54:59.469Z |
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `de0102da` | Multi-dimensional audit evidence | 2026-11-28T02:03:38.755Z |
+| `learn-huggingface-baidu-ernie-5-5-flash-preview` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-28T02:13:12.543Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `13366231` | Multi-dimensional audit evidence | 2026-11-28T02:13:16.019Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `d721e1f9` | Multi-dimensional audit evidence | 2026-11-28T02:13:23.471Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `a452de5f` | Multi-dimensional audit evidence | 2026-11-28T02:13:28.130Z |

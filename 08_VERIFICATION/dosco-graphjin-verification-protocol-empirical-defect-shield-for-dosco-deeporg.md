@@ -4,22 +4,22 @@
 {
   "source_repository": "dosco/deeporg",
   "source_url": "https://github.com/dosco/graphjin",
-  "source_version": "91c1df80",
+  "source_version": "d721e1f9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T08:14:45.302Z",
+  "timestamp": "2026-11-28T02:13:23.863Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dosco-deeporg",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `91c1df80`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T08:14:45.302Z`  
+> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `d721e1f9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T02:13:23.863Z`  
 > **Learning ID**: `learn-github-dosco-deeporg`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dosco/deeporg` (Commit: `91c1df80`)
+- **Target Repository**: `dosco/deeporg` (Commit: `d721e1f9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T08:14:35.118Z  
+> **Harvest Timestamp**: 2026-11-28T02:13:21.893Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3239 stars
+- **Stars / Engagement**: 3240 stars
 
 ---
 
@@ -2563,838 +2563,497 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `178469e5` (2026-11-27)
-**Commit Message**: fix: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page
+### Incident Patch 1: `d721e1f9` (2026-11-27)
+**Commit Message**: chore: bump version to v3.27.0 [skip-release] [skip ci]
 
-Three problems found by running a server install, and the website page
-that walks through one.
-
-Health check. A new install answered 503 on /health until a database
-was connected on the setup page, so hosting that restarts a failing
-program killed it before setup could finish. It now pings its own store
-and answers 200 "Waiting for setup". An install run from config files
-still answers 503 with no database.
-
-Server image. The image is stamped main.imageRole=server, and a first
-run in it writes listen: 0.0.0.0:8080, so publishing the port is
-enough. A laptop build still writes 127.0.0.1:8080. When the folder for
-the start config and store cannot be written, the error names the
-folder and the user id, and in the image says to mount the volume at
-the user's home. A start config that already holds a loopback address
-is used as written, with a hint on how to open it.
-
-Runtime page. A new install does not serve gj_security, because
-security.read is off by default on an agent server, but the console
-asked for it and showed "table not found". The Runtime page now leaves
-the Security pa
-
-**File**: `.goreleaser.yml` (modified, +5/-0)
+**File**: `agent/go.mod` (modified, +1/-1)
 ```diff
-@@ -61,12 +61,17 @@ kos:
-       - latest
-       - "{{ .Version }}"
-     bare: true
-+    # ko cannot set an environment variable, a command or a volume, so the
-+    # role ldflag tells the binary it is the server image. A new install then
-+    # listens where a container can be reached, and a volume it cannot write
-+    # to is reported with the folder to mount.
-     ldflags:
-       - -s -w
-       - -X main.version={{ .Version }}
-       - -X main.commit={{ .Commit }}
-       - -X main.date={{ .Date }}
-       - -X github.com/dosco/graphjin/serv/v3.version={{ .Version }}
-+      - -X main.imageRole=server
-     env:
-       - CGO_ENABLED=0
- 
-```
-
-**File**: `cmd/cmd_serv.go` (modified, +6/-0)
-```diff
-@@ -129,6 +129,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
- 		if file, ok := usesStartConfig(cmd); ok {
- 			var err error
- 			if start, err = loadStartConfig(file); err == nil {
-+				err = start.storeWritable()
-+			}
-+			if err == nil {
- 				err = start.findListen()
- 			}
- 			if err != nil {
-@@ -143,6 +146,9 @@ func cmdServ(cmd *cobra.Command, args []string) {
- 			if start.created {
- 				fmt.Printf("Created %s\n\n", start.path)
- 			}
-+			if advice := start.unreachableListenAdvice(); advice != "" {
-+				fmt.Fprintf(os.Stderr, "%s\n\n", advice)
-+			}
- 		}
- 	}
- 
-```
-
-**File**: `cmd/image_role.go` (modified, +17/-0)
-```diff
-@@ -26,6 +26,15 @@ var imageRole string
- // a plain `go build` leave it at the historical behaviour.
- var currentImageRole = imageRoleServer
- 
-+// serverImage is true when this binary was built as the server image, which
-+// is the one build that says so with main.imageRole=server. A plain
-+// `go build` and the release archives say nothing and are not an image, and
-+// the environment image has a role of its own.
-+//
-+// The server needs to know because a new install is right for a laptop by
-+// default and wrong for a container: see startDefaultListen.
-+var serverImage bool
-+
- const (
- 	// imageRoleServer is the historical image: the database server.
- 	imageRoleServer = "server"
-@@ -52,6 +61,13 @@ func resolveImageRole(role string) (string, error) {
- 	}
- }
- 
-+// builtAsServerImage reports whether the role stamped into the binary names
-+// the server image. An empty role also resolves to the server, but it means a
-+// build that is not an image at all.
-+func builtAsServerImage(stamped string) bool {
-+	return strings.EqualFold(strings.TrimSpace(stamped), imageRoleServer)
-+}
-+
- // imageRoleArgs supplies the command line an image's role implies.
- //
- // Anything explicit wins: `docker run <image> version` runs version, so a
-@@ -119,6 +135,7 @@ func applyImageRole() error {
- 		return err
- 	}
- 	currentImageRole = role
-+	serverImage = builtAsServerImage(imageRole)
- 	os.Args = append(os.Args[:1], imageRoleArgs(role, os.Args[1:])...)
- 	return nil
- }
-```
-
-**File**: `cmd/ldflags_pin_test.go` (modified, +14/-0)
-```diff
-@@ -58,6 +58,20 @@ func TestEveryBuildStampsTheSameIdentity(t *testing.T) {
- 	if !role {
- 		t.Fatal("no build stamps main.imageRole, so no image can be an environment")
- 	}
-+
-+	// Each image says which one it is, and nothing else does: the server
-+	// image first, then the environment. The archives people install on a
-+	// laptop carry no role, or a laptop install would listen on every address.
-+	var roles []string
-+	for _, match := range regexp.MustCompile(`main\.imageRole=(\S+)`).FindAllStringSubmatch(string(release), -1) {
-+		roles = append(roles, match[1])
-+	}
-+	if strings.Join(roles, ",") != imageRoleServer+","+imageRoleEnv {
-+		t.Fatalf("the release stamps the roles %v, want the server image then the environment image", roles)
-+	}
-+	if contains(baseline, "main.imageRole") {
-+		t.Fatal("the builds block stamps main.imageRole, so an installed binary would think it is an image")
-+	}
- }
- 
- // ldflagBlocks returns the -X keys of each ldflags list in a YAML document.
-```
-
-**File**: `cmd/start_config.go` (modified, +99/-4)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"errors"
- 	"fmt"
-+	"io/fs"
- 	"net"
- 	"net/http"
- 	"os"
-@@ -33,8 +34,20 @@ const (
- 
- 	// A laptop install listens on this machine only. A server sets listen.
- 	startDefaultListen = "127.0.0.1:8080"
-+	// Inside a container, this machine only means the container only: nothing
-+	// outside it could reach the server. The server image listens on every
-+	// address, and what is published from the container decides who gets in.
-+	startImageListen = "0.0.0.0:8080"
+@@ -5,7 +5,7 @@ go 1.25.0
+ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	github.com/gofrs/flock v0.13.0
  )
  
-+// firstRunListen is the address a new install is given when nobody chose one.
-+func firstRunListen() string {
-+	if serverImage {
-+		return startImageListen
-+	}
-+	return startDefaultListen
-+}
-+
- type startConfig struct {
- 	Store     string `yaml:"store"`
- 	SecretKey string `yaml:"secret_key"`
-@@ -134,11 +147,13 @@ func loadStartConfig(file string) (*startConfig, error) {
- 	case os.IsNotExist(err):
- 		sc.Store = filepath.Join(filepath.Dir(file), "store.db")
- 		sc.SecretKey = newInstallSecret()
--		sc.Listen = startDefaultListen
-+		sc.Listen = firstRunListen()
- 		if err := writeStartConfig(sc); err != nil {
--			return nil, err
-+			return nil, homeNotWritableError(filepath.Dir(file), err)
- 		}
- 		sc.created = true
-+	case errors.Is(err, fs.ErrPermission):
-+		return nil, fmt.Errorf("DeepORG cannot read %s: permission denied.\nMake the file readable for the user DeepORG runs as (user %d) and start again.", file, os.Getuid())
- 	default:
- 		return nil, err
- 	}
-@@ -169,6 +184,78 @@ func loadStartConfig(file string) (*startConfig, error) {
- 	return sc, nil
- }
- 
-+// storeWritable makes sure the store's folder can be written before the
-+// server opens the store. A store that cannot be written fails there with a
-+// database error that says nothing about folders.
-+func (sc *startConfig) storeWritable() error {
-+	dir := filepath.Dir(sc.Store)
-+	if err := checkWritable(dir); err != nil {
-+		return homeNotWritableError(dir, err)
-+	}
-+	return nil
-+}
-+
-+// unreachableListenAdvice is what the server image says when it is about to
-+// listen where nothing outside the container can reach it. That is what a
-+// start config written by an image older than this default holds.
-+func (sc *startConfig) unreachableListenAdvice() string {
-+	host, port, err := net.SplitHostPort(sc.Listen)
-+	if !serverImage || err != nil || !loopbackHost(host) {
-+		return ""
-+	}
-+	return fmt.Sprintf("DeepORG is listening on %s, which nothing outside this container can reach.\nTo open it, set `listen: 0.0.0.0:%s` in %s, or set %s, and start again.",
-+		sc.Listen, port, sc.path, startListenEnv)
-+}
-+
-+// checkWritable makes sure files can be created in dir, creating it first
-+// when it is not there.
-+func checkWritable(dir string) error {
-+	if err := os.MkdirAll(dir, 0o700); err != nil {
-+		return err
-+	}
-+	probe, err := os.CreateTemp(dir, ".deeporg-write-*")
-+	if err != nil {
-+		return err
-+	}
-+	probe.Close() //nolint:errcheck
-+	return os.Remove(probe.Name())
-+}
-+
-+// homeNotWritableError says which folder could not be written and what to do
-+// about it. Any other failure is returned as it is.
-+//
-+// In the server image this is the first thing most people hit: the image runs
-+// as an ordinary user, and a volume mounted anywhere but that user's home
-+// belongs to root.
-+func homeNotWritableError(dir string, err error) error {
-+	if !errors.Is(err, fs.ErrPermission) && !errors.Is(err, syscall.EROFS) {
-+		return err
-+	}
-+	reason := "permission denied"
-+	if errors.Is(err, syscall.EROFS) {
-+		reason = "it is read-only"
-+	}
-+	who := "the user it runs as"
-+	if uid := os.Getuid(); uid >= 0 {
-+		who = fmt.Sprintf("user %d", uid)
-+	}
-+	lines := []string{
-+		fmt.Sprintf("DeepORG cannot write to %s: %s.", dir, reason),
-+		"It keeps its start config and its store in that folder.",
-+	}
-+	home, homeErr := os.UserHomeDir()
-+	if !serverImage || homeErr != nil || home == "" {
-+		lines = append(lines, fmt.Sprintf("Make the folder writable for %s, or set %s to a folder that is, and start again.", who, startConfigDirEnv))
-+		return errors.New(strings.Join(lines, "\n"))
-+	}
-+	lines = append(lines,
-+		fmt.Sprintf("In this image DeepORG runs as %s, and a volume mounted anywhere else belongs to root.", who),
-+		fmt.Sprintf("Mount the volume at %s itself, which that user owns, and leave %s unset.", home, startConfigDirEnv),
-+		fmt.Sprintf("If the folder comes from the host or from Kubernetes, make it writable for %s first.", who),
-+	)
-+	return errors.New(strings.Join(lines, "\n"))
-+}
-+
- // startPortTries is how many ports after the wanted one are tried.
- const startPortTries = 20
- 
-@@ -274,12 +361,20 @@ store: %s
- # lost, everyone is signed out and stored database passwords cannot be read.
- secret_key: %s
- 
--# Address and port to listen on. This one is reachable from this machine only.
-+# Address and port to listen on. %s
- listen: %s
--`, yamlString(sc.Store), yamlString(sc.SecretKey), yamlString(sc.Listen))
-+`, yamlString(sc.Store), yamlString(sc.SecretKey), listenReach(sc.Listen),
 ```
 
-**File**: `cmd/start_config_test.go` (modified, +180/-0)
+**File**: `auth/go.mod` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@ package main
- import (
- 	"context"
- 	"fmt"
-+	"io"
- 	"net"
- 	"net/http"
- 	"net/http/httptest"
-@@ -175,6 +176,168 @@ func TestStartConfigProblemsSayWhatToDo(t *testing.T) {
- 	}
- }
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/auth/v3
+ go 1.25.0
  
-+// asServerImage runs the test as the binary in the server image does.
-+func asServerImage(t *testing.T) {
-+	t.Helper()
-+	previous := serverImage
-+	serverImage = true
-+	t.Cleanup(func() { serverImage = previous })
-+}
-+
-+// A container that listens on this machine only is one nothing can reach. The
-+// server image is the one build that knows it is in a container, so a new
-+// install there listens on every address without being told to.
-+func TestServerImageListensWhereAContainerCanBeReached(t *testing.T) {
-+	// Only the server image's own stamp makes a binary the server image.
-+	for stamped, want := range map[string]bool{"": false, "server": true, " Server\n": true, "env": false} {
-+		if got := builtAsServerImage(stamped); got != want {
-+			t.Fatalf("builtAsServerImage(%q) = %v, want %v", stamped, got, want)
-+		}
-+	}
-+
-+	_, home := inEmptyDir(t)
-+	file := filepath.Join(home, startConfigName)
-+	asServerImage(t)
-+
-+	sc, err := loadStartConfig(file)
-+	if err != nil {
-+		t.Fatalf("first run in the image: %v", err)
-+	}
-+	if sc.Listen != "0.0.0.0:8080" {
-+		t.Fatalf("listen = %q in the server image, want every address", sc.Listen)
-+	}
-+	raw, err := os.ReadFile(file)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !strings.Contains(string(raw), "listen: 0.0.0.0:8080") || strings.Contains(string(raw), "this machine only") {
-+		t.Fatalf("the start config written in the image does not say where it listens:\n%s", raw)
-+	}
-+	if opensBrowser(sc) {
-+		t.Fatal("the server image tried to open a browser")
-+	}
-+	if advice := sc.unreachableListenAdvice(); advice != "" {
-+		t.Fatalf("a reachable address was warned about: %s", advice)
-+	}
-+	// The environment still chooses the address.
-+	t.Setenv(startListenEnv, "0.0.0.0:9999")
-+	if sc, err = loadStartConfig(file); err != nil || sc.Listen != "0.0.0.0:9999" {
-+		t.Fatalf("%s did not override the image's address: %+v %v", startListenEnv, sc, err)
-+	}
-+	t.Setenv(startListenEnv, "")
-+
-+	// A start config written by an older image holds the laptop's address.
-+	// It is used as it is, since someone may have meant it, and the server
-+	// says how to open it.
-+	body := strings.Replace(string(raw), "listen: 0.0.0.0:8080", "listen: "+startDefaultListen, 1)
-+	if err := os.WriteFile(file, []byte(body), 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	if sc, err = loadStartConfig(file); err != nil || sc.Listen != startDefaultListen {
-+		t.Fatalf("an existing start config was not used as written: %+v %v", sc, err)
-+	}
-+	advice := sc.unreachableListenAdvice()
-+	for _, want := range []string{startDefaultListen, "listen: 0.0.0.0:8080", file, startListenEnv} {
-+		if !strings.Contains(advice, want) {
-+			t.Fatalf("the advice does not say %q:\n%s", want, advice)
-+		}
-+	}
-+	// On a laptop the same address is the right one, and nothing is said.
-+	serverImage = false
-+	if advice := sc.unreachableListenAdvice(); advice != "" {
-+		t.Fatalf("a laptop was warned about listening on this machine only: %s", advice)
-+	}
-+}
-+
-+// A volume mounted anywhere but the image user's home belongs to root, and the
-+// first run cannot write to it. The error names the folder and says what to
-+// mount, where it used to be `open /data/deeporg.yml: permission denied`.
-+func TestUnwritableHomeSaysWhichFolderAndWhatToMount(t *testing.T) {
-+	if os.Getuid() == 0 {
-+		t.Skip("root can write anywhere")
-+	}
-+	inEmptyDir(t)
-+	userHome := t.TempDir()
-+	t.Setenv("HOME", userHome)
-+	locked := filepath.Join(t.TempDir(), "data")
-+	if err := os.Mkdir(locked, 0o500); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(func() { os.Chmod(locked, 0o700) }) //nolint:errcheck
-+	t.Setenv(startConfigDirEnv, locked)
-+	file, ok := usesStartConfig(nil)
-+	if !ok || file != filepath.Join(locked, startConfigName) {
-+		t.Fatalf("file=%q ok=%v", file, ok)
-+	}
-+	uid := fmt.Sprintf("user %d", os.Getuid())
-+
-+	// On a laptop: which folder, who has to be able to write it, and the
-+	// setting that picks another folder.
-+	_, err := loadStartConfig(file)
-+	if err == nil {
-+		t.Fatal("a start config was written to a folder that cannot be written")
-+	}
-+	for _, want := range []string{"cannot write to " + locked, "permission denied", uid, startConfigDirEnv} {
-+		if !strings.Contains(err.Error(), want) {
-+			t.Fatalf("the error does not say %q:\n%s", want, err)
-+		}
-+	}
-+	if strings.Contains(err.Error(), "Mount the volume") {
-+		t.Fatalf("a laptop was told to mount a volume:\n%s", err)
-+	}
-+
-+	// In the server image: where to mount the volume.
-+	asServerImage(t)
-+	_, err = loadStartConfig(file)
-+	if err == nil {
-+		t.Fatal("a start config was written to a folder that cannot be written")
-+	}
-+	for _, want := range []string{"cannot write to " + locked, uid, "Mount the volume at " + userHome + " itself", "leave " + startConfigDirEnv + " unset"} {
-+		if !strings.Contains(err.Error(), wan
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	github.com/golang-jwt/jwt/v5 v5.3.1
+ 	github.com/lestrrat-go/jwx v1.2.31
+ 	github.com/stretchr/testify v1.11.1
 ```
 
-**File**: `serv/health.go` (modified, +23/-0)
+**File**: `cmd/go.mod` (modified, +5/-5)
 ```diff
-@@ -11,6 +11,10 @@ import (
- 
- var healthyResponse = []byte("All's Well")
- 
-+// waitingForSetupResponse is what a new install answers before a database has
-+// been connected on the setup page.
-+var waitingForSetupResponse = []byte("Waiting for setup")
-+
- // defaultHealthPingTimeout bounds the health probe when no ping_timeout is
- // configured. In sources mode the legacy DB block is never populated, so
- // conf.DB.PingTimeout is zero — without this guard the probe context is
-@@ -33,6 +37,25 @@ func healthCheckHandler(s1 *HttpService) http.Handler {
- 		defer span.End()
- 
- 		db := s.anyDB()
-+		if db == nil && s.setupNeedsDatabase() {
-+			// A new install has no database until someone connects one on
-+			// the setup page. Answering unhealthy here makes a host that
-+			// restarts a failing program kill the server before anyone can
-+			// finish setup, so the install is healthy while its own store
-+			// answers.
-+			if store := s.dbs[s.managedArtifactDB]; store != nil {
-+				if err := store.PingContext(c1); err != nil {
-+					spanError(span, err)
-+
-+					s.zlog.Error("Health Check", []zapcore.Field{zap.Error(err)}...)
-+					w.WriteHeader(http.StatusInternalServerError)
-+					_, _ = w.Write([]byte("store ping failed"))
-+					return
-+				}
-+			}
-+			_, _ = w.Write(waitingForSetupResponse)
-+			return
-+		}
- 		if db == nil {
- 			w.WriteHeader(http.StatusServiceUnavailable)
- 			_, _ = w.Write([]byte("no database connection"))
+@@ -5,13 +5,13 @@ go 1.25.5
+ require (
+ 	github.com/brianvoe/gofakeit/v6 v6.28.0
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.26.0
+-	github.com/dosco/graphjin/auth/v3 v3.26.0
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/agent/v3 v3.27.0
++	github.com/dosco/graphjin/auth/v3 v3.27.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	github.com/dosco/graphjin/examples v0.0.0
+ 	github.com/dosco/graphjin/hostedemu v0.0.0
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/serv/v3 v3.26.0
++	github.com/dosco/graphjin/serv/v3 v3.27.0
+ 	github.com/gosimple/slug v1.15.0
+ 	github.com/jackc/pgx/v5 v5.7.6
+ 	github.com/jvatic/goja-babel v0.0.0-20250906111304-06c40d6b931b
+@@ -111,7 +111,7 @@ require (
+ 	github.com/docker/docker v28.5.2+incompatible // indirect
+ 	github.com/docker/go-connections v0.6.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.26.0 // indirect
++	github.com/dosco/graphjin/plugin/otel/v3 v3.27.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10502.0 // indirect
 ```
 
-**File**: `serv/health_test.go` (added, +94/-0)
+**File**: `conf/go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,94 @@
-+package serv
-+
-+import (
-+	"database/sql"
-+	"net/http"
-+	"net/http/httptest"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"github.com/dosco/graphjin/core/v3"
-+	"go.uber.org/zap"
-+)
-+
-+// A new install has no database until someone connects one on the setup page.
-+// A host that restarts a program failing its health check would otherwise
-+// kill the server before anyone could finish setup. An install configured
-+// from config files keeps answering unhealthy with no database.
-+func TestHealthWhileWaitingForSetup(t *testing.T) {
-+	logger := zap.NewNop()
-+	const store = "gj_store"
-+	openStore := func(t *testing.T) *sql.DB {
-+		t.Helper()
-+		db, err := sql.Open("sqlite", filepath.Join(t.TempDir(), "store.db"))
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		t.Cleanup(func() { db.Close() }) //nolint:errcheck
-+		return db
-+	}
-+	health := func(svc *graphjinService) (int, string) {
-+		svc.log, svc.zlog = logger.Sugar(), logger
-+		hs := &HttpService{}
-+		hs.Store(svc)
-+		rec := httptest.NewRecorder()
-+		healthCheckHandler(hs).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, healthRoute, nil))
-+		return rec.Code, rec.Body.String()
-+	}
-+	// storeBacked builds the service a start config gives: its configuration
-+	// is in the store, and the store is the only database it has open.
-+	storeBacked := func(t *testing.T, sources ...core.SourceConfig) *graphjinService {
-+		conf := &Config{Core: core.Config{Sources: sources}}
-+		conf.SetStore("/somewhere/store.db", "seal")
-+		return &graphjinService{
-+			conf:              conf,
-+			accounts:          &accountService{},
-+			dbs:               map[string]*sql.DB{store: openStore(t)},
-+			managedArtifactDB: store,
-+		}
-+	}
-+
-+	t.Run("a new install waiting for its database is healthy", func(t *testing.T) {
-+		code, body := health(storeBacked(t))
-+		if code != http.StatusOK || !strings.Contains(body, "Waiting for setup") {
-+			t.Fatalf("health = %d %q, want 200 and a line saying setup is not finished", code, body)
-+		}
-+	})
-+
-+	t.Run("a new install whose store does not answer is not", func(t *testing.T) {
-+		svc := storeBacked(t)
-+		svc.dbs[store].Close() //nolint:errcheck
-+		if code, body := health(svc); code != http.StatusInternalServerError {
-+			t.Fatalf("health = %d %q with a closed store, want 500", code, body)
-+		}
-+	})
-+
-+	t.Run("a database that was connected and is gone is still unhealthy", func(t *testing.T) {
-+		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
-+		if code, body := health(svc); code != http.StatusServiceUnavailable {
-+			t.Fatalf("health = %d %q with a database configured and none open, want 503", code, body)
-+		}
-+	})
-+
-+	t.Run("an install from config files with no database is unhealthy", func(t *testing.T) {
-+		svc := &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{}}
-+		if code, body := health(svc); code != http.StatusServiceUnavailable || !strings.Contains(body, "no database connection") {
-+			t.Fatalf("health = %d %q, want 503 as before", code, body)
-+		}
-+		// The same install with a store file of its own for artifacts: the
-+		// store being open does not make it a new install.
-+		svc = &graphjinService{conf: &Config{}, dbs: map[string]*sql.DB{store: openStore(t)}, managedArtifactDB: store}
-+		if code, body := health(svc); code != http.StatusServiceUnavailable {
-+			t.Fatalf("health = %d %q with only an artifact store open, want 503 as before", code, body)
-+		}
-+	})
-+
-+	t.Run("a connected database is pinged as before", func(t *testing.T) {
-+		svc := storeBacked(t, core.SourceConfig{Name: "main", Kind: "database"})
-+		svc.dbs["main"] = openStore(t)
-+		if code, body := health(svc); code != http.StatusOK || body != string(healthyResponse) {
-+			t.Fatalf("health = %d %q with a database connected, want 200 %q", code, body, healthyResponse)
-+		}
-+	})
-+}
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/conf/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
+ 
+```
+
+**File**: `package-lock.json` (modified, +2/-2)
+```diff
+@@ -1,12 +1,12 @@
+ {
+   "name": "deeporg",
+-  "version": "3.26.0",
++  "version": "3.27.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "deeporg",
+-      "version": "3.26.0",
++      "version": "3.27.0",
+       "hasInstallScript": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "deeporg",
+-  "version": "3.26.0",
++  "version": "3.27.0",
+   "description": "DeepORG: one AI agent for your whole organization, across your databases, APIs, files and code. Formerly GraphJin.",
+   "bin": {
+     "deeporg": "bin/deeporg.js",
+```
+
+**File**: `plugin/otel/go.mod` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/plugin/otel/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
+ 	go.opentelemetry.io/otel v1.43.0
+ 	go.opentelemetry.io/otel/trace v1.43.0
+```
+
+**File**: `serv/go.mod` (modified, +4/-4)
+```diff
+@@ -8,15 +8,15 @@ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
+ 	github.com/coder/websocket v1.8.15
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.26.0
+-	github.com/dosco/graphjin/auth/v3 v3.26.0
++	github.com/dosco/graphjin/agent/v3 v3.27.0
++	github.com/dosco/graphjin/auth/v3 v3.27.0
+ 	github.com/dosco/graphjin/bigquerydriver v0.0.0
+ 	github.com/dosco/graphjin/cassandradriver v0.0.0
+ 	github.com/dosco/graphjin/clickhousedriver v0.0.0
+ 	github.com/dosco/graphjin/codesql v0.0.0
+-	github.com/dosco/graphjin/core/v3 v3.26.0
++	github.com/dosco/graphjin/core/v3 v3.27.0
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.26.0
++	github.com/dosco/graphjin/plugin/otel/v3 v3.27.0
+ 	github.com/fsnotify/fsnotify v1.9.0
+ 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
+ 	github.com/go-pkgz/expirable-cache v1.0.0
 ```
 
 ---
 
-### Incident Patch 2: `8f454813` (2026-11-26)
-**Commit Message**: fix(core): introspection builds a valid client schema with API sources
+### Incident Patch 2: `bac9c9e4` (2026-11-27)
+**Commit Message**: feat: more than one copy can run on one Postgres store
 
-GraphiQL in the console Workbench refused the saas-ops schema: "unknown
-type: account_healthWhereInput". Every column field took includeIf/skipIf
-typed as its table's where input, but API remote tables and OpenAPI
-mutation results never define one (only filesystem remotes do). Those
-fields now get the conditional args only where the where type exists.
+Step 2 of docs/DESIGN-STORE-POSTGRES.md. With the store in Postgres a
+second copy could read the same data, but it kept running the
+configuration it started with and printed a setup link of its own.
 
-With that fixed, graphql-js validateSchema still rejected the schema:
-rolesEnum listed the control store's internal role
-__graphjin_internal_store, and "__" names are reserved. The roles enum
-now skips names that are not legal enum values.
+- Every copy checks the stored configuration's version every five
+  seconds and restarts itself to load a newer one. The copy that saves a
+  change and this check both go through applyStoredConfig, which is
+  version based, so one change is one restart however it is noticed.
+- The check runs for a file store too, which makes `deeporg config
+  import` take effect on a running server. It used to need a restart.
+- While no admin exists, a server whose store is Postgres derives the
+  setup link's token from the store's key, so every copy offers the same
+  link. DEEPORG_SETUP_TOKEN still overrides it.
+- Copies take turns creating the store's tables, behind a Postgres
+  advisory lock. Two copies starting at the same moment on an empty
+  store both ran CREATE SCHEMA IF NOT EXISTS and Postgres failed one of
+  them with a duplicate key error, which stopped that copy. Two real
+  processes found this; the in-process test did not until it emp
 
-The new tests check the introspection JSON the way buildClientSchema and
-validateSchema do (unknown types, input/output positions, name grammar,
-reserved prefix, root types), and fail without each fix.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/intro.go` (modified, +46/-6)
+**File**: `SECURITY.md` (modified, +5/-0)
 ```diff
-@@ -407,7 +407,8 @@ func (in *Introspection) addOpenAPIMutationTable(table sdata.DBTable, alias stri
- 		if column.Blocked {
- 			continue
- 		}
--		field, err := in.getColumnField(column)
-+		// A mutation result has no where type to condition its fields on.
-+		field, err := in.getColumnField(column, false)
- 		if err != nil {
- 			return err
- 		}
-@@ -435,11 +436,17 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
- 	ft.Name = in.getName(name)
- 	ft.Description = table.Comment
+@@ -276,6 +276,11 @@ stored as the source's `admin_tables` and `blocked_tables`, the same settings a
+ config file uses, so the engine enforces it for every query. A table in either
+ list is left out of the catalog for every caller, so the agent does not use it.
  
-+	// Only a filesystem remote gets a where type (added below), so only its
-+	// fields can take includeIf/skipIf. Advertising them on an API remote
-+	// names a type the schema never defines, and GraphiQL then refuses to
-+	// build the client schema at all.
-+	filesystemRemote := isFilesystemRemoteTable(table)
++While no admin exists, a server whose store is Postgres offers a setup link
++whose token is derived from the store's key with HMAC, so every copy offers the
++same one. It says nothing about the key and stops working once an admin exists.
++Set `DEEPORG_SETUP_TOKEN` to choose the token yourself.
 +
- 	for _, c := range table.Columns {
- 		if c.Blocked {
- 			continue
- 		}
--		f, err := in.getColumnField(c)
-+		f, err := in.getColumnField(c, filesystemRemote)
- 		if err != nil {
- 			return err
- 		}
-@@ -453,7 +460,6 @@ func (in *Introspection) addRemoteTable(table sdata.DBTable, alias string) error
- 		}
- 		ft.addArg(a.Name, base)
- 	}
--	filesystemRemote := isFilesystemRemoteTable(table)
- 	if filesystemRemote {
- 		ft.addOrReplaceArg("id", newTypeRef("", "ID", nil))
- 		ft.addOrReplaceArg("limit", newTypeRef("", "Int", nil))
-@@ -596,7 +602,7 @@ func (in *Introspection) addTableTypeWithDepth(
- 			hasRecursive = true
- 		}
- 		var f1 FieldObject
--		f1, err = in.getColumnField(c)
-+		f1, err = in.getColumnField(c, true)
- 		if err != nil {
- 			return
- 		}
-@@ -729,6 +735,12 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
- 	}
- 	sort.Strings(roleNames)
- 	for _, name := range roleNames {
-+		// Internal roles such as __graphjin_internal_store are not for
-+		// clients, and a name outside the enum value grammar makes GraphiQL
-+		// reject the whole schema.
-+		if !isIntroEnumValueName(name) {
-+			continue
-+		}
- 		ro := roles[name]
- 		cmt := ro.Comment
- 		if ro.Match != "" {
-@@ -742,6 +754,28 @@ func (in *Introspection) addRolesEnumType(roles map[string]*Role) {
- 	in.addType(ft)
- }
- 
-+// isIntroEnumValueName reports whether name can be a GraphQL enum value:
-+// the name grammar [_A-Za-z][_0-9A-Za-z]*, no reserved "__" prefix, and not
-+// true, false or null.
-+func isIntroEnumValueName(name string) bool {
-+	if name == "" || strings.HasPrefix(name, "__") {
-+		return false
-+	}
-+	switch name {
-+	case "true", "false", "null":
-+		return false
-+	}
-+	for i, r := range name {
-+		switch {
-+		case r == '_', r >= 'A' && r <= 'Z', r >= 'a' && r <= 'z':
-+		case i > 0 && r >= '0' && r <= '9':
-+		default:
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- // addOrderByType adds an order by type to the introspection schema
- func (in *Introspection) addOrderByType(t sdata.DBTable, ft *FullType) {
- 	ty := FullType{
-@@ -936,8 +970,10 @@ func (in *Introspection) addArgsType(table sdata.DBTable, fn sdata.DBFunction) (
- 	return
- }
- 
--// getColumnField returns the field object for the given column
--func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObject, err error) {
-+// getColumnField returns the field object for the given column. conditional
-+// adds the includeIf/skipIf arguments, which take the table's where type; pass
-+// it only when the caller also defines that type.
-+func (in *Introspection) getColumnField(column sdata.DBColumn, conditional bool) (field FieldObject, err error) {
- 	field.Args = []InputValue{}
- 	field.Name = in.getName(column.Name)
- 	typeValue := newTypeRef("", "String", nil)
-@@ -957,6 +993,10 @@ func (in *Introspection) getColumnField(column sdata.DBColumn) (field FieldObjec
- 
- 	field.Type = typeValue
- 
-+	if !conditional {
-+		return
-+	}
-+
- 	field.Args = append(field.Args, InputValue{
- 		Name: "includeIf", Type: newTypeRef("", (column.Table + SUFFIX_WHERE), nil),
- 	})
+ DeepORG's own data is kept in a local file or, on a server with no disk, in a
+ Postgres database named by `DEEPORG_STORE`. Database passwords and the model key
+ in it are encrypted with a key derived from `DEEPORG_SECRET_KEY`, so reading the
 ```
 
-**File**: `core/intro_client_schema_test.go` (added, +368/-0)
+**File**: `cmd/postgres_store_test.go` (modified, +211/-0)
 ```diff
-@@ -0,0 +1,368 @@
-+package core
+@@ -7,6 +7,8 @@ import (
+ 	"net/http/httptest"
+ 	"os"
+ 	"strings"
++	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+@@ -245,3 +247,212 @@ func TestStoreInPostgresNeedsNoDisk(t *testing.T) {
+ 	}
+ 	nothingOnDisk("at the end")
+ }
 +
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"regexp"
-+	"sort"
-+	"strings"
-+	"testing"
-+
-+	"github.com/dosco/graphjin/core/v3/internal/sdata"
-+)
-+
-+// The console's Workbench hands this introspection result to GraphiQL, which
-+// calls graphql-js buildClientSchema. That call refuses the whole schema if a
-+// single field, argument or input field names a type the result never
-+// defines, so one dangling name blanks the editor for every table.
-+
-+func TestIntrospectionBuildsClientSchema(t *testing.T) {
-+	result := introspectRaw(t, sdata.GetTestDBInfo(), nil)
-+	if err := checkClientSchema(result); err != nil {
-+		t.Fatal(err)
++// Two copies of a server can run on one Postgres store. They offer the same
++// setup link, share accounts and what is kept in the store, and a setup
++// change made on one reaches the other within a few seconds.
++func TestTwoCopiesShareAPostgresStore(t *testing.T) {
++	if testing.Short() {
++		t.Skip("needs a Postgres container")
 +	}
-+}
++	storeURL, appURL := startStorePostgres(t)
++	inEmptyDir(t)
++	t.Setenv(startStoreEnv, storeURL)
++	t.Setenv(startSecretKeyEnv, "two-copies-test-secret-0123456789abcdef")
++	// No setup token is given, so each copy has to arrive at the same one.
++	t.Setenv("DEEPORG_SETUP_TOKEN", "")
 +
-+// An API source joined onto a table (the saas-ops demo's account_health) and
-+// a top-level API list are remote tables with no where type. Their fields
-+// used to take includeIf/skipIf typed as account_healthWhereInput anyway.
-+func TestIntrospectionWithAPIRemotesBuildsClientSchema(t *testing.T) {
-+	di := sdata.GetTestDBInfo()
-+
-+	joined := sdata.NewDBTable("public", "account_health", "remote", []sdata.DBColumn{
-+		{Schema: "public", Table: "account_health", Name: "account_id", Type: "bigint"},
-+		{Schema: "public", Table: "account_health", Name: "health", Type: "text"},
-+		{Schema: "public", Table: "account_health", Name: "open_risks", Type: "json"},
-+	})
-+	idcol := sdata.DBColumn{
-+		PrimaryKey: true, Schema: "public", Table: "account_health",
-+		Name: "__account_health_id", Type: "bigint",
-+		FKeySchema: "public", FKeyTable: "users", FKeyCol: "id",
++	file, ok := usesStartConfig(nil)
++	if !ok {
++		t.Fatal("an empty directory did not take the new flow")
 +	}
-+	joined.PrimaryCols = []sdata.DBColumn{idcol}
-+	joined.PrimaryCol = idcol
-+	joined.StrictColumns = true
-+	di.AddTable(joined)
-+
-+	list := sdata.NewDBTable("public", "incidents_api", "remote", []sdata.DBColumn{
-+		{Schema: "public", Table: "incidents_api", Name: "id", Type: "text"},
-+		{Schema: "public", Table: "incidents_api", Name: "severity", Type: "text"},
-+	})
-+	list.Args = []sdata.DBColumn{
-+		{Schema: "public", Table: "incidents_api", Name: "status", Type: "text"},
-+	}
-+	di.AddTable(list)
-+
-+	mutation := sdata.NewDBTable("public", "create_incident", "openapi_mutation", []sdata.DBColumn{
-+		{Schema: "public", Table: "create_incident", Name: "id", Type: "text"},
-+	})
-+	di.AddTable(mutation)
-+
-+	result := introspectRaw(t, di, map[string]bool{"create_incident": true})
-+	if err := checkClientSchema(result); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	var intro IntroResult
-+	if err := json.Unmarshal(result, &intro); err != nil {
-+		t.Fatal(err)
-+	}
-+	// The fix must not cost the remote tables their fields or their roots.
-+	health := requireIntroType(t, intro, "account_health")
-+	requireIntroField(t, health, "health")
-+	query := requireIntroType(t, intro, "Query")
-+	requireIntroField(t, query, "account_health")
-+	requireIntroField(t, query, "incidents_api")
-+	mut := requireIntroType(t, intro, "Mutation")
-+	requireIntroField(t, mut, "create_incident")
-+}
-+
-+// The control store's internal role is in the role map but is not a valid
-+// enum value; neither is a role name with a dash. Valid roles stay listed.
-+func TestIntrospectionRolesEnumBuildsClientSchema(t *testing.T) {
-+	schema, err := sdata.NewDBSchema(sdata.GetTestDBInfo(), nil)
++	sc, err := loadStartConfig(file)
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	gj := &graphjinEngine{
-+		conf: &Config{DBType: "postgres"},
-+		roles: map[string]*Role{
-+			"user":                      {Name: "user"},
-+			"anon":                      {Name: "anon"},
-+			"__graphjin_internal_store": {Name: "__graphjin_internal_store"},
-+			"support-agent":             {Name: "support-agent"},
-+		},
-+		defaultDB: "default",
-+		databases: map[string]*dbContext{
-+			"default": {name: "default", schema: schema},
-+		},
-+	}
-+	result, err := gj.introQuery()
++
++	// Copies that start at the same moment on an empty store all try to
++	// create its tables. None of them may fail for having lost that race.
++	// The race is a narrow one, so the store is emptied and opened again a
++	// number of times.
++	admin, err := sql.Open("pgx", storeURL)
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	if err := checkClientSchema(result); err != nil {
-+		t.Fatal(err)
++	for round := 0; round < 12; round++ {
++		if _, err := admin.Exec(`DROP SCHEMA IF EXISTS "_graphjin" CASCADE`); err != nil {
++			t.Fatal(err)
++		}
++		var opening sync.WaitGroup
++		openErrs := make(chan error, 8)
++		for i := 0; i < cap(openErrs); i++ {
++			opening.Add(1)
++			go func() {
++				defer opening.Done()
++				_, err := serv.StoredConfigVersion(context.Background(), storeURL)
++				openErrs <- err
++			}()
++		}
++		opening.Wait()
++		close(openErrs)
++		for err := range openErrs {
++			if err != nil {
++				t.Fatalf("round %d: a copy could not open a store another copy was creating: %v", round, err)
++			}
++		}
 +	}
-+	var intro IntroResult
-+	if err := json.Unmarshal(result, &intro); err != nil {
-+		t.Fatal(err)
-+	}
-+	roles := requireIntroType(t, intro, "rolesEnum")
-+	var got []string
-+	for _, v := range roles.EnumValues {
-+		got = append(got, v.Name)
-+	}
-+	if strings.Join(got, ",") != "anon,user" {
-+		t.Fatalf("rolesEnum values = %v, want [anon user]", got)
-+	}
-+}
++	admin.Close() //nolint:errcheck
 +
-+// A filesystem remote defines a where type, so its fields keep includeIf.
-+func TestIntrospectionFilesystemRemoteKeepsFieldConditions(t *testing.T) {
-+	di := sdata.GetTestDBInfo()
-+	fs := sdata.NewDBTable("public", "avatars", "remote", []sdata.DBColumn{
-+		{Schema: "public", Table: "avatars", Name: "key", Type: "text"},
-+		{Schema: "public", Table: "avatars", Name: "url", Type: "text"},
-+	})
-+	fs.Args = []sdata.DBColumn{
-+		{Schema: "public", Table: "avatars", Name: "prefix", Type: "text"},
-+		{Schema: "public", Table: "avatars", Name: "inline_data", Type: "boolean"},
++	// A copy is one server process. Its restart is counted here, and the
++	// test then starts it again, as the real one replaces itself.
++	type copyOf struct {
++		base     string
++		link     string
++		restarts *atomic.Int32
++		stop     func()
 +	}
-+	di.AddTable(fs)
++	boot := func() copyOf {
++		t.Helper()
++		conf, err := loadStartFlowConfig(sc)
++		if err != nil {
++			t.Fatalf("load from the store: %v", err)
++		}
++		restarts := &atomic.Int32{}
++		hs, err := serv.NewGraphJinService(conf,
++			serv.OptionSetLogOutput(zapcore.AddSync(&lockedBuffer{})),
++			serv.OptionSetConfigApplier(func() error { restarts.Add(1); return nil }))
++		if err != nil {
++			t.Fatalf("start: %v", err)
++		}
++		mux := http.NewServeMux()
++		if err := hs.Attach(mux); err != nil {
++			t.Fatal(err)
++		}
++		server := httptest.NewServer(mux)
++		return copyOf{base: server.URL, link: hs.SetupLink(), restarts: restarts, stop: func() { server.Close(); hs.Close() }} //nolint:errcheck
++	}
++	// restarted waits for a copy to ask for its restart. The copy that took
++	// the request asks at once; the others when their next check sees the
++	// change.
++	restarted := func(c copyOf, who string) {
++		t.Helper()
++		deadline := time.Now().Add(15 * time.Second)
++		for c.restarts.Load() == 0 {
++			if time.Now().After(deadline) {
++				t.Fatalf("%s never noticed the change", who)
++			}
++			time.Sleep(100 * time.Millisecond)
++		}
++		// One change is one restart, however many ways it was noticed.
++		time.Sleep(600 * time.Millisecond)
++		if n := c.restarts.Load(); n != 1 {
++			t.Fatalf("%s asked for %d restarts for one change", who, n)
++		}
++	}
++	reads := func(base, cookie, query, field string) bool {
++		t.Helper()
++		return strings.Contains(accountsGraphQL(t, base, cookie, query), field)
++	}
++	const ordersQuery = `query { orders(order_by: { id: asc }) { id total } }`
 +
-+	result := introspectRaw(t, di, nil)
-+	if err := checkClientSchema(result); err != nil {
-+		t.Fatal(err)
++	first, second := boot(), boot()
++	token := first.link[strings.Index(first.link, "token=")+len("token="):]
++	if first.link == "" || !strings.HasSuffix(second.link, "token="+token) {
++		t.Fatalf("the two copies do not offer the same setup link: %q and %q", first.link, second.link)
 +	}
-+	var intro IntroResult
-+	if err := json.Unmarshal(result, &intro); err != nil {
-+		t.Fatal(err)
++
++	// The admin is created through one copy and signs in on the other.
++	status, body, ada := accountsPost(t, first.base+"/api/v1/setup/admin", "", map[string]any{"token": token, "email": "ada@example.com", "password": "a long enough password"})
++	if status != http.StatusOK || ada == "" {
++		t.Fatalf("creating the admin answered %d: %s", status, body)
 +	}
-+	avatars :
++	if status, body, _ := accountsPost(t, second.base+"/api/v1/setup/admin", "", map[string]any{"token": token, "email": "eve@example.com", "password": "another long password"}); status != http.StatusConflict {
++		t.Fatalf("the other copy made a second first admin (%d): %s", status, body)
++	}
++	if status, _, cookie := accountsPost(t, second.base+"/api/v1/auth/session", "", map[string]any{"method": "password", "email": "ada@example.com", "password": "a long enough password"}); status != http.StatusOK || cookie == "" {
++
+```
+
+**File**: `cmd/start_config.go` (modified, +11/-3)
+```diff
+@@ -505,6 +505,13 @@ func dropAgentChoiceFromEnv(doc string) []string {
+ // loadStartFlowConfig builds the running configuration for a start-config
+ // install: the base, with the document read from the store laid over it.
+ func loadStartFlowConfig(sc *startConfig) (*serv.Config, error) {
++	// The version is read before the configuration. A change that lands in
++	// between is then newer than what this server believes it loaded, and it
++	// reloads.
++	version, err := serv.StoredConfigVersion(context.Background(), sc.Store)
++	if err != nil {
++		return nil, err
++	}
+ 	doc, err := serv.ReadStoredConfig(context.Background(), sc.Store, sc.sealKey())
+ 	if err != nil {
+ 		return nil, err
+@@ -526,6 +533,7 @@ func loadStartFlowConfig(sc *startConfig) (*serv.Config, error) {
+ 	// Relative paths, such as the discovery cache, sit beside the store.
+ 	c.Serv.ConfigPath = sc.localDir()
+ 	c.SetStore(sc.Store, sc.sealKey())
++	c.SetStoreVersion(version)
+ 
+ 	// The model provider's key is kept encrypted in the store. The agent
+ 	// reads its key from an environment variable, so hand it over in one of
+@@ -634,8 +642,8 @@ func configImportCmd() *cobra.Command {
+ 		Long: `Replace the configuration kept in the store with the contents of a YAML file.
+ 
+ The file uses the same settings as a config file, without the ones that belong
+-to the start config (mode, auth, host_port, artifacts, secrets). DeepORG reads
+-the stored configuration when it starts, so restart it afterwards.
++to the start config (mode, auth, host_port, artifacts, secrets). A running
++DeepORG notices the change within a few seconds and restarts itself to load it.
+ 
+ Examples:
+   deeporg config import sources.yml
+@@ -666,7 +674,7 @@ Examples:
+ 			if err := serv.WriteStoredConfig(context.Background(), sc.Store, sc.sealKey(), doc); err != nil {
+ 				log.Fatalf("%s", err)
+ 			}
+-			fmt.Printf("Stored the configuration from %s. Restart DeepORG for it to take effect.\n", args[0])
++			fmt.Printf("Stored the configuration from %s. A running DeepORG loads it within a few seconds.\n", args[0])
+ 		},
+ 	}
+ }
+```
+
+**File**: `docs/DESIGN-STORE-POSTGRES.md` (modified, +23/-2)
+```diff
+@@ -1,7 +1,28 @@
+ # Design: DeepORG's own data in Postgres
+ 
+-Status: step 1 is built (2026-11-27): one copy on Postgres, with no disk.
+-Steps 2 and 3 are proposed and not built. Written 2026-11-26.
++Status: steps 1 and 2 are built (2026-11-27): the store in Postgres with no
++disk, and more than one copy on it. Step 3, moving a file store into Postgres,
++is proposed and not built. Written 2026-11-26.
++
++What step 2 changed from this design, and what it found:
++
++- Every copy checks the stored configuration's version every five seconds
++  (`serv/store_watch.go`), for a file store too. That is what makes
++  `deeporg config import` take effect on a running server.
++- The copy that saves a change and the check itself both go through
++  `applyStoredConfig`, which is version based, so one change is one restart
++  however many ways it is noticed.
++- Two copies starting at the same moment on an empty store both ran
++  `CREATE SCHEMA IF NOT EXISTS`, and Postgres failed one of them with a
++  duplicate key error. Copies now take turns behind an advisory lock
++  (`lockStoreTables`). Two real processes found this; the first in-process test
++  did not, and the test now empties and reopens the store twelve times to hit it.
++- What a copy keeps through the engine, such as a task, reaches the other
++  copies when they next poll the store, within `artifacts.poll_seconds` (15).
++- Checked by `TestTwoCopiesShareAPostgresStore` and by two real processes on
++  one Postgres. Not run for this step: a watch firing with two copies on
++  Postgres. `TestWatchScheduleTwoRunnersFireOncePerTick` and
++  `TestMetricWatchFiresOnceOnCrossingAcrossReplicas` cover the claim logic.
+ 
+ What step 1 changed from this design: the secret key is required from the
+ environment when the store is Postgres and there is no start config file, and
+```
+
+**File**: `serv/accounts.go` (modified, +9/-0)
+```diff
+@@ -121,6 +121,11 @@ func (s *graphjinService) initAccounts(ctx context.Context) (*accountService, er
+ 		return nil, nil
+ 	}
+ 	schema := s.conf.Core.EffectiveArtifactsConfig().Schema
++	unlock, err := lockStoreTables(ctx, db, dbType)
++	if err != nil {
++		return nil, fmt.Errorf("create account store: %w", err)
++	}
++	defer unlock()
+ 	for _, stmt := range authStoreDDL(dbType, schema) {
+ 		if _, err := db.ExecContext(ctx, stmt); err != nil {
+ 			return nil, fmt.Errorf("create account store: %w", err)
+@@ -140,6 +145,10 @@ func (s *graphjinService) initAccounts(ctx context.Context) (*accountService, er
+ 	}
+ 	if !has {
+ 		svc.setupToken = strings.TrimSpace(os.Getenv(setupTokenEnv))
++		if svc.setupToken == "" && StoreIsPostgres(s.conf.storePath) && s.conf.storeSealKey != "" {
++			// Other copies may share this store. They all offer this link.
++			svc.setupToken = sharedSetupToken(s.conf.storeSealKey)
++		}
+ 		if svc.setupToken == "" {
+ 			if svc.setupToken, err = randomURLToken(24); err != nil {
+ 				return nil, err
+```
+
+**File**: `serv/api.go` (modified, +7/-0)
+```diff
+@@ -154,6 +154,10 @@ type graphjinService struct {
+ 	accounts             *accountService                       // local accounts (agentic, optional)
+ 	accountOAuth         *authLoginService                     // signs MCP clients in with a local account
+ 	configApplier        func() error                          // makes a changed stored configuration take effect
++	storeApplyMu         sync.Mutex                            // one apply at a time, see applyStoredConfig
++	storeSeenVersion     string                                // the stored configuration version this server runs or last applied
++	storeWatchStop       chan struct{}                         // closes this copy's check for a newer stored configuration
++	storeWatchWG         sync.WaitGroup
+ 	sampleData           func(context.Context) (string, error) // builds the sample database, returns its file
+ }
+ 
+@@ -486,6 +490,7 @@ func (s *HttpService) Shutdown(ctx context.Context) error {
+ // It is safe to call more than once: every step either nils what it released or
+ // is idempotent already.
+ func (s *graphjinService) closeServResources() {
++	s.stopStoreWatch()
+ 	s.closeMCPHTTPTransport()
+ 	if s.semantic != nil {
+ 		s.semantic.Close()
+@@ -868,6 +873,8 @@ func newGraphJinService(conf *Config, dbs map[string]*sql.DB, options ...Option)
+ 	}
+ 	s.accountOAuth = accountOAuth
+ 	s.conf.accountOAuth = accountOAuth != nil
++	// A copy of a server looks for setup changes other copies made.
++	s.startStoreWatch()
+ 
+ 	// if s.deployActive {
+ 	// 	err = s.hotStart()
+```
+
+**File**: `serv/artifacts.go` (modified, +6/-0)
+```diff
+@@ -603,6 +603,12 @@ func (s *graphjinService) ensureStoreTables() error {
+ 	if !ok {
+ 		return fmt.Errorf("artifact store database is not configured")
+ 	}
++	// Another copy may be starting on the same store at this moment.
++	unlock, err := lockStoreTables(context.Background(), db, dbType)
++	if err != nil {
++		return err
++	}
++	defer unlock()
+ 	for _, stmt := range artifactDDL(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema) {
+ 		if _, err := db.ExecContext(context.Background(), stmt); err != nil {
+ 			return err
+```
+
+**File**: `serv/config.go` (modified, +3/-0)
+```diff
+@@ -60,6 +60,9 @@ type Config struct {
+ 	// start-config install names it; otherwise the store sits under the
+ 	// config directory.
+ 	storePath string
++	// storeVersion is the version of the stored configuration this config
++	// was built from, so a running server can tell when it is out of date.
++	storeVersion string
+ 	// storeSealKey encrypts the configuration document kept in the store.
+ 	storeSealKey string
+ 	// accountOAuth is set by the service when MCP clients sign in with a
 ```
 
 #### Recent Merged Pull Requests:
@@ -3423,35 +3082,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a server install is healthy before setup and the image is reachable; add the Set
+## X. bump version to v3.27.0 [skip-release] [skip ci]
 
 **RULE**:
-When implementing operations in `.goreleaser.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `178469e5`: a server install is healthy before setup and the image is reachable; add the Set Up And Deploy page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d721e1f9`: bump version to v3.27.0 [skip-release] [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.goreleaser.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # ko cannot set an environment variable, a command or a volume, so the
-    # role ldflag tells the binary it is the server image. A new install then
-    # listens where a container can be reached, and a volume it cannot write
-    # to is reported with the folder to mount.
-      - -X main.imageRole=server
+	github.com/dosco/graphjin/core/v3 v3.27.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	github.com/dosco/graphjin/core/v3 v3.26.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `178469e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d721e1f9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

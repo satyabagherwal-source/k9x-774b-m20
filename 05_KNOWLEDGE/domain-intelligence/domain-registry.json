@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T02:03:51.218Z",
+  "last_updated": "2026-11-28T02:13:34.868Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -16475,8 +16475,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "02f028e0b0a49c7e8c6c332b7b41a69ca286040cfee03e94da9a157d90cdd9de",
-      "created_at": "2026-11-27T08:14:50.211Z"
+      "content_hash": "a4738eea7d13579ba6c667f1418729ac6c599dec7ded7ea8a8a5bb04498901a9",
+      "created_at": "2026-11-28T02:13:34.868Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -24345,8 +24345,8 @@
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "repository": "MariaDB/server",
-      "content_hash": "1bb75491c74203982a96d00cb0c7834fc11e6814b756aeeda55e14f53050fb8c",
-      "created_at": "2026-11-27T06:55:06.799Z"
+      "content_hash": "023a53822a5077a12bb8b99b69d8a17a7f22ec1d44567f86e6a9dcc3d5029a30",
+      "created_at": "2026-11-28T02:13:28.776Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -33275,8 +33275,8 @@
       "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
       "repository": "nezhahq/nezha",
-      "content_hash": "80bc5643d7079c5b92694b63f03b9157c8886f269d289a22f83aa69d9d89be88",
-      "created_at": "2026-11-20T17:58:46.886Z"
+      "content_hash": "01878c3cce04c56050bebf76a52d6cc973c8c09316679f965475a2effb8138c8",
+      "created_at": "2026-11-28T02:13:16.678Z"
     },
     "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
@@ -33284,8 +33284,8 @@
       "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-learnings-architecture-intelligence-nezhahq-nezha-learnings-core-i.md",
       "repository": "nezhahq-nezha-learnings",
-      "content_hash": "e47e6e86a4d132b1f045fdfda7258ec2595bbc069f349a4324076642979ba0a6",
-      "created_at": "2026-11-20T17:58:50.322Z"
+      "content_hash": "a3cc588d2111edd4250426d247dbd333bd40a3140c38427fc3d438b70c34e5bb",
+      "created_at": "2026-11-28T02:13:32.986Z"
     },
     "DOM-L-03EC8831": {
       "record_id": "DOM-L-03EC8831",
@@ -39572,8 +39572,8 @@
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "a47fb2d16d85642962b13da321ac97ed79cf4f6e4f3ba8044309e42c056a4c6a",
-      "created_at": "2026-11-26T15:22:12.971Z"
+      "content_hash": "7c8581b1a92ca246e130f3e4405b64e99181ce4ffe58bc567e2df6a63c04ea62",
+      "created_at": "2026-11-28T02:13:24.144Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -43241,8 +43241,8 @@
       "title": "Research & Knowledge Intelligence: baidu/ERNIE-5.5-Flash-Preview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-research-knowledge-intelligence-baidu-ernie-5-5.md",
       "repository": "baidu/ERNIE-5.5-Flash-Preview",
-      "content_hash": "acea43ca5192f7d84a41a547908b720e16c7b379e97ee875d921d00205de5c96",
-      "created_at": "2026-11-24T17:42:31.530Z"
+      "content_hash": "01d269e70883b70fadf9daaf62fb1b747708e6257860f00521b2c9479ffa57b1",
+      "created_at": "2026-11-28T02:13:12.879Z"
     },
     "DOM-D-9FC91E58": {
       "record_id": "DOM-D-9FC91E58",
@@ -43292,8 +43292,8 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-ernie-5.5-flash-preview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-ernie-5-5-flash-preview-learnings-research-knowledge-intelligence-hf-ba.md",
       "repository": "hf-baidu-ernie-5.5-flash-preview-learnings",
-      "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
-      "created_at": "2026-11-24T17:43:21.818Z"
+      "content_hash": "f4978e5f0820947a088c34ac31e5bd2bb6e305499cd601f6e558522494f2ff73",
+      "created_at": "2026-11-28T02:13:33.878Z"
     },
     "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants",

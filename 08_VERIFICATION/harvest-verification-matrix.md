@@ -13937,3 +13937,7 @@
 | `CYCLE-20261128-CKKT` | `2026-11-28T01:54:57.197Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11013` | Yes (`185ffc08...`) |
 | `CYCLE-20261128-CMBG` | `2026-11-28T01:54:59.452Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11014` | Yes (`ab60099c...`) |
 | `CYCLE-20261128-NR07` | `2026-11-28T02:03:38.743Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`5ce1c108...`) |
+| `CYCLE-20261128-01QQ` | `2026-11-28T02:13:12.530Z` | `baidu/ERNIE-5.5-Flash-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md` | Yes (`4b1bb68e...`) |
+| `CYCLE-20261128-04F3` | `2026-11-28T02:13:15.999Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11015` | Yes (`119eaf39...`) |
+| `CYCLE-20261128-0A5Y` | `2026-11-28T02:13:23.447Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11016` | Yes (`214cd4b6...`) |
+| `CYCLE-20261128-0DRP` | `2026-11-28T02:13:28.117Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11017` | Yes (`8af96167...`) |
