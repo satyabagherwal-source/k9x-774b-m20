@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T08:09:07.924Z",
-    "lastVerified": "2026-11-28T08:09:07.924Z",
+    "lastChecked": "2026-11-28T09:54:30.064Z",
+    "lastVerified": "2026-11-28T09:54:30.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T09:33:48.401Z",
-    "lastVerified": "2026-11-28T09:33:48.401Z",
+    "lastChecked": "2026-11-28T09:54:37.486Z",
+    "lastVerified": "2026-11-28T09:54:37.486Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1381,9 +1381,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-28T04:29:58.725Z",
+    "lastChecked": "2026-11-28T09:54:25.575Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-28T04:29:58.725Z"
+    "lastVerified": "2026-11-28T09:54:25.575Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2371,12 +2371,12 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T14:39:31.792Z",
-    "lastVerified": "2026-11-27T14:39:31.792Z",
+    "lastChecked": "2026-11-28T09:54:32.211Z",
+    "lastVerified": "2026-11-28T09:54:32.211Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
+    "contentHash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -6641,9 +6641,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-27T16:03:03.820Z",
+    "lastChecked": "2026-11-28T09:54:23.000Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-27T16:03:03.820Z"
+    "lastVerified": "2026-11-28T09:54:23.000Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -8773,14 +8773,14 @@
     "officialUrl": "https://github.com/oxc-project/oxc",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T09:44:39.137Z",
-    "lastVerified": "2026-11-27T09:44:39.137Z",
+    "lastChecked": "2026-11-28T09:54:20.574Z",
+    "lastVerified": "2026-11-28T09:54:20.574Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
+    "contentHash": "e0de9530fca370f7568988ebc0809e44df1f23fc029e4e9a61a01bea027228ea",
     "promotedRulesCount": 1,
-    "recentFixesCount": 28,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11780,9 +11780,9 @@
   "kartiklabhshetwar-better-shot": {
     "name": "better-shot",
     "officialUrl": "https://github.com/KartikLabhshetwar/better-shot",
-    "lastChecked": "2026-11-26T06:35:22.520Z",
+    "lastChecked": "2026-11-28T09:54:20.109Z",
     "revisionIdentifier": "0e005e9c",
-    "lastVerified": "2026-11-26T06:35:22.520Z"
+    "lastVerified": "2026-11-28T09:54:20.109Z"
   },
   "hf-unsloth-inkling-2-mini-gguf": {
     "name": "unsloth/Inkling-2-Mini-GGUF",
@@ -12158,14 +12158,14 @@
     "officialUrl": "https://github.com/TanStack/query",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T00:08:19.695Z",
-    "lastVerified": "2026-11-25T00:08:19.695Z",
+    "lastChecked": "2026-11-28T09:54:21.952Z",
+    "lastVerified": "2026-11-28T09:54:21.952Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tanstack-query",
-    "contentHash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
+    "contentHash": "998088d6bcfe074cb8b9449a375859c9a9d04319e02c3f2d18626dd4ab672d38",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

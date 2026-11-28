@@ -4,22 +4,22 @@
 {
   "source_repository": "TanStack/query",
   "source_url": "https://github.com/TanStack/query",
-  "source_version": "115fdefa",
+  "source_version": "e7916a9e",
   "license": "MIT",
-  "timestamp": "2026-11-25T00:08:21.306Z",
+  "timestamp": "2026-11-28T09:54:24.101Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tanstack-query",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [TanStack/query](https://github.com/TanStack/query) (Revision: `115fdefa`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T00:08:21.306Z`  
+> **Provenance**: Harvested from [TanStack/query](https://github.com/TanStack/query) (Revision: `e7916a9e`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T09:54:24.101Z`  
 > **Learning ID**: `learn-github-tanstack-query`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `TanStack/query` (Commit: `115fdefa`)
+- **Target Repository**: `TanStack/query` (Commit: `e7916a9e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:08:19.695Z  
+> **Harvest Timestamp**: 2026-11-28T09:54:21.952Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50626 stars
+- **Stars / Engagement**: 50686 stars
 
 ---
 
@@ -3597,541 +3597,747 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d7eed6c` (2026-11-24)
-**Commit Message**: docs(framework/angular/guides): add the 'polling' guide (#12692)
+### Incident Patch 1: `bee5eb04` (2026-11-26)
+**Commit Message**: fix(query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change (#12598)
 
-* docs(framework/angular/guides): add the 'polling' guide
+* fix(query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change
 
-* docs(framework/angular/guides): read 'jobId' once in the polling example
+* fix(query-core/queriesObserver): evaluate function 'throwOnError' with 'shouldThrowError' when deciding to skip combine
 
-**File**: `docs/config.json` (modified, +4/-0)
-```diff
-@@ -751,6 +751,10 @@
-               "label": "Window Focus Refetching",
-               "to": "framework/angular/guides/window-focus-refetching"
-             },
-+            {
-+              "label": "Polling",
-+              "to": "framework/angular/guides/polling"
-+            },
-             {
-               "label": "Disabling/Pausing Queries",
-               "to": "framework/angular/guides/disabling-queries"
-```
+* fix(query-core/queriesObserver): exclude fetching queries from the 'throwOnError' skip-combine check to match 'getHasError'
 
-**File**: `docs/framework/angular/guides/polling.md` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+---
-+id: polling
-+title: Polling
-+ref: docs/framework/react/guides/polling.md
-+replace: { '@tanstack/react-query': '@tanstack/angular-query' }
-+---
-+
-+[//]: # 'Example1'
-+
-+```ts
-+injectQuery(() => ({
-+  queryKey: ['prices'],
-+  queryFn: fetchPrices,
-+  refetchInterval: 5 * 1000, // every 5 seconds
-+}))
-+```
-+
-+[//]: # 'Example1'
-+[//]: # 'Example2'
-+
-+```ts
-+injectQuery(() => {
-+  const jobId = this.jobId()
-+
-+  return {
-+    queryKey: ['job', jobId],
-+    queryFn: () => fetchJobStatus(jobId),
-+    refetchInterval: (query) => {
-+      // Stop polling once the job finishes
-+      if (query.state.data?.status === 'complete') return false
-+      return 2 * 1000
-+    },
-+  }
-+})
-+```
-+
-+[//]: # 'Example2'
-+[//]: # 'Example3'
-+
-+```ts
-+injectQuery(() => ({
-+  queryKey: ['portfolio'],
-+  queryFn: fetchPortfolio,
-+  refetchInterval: 30 * 1000,
-+  refetchIntervalInBackground: true,
-+}))
-+```
-+
-+[//]: # 'Example3'
-+[//]: # 'Example4'
-+
-+```ts
-+injectQuery(() => {
-+  // Read signals here so the query reacts when they change
-+  const tokenAddress = this.tokenAddress()
-+  const isPaused = this.isPaused()
-+
-+  return {
-+    queryKey: ['prices', tokenAddress],
-+    queryFn: () => fetchPrice(tokenAddress),
-+    refetchInterval: () => {
-+      if (!tokenAddress || isPaused) return false
-+      return 15 * 1000
-+    },
-+  }
-+})
-+```
-+
-+[//]: # 'Example4'
-+[//]: # 'Example5'
-+
-+```ts
-+injectQuery(() => ({
-+  queryKey: ['chainStatus'],
-+  queryFn: fetchChainStatus,
-+  refetchInterval: 10 * 1000,
-+  networkMode: 'always',
-+}))
-+```
-+
-+[//]: # 'Example5'
-+[//]: # 'ReactNative'
-+[//]: # 'ReactNative'
-+[//]: # 'ReRenders'
-+[//]: # 'ReRenders'
-```
-
----
-
-### Incident Patch 2: `9979ddac` (2026-11-23)
-**Commit Message**: ci: apply automated fixes
-
-**File**: `docs/framework/angular/reference/classes/Mutation.md` (modified, +2/-2)
-```diff
-@@ -146,7 +146,7 @@ The mutation's `meta`, or `undefined` if none was set.
- continue(): Promise<unknown>;
- ```
- 
--Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
-+Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
- 
- Resumes a mutation that is currently paused or was restored from a
- dehydrated, still-`pending` state.
-@@ -210,7 +210,7 @@ Removable.destroy
- execute(variables: TVariables): Promise<TData>;
- ```
- 
--Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
-+Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
- 
- Runs the mutation function for the given variables through a retryer, and
- drives the mutation's state and lifecycle callbacks through to settlement.
-```
-
-**File**: `docs/framework/angular/reference/classes/MutationCache.md` (modified, +6/-5)
-```diff
-@@ -69,9 +69,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
- clear(): void;
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
-+Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
- 
--Removes all mutations from the cache.
-+Removes all mutations and clears their garbage collection timers.
-+Mutations that are already running continue to execute.
- 
- #### Returns
- 
-@@ -95,7 +96,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
-   | undefined;
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
-+Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
- 
- A slightly more advanced method that can be used to get an existing mutation instance from
- the cache. If the mutation does not exist, `undefined` is returned.
-@@ -156,7 +157,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
- findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
-+Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
- 
- An even more advanced method that can be used to get existing mutation instances from the
- cache that match the given filters. If no mutations match, an empty array is returned.
-@@ -198,7 +199,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
- getAll(): Mutation<unknown, Error, unknown, unknown>[];
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
-+Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
- 
- Returns all mutations within the cache.
- 
-```
-
-**File**: `docs/framework/angular/reference/classes/Query.md` (modified, +2/-2)
-```diff
-@@ -226,8 +226,8 @@ destroy(): void;
- 
- Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
- 
--Clears the query's garbage collection timeout and silently cancels any
--in-flight fetch. Called by `QueryCache` when the query is removed from
-+Silently cancels any in-flight fetch, then clears the query's garbage
-+collection timeout. Called by `QueryCache` when the query is removed from
- the cache.
- 
- #### Returns
-```
-
-**File**: `docs/framework/angular/reference/classes/QueryClient.md` (modified, +3/-1)
-```diff
-@@ -104,9 +104,11 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
- clear(): void;
- ```
- 
--Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
-+Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
- 
- Clears both the query cache and the mutation cache this client is connected to.
-+This clears their garbage collection timers and cancels in-flight query fetches.
-+Running mutations continue to execute.
- 
- #### Returns
- 
-```
-
-**File**: `docs/framework/lit/reference/classes/Mutation.md` (modified, +2/-2)
-```diff
-@@ -146,7 +146,7 @@ The mutation's `meta`, or `undefined` if none was set.
- continue(): Promise<unknown>;
- ```
- 
--Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
-+Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
- 
- Resumes a mutation that is currently paused or was restored from a
- dehydrated, still-`pending` state.
-@@ -210,7 +210,7 @@ Removable.destroy
- execute(variables: TVariables): Promise<TData>;
- ```
- 
--Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
-+Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
- 
- Runs the mutation function for the given variables through a retryer, and
- drives the mutation's state and lifecycle callbacks through to settlement.
-```
-
-**File**: `docs/framework/lit/reference/classes/MutationCache.md` (modified, +6/-5)
-```diff
-@@ -69,9 +69,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
- clear(): void;
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
-+Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
- 
--Removes all mutations from the cache.
-+Removes all mutations and clears their garbage collection timers.
-+Mutations that are already running continue to execute.
- 
- #### Returns
- 
-@@ -95,7 +96,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
-   | undefined;
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
-+Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
- 
- A slightly more advanced method that can be used to get an existing mutation instance from
- the cache. If the mutation does not exist, `undefined` is returned.
-@@ -156,7 +157,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
- findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
-+Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
- 
- An even more advanced method that can be used to get existing mutation instances from the
- cache that match the given filters. If no mutations match, an empty array is returned.
-@@ -198,7 +199,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
- getAll(): Mutation<unknown, Error, unknown, unknown>[];
- ```
- 
--Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
-+Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
- 
- Returns all mutations within the cache.
- 
-```
-
-**File**: `docs/framework/lit/reference/classes/Query.md` (modified, +2/-2)
-```diff
-@@ -226,8 +226,8 @@ destroy(): void;
- 
- Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
- 
--Clears the query's garbage collection timeout and silently cancels any
--in-flight fetch. Called by `QueryCache` when the query is removed from
-+Silently cancels any in-flight fetch, then clears the query's garbage
-+collection timeout. Called by `QueryCache` when the query is removed from
- the cache.
- 
- #### Returns
-```
-
-**File**: `docs/framework/lit/reference/classes/QueryClient.md` (modified, +3/-1)
-```diff
-@@ -104,9 +104,11 @@ await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
- clear(): void;
- ```
- 
--Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
-+Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
- 
- Clears both the query cache and the mutation cache this client is connected to.
-+This clears their garbage collection timers and cancels in-flight query fetches.
-+Running mutations continue to execute.
- 
- #### Returns
- 
-```
-
----
-
-### Incident Patch 3: `89bb0820` (2026-11-23)
-**Commit Message**: fix(query-core): clear GC timers for removed cache entries (#12683)
-
-**File**: `.changeset/clear-removed-entry-gc-timers.md` (added, +5/-0)
+**File**: `.changeset/query-core-queries-observer-throw-on-error.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@tanstack/query-core': patch
 +---
 +
-+Clear garbage collection timers when cache entries are removed and prevent later fetch or observer cleanup from starting new timers for those entries.
++fix(query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change
 ```
 
-**File**: `docs/framework/preact/guides/ssr.md` (modified, +1/-1)
+**File**: `packages/preact-query/src/__tests__/useQueries.test.tsx` (modified, +44/-0)
 ```diff
-@@ -522,4 +522,4 @@ const queryClient = new QueryClient({
+@@ -368,6 +368,50 @@ describe('useQueries', () => {
+     expect(rendered.getByText('error boundary')).toBeInTheDocument()
+   })
  
- Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
- 
--If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
-+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
-```
-
-**File**: `docs/framework/react/guides/ssr.md` (modified, +1/-1)
-```diff
-@@ -598,7 +598,7 @@ const queryClient = new QueryClient({
- 
- Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
- 
--If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
-+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
- 
- ### Caveat for Next.js rewrites
- 
-```
-
-**File**: `docs/framework/solid/guides/ssr.md` (modified, +1/-1)
-```diff
-@@ -225,4 +225,4 @@ const queryClient = new QueryClient({
- })
- ```
- 
--If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once the response has been sent and all of the client's queries have settled. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
-+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once the response has been sent and you no longer need the client. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
-```
-
-**File**: `docs/framework/vue/guides/ssr.md` (modified, +1/-1)
-```diff
-@@ -313,7 +313,7 @@ const queryClient = new QueryClient({
- })
- ```
- 
--If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client and all of its queries have settled, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending timer. A fetch that is still in flight when you call `clear()` schedules a new timer once it settles, so wait for pending fetches to settle first.
-+If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
- 
- ## `dehydrate`/`hydrate` options
- 
-```
-
-**File**: `packages/query-core/src/__tests__/cacheGc.test.tsx` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-+import { MutationObserver, QueryClient, QueryObserver } from '..'
++  it("should throw error if in one of queries' queryFn throws and throwOnError is in use while the combined result does not change", async () => {
++    vi.spyOn(console, 'error').mockReturnValue(undefined)
++    const key = createKey()
 +
-+describe('garbage collection after cache removal', () => {
-+  let client: QueryClient
++    function Page() {
++      const data = useQueries({
++        queries: [
++          {
++            queryKey: key,
++            queryFn: () =>
++              sleep(10).then(() =>
++                Promise.reject(new Error('single query error')),
++              ),
++            throwOnError: true,
++            retry: false,
++          },
++        ],
++        combine: (results) => results.map((result) => result.data),
++      })
 +
-+  beforeEach(() => {
-+    vi.useFakeTimers()
-+    client = new QueryClient({
-+      defaultOptions: {
-+        queries: { gcTime: 1000 },
-+        mutations: { gcTime: 1000 },
-+      },
-+    })
-+  })
-+
-+  afterEach(() => {
-+    client.clear()
-+    vi.useRealTimers()
-+  })
-+
-+  it('clears an existing mutation timer on clear', () => {
-+    const cache = client.getMutationCache()
-+    cache.build(client, {})
-+    expect(vi.getTimerCount()).toBe(1)
-+
-+    cache.clear()
-+
-+    expect(cache.getAll()).toHaveLength(0)
-+    expect(vi.getTimerCount()).toBe(0)
-+  })
-+
-+  it('clears an existing mutation timer on remove', () => {
-+    const cache = client.getMutationCache()
-+    const mutation = cache.build(client, {})
-+    expect(vi.getTimerCount()).toBe(1)
-+
-+    cache.remove(mutation)
-+
-+    expect(cache.getAll()).toHaveLength(0)
-+    expect(vi.getTimerCount()).toBe(0)
-+  })
-+
-+  it('does not schedule mutation GC when an observer resets after clear', async () => {
-+    const observer = new MutationObserver(client, {
-+      mutationFn: () => Promise.resolve('done'),
-+    })
-+    await observer.mutate()
-+    expect(vi.getTimerCount()).toBe(0)
-+
-+    client.clear()
-+    observer.reset()
-+
-+    expect(vi.getTimerCount()).toBe(0)
-+  })
-+
-+  it('keeps only the replacement query timer when a removed fetch settles', async () => {
-+    const queryKey = ['replacement']
-+    const pending = client.query({
-+      queryKey,
-+      queryFn: ({ signal }) =>
-+        new Promise<never>((_, reject) => {
-+          signal.addEventListener('abort', () => reject(signal.reason))
-+        }),
-+    })
-+
-+    client.clear()
-+    client.setQueryData(queryKey, 'replacement')
-+    await expect(pending).rejects.toThrow('CancelledError')
-+
-+    expect(client.getQueryData(queryKey)).toBe('replacement')
-+    expect(vi.getTimerCount()).toBe(1)
-+    vi.advanceTimersByTime(1000)
-+    expect(client.getQueryCache().getAll()).toHaveLength(0)
-+  })
-+
-+  it('does not schedule query GC when an observer unsubscribes after clear', async () => {
-+    const queryKey = ['observed']
-+    await client.query({ queryKey, queryFn: () => Promise.resolve('data') })
-+    const observer = new QueryObserver(client, {
-+      queryKey,
-+      staleTime: Infinity,
-+    })
-+    const unsubscribe = observer.subscribe(() => {})
-+    expect(vi.getTimerCount()).toBe(0)
-+
-+    client.clear()
-+    unsubscribe()
-+
-+    expect(vi.getTimerCount()).toBe(0)
-+  })
-+
-+  it('clears a timer scheduled by an abort listener during removal', async () => {
-+    const observer = new QueryObserver(client, {
-+      queryKey: ['aborted'],
-+      queryFn: ({ signal }) =>
-+        new Promise<never>((_, reject) => {
-+          signal.addEventListener('abort', () => {
-+            unsubscribe()
-+            reject(signal.reason)
-+          })
-+        }),
-+    })
-+    const unsubscribe = observer.subscribe(() => {})
-+    const query = observer.getCurrentQuery()
-+    expect(vi.getTimerCount()).toBe(0)
-+
-+    client.clear()
-+    const timersAfterClear = vi.getTimerCount()
-+    await query.cancel()
-+
-+    expect(timersAfterClear).toBe(0)
-+    expect(vi.getTimerCount()).toBe(0)
-+  })
-+})
-```
-
-**File**: `packages/query-core/src/__tests__/mutationCache.test-d.tsx` (modified, +1/-0)
-```diff
-@@ -38,6 +38,7 @@ describe('mutationCache', () => {
-         | 'build'
-         | 'add'
-         | 'remove'
-+        | 'has'
-         | 'canRun'
-         | 'runNext'
-         | 'clear'
-```
-
-**File**: `packages/query-core/src/mutation.ts` (modified, +5/-2)
-```diff
-@@ -212,12 +212,15 @@ export class Mutation<
-   /**
-    * Unsubscribes an observer from the mutation.
-    * @internal
--   * @param observer - The observer to remove. Garbage collection is scheduled afterwards.
-+   * @param observer - The observer to remove. Schedules garbage collection if the mutation
-+   * is still in the cache.
-    */
-   removeObserver(observer: MutationObserver<any, any, any, any>): void {
-     this.#observers = this.#observers.filter((x) => x !== observer)
- 
--    this.scheduleGc()
-+    if (this.#mutationCache.has(this)) {
-+      this.scheduleGc()
++      return <div>data: {String(data[0])}</div>
 +    }
++
++    const rendered = renderWithClient(
++      queryClient,
++      <ErrorBoundary
++        fallbackRender={({ error }) => (
++          <div>
++            <div>error boundary</div>
++            <div>{error.message}</div>
++          </div>
++        )}
++      >
++        <Page />
++      </ErrorBoundary>,
++    )
++
++    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
++
++    await vi.advanceTimersByTimeAsync(11)
++    expect(rendered.getByText('error boundary')).toBeInTheDocument()
++    expect(rendered.getByText('single query error')).toBeInTheDocument()
++  })
++
+   it('should use provided custom queryClient', async () => {
+     const key = createKey()
+     const queryFn = async () => {
+```
+
+**File**: `packages/query-core/src/__tests__/queriesObserver.test.tsx` (modified, +193/-0)
+```diff
+@@ -572,6 +572,199 @@ describe('queriesObserver', () => {
+     unsubscribe()
+   })
  
-     this.#mutationCache.notify({
-       type: 'observerRemoved',
++  it('should notify listeners when a query with throwOnError fails without changing the combined result', async () => {
++    const key = createKey()
++    const combine = (results: Array<QueryObserverResult>) =>
++      results.map((result) => result.data)
++    const query = {
++      queryKey: key,
++      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
++      retry: false,
++      throwOnError: true,
++    }
++
++    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
++    observer.setQueries([query], { combine })
++
++    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
++      [query],
++      combine,
++    )
++    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
++
++    const results: Array<Array<QueryObserverResult>> = []
++    const unsubscribe = observer.subscribe((result) => {
++      results.push(result)
++    })
++
++    await vi.advanceTimersByTimeAsync(10)
++    expect(results).toHaveLength(1)
++    expect(results[0]?.[0]).toMatchObject({
++      status: 'error',
++      error: new Error('error'),
++    })
++
++    unsubscribe()
++  })
++
++  it('should not notify listeners when a query without throwOnError fails without changing the combined result', async () => {
++    const key = createKey()
++    const combine = (results: Array<QueryObserverResult>) =>
++      results.map((result) => result.data)
++    const query = {
++      queryKey: key,
++      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
++      retry: false,
++    }
++
++    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
++    observer.setQueries([query], { combine })
++
++    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
++      [query],
++      combine,
++    )
++    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
++
++    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
++    const unsubscribe = observer.subscribe(listener)
++
++    await vi.advanceTimersByTimeAsync(10)
++    expect(listener).not.toHaveBeenCalled()
++
++    unsubscribe()
++  })
++
++  it('should notify listeners when a query with throwOnError function returning true fails without changing the combined result', async () => {
++    const key = createKey()
++    const combine = (results: Array<QueryObserverResult>) =>
++      results.map((result) => result.data)
++    const throwOnError = vi.fn<() => boolean>(() => true)
++    const query = {
++      queryKey: key,
++      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
++      retry: false,
++      throwOnError,
++    }
++
++    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
++    observer.setQueries([query], { combine })
++
++    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
++      [query],
++      combine,
++    )
++    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
++
++    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
++    const unsubscribe = observer.subscribe(listener)
++
++    await vi.advanceTimersByTimeAsync(10)
++    expect(listener).toHaveBeenCalledTimes(1)
++    expect(throwOnError).toHaveBeenCalledWith(
++      new Error('error'),
++      queryClient.getQueryCache().find({ queryKey: key }),
++    )
++
++    unsubscribe()
++  })
++
++  it('should not notify listeners when a query with throwOnError function returning false fails without changing the combined result', async () => {
++    const key = createKey()
++    const combine = (results: Array<QueryObserverResult>) =>
++      results.map((result) => result.data)
++    const throwOnError = vi.fn<() => boolean>(() => false)
++    const query = {
++      queryKey: key,
++      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
++      retry: false,
++      throwOnError,
++    }
++
++    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
++    observer.setQueries([query], { combine })
++
++    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
++      [query],
++      combine,
++    )
++    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
++
++    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
++    const unsubscribe = observer.subscribe(listener)
++
++    await vi.advanceTimersByTimeAsync(10)
++    expect(listener).not.toHaveBeenCalled()
++    expect(throwOnError).toHaveBeenCalledWith(
++      new Error('error'),
++      queryClient.getQueryCache().find({ queryKey: key }),
++    )
++
++    unsubscribe()
++  })
++
++  it('should not notify listeners while a query with throwOnError refetches after failing without changing the combined result', async () => {
++    const key = createKey()
++    const combine = (results: Array<QueryObserverResult>) =>
++      results.map((result) => result.data)
++    let count = 0
++    const query = {
++      queryKey: key,
++      queryFn: () =>
++       
+```
+
+**File**: `packages/query-core/src/queriesObserver.ts` (modified, +13/-2)
+```diff
+@@ -1,7 +1,11 @@
+ import { notifyManager } from './notifyManager'
+ import { QueryObserver } from './queryObserver'
+ import { Subscribable } from './subscribable'
+-import { replaceEqualDeep, shallowEqualObjects } from './utils'
++import {
++  replaceEqualDeep,
++  shallowEqualObjects,
++  shouldThrowError,
++} from './utils'
+ import type { QueryClient } from './queryClient'
+ import type {
+   DefaultedQueryObserverOptions,
+@@ -347,8 +351,15 @@ export class QueriesObserver<
+     return (
+       !this.#options?.combine ||
+       this.#observers.some((observer, index) => {
++        const result = this.#result[index]
+         return (
+-          observer.options.suspense && this.#result[index]?.data === undefined
++          (observer.options.suspense && result?.data === undefined) ||
++          (!!result?.isError &&
++            !result.isFetching &&
++            shouldThrowError(observer.options.throwOnError, [
++              result.error,
++              observer.getCurrentQuery(),
++            ]))
+         )
+       })
+     )
+```
+
+**File**: `packages/react-query/src/__tests__/useQueries.test.tsx` (modified, +44/-0)
+```diff
+@@ -337,6 +337,50 @@ describe('useQueries', () => {
+     expect(rendered.getByText('error boundary')).toBeInTheDocument()
+   })
+ 
++  it("should throw error if in one of queries' queryFn throws and throwOnError is in use while the combined result does not change", async () => {
++    vi.spyOn(console, 'error').mockReturnValue(undefined)
++    const key = createKey()
++
++    function Page() {
++      const data = useQueries({
++        queries: [
++          {
++            queryKey: key,
++            queryFn: () =>
++              sleep(10).then(() =>
++                Promise.reject(new Error('single query error')),
++              ),
++            throwOnError: true,
++            retry: false,
++          },
++        ],
++        combine: (results) => results.map((result) => result.data),
++      })
++
++      return <div>data: {String(data[0])}</div>
++    }
++
++    const rendered = renderWithClient(
++      queryClient,
++      <ErrorBoundary
++        fallbackRender={({ error }) => (
++          <div>
++            <div>error boundary</div>
++            <div>{error.message}</div>
++          </div>
++        )}
++      >
++        <Page />
++      </ErrorBoundary>,
++    )
++
++    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
++
++    await vi.advanceTimersByTimeAsync(11)
++    expect(rendered.getByText('error boundary')).toBeInTheDocument()
++    expect(rendered.getByText('single query error')).toBeInTheDocument()
++  })
++
+   it('should use provided custom queryClient', async () => {
+     const key = createKey()
+     const queryFn = async () => {
+```
+
+---
+
+### Incident Patch 2: `18b1aded` (2026-11-25)
+**Commit Message**: fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query (#12699)
+
+* fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query
+
+* chore(.changeset): match the 'query-devtools' changeset description to the commit message
+
+**File**: `.changeset/batch-devtools-clear-query-cache.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@tanstack/query-devtools': patch
++---
++
++fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query
+```
+
+**File**: `packages/query-devtools/src/Devtools.tsx` (modified, +1/-1)
+```diff
+@@ -1058,7 +1058,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
+               onClick={() => {
+                 if (selectedView() === 'queries') {
+                   sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
+-                  query_cache().clear()
++                  batch(() => query_cache().clear())
+                 } else {
+                   sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
+                   mutation_cache().clear()
+```
+
+**File**: `packages/query-devtools/src/__tests__/Devtools.test.tsx` (modified, +19/-0)
+```diff
+@@ -228,6 +228,25 @@ describe('Devtools', () => {
+       expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
+     })
+ 
++    it('should update the query list once when clearing the query cache', () => {
++      seedQueries()
++      const rendered = renderDevtools({ initialIsOpen: true })
++      const content = getViewport(
++        rendered.container,
++        'queries',
++      ).firstElementChild
++      assert(content)
++      const observer = new MutationObserver(noop)
++      observer.observe(content, { attributeFilter: ['style'] })
++
++      fireEvent.click(rendered.getByLabelText('Clear query cache'))
++
++      const records = observer.takeRecords()
++      observer.disconnect()
++      expect(records).toHaveLength(1)
++      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
++    })
++
+     it('keeps query clicks aligned after a same-count sort change', () => {
+       seedQueries()
+       const rendered = renderDevtools(
+```
+
+---
+
+### Incident Patch 3: `635aad6a` (2026-11-26)
+**Commit Message**: ci: apply automated fixes
+
+**File**: `docs/framework/angular/reference/classes/QueriesObserver.md` (modified, +8/-8)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserver
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L64)
++Defined in: [packages/query-core/src/queriesObserver.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L68)
+ 
+ A `QueriesObserver` watches an array of queries at once, exposing them as
+ a single array of `QueryObserverResult`s (or, when a `combine` option is
+@@ -48,7 +48,7 @@ new QueriesObserver<TCombinedResult = QueryObserverResult[]>(
+ ): QueriesObserver<TCombinedResult>;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L78)
++Defined in: [packages/query-core/src/queriesObserver.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L82)
+ 
+ #### Parameters
+ 
+@@ -82,7 +82,7 @@ Subscribable<QueriesObserverListener>.constructor
+ destroy(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L110)
++Defined in: [packages/query-core/src/queriesObserver.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L114)
+ 
+ Stops observing all queries: clears all listeners and destroys every
+ underlying `QueryObserver` this observer manages.
+@@ -99,7 +99,7 @@ underlying `QueryObserver` this observer manages.
+ getCurrentResult(): QueryObserverResult[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:213](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L213)
++Defined in: [packages/query-core/src/queriesObserver.ts:217](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L217)
+ 
+ Returns the most recently computed array of `QueryObserverResult`s, one
+ per observed query, in the same order as the queries passed to the
+@@ -126,7 +126,7 @@ const data = results.map((result) => result.data)
+ getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L232)
++Defined in: [packages/query-core/src/queriesObserver.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L236)
+ 
+ Returns the underlying `QueryObserver` instances this observer manages,
+ in the same order as the queries passed to the constructor or
+@@ -146,7 +146,7 @@ The managed query observers.
+ getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L249)
++Defined in: [packages/query-core/src/queriesObserver.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L253)
+ 
+ The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
+ the result for the given (already-defaulted) queries right now, synchronously. Called by
+@@ -185,7 +185,7 @@ function that returns the results wrapped for property-access tracking.
+ getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:222](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L222)
++Defined in: [packages/query-core/src/queriesObserver.ts:226](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L226)
+ 
+ Returns the underlying `Query` instances currently being observed, in
+ the same order as the queries passed to the constructor or `setQueries`.
+@@ -228,7 +228,7 @@ Subscribable.hasListeners
+ setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:132](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L132)
++Defined in: [packages/query-core/src/queriesObserver.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L136)
+ 
+ Replaces the set of queries being observed. Existing `QueryObserver`s
+ are reused for queries that match an already-observed query hash;
+```
+
+**File**: `docs/framework/angular/reference/interfaces/QueriesObserverOptions.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserverOptions
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L32)
++Defined in: [packages/query-core/src/queriesObserver.ts:36](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L36)
+ 
+ Options for a `QueriesObserver` that apply to all of its queries at once.
+ 
+```
+
+**File**: `docs/framework/lit/reference/classes/QueriesObserver.md` (modified, +8/-8)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserver
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L64)
++Defined in: [packages/query-core/src/queriesObserver.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L68)
+ 
+ A `QueriesObserver` watches an array of queries at once, exposing them as
+ a single array of `QueryObserverResult`s (or, when a `combine` option is
+@@ -48,7 +48,7 @@ new QueriesObserver<TCombinedResult = QueryObserverResult[]>(
+ ): QueriesObserver<TCombinedResult>;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L78)
++Defined in: [packages/query-core/src/queriesObserver.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L82)
+ 
+ #### Parameters
+ 
+@@ -82,7 +82,7 @@ Subscribable<QueriesObserverListener>.constructor
+ destroy(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L110)
++Defined in: [packages/query-core/src/queriesObserver.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L114)
+ 
+ Stops observing all queries: clears all listeners and destroys every
+ underlying `QueryObserver` this observer manages.
+@@ -99,7 +99,7 @@ underlying `QueryObserver` this observer manages.
+ getCurrentResult(): QueryObserverResult[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:213](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L213)
++Defined in: [packages/query-core/src/queriesObserver.ts:217](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L217)
+ 
+ Returns the most recently computed array of `QueryObserverResult`s, one
+ per observed query, in the same order as the queries passed to the
+@@ -126,7 +126,7 @@ const data = results.map((result) => result.data)
+ getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L232)
++Defined in: [packages/query-core/src/queriesObserver.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L236)
+ 
+ Returns the underlying `QueryObserver` instances this observer manages,
+ in the same order as the queries passed to the constructor or
+@@ -146,7 +146,7 @@ The managed query observers.
+ getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L249)
++Defined in: [packages/query-core/src/queriesObserver.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L253)
+ 
+ The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
+ the result for the given (already-defaulted) queries right now, synchronously. Called by
+@@ -185,7 +185,7 @@ function that returns the results wrapped for property-access tracking.
+ getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:222](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L222)
++Defined in: [packages/query-core/src/queriesObserver.ts:226](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L226)
+ 
+ Returns the underlying `Query` instances currently being observed, in
+ the same order as the queries passed to the constructor or `setQueries`.
+@@ -228,7 +228,7 @@ Subscribable.hasListeners
+ setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:132](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L132)
++Defined in: [packages/query-core/src/queriesObserver.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L136)
+ 
+ Replaces the set of queries being observed. Existing `QueryObserver`s
+ are reused for queries that match an already-observed query hash;
+```
+
+**File**: `docs/framework/lit/reference/interfaces/QueriesObserverOptions.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserverOptions
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L32)
++Defined in: [packages/query-core/src/queriesObserver.ts:36](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L36)
+ 
+ Options for a `QueriesObserver` that apply to all of its queries at once.
+ 
+```
+
+**File**: `docs/framework/preact/reference/classes/QueriesObserver.md` (modified, +8/-8)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserver
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L64)
++Defined in: [packages/query-core/src/queriesObserver.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L68)
+ 
+ A `QueriesObserver` watches an array of queries at once, exposing them as
+ a single array of `QueryObserverResult`s (or, when a `combine` option is
+@@ -48,7 +48,7 @@ new QueriesObserver<TCombinedResult = QueryObserverResult[]>(
+ ): QueriesObserver<TCombinedResult>;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L78)
++Defined in: [packages/query-core/src/queriesObserver.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L82)
+ 
+ #### Parameters
+ 
+@@ -82,7 +82,7 @@ Subscribable<QueriesObserverListener>.constructor
+ destroy(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L110)
++Defined in: [packages/query-core/src/queriesObserver.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L114)
+ 
+ Stops observing all queries: clears all listeners and destroys every
+ underlying `QueryObserver` this observer manages.
+@@ -99,7 +99,7 @@ underlying `QueryObserver` this observer manages.
+ getCurrentResult(): QueryObserverResult[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:213](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L213)
++Defined in: [packages/query-core/src/queriesObserver.ts:217](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L217)
+ 
+ Returns the most recently computed array of `QueryObserverResult`s, one
+ per observed query, in the same order as the queries passed to the
+@@ -126,7 +126,7 @@ const data = results.map((result) => result.data)
+ getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L232)
++Defined in: [packages/query-core/src/queriesObserver.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L236)
+ 
+ Returns the underlying `QueryObserver` instances this observer manages,
+ in the same order as the queries passed to the constructor or
+@@ -146,7 +146,7 @@ The managed query observers.
+ getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L249)
++Defined in: [packages/query-core/src/queriesObserver.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L253)
+ 
+ The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
+ the result for the given (already-defaulted) queries right now, synchronously. Called by
+@@ -185,7 +185,7 @@ function that returns the results wrapped for property-access tracking.
+ getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:222](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L222)
++Defined in: [packages/query-core/src/queriesObserver.ts:226](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L226)
+ 
+ Returns the underlying `Query` instances currently being observed, in
+ the same order as the queries passed to the constructor or `setQueries`.
+@@ -228,7 +228,7 @@ Subscribable.hasListeners
+ setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:132](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L132)
++Defined in: [packages/query-core/src/queriesObserver.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L136)
+ 
+ Replaces the set of queries being observed. Existing `QueryObserver`s
+ are reused for queries that match an already-observed query hash;
+```
+
+**File**: `docs/framework/preact/reference/interfaces/QueriesObserverOptions.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserverOptions
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L32)
++Defined in: [packages/query-core/src/queriesObserver.ts:36](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L36)
+ 
+ Options for a `QueriesObserver` that apply to all of its queries at once.
+ 
+```
+
+**File**: `docs/framework/react/reference/classes/QueriesObserver.md` (modified, +8/-8)
+```diff
+@@ -8,7 +8,7 @@ redirect_from:
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:64](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L64)
++Defined in: [packages/query-core/src/queriesObserver.ts:68](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L68)
+ 
+ A `QueriesObserver` watches an array of queries at once, exposing them as
+ a single array of `QueryObserverResult`s (or, when a `combine` option is
+@@ -51,7 +51,7 @@ new QueriesObserver<TCombinedResult = QueryObserverResult[]>(
+ ): QueriesObserver<TCombinedResult>;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:78](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L78)
++Defined in: [packages/query-core/src/queriesObserver.ts:82](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L82)
+ 
+ #### Parameters
+ 
+@@ -85,7 +85,7 @@ Subscribable<QueriesObserverListener>.constructor
+ destroy(): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:110](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L110)
++Defined in: [packages/query-core/src/queriesObserver.ts:114](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L114)
+ 
+ Stops observing all queries: clears all listeners and destroys every
+ underlying `QueryObserver` this observer manages.
+@@ -102,7 +102,7 @@ underlying `QueryObserver` this observer manages.
+ getCurrentResult(): QueryObserverResult[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:213](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L213)
++Defined in: [packages/query-core/src/queriesObserver.ts:217](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L217)
+ 
+ Returns the most recently computed array of `QueryObserverResult`s, one
+ per observed query, in the same order as the queries passed to the
+@@ -129,7 +129,7 @@ const data = results.map((result) => result.data)
+ getObservers(): QueryObserver<unknown, Error, unknown, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:232](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L232)
++Defined in: [packages/query-core/src/queriesObserver.ts:236](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L236)
+ 
+ Returns the underlying `QueryObserver` instances this observer manages,
+ in the same order as the queries passed to the constructor or
+@@ -149,7 +149,7 @@ The managed query observers.
+ getOptimisticResult(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], combine: CombineFn<TCombinedResult> | undefined): [rawResult: QueryObserverResult[], combineResult: (r?: QueryObserverResult[]) => TCombinedResult, trackResult: () => QueryObserverResult[]];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:249](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L249)
++Defined in: [packages/query-core/src/queriesObserver.ts:253](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L253)
+ 
+ The `QueriesObserver` counterpart of [QueryObserver#getOptimisticResult](QueryObserver.md#getoptimisticresult) — computes
+ the result for the given (already-defaulted) queries right now, synchronously. Called by
+@@ -188,7 +188,7 @@ function that returns the results wrapped for property-access tracking.
+ getQueries(): Query<unknown, Error, unknown, readonly unknown[]>[];
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:222](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L222)
++Defined in: [packages/query-core/src/queriesObserver.ts:226](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L226)
+ 
+ Returns the underlying `Query` instances currently being observed, in
+ the same order as the queries passed to the constructor or `setQueries`.
+@@ -231,7 +231,7 @@ Subscribable.hasListeners
+ setQueries(queries: QueryObserverOptions<unknown, Error, unknown, unknown, readonly unknown[], never>[], options?: QueriesObserverOptions<TCombinedResult>): void;
+ ```
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:132](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L132)
++Defined in: [packages/query-core/src/queriesObserver.ts:136](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L136)
+ 
+ Replaces the set of queries being observed. Existing `QueryObserver`s
+ are reused for queries that match an already-observed query hash;
+```
+
+**File**: `docs/framework/react/reference/interfaces/QueriesObserverOptions.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ title: QueriesObserverOptions
+ 
+ <!-- DO NOT EDIT: this page is autogenerated from the type comments -->
+ 
+-Defined in: [packages/query-core/src/queriesObserver.ts:32](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L32)
++Defined in: [packages/query-core/src/queriesObserver.ts:36](https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts#L36)
+ 
+ Options for a `QueriesObserver` that apply to all of its queries at once.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12694** (2026-11-24): chore(knip): rename 'knip.ts' to 'knip.config.ts' to match the other root config files (@sukvvon)
-- **PR #12692** (2026-11-24): docs(framework/angular/guides): add the 'polling' guide (@chromeheartz)
-- **PR #12691** (2026-11-24): docs: remove CodeRabbit sponsor logo (@tannerlinsley)
-- **PR #12689** (2026-11-23): refactor(query-core)!: make notifyOnChangeProps static (@TkDodo)
-- **PR #12688** (2026-11-23): chore(angular): bump Angular to 22.3.0 for patched vite (@DogPawHat)
-- **PR #12687** (2026-11-23): feat(preact-query): support placeholder data in Suspense hooks (@TkDodo)
+- **PR #12714** (closed): feat(react-query): compose query modes and tree-shake client operations on v6 (@manudeli)
+- **PR #12710** (2026-11-26): refactor(query-core)!: move Suspense policy to adapters (@TkDodo)
+- **PR #12707** (2026-11-27): chore(*): replace the 'eslint-plugin-react-hooks' JS plugin with Oxlint's native 'react' rules in the react package oxlint configs (@sukvvon)
+- **PR #12705** (2026-11-26): refactor(query-core): remove the internal behavior query option (@benjavicente)
+- **PR #12699** (2026-11-25): fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query (@sukvvon)
+- **PR #12697** (closed): fix(react-query): render dehydrated pending queries as pending during hydration (@DogPawHat)
 
 ---
 
@@ -4151,24 +4357,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(framework/angular/guides): add the 'polling' guide
+## X. query-core/queriesObserver): notify listeners when a query with 'throwOnError' f
 
 **RULE**:
-When implementing operations in `docs/config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/query-core-queries-observer-throw-on-error.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d7eed6c`: docs(framework/angular/guides): add the 'polling' guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bee5eb04`: query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/config.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/query-core-queries-observer-throw-on-error.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            {
-              "label": "Polling",
-              "to": "framework/angular/guides/polling"
-            },
+---
+'@tanstack/query-core': patch
+---
+
+fix(query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4178,7 +4385,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d7eed6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bee5eb04` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

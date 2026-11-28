@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T09:08:27.729Z",
+  "updated_at": "2026-11-28T09:54:39.547Z",
   "stats": {
-    "total_discovered": 10884,
-    "approved_pending_harvest": 10336,
+    "total_discovered": 10886,
+    "approved_pending_harvest": 10338,
     "harvested_count": 0,
     "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10343,
+      "COMMUNITY_AND_EXPERT": 10345,
       "OFFICIAL_DOCUMENTATION": 299,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
@@ -235639,6 +235639,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oshai-kotlin-logging-learnings.md",
         "fileName": "oshai-kotlin-logging-learnings.md"
+      }
+    },
+    "SRC-2F195CA3E8CB": {
+      "id": "SRC-2F195CA3E8CB",
+      "url": "https://app.codspeed.io/oxc-project/oxc/branches/om%2F11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions?utm_conten=",
+      "title": "https://app.codspeed.io/oxc-project/oxc/branches/om%2F11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions?utm_conten=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:54:37.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-6F40AB6B50B7": {
+      "id": "SRC-6F40AB6B50B7",
+      "url": "https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts",
+      "title": "https://github.com/TanStack/query/blob/main/packages/query-core/src/queriesObserver.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T09:54:39.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
       }
     }
   }

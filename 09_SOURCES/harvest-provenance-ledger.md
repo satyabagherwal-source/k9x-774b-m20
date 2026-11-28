@@ -14066,3 +14066,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `42b3267e` | Multi-dimensional audit evidence | 2026-11-28T09:33:45.030Z |
 | `learn-dom-b-67232c2a` | `project://biomejs-biome` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-28T09:34:16.441Z |
 | `learn-dom-k-287b8757` | `project://freenet-freenet-core` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-28T09:34:51.728Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `e18e0b30` | Multi-dimensional audit evidence | 2026-11-28T09:54:22.292Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `e7916a9e` | Multi-dimensional audit evidence | 2026-11-28T09:54:23.747Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `ec96ff49` | Multi-dimensional audit evidence | 2026-11-28T09:54:33.755Z |

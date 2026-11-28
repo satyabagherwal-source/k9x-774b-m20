@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T09:33:45.038Z",
+  "last_updated": "2026-11-28T09:54:33.768Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
-      "verified_at": "2026-11-27T14:39:33.130Z",
+      "content_hash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
+      "verified_at": "2026-11-28T09:54:33.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T14:39:33.130Z"
+      "last_updated": "2026-11-28T09:54:33.767Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
-      "verified_at": "2026-11-27T09:44:40.441Z",
+      "content_hash": "e0de9530fca370f7568988ebc0809e44df1f23fc029e4e9a61a01bea027228ea",
+      "verified_at": "2026-11-28T09:54:22.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T09:44:40.441Z"
+      "last_updated": "2026-11-28T09:54:22.305Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
-      "verified_at": "2026-11-25T00:08:21.078Z",
+      "content_hash": "998088d6bcfe074cb8b9449a375859c9a9d04319e02c3f2d18626dd4ab672d38",
+      "verified_at": "2026-11-28T09:54:23.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:08:21.078Z"
+      "last_updated": "2026-11-28T09:54:23.757Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

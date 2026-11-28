@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T09:33:45.035Z",
-  "total_cycles_completed": 13307,
-  "total_learnings_persisted": 13307,
-  "total_rules_promoted": 12006,
+  "last_updated": "2026-11-28T09:54:33.762Z",
+  "total_cycles_completed": 13310,
+  "total_learnings_persisted": 13310,
+  "total_rules_promoted": 12009,
   "history": [
-    {
-      "timestamp": "2026-11-27T15:45:39.385Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:54:27.190Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T15:54:29.112Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T16:03:02.406Z",
       "repository": "FalkorDB/FalkorDB",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T09:33:45.035Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:54:22.301Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:54:23.753Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T09:54:33.762Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

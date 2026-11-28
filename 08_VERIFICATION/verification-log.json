@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-IOQI",
-    "timestamp": "2026-11-26T17:48:09.018Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "65a5d7aea28e8801619eeb6b222dab1be920766530f4f8911c9eb6885ac703ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-IYNO",
-    "timestamp": "2026-11-26T17:48:21.876Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "4d8a526d22871d0963425bb7ce5f9d57ca3a0272923da979f7353b656af1cdc4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-J0AJ",
-    "timestamp": "2026-11-26T17:48:23.995Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "3214005029a11539dfdc9e6eb3ce2b0186a9c4cf274e26c740e814959d2718b0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-TY6B",
     "timestamp": "2026-11-26T17:56:54.467Z",
     "repository": "Qwen/Qwen3-0.6B",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "85fd40064fcd7382490e039601169fa6f5914a28298d305dbe64f220550a2061",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-H3V2",
+    "timestamp": "2026-11-28T09:54:22.286Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "e0de9530fca370f7568988ebc0809e44df1f23fc029e4e9a61a01bea027228ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-H4ZI",
+    "timestamp": "2026-11-28T09:54:23.742Z",
+    "repository": "TanStack/query",
+    "learningId": "learn-github-tanstack-query",
+    "contentHash": "998088d6bcfe074cb8b9449a375859c9a9d04319e02c3f2d18626dd4ab672d38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-HCPI",
+    "timestamp": "2026-11-28T09:54:33.750Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

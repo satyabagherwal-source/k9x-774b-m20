@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T09:44:58.844Z",
+  "timestamp": "2026-11-28T09:54:38.196Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oxc-project-oxc-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oxc-project-oxc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T09:44:58.844Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T09:54:38.196Z`  
 > **Learning ID**: `LEARN-EVO-oxc-project-oxc-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `68fdb4c9`  
+> **Source Version**: `e18e0b30`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T09:44:39.142Z  
+> **Timestamp**: 2026-11-28T09:54:20.745Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T09:44:39.137Z  
+> **Harvest Timestamp**: 2026-11-28T09:54:20.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23630 stars
+- **Stars / Engagement**: 23648 stars
 
 ---
 
@@ -1092,11 +1092,13 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30395** (2026-11-27): **fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written**
-  *Symptoms*: Bumps `oxc-css-parser` to 0.0.24 (oxc-project/oxc-css-parser#220 to #224, fixing oxc-project/oxc-css-parser#217, #218 and #219, and oxc-project/oxc-css-parser#226) and follows its fixes in the CSS formatter. Before, oxfmt rejected some valid SCSS / Less, and changed what lessc and dart-sass compile for others.  - `@supports selector()`: the parser now spans the term from its name to its `)`, so the workaround that found both by scanning the source is dropped (a refactor: fixture output and conformance results are unchanged) - Less: `2-round(1.5)` and `1-(1)` are now subtractions, as in less.js, and print as written; a lone `-` that negates nothing is a keyword (`1 -"t"`), now kept glued to its neighbors as Prettier does - SCSS: dart-sass matches at-rule names case-sensitively, so an uppercase one is an unknown at-rule there: it now prints as written, params included. Lowercasing turned `@IMPORT` / `@USE` into a real `@import` / `@use`, and `@MEDIA (min-width:$bp)` (which dart-sass keeps as is) was re-spaced (`DIVERGENCES.md#scss-at-rule-name-case`) - Less `- 1` (a keyword, then a number) keeps its space where Prettier prints `-1`, which lessc compiles differently (`DIVERGENCES.md#less-keyword-minus`)  ### Example  Input (SCSS):  ```scss @IMPORT "Keep"; @USE "x"; ```  Before output:  ```scss @import "Keep"; @use "x"; ```  After output:  ```scss @IMPORT "Keep"; @USE "x"; ```  dart-sass 1.108.2 compiles `@IMPORT "Keep";` as written (an unknown at-rule), but `@import "Keep";` as 
+- **Issue #30437** (2026-11-28): **docs(napi): improve JSDoc comments for all NAPI entry point functions**
+  *Symptoms*: Improve the JSDoc comments for all `napi` packages.  - Add `@param` and `@return` to all functions. - Standardize the description of these functions. - Reformat the comments. - Correct the wording about the perf cost of the async functions.
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 91` untouched benchmarks   `⏩ 19` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>om/11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions</code> (8427dd0) with <code>main</code> (2d8f3ff)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/om%2F11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions?utm_source=github&utm_medium=comment-v2&utm_conten
 
-- **Issue #30393** (2026-11-27): **refactor(formatter_css): share the operator fill between calc and Less operations**
-  *Symptoms*: ## Summary  `write_calc` and `write_less_binary_operation` built the same flat operator fill twice: the piece enum, the operator push that ends a chunk after a spaced operator, the chunk writer with its comment flushes, and the `group(indent(fill))` layout. Both now go through `OpPiece` / `OpChunks` and keep only their own operand recursion and spacing rules.  Operators are printed from their source spans (the same `write_text_with_leading_comments` the Sass printer uses), so the two operator-to-string tables and the separate `Space` piece go away.  ## What stays identical  The formatter output, byte for byte. Compared against the parent PR's head:  - Every `.css` / `.scss` / `.less` file under `apps/oxfmt/conformance/externals` (2565 files: Prettier's suite plus the real-world projects), formatted with `--print-width 80` and `100` by both builds of the `css_formatter` example: 0 differences. - `cargo test -p oxc_formatter_css`: all snapshots unchanged. - `conformance:prettier`, `conformance:fixture` and `conformance:live` reports: unchanged.  `write_sass_binary` still builds its own fill: its run merging for `+` / `-` decides spacing while writing, so moving it onto `OpChunks` would be a behavior-sensitive change of its own.  ---  AI assistance: this PR was written with Claude Code (model: Claude Opus 5.5, `claude-opus-5-5`; the reasoning effort level is not available to the agent).  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #30436** (2026-11-28): **refactor(napi): clarify types in async tasks**
+  *Symptoms*: Minor refactor.  In all `napi` packages, specify the actual types used by the async `Task`'s methods, rather than the more opaque `Self::Output` and `Self::JsValue`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1113,1036 +1115,354 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eb6c432` (2026-11-26)
-**Commit Message**: fix(linter/eslint/no-empty-static-block): suggest a comment instead of deleting the block (#30374)
+### Incident Patch 1: `c94ac0b2` (2026-11-27)
+**Commit Message**: fix(linter/eslint/no-void): only suggest `undefined` for literal operands (#30417)
 
-- Change the suggestion to insert ` /* empty */ ` inside the static
-block instead of deleting it, matching ESLint.
-- Deleting the block could merge neighbouring class members. For
-example, `x = value` followed by `[key]() {}` became a computed access
-on the field initializer, which is invalid.
+- The `undefined` suggestion is now offered only when the `void` operand
+is a literal such as `void 0`. For other operands like `void
+callback()`, the replacement skipped evaluating the operand, dropping
+calls and their exceptions, so those are now reported without a
+suggestion.
+- The suggestion is also withheld when `undefined` is shadowed by a
+local binding.
 
-**File**: `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs` (modified, +20/-5)
+**File**: `crates/oxc_linter/src/rules/eslint/no_void.rs` (modified, +24/-3)
 ```diff
-@@ -67,7 +67,15 @@ impl Rule for NoEmptyStaticBlock {
-             }
-             ctx.diagnostic_with_suggestion(
-                 no_empty_static_block_diagnostic(static_block.span),
--                |fixer| fixer.delete(&static_block.span),
-+                |fixer| {
-+                    let span = static_block.span;
-+                    let Some(offset) = ctx.find_next_token_within(span.start, span.end, "{") else {
-+                        return fixer.noop();
-+                    };
-+                    fixer
-+                        .replace(Span::new(span.start + offset + 1, span.end - 1), " /* empty */ ")
-+                        .with_message("Add comment inside empty static block.")
-+                },
-             );
+@@ -5,6 +5,7 @@ use oxc_ast::AstKind;
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+ use oxc_span::Span;
++use oxc_str::static_ident;
+ 
+ use crate::{
+     AstNode,
+@@ -77,9 +78,16 @@ impl Rule for NoVoid {
+         }
+ 
+         if unary_expr.operator.is_void() {
+-            ctx.diagnostic_with_suggestion(no_void_diagnostic(unary_expr.span), |fixer| {
+-                fixer.replace(unary_expr.span, "undefined")
+-            });
++            let diagnostic = no_void_diagnostic(unary_expr.span);
++            if unary_expr.argument.without_parentheses().is_literal()
++                && ctx.scoping().find_binding(node.scope_id(), static_ident!("undefined")).is_none()
++            {
++                ctx.diagnostic_with_suggestion(diagnostic, |fixer| {
++                    fixer.replace(unary_expr.span, "undefined")
++                });
++            } else {
++                ctx.diagnostic(diagnostic);
++            }
          }
      }
-@@ -96,15 +104,22 @@ fn test() {
+ }
+@@ -105,6 +113,7 @@ fn test() {
+         ("void(0)", None),
+         ("var foo = void 0", None),
+         ("var foo = void 0", Some(serde_json::json!([{ "allowAsStatement": true }]))),
++        ("function discard(callback) { return void callback(); }", None),
      ];
  
      let fix = vec![
--        ("class Foo { static {} }", "class Foo {  }"),
--        ("class Foo { static { } }", "class Foo {  }"),
-+        ("class Foo { static {} }", "class Foo { static { /* empty */ } }"),
-+        ("class Foo { static { } }", "class Foo { static { /* empty */ } }"),
-         (
-             "class Foo { static {
- 
- 			 } }",
--            "class Foo {  }",
-+            "class Foo { static { /* empty */ } }",
-+        ),
-+        (
-+            "class Foo { static { bar(); } static {} }",
-+            "class Foo { static { bar(); } static { /* empty */ } }",
-+        ),
-+        (
-+            "class C { x = value\nstatic {}\n[key]() {} }",
-+            "class C { x = value\nstatic { /* empty */ }\n[key]() {} }",
+@@ -118,6 +127,18 @@ fn test() {
+             "var foo = undefined",
+             Some(serde_json::json!([{ "allowAsStatement": true }])),
          ),
--        ("class Foo { static { bar(); } static {} }", "class Foo { static { bar(); }  }"),
++        ("var foo = void (0)", "var foo = undefined", None),
++        (
++            "function discard(callback) { return void callback(); }",
++            "function discard(callback) { return void callback(); }",
++            None,
++        ),
++        ("var foo = void bar", "var foo = void bar", None),
++        (
++            "function f(undefined) { return void 0; }",
++            "function f(undefined) { return void 0; }",
++            None,
++        ),
      ];
  
-     Tester::new(NoEmptyStaticBlock::NAME, NoEmptyStaticBlock::PLUGIN, pass, fail)
+     Tester::new(NoVoid::NAME, NoVoid::PLUGIN, pass, fail).expect_fix(fix).test_and_snapshot();
+```
+
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_void.snap` (modified, +7/-0)
+```diff
+@@ -43,3 +43,10 @@ source: crates/oxc_linter/src/tester.rs
+    ·           ──────
+    ╰────
+   help: Use `undefined` instead
++
++  ⚠ eslint(no-void): Unexpected `void` operator
++   ╭─[no_void.tsx:1:37]
++ 1 │ function discard(callback) { return void callback(); }
++   ·                                     ───────────────
++   ╰────
++  help: Use `undefined` instead
 ```
 
 ---
 
-### Incident Patch 2: `68fdb4c9` (2026-11-27)
-**Commit Message**: fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written (#30395)
+### Incident Patch 2: `c7d3f6b5` (2026-11-28)
+**Commit Message**: fix(napi/minify, napi/transform): do not produce codeframe for options errors (#30431)
 
-Bumps `oxc-css-parser` to 0.0.24 (oxc-project/oxc-css-parser#220 to
-#224, fixing oxc-project/oxc-css-parser#217, #218 and #219, and
-oxc-project/oxc-css-parser#226) and follows its fixes in the CSS
-formatter. Before, oxfmt rejected some valid SCSS / Less, and changed
-what lessc and dart-sass compile for others.
+NAPI `minify`, `transform-react` and `transform-relay` all produced
+diagnostics with a codeframe for errors with options.
 
-- `@supports selector()`: the parser now spans the term from its name to
-its `)`, so the workaround that found both by scanning the source is
-dropped (a refactor: fixture output and conformance results are
-unchanged)
-- Less: `2-round(1.5)` and `1-(1)` are now subtractions, as in less.js,
-and print as written; a lone `-` that negates nothing is a keyword (`1
--"t"`), now kept glued to its neighbors as Prettier does
-- SCSS: dart-sass matches at-rule names case-sensitively, so an
-uppercase one is an unknown at-rule there: it now prints as written,
-params included. Lowercasing turned `@IMPORT` / `@USE` into a real
-`@import` / `@use`, and `@MEDIA (min-width:$bp)` (which dart-sass keeps
-as is) was re-spaced (`DIVERGENCES.md#scss-at-rule-name-case`)
-- Less `- 1
+These errors are not related to the file or it's source, so skip adding
+the code frame.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -1679,9 +1679,9 @@ dependencies = [
- 
- [[package]]
- name = "oxc-css-parser"
--version = "0.0.22"
-+version = "0.0.24"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8e5e8f4fcfe5796d4e23bec581cf049823c9303cb27bbcbbaa31342bce0d48bd"
-+checksum = "398ea9a6754e2ebf0225b4f80dedb03a9836d5cbd1397fbb0701479db99c786c"
- dependencies = [
+@@ -2431,7 +2431,6 @@ dependencies = [
   "oxc_allocator",
- ]
+  "oxc_codegen",
+  "oxc_compat",
+- "oxc_diagnostics",
+  "oxc_minifier",
+  "oxc_napi",
+  "oxc_parser",
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `napi/minify/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -250,7 +250,7 @@ nodejs-built-in-modules = "1.0.0" # Node.js built-in modules
- nonmax = "0.5.5" # Non-maximum numbers
- num-bigint = "0.5.0" # Big integers
- num-traits = "0.2.19" # Numeric traits
--oxc-css-parser = "0.0.22" # CSS/SCSS/Less parser (raffia 0.12.3 fork: adds `template_placeholder` typed placeholders for css-in-js + valid-syntax coverage fixes (see crates/oxc_formatter_css/AGENTS.md))
-+oxc-css-parser = "0.0.24" # CSS/SCSS/Less parser (raffia 0.12.3 fork: adds `template_placeholder` typed placeholders for css-in-js + valid-syntax coverage fixes (see crates/oxc_formatter_css/AGENTS.md))
- oxc-graphql-parser = "0.0.10" # GraphQL parser (direct AST; apollo-parser 0.8.6 fork aligned with graphql-js 17 syntax)
- oxc-htmlish-parser = "0.0.11" # HTML / Vue / Angular parser (loose, span-faithful AST)
- oxc-markdown-parser = "0.0.4" # CommonMark + GFM parser (span-faithful, style-preserving typed AST)
+@@ -26,7 +26,6 @@ oxc_allocator = { workspace = true }
+ oxc_codegen = { workspace = true, features = ["sourcemap"] }
+ oxc_compat = { workspace = true }
+ oxc_str = { workspace = true }
+-oxc_diagnostics = { workspace = true }
+ oxc_minifier = { workspace = true }
+ oxc_napi = { workspace = true }
+ oxc_parser = { workspace = true }
 ```
 
-**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +6/-6)
+**File**: `napi/minify/src/lib.rs` (modified, +7/-16)
 ```diff
-@@ -395,6 +395,8 @@
- - externals/prettier/css/font/font.css (💥, 79.41%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-   - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
-+- externals/prettier/scss/case/case.scss (💥, 93.67%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#scss-at-rule-name-case
- - externals/prettier/scss/comments/4594.scss (💥, 83.78%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
- - externals/prettier/scss/comments/4878.scss (💥, 89.39%)
-@@ -437,8 +439,6 @@
+@@ -22,8 +22,7 @@ use napi_derive::napi;
  
- ### Error
+ use oxc_allocator::Allocator;
+ use oxc_codegen::Codegen;
+-use oxc_diagnostics::OxcDiagnostic;
+-use oxc_minifier::Minifier;
++use oxc_minifier::{Minifier, MinifierOptions};
+ use oxc_napi::OxcError;
+ use oxc_parser::Parser;
+ use oxc_sourcemap::napi::SourceMap;
+@@ -60,19 +59,14 @@ fn to_napi_mangle_cache(
  
--- externals/prettier/scss/case/case.scss: Syntax error: expect token `<string>`, but found `<ident>`
--  - ❓unclassified
- - externals/prettier/css/custom-properties/emoji.css: Syntax error: declaration at top level is disallowed
-   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
- - externals/prettier/scss/atrule/for.scss: Syntax error: Sass keyword `to` is expected
-@@ -500,15 +500,13 @@
- - externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 97.89%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
-+- externals/prettier/less/less/less.less (💥, 99.21%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#less-extend-statement-break
- - externals/prettier/less/postcss-8-improment/test.less (💥, 88.24%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
+ fn minify_impl(filename: &str, source_text: &str, options: Option<MinifyOptions>) -> MinifyResult {
+     use oxc_codegen::CodegenOptions;
++
+     let options = options.unwrap_or_default();
  
- ### Error
+-    let mut minifier_options = match oxc_minifier::MinifierOptions::try_from(&options) {
++    let mut minifier_options = match MinifierOptions::try_from(&options) {
+         Ok(options) => options,
+         Err(error) => {
+-            return MinifyResult {
+-                errors: OxcError::from_diagnostics(
+-                    filename,
+-                    source_text,
+-                    vec![OxcDiagnostic::error(error)],
+-                ),
+-                ..MinifyResult::default()
+-            };
++            // Options error is not an error in the source text, so don't produce a codeframe
++            return MinifyResult { errors: vec![OxcError::new(error)], ..MinifyResult::default() };
+         }
+     };
  
--- externals/prettier/less/less/less.less: Syntax error: expect one of `<ident>` or `@{`, but found `(`
--  - ❓unclassified
--- externals/prettier/less/parens/parens.less: Syntax error: expect token `;`, but found `{`
--  - ❓unclassified
- - externals/prettier/less/case/case.less: Syntax error: expect token `(`, but found `<ident>`
-   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
- - externals/prettier/less/comments/in-value.less: Syntax error: expect token `;`, but found `{`
-@@ -519,6 +517,8 @@
-   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
- - externals/prettier/less/no-semicolon/url.less: Syntax error: expect token `(`, but found `<ident>`
-   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
-+- externals/prettier/less/parens/parens.less: Syntax error: expect token `;`, but found `{`
-+  - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
- 
- ## graphql
- 
+@@ -107,12 +101,9 @@ fn minify_impl(filename: &str, source_text: &str, options: Option<MinifyOptions>
+         Some(Either::B(o)) => match o.to_codegen_options() {
+             Ok(opts) => opts,
+             Err(error) => {
++                // Options error is not an error in the source text, so don't produce a codeframe
+                 return MinifyResult {
+-                    errors: OxcError::from_diagnostics(
+-                        filename,
+-                        source_text,
+-                        vec![OxcDiagnostic::error(error)],
+-                    ),
++                    errors: vec![OxcError::new(error)],
+                     ..MinifyResult::default()
+                 };
+             }
 ```
 
-**File**: `crates/oxc_formatter_css/AGENTS.md` (modified, +2/-1)
+**File**: `napi/minify/test/minify.test.ts` (modified, +9/-0)
 ```diff
-@@ -171,7 +171,8 @@ What the formatter relies on per shape:
- ### Case
+@@ -55,6 +55,13 @@ describe("simple", () => {
+     expect(ret.errors.length).toBe(0);
+   });
  
- Lowercased: what the spec makes ASCII case-insensitive AND that can only be a keyword in its position.
--e.g. at-rule names, property names (a `@supports` declaration's included), media feature names, media types,
-+e.g. at-rule names (not in SCSS: DIVERGENCES.md#scss-at-rule-name-case),
-+property names (a `@supports` declaration's included), media feature names, media types,
- `only` / `and` / `not` / `or`.
- Everything else prints as written:
- values (a value may be a case-sensitive custom ident: `animation-name`, `grid-area`; keyword values are a linter's `value-keyword-case`),
-```
-
-**File**: `crates/oxc_formatter_css/DIVERGENCES.md` (modified, +50/-0)
-```diff
-@@ -965,6 +965,7 @@ and its at-rule printer drops the block comments in there (a trailing one surviv
- - Pin: `tests/fixtures/format/less/extend-rule.less`
- - Conformance:
-   - `externals/prettier/less/less-test-suite/snippet: tests-unit/extend-chaining/extend-chaining.less`
-+  - `externals/prettier/less/less/less.less` (the `extend #7977` rules)
- - Drop when: the selector-list leak is fixed (prettier/prettier#19550 covered only the indentation) and the pin catches up
- 
- ```less
-@@ -1010,6 +1011,54 @@ Prettier glues the sign to the number (removing the source space, a postcss word
- Matching that gluing is ad-hoc work for a torture-test-only shape.
- A sign GLUED in the source never gains a space in either implementation (that direction is the parser's folded-sign handling, not a divergence).
- 
-+## less-keyword-minus
++  it("rejects empty legalComments.linked path", () => {
++    const ret = minifySync("test.js", "foo();", { codegen: { legalComments: { linked: "" } } });
++    expect(ret.errors.length).toBe(1);
++    expect(ret.errors[0].message).toContain("legalComments.linked must be a non-empty path");
++    expect(ret.errors[0].codeframe).toBeNull();
++  });
 +
-+- Why: semantics
-+- Pin: `tests/fixtures/format/less/keyword-minus.less`
-+
-+```less
-+/* input */
-+v: -  1;
-+
-+/* ours */
-+v: - 1;
-+
-+/* prettier */
-+v: -1;
-+```
-+
-+less.js negates only a glued `@var`, `$prop` or `(`, so a lone `-` before a number is a keyword, not a sign.
-+lessc compiles `- 1` as written and `-1` as the number, so Prettier's glue changes the output.
-+
-+## scss-at-rule-name-case
-+
-+- Why: semantics
-+- Pin: `tests/fixtures/format/scss/at-rule-name-case.scss`
-+- Conformance:
-+  - `externals/prettier/scss/case/case.scss` (the at-rule name lines only; the interpolated property name line has no entry)
-+
-+```scss
-+/* input */
-+@IMPORT Keep;
-+@USE "x";
-+@MEDIA (MIN-WIDTH: 700PX) {}
-+
-+/* ours */
-+@IMPORT Keep;
-+@USE "x";
-+@MEDIA (MIN-WIDTH: 700PX) {}
-+
-+/* prettier */
-+@import Keep;
-+@use "x";
-+@media (min-width: 700px) {}
-+```
-+
-+dart-sass matches at-rule names case-sensitively: `@IMPORT`, `@USE` and `@MEDIA` are unknown at-rules it compiles as written,
-+while `@import Keep;` fails to compile and `@use "x"` loads a module.
-+So an SCSS at-rule with an uppercase name prints as written, its params included,
-+as every unknown at-rule's (AGENTS.md "Printing raw vs typed").
-+
- ## signed-value-resplit
- 
- - Why: uniform-rule (same construct, same output: the item in first position, an unsigned item)
-@@ -1140,6 +1189,7 @@ A spaced `/` is not part of this: it glues to its left operand and breaks after,
-   - `externals/prettier/less/interpolation/interpolation.less`
-   - `externals/prettier/less/lookup/lookup-1.less`
-   - `externals/prettier/less/no-semicolon/url.less`
-+  - `externals/prettier/less/parens/parens.less`
- 
- ```less
- /* input */
-```
-
-**File**: `crates/oxc_formatter_css/src/print/at_rule.rs` (modified, +27/-66)
-```diff
-@@ -30,18 +30,28 @@ use crate::{
-     context::CssFormatContext,
-     format::to_span,
-     print::{
--        CssFormatter, block_comment_end, format_with, is_glued, scss, selector, statement,
-+        CssFormatter, format_with, is_glued, scss, selector, statement,
-         value::{self, ValueContext},
-         write_maybe_lowercase,
-     },
- };
- 
-+/// `@` and an at-rule name, lowercased except in SCSS (DIVERGENCES.md#scss-at-rule-name-case).
-+pub(super) fn write_at_rule_name(span: oxc_span::Span, f: &mut CssFormatter<'_, '_>) {
-+    let name = f.context().source_text().text_for(&span);
-+    write!(f, "@");
-+    if matches!(f.options().variant, crate::options::CssVariant::Scss) {
-+        write!(f, text(name));
-+    } else {
-+        write_maybe_lowercase(name, f);
-+    }
-+}
-+
- /// Mirrors Prettier's `css-atrule`.
- pub(super) fn write_at_rule<'a>(at_rule: &AtRule<'a>, f: &mut CssFormatter<'_, 'a>) {
-     let source = f.context().source_text();
--    write!(f, "@");
-     let name_span = to_span(at_rule.name.span());
--    write_maybe_lowercase(source.text_for(&name_span), f);
-+    write_at_rule_name(name_span, f);
- 
-     // Comments inside the params: the structured printers place them,
-     // a commented String-params prelude prints them as written (below).
-@@ -80,7 +90,10 @@ pub(super) fn write_at_rule<'a>(at_rule: &AtRule<'a>, f: &mut CssFormatter<'_, '
-         // The exception: SCSS-family names parsed AS CSS
-         // (oxc-css-parser: Unknown, Prettier: parseValue/parseSelector) keep the structural printers below.
-         let unknown_string_params = matches!(prelude, AtRulePrelude::Unknown(_))
--            && !is_value_parsed_at_rule(at_rule.name.raw);
-+            && !is_value_parsed_at_rule(
-+                at_rule.name.raw,
-+                matches!(f.options().variant, crate::options::CssVariant::Scss),
-+            );
-         // NOTE: Prettier also keeps `@warn` / `@error` params as a raw string (`media-unknown`),
-         // but `oxc-css-parser` parses their prelude structurally (`SassExpr`),
-         // so we route them through the normal structured printer
-@@ -268,8 +281,9 @@ fn split_important_tail(raw: &str) -> Option<(&str, &str)> {
- /// so a `oxc-css-parser` Unknown prelude for them must keep the structural printers.
- ///
- /// Case-sensitivity mirrors Prettier:
--/// bare `name` comparisons for the SCSS family, lowercased for module/media rules.
--fn is_value_parsed_at_rule(name: &str) -> bool {
-+/// bare `name` comparisons for the SCSS family, lowercased for module/media rules
-+/// except in SCSS, which keeps `@MEDIA` unknown (DIVERGENCES.md#scss-at-rule-name-case).
-+fn is_value_parsed_at_rule(name: &str, scss: bool) -> bool {
-     matches!(
-         name,
-         "extend"
-@@ -291,7 +305,7 @@ fn is_value_parsed_at_rule(name: &str) -> bool {
-             | "add-mixin"
-             | "custom-selector"
-     ) || matches!(
--        &*name.cow_to_ascii_lowercase(),
-+        &*if scss { name.into() } else { name.cow_to_ascii_lowercase() },
-         "import" | "use" | "forward" | "media" | "custom-media"
-     )
- }
-@@ -354,17 +368,7 @@ fn write_at_rule_prelude<'a>(prelude: &AtRulePrelude<'a>, f: &mut CssFormatter<'
-     let source = f.context().source_text();
-     // `@import` places its own: one fuses with the path after it (`write_import_path_list`)
-     if !matches!(prelude, AtRulePrelude::Import(_) | AtRulePrelude::SassImport(_)) {
--        // A first `selector()` term starts before its span (`supports_in_parens_start`)
--        let start = match prelude {
--            AtRulePrelude::Supports(condition) => match condition.conditions.first() {
--                Some(SupportsConditionKind::SupportsInParens(in_parens)) => {
--                    supports_in_parens_start(in_parens, f)
--                }
--                _ => condition.span.start,
--            },
--            _ => prelude.span().start,
--        };
--        write_leading_comments(start, f);
-+        write_leading_comments(prelude.span().start, f);
-     }
-     match prelude {
-         AtRulePrelude::Media(media) => write_media_query_list(media, f),
-@@ -1967,42 +1971,11 @@ fn write_supports_term<'a>(
-     end: u32,
-     f: &mut CssFormatter<'_, 'a>,
- ) {
--    let mut span = to_span(in_parens.span());
--    span.start = supports_in_parens_start(in_parens, f);
--    value::write_with_comments(span, end, f, |f| {
-+    value::write_with_comments(to_span(in_parens.span()), end, f, |f| {
-         write_supports_in_parens(in_parens, f);
+   it("defaults to esnext", () => {
+     const code = "try { foo } catch (e) {}";
+     const ret = minifySync("test.js", code);
+@@ -176,6 +183,7 @@ describe("treeshake options", () => {
      });
- }
+     expect(ret.errors.length).toBe(1);
+     expect(ret.errors[0].message).toContain("Invalid propertyReadSideEffects value");
++    expect(ret.errors[0].codeframe).toBeNull();
+   });
+ });
  
--/// Where a term starts, so a comment inside it never reads as leading it.
--///
--/// TODO: oxc-css-parser spans a `selector()` term as its selector list only:
--/// its start is found back over the pending comments and whitespace after `selector(`.
--/// Fix the span in the parser and remove this.
--fn supports_in_parens_start(in_parens: &SupportsInParens<'_>, f: &CssFormatter<'_, '_>) -> u32 {
--    let list_start = in_parens.span.start;
--    if !matches!(in_parens.kind, SupportsInParensKind::Selec
+@@ -372,6 +380,7 @@ describe("property mangling", () => {
+     const ret = minifySync("test.js", "obj._field;", { mangleProps: mangleProps as any });
+     expect(ret.errors).toHaveLength(1);
+     expect(ret.errors[0].message).toContain(message);
++    expect(ret.errors[0].codeframe).toBeNull();
+     expect(ret.mangleCache).toBeUndefined();
+   });
+ });
 ```
 
-**File**: `crates/oxc_formatter_css/src/print/statement.rs` (modified, +1/-3)
+**File**: `napi/transform-react/src/lib.rs` (modified, +2/-1)
 ```diff
-@@ -226,10 +226,8 @@ pub(super) fn write_statement<'a>(stmt: &Statement<'a>, f: &mut CssFormatter<'_,
-         Statement::UnknownSassAtRule(unknown) => {
-             // Same string-params contract as the Unknown prelude in `write_at_rule`:
-             // Prettier prints unknown at-rule params verbatim.
--            let source = f.context().source_text();
--            write!(f, "@");
-             let name_span = to_span(unknown.name.span());
--            write_maybe_lowercase(source.text_for(&name_span), f);
-+            at_rule::write_at_rule_name(name_span, f);
-             let region_end = params_region_end(unknown.block.as_ref(), unknown.span.end, f);
-             let prelude_start =
-                 unknown.prelude.as_ref().map_or(region_end, |prelude| prelude.span().start);
+@@ -74,9 +74,10 @@ fn transform_impl(
+     let (react_compiler_options, transform_options) = match options.resolve(filename) {
+         Ok(options) => options,
+         Err(error) => {
++            // Options error is not an error in the source text, so don't produce a codeframe
+             return TransformResult {
+                 fatal: true,
+-                errors: OxcError::from_diagnostics(filename, source_text, [error]),
++                errors: vec![OxcError::from(&error)],
+                 ..TransformResult::default()
+             };
+         }
 ```
 
-**File**: `crates/oxc_formatter_css/src/print/value.rs` (modified, +9/-1)
+**File**: `napi/transform-react/test/transform.test.ts` (modified, +1/-0)
 ```diff
-@@ -1423,6 +1423,11 @@ fn raw_token<'b, 'a>(value: &'b ComponentValue<'a>) -> Option<&'b Token<'a>> {
-     if let ComponentValue::TokenWithSpan(token) = value { Some(&token.token) } else { None }
- }
+@@ -133,6 +133,7 @@ export function Component({ value }: { value: string }) {
+     expect(result.code).toBe("");
+     expect(result.errors).toHaveLength(1);
+     expect(result.errors[0].message).toContain(`Invalid React Compiler \`${option}\` option`);
++    expect(result.errors[0].codeframe).toBeNull();
+   });
  
-+/// A lone `-` that oxc-css-parser reads as a Less keyword, not an operator or a sign (`1 -"t"`).
-+fn is_less_keyword_minus(value: &ComponentValue<'_>) -> bool {
-+    matches!(value, ComponentValue::InterpolableIdent(InterpolableIdent::Literal(id)) if id.raw == "-")
-+}
-+
- /// The end of the run starting at `values[start]`: tight / non-breaking-space components merge into one fill entry.
- fn run_end(
-     values: &[ComponentValue<'_>],
-@@ -1577,11 +1582,14 @@ fn base_separator(values: &[ComponentValue<'_>], i: usize, ctx: ValueContext<'_>
+   it("marks parse errors as fatal", () => {
+```
+
+**File**: `napi/transform-relay/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -65,8 +65,9 @@ fn transform_impl(
+     let relay_options = match options.unwrap_or_default().resolve() {
+         Ok(options) => options,
+         Err(error) => {
++            // Options error is not an error in the source text, so don't produce a codeframe
+             return TransformResult {
+-                errors: OxcError::from_diagnostics(filename, source_text, [error]),
++                errors: vec![OxcError::from(&error)],
+                 ..TransformResult::default()
+             };
+         }
+```
+
+**File**: `napi/transform-relay/test/transform.test.ts` (modified, +1/-0)
+```diff
+@@ -37,6 +37,7 @@ describe("transformSync", () => {
+     const invalidOption = transformSync("foo.js", fixture, { language: "elm" });
+     expect(invalidOption.code).toBe("");
+     expect(invalidOption.errors[0].message).toContain("language");
++    expect(invalidOption.errors[0].codeframe).toBeNull();
+   });
+ });
  
-     // Raw token fallbacks (postcss-values would have produced operator/word tokens):
-     // keep gap-free neighbors tight (`10em+12em`, `-fb-url(/a/b)`).
-+    // So does the Less keyword `-` (`1 -"t"`, `1-`): a space after it would make it an operator
-     if gap_empty
-         && (matches!(prev, ComponentValue::TokenWithSpan(_) | ComponentValue::Placeholder(_))
-             || matches!(curr, ComponentValue::TokenWithSpan(_) | ComponentValue::Placeholder(_))
-             || matches!(prev, ComponentValue::Delimiter(_))
--            || matches!(curr, ComponentValue::Delimiter(_)))
-+            || matches!(curr, ComponentValue::Delimiter(_))
-+            || is_less_keyword_minus(prev)
-+            || is_less_keyword_minus(curr))
-     {
-         return Separator::Tight;
-     }
 ```
 
 ---
 
-### Incident Patch 3: `69957244` (2026-11-27)
-**Commit Message**: fix(formatter_css): make `/` spacing symmetric and space math-function operators (#30392)
+### Incident Patch 3: `eef83a05` (2026-11-27)
+**Commit Message**: fix(linter/typescript/no-extraneous-class): make class deletion a dangerous suggestion that keeps valid syntax (#30415)
 
-## Summary
+- Deleting an empty class is now emitted as a dangerous suggestion,
+matching the rule's declared fix kind, so `--fix-suggestions` alone no
+longer removes (possibly exported) classes.
+- For `export default class {}`, the suggestion deletes the whole export
+instead of leaving a bare `export default`.
+- When the next token could continue the previous statement (`(`, `[`,
+`/`, `+`, `-`, ``` ` ```, `<`), the class is replaced with `;` instead
+of deleted, so `const n = 1\nclass Empty {}\n/abc/.test('abc')` stays
+valid.
 
-The spacing around `/` in CSS / SCSS / Less values depended on which
-printer path handled it and on the operand kind, kept lopsided spacing
-(`$a/ 2`), and comments next to a `/` moved past it. This PR applies one
-rule everywhere:
-
-- Outside a math function, a `/` stays tight when the source glues it on
-both sides; a gap on either side prints one space on both sides.
-- Inside a math function (`calc`, `min`, `max`, `clamp`, `round`, ...),
-`*` and `/` are always spaced; `+` / `-` keep the source (they require
-whitespace, a glued one is invalid and left as written).
-- A comment between an operand and an operator stays where it is.
-
-### Example
-
-Input:
-
-```scss
-.a {
-  font: 12px/ 1.5 serif;
-  width: $a/ 2;
-  width: f(1px)/2;
-  width: calc(1px/2);
-  width: min(1px/2, 3px);
-  width: 1px /* c */ / 2;
-}
-```
-
-Before output:
-
-```scss
-.a {
-  font: 12px/1.5 serif;
-  width: $a/ 2;
-  width: f(1px)/2;
-  width: calc(1px/2);
-  width: min(1px/2, 3px);
-  width: 1px / /* c */ 2;
-}
-```
-
-After output:
-
-```scss
-.a {
-  font: 12px / 1.5 serif;
-  width: $a / 2;
-  width: f(1px)/2;
-  width: calc(1px / 2);
-  w
-
-**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +17/-6)
+**File**: `crates/oxc_linter/src/rules/typescript/no_extraneous_class.rs` (modified, +27/-6)
 ```diff
-@@ -323,7 +323,7 @@
+@@ -11,6 +11,7 @@ use oxc_span::Span;
  
- ## css
- 
--139/164 (84.76%)
-+138/164 (84.15%)
- 
- ### Failed
- 
-@@ -339,11 +339,15 @@
-   - crates/oxc_formatter_css/DIVERGENCES.md#declaration-colon-comments
- - externals/prettier/css/fill-value/fill.css (💥, 93.33%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#signed-value-resplit
-+- externals/prettier/css/font/font.css (💥, 79.41%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-+  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
- - externals/prettier/css/parens/empty-lines.css (💥, 31.58%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#postcss-simple-var-raw-verbatim
--- externals/prettier/css/parens/parens.css (💥, 92.41%)
-+- externals/prettier/css/parens/parens.css (💥, 91.72%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#unary-plus-glue
-   - crates/oxc_formatter_css/DIVERGENCES.md#css-glued-minus-paren
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
- - externals/prettier/css/postcss-8-improment/test.css (💥, 88.24%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
- - externals/prettier/css/postcss-plugins/postcss-nesting.css (💥, 97.66%)
-@@ -388,8 +392,9 @@
- 
- ### Failed
- 
--- externals/prettier/css/font/font.css (💥, 94.12%)
--  - ❓unclassified
-+- externals/prettier/css/font/font.css (💥, 79.41%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-+  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
- - externals/prettier/scss/comments/4594.scss (💥, 83.78%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
- - externals/prettier/scss/comments/4878.scss (💥, 89.39%)
-@@ -449,10 +454,13 @@
- 
- ## less
- 
--227/252 (90.08%)
-+225/252 (89.29%)
- 
- ### Failed
- 
-+- externals/prettier/css/font/font.css (💥, 79.41%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-+  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
- - externals/prettier/less/comments/between-decl.less (💥, 94.44%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#declaration-colon-comments
- - externals/prettier/less/comments/selectors.less (💥, 88.89%)
-@@ -461,6 +469,8 @@
-   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
- - externals/prettier/less/less-test-suite/snippet: tests-config/globalVars/extended.less (💥, 78.26%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#trailing-line-comment-print-width
-+- externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-3.less (💥, 98.04%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
- - externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-functions.less (💥, 97.30%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#less-lookup-glue
- - externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-media.less (💥, 96.15%)
-@@ -487,7 +497,8 @@
-   - crates/oxc_formatter_css/DIVERGENCES.md#less-variable-value-comments
- - externals/prettier/less/less-test-suite/snippet: tests-unit/strings/strings.less (💥, 98.68%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
--- externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 98.95%)
-+- externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 97.89%)
-+  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
-   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
- - externals/prettier/less/postcss-8-improment/test.less (💥, 88.24%)
-   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
-```
-
-**File**: `crates/oxc_formatter_css/DIVERGENCES.md` (modified, +105/-0)
-```diff
-@@ -1253,6 +1253,111 @@ Everywhere else BOTH implementations keep the glue, so there is nothing to diver
- where exactly ours keeps it is printer mechanism, documented at `write_less_binary_operation` / `write_sass_binary`
- (and pinned by the same fixtures plus `tests/fixtures/format/scss/calc-glued-minus.scss` for Scss calculation args).
- 
-+## slash-spacing
-+
-+- Why: uniform-rule (same construct, same output: a `/` between numbers, glued `1rem/1` or spaced `1rem / 1`; prettier/prettier#10831)
-+- Pin: `tests/fixtures/format/scss/slash-spacing.scss`, `tests/fixtures/format/less/slash-spacing.less`
-+- Conformance:
-+  - `externals/prettier/css/font/font.css`
-+  - `externals/prettier/css/parens/parens.css`
-+  - `externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-3.less`
-+  - `externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less`
-+
-+```scss
-+/* input */
-+.a {
-+  width: f(1px)/2;
-+  width: 1px/($b);
-+  font: 12px/ 1.5 serif;
-+  font: 12px  /1.5 serif;
-+  width: $a/ 2;
-+}
-+
-+/* ours */
-+.a {
-+  width: f(1px)/2;
-+  width: 1px/($b);
-+  font: 12px / 1.5 serif;
-+  font: 12px / 1.5 serif;
-+  width: $a / 2;
-+}
-+
-+/* prettier */
-+.a {
-+  width: f(1px) / 2;
-+  width: 1px/ ($b);
-+  font: 12px/1.5 serif;
-+  font: 12px /1.5 serif;
-+  width: $a/ 2;
-+}
-+```
-+
-+```less
-+/* input */
-+.a { width: @a/2; }
-+@media @phone and (aspect-ratio: 16/ 9) {}
-+
-+/* ours */
-+.a {
-+  width: @a/2;
-+}
-+@media @phone and (aspect-ratio: 16 / 9) {
-+}
-+
-+/* prettier */
-+.a {
-+  width: @a / 2;
-+}
-+@media @phone and (aspect-ratio: 16/ 9) {
-+}
-+```
-+
-+A `/` outside a math function keeps the source's choice, made symmetric:
-+glued on both sides stays glued, a gap on either side prints one space on both.
-+The spacing never changes the meaning: dart-sass and lessc compile `x/y`, `x/ y` and `x / y` alike for every operand kind.
-+Prettier decides each gap on its own and by the neighbor's kind:
-+
-+- a word or function neighbor forces spaces (`f(1px)/2`), numbers and parens keep each gap as written (`1rem/ 1` stays lopsided)
-+- `font` and custom properties tighten a `/` after a font-size value (prettier/prettier#18114, whose review asked to "preserve space")
-+- a `/` glued after a word is lexed INTO the word by postcss-values-parser 2 (`$a/`, `center/`), so no operator node is left to space and `$a/ 2` stays lopsided
-+
-+Its own numeric `/` keeping tight or spaced is the rule we apply to every operand.
-+Scope: declaration values, Sass / Less operations, media query ratios (a substituted raw prelude's too) and Sass control conditions;
-+a Less mixin call / definition / guard prints its source slice (`adjust_numbers_and_strings`, Prettier does too), and a `@container` prelude prints verbatim.
-+
-+## math-function-operator-spacing
-+
-+- Why: uniform-rule (same construct, same output: `calc()`'s `*` and `/`)
-+- Pin: `tests/fixtures/format/scss/slash-spacing.scss`
-+- Conformance:
-+  - `externals/prettier/css/font/font.css`
-+
-+```scss
-+/* input */
-+.a {
-+  width: min(1px/2, 3px);
-+  font: calc(var(--size)/2)/2;
-+}
-+
-+/* ours */
-+.a {
-+  width: min(1px / 2, 3px);
-+  font: calc(var(--size) / 2)/2;
-+}
-+
-+/* prettier */
-+.a {
-+  width: min(1px/2, 3px);
-+  font: calc(var(--size)/2)/2;
-+}
-+```
-+
-+Inside a math function (the `Calc` node: `calc`, `min`, `max`, `clamp`, `round`, `abs`, ...) `*` and `/` always print spaced;
-+`+` / `-` keep the source, they require whitespace and a glued one is invalid, left as written.
-+There a `/` is always a division, never a separator, so it is laid out as math:
-+css-values-4 serializes a calculation tree with `" * "` / `" / "`, and dart-sass prints `min(var(--x)/2, 3px)` as `min(var(--x) / 2, 3px)`.
-+Prettier spaces them inside `calc()` only, and not after a font-size value in `font` and custom properties (its #18114 rule above).
-+
- ## paren-group-glued-word
- 
- - Why: semantics
-```
-
-**File**: `crates/oxc_formatter_css/src/print/at_rule.rs` (modified, +22/-5)
-```diff
-@@ -836,8 +836,9 @@ fn write_token_comma_group_after<'a>(
-         }
-         let run = &tokens[i..run_end];
-         let run_start = i;
-+        let followed = run_end < tokens.len();
-         let content = format_with(move |f: &mut CssFormatter<'_, 'a>| {
--            write_token_run(run, run_start == 0 && hug_lparen, f);
-+            write_token_run(run, run_start == 0 && hug_lparen, followed, f);
-         });
-         filler.entry(&soft_line_break_or_space(), &content);
-         i = run_end;
-@@ -895,7 +896,13 @@ fn write_token_comma_group_grouped<'a>(
- }
- 
- /// One run: spacing normalized; paren regions recurse as breakable groups.
--fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssFormatter<'_, 'a>) {
-+/// `followed`: more tokens come after the run (a `/` ending it has a gap after it).
-+fn write_token_run<'a>(
-+    run: &[TokenWithSpan<'a>],
-+    hug_lparen: bool,
-+    followed: bool,
-+    f: &mut CssFormatter<'_, 'a>,
-+) {
-     let source = f.context().source_text();
-     let mut j = 0;
-     while j < run.len() {
-@@ -914,7 +921,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
-             // Unbalanced region: print the opener verbatim and move on
-             if depth != 0 || k < j + 2 {
-                 if j > 0 {
--                    write_token_pair_space(run, j, hug_lparen, f);
-+                    write_token_pair_space(run, j, hug_lparen, followed, f);
-                 }
-                 let span = to_span(tok.span);
-                 write!(f, text(source.text_for(&span)));
-@@ -928,7 +935,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
-                 _ => ("{", "}"),
-             };
-             if j > 0 {
--                write_token_pair_space(run, j, hug_lparen, f);
-+                write_token_pair_space(run, j, hug_lparen, followed, f);
-             }
-             if inner.is_empty() {
-                 write!(f, [text(open), text(close)]);
-@@ -951,7 +958,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
-             continue;
-         }
-         if j > 0 {
--            write_token_pair_space(run, j, hug_lparen, f);
-+            write_token_pair_space(run, j, hug_lparen, followed, f);
-         }
-         let span = to_span(tok.span);
-         match &tok.token {
-@@ -984,6 +991,7 @@ fn write_token_pair_space<'a>(
-     run: &[TokenWithSpan<'a>],
-     j: usize,
-     hug_lparen: bool,
-+    followed: bool,
-     f: &mut CssFormatter<'_, 'a>,
- ) {
-     let source = f.context().source_text();
-@@ -1027,6 +1035,15 @@ fn write_token_pair_space<'a>(
-             | Token::EqualEqual(_)
-             | Token::ExclamationEqual(_),
-         ) => true,
-+        // A `/` takes both of its gaps together (DIVERGENCES.md#slash-spacing);
-+        // it glues to its left operand, so a gap after it ends the run
-+        (_, Token::Solidus(_)) => match run.get(j + 1) {
-+            Some(next) => value::is_slash_spaced(prev.span, tok.span, next.span),
-+            None => gap || followed,
-+        },
-+        (Token::Solidus(_), _) if j >= 2 => {
-+            value::is_slash_spaced(run[j - 2].span, prev.span, tok.span)
-+        }
-         _ => gap,
-     };
-     if space {
-```
-
-**File**: `crates/oxc_formatter_css/src/print/scss.rs` (modified, +32/-20)
-```diff
-@@ -742,7 +742,7 @@ pub(super) fn write_control_condition<'a>(
- enum CondPart<'b, 'a> {
-     Value(&'b ComponentValue<'a>),
-     /// Operator/keyword raw text (`and`, `or`, `not`, `==`, `*`, ...).
--    Op(Span, OpClass),
-+    Op(oxc_css_parser::pos::Span, OpClass),
- }
- 
- #[derive(Clone, Copy, PartialEq, Eq)]
-@@ -751,6 +751,8 @@ enum OpClass {
-     Logical,
-     /// `==` / `!=` / `<` / `<=` / `>` / `>=`
-     Comparison,
-+    /// `/`: glued on both sides or spaced on both (DIVERGENCES.md#slash-spacing)
-+    Division,
-     Other,
- }
- 
-@@ -766,15 +768,16 @@ fn flatten_condition<'b, 'a>(cond: &'b ComponentValue<'a>, out: &mut Vec<CondPar
-                 | SassBinaryOperatorKind::GreaterThanOrEqual
-                 | SassBinaryOperatorKind::LessThan
-                 | SassBinaryOperatorKind::LessThanOrEqual => OpClass::Comparison,
-+                SassBinaryOperatorKind::Division => OpClass::Division,
-                 _ => OpClass::Other,
-             };
--            out.push(CondPart::Op(to_span(binary.op.span), class));
-+            out.push(CondPart::Op(binary.op.span, class));
-             flatten_condition(&binary.right, out);
-         }
-         ComponentValue::SassUnaryExpression(unary)
-             if matches!(unary.op.kind, SassUnaryOperatorKind::Not) =>
-         {
--            out.push(CondPart::Op(to_span(unary.op.span), OpClass::Logical));
-+            out.push(CondPart::Op(unary.op.span, OpClass::Logical));
-             flatten_condition(&unary.expr, out);
-         }
-         other => out.push(CondPart::Value(other)),
-@@ -794,6 +797,24 @@ fn write_condition_chain<'a>(
-     let mut parts = Vec::new();
-     flatten_condition(condition, &mut parts);
-     let has_logical = parts.iter().any(|p| matches!(p, CondPart::Op(_, OpClass::Logical)));
-+    let part_span = |p: &CondPart<'_, 'a>| match p {
-+        CondPart::Op(span, _) => *span,
-+        CondPart::Value(v) => v.span(),
-+    };
-+    // `glued[i]`: no source gap before `parts[i]`.
-+    // Tokens glued in the source stay glued (postcss parses `$type==ocean` as ONE word and prints it verbatim);
-+    // a `/` takes both of its gaps together (DIVERGENCES.md#slash-spacing)
-+    let mut glued: Vec<bool> = (0..parts.len())
-+        .map(|i| i > 0 && is_glued(part_span(&parts[i - 1]), part_span(&parts[i])))
-+        .collect();
-+    for i in 1..parts.len().saturating_sub(1) {
-+        if matches!(parts[i], CondPart::Op(_, OpClass::Division)) {
-+            let [left, slash, right] = [i - 1, i, i + 1].map(|k| part_span(&parts[k]));
-+            let both = !value::is_slash_spaced(left, slash, right);
-+            glued[i] = both;
-+            glued[i + 1] = both;
-+        }
-+    }
-     let parts_ref = &parts;
-     let inner = format_with(move |f: &mut CssFormatter<'_, 'a>| {
-         if let Some(word) = prefix {
-@@ -805,28 +826,19 @@ fn write_condition_chain<'a>(
-                 write!(f, soft_line_break_or_space());
-             }
-         }
--        let part_span = |p: &CondPart<'_, 'a>| match p {
--            CondPart::Op(span, _) => *span,
--            CondPart::Value(v) => to_span(v.span()),
--        };
-         for (i, part) in parts_ref.iter().enumerate() {
--            if i > 0 {
--                // Tokens glued in the source stay glued (postcss parses
--                // `$type==ocean` as ONE word and prints it verbatim).
--                let glued = part_span(&parts_ref[i - 1]).end == part_span(part).start;
--                if !glued {
--                    let after_comparison = has_logical
--                        && matches!(parts_ref[i - 1], CondPart::Op(_, OpClass::Comparison));
--                    if matches!(part, CondPart::Op(..)) || after_comparison {
--                        write!(f, space());
--                    } else {
--                        write!(f, soft_line_break_or_space());
--                    }
-+            if i > 0 && !glued[i] {
-+                let after_comparison =
-+                    has_logical && matches!(parts_ref[i - 1], CondPart::Op(_, OpClass::Comparison));
-+                if matches!(part, CondPart::Op(..)) || after_comparison {
-+                    write!(f, space());
-+                } else {
-+                    write!(f, soft_line_break_or_space());
-                 }
-             }
-             // Each part owns its leading comments, or they would leak into the block
-             match part {
--                CondPart::Op(span, _) => value::write_text_with_leading_comments(*span, f),
-+                CondPart::Op(span, _) => value::write_text_with_leading_comments(to_span(*span), f),
-                 CondPart::Value(v) => {
-                     value::write_list_element(v, ValueContext::default(), f);
-                 }
-```
-
-**File**: `crates/oxc_formatter_css/src/print/value.rs` (modified, +106/-178)
-```diff
-@@ -182,6 +182,11 @@ pub(super) fn write_adjusted_verbatim<'a>(raw: &'a str, f: &mut CssFormatter<'_,
- /// so splicing the printed `Number` / `Dimension` / `Str` leaves into the verbatim slice is possible
- /// and would retire this byte re-scan, with its comment / `url()` / hash skips.
- /// However, we keep the scan for now: `oxc-css-parser` has no visitor to collect those leaves.
-+///
-+/// TODO: the slice keeps its source `/` spacing (`.m(@a/ 2)`, `when (@a/ 2 > 1)`), unlike a declaration value's
-+/// symmetric `/` (DIVERGENCES.md#slash-spacing); Prettier prints the slice as written too.
-+/// Re-spacing `/` here would re-scan bytes it does not own (escapes, detached rulesets, `./`);
-+/// the leaf-splicing above, printing the typed operations, is what lifts it.
- pub(super) fn adjust_numbers_and_strings<'a>(
-     raw: &'a str,
-     options: &CssFormatOptions,
-@@ -462,6 +467,44 @@ fn is_solidus(value: &ComponentValue<'_>) -> bool {
-     matches!(value, ComponentValue::Delimiter(Delimiter { kind: DelimiterKind::Solidus, .. }))
- }
- 
-+/// A `/` outside a math function keeps the source's choice, made symmetric (DIVERGENCES.md#slash-spacing):
-+/// tight when glued on both sides, otherwise one space on both sides.
-+pub(super) fn is_slash_spaced(
-+    left: oxc_css_parser::pos::Span,
-+    slash: oxc_css_parser::pos::Span,
-+    right: oxc_css_parser::pos::Span,
-+) -> bool {
-+    !is_glued(left, slash) || !is_glued(slash, right)
-+}
-+
-+/// [`is_slash_spaced`] for a component list:
-+/// the separator BEFORE `values[i]` when it or `values[i - 1]` is a slash, `None` otherwise.
-+fn slash_separator(
-+    values: &[ComponentValue<'_>],
-+    i: usize,
-+    is_slash: impl Fn(&ComponentValue<'_>) -> bool,
-+) -> Option<Separator> {
-+    let gap = |k: usize| values.get(k).is_some_and(|v| !is_glued(values[k - 1].span(), v.span()));
-+    let curr_is_slash = is_slash(&values[i]);
-+    if !curr_is_slash && !is_slash(&values[i - 1]) {
-+        return None;
-+    }
-+    // A leading `/` makes the stream path-like (`-fb-url(/a/b.png)`): it never spaces
-+    if is_slash(&values[0]) && (i == 1 || !gap(i)) {
-+        return Some(Separator::Tight);
-+    }
-+    // The slash's own two gaps: `values[i]` is the slash, or the one before it
-+    let slash = if curr_is_slash { i } else { i - 1 };
-+    // A trailing `/` has no right gap
-+    let spaced = gap(slash) || gap(slash + 1);
-+    Some(match (spaced, curr_is_slash) {
-+        (false, _) => Separator::Tight,
-+        // A spaced `/` glues to its left operand and breaks after
-+        (true, true) => Separator::Space,
-+        (true, false) => Separator::Line,
-+    })
-+}
-+
- fn is_semicolon(value: &ComponentValue<'_>) -> bool {
-     matches!(value, ComponentValue::Delimiter(Delimiter { kind: DelimiterKind::Semicolon, .. }))
- }
-@@ -509,23 +552,6 @@ fn is_number_ish(value: &ComponentValue<'_>) -> bool {
-     )
- }
- 
--/// Is this number-ish or a font-size-capable function? (Prettier's `isPossibleFontSize`)
--fn is_possible_font_size(value: &ComponentValue<'_>) -> bool {
--    match value {
--        v if is_number_ish(v) => true,
--        ComponentValue::Function(func) => {
--            let name = function_name_text(func);
--            name.eq_ignore_ascii_case("var")
--                || name.eq_ignore_ascii_case("calc")
--                || name.eq_ignore_ascii_case("min")
--                || name.eq_ignore_ascii_case("max")
--                || name.eq_ignore_ascii_case("clamp")
--                || name.starts_with("--")
--        }
--        _ => false,
--    }
--}
--
- pub(super) fn function_name_text<'a>(func: &Function<'a>) -> &'a str {
-     match &func.name {
-         FunctionName::Ident(InterpolableIdent::Literal(ident)) => ident.raw,
-@@ -573,10 +599,6 @@ impl ValueContext<'_> {
-         !self.in_args
-             && self.decl_prop.is_some_and(|p| p == "grid" || p.starts_with("grid-template"))
-     }
--
--    fn is_font_or_custom(&self) -> bool {
--        self.decl_prop.is_some_and(|p| p == "font" || p.starts_with("--"))
--    }
- }
- 
- /// Splits a flat component stream at top-level commas.
-@@ -1264,13 +1286,25 @@ pub(super) fn write_comma_group<'a>(
-             let content = format_with(move |f: &mut CssFormatter<'_, 'a>| {
-                 flush_value_comments(start, f);
-                 for (j, v) in run.iter().enumerate() {
--                    let is_word_continuation = j > 0 && {
--                        let sep = separator_between(values, run_start + j, ctx, source);
--                        if sep == Separator::Space {
-+                    let sep =
-+                        (j > 0).then(|| separator_between(values, run_start + j, ctx, source));
-+                    if sep == Some(Separator::Space) {
-+                        write!(f, " ");
-+                    }
-+                    let is_word_continuation = sep == Some(Separator::Word);
-+                    // A comment inside the run stays where it is (`1px /* c */ / 2`), never past the next member;
-+                    // a pair kept tight re
-```
-
-**File**: `crates/oxc_formatter_css/tests/fixtures/format/css/media-ratio.css.snap` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
- }
- @media (aspect-ratio: 16/9) {
- }
--@media (16/ 9 < aspect-ratio < 21 / 9) {
-+@media (16 / 9 < aspect-ratio < 21 / 9) {
- }
- 
- -------------------
-@@ -24,7 +24,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
- }
- @media (aspect-ratio: 16/9) {
- }
--@media (16/ 9 < aspect-ratio < 21 / 9) {
-+@media (16 / 9 < aspect-ratio < 21 / 9) {
- }
- 
- ===================== End =====================
-```
-
-**File**: `crates/oxc_formatter_css/tests/fixtures/format/less/math-operations.less` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-   t7: (2em*1em) + 20;
-   h: (10px / 2px+6px-1px*2);
-   g: @base*2;
--  // `/` spaced next to a word-like operand, number-only division keeps its glue
-+  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
-   m: @margins[zero] (@margins[ten]/2) !important;
-   w: @w/2;
-   d: 10px/8px;
-```
-
-**File**: `crates/oxc_formatter_css/tests/fixtures/format/less/math-operations.less.snap` (modified, +7/-7)
-```diff
-@@ -26,7 +26,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
-   t7: (2em*1em) + 20;
-   h: (10px / 2px+6px-1px*2);
-   g: @base*2;
--  // `/` spaced next to a word-like operand, number-only division keeps its glue
-+  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
-   m: @margins[zero] (@margins[ten]/2) !important;
-   w: @w/2;
-   d: 10px/8px;
-@@ -64,9 +64,9 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
-   t7: (2em * 1em) + 20;
-   h: (10px / 2px+6px-1px * 2);
-   g: @base*2;
--  // `/` spaced next to a word-like operand, number-only division keeps its glue
--  m: @margins[zero] (@margins[ten] / 2) !important;
--  w: @w / 2;
-+  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
-+  m: @margins[zero] (@margins[ten]/2) !important;
-+  w: @w/2;
-   d: 10px/8px;
- }
- 
-@@ -100,9 +100,9 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
-   t7: (2em * 1em) + 20;
-   h: (10px / 2px+6px-1px * 2);
-   g: @base*2;
--  // `/` spaced next to a word-like operand, number-only division keeps its glue
--  m: @margins[zero] (@margins[ten] / 2) !important;
--  w: @w / 2;
-+  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
-+  m: @margins[zero] (@margins[ten]/2) !important;
-+  w: @w/2;
-   d: 10px/8px;
- }
- 
+ use crate::{
+     AstNode,
++    ast_util::next_token,
+     context::LintContext,
+     rule::{DefaultRuleConfig, Rule},
+ };
+@@ -143,18 +144,23 @@ impl Rule for NoExtraneousClass {
+                         }
+                     }
+                     let has_decorators = !class.decorators.is_empty();
+-                    ctx.diagnostic_with_suggestion(
++                    ctx.diagnostic_with_dangerous_suggestion(
+                         empty_class_diagnostic(span, has_decorators),
+                         |fixer| {
+                             if has_decorators || class.is_expression() {
+                                 return fixer.noop();
+                             }
+-                            if let AstKind::ExportDeclaration(decl) =
+-                                ctx.nodes().parent_kind(node.id())
+-                            {
+-                                fixer.delete(decl)
++                            let span = match ctx.nodes().parent_kind(node.id()) {
++                                AstKind::ExportDeclaration(decl) => decl.span,
++                                AstKind::ExportDefaultDeclaration(decl) => decl.span,
++                                _ => class.span,
++                            };
++                            if next_token(span.end, ctx).is_some_and(|(_, c)| {
++                                matches!(c, '(' | '[' | '/' | '+' | '-' | '`' | '<')
++                            }) {
++                                fixer.replace(span, ";")
+                             } else {
+-                                fixer.delete(class)
++                                fixer.delete_range(span)
+                             }
+                         },
+                     );
+@@ -359,6 +365,21 @@ fn test() {
+     let fix = vec![
+         ("class Foo {}", "", None, FixKind::DangerousSuggestion),
+         ("export class Foo {}", "", None, FixKind::DangerousSuggestion),
++        ("export default class {}", "", None, FixKind::DangerousSuggestion),
++        ("export default class Foo {}", "", None, FixKind::DangerousSuggestion),
++        ("export class Foo {}", "export class Foo {}", None, FixKind::Suggestion),
++        (
++            "const n = 1\nclass Empty {}\n/abc/.test('abc');",
++            "const n = 1\n;\n/abc/.test('abc');",
++            None,
++            FixKind::DangerousSuggestion,
++        ),
++        (
++            "foo()\nexport class Empty {}\n[1].map(bar);",
++            "foo()\n;\n[1].map(bar);",
++            None,
++            FixKind::DangerousSuggestion,
++        ),
+         (
+             "@foo class Foo {}",
+             "@foo class Foo {}",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30395** (2026-11-27): fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written (@leaysgur)
-- **PR #30393** (2026-11-27): refactor(formatter_css): share the operator fill between calc and Less operations (@leaysgur)
-- **PR #30392** (2026-11-27): fix(formatter_css): make `/` spacing symmetric and space math-function operators (@leaysgur)
-- **PR #30391** (2026-11-27): fix(formatter): hug negated logical conditions in statement heads (@leaysgur)
-- **PR #30387** (2026-11-26): fix(linter/eslint/no-constant-binary-expression): check that constructors resolve to globals (@camc314)
-- **PR #30385** (2026-11-26): fix(linter/eslint/no-invalid-regexp): validate cooked flags and patterns with unknown flags (@camc314)
+- **PR #30437** (2026-11-28): docs(napi): improve JSDoc comments for all NAPI entry point functions (@overlookmotel)
+- **PR #30436** (2026-11-28): refactor(napi): clarify types in async tasks (@overlookmotel)
+- **PR #30435** (2026-11-28): refactor(napi/parser): rename `ResolveTask` to `ParseTask` (@overlookmotel)
+- **PR #30434** (2026-11-28): perf(napi): drop all data on worker thread (@overlookmotel)
+- **PR #30433** (2026-11-28): refactor(napi): re-order code (@overlookmotel)
+- **PR #30432** (2026-11-28): refactor(napi/transform): deduplicate code (@overlookmotel)
 
 ---
 
@@ -2162,54 +1482,56 @@ After output:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linter/eslint/no-empty-static-block): suggest a comment instead of deleting the 
+## X. linter/eslint/no-void): only suggest `undefined` for literal operands
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_void.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eb6c432`: linter/eslint/no-empty-static-block): suggest a comment instead of deleting the block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c94ac0b2`: linter/eslint/no-void): only suggest `undefined` for literal operands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_void.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                |fixer| {
-                    let span = static_block.span;
-                    let Some(offset) = ctx.find_next_token_within(span.start, span.end, "{") else {
-                        return fixer.noop();
-                    };
-                    fixer
-                        .replace(Span::new(span.start + offset + 1, span.end - 1), " /* empty */ ")
-                        .with_message("Add comment inside empty static block.")
-                },
-        ("class Foo { static {} }", "class Foo { static { /* empty */ } }"),
-        ("class Foo { static { } }", "class Foo { static { /* empty */ } }"),
-            "class Foo { static { /* empty */ } }",
-        ),
+use oxc_str::static_ident;
+            let diagnostic = no_void_diagnostic(unary_expr.span);
+            if unary_expr.argument.without_parentheses().is_literal()
+                && ctx.scoping().find_binding(node.scope_id(), static_ident!("undefined")).is_none()
+            {
+                ctx.diagnostic_with_suggestion(diagnostic, |fixer| {
+                    fixer.replace(unary_expr.span, "undefined")
+                });
+            } else {
+                ctx.diagnostic(diagnostic);
+            }
+        ("function discard(callback) { return void callback(); }", None),
+        ("var foo = void (0)", "var foo = undefined", None),
         (
-            "class Foo { static { bar(); } static {} }",
-            "class Foo { static { bar(); } static { /* empty */ } }",
+            "function discard(callback) { return void callback(); }",
+            "function discard(callback) { return void callback(); }",
+            None,
         ),
+        ("var foo = void bar", "var foo = void bar", None),
         (
-            "class C { x = value\nstatic {}\n[key]() {} }",
-            "class C { x = value\nstatic { /* empty */ }\n[key]() {} }",
+            "function f(undefined) { return void 0; }",
+            "function f(undefined) { return void 0; }",
+            None,
+        ),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                |fixer| fixer.delete(&static_block.span),
-        ("class Foo { static {} }", "class Foo {  }"),
-        ("class Foo { static { } }", "class Foo {  }"),
-            "class Foo {  }",
-        ("class Foo { static { bar(); } static {} }", "class Foo { static { bar(); }  }"),
+            ctx.diagnostic_with_suggestion(no_void_diagnostic(unary_expr.span), |fixer| {
+                fixer.replace(unary_expr.span, "undefined")
+            });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eb6c432` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c94ac0b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

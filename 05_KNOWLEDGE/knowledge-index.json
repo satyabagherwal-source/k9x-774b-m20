@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T09:34:53.073Z",
+  "last_updated": "2026-11-28T09:54:41.870Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27079,
+  "total_items": 27086,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218245,8 +218245,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "c4eaf89c",
-      "content_hash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
+      "source_version": "ec96ff49",
+      "content_hash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -218314,6 +218314,11 @@
           "number": 10915,
           "title": "keep the schedule of a task recreated after a drop",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11086,
+          "title": "accept queries_queue_retry_timeout values above 1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218321,7 +218326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T14:39:32.843Z",
+      "verified_at": "2026-11-28T09:54:33.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218375,10 +218380,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "c4eaf89c",
-      "content_hash": "ca7ab4bb672368cbd2e3ee80a30d3905abb9dce57c4cea41eaa29914514b8bd0",
+      "source_version": "ec96ff49",
+      "content_hash": "f9dc43fdc762d5c0167369c12c8dea55806bafbdcc3d596a834fe05fcf45e267",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:39:33.750Z"
+      "persisted_at": "2026-11-28T09:54:34.697Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -235286,8 +235291,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "68fdb4c9",
-      "content_hash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
+      "source_version": "e18e0b30",
+      "content_hash": "e0de9530fca370f7568988ebc0809e44df1f23fc029e4e9a61a01bea027228ea",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -235340,6 +235345,11 @@
           "number": 10871,
           "title": "linter/eslint/no-empty-static-block): suggest a comment instead of deleting the",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11084,
+          "title": "linter/eslint/no-void): only suggest `undefined` for literal operands",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235347,7 +235357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T09:44:40.116Z",
+      "verified_at": "2026-11-28T09:54:21.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235724,9 +235734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "0741a3ad6c05fbe4b9302cbfcc6aeb3f03cf5c2e5695610200da9a55deb4e64a",
+      "content_hash": "ad5e44eeae9560868d56a338e1ac35edc557b709b425ce0f0648f3f5a79f67f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:44:59.412Z"
+      "persisted_at": "2026-11-28T09:54:38.925Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -250774,9 +250784,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "02443f664f2dcc24ccfbdbf3c935b28a85a4f3808c31a89ca2ef9f6fedd2b2c8",
+      "content_hash": "b2976b79b27f1af3839b7b01961c9dd132fd3033ce5b9985e2c59f99c0df6a23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:39:37.412Z"
+      "persisted_at": "2026-11-28T09:54:41.870Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -261523,9 +261533,9 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "c77fafd2d68c5f605ffd665abd04a618dffbab1520823414430dc1c9fda8f2ae",
+      "content_hash": "5ae5fd6b98a958c4de58536ff26292e363f04883debd9debf20fa67ad6cbb5ab",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T08:36:48.707Z"
+      "persisted_at": "2026-11-28T09:54:38.649Z"
     },
     "rule-8727": {
       "learning_id": "rule-8727",
@@ -266788,10 +266798,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-architecture-intelligence-databendlabs-databend-core-invar.md",
       "title": "Architecture Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "c4eaf89c",
-      "content_hash": "b98feffdaca9f0b302e31a97884e6efc7fdf56460b9ca67fe5bfdfb6852b673a",
+      "source_version": "ec96ff49",
+      "content_hash": "a11178f8b7e2cb254c8fc8b69e2dcfd128dbb5b06a7b6db41a489ee80f6fb41b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T14:39:33.550Z"
+      "persisted_at": "2026-11-28T09:54:34.383Z"
     },
     "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id": {
       "item_id": "candidate_directive-client-decide-the-reasoning-dialect-by-endpoint-not-by-model-id",
@@ -266837,9 +266847,9 @@
       "title": "Architecture Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdc93e24be40163b5870939982d25c8317c0f95c1ba709deb99bbad094412ef1",
+      "content_hash": "8794d1f4c4e40ac3f0fb3ff204a6c9bb13bd2553daaded8683bfbf1c6a7ab1d5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T14:39:37.208Z"
+      "persisted_at": "2026-11-28T09:54:41.593Z"
     },
     "rule-8792": {
       "learning_id": "rule-8792",
@@ -273385,8 +273395,8 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "115fdefa",
-      "content_hash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
+      "source_version": "e7916a9e",
+      "content_hash": "998088d6bcfe074cb8b9449a375859c9a9d04319e02c3f2d18626dd4ab672d38",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
@@ -273404,6 +273414,11 @@
           "number": 10393,
           "title": "docs(framework/angular/guides): add the 'polling' guide",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11085,
+          "title": "query-core/queriesObserver): notify listeners when a query with 'throwOnError' f",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273411,7 +273426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:08:20.855Z",
+      "verified_at": "2026-11-28T09:54:23.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273453,10 +273468,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "repository": "TanStack/query",
-      "source_version": "115fdefa",
-      "content_hash": "98ff0cf2162bc602b78de3b949608ad8f1df0daa8997c5b7158fdd89c1e05b52",
+      "source_version": "e7916a9e",
+      "content_hash": "d1ea0ea7a12b9be83665c497b00852498d5989a9037216e0b400073edfa76fdb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:08:21.479Z"
+      "persisted_at": "2026-11-28T09:54:24.384Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query",
@@ -273465,10 +273480,10 @@
       "relative_path": "08_VERIFICATION/tanstack-query-verification-protocol-empirical-defect-shield-for-tanstack-query.md",
       "title": "Verification Protocol: Empirical Defect Shield for TanStack/query",
       "repository": "TanStack/query",
-      "source_version": "115fdefa",
-      "content_hash": "a287f30cbbfc43901cd7f3f59568da277fe7bf182ec9507ecb7e9a8512996acf",
+      "source_version": "e7916a9e",
+      "content_hash": "e18aa8d713fded8baf02cc2b299bace02da4d222f88ac08d7b8e7bd4528b42f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:21.666Z"
+      "persisted_at": "2026-11-28T09:54:24.663Z"
     },
     "learn-github-gauthierpiarrette-highball": {
       "learning_id": "learn-github-gauthierpiarrette-highball",
@@ -273578,9 +273593,9 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "0835c0e964668878beffd69d26a7f2c264e4877f2aebe96d15bca34d6ed5a706",
+      "content_hash": "7e25b1a671abc5ece22f93901014a3aa1ecf8a1cf6fc0184a94d52fdff309a35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:08:36.820Z"
+      "persisted_at": "2026-11-28T09:54:40.226Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings",
@@ -273590,9 +273605,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tanstack-query-learnings",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "36eda2870da289b2030313f310d175d8118f25ecc063e50f0cd1e94b334a9349",
+      "content_hash": "fb35199e34f01672a75a7ceae4e394b0455e466e0d94dfe5602ba63abb3757ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:36.985Z"
+      "persisted_at": "2026-11-28T09:54:40.509Z"
     },
     "learn-github-preactjs-preact": {
       "learning_id": "learn-github-preactjs-preact",
@@ -372236,6 +372251,96 @@
       "content_hash": "833f92572dd1d1c191aa0e16d29a29018d78cb712c4ac2dbd3517d4b8188c679",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T09:34:18.673Z"
+    },
+    "rule-11084": {
+      "learning_id": "rule-11084",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11084,
+      "title": "linter/eslint/no-void): only suggest `undefined` for literal operands",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "e18e0b30",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:54:21.921Z"
+    },
+    "candidate_directive-linter-eslint-no-void-only-suggest-undefined-for-literal-operands": {
+      "item_id": "candidate_directive-linter-eslint-no-void-only-suggest-undefined-for-literal-operands",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HG9F-linter-eslint-no-void-only-suggest-undefined-for-literal-operands.md",
+      "title": "linter/eslint/no-void): only suggest `undefined` for literal operands",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c39868d5dbcc840bd0db685b9717415164c6ad028515b594d7e17f2137ecc9ea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:54:38.356Z"
+    },
+    "rule-11085": {
+      "learning_id": "rule-11085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11085,
+      "title": "query-core/queriesObserver): notify listeners when a query with 'throwOnError' f",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "e7916a9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:54:23.385Z"
+    },
+    "candidate_directive-query-core-queriesobserver-notify-listeners-when-a-query-with-throwonerror-f": {
+      "item_id": "candidate_directive-query-core-queriesobserver-notify-listeners-when-a-query-with-throwonerror-f",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HHGL-query-core-queriesobserver-notify-listeners-when-a-query-with-throwonerror-f.md",
+      "title": "query-core/queriesObserver): notify listeners when a query with 'throwOnError' f",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e2efb0d7d172bbd9e817168913db007247d8b4dcc418d3c9b2c4e0d7850a79f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T09:54:39.915Z"
+    },
+    "rule-11086": {
+      "learning_id": "rule-11086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11086,
+      "title": "accept queries_queue_retry_timeout values above 1",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "ec96ff49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T09:54:33.407Z"
+    },
+    "candidate_directive-accept-queries_queue_retry_timeout-values-above-1": {
+      "item_id": "candidate_directive-accept-queries_queue_retry_timeout-values-above-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HCZ3-accept-queries_queue_retry_timeout-values-above-1.md",
+      "title": "accept queries_queue_retry_timeout values above 1",
+      "repository": "databendlabs/databend",
+      "source_version": "ec96ff49",
+      "content_hash": "63db26f8226054014bb7f5a188bf40828ff7ca71773639877fd97e6720d9c8f0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T09:54:34.096Z"
+    },
+    "candidate_directive-settings-accept-queries_queue_retry_timeout-values-above-1": {
+      "item_id": "candidate_directive-settings-accept-queries_queue_retry_timeout-values-above-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HIIY-settings-accept-queries_queue_retry_timeout-values-above-1.md",
+      "title": "settings: accept queries_queue_retry_timeout values above 1",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "15ddb2a3227310f754223d39bed9f8eccfaaeef1ba1c08d57cf7b4e7c2c98bfe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T09:54:41.291Z"
     }
   },
   "ai-builder-brain": {

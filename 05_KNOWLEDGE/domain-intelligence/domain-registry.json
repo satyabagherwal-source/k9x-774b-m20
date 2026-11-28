@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T09:34:52.820Z",
+  "last_updated": "2026-11-28T09:54:41.593Z",
   "total_records": 2896,
   "domains": {
     "A": {
@@ -24577,8 +24577,8 @@
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "repository": "oxc-project/oxc",
-      "content_hash": "c262b0bf44bed4c28f2060ce201076d5f266f2b9805ed74c0e8d202540d582a0",
-      "created_at": "2026-11-26T08:36:44.698Z"
+      "content_hash": "64cfbddc91b1790ae168e761f6ea51d6afbd82070d049970db361daa99f74543",
+      "created_at": "2026-11-28T09:54:23.053Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -24586,8 +24586,8 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-learnings-technical-construction-intelligence-oxc-project-oxc-le.md",
       "repository": "oxc-project-oxc-learnings",
-      "content_hash": "c77fafd2d68c5f605ffd665abd04a618dffbab1520823414430dc1c9fda8f2ae",
-      "created_at": "2026-11-26T08:36:48.707Z"
+      "content_hash": "5ae5fd6b98a958c4de58536ff26292e363f04883debd9debf20fa67ad6cbb5ab",
+      "created_at": "2026-11-28T09:54:38.649Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
@@ -25466,8 +25466,8 @@
       "title": "Architecture Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-architecture-intelligence-databendlabs-databend-core-invar.md",
       "repository": "databendlabs/databend",
-      "content_hash": "b98feffdaca9f0b302e31a97884e6efc7fdf56460b9ca67fe5bfdfb6852b673a",
-      "created_at": "2026-11-27T14:39:33.550Z"
+      "content_hash": "a11178f8b7e2cb254c8fc8b69e2dcfd128dbb5b06a7b6db41a489ee80f6fb41b",
+      "created_at": "2026-11-28T09:54:34.383Z"
     },
     "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-learnings-core-invariants",
@@ -25475,8 +25475,8 @@
       "title": "Architecture Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-databendlabs-databend-learnings-architecture-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "fdc93e24be40163b5870939982d25c8317c0f95c1ba709deb99bbad094412ef1",
-      "created_at": "2026-11-27T14:39:37.208Z"
+      "content_hash": "8794d1f4c4e40ac3f0fb3ff204a6c9bb13bd2553daaded8683bfbf1c6a7ab1d5",
+      "created_at": "2026-11-28T09:54:41.593Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -26734,8 +26734,8 @@
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "repository": "TanStack/query",
-      "content_hash": "98ff0cf2162bc602b78de3b949608ad8f1df0daa8997c5b7158fdd89c1e05b52",
-      "created_at": "2026-11-25T00:08:21.479Z"
+      "content_hash": "d1ea0ea7a12b9be83665c497b00852498d5989a9037216e0b400073edfa76fdb",
+      "created_at": "2026-11-28T09:54:24.384Z"
     },
     "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
@@ -26743,8 +26743,8 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-learnings-technical-construction-intelligence-tanstack-query-lear.md",
       "repository": "tanstack-query-learnings",
-      "content_hash": "0835c0e964668878beffd69d26a7f2c264e4877f2aebe96d15bca34d6ed5a706",
-      "created_at": "2026-11-25T00:08:36.820Z"
+      "content_hash": "7e25b1a671abc5ece22f93901014a3aa1ecf8a1cf6fc0184a94d52fdff309a35",
+      "created_at": "2026-11-28T09:54:40.226Z"
     },
     "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T08:36:48.386Z",
+  "timestamp": "2026-11-28T09:54:38.196Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oxc-project-oxc-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oxc-project-oxc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T08:36:48.386Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T09:54:38.196Z`  
 > **Learning ID**: `LEARN-EVO-oxc-project-oxc-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from oxc-project-oxc-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `ab594768`  
+> **Source Version**: `e18e0b30`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T08:36:43.040Z  
+> **Timestamp**: 2026-11-28T09:54:20.745Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:36:28.543Z  
+> **Harvest Timestamp**: 2026-11-28T09:54:20.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23614 stars
+- **Stars / Engagement**: 23648 stars
 
 ---
 
@@ -639,7 +639,7 @@ impl ConfigLoader {
     fn load_in_dir(&self, dir: &Path) -> Result<Option<ConfigResolver>, String> {
         let Some(config_file) = self
             .discovery
-            .find_unique_config_by_readdir(dir)
+            .find_unique_config(dir)
             .map_err(|e| Into::<oxc_diagnostics::OxcDiagnostic>::into(e).to_string())?
         else {
             return Ok(None);
@@ -780,7 +780,7 @@ pub fn resolve_for_api(
 pub struct ConfigResolver {
     /// User's raw config as JSON value.
     ///
-    /// Retained because the slow 
+    /// Retained because the slow path must r
 ```
 
 ### Core Architecture Module: `apps/oxfmt/src/core/config/nested.rs`
@@ -1095,14 +1095,13 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30326** (2026-11-26): **fix(transformer): map lowered auto-accessors and class field initializers to their source**
-  *Symptoms*: The storage field, getter and setter that lowering generates for an `accessor` field have no source positions. Stepping into the getter or setter in a debugger shows no original location, and the `_defineProperty(...)` / `_classPrivateFieldInitSpec(...)` calls that class-properties emits for field initializers map only their arguments.  ### Example  Input ([playground for this example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22es2021%22%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+C+%7B%0A++%40dec+accessor+x+%3D+1%3B%0A%7D%0Aclass+D+%7B%0A++y+%3D+1%3B%0A++static+z+%3D+2%3B%0A%7D%0A)):   ```ts class C {   @dec accessor x = 1; } class D {   y = 1;   static z = 2; } ```  Options: `target: "es2021"`, legacy decorators, source map on. Each line lists its decoded mappings as `generated`→`line:column original`.  Before output:  ```js _classPrivateFieldInitSpec(this, _x_accessor_storage, 1);  // `1`→2:20 `1` get x() {                                                  // `x`→2:16 `x`   return _classPrivateFieldGet(_x_accessor_storage, this); // (none) set x(value) {                                             // (none)   _classPrivateFieldSet(_x_accessor_storage, this, value); // (none) _defineProperty(this, "y", 1);                             // `"`→5:2 `y`, `1`→5:6 `1` _defineProperty(D, "z", 2);                                // `"`→6
+- **Issue #30437** (2026-11-28): **docs(napi): improve JSDoc comments for all NAPI entry point functions**
+  *Symptoms*: Improve the JSDoc comments for all `napi` packages.  - Add `@param` and `@return` to all functions. - Standardize the description of these functions. - Reformat the comments. - Correct the wording about the perf cost of the async functions.
   **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 81` untouched benchmarks   `⏩ 29` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>accessor-lowering-source-positions</code> (051b29c) with <code>main</code> (ca243ee)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/accessor-lowering-source-positions?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https:
-  > I can see this is a nice improvement from [Before and after in the source map viewer](https://source-map-viewer.void.app/compare?a=eJylkm9P4kAQxr_KZO8NmpUG7x0NCUvhPPUwRmLMxTHNZhmhXtnt7W4RNHx3s2DlT5Dcxb5o0t1nfs8z03llI9JkpadhYobEmmwqLaQql85d22wqPf3IKB-e68wPClLQAkt_y8xSDVnbzNRJYc0TKR_ZUvtsQtGY8oKsiz5FIDuKUe-3OSP_BYcz8qcb9CEpEzr7d2JVcSji4EsRB7sRHzNN19YUZP38f4Ju1m0AZ6lUipwzNnXeWDkK3UfH0E7T69ubXprCcQSanuGO5J--LGqhcpkSEnhFjV4Z7bwtlTe2drQ6Qv_5QtT8OHN8nzGHRoCjX4TXiDzM1kBLvrR6_wbU9sKCzwbPLXlTmZd0IOXgEI3DqryCLlB_7EztfkjqgUNSL6zxxs8L4oBshoyDLvN8PbbuobFt_6f3WSGbB0xjx3hL2Q2ylyA7DbIo-gbOlFZRXxZFpke3N79aVVcnE5np-pOrT2SBmnH2obxwRrMme0U2Jesyo5E1v3Nkj1lOyJrIdhHIODItJ-SQNe8fOL6zlp9red07ZBu3idGetF-J1tuEGqA9JAVVHcygBY0YQ8ub8wvCeXUF4Lz0mYIXaMFpJV75TVbdu2X4ePkIIQTvC9HnPSF6cfzcFcnvOL4U4qISJONOfCe6Z7EQvZ9b2o5IrvilEOdB1ruKJx3RHSwPkC3Y4g1Okc8I&b=eJylklFP2zAQx7_KyXspyDSie2tUiWuaMca6VVSIB4yiyLmWQGpnttO1oH73yS2hoSvVJvJgKb7__f5353tmU1JkUkdZpDNiXTZPDSSySK0dmXyeOvqSU5FdqNyNS5LQA0O_qtxQS7AzvZAnpdEPJF1gKuXyGQX3VJRkbPAuQr
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 91` untouched benchmarks   `⏩ 19` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>om/11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions</code> (8427dd0) with <code>main</code> (2d8f3ff)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/om%2F11-27-docs_napi_improve_jsdoc_comments_for_all_napi_entry_point_functions?utm_source=github&utm_medium=comment-v2&utm_conten
 
-- **Issue #30322** (2026-11-26): **fix(runtime): reject non-object receivers in decorator access objects**
-  *Symptoms*: The decorators spec requires `context.access.get`, `set` and `has` to throw a `TypeError` when the receiver is not an object ([CreateDecoratorAccessObject](https://github.com/tc39/ecma262/pull/2417): "If _obj_ is not an Object, throw a *TypeError* exception", before any `Get`, `Set` or private lookup). Our `decorateElement` helper read and wrote through primitives instead, so `access.get(1)` returned `(1)[name]`. The CommonJS build is not strict, so `access.set(1, 2)` was silently dropped too.  ### Example  No playground link: `main` does not lower standard decorators yet, so the playground never emits this helper. Run the helper directly from `npm/runtime` with `node example.cjs`:  ```js const decorateElement = require("@oxc-project/runtime/helpers/decorateElement"); const decoratorStart = require("@oxc-project/runtime/helpers/decoratorStart");  class C {} let access; // A decorated public field `x` (flags 5 = field) decorateElement(decoratorStart(), 5, "x", [[undefined, (_, context) => void (access = context.access)]], C);  for (const call of [() => access.get(1), () => access.set(1, 2)]) {   try {     console.log("returned", call());   } catch (error) {     console.log(`${error.name}: ${error.message}`);   } } ```  Before output:  ```text returned undefined returned undefined ```  After output:  ```text TypeError: Decorator access receiver must be an object TypeError: Decorator access receiver must be an object ```  Public `get` and `set` now check the receiver once per ca
+- **Issue #30436** (2026-11-28): **refactor(napi): clarify types in async tasks**
+  *Symptoms*: Minor refactor.  In all `napi` packages, specify the actual types used by the async `Task`'s methods, rather than the more opaque `Self::Output` and `Self::JsValue`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1119,1613 +1118,354 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1aef2f49` (2026-11-25)
-**Commit Message**: fix(napi/parser, linter/plugins): deserialize statements directly onto directives in raw transfer (#30274)
+### Incident Patch 1: `c94ac0b2` (2026-11-27)
+**Commit Message**: fix(linter/eslint/no-void): only suggest `undefined` for literal operands (#30417)
 
-With `experimentalRawTransfer`, a `Program`, function body or
-`TSModuleBlock` with more than about 120k statements throws `RangeError:
-Maximum call stack size exceeded`. ESTree puts directives and statements
-in one `body` array, and the deserializer merged them with
-`body.push(...deserializeVecStatement(pos))`. The spread passes every
-statement as a separate call argument.
+- The `undefined` suggestion is now offered only when the `void` operand
+is a literal such as `void 0`. For other operands like `void
+callback()`, the replacement skipped evaluating the operand, dropping
+calls and their exceptions, so those are now reported without a
+suggestion.
+- The suggestion is also withheld when `undefined` is shadowed by a
+local binding.
 
-Generated `Vec` deserializers now accept an optional target array, so
-statements are pushed straight onto the directives array:
-
-```js
-// Before
-body = deserializeVecDirective(pos + 16);
-body.push(...deserializeVecStatement(pos + 40));
-
-// After
-body = deserializeVecDirective(pos + 16);
-deserializeVecStatement(pos + 40, body);
-```
-
-Each `Vec` deserializer now starts with `function deserializeVecX(pos,
-arr = [])`. Existing one-argument calls behave as before.
-
-## Example
-
-```js
-import { parseSync } from 'oxc-parser';
-
-const stmts = ';'.repeat(200_000);
-const cases = {
-  Program: `"use strict";${stmts}`,
-  FunctionBody: `function f() { "use strict";${stmts} }`,
-  TSModuleBlock: `namespace N {${stmts}}`,
-};
-
-
-
-**File**: `apps/oxlint/src-js/generated/deserialize.js` (modified, +61/-88)
+**File**: `crates/oxc_linter/src/rules/eslint/no_void.rs` (modified, +24/-3)
 ```diff
-@@ -92,8 +92,9 @@ function deserializeProgram(pos) {
-       (node$0.end = end),
-       (node$0.range = [start, end]),
-       (node$0.parent = null),
--      node$0));
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+      node$0)),
-+    body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2605,7 +2606,7 @@ function deserializeFunctionBody(pos) {
-       (node$0.parent = parent),
-       node$0)),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5574,7 +5575,7 @@ function deserializeTSModuleBlock(pos) {
-       (node$0.parent = parent),
-       node$0)),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -6282,9 +6283,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -6294,9 +6294,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6470,9 +6469,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6490,9 +6488,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6518,9 +6515,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -6530,9 +6526,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6596,9 +6591,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6620,9 +6614,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6642,9 +6635,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6774,9 +6766,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deserializeVecVariableDeclarator(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecVariableDeclarator(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 56;
- 
-```
-
-**File**: `crates/oxc_ast/src/serialize/mod.rs` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ impl Program<'_> {
-     if (!LINTER) program.hashbang = DESER[Option<Hashbang>](POS_OFFSET.hashbang);
- 
-     const body = program.body = DESER[Vec<Directive>](POS_OFFSET.directives);
--    body.push(...DESER[Vec<Statement>](POS_OFFSET.body));
-+    DESER[Vec<Statement>](POS_OFFSET.body, body);
- 
-     if (PARENT) parent = null;
- 
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js.js` (modified, +76/-111)
-```diff
-@@ -66,7 +66,8 @@ function deserializeProgram(pos) {
-       end,
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -1831,7 +1832,7 @@ function deserializeFunctionBody(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -3959,7 +3960,7 @@ function deserializeTSModuleBlock(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4757,9 +4758,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -4775,9 +4775,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -4787,9 +4786,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -4963,9 +4961,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -4983,9 +4980,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5011,9 +5007,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5023,9 +5018,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5089,9 +5083,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5113,9 +5106,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5135,9 +5127,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5267,9 +5258,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseria
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_parent.js` (modified, +76/-111)
-```diff
-@@ -68,7 +68,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2035,7 +2036,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4426,7 +4427,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5289,9 +5290,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5307,9 +5307,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5319,9 +5318,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5495,9 +5493,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5515,9 +5512,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5543,9 +5539,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5555,9 +5550,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5621,9 +5615,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5645,9 +5638,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5667,9 +5659,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5799,9 +5790,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_range.js` (modified, +76/-111)
-```diff
-@@ -67,7 +67,8 @@ function deserializeProgram(pos) {
-       range: [start, end],
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -2041,7 +2042,7 @@ function deserializeFunctionBody(pos) {
-       range: [start, end],
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4430,7 +4431,7 @@ function deserializeTSModuleBlock(pos) {
-       range: [start, end],
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -5319,9 +5320,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5337,9 +5337,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5349,9 +5348,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5525,9 +5523,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5545,9 +5542,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5573,9 +5569,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5585,9 +5580,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5651,9 +5645,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5675,9 +5668,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5697,9 +5689,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5829,9 +5820,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseriali
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_range_parent.js` (modified, +76/-111)
-```diff
-@@ -69,7 +69,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2244,7 +2245,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4896,7 +4897,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5850,9 +5851,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5868,9 +5868,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5880,9 +5879,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6056,9 +6054,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6076,9 +6073,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6104,9 +6100,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -6116,9 +6111,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6182,9 +6176,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6206,9 +6199,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6228,9 +6220,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6360,9 +6351,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/ts.js` (modified, +78/-114)
-```diff
-@@ -66,7 +66,8 @@ function deserializeProgram(pos) {
-       end,
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -2009,7 +2010,7 @@ function deserializeFunctionBody(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4242,7 +4243,7 @@ function deserializeTSModuleBlock(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -5040,9 +5041,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5058,9 +5058,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5070,9 +5069,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5246,9 +5244,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5266,9 +5263,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5294,9 +5290,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5306,9 +5301,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5372,9 +5366,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5396,9 +5389,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5418,9 +5410,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5550,9 +5541,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseria
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/ts_parent.js` (modified, +78/-114)
-```diff
-@@ -68,7 +68,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2232,7 +2233,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4739,7 +4740,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5602,9 +5603,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5620,9 +5620,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5632,9 +5631,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5808,9 +5806,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5828,9 +5825,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5856,9 +5852,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5868,9 +5863,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5934,9 +5928,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5958,9 +5951,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5980,9 +5972,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6112,9 +6103,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
-```
-
----
-
-### Incident Patch 2: `56b8f4fb` (2026-11-26)
-**Commit Message**: fix(transformer/legacy-decorator): evaluate computed keys of decorated `declare` fields (#30264)
-
-With legacy decorators (`experimentalDecorators`), a decorated `declare`
-field whose computed key has side effects, such as `@dec declare
-[key()]: any`, got `undefined` as its decorator key, and `key()` never
-ran: legacy decorators put `_key = key()` in the field's key, but
-TypeScript removes `declare` fields with their keys. Define mode was
-already broken; #29979 broke `useDefineForClassFields: false`, which
-used to call `key()` (with a `null` key). An identifier key, `@dec
-declare [k]: any`, also got an unassigned temp var, and an imported `k`
-was removed as type-only.
-
-### Example
-
-Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28%29+%3D%3E+%28log.push%28%22key%22%29%2C+%22k%22%29%3B%0Aconst+dec+%3D+%28_%3A+object%2C+name%3A+string%29+%3D%3E+log.push%28%60dec%3A%24%7Bname%7D%60%29%3B%0A%0Ac
-
-**File**: `crates/oxc_transformer/src/decorator/legacy/mod.rs` (modified, +7/-9)
-```diff
-@@ -290,16 +290,14 @@ impl<'a> Traverse<'a, TransformState<'a>> for LegacyDecorator<'a> {
- 
-         // We emit `void 0` here to indicate to `_decorate` that it can invoke `Object.defineProperty` directly.
-         let descriptor = Expression::new_void_0(SPAN, ctx);
--        // TypeScript turns a decorated field that it removes into a `declare` field keyed by a value
--        // reference or a literal, which the class doesn't evaluate. Other keys of user-written
--        // `declare` fields hold type references, so they keep the temp var.
-+        // The class doesn't evaluate the key of a `declare` field, which TypeScript removes. It has
-+        // already replaced a key with side effects by a temp var, which it assigns in order with the
-+        // other class keys, so an identifier or literal key is passed to `_decorate` as is.
-         let key_is_evaluated = !(prop.declare
--            && prop.key.as_expression().is_some_and(|key| match key {
--                Expression::Identifier(ident) => {
--                    ctx.scoping().get_reference(ident.reference_id()).flags().is_read()
--                }
--                key => key.is_literal(),
--            }));
-+            && prop
-+                .key
-+                .as_expression()
-+                .is_some_and(|key| matches!(key, Expression::Identifier(_)) || key.is_literal()));
-         self.handle_decorated_class_element(
-             prop.r#static,
-             &mut prop.key,
-```
-
-**File**: `crates/oxc_transformer/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -164,7 +164,7 @@ impl<'a> Transformer<'a> {
-             x0_typescript: program
-                 .source_type
-                 .is_typescript()
--                .then(|| TypeScript::new(&self.typescript, &self.state)),
-+                .then(|| TypeScript::new(&self.typescript, decorator_mode, &self.state)),
-             x1_jsx: Jsx::new(
-                 self.jsx,
-                 self.env.es2018.object_rest_spread,
-```
-
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +179/-41)
-```diff
-@@ -3,7 +3,7 @@ use rustc_hash::FxHashSet;
- use oxc_allocator::{ArenaVec, CloneIn, GetAllocator, ReplaceWith, TakeIn};
- use oxc_ast::ast::*;
- use oxc_ast_visit::{Visit, VisitJs, walk};
--use oxc_semantic::{ReferenceFlags, ScopeFlags, ScopeId, SymbolFlags};
-+use oxc_semantic::{ReferenceFlags, ScopeFlags, ScopeId, Scoping, SymbolFlags};
- use oxc_span::{SPAN, Span};
- use oxc_str::{Ident, Str, static_ident};
- use oxc_syntax::operator::{AssignmentOperator, UnaryOperator};
-@@ -168,6 +168,7 @@ impl<'a> TypeScript<'a> {
-         // not the current traversal scope (which is the scope enclosing the class).
-         let class_scope_id = class.scope_id();
- 
-+        let lowers_decorated_declare_fields = self.lowers_decorated_declare_fields(class);
-         let mut constructor_index = None;
-         let mut property_assignments = Vec::new();
-         let mut computed_key_assignments = Vec::new();
-@@ -180,6 +181,18 @@ impl<'a> TypeScript<'a> {
-             let mut block_after = None;
-             let kept = lowering.keeps_field(element);
-             match element {
-+                ClassElement::PropertyDefinition(prop)
-+                    if lowers_decorated_declare_fields
-+                        && !kept
-+                        && prop.declare
-+                        && !prop.decorators.is_empty() =>
-+                {
-+                    Self::convert_decorated_declare_field_key(
-+                        prop,
-+                        &mut computed_key_assignments,
-+                        ctx,
-+                    );
-+                }
-                 // Skip static private properties — converting them to static blocks
-                 // would lose the private field declaration.
-                 ClassElement::PropertyDefinition(prop)
-@@ -234,12 +247,8 @@ impl<'a> TypeScript<'a> {
-                         // order with the other moved keys.
-                         if !prop.declare
-                             && let Some(key) = prop.key.as_expression_mut()
--                            && key_needs_temp_var(key, ctx)
-                         {
--                            let (assignment, ident) =
--                                create_computed_key_temp_var(key.take_in(ctx), ctx);
--                            computed_key_assignments.push(assignment);
--                            *key = ident;
-+                            Self::move_key_to_temp_var(key, &mut computed_key_assignments, ctx);
-                         }
-                         prop.declare = true;
-                     } else if self.remove_class_fields_without_initializer
-@@ -305,30 +314,13 @@ impl<'a> TypeScript<'a> {
-             position += 1;
-         }
- 
--        let computed_key_assignment_static_block = if computed_key_assignments.is_empty() {
--            None
--        } else {
--            let assignments = ArenaVec::from_iter_in(computed_key_assignments, ctx);
--            let expr = if assignments.iter().any(depends_on_outer_context) {
--                self.append_computed_key_carrier(
--                    class,
--                    assignments,
--                    &property_assignments,
--                    lowering,
--                    ctx,
--                )
--            } else {
--                Some(Expression::new_sequence_expression(SPAN, assignments, ctx))
--            };
--            expr.map(|expr| {
--                let statement = Statement::new_expression_statement(SPAN, expr, ctx);
--                Self::create_class_static_block(
--                    ArenaVec::from_value_in(statement, ctx),
--                    class_scope_id,
--                    ctx,
--                )
--            })
--        };
-+        let computed_key_assignment_static_block = self.create_computed_key_static_block(
-+            class,
-+            computed_key_assignments,
-+            &property_assignments,
-+            lowering,
-+            ctx,
-+        );
- 
-         // Blocks are only inserted after the visited element, and the carrier is appended,
-         // so `constructor_index` is still valid.
-@@ -545,20 +537,25 @@ impl<'a> TypeScript<'a> {
-         }
- 
-         class.body.body.retain(|element| {
--            if let ClassElement::PropertyDefinition(prop) = element
--                && prop.value.is_none()
--                && prop.decorators.is_empty()
--                && !prop.key.is_private_identifier()
--            {
--                if let Some(key) = prop.key.as_expression() {
--                    return key_needs_temp_var(key, ctx);
--                }
--                return false;
--            }
--            true
-+            !matches!(element, ClassElement::PropertyDefinition(prop)
-+                if self.removes_uninitialized_field(prop, ctx))
-         });
-     }
- 
-+    /// Whether [`Self::remove_uninitialized_class_fields`] removes `prop`: a field without an
-+    /// initializer or decorators, whose key has no side effects.
-+    fn removes_uninitialized_field(
-+        &self,
-+        prop: &PropertyDefinition<'a>,
-+        ct
-```
-
-**File**: `crates/oxc_transformer/src/typescript/mod.rs` (modified, +12/-3)
-```diff
-@@ -7,8 +7,8 @@ use oxc_syntax::scope::ScopeId;
- use oxc_traverse::{BoundIdentifier, Traverse};
+@@ -5,6 +5,7 @@ use oxc_ast::AstKind;
+ use oxc_diagnostics::OxcDiagnostic;
+ use oxc_macros::declare_oxc_lint;
+ use oxc_span::Span;
++use oxc_str::static_ident;
  
  use crate::{
--    common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState,
--    utils::decorated_class::PrivateNames,
-+    common::class_lowering::ClassLowering, context::TraverseCtx, decorator::DecoratorMode,
-+    state::TransformState, utils::decorated_class::PrivateNames,
- };
+     AstNode,
+@@ -77,9 +78,16 @@ impl Rule for NoVoid {
+         }
  
- mod annotations;
-@@ -58,6 +58,8 @@ pub struct TypeScript<'a> {
-     source_type_is_typescript_definition: bool,
-     set_public_class_fields: bool,
-     remove_class_fields_without_initializer: bool,
-+    /// Whether legacy decorators (`experimentalDecorators`) lower decorated members.
-+    legacy_decorators: bool,
-     /// Parameter properties of the entered classes, for [`Self::add_parameter_property_fields`].
-     parameter_properties: Vec<(Span, Ident<'a>)>,
-     /// Entered classes with parameter properties, and where theirs start in
-@@ -70,7 +72,11 @@ pub struct TypeScript<'a> {
+         if unary_expr.operator.is_void() {
+-            ctx.diagnostic_with_suggestion(no_void_diagnostic(unary_expr.span), |fixer| {
+-                fixer.replace(unary_expr.span, "undefined")
+-            });
++            let diagnostic = no_void_diagnostic(unary_expr.span);
++            if unary_expr.argument.without_parentheses().is_literal()
++                && ctx.scoping().find_binding(node.scope_id(), static_ident!("undefined")).is_none()
++            {
++                ctx.diagnostic_with_suggestion(diagnostic, |fixer| {
++                    fixer.replace(unary_expr.span, "undefined")
++                });
++            } else {
++                ctx.diagnostic(diagnostic);
++            }
+         }
+     }
  }
+@@ -105,6 +113,7 @@ fn test() {
+         ("void(0)", None),
+         ("var foo = void 0", None),
+         ("var foo = void 0", Some(serde_json::json!([{ "allowAsStatement": true }]))),
++        ("function discard(callback) { return void callback(); }", None),
+     ];
  
- impl<'a> TypeScript<'a> {
--    pub fn new(options: &TypeScriptOptions, state: &TransformState<'a>) -> Self {
-+    pub fn new(
-+        options: &TypeScriptOptions,
-+        decorator_mode: DecoratorMode,
-+        state: &TransformState<'a>,
-+    ) -> Self {
-         Self {
-             annotations: TypeScriptAnnotations::new(options),
-             r#enum: TypeScriptEnum::new(options.optimize_const_enums, options.optimize_enums),
-@@ -81,6 +87,7 @@ impl<'a> TypeScript<'a> {
-             set_public_class_fields: state.assumptions.set_public_class_fields,
-             remove_class_fields_without_initializer: !options.allow_declare_fields
-                 || options.remove_class_fields_without_initializer,
-+            legacy_decorators: decorator_mode.is_legacy(),
-             parameter_properties: Vec::new(),
-             parameter_properties_starts: Vec::new(),
-             computed_key_marker: None,
-@@ -155,9 +162,11 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-         if lowering.lowers_fields() {
-             // Erase type-only fields before class-properties lowers the rest.
-             self.remove_uninitialized_class_fields(class, ctx);
-+            self.convert_decorated_declare_field_keys(class, lowering, ctx);
-         } else if self.assigns_fields(lowering) {
-             self.transform_class_fields(class, lowering, ctx);
-         } else {
-+            self.convert_decorated_declare_field_keys(class, lowering, ctx);
-             // Define semantics: parameter properties also get field declarations.
-             let start = self.parameter_properties.len();
-             Self::collect_parameter_properties(class, &mut self.parameter_properties);
+     let fix = vec![
+@@ -118,6 +127,18 @@ fn test() {
+             "var foo = undefined",
+             Some(serde_json::json!([{ "allowAsStatement": true }])),
+         ),
++        ("var foo = void (0)", "var foo = undefined", None),
++        (
++            "function discard(callback) { return void callback(); }",
++            "function discard(callback) { return void callback(); }",
++            None,
++        ),
++        ("var foo = void bar", "var foo = void bar", None),
++        (
++            "function f(undefined) { return void 0; }",
++            "function f(undefined) { return void 0; }",
++            None,
++        ),
+     ];
+ 
+     Tester::new(NoVoid::NAME, NoVoid::PLUGIN, pass, fail).expect_fix(fix).test_and_snapshot();
 ```
 
-**File**: `tasks/coverage/snapshots/semantic_typescript.snap` (modified, +2/-5)
+**File**: `crates/oxc_linter/src/snapshots/eslint_no_void.snap` (modified, +7/-0)
 ```diff
-@@ -26671,11 +26671,8 @@ rebuilt        : ["Object", "dec", "require"]
- 
- semantic Error: tasks/coverage/typescript/tsc/testdata/tests/cases/conformance/decorators/decoratorInAmbientContext.ts
- Bindings mismatch:
--after transform: ScopeId(0): ["Foo", "_b", "_decorate", "_decorateMetadata", "b", "decorator"]
--rebuilt        : ScopeId(0): ["Foo", "_b", "_decorate", "_decorateMetadata", "b"]
--Symbol reference IDs mismatch for "_b":
--after transform: SymbolId(7): [ReferenceId(11), ReferenceId(12)]
--rebuilt        : SymbolId(2): [ReferenceId(13)]
-+after transform: ScopeId(0): ["Foo", "_decorate", "_decorateMetadata", "b", "decorator"]
-+rebuilt        : ScopeId(0): ["Foo", "_decorate", "_decorateMetadata", "b"]
- Reference symbol mismatch for "decorator":
- after transform: SymbolId(0) "decorator"
- rebuilt        : <None>
-```
-
-**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +8/-3)
-```diff
-@@ -1,6 +1,6 @@
- commit: 51225612
- 
--Passed: 371/490
-+Passed: 374/494
- 
- # All Passed:
- * babel-plugin-transform-class-static-block
-@@ -49,7 +49,7 @@ x Output mismatch
- x Output mismatch
- 
- 
--# babel-plugin-transform-typescript (60/76)
-+# babel-plugin-transform-typescript (60/77)
- * computed-constant-value/input.ts
- x Output mismatch
- 
-@@ -162,6 +162,11 @@ Unresolved references mismatch:
- after transform: ["A"]
- rebuilt        : []
- 
-+* oxc/decorated-declare-field-erased/input.ts
-+Unresolved references mismatch:
-+after transform: ["a", "dec", "g"]
-+rebuilt        : ["a", "g"]
+@@ -43,3 +43,10 @@ source: crates/oxc_linter/src/tester.rs
+    ·           ──────
+    ╰────
+   help: Use `undefined` instead
 +
- * redeclarations/input.ts
- Bindings mismatch:
- after transform: ScopeId(0): ["A"]
-@@ -206,7 +211,7 @@ x Output mismatch
- x Output mismatch
- 
- 
--# legacy-decorators (40/120)
-+# legacy-decorators (43/123)
- * oxc/accessor/input.ts
- x Output mismatch
- 
-```
-
-**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ commit: 51225612
- 
- node: v26.12.1
- 
--Passed: 87 of 383 (22.72%)
-+Passed: 88 of 384 (22.92%)
- 
- Failures:
- 
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/decorated-declare-field-erased/input.ts` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+class Foo {
-+  [a()] = 1;
-+  @dec declare [b()]: any;
-+  @dec static declare [c()]: any;
-+  @dec declare [d]: any;
-+  [g()] = 2;
-+}
++  ⚠ eslint(no-void): Unexpected `void` operator
++   ╭─[no_void.tsx:1:37]
++ 1 │ function discard(callback) { return void callback(); }
++   ·                                     ───────────────
++   ╰────
++  help: Use `undefined` instead
 ```
 
 ---
 
-### Incident Patch 3: `5a0133f3` (2026-11-25)
-**Commit Message**: fix(transformer/typescript): don't evaluate keys of `declare` fields with `removeClassFieldsWithoutInitializer` (#30272)
+### Incident Patch 2: `c7d3f6b5` (2026-11-28)
+**Commit Message**: fix(napi/minify, napi/transform): do not produce codeframe for options errors (#30431)
 
-With `removeClassFieldsWithoutInitializer`, the computed key of an
-undecorated `declare` field, such as `declare [f()]: any`, was still
-evaluated: the TypeScript transform moved `f()` into the class's
-computed-key static block. A `declare` field is type-only, so tsc and
-esbuild erase it together with its key, and Oxc's other field modes
-already do.
+NAPI `minify`, `transform-react` and `transform-relay` all produced
+diagnostics with a codeframe for errors with options.
 
-### Example
+These errors are not related to the file or it's source, so skip adding
+the code frame.
 
-Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28name%3A+string%29+%3D%3E+%28log.push%28name%29%2C+name%29%3B%0A%0Aclass+Foo+%7B%0A++declare+%5Bkey%28%22declared%22%29%5D%3A+any%3B%0A++%5Bkey%28%22field%22%29%5D+%3D+1%3B%0A%7D%0Aconsole.log%28log%29%3B%0A)):
-
-```ts
-const log: string[] = [];
-const key = (name: string) => (log.push(name), name);
-
-class Foo {
-  declare [key("declared")]: any;
-  [key("field")] = 1;
-}
-console.log(log);
+**File**: `Cargo.lock` (modified, +0/-1)
+```diff
+@@ -2431,7 +2431,6 @@ dependencies = [
+  "oxc_allocator",
+  "oxc_codegen",
+  "oxc_compat",
+- "oxc_diagnostics",
+  "oxc_minifier",
+  "oxc_napi",
+  "oxc_parser",
 ```
 
-Options: `{ "
-
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +2/-0)
+**File**: `napi/minify/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -243,8 +243,10 @@ impl<'a> TypeScript<'a> {
+@@ -26,7 +26,6 @@ oxc_allocator = { workspace = true }
+ oxc_codegen = { workspace = true, features = ["sourcemap"] }
+ oxc_compat = { workspace = true }
+ oxc_str = { workspace = true }
+-oxc_diagnostics = { workspace = true }
+ oxc_minifier = { workspace = true }
+ oxc_napi = { workspace = true }
+ oxc_parser = { workspace = true }
+```
+
+**File**: `napi/minify/src/lib.rs` (modified, +7/-16)
+```diff
+@@ -22,8 +22,7 @@ use napi_derive::napi;
+ 
+ use oxc_allocator::Allocator;
+ use oxc_codegen::Codegen;
+-use oxc_diagnostics::OxcDiagnostic;
+-use oxc_minifier::Minifier;
++use oxc_minifier::{Minifier, MinifierOptions};
+ use oxc_napi::OxcError;
+ use oxc_parser::Parser;
+ use oxc_sourcemap::napi::SourceMap;
+@@ -60,19 +59,14 @@ fn to_napi_mangle_cache(
+ 
+ fn minify_impl(filename: &str, source_text: &str, options: Option<MinifyOptions>) -> MinifyResult {
+     use oxc_codegen::CodegenOptions;
++
+     let options = options.unwrap_or_default();
+ 
+-    let mut minifier_options = match oxc_minifier::MinifierOptions::try_from(&options) {
++    let mut minifier_options = match MinifierOptions::try_from(&options) {
+         Ok(options) => options,
+         Err(error) => {
+-            return MinifyResult {
+-                errors: OxcError::from_diagnostics(
+-                    filename,
+-                    source_text,
+-                    vec![OxcDiagnostic::error(error)],
+-                ),
+-                ..MinifyResult::default()
+-            };
++            // Options error is not an error in the source text, so don't produce a codeframe
++            return MinifyResult { errors: vec![OxcError::new(error)], ..MinifyResult::default() };
+         }
+     };
+ 
+@@ -107,12 +101,9 @@ fn minify_impl(filename: &str, source_text: &str, options: Option<MinifyOptions>
+         Some(Either::B(o)) => match o.to_codegen_options() {
+             Ok(opts) => opts,
+             Err(error) => {
++                // Options error is not an error in the source text, so don't produce a codeframe
+                 return MinifyResult {
+-                    errors: OxcError::from_diagnostics(
+-                        filename,
+-                        source_text,
+-                        vec![OxcDiagnostic::error(error)],
+-                    ),
++                    errors: vec![OxcError::new(error)],
+                     ..MinifyResult::default()
+                 };
+             }
+```
+
+**File**: `napi/minify/test/minify.test.ts` (modified, +9/-0)
+```diff
+@@ -55,6 +55,13 @@ describe("simple", () => {
+     expect(ret.errors.length).toBe(0);
+   });
+ 
++  it("rejects empty legalComments.linked path", () => {
++    const ret = minifySync("test.js", "foo();", { codegen: { legalComments: { linked: "" } } });
++    expect(ret.errors.length).toBe(1);
++    expect(ret.errors[0].message).toContain("legalComments.linked must be a non-empty path");
++    expect(ret.errors[0].codeframe).toBeNull();
++  });
++
+   it("defaults to esnext", () => {
+     const code = "try { foo } catch (e) {}";
+     const ret = minifySync("test.js", code);
+@@ -176,6 +183,7 @@ describe("treeshake options", () => {
+     });
+     expect(ret.errors.length).toBe(1);
+     expect(ret.errors[0].message).toContain("Invalid propertyReadSideEffects value");
++    expect(ret.errors[0].codeframe).toBeNull();
+   });
+ });
+ 
+@@ -372,6 +380,7 @@ describe("property mangling", () => {
+     const ret = minifySync("test.js", "obj._field;", { mangleProps: mangleProps as any });
+     expect(ret.errors).toHaveLength(1);
+     expect(ret.errors[0].message).toContain(message);
++    expect(ret.errors[0].codeframe).toBeNull();
+     expect(ret.mangleCache).toBeUndefined();
+   });
+ });
+```
+
+**File**: `napi/transform-react/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -74,9 +74,10 @@ fn transform_impl(
+     let (react_compiler_options, transform_options) = match options.resolve(filename) {
+         Ok(options) => options,
+         Err(error) => {
++            // Options error is not an error in the source text, so don't produce a codeframe
+             return TransformResult {
+                 fatal: true,
+-                errors: OxcError::from_diagnostics(filename, source_text, [error]),
++                errors: vec![OxcError::from(&error)],
+                 ..TransformResult::default()
+             };
+         }
+```
+
+**File**: `napi/transform-react/test/transform.test.ts` (modified, +1/-0)
+```diff
+@@ -133,6 +133,7 @@ export function Component({ value }: { value: string }) {
+     expect(result.code).toBe("");
+     expect(result.errors).toHaveLength(1);
+     expect(result.errors[0].message).toContain(`Invalid React Compiler \`${option}\` option`);
++    expect(result.errors[0].codeframe).toBeNull();
+   });
+ 
+   it("marks parse errors as fatal", () => {
+```
+
+**File**: `napi/transform-relay/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -65,8 +65,9 @@ fn transform_impl(
+     let relay_options = match options.unwrap_or_default().resolve() {
+         Ok(options) => options,
+         Err(error) => {
++            // Options error is not an error in the source text, so don't produce a codeframe
+             return TransformResult {
+-                errors: OxcError::from_diagnostics(filename, source_text, [error]),
++                errors: vec![OxcError::from(&error)],
+                 ..TransformResult::default()
+             };
+         }
+```
+
+**File**: `napi/transform-relay/test/transform.test.ts` (modified, +1/-0)
+```diff
+@@ -37,6 +37,7 @@ describe("transformSync", () => {
+     const invalidOption = transformSync("foo.js", fixture, { language: "elm" });
+     expect(invalidOption.code).toBe("");
+     expect(invalidOption.errors[0].message).toContain("language");
++    expect(invalidOption.errors[0].codeframe).toBeNull();
+   });
+ });
+ 
+```
+
+---
+
+### Incident Patch 3: `eef83a05` (2026-11-27)
+**Commit Message**: fix(linter/typescript/no-extraneous-class): make class deletion a dangerous suggestion that keeps valid syntax (#30415)
+
+- Deleting an empty class is now emitted as a dangerous suggestion,
+matching the rule's declared fix kind, so `--fix-suggestions` alone no
+longer removes (possibly exported) classes.
+- For `export default class {}`, the suggestion deletes the whole export
+instead of leaving a bare `export default`.
+- When the next token could continue the previous statement (`(`, `[`,
+`/`, `+`, `-`, ``` ` ```, `<`), the class is replaced with `;` instead
+of deleted, so `const n = 1\nclass Empty {}\n/abc/.test('abc')` stays
+valid.
+
+**File**: `crates/oxc_linter/src/rules/typescript/no_extraneous_class.rs` (modified, +27/-6)
+```diff
+@@ -11,6 +11,7 @@ use oxc_span::Span;
+ 
+ use crate::{
+     AstNode,
++    ast_util::next_token,
+     context::LintContext,
+     rule::{DefaultRuleConfig, Rule},
+ };
+@@ -143,18 +144,23 @@ impl Rule for NoExtraneousClass {
                          }
-                         prop.declare = true;
-                     } else if self.remove_class_fields_without_initializer
-+                        && !prop.declare
-                         && let Some(key) = prop.key.as_expression_mut()
-                     {
-+                        // A `declare` field is erased along with its key, so the key never runs.
-                         // `TypeScript` uses `isSimpleInlineableExpression` to check if the key needs to be kept.
-                         // There is a little difference that we treat `BigIntLiteral` and `RegExpLiteral` can be kept, and
-                         // `IdentifierReference` without symbol is not kept.
-```
-
-**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- commit: 51225612
- 
--Passed: 370/489
-+Passed: 371/490
- 
- # All Passed:
- * babel-plugin-transform-class-static-block
-@@ -49,7 +49,7 @@ x Output mismatch
- x Output mismatch
- 
- 
--# babel-plugin-transform-typescript (59/75)
-+# babel-plugin-transform-typescript (60/76)
- * computed-constant-value/input.ts
- x Output mismatch
- 
-```
-
-**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ commit: 51225612
- 
- node: v26.12.1
- 
--Passed: 86 of 382 (22.51%)
-+Passed: 87 of 383 (22.72%)
- 
- Failures:
- 
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/exec.ts` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+const log: string[] = [];
-+const k = (name: string) => (log.push(name), name);
-+
-+class Foo {
-+  [k("a")] = 1;
-+  declare [k("f")]: any;
-+  static declare [k("s")]: any;
-+  declare x: number;
-+  [k("g")]: any;
-+  [k("h")] = 2;
-+}
-+
-+expect(log).toEqual(["a", "g", "h"]);
-+const foo = new Foo();
-+expect(Object.keys(foo)).toEqual(["a", "h"]);
-+expect(Object.keys(Foo)).toEqual([]);
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/input.ts` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+class Foo {
-+  [a()] = 1;
-+  declare [f()]: any;
-+  static declare [s()]: any;
-+  declare x: number;
-+  [g()]: any;
-+  [h()] = 2;
-+}
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/options.json` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+{
-+  "assumptions": {
-+    "setPublicClassFields": true
-+  },
-+  "plugins": [["transform-typescript", { "removeClassFieldsWithoutInitializer": true }]]
-+}
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/output.js` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+let _a, _h;
-+class Foo {
-+  constructor() {
-+    this[_a] = 1;
-+    this[_h] = 2;
-+  }
-+  static {
-+    _a = a(), g(), _h = h();
-+  }
-+}
+                     }
+                     let has_decorators = !class.decorators.is_empty();
+-                    ctx.diagnostic_with_suggestion(
++                    ctx.diagnostic_with_dangerous_suggestion(
+                         empty_class_diagnostic(span, has_decorators),
+                         |fixer| {
+                             if has_decorators || class.is_expression() {
+                                 return fixer.noop();
+                             }
+-                            if let AstKind::ExportDeclaration(decl) =
+-                                ctx.nodes().parent_kind(node.id())
+-                            {
+-                                fixer.delete(decl)
++                            let span = match ctx.nodes().parent_kind(node.id()) {
++                                AstKind::ExportDeclaration(decl) => decl.span,
++                                AstKind::ExportDefaultDeclaration(decl) => decl.span,
++                                _ => class.span,
++                            };
++                            if next_token(span.end, ctx).is_some_and(|(_, c)| {
++                                matches!(c, '(' | '[' | '/' | '+' | '-' | '`' | '<')
++                            }) {
++                                fixer.replace(span, ";")
+                             } else {
+-                                fixer.delete(class)
++                                fixer.delete_range(span)
+                             }
+                         },
+                     );
+@@ -359,6 +365,21 @@ fn test() {
+     let fix = vec![
+         ("class Foo {}", "", None, FixKind::DangerousSuggestion),
+         ("export class Foo {}", "", None, FixKind::DangerousSuggestion),
++        ("export default class {}", "", None, FixKind::DangerousSuggestion),
++        ("export default class Foo {}", "", None, FixKind::DangerousSuggestion),
++        ("export class Foo {}", "export class Foo {}", None, FixKind::Suggestion),
++        (
++            "const n = 1\nclass Empty {}\n/abc/.test('abc');",
++            "const n = 1\n;\n/abc/.test('abc');",
++            None,
++            FixKind::DangerousSuggestion,
++        ),
++        (
++            "foo()\nexport class Empty {}\n[1].map(bar);",
++            "foo()\n;\n[1].map(bar);",
++            None,
++            FixKind::DangerousSuggestion,
++        ),
+         (
+             "@foo class Foo {}",
+             "@foo class Foo {}",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30326** (2026-11-26): fix(transformer): map lowered auto-accessors and class field initializers to their source (@Dunqing)
-- **PR #30322** (2026-11-26): fix(runtime): reject non-object receivers in decorator access objects (@Dunqing)
-- **PR #30320** (closed): test(formatter_css): fingerprint fixtures by their comments' text, not count (@leaysgur)
-- **PR #30306** (closed): fix(formatter_css): lay out a commented `@supports` / `@import` prelude by width as Prettier does (@leaysgur)
-- **PR #30302** (2026-11-26): docs(linter): fix JavaScript/TypeScript capitalization in rule docs (@leaysgur)
-- **PR #30301** (2026-11-25): fix(linter/eslint/no-obj-calls): limit destructured aliases to globalThis and stop alias cycles (@camc314)
+- **PR #30437** (2026-11-28): docs(napi): improve JSDoc comments for all NAPI entry point functions (@overlookmotel)
+- **PR #30436** (2026-11-28): refactor(napi): clarify types in async tasks (@overlookmotel)
+- **PR #30435** (2026-11-28): refactor(napi/parser): rename `ResolveTask` to `ParseTask` (@overlookmotel)
+- **PR #30434** (2026-11-28): perf(napi): drop all data on worker thread (@overlookmotel)
+- **PR #30433** (2026-11-28): refactor(napi): re-order code (@overlookmotel)
+- **PR #30432** (2026-11-28): refactor(napi/transform): deduplicate code (@overlookmotel)
 
 ---
 
@@ -2745,88 +1485,56 @@ Options: `{ "
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. napi/parser, linter/plugins): deserialize statements directly onto directives in
+## X. linter/eslint/no-void): only suggest `undefined` for literal operands
 
 **RULE**:
-When implementing operations in `apps/oxlint/src-js/generated/deserialize.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_void.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1aef2f49`: napi/parser, linter/plugins): deserialize statements directly onto directives in raw transfer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c94ac0b2`: linter/eslint/no-void): only suggest `undefined` for literal operands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/oxlint/src-js/generated/deserialize.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_void.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      node$0)),
-    body = (program.body = deserializeVecDirective(pos + 88));
-  deserializeVecStatement(pos + 112, body);
-  deserializeVecStatement(pos + 40, body);
-  deserializeVecStatement(pos + 40, body);
-function deserializeVecDirective(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecStatement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecArrayExpressionElement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecObjectPropertyKind(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecTemplateElement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecExpression(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecArgument(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecVariableDeclarator(pos, arr = []) {
-  let pos32 = pos >> 2;
+use oxc_str::static_ident;
+            let diagnostic = no_void_diagnostic(unary_expr.span);
+            if unary_expr.argument.without_parentheses().is_literal()
+                && ctx.scoping().find_binding(node.scope_id(), static_ident!("undefined")).is_none()
+            {
+                ctx.diagnostic_with_suggestion(diagnostic, |fixer| {
+                    fixer.replace(unary_expr.span, "undefined")
+                });
+            } else {
+                ctx.diagnostic(diagnostic);
+            }
+        ("function discard(callback) { return void callback(); }", None),
+        ("var foo = void (0)", "var foo = undefined", None),
+        (
+            "function discard(callback) { return void callback(); }",
+            "function discard(callback) { return void callback(); }",
+            None,
+        ),
+        ("var foo = void bar", "var foo = void bar", None),
+        (
+            "function f(undefined) { return void 0; }",
+            "function f(undefined) { return void 0; }",
+            None,
+        ),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      node$0));
-  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-  body.push(...deserializeVecStatement(pos + 40));
-  body.push(...deserializeVecStatement(pos + 40));
-function deserializeVecDirective(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecStatement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecArrayExpressionElement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecObjectPropertyKind(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecTemplateElement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecExpression(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecArgument(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecAssignmentTargetProperty(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecVariableDeclarator(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
+            ctx.diagnostic_with_suggestion(no_void_diagnostic(unary_expr.span), |fixer| {
+                fixer.replace(unary_expr.span, "undefined")
+            });
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1aef2f49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c94ac0b2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

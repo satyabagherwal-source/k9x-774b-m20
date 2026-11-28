@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "c4eaf89c",
+    "sourceVersion": "ec96ff49",
     "license": "Apache-2.0",
-    "contentHash": "5dda95943b5d11dcd650afb0d8c0ad3b3e673c178f45bc0d449c53f950bd4654",
-    "lastHarvestedAt": "2026-11-27T14:39:33.115Z",
+    "contentHash": "2a74a2223322b416a172c9df84ac5f3d3d3660c5a0c5f07c11ca943500b9cbf9",
+    "lastHarvestedAt": "2026-11-28T09:54:33.755Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "68fdb4c9",
+    "sourceVersion": "e18e0b30",
     "license": "MIT",
-    "contentHash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
-    "lastHarvestedAt": "2026-11-27T09:44:40.427Z",
+    "contentHash": "e0de9530fca370f7568988ebc0809e44df1f23fc029e4e9a61a01bea027228ea",
+    "lastHarvestedAt": "2026-11-28T09:54:22.292Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "115fdefa",
+    "sourceVersion": "e7916a9e",
     "license": "MIT",
-    "contentHash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
-    "lastHarvestedAt": "2026-11-25T00:08:21.063Z",
+    "contentHash": "998088d6bcfe074cb8b9449a375859c9a9d04319e02c3f2d18626dd4ab672d38",
+    "lastHarvestedAt": "2026-11-28T09:54:23.747Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

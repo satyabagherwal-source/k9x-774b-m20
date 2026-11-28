@@ -14033,3 +14033,6 @@
 | `CYCLE-20261128-QL6P` | `2026-11-28T09:33:45.025Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11083` | Yes (`85fd4006...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T09:34:16.441Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-67232C2A` [Domain B] | Yes (`a8fa6fed...`) |
 | `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T09:34:51.728Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-287B8757` [Domain K] | Yes (`8632a2cd...`) |
+| `CYCLE-20261128-H3V2` | `2026-11-28T09:54:22.286Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11084` | Yes (`e0de9530...`) |
+| `CYCLE-20261128-H4ZI` | `2026-11-28T09:54:23.742Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11085` | Yes (`998088d6...`) |
+| `CYCLE-20261128-HCPI` | `2026-11-28T09:54:33.750Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11086` | Yes (`2a74a222...`) |

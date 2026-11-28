@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T14:39:36.870Z",
+  "timestamp": "2026-11-28T09:54:41.140Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T14:39:36.870Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T09:54:41.140Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs-databend-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `c4eaf89c`  
+> **Source Version**: `ec96ff49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T14:39:31.901Z  
+> **Timestamp**: 2026-11-28T09:54:32.217Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T14:39:31.792Z  
+> **Harvest Timestamp**: 2026-11-28T09:54:32.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1224,11 +1224,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21251** (2026-11-27): **fix: task: keep the schedule of a task recreated after a drop**
-  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: task: keep the schedule of a task recreated after a drop # Summary  A query node that handles the `DeleteTask` message of a dropped task now removes the task's schedule message only if it belongs to the dropped task. Before, it removed the schedule message of that name whatever task it belonged to, so a node that handled the message late could remove the schedule message of a task created again with the same name.  # Details  - After `DROP TASK t` and then `CREATE TASK t SCHEDULE = ...`, the   new task's `ScheduleTask` message replaces the old one at the same   key. A node that handled the drop's `DeleteTask` after that removed   the new message. The nodes that had already received the new message   kept running the schedule, but the message was gone from meta: a   query node that started later found no schedule of `t`, and once all   nodes restarted, nothing ran the task until it was altered.  - The new `TaskMgr::remove_dropped_schedule()` reads the schedule   message, keeps it when its task id is larger than the dropped task's   id, as a task created after the drop has, and removes it otherwise by   its seq. A `DeleteTask` message of an older version carries no task   id and still removes the message of any task.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Bug Fix (non-breakin
+- **Issue #21253** (2026-11-28): **feat(query): cap pipeline width for bounded index search**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  With `enable_auto_pipeline_width=1` (default: off), top-level SELECT and executable EXPLAIN ask the root plan once for a thread cap. Only bounded FTS/vector Top-K (2–4 lazy blocks, ≤100 candidates per block) suggests one thread. Explicit `SET_VAR(max_threads=…)` wins.  `db0-aws`, `e66ba89c14`: same Release binary, 12 query cores, INFO file logging, result cache off, Top-100 on 1M rows. Three-round means. **Auto only** uses the legacy executor; **Global only** uses the global query executor with auto off and `max_threads=12`.  | Workload | Auto only QPS | Global only QPS | Auto only P99 | Global only P99 | |---|---:|---:|---:|---:| | 64 clients, FTS, 1 block | 2,260 | 2,300 | 36.27 ms | 34.58 ms | | 64 clients, vector, 1 block | 1,808 | 1,830 | 43.19 ms | 42.55 ms | | 64 clients, FTS, 4 blocks | 1,585 | 1,593 | 51.40 ms | 48.01 ms | | 64 clients, vector, 4 blocks | 1,408 | 1,415 | 52.80 ms | 52.49 ms | | 1,450 QPS offered, 50:50 FTS/vector, 4 blocks | 1,449.25 | 1,449.11 | 19.45 / 20.99 ms | 27.29 / 28.76 ms |  At 64 clients without a rate limit, Global had ~0.5% higher four-block throughput. At a fixed 1,450 QPS, both kept up; Auto lowered end-to-end P99 (including queueing) by 29% for FTS and 27% for vector.  All 12 `sql::top_n` tests passed.  ## Tests  - [x] Unit Test - [ ] Logic Test - [x] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug F
 
-- **Issue #21241** (2026-11-26): **fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta**
-  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta # Summary  For an HTTP session, `RESULT_SCAN` now uses the result cache key that the server recorded for the last query, instead of the copy in the session state that the client sends back.  # Details  - When an HTTP query has a result cache key, `HttpQuery` records it in   meta at `_result_scan_owner/{tenant}/{user}/{query_id}`, with   `query_result_cache_ttl_secs` as its TTL, before the response that   carries the key. The tenant and user are the authenticated ones that   `HttpQuery` already uses for query ownership. Because the user is   part of the key, a user reads back only the keys of their own   queries.  - `HttpSessionConf::restore()` reads the record for the last query id   only when the client's `last_query_result_cache_key` is not empty,   so a session that does not use the result cache makes no extra meta   read. The content of that field is no longer used. A failed read or   write is logged, and `RESULT_SCAN` then reports that no cache key is   found.  - Each HTTP query with a result cache key costs one meta write. The   result cache is off by default.  - The field is still sent, so nodes of older versions keep working   during a rolling upgrade. A `RESULT_SCAN` on a new node of a query   that ran on an old node finds no record, and reports that no cache   key is found.  ##### 
+- **Issue #21252** (2026-11-27): **fix: settings: accept queries_queue_retry_timeout values above 1**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `queries_queue_retry_timeout`, added in #18689, is in seconds and defaults to 300, but its range was `[0, 1]`, which looks copied from a boolean setting. `SET`, `SET GLOBAL` and the config file all check the range, so they rejected every value but 0 and 1, the default included: `SET queries_queue_retry_timeout = 300` failed with `Value 300 is not within the range [0, 1]`. Of the two values left, 1 makes a query waiting in a workload group queue, or in the global statement queue, give up its place every second and enter the queue again at the back.  The range is now `[0, u64::MAX]`, as for `statement_queued_timeout_in_seconds`. A timeout too large for a deadline makes an attempt wait without a limit: `tokio::time::timeout` sets no deadline when the deadline would overflow.  The description now says what the setting does: "Seconds that a query waits for a slot on one attempt, in a queue kept in meta-service such as a workload group queue, before it gives up its place and enters the queue again at the back. 0 means 365 days." It said "0 if never retry", but `MetaStore::do_new_acquired_by_time` gives an attempt 365 days when the setting is 0, and a failed attempt is retried whatever the setting.  Tests, in `src/query/settings/tests/it/setting.rs`: - `test_queries_queue_retry_timeout_setting`: the default is 300, and 0, 300 and 86400 can be set. - `test_setting_defaults_ar
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,195 +1245,119 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4eaf89c` (2026-11-27)
-**Commit Message**: fix: task: keep the schedule of a task recreated after a drop
+### Incident Patch 1: `ec96ff49` (2026-11-27)
+**Commit Message**: fix: settings: accept queries_queue_retry_timeout values above 1 (#21252)
+
+* fix: settings: accept queries_queue_retry_timeout values above 1
 
 # Summary
 
-A query node that handles the `DeleteTask` message of a dropped task
-now removes the task's schedule message only if it belongs to the
-dropped task. Before, it removed the schedule message of that name
-whatever task it belonged to, so a node that handled the message late
-could remove the schedule message of a task created again with the
-same name.
+`queries_queue_retry_timeout` is in seconds and defaults to 300, but its
+range was `[0, 1]`: `SET`, `SET GLOBAL` and the config file rejected
+every other value, its default included, and 1 makes a queued query
+give up its place every second and enter the queue again at the back.
+The range is now `[0, u64::MAX]`, as for
+`statement_queued_timeout_in_seconds`.
 
 # Details
 
-- After `DROP TASK t` and then `CREATE TASK t SCHEDULE = ...`, the
-  new task's `ScheduleTask` message replaces the old one at the same
-  key. A node that handled the drop's `DeleteTask` after that removed
-  the new message. The nodes that had already received the new message
-  kept running the schedule, but the message was gone from meta: a
-  query node that started later found no schedule of `t`, and once all
-  nodes restarted, nothing ran the task until it was altered.
+The description now says what the setting does. It said "0 if never
+retry", but with 0 an attempt only never times out: a failed attempt
+is still retried.
 
-- The new `TaskMgr::remove_dropped_schedule()` reads the schedule
-  message, keeps it when its task id is larger than the dropped task's
-  id, as a task created after the drop has, and removes it otherwise by
-  its seq. A `DeleteTask` message of an older version carries no task
-  id an
+A timeout too large for a deadline makes an attempt wait without a
+limit, as 0 does: `tokio::time::timeout` sets no deadline when the
+deadline would overflow.
 
-**File**: `src/query/management/src/task/task_mgr.rs` (modified, +29/-0)
+`test_setting_defaults_are_within_their_ranges` checks that the default
+of every setting with a range lies within it. This setting was the
+only one outside.
+
+* docs: settings: say queries_queue_retry_timeout 0 means 365 days
+
+# Summary
+
+The description of `queries_queue_retry_timeout` said that with 0 an
+attempt waits without a limit. It waits 365 days, th
+
+**File**: `src/query/settings/src/settings_default.rs` (modified, +2/-2)
 ```diff
-@@ -32,6 +32,7 @@ use databend_common_meta_app::principal::TaskIdent;
- use databend_common_meta_app::principal::task;
- use databend_common_meta_app::principal::task::EMPTY_TASK_ID;
- use databend_common_meta_app::principal::task::TaskMessage;
-+use databend_common_meta_app::principal::task::TaskMessageType;
- use databend_common_meta_app::principal::task::TaskSql as MetaTaskSql;
- use databend_common_meta_app::principal::task_message_ident::TaskMessageIdent;
- use databend_common_meta_app::schema::CreateOption;
-@@ -315,6 +316,34 @@ impl TaskMgr {
-         Ok(change.is_changed())
-     }
- 
-+    /// Removes the schedule message of the dropped task `task_name`, unless a task created with
-+    /// the same name after the drop has replaced it. Returns whether this call removed it.
-+    ///
-+    /// `task_id` is the id of the dropped task, or `None` from a `DeleteTask` message of an older
-+    /// version, which removes the message whatever task it belongs to. A task created after the
-+    /// drop has a larger id.
-+    #[async_backtrace::framed]
-+    #[fastrace::trace]
-+    pub async fn remove_dropped_schedule(
-+        &self,
-+        task_name: &str,
-+        task_id: Option<u64>,
-+    ) -> Result<bool, MetaError> {
-+        let key = TaskMessageIdent::new(
-+            &self.tenant,
-+            TaskMessage::key_with_type(TaskMessageType::Schedule, task_name),
-+        );
-+        let Some(message) = self.kv_api.get_pb(&key).await? else {
-+            return Ok(false);
-+        };
-+        if let (Some(task_id), TaskMessage::ScheduleTask(task)) = (task_id, &message.data) {
-+            if task.task_id > task_id {
-+                return Ok(false);
-+            }
-+        }
-+        self.accept(&key, MatchSeq::Exact(message.seq)).await
-+    }
-+
-     async fn create_task_inner(
-         &self,
-         mut task: Task,
+@@ -1805,10 +1805,10 @@ impl DefaultSettings {
+                 }),
+                 ("queries_queue_retry_timeout", DefaultSettingValue {
+                     value: UserSettingValue::UInt64(5 * 60),
+-                    desc: "The retry interval for query queue timeout. 0 if never retry.",
++                    desc: "Seconds that a query waits for a slot on one attempt, in a queue kept in meta-service such as a workload group queue, before it gives up its place and enters the queue again at the back. 0 means 365 days.",
+                     mode: SettingMode::Both,
+                     scope: SettingScope::Both,
+-                    range: Some(SettingRange::Numeric(0..=1)),
++                    range: Some(SettingRange::Numeric(0..=u64::MAX)),
+                 }),
+                 ("enable_experimental_new_join", DefaultSettingValue {
+                     value: UserSettingValue::UInt64(1),
 ```
 
-**File**: `src/query/management/tests/it/task.rs` (modified, +66/-0)
+**File**: `src/query/settings/tests/it/setting.rs` (modified, +36/-0)
 ```diff
-@@ -30,6 +30,7 @@ use databend_common_meta_app::principal::Task;
- use databend_common_meta_app::principal::WarehouseOptions;
- use databend_common_meta_app::principal::task::EMPTY_TASK_ID;
- use databend_common_meta_app::principal::task::TaskMessage;
-+use databend_common_meta_app::principal::task::TaskMessageType;
- use databend_common_meta_app::principal::task::TaskSql as MetaTaskSql;
- use databend_common_meta_app::principal::task_message_ident::TaskMessageIdent;
- use databend_common_meta_app::schema::CreateOption;
-@@ -285,6 +286,71 @@ async fn test_accept_keeps_a_later_message() -> anyhow::Result<()> {
-     Ok(())
+@@ -16,6 +16,7 @@ use databend_common_config::GlobalConfig;
+ use databend_common_config::InnerConfig;
+ use databend_common_config::default_server_memory_limit;
+ use databend_common_io::prelude::HttpHandlerDataFormat;
++use databend_common_meta_app::principal::UserSettingValue;
+ use databend_common_meta_app::tenant::Tenant;
+ use databend_common_settings::Settings;
+ use databend_common_version::BUILD_INFO;
+@@ -385,6 +386,41 @@ async fn test_flight_query_leak_timeout_setting() {
+     assert!(result.is_err());
  }
  
++/// `queries_queue_retry_timeout` is in seconds, 300 by default: it takes its default and other
++/// timeouts in seconds, not only 0 and 1.
 +#[tokio::test(flavor = "multi_thread", worker_threads = 1)]
-+async fn test_remove_dropped_schedule_keeps_a_recreated_task() -> anyhow::Result<()> {
-+    let (kv, task_mgr) = new_task_api().await?;
-+    let key = TaskMessageIdent::new(
-+        Tenant::new_literal("admin"),
-+        TaskMessage::key_with_type(TaskMessageType::Schedule, "task_1"),
-+    );
++async fn test_queries_queue_retry_timeout_setting() {
++    let settings = Settings::create(Tenant::new_literal("test"));
++    assert_eq!(settings.get_queries_queue_retry_timeout().unwrap(), 300);
 +
-+    task_mgr
-+        .create_task(scheduled_task("task_1"), &CreateOption::Create)
-+        .await??;
-+    let dropped = task_mgr.drop_task("task_1").await?.unwrap();
-+
-+    // The task is created again before a node handles the DeleteTask message of the drop: the
-+    // schedule message of the new task replaces the old one at the same key.
-+    task_mgr
-+        .create_task(scheduled_task("task_1"), &CreateOption::Create)
-+        .await??;
-+    let created = task_mgr.describe_task("task_1").await??.unwrap();
-+    assert!(created.task_id > dropped.task_id);
-+
-+    // A node that handles the DeleteTask message keeps the schedule message of the new task.
-+    assert!(
-+        !task_mgr
-+            .remove_dropped_schedule("task_1", Some(dropped.task_id))
-+            .await?
-+    );
-+    let message = kv.get_pb(&key).await?.unwrap();
-+    assert!(matches!(
-+        &message.data,
-+        TaskMessage::ScheduleTask(task) if task.task_id == created.task_id
-+    ));
-+
-+    // The DeleteTask message of the new task removes it.
-+    task_mgr.drop_task("task_1").await?.unwrap();
-+    assert!(
-+        task_mgr
-+            .remove_dropped_schedule("task_1", Some(created.task_id))
-+            .await?
-+    );
-+    assert!(kv.get_pb(&key).await?.is_none());
-+
-+    // A DeleteTask message of an older version has no task id, and removes the schedule message
-+    // whatever task it belongs to.
-+    task_mgr
-+        .create_task(scheduled_task("task_1"), &CreateOption::Create)
-+        .await??;
-+    assert!(task_mgr.remove_dropped_schedule("task_1", None).await?);
-+    assert!(kv.get_pb(&key).await?.is_none());
-+
-+    Ok(())
++    for secs in [0, 300, 86400] {
++        settings
++            .set_setting("queries_queue_retry_timeout".to_string(), secs.to_string())
++            .unwrap();
++        assert_eq!(settings.get_queries_queue_retry_timeout().unwrap(), secs);
++    }
 +}
 +
-+fn scheduled_task(name: &str) -> Task {
-+    let mut task = test_task(name, "select 1");
-+    task.schedule_options = Some(ScheduleOptions {
-+        interval: Some(60),
-+        cron: None,
-+        time_zone: None,
-+        schedule_type: ScheduleType::IntervalType,
-+        milliseconds_interval: None,
-+    });
-+    task
++/// The default of every setting that has a range lies within that range. A default outside it
++/// could not be set again, with `SET` or in the config file.
++#[test]
++fn test_setting_defaults_are_within_their_ranges() {
++    let settings = Settings::create(Tenant::new_literal("test"));
++
++    for item in settings.as_ref() {
++        let Some(range) = &item.range else {
++            continue;
++        };
++        let within = match &item.default_value {
++            UserSettingValue::UInt64(value) => range.is_within_numeric_range(*value),
++            UserSettingValue::String(value) => range.is_within_string_range(value).map(|_| ()),
++        };
++        if let Err(err) = within {
++            panic!("the default of {} is outside its range: {}", item.name, err);
++        }
++    }
 +}
 +
- fn test_task(name: &str, query_text: &str) -> Task {
-     let now = Utc::now();
- 
-```
-
-**File**: `src/query/service/src/task/service.rs` (modified, +3/-8)
-```diff
-@@ -669,15 +669,10 @@ impl TaskService {
-                         .await?;
-                     }
-                 }
--                // The schedule message of the dropped task, whichever version it is.
-+                // The schedule message of the dropped task, unless a task created with the same
-+                // name after the drop has replaced it.
-                 task_mgr
--                    .accept(
--                        &TaskMessageIdent::new(
--                            tenant,
--                            TaskMessage::key_with_type(TaskMessageType::Schedule, &task_name),
--                        ),
--                        MatchSeq::GE(1),
--                    )
-+                    .remove_dropped_schedule(&task_name, task_id)
-                     .await
-                     .map_err(meta_service_error)?;
-             }
+ #[tokio::test(flavor = "multi_thread", worker_threads = 1)]
+ async fn test_http_json_result_mode_settings() {
+     let settings = Settings::create(Tenant::new_literal("test"));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21253** (closed): feat(query): cap pipeline width for bounded index search (@bohutang)
+- **PR #21252** (2026-11-27): fix: settings: accept queries_queue_retry_timeout values above 1 (@drmingdrmer)
 - **PR #21251** (2026-11-27): fix: task: keep the schedule of a task recreated after a drop (@drmingdrmer)
+- **PR #21246** (closed): feat(query): record external Flight UDF diagnostics (@TCeason)
 - **PR #21241** (2026-11-26): fix: query: read the RESULT_SCAN cache key of HTTP sessions from meta (@drmingdrmer)
 - **PR #21240** (closed): fix(query): let a grouping-set key candidate that fails to bind match no key (@dqhl76)
-- **PR #21239** (2026-11-26): fix: query: update the matching entry in update_query_ids_results (@drmingdrmer)
-- **PR #21237** (2026-11-26): ci(benchmark): move ClickBench hits from cloud to local fs benchmark (@dqhl76)
-- **PR #21236** (closed): fix(storage): keep column statistics only where they cover every row (@dantengsky)
 
 ---
 
@@ -1453,57 +1377,33 @@ same name.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. task: keep the schedule of a task recreated after a drop
+## X. settings: accept queries_queue_retry_timeout values above 1
 
 **RULE**:
-When implementing operations in `src/query/management/src/task/task_mgr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/settings/src/settings_default.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4eaf89c`: task: keep the schedule of a task recreated after a drop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec96ff49`: settings: accept queries_queue_retry_timeout values above 1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/management/src/task/task_mgr.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/settings/src/settings_default.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use databend_common_meta_app::principal::task::TaskMessageType;
-    /// Removes the schedule message of the dropped task `task_name`, unless a task created with
-    /// the same name after the drop has replaced it. Returns whether this call removed it.
-    ///
-    /// `task_id` is the id of the dropped task, or `None` from a `DeleteTask` message of an older
-    /// version, which removes the message whatever task it belongs to. A task created after the
-    /// drop has a larger id.
-    #[async_backtrace::framed]
-    #[fastrace::trace]
-    pub async fn remove_dropped_schedule(
-        &self,
-        task_name: &str,
-        task_id: Option<u64>,
-    ) -> Result<bool, MetaError> {
-        let key = TaskMessageIdent::new(
-            &self.tenant,
-            TaskMessage::key_with_type(TaskMessageType::Schedule, task_name),
-        );
-        let Some(message) = self.kv_api.get_pb(&key).await? else {
-            return Ok(false);
-        };
-        if let (Some(task_id), TaskMessage::ScheduleTask(task)) = (task_id, &message.data) {
-            if task.task_id > task_id {
-                return Ok(false);
-            }
-        }
-        self.accept(&key, MatchSeq::Exact(message.seq)).a
+                    desc: "Seconds that a query waits for a slot on one attempt, in a queue kept in meta-service such as a workload group queue, before it gives up its place and enters the queue again at the back. 0 means 365 days.",
+                    range: Some(SettingRange::Numeric(0..=u64::MAX)),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    desc: "The retry interval for query queue timeout. 0 if never retry.",
+                    range: Some(SettingRange::Numeric(0..=1)),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4eaf89c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec96ff49` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
