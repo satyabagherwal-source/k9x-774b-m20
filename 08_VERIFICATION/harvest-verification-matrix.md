@@ -14093,3 +14093,4 @@
 | `CYCLE-20261128-LA9T` | `2026-11-28T17:25:31.073Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11127` | Yes (`56943b34...`) |
 | `CYCLE-20261128-WEP9` | `2026-11-28T17:34:10.029Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11128` | Yes (`8e626c54...`) |
 | `CYCLE-20261128-WHWA` | `2026-11-28T17:34:14.170Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11129` | Yes (`8fd637b6...`) |
+| `CYCLE-20261128-83WF` | `2026-11-28T17:43:15.903Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`70fc713b...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T17:34:14.181Z",
+  "last_updated": "2026-11-28T17:43:15.961Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
-      "verified_at": "2026-11-28T15:36:17.869Z",
+      "content_hash": "70fc713be6b2d1bb8ffcba8c59322e6068bccea8eacb21466b9a6ffcd076f4a0",
+      "verified_at": "2026-11-28T17:43:15.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T15:36:17.869Z"
+      "last_updated": "2026-11-28T17:43:15.961Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",

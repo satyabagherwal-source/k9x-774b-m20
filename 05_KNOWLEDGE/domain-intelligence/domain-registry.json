@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T17:34:22.685Z",
+  "last_updated": "2026-11-28T17:43:23.171Z",
   "total_records": 2922,
   "domains": {
     "A": {
@@ -15713,8 +15713,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "ae195171ba4026f21384eb75dd40182f330552ebeb23b8fec187371f608d0ee7",
-      "created_at": "2026-11-28T16:12:52.477Z"
+      "content_hash": "f037b78031c3315b5dd4db3e3ecc1054516681a16b6a062e57f716ad2811e96a",
+      "created_at": "2026-11-28T17:43:23.171Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -16685,8 +16685,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "ebdda2924322abc3cb1162e711ab86f67b7614c69469700ad42aaa2ff9f24a7b",
-      "created_at": "2026-11-28T13:55:58.091Z"
+      "content_hash": "2538c371192a69a4c854b1554411fe7c0fc04e2d30890d8433983c7c37be964e",
+      "created_at": "2026-11-28T17:43:16.444Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -16745,8 +16745,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "a1e772e341f0393efde815649d93c57cddd84a590569f14183c69e8ac8344a71",
-      "created_at": "2026-11-28T13:56:04.073Z"
+      "content_hash": "0808a2db0dad0d0c247c878c37ba1e9fc2c1ff8f5abb6503136d62d20af32ce1",
+      "created_at": "2026-11-28T17:43:20.535Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -18572,8 +18572,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "7f392764a562be6ab383b33eaa57b3c7aa99bd59a07901d59e9505ed74140867",
-      "created_at": "2026-11-28T15:27:54.132Z"
+      "content_hash": "893d535319cc462913ccb9c81be18586aef64bd8c66e99cda56d9c7d946084d5",
+      "created_at": "2026-11-28T17:43:22.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",

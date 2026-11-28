@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-OASF",
-    "timestamp": "2026-11-26T20:40:28.575Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "cf7b697b2455de311de303b1b858cf52fc57d178f6e7d3df1f3d1d4580ff8e84",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-OI8V",
     "timestamp": "2026-11-26T20:40:38.239Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7492,6 +7477,21 @@
     "contentHash": "8fd637b6d2c454e35888ba32878f20b3624a6c7db7cef36beb98a530ce021a7d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-83WF",
+    "timestamp": "2026-11-28T17:43:15.903Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "70fc713be6b2d1bb8ffcba8c59322e6068bccea8eacb21466b9a6ffcd076f4a0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

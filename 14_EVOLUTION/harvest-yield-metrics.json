@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T17:34:14.178Z",
-  "total_cycles_completed": 13362,
-  "total_learnings_persisted": 13362,
+  "last_updated": "2026-11-28T17:43:15.958Z",
+  "total_cycles_completed": 13363,
+  "total_learnings_persisted": 13363,
   "total_rules_promoted": 12055,
   "history": [
-    {
-      "timestamp": "2026-11-27T21:11:19.788Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T21:11:22.412Z",
       "repository": "GateNLP/ultimate-sitemap-parser",
@@ -1403,6 +1396,13 @@
       "repository": "tauri-apps/tauri",
       "learningId": "learn-github-tauri-apps-tauri",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T17:43:15.958Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-28T13:56:03.705Z",
+  "timestamp": "2026-11-28T17:43:20.155Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-28T13:56:03.705Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T17:43:20.155Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `1772058f`  
+> **Source Version**: `1ff54cfa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-28T13:55:56.283Z  
+> **Timestamp**: 2026-11-28T17:43:15.231Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-28T13:55:56.277Z  
+> **Harvest Timestamp**: 2026-11-28T17:43:15.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1887,584 +1887,458 @@ export function document(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1772058f` (2026-11-28)
-**Commit Message**: Draft NUC 162 Population Instance Removal
-
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw, at
-07:57 on 28-Nov) for a continuous /nuc-proposal cycle. Runtime
-applicability: an existing comparable feature (deletion of properties
-and instances), so the token comparison runs.
-
-Requested change: class populations gain Name.remove(instance), which
-removes one instance of Name in one statement: every property it holds,
-its own and those class-level rules derive, and then the instance
-itself, as `delete instance.property` for each property followed by
-`delete instance` does at the accepted revision, with the same
-propagation to dependents and the same rollback of a failed statement
-or transaction. An argument that is not an instance of Name raises a
-TypeError, further arguments are evaluated and ignored, and the call is
-undefined. Only calls that raised TypeError("<Name>.remove is not a
-function") change; `delete` keeps its accepted rule (an instance that
-still has properties keeps raising TypeError("Cannot delete object
-'<id>'")), and lists, instances, user methods, variables and object
-members named r
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -111,6 +111,7 @@ Created: 31-Jul-2026
- | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
- | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
- | [158](nuc-0158.md) | List Invocation of Function Values | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
-+| [162](nuc-0162.md) | Population Instance Removal | Draft |
- 
- ### Utility enhancement
- 
-@@ -377,6 +378,7 @@ Created: 31-Jul-2026
- | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
- | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
-+| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0162.md` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+# NUC 162 -- Population Instance Removal
-+
-+```
-+NUC: 162
-+Title: Population Instance Removal
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 28-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Class populations gain `Name.remove(instance)`, which removes one
-+  instance of `Name` from the world model in one statement: every property
-+  the instance holds, its own and those that class-level rules derive,
-+  and then the instance itself, as deleting each property with
-+  `delete instance.property` and then `delete instance` does at the
-+  accepted revision.
-+- Dependents follow, as they follow those deletions: population mappings,
-+  filters, counts and reads of the removed instance's properties
-+  re-evaluate, and a failed statement or transaction restores the
-+  instance, its properties and their dependencies.
-+- An argument that is not an instance of `Name` raises a `TypeError`,
-+  further arguments are evaluated and ignored, and the call is undefined.
-+- At the accepted revision every such call raises
-+  `TypeError("<Name>.remove is not a function")`, and only those calls
-+  change. `delete` keeps its accepted rule, so deleting an instance that
-+  still has properties keeps raising
-+  `TypeError("Cannot delete object '<id>'")`; lists, instances, user
-+  methods, variables and object members named `remove` keep their
-+  readings.
-+- This continuous Runtime features proposal extends an existing comparable
-+  feature, deletion, so the token comparison runs: each new case is paired
-+  with its accepted spelling through `delete`.
-+
-+## Motivation
-+
-+- World models gain and lose objects: an order is fulfilled, a vehicle
-+  leaves the lot, a task is cancelled. Nucleoid creates an instance with
-+  one call, but removing one that holds properties takes a `delete` for
-+  every property it holds, including each property a class-level rule
-+  derived, before `delete instance` succeeds; a forgotten property leaves
-+  `TypeError("Cannot delete object '<id>'")`.
-+- At the accepted revision, with `class Robot(name)` and
-+  `a = Robot("a")`, `delete a` raises
-+  `TypeError("Cannot delete object 'a'")`, while `delete a.name` followed
-+  by `delete a` removes the instance from `Robot`'s population, and
-+  `Robot.remove(a)` raises `TypeError("Robot.remove is not a function")`.
-+- The removal reuses the accepted deletion of properties and instances,
-+  with their propagation and rollback, so dependents and transactions
-+  behave as they already do for those deletions.
-+- Python's `list.remove(item)`, Kotlin's `remove(element)` and C#'s
-+  `Remove(item)` name the operation on collections; Nucleoid's class
-+  populations already answer `map`, `filter` and the other list queries.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `3093baaa` (2026-11-28)
-**Commit Message**: NUC 159 Reactive Hypotenuse
+### Incident Patch 1: `1ff54cfa` (2026-11-28)
+**Commit Message**: NUC 162 Population Instance Removal
 
 Accepted under the automatic acceptance rule, in a continuous cycle:
 every hard criterion passes and every policy check passes. Category
-Utility enhancement, so the token non-regression gate ran and passed:
-7 cases use fewer tokens, 1,340 the same and none more (1,094 against
-1,144 for the seven new cases). Counterparts judged fair. The
+Runtime features with an existing comparable feature (the accepted
+delete statement), so the token non-regression gate ran and passed:
+7 cases use fewer tokens, 1,347 the same and none more (1,457 against
+1,585 for the seven new cases). Counterparts judged fair. The
 independent evaluator's overall decision is Accepted, with two low and
-one informational finding.
+two informational findings.
 
-Math.hypot(value, ...) is the Euclidean norm of its arguments: Math's
-undefined gate first, conversion as for Math.max, +Infinity before NaN,
-+0 for no arguments, and the sum of squares in argument order, computed
-directly within [2^-450, 2^450] and with an exact power-of-two scaling
-outside it, so there is no intermediate overflow or underflow and every
-integer Pythagorean tuple is exact. One arm and two private helpers in
-src/builtins/numeric.rs. Only calls of Math.hypot change, each a
-TypeError("Math.hypot is not a function") at the accepted revision.
+Name.remove(instance) removes an instance from its class's population
+with every property it holds: the population is read first, then every
+argument once, left to right; the first argument must be an instance in
+Name's own population, as x in Name reads it (a subclass instance leaves
+through its own class), else TypeError("remove expects an instance of
+<Name>") before anything is deleted; its properties other than id go
+from the most recently added to the first, as delete instance.property
+deletes them, then the instance leaves as delete Name[index] removes it;
+the call is undefined, with the liveness and rollback of the accepted
+deletions. One dispa
 
-Hard criteria (evaluator against the pin 4caa973e; caller rerun on the
-integrated tree, main 6e57e554 plus the frozen candidate):
-- No compile errors: cargo fmt --check, c
-
-**File**: `README.md` (modified, +30/-0)
+**File**: `README.md` (modified, +31/-0)
 ```diff
-@@ -3166,6 +3166,36 @@ row
-   already holds ten characters, such as `"Badge reader"`, is not padded.
-   See the [root contract](nucleoid.spec.md#padding-method-aliases).
+@@ -3140,6 +3140,37 @@ hours
+   holds at most 100,000 items, and `close..<open` is empty. See the
+   [root contract](nucleoid.spec.md#integer-range-literals).
  
-+## Reactive hypotenuse
++## Population instance removal
 +
-+**Math.hypot keeps a drone's distance to its landing pad live**
++**Removing a car keeps a parking lot's free spaces live**
 +
 +```nuc
-+drone = {x: 7, y: 10}
-+pad = {x: 1, y: 2}
-+distance = Math.hypot(drone.x - pad.x, drone.y - pad.y)
-+assert(distance, 10)
-+drone.x = 16
-+assert(distance, 17)
-+drone.y = 22
-+assert(distance, 25)
-+distance
-+# return: 25
++class Car(plate, level):
++    this.plate = plate
++    this.level = level
++capacity = 3
++free = capacity - Car.length
++upstairs = Car.filter(car -> car.level == 2).map(car -> car.plate)
++van = Car("AB-12", 1)
++cab = Car("CD-34", 2)
++bus = Car("EF-56", 2)
++assert([free, upstairs], [0, ["CD-34", "EF-56"]])
++Car.remove(cab)
++assert([free, upstairs], [1, ["EF-56"]])
++Car.map(car -> car.plate)
++# return: ["AB-12","EF-56"]
 +```
 +
-+- [NUC 159](docs/nuc-0159.md) adds `Math.hypot(value, ...)`, the square
-+  root of the sum of the squares of its arguments: the straight-line
-+  distance between two points from the differences of their coordinates,
-+  or the length of a vector from its components, as JavaScript's
-+  `Math.hypot` and Python's `math.hypot` compute it.
-+- `distance` is a standing declaration, so it follows every move of the
-+  drone. Each distance here is whole, as `Math.hypot` gives it exactly
-+  for every integer Pythagorean triple, and it is what
-+  `((drone.x - pad.x) ** 2 + (drone.y - pad.y) ** 2) ** 0.5` gives,
-+  without squaring each difference by hand or overflowing for large
-+  coordinates. See the
-+  [root contract](nucleoid.spec.md#reactive-hypotenuse).
++- [NUC 162](docs/nuc-0162.md) adds `Name.remove(instance)`, which removes
++  an instance from its class's population in one statement: it deletes
++  every property the instance holds and then the instance, as
++  `delete cab.level`, `delete cab.plate` and `delete cab` do.
++- The free spaces and the cars upstairs are standing declarations over the
++  population, so they follow the departing car, while `delete cab` alone
++  would still raise `TypeError("Cannot delete object 'cab'")` as long as
++  the car holds its plate and level. See the
++  [root contract](nucleoid.spec.md#population-instance-removal).
 +
- ## Symmetric difference reasoning selections
+ ## Padding method aliases
  
- **Xor tells two alarms apart**
+ **Padding aliases keep a help desk's ticket board aligned**
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +21/-17)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +30/-26)
 ```diff
-@@ -875,20 +875,24 @@
- {"id":"spec-0875","description":"Nucleoid pads strings with C#'s PadLeft and PadRight","code":"name = \"Zoë\"\ncode = \"7\"\ncell = name.PadRight(6, \"·\") + code.PadLeft(3, \"0\")\nassert(cell, \"Zoë···007\")\nname = \"Ana\"\ncode = \"12\"\nassert(cell, \"Ana···012\")\nassert([\"😀\".PadLeft(3), \"añejo\".PadRight(7, \"*\"), \"x\".PadLeft(4, \"😀é\")], [\"  😀\", \"añejo**\", \"😀é😀x\"])\nmark = String.fromCharCode(101, 769)\nassert([mark.PadLeft(3, \"-\"), mark.PadLeft(3, \"-\").length], [\"-\" + mark, 3])\ncell.length","return":"9"}
- {"id":"spec-0876","description":"Nucleoid keeps padding aliases live in class level rules","code":"class Room(floor, number):\n    this.floor = floor\n    this.number = number\n$Room.label = String($Room.floor).rjust(2, \"0\") + \"-\" + String($Room.number).PadLeft(3, \"0\")\nsuite = Room(3, 7)\nhall = Room(12, 45)\nassert([suite.label, hall.label], [\"03-007\", \"12-045\"])\nsuite.number = 120\nhall.floor = 4\nassert([suite.label, hall.label], [\"03-120\", \"04-045\"])\nsigns = Room.map(room -> room.label.ljust(8, \".\"))\nRoom(1, 1)\nassert(signs, [\"03-120..\", \"04-045..\", \"01-001..\"])\nsigns.length","return":"3"}
- {"id":"spec-0877","description":"Nucleoid rolls back failed updates through padding aliases","code":"width = 4\nfill = \"0\"\nticket = \"42\".rjust(width, fill)\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Padded string is too large\"))\nassert([width, ticket], [4, \"0042\"])\nids = []\ntags = ids.map(id -> id.PadRight(size, \"-\"))\ntry:\n    ids.push(\"a\")\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"size is not defined\"))\nassert([ids, tags], [[], []])\nsize = 3\nids.push(\"a\", \"bb\")\nassert(tags, [\"a--\", \"bb-\"])\ntry:\n    fill = \"*\"\n    size = 4\n    assert([ticket, tags], [\"**42\", [\"a---\", \"bb--\"]])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([ticket, fill, tags], [\"0042\", \"0\", [\"a--\", \"bb-\"]])\nticket","return":"\"0042\""}
--{"id":"spec-0878","description":"Nucleoid tells two explanations apart with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\napart = total |> why |> xor(freight |> why)\ncontrast = why freight |> xor(why total)\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"price\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"price\"])\nshipping = price + 1\nassert(apart.map(s -> s.node), [\"total\", \"subtotal\", \"tax\", \"quantity\", \"freight\", \"shipping\"])\nassert(contrast.map(s -> s.node), [\"freight\", \"shipping\", \"total\", \"subtotal\", \"tax\", \"quantity\"])\nquantity = 5\nassert(apart.map(s -> s.holds), [60, 50, 10, 5, 11.2, 11])","return":null}
--{"id":"spec-0879","description":"Nucleoid finds what a change of only one of two inputs reaches with xor","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntotal = subtotal + tax\nfreight = shipping + rate\nmoved = price |> affects |> xor(rate |> affects)\nspread = affects quantity |> xor(affects price)\nassert(moved.map(s -> s.node), [\"subtotal\", \"freight\"])\nassert(spread.map(s -> s.node), [\"shipping\", \"freight\"])\nfreight = shipping + rate * price\nassert(moved.map(s -> s.node), [\"subtotal\"])\nassert(spread.map(s -> s.node), [\"shipping\"])\nprice = 20\nassert(moved.map(s -> s.holds), [60])\nmoved.length","return":"1"}
--{"id":"spec-0880","description":"Nucleoid separates what two changes of each instance reach with xor","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.split = $Part.cost |> affects |> xor($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.split.map(s -> s.node), [\"bolt.price\", \"bolt.freight\"])\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.split.map(s -> s.node), [\"nut.price\", \"nut.freight\", \"nut.duty\"])\n$Part.price = $Part.cost * 2 + $Part.weight\nassert(bolt.split.map(s -> s.node), [\"bolt.freight\", \"bolt.duty\"])\nnut.weight = 10\nassert(nut.split.map(s -> s.holds), [30, 1])\nnut.split.length","return":"2"}
--{"id":"spec-0881","description":"Nucleoid restores symmetric differences after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\napart = why subtotal |> xor(why shipping)\nfailure = \"\"\ntry:\n    apart = why subtotal |> xor(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(apart.map(s -> s.node), [\"subtotal\", \"price\", \"shipping\"])\ntry:\n 
+@@ -871,29 +871,33 @@
+ {"id":"spec-0871","description":"Nucleoid keeps class-level integer range rules live","code":"class Shift(start, end):\n    this.start = start\n    this.end = end\nearly = Shift(6, 10)\n$Shift.hours = $Shift.start..<$Shift.end\n$Shift.lunch = 12 in $Shift.hours\nlate = Shift(11, 15)\nassert([early.hours, late.hours], [[6, 7, 8, 9], [11, 12, 13, 14]])\nassert([early.lunch, late.lunch], [false, true])\nearly.end = 13\nlate.start = 13\nassert([early.hours, late.hours], [[6, 7, 8, 9, 10, 11, 12], [13, 14]])\nassert([early.lunch, late.lunch], [true, false])\nstaffed = Shift.map(shift -> shift.hours.length).sum()\nassert(staffed, 9)\nShift(20, 23)\nstaffed","return":"12"}
+ {"id":"spec-0872","description":"Nucleoid maps integer ranges to positions and coordinates","code":"columns = 3\nrows = 2\ncells = (0..<columns * rows).map(i -> [i % columns, Math.floor(i / columns)])\nassert(cells, [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]])\ncolumns = 4\nrows = 3\nassert([cells.length, cells[5], cells.at(-1)], [12, [1, 1], [3, 2]])\nrow = \"B\"\nseats = 3\nlabels = (1..=seats).map(n -> row + n)\nassert(labels, [\"B1\", \"B2\", \"B3\"])\nseats = 12\nrow = \"C\"\nassert([labels.length, labels[9], labels.at(-1)], [12, \"C10\", \"C12\"])\ncells.length","return":"12"}
+ {"id":"spec-0873","description":"Nucleoid rolls back failed integer range updates","code":"first = 1\nlast = 4\ndays = first..=last\nfailure = \"\"\ntry:\n    last = 4.5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Range bounds must be integers\"))\nassert([last, days], [4, [1, 2, 3, 4]])\ntry:\n    first = -200000\ncatch error:\n    failure = error\nassert([failure, first, days.length], [TypeError(\"Range is too large\"), 1, 4])\ntry:\n    last = 6\n    assert(days, [1, 2, 3, 4, 5, 6])\n    throw \"UNDO\"\ncatch error:\n    failure = error\nassert([failure, last, days], [\"UNDO\", 4, [1, 2, 3, 4]])\nlast = 7\ndays.sum()","return":"28"}
+-{"id":"spec-0874","description":"Nucleoid pads strings with Python's and Ruby's rjust and ljust","code":"orders = [\"7\", \"42\", \"305\"]\nnumbers = orders.map(order -> order.rjust(4, \"0\"))\nitem = \"tea\"\nwidth = 8\nrow = item.ljust(width, \".\") + \"|\"\nassert(numbers, [\"0007\", \"0042\", \"0305\"])\nassert(row, \"tea.....|\")\norders.push(\"1234\")\nitem = \"honey\"\nwidth = 7\nassert(numbers, [\"0007\", \"0042\", \"0305\", \"1234\"])\nassert(row, \"honey..|\")\nassert([\"ab\".rjust(7, \"xy\"), \"ab\".ljust(7, \"xy\"), \"5\".rjust(3), \"long\".ljust(2)], [\"xyxyxab\", \"abxyxyx\", \"  5\", \"long\"])\nrow","return":"\"honey..|\""}
+-{"id":"spec-0875","description":"Nucleoid pads strings with C#'s PadLeft and PadRight","code":"name = \"Zoë\"\ncode = \"7\"\ncell = name.PadRight(6, \"·\") + code.PadLeft(3, \"0\")\nassert(cell, \"Zoë···007\")\nname = \"Ana\"\ncode = \"12\"\nassert(cell, \"Ana···012\")\nassert([\"😀\".PadLeft(3), \"añejo\".PadRight(7, \"*\"), \"x\".PadLeft(4, \"😀é\")], [\"  😀\", \"añejo**\", \"😀é😀x\"])\nmark = String.fromCharCode(101, 769)\nassert([mark.PadLeft(3, \"-\"), mark.PadLeft(3, \"-\").length], [\"-\" + mark, 3])\ncell.length","return":"9"}
+-{"id":"spec-0876","description":"Nucleoid keeps padding aliases live in class level rules","code":"class Room(floor, number):\n    this.floor = floor\n    this.number = number\n$Room.label = String($Room.floor).rjust(2, \"0\") + \"-\" + String($Room.number).PadLeft(3, \"0\")\nsuite = Room(3, 7)\nhall = Room(12, 45)\nassert([suite.label, hall.label], [\"03-007\", \"12-045\"])\nsuite.number = 120\nhall.floor = 4\nassert([suite.label, hall.label], [\"03-120\", \"04-045\"])\nsigns = Room.map(room -> room.label.ljust(8, \".\"))\nRoom(1, 1)\nassert(signs, [\"03-120..\", \"04-045..\", \"01-001..\"])\nsigns.length","return":"3"}
+-{"id":"spec-0877","description":"Nucleoid rolls back failed updates through padding aliases","code":"width = 4\nfill = \"0\"\nticket = \"42\".rjust(width, fill)\nfailure = \"\"\ntry:\n    width = 1 / 0\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Padded string is too large\"))\nassert([width, ticket], [4, \"0042\"])\nids = []\ntags = ids.map(id -> id.PadRight(size, \"-\"))\ntry:\n    ids.push(\"a\")\ncatch error:\n    failure = error\nassert(failure, ReferenceError(\"size is not defined\"))\nassert([ids, tags], [[], []])\nsize = 3\nids.push(\"a\", \"bb\")\nassert(tags, [\"a--\", \"bb-\"])\ntry:\n    fill = \"*\"\n    size = 4\n    assert([ticket, tags], [\"**42\", [\"a---\", \"bb--\"]])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([ticket, fill, tags], [\"0042\", \"0\", [\"a--\", \"bb-\"]])\nticket","return":"\"0042\""}
+-{"id":"spec-0878","description":"Nucleoid keeps the distance between two instances live with Math.hypot","code":"class Point(x, y):\n    this.x = x\n    this.y = y\nrobot = Point(1, 2)\ncharger = Point(9, 17)\ngap = Math.hypot(charger.x - robot.x, charger.y - robot.y)\nassert(gap, 17)\ncharger.x = 21\nassert(gap, 25)\nrobot.y = -4\nasser
 ```
 
-**File**: `dataset/nucleoid.synth.159.jsonl` (added, +12/-0)
+**File**: `dataset/nucleoid.synth.162.jsonl` (added, +12/-0)
 ```diff
 @@ -0,0 +1,12 @@
-+{"id":"synth-159-0001","description":"Math.hypot keeps the distance between two points in step with a move","code":"home = {x: 1, y: 1}\nrobot = {x: 4, y: 5}\ndistance = Math.hypot(robot.x - home.x, robot.y - home.y)\nassert(distance, 5)\nrobot.x = 6\nrobot.y = 13\ndistance","return":"13"}
-+{"id":"synth-159-0002","description":"Math.hypot measures the speed of a velocity from its three components","code":"velocity = {x: 2, y: 3, z: 6}\nspeed = Math.hypot(velocity.x, velocity.y, velocity.z)\nassert(speed, 7)\nvelocity.z = 0\nvelocity.x = 4\nspeed","return":"5"}
-+{"id":"synth-159-0003","description":"A class-level rule gives every point its distance from the origin","code":"class Point(x, y):\n    this.x = x\n    this.y = y\n$Point.radius = Math.hypot($Point.x, $Point.y)\np = Point(3, 4)\nq = Point(5, 12)\nassert([p.radius, q.radius], [5, 13])\nq.x = 9\nq.y = 40\n[p.radius, q.radius]","return":"[5,41]"}
-+{"id":"synth-159-0004","description":"A mapping turns a list of moves into their lengths and follows a push","code":"moves = [{dx: 3, dy: 4}]\nlengths = moves.map(move -> Math.hypot(move.dx, move.dy))\nassert(lengths, [5])\nmoves.push({dx: 8, dy: 15})\nlengths","return":"[5,17]"}
-+{"id":"synth-159-0005","description":"Math.hypot stays finite where squaring large coordinates overflows","code":"big = 1e200\nnaive = (big ** 2 + big ** 2) ** 0.5\nsafe = Math.hypot(big, big)\n[naive == Number.POSITIVE_INFINITY, safe > big, safe < 2 * big]","return":"[true,true,true]"}
-+{"id":"synth-159-0006","description":"Math.hypot keeps tiny components that squaring would lose","code":"small = 3e-200\nnaive = (small ** 2 + (4e-200) ** 2) ** 0.5\nsafe = Math.hypot(small, 4e-200)\n[naive, safe]","return":"[0,5e-200]"}
-+{"id":"synth-159-0007","description":"An infinite component makes Math.hypot infinite even beside NaN","code":"[Math.hypot(1 / 0, 0 / 0) == Number.POSITIVE_INFINITY, Number.isNaN(Math.hypot(0 / 0, 3))]","return":"[true,true]"}
-+{"id":"synth-159-0008","description":"Math.hypot of nothing is zero and of one value is its magnitude","code":"[Math.hypot(), Math.hypot(-7), Math.hypot(0, -0), 1 / Math.hypot(-0) > 0]","return":"[0,7,0,true]"}
-+{"id":"synth-159-0009","description":"Math.hypot converts its arguments as Math.max does","code":"[Math.hypot(\"3\", [4]), Math.hypot(true, null, \" 2 \", 2), Number.isNaN(Math.hypot(\"x\", 4))]","return":"[5,3,true]"}
-+{"id":"synth-159-0010","description":"An undefined argument makes Math.hypot undefined until it is defined","code":"target = {}\nreach = Math.hypot(target.x, 4)\nfirst = reach.value\ntarget.x = 3\n[first, reach]","return":"[null,5]"}
-+{"id":"synth-159-0011","description":"A failed push rolls back a mapping that measures lengths with Math.hypot","code":"legs = []\nlengths = legs.map(leg -> Math.hypot(leg.dx, leg.dy, rise))\nfailure = \"\"\ntry:\n    legs.push({dx: 2, dy: 3})\ncatch error:\n    failure = error\nassert([failure, legs, lengths], [ReferenceError(\"rise is not defined\"), [], []])\nrise = 6\nlegs.push({dx: 2, dy: 3})\nlengths","return":"[7]"}
-+{"id":"synth-159-0012","description":"Drones within range of a moving base follow it through Math.hypot","code":"class Drone(name, x, y):\n    this.name = name\n    this.x = x\n    this.y = y\nbase = {x: 0, y: 0}\n$Drone.range = Math.hypot($Drone.x - base.x, $Drone.y - base.y)\nDrone(\"near\", 6, 8)\nDrone(\"far\", 15, 20)\ninRange = Drone.filter(drone -> drone.range <= 10).map(drone -> drone.name)\nassert(inRange, [\"near\"])\nbase.x = 12\nbase.y = 16\ninRange","return":"[\"near\",\"far\"]"}
++{"id":"synth-162-0001","description":"Removing a fulfilled order deletes its own and derived properties and keeps the pending orders live","code":"class Order(item, qty, price):\n    this.item = item\n    this.qty = qty\n    this.price = price\n$Order.total = $Order.qty * $Order.price\ntea = Order(\"tea\", 2, 3)\njam = Order(\"jam\", 1, 5)\npending = Order.map(order -> order.item)\nrevenue = Order.map(order -> order.total).reduce((sum, total) -> sum + total, 0)\nassert([pending, revenue], [[\"tea\", \"jam\"], 11])\nOrder.remove(tea)\n[pending, revenue]","return":"[[\"jam\"],5]"}
++{"id":"synth-162-0002","description":"Name.remove removes an instance that delete alone refuses while it holds properties","code":"class Sensor(name, reading):\n    this.name = name\n    this.reading = reading\nprobe = Sensor(\"probe\", 7)\nfailure = \"\"\ntry:\n    delete probe\ncatch error:\n    failure = error\nSensor.remove(probe)\n[failure, Sensor.length]","return":"[\"TypeError: Cannot delete object 'probe'\",0]"}
++{"id":"synth-162-0003","description":"The variable named by a removed instance's id is unbound, so reading it raises a ReferenceError","code":"class Robot(name):\n    this.name = name\nr1 = Robot(\"r1\")\nr2 = Robot(\"r2\")\nRobot.remove(r1)\nseen = \"\"\ntry:\n    r1\ncatch error:\n    seen = error\n[seen, Robot.map(robot -> robot.name)]","return":"[\"ReferenceError: r1 is not defined\",[\"r2\"]]"}
++{"id":"synth-162-0004","description":"A loop removes every finished task, tasks created without a name included","code":"class Task(title, done):\n    this.title = title\n    this.done = done\nTask(\"wash\", true)\nTask(\"cook\", false)\nTask(\"shop\", true)\nfor task in Task:\n    if task.done:\n        Task.remove(task)\nTask.map(task -> task.title)","return":"[\"cook\"]"}
++{"id":"synth-162-0005","description":"A helper function removes the instance it receives, which delete cannot do through a parameter","code":"class Ticket(code):\n    this.code = code\nt1 = Ticket(\"A1\")\nt2 = Ticket(\"B2\")\ndef close(ticket) => Ticket.remove(ticket)\nclose(t2)\nTicket.map(ticket -> ticket.code)","return":"[\"A1\"]"}
++{"id":"synth-162-0006","description":"A failed update restores the removed instance with its properties and dependents","code":"class Seat(row, number):\n    this.row = row\n    this.number = number\n$Seat.label = $Seat.row + $Seat.number\na1 = Seat(\"A\", 1)\nb2 = Seat(\"B\", 2)\nlabels = Seat.map(seat -> seat.label)\nfailure = \"\"\ntry:\n    Seat.remove(a1)\n    c3.row = \"C\"\ncatch error:\n    failure = error\nassert([labels, a1.label], [[\"A1\", \"B2\"], \"A1\"])\nSeat.remove(b2)\n[failure, labels]","return":"[\"ReferenceError: c3 is not defined\",[\"A1\"]]"}
++{"id":"synth-162-0007","description":"A thrown block undoes the removal it made","code":"class Crate(weight):\n    this.weight = weight\nsmall = Crate(5)\nlarge = Crate(20)\nload = Crate.map(crate -> crate.weight).reduce((sum, weight) -> sum + weight, 0)\ntry:\n    Crate.remove(large)\n    assert(load, 5)\n    throw \"UNDO\"\ncatch error:\n    pass\nassert([load, Crate.length], [25, 2])\nCrate.remove(small)\n[load, Crate.length]","return":"[20,1]"}
++{"id":"synth-162-0008","description":"A removal inside suppose is hypothetical","code":"class Guest(name):\n    this.name = name\nana = Guest(\"ana\")\nbo = Guest(\"bo\")\nwithout = suppose:\n    Guest.remove(ana)\n    Guest.map(guest -> guest.name)\nassert([without, Guest.length], [[\"bo\"], 2])\nGuest.remove(bo)\nGuest.map(guest -> guest.name)","return":"[\"ana\"]"}
++{"id":"synth-162-0009","description":"A subclass instance leaves through its own class with the property its parent's rule derived","code":"class Animal(name, legs):\n    this.name = name\n    this.legs = legs\n$Animal.pairs = $Animal.legs / 2\nclass Bird extends Animal\nrobin = Bird(\"robin\", 2)\ncrow = Bird(\"crow\", 2)\ndog = Animal(\"dog\", 4)\nBird.remove(robin)\n[Bird.map(bird -> bird.name), Animal.map(animal -> animal.pairs)]","return":"[[\"crow\"],[2]]"}
++{"id":"synth-162-0010","description":"Removing a subclass instance through its parent class raises a TypeError","code":"class Animal(name):\n    this.name = name\nclass Bird extends Animal\nrobin = Bird(\"robin\")\nfailure = \"\"\ntry:\n    Animal.remove(robin)\ncatch error:\n    failure = error\nBird.remove(robin)\n[failure, Bird.length]","return":"[\"TypeError: remove expects an instance of Animal\",0]"}
++{"id":"synth-162-0011","description":"A value that is not an instance in the population raises a TypeError and deletes nothing","code":"class Robot(name):\n    this.name = name\na = Robot(\"a\")\nfailures = []\ntry:\n    Robot.remove(null)\ncatch error:\n    failures.push(error)\ntry:\n    Robot.remove(\"a\")\ncatch error:\n    failures.push(error)\nassert([Robot.length, a.name], [1, \"a\"])\nRobot.remove(a)\n[failures, Robot.length]","return":"[[\"TypeError: remove expects an instance of Robot\",\"TypeError: remove expects an instance of Robot\"],0]"}
++{"id":"sy
 ```
 
-**File**: `docs/README.md` (modified, +40/-1)
+**File**: `docs/README.md` (modified, +29/-0)
 ```diff
-@@ -3039,6 +3039,44 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
-   No aliases, receiver methods or syntax are added. See the
-   [cubing contract](../nucleoid.spec.md#reactive-cubing).
+@@ -1548,6 +1548,33 @@ counter.doubled()
+ - `Name[1:]`, `Name.at(-1)`, `Name.list()` and `Name.all()` read them by range, by position from either end, and all at once, in population order ([NUC 61](nuc-0061.md)).
+ - `Name.first()` and `Name.last()` are the first and latest created instances, exactly `Name.at(0)` and `Name.at(-1)`, and `Name.first(predicate)` and `Name.last(predicate)` are `Name.find(predicate)` and `Name.findLast(predicate)` ([NUC 117](nuc-0117.md)).
  
-+- [NUC 159](nuc-0159.md) adds native static `Math.hypot(value, ...)`, the
-+  square root of the sum of the squares of its arguments: the length of a
-+  vector from its components, or the distance between two points from the
-+  differences of their coordinates. It takes any number of arguments, and
-+  `Math.hypot()` is `0`. The arguments evaluate once, left to right, the
-+  supplied-Undefined gate applies, and every argument then converts as the
-+  arguments of `Math.max` do, none ignored. An infinite argument gives
-+  `Infinity`, even beside NaN; otherwise a NaN gives NaN. Signs do not
-+  matter, so `Math.hypot(-7)` is `7` and `Math.hypot(-0)` is `0`. While the
-+  largest magnitude lies between 2^-450 and 2^450, the result is exactly
-+  `Math.sqrt(a * a + b * b + ...)`, exact for every integer Pythagorean
-+  tuple; outside that range the arguments are scaled by a power of two
-+  first, so `Math.hypot(1e200, 1e200)` stays finite and
-+  `Math.hypot(3e-200, 4e-200)` is `5e-200`. Dependencies, live-null
-+  deferral and rollback are those of every Math call, and native
-+  `Math.hypot` value reads stay Undefined. No alias, receiver method or
-+  syntax is added. See the
-+  [hypotenuse contract](../nucleoid.spec.md#reactive-hypotenuse).
-+
-+### Reactive hypotenuse
++### Population instance removal
 +
 +```
-+velocity = {x: -3, y: 4, z: 12}
-+speed = Math.hypot(velocity.x, velocity.y, velocity.z)
-+dx = 5
-+dy = -12
-+ground = Math.hypot(dx, dy)
-+assert([speed, ground], [13, 13])
-+velocity.x = 6
-+dx = -9
-+assert([speed, ground], [14, 15])
-+speed + ground
++class Robot(name, battery):
++    this.name = name
++    this.battery = battery
++$Robot.low = $Robot.battery < 20
++r1 = Robot("r1", 80)
++r2 = Robot("r2", 15)
++r3 = Robot("r3", 10)
++charging = Robot.filter(robot -> robot.low).map(robot -> robot.name)
++assert([Robot.length, charging], [3, ["r2", "r3"]])
++Robot.remove(r2)
++assert([Robot.length, charging], [2, ["r3"]])
++r1.battery = 5
++assert(charging, ["r1", "r3"])
++charging.length
 +```
 +
-+- This is the complete `Nucleoid keeps Euclidean lengths live with Math.hypot`
++- This is the complete `Nucleoid removes an instance with every property it holds through its class`
 +  program in `tests/reference.md`, without title or expected-return metadata;
-+  its expected return is `29`.
++  its expected return is `2`.
++- `Name.remove(instance)` ([NUC 162](nuc-0162.md)) removes an instance in `Name`'s own population, the one `Name.length` counts, in one statement. It deletes every property the instance holds, the most recently added first, so `r2.low`, which a class-level rule derived, goes before `r2.battery` and `r2.name`, and then the instance, which leaves its population as `delete Robot[1]` removes it. The variable named by its id, `r2`, is unbound.
++- `delete` keeps its rule: `delete r2` alone raises `TypeError("Cannot delete object 'r2'")` while `r2` holds a property.
++- Population counts, mappings, filters and class-level rules follow the removal, and a failure later in the statement or its transaction restores the instance, its properties, the variable and every dependent.
++- Any other first argument, a subclass instance through its parent class among them, raises `TypeError("remove expects an instance of <Name>")` before anything is deleted, and the call is undefined. A subclass instance leaves through its own class. See the [removal contract](../nucleoid.spec.md#population-instance-removal).
 +
- ### Reactive cubing argument dependencies
+ ### Subtypes
  
- ```
-@@ -3221,7 +3259,7 @@ assert(copied, -3)
- | `Object` | `Object()` -- a plain object, not an instance of any type |
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
--| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)) |
-+| `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)), `copySign(value, sign)` ([NUC 142](nuc-0142.md)), `hypot(value, ...)` ([NUC 159](nuc-0159.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `trim` and `strip`, their C# alias `Trim()` ([NUC 160](nuc-0160.md)), `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), their padding aliases `rjust` and `PadLeft` of `padStart` and `ljust` and `PadRight` of `padEnd` ([NUC 157](nuc-0157.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
- | `List` | `push`, `pop`, `filter`, `map`, their Ruby aliases `select` and `collect` ([NUC 134](nuc-0134.md)), `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median`
+ - A subtype names its supertype after the colon; `super(...)` invokes its constructor.
+@@ -1610,6 +1637,7 @@ assert(child.code, 7)
+ - New attributes are `null` on existing instances.
+ - `delete` removes an instance and returns whether anything was removed.
+ - Deletion is refused while the instance still has properties.
++- `Name.remove(instance)` deletes an instance's properties and then the instance in one statement; see [Population instance removal](#population-instance-removal) ([NUC 162](nuc-0162.md)).
+ - A variable name is reusable after its instance is deleted.
+ 
+ Full detail: [NUC 3](nuc-0003.md); accepted compact headers: [NUC 14](nuc-0014.md); candidate bare calls: [NUC 16](nuc-0016.md); extends clauses: [NUC 78](nuc-0078.md); initializing constructor parameters: [NUC 87](nuc-0087.md).
+@@ -6491,6 +6519,7 @@ value[start:end]  value[-n:]           slice, negative counts from the end
+ Name[start:end]  Name[:]  Name[-n:]    instance list range (NUC 61)
+ value[start:stop:step]  value[::-1]    stepped slice; a negative step walks backward (NUC 125)
+ Name.list()  Name.all()                every instance, in population order (NUC 61)
++Name.remove(instance)                  delete every property of an instance, then the instance (NUC 162)
+ items.at(-1)  items.findLast(callback) read or search from the end (NUC 61)
+ items.sum()  Name.sum(selector)        live numeric total (NUC 68)
+ items.max()  Name.min(selector)        live numeric extreme (NUC 69)
 ```
 
-**File**: `docs/examples.md` (modified, +36/-0)
+**File**: `docs/examples.md` (modified, +35/-0)
 ```diff
-@@ -4672,6 +4672,42 @@ receipt.length
-   padded. See [NUC 157](nuc-0157.md) and the
-   [root contract](../nucleoid.spec.md#padding-method-aliases).
+@@ -4638,6 +4638,41 @@ serving
+   elevators and their floors. See [NUC 148](nuc-0148.md) and the
+   [root contract](../nucleoid.spec.md#integer-range-literals).
  
-+## Reactive hypotenuse
++## Population instance removal
 +
-+**Math.hypot keeps the antennas that serve a moving phone live**
++**Removing shipped orders keeps a warehouse's pick list live**
 +
 +```nuc
-+class Antenna(name, x, y, reach):
-+    this.name = name
-+    this.x = x
-+    this.y = y
-+    this.reach = reach
-+phone = {x: 3, y: 2}
-+$Antenna.distance = Math.hypot($Antenna.x - phone.x, $Antenna.y - phone.y)
-+tower = Antenna("tower", 15, 7, 13)
-+mast = Antenna("mast", -9, -7, 14)
-+assert([tower.distance, mast.distance], [13, 15])
-+serving = Antenna.filter(antenna -> antenna.distance <= antenna.reach).map(antenna -> antenna.name)
-+assert(serving, ["tower"])
-+phone.y = -2
-+assert([tower.distance, mast.distance], [15, 13])
-+assert(serving, ["mast"])
-+Antenna("relay", 6, 2, 5)
-+assert(serving, ["mast", "relay"])
-+serving
-+# return: ["mast","relay"]
++class Order(item, qty, shipped):
++    this.item = item
++    this.qty = qty
++    this.shipped = shipped
++$Order.boxes = $Order.qty / 4
++pick = Order.filter(order -> !order.shipped).map(order -> order.item)
++boxes = Order.map(order -> order.boxes).reduce((total, count) -> total + count, 0)
++Order("tea", 8, true)
++Order("jam", 4, false)
++Order("rye", 12, true)
++assert([pick, boxes], [["jam"], 6])
++for order in Order:
++    if order.shipped:
++        Order.remove(order)
++assert([Order.length, pick, boxes], [1, ["jam"], 1])
++Order("oat", 4, false)
++[pick, boxes]
++# return: [["jam","oat"],2]
 +```
 +
-+- Each antenna's class-level rule measures its distance to the phone,
-+  `Math.hypot($Antenna.x - phone.x, $Antenna.y - phone.y)`, and an antenna
-+  serves the phone while that distance is within its reach. The tower's
-+  distance of exactly 13 is within its reach of 13, because `Math.hypot`
-+  gives whole distances exactly.
-+- When the phone moves, every antenna's distance follows, so the tower
-+  hands the phone over to the mast, and the relay built last joins the
-+  antennas that serve it. See [NUC 159](nuc-0159.md) and the
-+  [root contract](../nucleoid.spec.md#reactive-hypotenuse).
++- A loop over the orders removes every shipped one with
++  `Order.remove(order)`: its properties first, the box count that the
++  class-level rule derived among them, and then the order. Inside the loop
++  `delete order` would only unbind the loop variable, so the accepted
++  spelling names each property and then deletes `Order[order.id]`.
++- The orders are created without a name, so no variable is unbound, and
++  the pick list and the box count follow every removal and the order
++  created last. See [NUC 162](nuc-0162.md) and the
++  [root contract](../nucleoid.spec.md#population-instance-removal).
 +
- ## Symmetric difference reasoning selections
+ ## Padding method aliases
  
- **Xor lists what tells two diagnoses apart**
+ **Padding aliases keep every order's receipt line aligned**
 ```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -154,7 +154,7 @@ Created: 31-Jul-2026
- | [143](nuc-0143.md) | Reactive Squaring | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Accepted |
- | [155](nuc-0155.md) | Reactive Reciprocal Square Root | Rejected: 74 existing corpus-count and historical-locator tests fail |
--| [159](nuc-0159.md) | Reactive Hypotenuse | Draft |
-+| [159](nuc-0159.md) | Reactive Hypotenuse | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Draft |
+@@ -111,7 +111,7 @@ Created: 31-Jul-2026
+ | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
+ | [152](nuc-0152.md) | Falsy Value Assignment | Rejected: protected truthy-assignment parser rejection test fails |
+ | [158](nuc-0158.md) | List Invocation of Function Values | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
+-| [162](nuc-0162.md) | Population Instance Removal | Draft |
++| [162](nuc-0162.md) | Population Instance Removal | Accepted |
  
- ### Reasoning enhancement
-@@ -374,7 +374,7 @@ Created: 31-Jul-2026
- | [156](nuc-0156.md) | Output Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: 76 existing corpus-count, historical-locator and syntax-partition tests fail |
- | [157](nuc-0157.md) | Padding Method Aliases | Standards Track | Language compatibility | Accepted |
- | [158](nuc-0158.md) | List Invocation of Function Values | Standards Track | Runtime features | Rejected: 33 existing historical-locator, case-seal and syntax/corpus-partition tests fail |
--| [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Draft |
-+| [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
+ ### Utility enhancement
+ 
+@@ -379,7 +379,7 @@ Created: 31-Jul-2026
+ | [159](nuc-0159.md) | Reactive Hypotenuse | Standards Track | Utility enhancement | Accepted |
  | [160](nuc-0160.md) | C# String Trimming Method Alias | Standards Track | Language compatibility | Accepted |
- | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Draft |
+ | [161](nuc-0161.md) | Reactive Base Ten Exponentiation | Standards Track | Utility enhancement | Accepted |
+-| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
++| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Accepted |
+ | [163](nuc-0163.md) | C# Ceiling Method Alias | Standards Track | Language compatibility | Draft |
  
+ ## Copyright
 ```
 
-**File**: `docs/nuc-0159.md` (modified, +915/-13)
+**File**: `docs/nuc-0162.md` (modified, +1084/-20)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 159
- Title: Reactive Hypotenuse
+ NUC: 162
+ Title: Population Instance Removal
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Utility enhancement
+ Category: Runtime features
  Created: 28-Nov-2026
-@@ -19,29 +19,37 @@ Created: 28-Nov-2026
-   `Math.hypot()` is `0`.
- - Every argument converts as the arguments of `Math.max` do. An infinite
-   argument makes the result `Infinity`, even beside `NaN`; otherwise any
--  `NaN` makes it `NaN`. The result is computed without intermediate
--  overflow or underflow, so `Math.hypot(1e200, 1e200)` is finite where
-+  `NaN` makes it `NaN`. While the largest magnitude lies between 2^-450 and
-+  2^450, the result is exactly `Math.sqrt(a * a + b * b + ...)` over the
-+  converted arguments, so it is exact for every integer Pythagorean tuple;
-+  outside that range every argument is first scaled by the same power of
-+  two, so the result is computed without intermediate overflow or
-+  underflow: `Math.hypot(1e200, 1e200)` is finite where
-   `(1e200 ** 2 + 1e200 ** 2) ** 0.5` is `Infinity`.
- - A declaration or class-level rule that calls it stays live with the
-   dependencies of its arguments, as every Math call does, and an undefined
-   argument makes the call undefined, as Math's gate does for every
-   function.
--- At the accepted revision `Math.hypot(...)` raises
-+- At the accepted revision every call of `Math.hypot` whose arguments
-+  evaluate without error and are not undefined raises
-   `TypeError("Math.hypot is not a function")`, and only those calls change.
-   A bare `Math.hypot` read stays undefined, as the read of every Math
-   function does.
- - This continuous Utility enhancement runs the token comparison: each new
-   case is paired with its most compact accepted spelling, such as
--  `(dx ** 2 + dy ** 2) ** 0.5`.
-+  `(dx ** 2 + dy ** 2) ** 0.5`, with the implicit receivers `.x` of
-+  [NUC 102](nuc-0102.md) in class-level rules.
+@@ -13,27 +13,34 @@ Created: 28-Nov-2026
+ ## Abstract
+ 
+ - Class populations gain `Name.remove(instance)`, which removes one
+-  instance of `Name` from the world model in one statement: every property
+-  the instance holds, its own and those that class-level rules derive,
+-  and then the instance itself, as deleting each property with
+-  `delete instance.property` and then `delete instance` does at the
+-  accepted revision.
+-- Dependents follow, as they follow those deletions: population mappings,
+-  filters, counts and reads of the removed instance's properties
+-  re-evaluate, and a failed statement or transaction restores the
+-  instance, its properties and their dependencies.
+-- An argument that is not an instance of `Name` raises a `TypeError`,
+-  further arguments are evaluated and ignored, and the call is undefined.
++  instance in `Name`'s own population from the world model in one
++  statement: every property the instance holds, its own and those that
++  class-level rules derived, the most recently added first, and then the
++  instance itself, as deleting each property with
++  `delete instance.property` and then the instance with `delete instance`
++  does at the accepted revision.
++- Dependents follow, as they follow those deletions: population counts,
++  mappings, filters and reads of the removed instance's properties
++  re-evaluate, the variable named by the instance's id is unbound, and a
++  failed statement or transaction restores the instance, its properties,
++  the variable and their dependencies.
++- Any other first argument, an instance of a subclass or of a parent class
++  among them, raises `TypeError("remove expects an instance of <Name>")`
++  before anything is deleted; further arguments are evaluated and ignored,
++  and the call is undefined. A subclass instance leaves through its own
++  class.
+ - At the accepted revision every such call raises
+-  `TypeError("<Name>.remove is not a function")`, and only those calls
+-  change. `delete` keeps its accepted rule, so deleting an instance that
+-  still has properties keeps raising
++  `TypeError("<Name>.remove is not a function")`, and only calls whose
++  arguments evaluate without error change. `delete` keeps its accepted
++  rule, so deleting an instance that still has properties keeps raising
+   `TypeError("Cannot delete object '<id>'")`; lists, instances, user
+   methods, variables and object members named `remove` keep their
+   readings.
+ - This continuous Runtime features proposal extends an existing comparable
+   feature, deletion, so the token comparison runs: each new case is paired
+-  with its accepted spelling through `delete`.
++  with its most compact accepted spelling through `delete`.
 +- The authoritative contract is
-+  [Reactive hypotenuse](../nucleoid.spec.md#reactive-hypotenuse).
++  [Population instance removal](../nucleoid.spec.md#population-instance-removal).
  
  ## Motivation
  
- - World models measure distances and magnitudes from live coordinates: how
-   far one object is from another, the length of a velocity or an offset,
-   the diagonal of a box. Today that is
-   `((p.x - q.x) ** 2 + (p.y - q.y) ** 2) ** 0.5` or
--  `Math.sqrt(dx * dx + dy * dy)`, which square each difference by hand and
--  overflow for large coordinates.
-+  `Math.sqrt(dx * dx + dy * dy)`, which square each difference by hand,
-+  overflow for large coordinates and vanish for tiny ones.
- - JavaScript (`Math.hypot`), Python (`math.hypot`), C and C++ (`hypot`),
-   Java (`Math.hypot`), Kotlin (`hypot`), Go (`math.Hypot`) and Rust
-   (`f64::hypot`) name this operation, so programmers and language models
-@@ -50,25 +58,919 @@ Created: 28-Nov-2026
-   `TypeError("Math.hypot is not a function")` at column 1 of its statement,
-   and `Math.hypot` read without a call is undefined, as `Math.sqrt` is. No
-   document case, dataset record or test calls it, and no NUC proposes it.
--- One arm in the existing Math dispatcher, folding the converted arguments
--  with an overflow-safe `hypot`, keeps the change bounded: no syntax,
-+- One arm in the existing Math dispatcher, summing the squares of the
-+  converted arguments and scaling them by a power of two only when they
-+  would overflow or underflow, keeps the change bounded: no syntax,
-   keyword, token, error message or public item.
+@@ -48,6 +55,10 @@ Created: 28-Nov-2026
+   `TypeError("Cannot delete object 'a'")`, while `delete a.name` followed
+   by `delete a` removes the instance from `Robot`'s population, and
+   `Robot.remove(a)` raises `TypeError("Robot.remove is not a function")`.
++- Inside a function, a method, a lambda or a loop, `delete r` only unbinds
++  the parameter or loop variable `r`, so code that removes the instance it
++  receives must name each property and then reach the instance through its
++  population, as `delete Robot[r.id]` does.
+ - The removal reuses the accepted deletion of properties and instances,
+   with their propagation and rollback, so dependents and transactions
+   behave as they already do for those deletions.
+@@ -57,19 +68,1072 @@ Created: 28-Nov-2026
  
  ## Rationale
  
 -- Pending: the proposer completes this section.
 +- **Category and mode.** The allocating continuous cycle found no stale
-+  Draft: NUC 158 is another session's, claimed an hour earlier, and the
-+  reference NUCs 2 to 11 have no allocation commit. It drew Utility
-+  enhancement with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 2
-+  with probability 1/5 at 03:42:36 on 28-Nov-2026 and no redraw, and
-+  recorded the requested change in the allocation commit `4caa973e`, which
-+  this revision pins. Utility enhancement requires the token comparison in
-+  a continuous cycle. Runtime applicability does not apply to this
-+  category, and neither the ARC-requested nor the user-requested basis
-+  applies.
-+- **Counterparts.** Every new case has a behavior-equivalent counterpart in
-+  accepted syntax among the extra baselines, with the case's document,
-+  title, canonical assertions and expected return. Each differs from its
-+  case only where `Math.hypot` is written, in the most compact fair
-+  spelling of the families searched: `**` and `*` squares under `** 0.5`,
-+  `Math.sqrt`, `Math.square` and `Math.pow` over the same sums, helper
-+  functions in both arrow forms, list folds and the class-level
-+  `$Name` and `.name` forms. Hard-coded results and hand-evaluated
-+  substitutions are not fair counterparts; they were counted too, and none
-+  is shorter than its case. Every case changes a value after its call is
-+  declared and keeps every value on an integer Pythagorean tuple, so
++  Draft: NUC 161 was another session's Draft, under an hour old, and the
++  reference NUCs 2 to 11 have no allocation commit. It drew Runtime
++  features with one tool-backed uniform draw over the five categories that
++  NUC 1's registry marks eligible for automatic selection, index 1 with
++  probability 1/5 at 07:57:04 on 28-Nov-2026 and no redraw, chose
++  population instance removal, and recorded the requested change in the
++  allocation commit `1772058f`, which this revision pins. Neither the
++  ARC-requested nor the user-requested basis applies.
++- **Runtime applicability: existing comparable.** The accepted `delete`
++  statement removes properties (`delete a.name`) and an instance that holds
++  none (`delete a`, `delete Robot[i]`), with propagation and rollback, so
++  every new case has a behavior-equivalent accepted spelling and the token
++  comparison runs in this continuous cycle.
++- **Counterparts.** Every new case has a counterpart in accepted syntax
++  among the extra baselines, with the case's document, title
 ```
 
-**File**: `nucleoid.spec.md` (modified, +149/-0)
+**File**: `nucleoid.spec.md` (modified, +200/-0)
 ```diff
-@@ -29822,6 +29822,89 @@ assert([ticket, fill, tags], ["0042", "0", ["a--", "bb-"]])
- ticket
- # return: "0042"
+@@ -29780,6 +29780,112 @@ last = 7
+ days.sum()
+ # return: 28
  ---
-+# Nucleoid keeps the distance between two instances live with Math.hypot
++# Nucleoid removes orders and every property they hold from their population
 +
-+class Point(x, y):
-+    this.x = x
-+    this.y = y
-+robot = Point(1, 2)
-+charger = Point(9, 17)
-+gap = Math.hypot(charger.x - robot.x, charger.y - robot.y)
-+assert(gap, 17)
-+charger.x = 21
-+assert(gap, 25)
-+robot.y = -4
-+assert(gap, 29)
-+gap
-+# return: 29
-+---
-+# Nucleoid keeps Math.hypot distances live in class level rules
-+
-+class Drone(name, x, y):
-+    this.name = name
-+    this.x = x
-+    this.y = y
-+home = {x: 2, y: 1}
-+$Drone.reach = Math.hypot($Drone.x - home.x, $Drone.y - home.y)
-+scout = Drone("scout", -4, 9)
-+hauler = Drone("hauler", 17, 9)
-+assert([scout.reach, hauler.reach], [10, 17])
-+near = Drone.filter(drone -> drone.reach <= 10).map(drone -> drone.name)
-+assert(near, ["scout"])
-+home.x = 11
-+assert([scout.reach, hauler.reach], [17, 10])
-+assert(near, ["hauler"])
-+scout.x = 5
-+Drone("relay", 14, 5)
-+assert(near, ["scout", "hauler", "relay"])
-+near.length
-+# return: 3
-+---
-+# Nucleoid measures lengths in three dimensions with Math.hypot
-+
-+crate = {w: 2, d: 3, h: 6}
-+diagonal = Math.hypot(crate.w, crate.d, crate.h)
-+assert(diagonal, 7)
-+crate.w = 6
-+assert(diagonal, 9)
-+crate.d = 7
-+assert(diagonal, 11)
-+moves = [{x: 1, y: 2, z: 2}]
-+lengths = moves.map(move -> Math.hypot(move.x, move.y, move.z))
-+assert(lengths, [3])
-+moves.push({x: -2, y: 6, z: -9})
-+assert(lengths, [3, 11])
-+lengths
-+# return: [3,11]
-+---
-+# Nucleoid rolls back failed updates through Math.hypot
-+
-+dx = 6
-+dy = 8
-+step = Math.hypot(dx, dy)
-+legs = []
-+lengths = legs.map(leg -> Math.hypot(leg.dx, leg.dy, rise))
++class Order(item, qty, price):
++    this.item = item
++    this.qty = qty
++    this.price = price
++$Order.total = $Order.qty * $Order.price
++tea = Order("tea", 2, 4)
++jam = Order("jam", 1, 6)
++rye = Order("rye", 3, 5)
++pending = Order.length
++items = Order.map(order -> order.item)
++large = Order.filter(order -> order.total > 7).map(order -> order.item)
++assert([pending, items, large], [3, ["tea", "jam", "rye"], ["tea", "rye"]])
 +failure = ""
 +try:
-+    legs.push({dx: 2, dy: 3})
++    delete tea
 +catch error:
 +    failure = error
-+assert(failure, ReferenceError("rise is not defined"))
-+assert([legs, lengths], [[], []])
-+rise = 6
-+legs.push({dx: 2, dy: 3}, {dx: 6, dy: 7})
-+assert(lengths, [7, 11])
++assert(failure, TypeError("Cannot delete object 'tea'"))
++Order.remove(tea)
++assert([pending, items, large], [2, ["jam", "rye"], ["rye"]])
++Order.remove(rye)
++assert([pending, items, large], [1, ["jam"], []])
++Order("oat", 4, 2)
++assert([pending, items, large], [2, ["jam", "oat"], ["oat"]])
++items
++# return: ["jam","oat"]
++---
++# Nucleoid removes departing cars with the properties class level rules derive
++
++class Car(plate, hours):
++    this.plate = plate
++    this.hours = hours
++rate = 3
++$Car.fee = $Car.hours * rate
++$Car.ticket = $Car.plate + " " + $Car.fee
++van = Car("VAN-1", 2)
++bus = Car("BUS-2", 5)
++board = Car.map(car -> car.ticket)
++takings = Car.map(car -> car.fee).reduce((total, fee) -> total + fee, 0)
++receipt = bus.ticket
++assert([board, takings, receipt], [["VAN-1 6", "BUS-2 15"], 21, "BUS-2 15"])
++Car.remove(bus)
++assert([board, takings, receipt], [["VAN-1 6"], 6, null])
++rate = 4
++assert([board, takings, receipt], [["VAN-1 8"], 8, null])
++Car("CAB-3", 1)
++assert([board, takings], [["VAN-1 8", "CAB-3 4"], 12])
++takings
++# return: 12
++---
++# Nucleoid removes subclass instances with the properties their parent's rules derive
++
++class Vehicle(plate, axles):
++    this.plate = plate
++    this.axles = axles
++$Vehicle.toll = $Vehicle.axles * 2
++class Truck extends Vehicle
++class Van extends Vehicle
++rig = Truck("RIG-1", 5)
++hauler = Truck("HAUL-2", 3)
++camper = Van("CAMP-3", 2)
++trucks = Truck.map(truck -> truck.plate)
++tolls = Truck.map(truck -> truck.toll)
++assert([trucks, tolls, Van.length], [["RIG-1", "HAUL-2"], [10, 6], 1])
++Truck.remove(rig)
++assert([trucks, tolls, Van.length], [["HAUL-2"], [6], 1])
++Van.remove(camper)
++assert([Truck.length, Van.length], [1, 0])
++Truck("RIG-4", 6)
++tolls
++# return: [6,12]
++---
++# Nucleoid restores removed instances when the update that removes them fails
++
++class Task(name, hours, owner):
++    this.name = name
++    this.hours = hours
++    this.owner = owner
++$Task.cost = $Task.hours * 40
++plan = Task("plan", 3, "ana")
++build = Task("build", 8, "bo")
++review = Task("review", 2, "ana")
++budget = Task.map(task -> task.cost).reduce((total, cost) -> total + cost, 0)
++mine = Task.filter(task -> task.owner == "ana").length
++failure = ""
 +try:
-+    dx = 15
-+    legs.push({dx: 2, dy: 9})
-+    assert([step, lengths], [17, [7, 11, 11]])
++    Task.remove(build)
++    reveiw.hours = 10
++catch error:
++    failure = error
++assert(failure, ReferenceError("reveiw is not defined"))
++assert([Task.length, budget, mine, build.cost], [3, 520, 2, 320])
++try:
++    Task.remove(plan)
++    Task.remove(review)
++    assert([Task.length, budget, mine], [1, 320, 0])
 +    throw "UNDO"
 +catch error:
 +    assert(error, "UNDO")
-+assert([step, legs.length, lengths], [10, 2, [7, 11]])
-+step
-+# return: 10
++assert([Task.length, budget, mine, plan.owner], [3, 520, 2, "ana"])
++Task.remove(review)
++[Task.length, budget, mine]
++# return: [2,440,1]
 +---
- # Nucleoid tells two explanations apart with xor
+ # Nucleoid pads strings with Python's and Ruby's rjust and ljust
  
- price = 10
-@@ -30479,6 +30562,72 @@ assert(input, 7)
-   fair ordered-arithmetic counterpart, not a promise to duplicate a future
-   call argument's effects. Every historical executable case is unchanged.
+ orders = ["7", "42", "305"]
+@@ -30700,6 +30806,100 @@ scale
+   through `Nucleoid rolls back failed updates through Math.hypot` specify
+   the executable behavior. `tests/math_hypot.rs` executes the rest.
  
-+## Reactive hypotenuse
++## Population instance removal
 +
-+- [NUC 159](docs/nuc-0159.md) adds `Math.hypot(value, ...)`, the square
-+  root of the sum of the squares of its arguments: the length of a vector
-+  from its components, or the distance between two points from the
-+  differences of their coordinates, as JavaScript's `Math.hypot` and
-+  Python's `math.hypot` compute it. `Math.hypot(3, 4)` is `5`,
-+  `Math.hypot(1, 2, 2)` is `3`, `Math.hypot(-7)` is `7` and `Math.hypot()`
-+  is `0`. No token, keyword, syntax tree node, error type or message is
-+  added.
-+- **Arguments.** It takes any number of arguments, none included. They are
-+  evaluated once, left to right, as for every Math call, and an argument's
-+  error propagates before the call runs. Then Math's undefined gate
-+  applies: any undefined argument, such as a missing property, makes the
-+  call undefined. Otherwise every argument converts as the arguments of
-+  `Math.max` do, and none is ignored: `null` and an empty or blank string
-+  are `0`, booleans `0` and `1`, a numeric string its trimmed value, an
-+  empty list `0`, a one-item list its item, a date its milliseconds, and
-+  everything else, such as `"x"`, a longer list, an object or a function,
-+  NaN. The keyword `undefined` reads as `null`, so it converts to `0`.
-+- **Result.** `Infinity` when any converted argument is infinite, of either
-+  sign, even beside NaN; otherwise NaN when any is NaN; otherwise the
-+  square root of the sum of the squares, which is never negative, so
-+  `Math.hypot(-0)` and `Math.hypot(0, -0)` are `0`.
-+- **Exactness.** While the largest magnitude lies between 2^-450 and
-+  2^450, the result is exactly `Math.sqrt(a * a + b * b + ...)` over the
-+  converted arguments, squared and summed in argument order. It is exact
-+  whenever the squares and their sum are exact and the sum is a perfect
-+  square, as for every integer Pythagorean tuple: `Math.hypot(20, 21)` is
-+  `29` and `Math.hypot(2, 3, 6)` is `7`. Otherwise it rounds as that sum
-+  and square root round.
-+- **No overflow or underflow.** Outside that range every argument is first
-+  multiplied by the same power of two, 2^-600 above it and 2^600 below it,
-+  and the result is multiplied back, which keeps those results exact and
-+  avoids squares that overflow or vanish: `Math.hypot(1e200, 1e200)` is
-+  `1.414213562373095e200` and `Math.hypot(3e-200, 4e-200)` is `5e-200`,
-+  where `(1e200 ** 2 + 1e200 ** 2) ** 0.5` is `Infinity` and
-+  `(3e-200 ** 2 + 4e-200 ** 2) ** 0.5` is `0`. Only a result beyond the
-+  largest number i
++- [NUC 162](docs/nuc-0162.md) adds `Name.remove(instance)` to class
++  populations. In one statement it deletes every property the instance
++  holds, its own and those that class-level rules derived, and then the
++  instance itself, as `delete instance.property` for each property and then
++  `delete instance` do. No token, keyword, syntax tree node or error type is
++  added, and `delete` keeps its rule.
++- **Receiver.** `Name` is any receiver that reads a declared class, as for
++  every population query: the class's name, unless a local, a parameter or
++  a variable of that name shadows it, or a variable that holds the class.
++  Every other receiver keeps its accepted reading.
++- **Evaluation.** The population and then every argument are evaluated
++  once, left to right, as for every population call, and an argument's
++  error propagates before anything is deleted. Arguments after the first
++  are evaluated and ignored.
++- **Membership.** The first argument must be an instance in `Name`'s own
++  population, the population that `Name.length`, `Name.map(...)` and
++  `x in Name` read, when the call runs after its arguments. Anything else
++  raises `TypeError("remove expects an instance of <Name>")` at the running
++  statement, before anything is deleted: no argument, `null`, an un
 ```
 
 #### Recent Merged Pull Requests:
@@ -2493,22 +2367,51 @@ integrated tree, main 6e57e554 plus the frozen candidate):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 162 Population Instance Removal
+## X. NUC 162 Population Instance Removal
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1772058f`: Draft NUC 162 Population Instance Removal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ff54cfa`: NUC 162 Population Instance Removal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [162](nuc-0162.md) | Population Instance Removal | Draft |
-| [162](nuc-0162.md) | Population Instance Removal | Standards Track | Runtime features | Draft |
+## Population instance removal
+
+**Removing a car keeps a parking lot's free spaces live**
+
+```nuc
+class Car(plate, level):
+    this.plate = plate
+    this.level = level
+capacity = 3
+free = capacity - Car.length
+upstairs = Car.filter(car -> car.level == 2).map(car -> car.plate)
+van = Car("AB-12", 1)
+cab = Car("CD-34", 2)
+bus = Car("EF-56", 2)
+assert([free, upstairs], [0, ["CD-34", "EF-56"]])
+Car.remove(cab)
+assert([free, upstairs], [1, ["EF-56"]])
+Car.map(car -> car.plate)
+# return: ["AB-12","EF-56"]
+```
+
+- [NUC 162](docs/nuc-0162.md) adds `Name.remove(instance)`, which removes
+  an instance from its class's population in one statement: it deletes
+  every property the instance holds and then the instance, as
+  `delete cab.level`, `delete cab.plate` and `delete cab` do.
+- The free spaces and the cars upstairs are standing declarations over the
+  population, so they follow the departing car, while `delete cab` alone
+  would still raise `TypeError("Cannot delete object 'cab'")` as long as
+  the car holds its plate and level. See the
+  [root contract](nucleoid.spec.md#population-instance-removal).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2518,7 +2421,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1772058f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ff54cfa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

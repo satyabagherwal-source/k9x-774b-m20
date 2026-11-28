@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T17:34:18.537Z",
-    "lastVerified": "2026-11-28T17:34:18.537Z",
+    "lastChecked": "2026-11-28T17:43:19.394Z",
+    "lastVerified": "2026-11-28T17:43:19.394Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -400,22 +400,21 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T17:00:22.632Z",
-    "lastVerified": "2026-11-28T17:00:22.632Z",
+    "lastChecked": "2026-11-28T17:43:15.080Z",
+    "lastVerified": "2026-11-28T17:43:15.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
-    "promotedRulesCount": 1,
+    "contentHash": "70fc713be6b2d1bb8ffcba8c59322e6068bccea8eacb21466b9a6ffcd076f4a0",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "30bfd633"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce/lapce",
@@ -961,9 +960,9 @@
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-11-27T14:25:32.768Z",
+    "lastChecked": "2026-11-28T17:42:55.642Z",
     "revisionIdentifier": "8b21cc07",
-    "lastVerified": "2026-11-27T14:25:32.768Z"
+    "lastVerified": "2026-11-28T17:42:55.642Z"
   },
   "hf-moonshotai-kimi-k3": {
     "name": "moonshotai/Kimi-K3",
@@ -1073,12 +1072,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kong-kubernetes-ingress-controller": {
-    "name": "Kong/kubernetes-ingress-controller",
+    "name": "kubernetes-ingress-controller",
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T20:19:53.630Z",
-    "lastVerified": "2026-11-27T20:19:53.630Z",
+    "lastChecked": "2026-11-28T17:43:03.213Z",
+    "lastVerified": "2026-11-28T17:43:03.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -1087,7 +1086,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "41e944f8"
   },
   "mimblewimble-grin": {
     "name": "grin",
@@ -1384,9 +1384,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-28T09:54:25.575Z",
+    "lastChecked": "2026-11-28T17:43:05.656Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-28T09:54:25.575Z"
+    "lastVerified": "2026-11-28T17:43:05.656Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4191,9 +4191,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-27T19:07:46.177Z",
+    "lastChecked": "2026-11-28T17:43:08.140Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-27T19:07:46.177Z"
+    "lastVerified": "2026-11-28T17:43:08.140Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -12538,12 +12538,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "electron-electron": {
-    "name": "electron/electron",
+    "name": "electron",
     "officialUrl": "https://github.com/electron/electron",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T11:49:31.919Z",
-    "lastVerified": "2026-11-26T11:49:31.919Z",
+    "lastChecked": "2026-11-28T17:43:00.745Z",
+    "lastVerified": "2026-11-28T17:43:00.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-electron-electron",
@@ -12552,7 +12552,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b5e057ba"
   },
   "mochajs-mocha": {
     "name": "mocha",
@@ -12927,9 +12928,9 @@
   "unjs-h3": {
     "name": "h3",
     "officialUrl": "https://github.com/unjs/h3",
-    "lastChecked": "2026-11-25T04:07:31.577Z",
+    "lastChecked": "2026-11-28T17:42:58.272Z",
     "revisionIdentifier": "2f29b875",
-    "lastVerified": "2026-11-25T04:07:31.577Z"
+    "lastVerified": "2026-11-28T17:42:58.272Z"
   },
   "sceneview-sceneview": {
     "name": "sceneview/sceneview",

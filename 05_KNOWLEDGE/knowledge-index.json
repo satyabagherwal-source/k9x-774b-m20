@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T17:34:22.898Z",
+  "last_updated": "2026-11-28T17:43:23.394Z",
   "total_verified_learnings": 9154,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27223,
+  "total_items": 27224,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230621,9 +230621,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae195171ba4026f21384eb75dd40182f330552ebeb23b8fec187371f608d0ee7",
+      "content_hash": "f037b78031c3315b5dd4db3e3ecc1054516681a16b6a062e57f716ad2811e96a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T16:12:52.477Z"
+      "persisted_at": "2026-11-28T17:43:23.171Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230633,9 +230633,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2f15cbd558338af1d34499d308ecd24df5209a635c63a4a02c3a2016554ac01",
+      "content_hash": "643112a706e7698db8e39908c857d4a47412f5f5e1c17b97e97251c9cd78ace3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T16:12:52.751Z"
+      "persisted_at": "2026-11-28T17:43:23.394Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -231681,8 +231681,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "30bfd633",
-      "content_hash": "0f3bd3152c70b5be47fd9fd769ae51b6ea6be5c45624bda11c484ab127a525cd",
+      "source_version": "1ff54cfa",
+      "content_hash": "70fc713be6b2d1bb8ffcba8c59322e6068bccea8eacb21466b9a6ffcd076f4a0",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -232052,7 +232052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T15:36:17.612Z",
+      "verified_at": "2026-11-28T17:43:15.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232106,10 +232106,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "30bfd633",
-      "content_hash": "0c1a7ad589f6131638e982f54eb4eeac94716638fc1f44a7db255b653244c587",
+      "source_version": "1ff54cfa",
+      "content_hash": "c6027c985a7a473966d7c1b66781d81d82db006ce97a26d516fe09843a183b0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:36:18.497Z"
+      "persisted_at": "2026-11-28T17:43:16.668Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233309,9 +233309,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb15e5a4f715a51e6996711afd5806f20e3ad4f7db2786f0aa33a447e2090488",
+      "content_hash": "e3e1d953d813bc542ad654f02a5f81f5874a212bc93dc580cfb6c205a4dd738c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:36:48.569Z"
+      "persisted_at": "2026-11-28T17:43:20.752Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -233835,10 +233835,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "1772058f",
-      "content_hash": "ebdda2924322abc3cb1162e711ab86f67b7614c69469700ad42aaa2ff9f24a7b",
+      "source_version": "1ff54cfa",
+      "content_hash": "2538c371192a69a4c854b1554411fe7c0fc04e2d30890d8433983c7c37be964e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T13:55:58.091Z"
+      "persisted_at": "2026-11-28T17:43:16.444Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -233860,9 +233860,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1e772e341f0393efde815649d93c57cddd84a590569f14183c69e8ac8344a71",
+      "content_hash": "0808a2db0dad0d0c247c878c37ba1e9fc2c1ff8f5abb6503136d62d20af32ce1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T13:56:04.073Z"
+      "persisted_at": "2026-11-28T17:43:20.535Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -240331,9 +240331,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f392764a562be6ab383b33eaa57b3c7aa99bd59a07901d59e9505ed74140867",
+      "content_hash": "893d535319cc462913ccb9c81be18586aef64bd8c66e99cda56d9c7d946084d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:27:54.132Z"
+      "persisted_at": "2026-11-28T17:43:22.231Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -351378,13 +351378,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PSHF-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-89CA-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-permissions-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9e62151f809d412a3a4e5e841e841d97927dae05f78e6947c734e9cd95dca6d",
+      "content_hash": "3fcfbee3d5b013488849e263f49976d9eedcbf2f68328f37267aa99625914ddb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T17:01:01.684Z"
+      "persisted_at": "2026-11-28T17:43:22.954Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -374369,6 +374369,18 @@
       "content_hash": "2ec675efe0aa3b24ec676a87080d6fbf34230afd1d31aa613a52a75f8fc02bf9",
       "domain_letter": "I",
       "persisted_at": "2026-11-28T17:34:21.540Z"
+    },
+    "candidate_directive-nuc-162-population-instance-removal": {
+      "item_id": "candidate_directive-nuc-162-population-instance-removal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-87AO-nuc-162-population-instance-removal.md",
+      "title": "NUC 162 Population Instance Removal",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5ba9ef4dbbc2886ce89e9896bc3f5391e0737f179aa9e27b2be8d41f35a416c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T17:43:20.308Z"
     }
   },
   "ai-builder-brain": {
