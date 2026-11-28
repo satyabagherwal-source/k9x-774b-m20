@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T18:52:07.829Z",
+  "timestamp": "2026-11-28T02:31:43.507Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubearmor-kubearmor-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubearmor-kubearmor-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T18:52:07.829Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T02:31:43.507Z`  
 > **Learning ID**: `LEARN-EVO-kubearmor-kubearmor-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 96%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source**: github ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
-> **Source Version**: `a95bfe7d`  
+> **Source Version**: `e0318232`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:51:49.709Z  
+> **Timestamp**: 2026-11-28T02:31:03.413Z  
 > **Learning ID**: `learn-github-kubearmor-kubearmor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubearmor/KubeArmor](https://github.com/kubearmor/KubeArmor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:51:49.552Z  
+> **Harvest Timestamp**: 2026-11-28T02:31:03.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Runtime Security Enforcement System. Workload hardening/sandboxing and implementing least-permissive policies made easy leveraging LSMs (LSM-BPF, AppArmor).
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 2644 stars
+- **Stars / Engagement**: 2647 stars
 
 ---
 
@@ -3207,101 +3207,130 @@ func (nh *NRIHandler) nriToKubeArmorContainer(nriContainer *api.Container) tp.Co
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a95bfe7d` (2026-11-24)
-**Commit Message**: chore: Update helm chart and stable version to v1.7.7 (#3040)
+### Incident Patch 1: `e0318232` (2026-11-27)
+**Commit Message**: chore(controller): remove unused SELinuxType and MatchVolumeMountType (#2969)
 
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
+Neither type is referenced by KubeArmorPolicySpec or anywhere else in
+the repo. Drop them and regenerate the deepcopy code.
 
-**File**: `STABLE-RELEASE` (modified, +1/-1)
+Fixes #2965
+
+Signed-off-by: Vishal Punjabi <[REDACTED_EMAIL]>
+
+**File**: `pkg/KubeArmorController/api/security.kubearmor.com/v1/kubearmorpolicy_types.go` (modified, +0/-31)
 ```diff
-@@ -1 +1 @@
--v1.7.6
-+v1.7.7
+@@ -22,37 +22,6 @@ type SelectorType struct {
+ 	MatchExpressions []MatchExpressionsType `json:"matchExpressions,omitempty"`
+ }
+ 
+-type MatchVolumeMountType struct {
+-	// +kubebuilder:validation:Optional
+-	Path MatchPathType `json:"path,omitempty"`
+-	// +kubebuilder:validation:Optional
+-	Directory MatchDirectoryType `json:"dir,omitempty"`
+-	// +kubebuilder:validation:Optional
+-	ReadOnly bool `json:"readOnly,omitempty"`
+-
+-	// +kubebuilder:validation:optional
+-	Severity SeverityType `json:"severity,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Tags []string `json:"tags,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Message string `json:"message,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Action ActionType `json:"action,omitempty"`
+-}
+-
+-type SELinuxType struct {
+-	MatchVolumeMounts []MatchVolumeMountType `json:"matchVolumeMounts"`
+-
+-	// +kubebuilder:validation:optional
+-	Severity SeverityType `json:"severity,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Tags []string `json:"tags,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Message string `json:"message,omitempty"`
+-	// +kubebuilder:validation:optional
+-	Action ActionType `json:"action,omitempty"`
+-}
+-
+ // KubeArmorPolicySpec defines the desired state of KubeArmorPolicy
+ type KubeArmorPolicySpec struct {
+ 	Selector SelectorType `json:"selector,omitempty"`
 ```
 
-**File**: `deployments/helm/KubeArmor/Chart.yaml` (modified, +2/-2)
+**File**: `pkg/KubeArmorController/api/security.kubearmor.com/v1/zz_generated.deepcopy.go` (modified, +0/-47)
 ```diff
-@@ -1,8 +1,8 @@
- apiVersion: v2
--appVersion: v1.7.6
-+appVersion: v1.7.7
- description: A Helm chart for Kubearmor on Kubernetes
- home: https://github.com/kubearmor/KubeArmor
- icon: https://github.com/kubearmor/KubeArmor/blob/main/.gitbook/assets/logo.png?raw=true
- name: kubearmor
- type: application
--version: v1.7.6
-+version: v1.7.7
-```
-
-**File**: `deployments/helm/KubeArmorOperator/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -13,9 +13,9 @@ type: application
- # This is the chart version. This version number should be incremented each time you make changes
- # to the chart and its templates, including the app version.
- # Versions are expected to follow Semantic Versioning (https://semver.org/)
--version: v1.7.6
-+version: v1.7.7
- # This is the version number of the application being deployed. This version number should be
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--appVersion: v1.7.6
-+appVersion: v1.7.7
-```
-
----
-
-### Incident Patch 2: `b6a648bf` (2026-11-24)
-**Commit Message**: chore: Update helm chart and stable version to v1.7.7
-
-Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
-
-**File**: `STABLE-RELEASE` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--v1.7.6
-+v1.7.7
-```
-
-**File**: `deployments/helm/KubeArmor/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- apiVersion: v2
--appVersion: v1.7.6
-+appVersion: v1.7.7
- description: A Helm chart for Kubearmor on Kubernetes
- home: https://github.com/kubearmor/KubeArmor
- icon: https://github.com/kubearmor/KubeArmor/blob/main/.gitbook/assets/logo.png?raw=true
- name: kubearmor
- type: application
--version: v1.7.6
-+version: v1.7.7
-```
-
-**File**: `deployments/helm/KubeArmorOperator/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -13,9 +13,9 @@ type: application
- # This is the chart version. This version number should be incremented each time you make changes
- # to the chart and its templates, including the app version.
- # Versions are expected to follow Semantic Versioning (https://semver.org/)
--version: v1.7.6
-+version: v1.7.7
- # This is the version number of the application being deployed. This version number should be
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--appVersion: v1.7.6
-+appVersion: v1.7.7
+@@ -1011,26 +1011,6 @@ func (in *MatchSourceType) DeepCopy() *MatchSourceType {
+ 	return out
+ }
+ 
+-// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+-func (in *MatchVolumeMountType) DeepCopyInto(out *MatchVolumeMountType) {
+-	*out = *in
+-	if in.Tags != nil {
+-		in, out := &in.Tags, &out.Tags
+-		*out = make([]string, len(*in))
+-		copy(*out, *in)
+-	}
+-}
+-
+-// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new MatchVolumeMountType.
+-func (in *MatchVolumeMountType) DeepCopy() *MatchVolumeMountType {
+-	if in == nil {
+-		return nil
+-	}
+-	out := new(MatchVolumeMountType)
+-	in.DeepCopyInto(out)
+-	return out
+-}
+-
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *NetworkPeer) DeepCopyInto(out *NetworkPeer) {
+ 	*out = *in
+@@ -1290,33 +1270,6 @@ func (in *ProcessType) DeepCopy() *ProcessType {
+ 	return out
+ }
+ 
+-// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+-func (in *SELinuxType) DeepCopyInto(out *SELinuxType) {
+-	*out = *in
+-	if in.MatchVolumeMounts != nil {
+-		in, out := &in.MatchVolumeMounts, &out.MatchVolumeMounts
+-		*out = make([]MatchVolumeMountType, len(*in))
+-		for i := range *in {
+-			(*in)[i].DeepCopyInto(&(*out)[i])
+-		}
+-	}
+-	if in.Tags != nil {
+-		in, out := &in.Tags, &out.Tags
+-		*out = make([]string, len(*in))
+-		copy(*out, *in)
+-	}
+-}
+-
+-// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new SELinuxType.
+-func (in *SELinuxType) DeepCopy() *SELinuxType {
+-	if in == nil {
+-		return nil
+-	}
+-	out := new(SELinuxType)
+-	in.DeepCopyInto(out)
+-	return out
+-}
+-
+ // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
+ func (in *SelectorType) DeepCopyInto(out *SelectorType) {
+ 	*out = *in
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3069** (closed): fix(common): require In match when NotIn selector is present (@saswatdutta1310)
+- **PR #3055** (closed): fix: validate host policies with strict JSON decoding (@Ankitavasudev)
 - **PR #3040** (2026-11-24): chore: Update helm chart and stable version to v1.7.7 (@AryanBakliwal)
-- **PR #3029** (2026-11-23): fix(monitor): stop silently dropping alerts for short-lived processes (@AryanBakliwal)
-- **PR #3012** (closed): docs: document Elasticsearch adapter configuration in KubeArmorConfig (@Ankitavasudev)
-- **PR #3011** (closed): docs: document seccompEnabled and controllerPort in KubeArmorConfig (@Ankitavasudev)
-- **PR #3010** (2026-11-18): docs(examples): fix links to the match-expression policy files (@SANJANAKUMARI83)
-- **PR #3004** (2026-11-18): fix(feeder): narrow DefaultPosturesLock scope in UpdateMatchedPolicy (@AryanBakliwal)
+- **PR #3036** (closed): docs: document TLS configuration in KubeArmorConfig (@Ankitavasudev)
+- **PR #3035** (closed): docs: document global scheduling and environment configuration fields (@Ankitavasudev)
+- **PR #3034** (closed): docs: document additional ImageSpec fields (@Ankitavasudev)
 
 ---
 
@@ -3315,39 +3344,6 @@ Signed-off-by: Aryan Bakliwal <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Update helm chart and stable version to v1.7.7
-
-**RULE**:
-When implementing operations in `deployments/helm/KubeArmor/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubearmor/KubeArmor. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a95bfe7d`: Update helm chart and stable version to v1.7.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deployments/helm/KubeArmor/Chart.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-appVersion: v1.7.7
-version: v1.7.7
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-appVersion: v1.7.6
-version: v1.7.6
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a95bfe7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

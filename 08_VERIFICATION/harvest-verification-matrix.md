@@ -13943,3 +13943,7 @@
 | `CYCLE-20261128-0DRP` | `2026-11-28T02:13:28.117Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11017` | Yes (`8af96167...`) |
 | `CYCLE-20261128-BUZI` | `2026-11-28T02:22:23.646Z` | `fb55/css-select` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`62e9390d...`) |
 | `CYCLE-20261128-C3LK` | `2026-11-28T02:22:34.808Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11018` | Yes (`b51af697...`) |
+| `CYCLE-20261128-N0KI` | `2026-11-28T02:31:04.098Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md` | Yes (`14a249e5...`) |
+| `CYCLE-20261128-N1BT` | `2026-11-28T02:31:05.081Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`b7ac080c...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T02:31:42.917Z` | `kubearmor-kubearmor` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D82E6746` [Domain D] | Yes (`0957c631...`) |
+| `CYCLE-2026-11-28-PROJ-EVOLVE` | `2026-11-28T02:32:19.208Z` | `cheeriojs-dom-serializer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F2C6AB3` [Domain H] | Yes (`286d59b3...`) |

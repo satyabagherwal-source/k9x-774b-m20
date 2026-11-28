@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T02:22:34.828Z",
+  "last_updated": "2026-11-28T02:31:05.111Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9261,14 +9261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubearmor-kubearmor",
-      "content_hash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
-      "verified_at": "2026-11-24T18:51:50.891Z",
+      "content_hash": "14a249e5bbb1be25de3cb4bd1ab5877f41bee27c877fd459722f099a48ba0604",
+      "verified_at": "2026-11-28T02:31:04.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:51:50.892Z"
+      "last_updated": "2026-11-28T02:31:04.125Z"
     },
     "callstack/agent-device": {
       "repository": "callstack/agent-device",
@@ -14166,14 +14166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cheeriojs-dom-serializer",
-      "content_hash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
-      "verified_at": "2026-11-24T17:51:56.825Z",
+      "content_hash": "b7ac080c37b2daf62ca5df3a9336120216f3b3d6167a33c47527ec2a84cf0b3c",
+      "verified_at": "2026-11-28T02:31:05.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:51:56.825Z"
+      "last_updated": "2026-11-28T02:31:05.110Z"
     },
     "paololeonardi/WaterfallGrid": {
       "repository": "paololeonardi/WaterfallGrid",

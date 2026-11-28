@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T01:54:58.935Z",
-    "lastVerified": "2026-11-28T01:54:58.935Z",
+    "lastChecked": "2026-11-28T02:31:12.996Z",
+    "lastVerified": "2026-11-28T02:31:12.996Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T02:22:38.375Z",
-    "lastVerified": "2026-11-28T02:22:38.375Z",
+    "lastChecked": "2026-11-28T02:31:13.007Z",
+    "lastVerified": "2026-11-28T02:31:13.007Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,9 +171,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-27T22:14:09.003Z",
+    "lastChecked": "2026-11-28T02:31:08.114Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-27T22:14:09.003Z"
+    "lastVerified": "2026-11-28T02:31:08.114Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -4066,9 +4066,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-27T08:46:41.091Z",
+    "lastChecked": "2026-11-28T02:31:05.669Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-27T08:46:41.091Z"
+    "lastVerified": "2026-11-28T02:31:05.669Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -6392,22 +6392,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubearmor-kubearmor": {
-    "name": "KubeArmor",
+    "name": "kubearmor/KubeArmor",
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T02:40:40.671Z",
-    "lastVerified": "2026-11-27T02:40:40.671Z",
+    "lastChecked": "2026-11-28T02:31:03.180Z",
+    "lastVerified": "2026-11-28T02:31:03.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "14a249e5bbb1be25de3cb4bd1ab5877f41bee27c877fd459722f099a48ba0604",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "a95bfe7d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "name": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7178,9 +7177,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-27T07:12:30.281Z",
+    "lastChecked": "2026-11-28T02:31:10.584Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-27T07:12:30.281Z"
+    "lastVerified": "2026-11-28T02:31:10.584Z"
   },
   "alexpasmantier-television": {
     "name": "television",
@@ -10859,9 +10858,9 @@
   "aakira-napier": {
     "name": "Napier",
     "officialUrl": "https://github.com/AAkira/Napier",
-    "lastChecked": "2026-11-26T00:34:47.032Z",
+    "lastChecked": "2026-11-28T02:31:02.975Z",
     "revisionIdentifier": "50835e2e",
-    "lastVerified": "2026-11-26T00:34:47.032Z"
+    "lastVerified": "2026-11-28T02:31:02.975Z"
   },
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
@@ -11342,14 +11341,14 @@
     "officialUrl": "https://github.com/cheeriojs/dom-serializer",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T17:51:55.931Z",
-    "lastVerified": "2026-11-24T17:51:55.931Z",
+    "lastChecked": "2026-11-28T02:31:04.002Z",
+    "lastVerified": "2026-11-28T02:31:04.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
+    "contentHash": "b7ac080c37b2daf62ca5df3a9336120216f3b3d6167a33c47527ec2a84cf0b3c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

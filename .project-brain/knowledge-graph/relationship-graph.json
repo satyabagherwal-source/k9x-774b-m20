@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-28T00:39:03.631Z",
+  "updated_at": "2026-11-28T02:32:19.205Z",
   "statistics": {
-    "total_nodes": 588,
+    "total_nodes": 590,
     "total_edges": 239,
     "domain_distribution": {
-      "D": 351,
+      "D": 352,
       "M": 1,
-      "H": 113,
+      "H": 114,
       "J": 23,
       "K": 35,
       "L": 9,
@@ -13121,6 +13121,50 @@
       ],
       "created_at": "2026-11-28T00:39:03.631Z",
       "updated_at": "2026-11-28T00:39:03.631Z"
+    },
+    "DOM-D-D82E6746": {
+      "id": "DOM-D-D82E6746",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): kubearmor/KubeArmor",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  \n> **Source**: github ([https://github.com/kubear -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md`  \n> **Source**: github ([https://github.com/kubear",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kubearmor-kubearmor/kubearmor-kubearmor-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-28T02:31:13.157Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kubearmor-kubearmor)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-28T02:31:42.913Z",
+      "updated_at": "2026-11-28T02:31:42.913Z"
+    },
+    "DOM-H-6F2C6AB3": {
+      "id": "DOM-H-6F2C6AB3",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "build(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0",
+      "summary": "Prevents defects observed in production commit `4b19f7e3`: build(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0. Unvalidated execut -> When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://cheeriojs-dom-serializer/cheeriojs-dom-serializer-learnings.md",
+        "source_version": "c64fe929",
+        "observed_at": "2026-11-28T02:31:04.010Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (cheeriojs-dom-serializer)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-28T02:32:19.205Z",
+      "updated_at": "2026-11-28T02:32:19.205Z"
     }
   },
   "edges": [

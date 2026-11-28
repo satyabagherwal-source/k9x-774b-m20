@@ -13976,3 +13976,7 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `a452de5f` | Multi-dimensional audit evidence | 2026-11-28T02:13:28.130Z |
 | `learn-github-fb55-css-select` | `https://github.com/fb55/css-select` | `f060b990` | Multi-dimensional audit evidence | 2026-11-28T02:22:23.659Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `8de5482d` | Multi-dimensional audit evidence | 2026-11-28T02:22:34.820Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `e0318232` | Multi-dimensional audit evidence | 2026-11-28T02:31:04.115Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `c64fe929` | Multi-dimensional audit evidence | 2026-11-28T02:31:05.101Z |
+| `learn-dom-d-d82e6746` | `project://kubearmor-kubearmor` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md` | 2026-11-28T02:31:42.917Z |
+| `learn-dom-h-6f2c6ab3` | `project://cheeriojs-dom-serializer` | `c64fe929` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md` | 2026-11-28T02:32:19.208Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T02:22:42.260Z",
+  "last_updated": "2026-11-28T02:32:23.946Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -240106,9 +240106,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4fab369c7471f328104d82741ebe217f58fd0d76baf096dd474a75ecf5a0ec2",
+      "content_hash": "dade53691a5c0a7d414cc2de8c6d0bea44933c938c631691595194aa5838e4ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:38:22.165Z"
+      "persisted_at": "2026-11-28T02:32:23.946Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -266026,10 +266026,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cheeriojs-dom-serializer-technical-construction-intelligence-cheeriojs-dom-seria.md",
       "title": "Technical Construction Intelligence: cheeriojs/dom-serializer Core Invariants",
       "repository": "cheeriojs/dom-serializer",
-      "source_version": "dbc3d929",
-      "content_hash": "95de87cf3864c6cd201b2fc090ed34c8fcc36c0487965ecc3480ddc6706433ea",
+      "source_version": "c64fe929",
+      "content_hash": "3fc7efd3af34712a6aa3d7c32e8a4353a44be25efef7204ad07cc3a34e7ca6ed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:51:57.241Z"
+      "persisted_at": "2026-11-28T02:31:05.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer",
@@ -266038,10 +266038,10 @@
       "relative_path": "08_VERIFICATION/cheeriojs-dom-serializer-verification-protocol-empirical-defect-shield-for-cheer.md",
       "title": "Verification Protocol: Empirical Defect Shield for cheeriojs/dom-serializer",
       "repository": "cheeriojs/dom-serializer",
-      "source_version": "dbc3d929",
-      "content_hash": "8002392d6a220220b1f7f145c3a70a0c95dfc9505f42e0b0c17568ba8060980a",
+      "source_version": "c64fe929",
+      "content_hash": "ba5047c40a45d73a237c88c1b1004531a082323ce8766589cc4091d349b21162",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:51:57.417Z"
+      "persisted_at": "2026-11-28T02:31:05.814Z"
     },
     "learn-github-superhighfives-pika": {
       "learning_id": "learn-github-superhighfives-pika",
@@ -266160,9 +266160,9 @@
       "title": "Technical Construction Intelligence: cheeriojs-dom-serializer-learnings Core Invariants",
       "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "e650efeba11efb620251d638480ca381286d4641ed4a92123915394288cf46c5",
+      "content_hash": "e1659c1c78496ef8703eae18868e0a6368706b3026715bc69b0404a654c66e59",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:52:06.438Z"
+      "persisted_at": "2026-11-28T02:32:21.768Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cheeriojs-dom-serializer-learn",
@@ -266172,9 +266172,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cheeriojs-dom-serializer-learnings",
       "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "c98b9a33b26f58e4f320c2c0690326d7f64c8494a7b7698b8e771dd15c24f3c2",
+      "content_hash": "a88d0e600d0df5b7724839a14851fb562a26bb54944726c817c25dffa7e57a22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:52:06.610Z"
+      "persisted_at": "2026-11-28T02:32:22.032Z"
     },
     "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-superhighfives-pika-learnings-core-invariants",
@@ -299278,8 +299278,8 @@
       "slug": "kubearmor-kubearmor",
       "platform": "github",
       "source_url": "https://github.com/kubearmor/KubeArmor",
-      "source_version": "a95bfe7d",
-      "content_hash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
+      "source_version": "e0318232",
+      "content_hash": "14a249e5bbb1be25de3cb4bd1ab5877f41bee27c877fd459722f099a48ba0604",
       "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
       "promoted_rules": [
@@ -299304,7 +299304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:51:50.649Z",
+      "verified_at": "2026-11-28T02:31:03.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -299346,10 +299346,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
       "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "a95bfe7d",
-      "content_hash": "45b3a09500c601024c888b679014d8603d3d8eef50f865cc22d2c5a69bf3be84",
+      "source_version": "e0318232",
+      "content_hash": "d1bbda2ca6b83be1456519bb1a5a7494bbabfbe837fe38d952583b95075bb894",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:51:51.317Z"
+      "persisted_at": "2026-11-28T02:31:04.412Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor",
@@ -299358,10 +299358,10 @@
       "relative_path": "12_DECISIONS/ADR-kubearmor-kubearmor-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubea.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor/KubeArmor",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "a95bfe7d",
-      "content_hash": "532bc6f10338df933c49af1864d358cbff5439b9c16702353e1896770eeece24",
+      "source_version": "e0318232",
+      "content_hash": "3b10c81354d8690ce5675271dee7f6e42a3d6811972fa9e51a147fe3597b7d2b",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:51:51.499Z"
+      "persisted_at": "2026-11-28T02:31:04.649Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona",
@@ -299370,10 +299370,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/kubearmor-kubearmor-agent-contract-kubearmor-kubearmor-autonomous-specialist-per.md",
       "title": "Agent Contract: kubearmor/KubeArmor Autonomous Specialist Persona",
       "repository": "kubearmor/KubeArmor",
-      "source_version": "a95bfe7d",
-      "content_hash": "149a93ecad166213a52de5a8ea64a181e86f315974de0afc69bc0821314b00ea",
+      "source_version": "e0318232",
+      "content_hash": "dfabe3a887a7bf7a7ee7272e8af07cce5383e9238a21fabd41d4ec771fe20296",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:51:51.653Z"
+      "persisted_at": "2026-11-28T02:31:04.855Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor",
@@ -299447,9 +299447,9 @@
       "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "7550da47e5c1c316420223b1f5284a21e554da7fc3493bd1ceab72baf536aab3",
+      "content_hash": "7455e2aa645f3abe22cca174b85fea8fe06cfe4aad11d162c1f01719f1e4b45d",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:52:08.154Z"
+      "persisted_at": "2026-11-28T02:31:43.674Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings",
@@ -299459,9 +299459,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor-kubearmor-learnings",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2541c13d4c6d3f67b16c9e3d619fba1d923b8bc0eea5ab3c697f195a3206233",
+      "content_hash": "983b4968914191d834cb08ca4b443994a9792c695b0b733fc09a20f24371ec2d",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:52:08.330Z"
+      "persisted_at": "2026-11-28T02:31:43.974Z"
     },
     "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona",
@@ -299471,9 +299471,9 @@
       "title": "Agent Contract: kubearmor-kubearmor-learnings Autonomous Specialist Persona",
       "repository": "kubearmor-kubearmor-learnings",
       "source_version": "HEAD",
-      "content_hash": "41fe7c14907730d0f881463bcb69d63f8d5e77d7da2445ad26121fe55d0f2696",
+      "content_hash": "74a56d534a2253858ec050e3d68f74a53bed3effae775fa6f7f557d9828b59f4",
       "domain_letter": "L",
-      "persisted_at": "2026-11-24T18:52:08.482Z"
+      "persisted_at": "2026-11-28T02:31:44.242Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings",
@@ -369461,13 +369461,13 @@
       "item_id": "candidate_directive-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C7DX-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OOA0-build-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
       "title": "build(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0",
-      "repository": "fb55-css-select-learnings",
+      "repository": "cheeriojs-dom-serializer-learnings",
       "source_version": "HEAD",
-      "content_hash": "948cf9cadc64c26b0318b05cbb683e394dbc51cc79378dca139dc5c8d1cdd19e",
+      "content_hash": "00037e21abf5112580b182c6e669da8a4650b4d02300ee3bb235f00388cd8c6d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T02:22:39.718Z"
+      "persisted_at": "2026-11-28T02:32:21.481Z"
     },
     "rule-11013": {
       "learning_id": "rule-11013",

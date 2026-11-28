@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T02:22:34.825Z",
-  "total_cycles_completed": 13233,
-  "total_learnings_persisted": 13233,
-  "total_rules_promoted": 11936,
+  "last_updated": "2026-11-28T02:31:05.107Z",
+  "total_cycles_completed": 13235,
+  "total_learnings_persisted": 13235,
+  "total_rules_promoted": 11937,
   "history": [
-    {
-      "timestamp": "2026-11-27T08:14:44.996Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T08:31:51.280Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T08:32:39.487Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T02:22:34.825Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:31:04.122Z",
+      "repository": "kubearmor/KubeArmor",
+      "learningId": "learn-github-kubearmor-kubearmor",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T02:31:05.107Z",
+      "repository": "cheeriojs/dom-serializer",
+      "learningId": "learn-github-cheeriojs-dom-serializer",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

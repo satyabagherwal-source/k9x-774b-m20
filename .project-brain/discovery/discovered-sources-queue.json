@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T02:22:39.406Z",
+  "updated_at": "2026-11-28T02:32:21.137Z",
   "stats": {
-    "total_discovered": 10688,
-    "approved_pending_harvest": 10147,
+    "total_discovered": 10694,
+    "approved_pending_harvest": 10153,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10156,
+      "COMMUNITY_AND_EXPERT": 10162,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231376,6 +231376,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-css-select-learnings.md",
         "fileName": "fb55-css-select-learnings.md"
+      }
+    },
+    "SRC-8A92382B195F": {
+      "id": "SRC-8A92382B195F",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13075",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13075",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:19.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-EEA7B8174944": {
+      "id": "SRC-EEA7B8174944",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13074",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13074",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:19.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-618C4D1B2574": {
+      "id": "SRC-618C4D1B2574",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13011",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13011",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:19.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-AC411C08CFCD": {
+      "id": "SRC-AC411C08CFCD",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13126",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/13126",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:19.935Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-1B3D5DE34E04": {
+      "id": "SRC-1B3D5DE34E04",
+      "url": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12968",
+      "title": "https://redirect.github.com/typescript-eslint/typescript-eslint/pull/12968",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:20.029Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
+      }
+    },
+    "SRC-2016ECFC60AF": {
+      "id": "SRC-2016ECFC60AF",
+      "url": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.74.0.t",
+      "title": "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.74.0.t",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:32:21.136Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
+        "fileName": "cheeriojs-dom-serializer-learnings.md"
       }
     }
   }

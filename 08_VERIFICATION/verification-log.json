@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-ISMY",
-    "timestamp": "2026-11-26T14:04:17.146Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "c6802b61cc1f4bbdb6cd721657d69f634644edb3ff857edbec209f521fd0067c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-UMK4",
-    "timestamp": "2026-11-26T14:13:29.140Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "f0f2a723f360b1508b271b85f297e75b5c50ab85af8968c7fdd70519b4ae35c5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-USQB",
     "timestamp": "2026-11-26T14:13:37.139Z",
     "repository": "sceneview/sceneview",
@@ -7490,6 +7460,36 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "b51af69772ffc5e33e062ce373dab1dc372bfe73d11fc2500d85f4faaaa640de",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-N0KI",
+    "timestamp": "2026-11-28T02:31:04.098Z",
+    "repository": "kubearmor/KubeArmor",
+    "learningId": "learn-github-kubearmor-kubearmor",
+    "contentHash": "14a249e5bbb1be25de3cb4bd1ab5877f41bee27c877fd459722f099a48ba0604",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-N1BT",
+    "timestamp": "2026-11-28T02:31:05.081Z",
+    "repository": "cheeriojs/dom-serializer",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "b7ac080c37b2daf62ca5df3a9336120216f3b3d6167a33c47527ec2a84cf0b3c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
