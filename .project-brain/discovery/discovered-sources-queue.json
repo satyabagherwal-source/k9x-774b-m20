@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T01:55:07.657Z",
+  "updated_at": "2026-11-28T02:03:48.590Z",
   "stats": {
-    "total_discovered": 10681,
-    "approved_pending_harvest": 10140,
+    "total_discovered": 10686,
+    "approved_pending_harvest": 10145,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10149,
+      "COMMUNITY_AND_EXPERT": 10154,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -231222,6 +231222,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
         "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-3136CE71C58A": {
+      "id": "SRC-3136CE71C58A",
+      "url": "https://github.com/tinylibs/tinybench",
+      "title": "https://github.com/tinylibs/tinybench",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:03:48.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-3B6BD46CEABF": {
+      "id": "SRC-3B6BD46CEABF",
+      "url": "https://github.com/tinylibs/tinybench/releases",
+      "title": "https://github.com/tinylibs/tinybench/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:03:48.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-0A84962EC548": {
+      "id": "SRC-0A84962EC548",
+      "url": "https://github.com/tinylibs/tinybench/compare/v6.2.4...v6.2.5",
+      "title": "https://github.com/tinylibs/tinybench/compare/v6.2.4...v6.2.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:03:48.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-93A9F18AA81F": {
+      "id": "SRC-93A9F18AA81F",
+      "url": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.4.tgz",
+      "title": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:03:48.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
+      }
+    },
+    "SRC-4985F07D55A1": {
+      "id": "SRC-4985F07D55A1",
+      "url": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.5.tgz",
+      "title": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T02:03:48.590Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
+        "fileName": "inikulin-parse5-learnings.md"
       }
     }
   }

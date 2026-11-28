@@ -13936,3 +13936,4 @@
 | `CYCLE-20261128-CFXJ` | `2026-11-28T01:54:51.175Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11012` | Yes (`1f16faa8...`) |
 | `CYCLE-20261128-CKKT` | `2026-11-28T01:54:57.197Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11013` | Yes (`185ffc08...`) |
 | `CYCLE-20261128-CMBG` | `2026-11-28T01:54:59.452Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11014` | Yes (`ab60099c...`) |
+| `CYCLE-20261128-NR07` | `2026-11-28T02:03:38.743Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`5ce1c108...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "inikulin/parse5",
   "source_url": "https://github.com/inikulin/parse5",
-  "source_version": "2412bb99",
+  "source_version": "de0102da",
   "license": "MIT",
-  "timestamp": "2026-11-24T17:33:09.078Z",
+  "timestamp": "2026-11-28T02:03:39.008Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-inikulin-parse5",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [inikulin/parse5](https://github.com/inikulin/parse5) (Revision: `2412bb99`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T17:33:09.078Z`  
+> **Provenance**: Harvested from [inikulin/parse5](https://github.com/inikulin/parse5) (Revision: `de0102da`).  
+> **License**: MIT | **Timestamp**: `2026-11-28T02:03:39.008Z`  
 > **Learning ID**: `learn-github-inikulin-parse5`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `inikulin/parse5` (Commit: `2412bb99`)
+- **Target Repository**: `inikulin/parse5` (Commit: `de0102da`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:33:07.024Z  
+> **Harvest Timestamp**: 2026-11-28T02:03:37.739Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: HTML parsing/serialization toolset for Node.js. WHATWG HTML Living Standard (aka HTML5)-compliant.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3944 stars
+- **Stars / Engagement**: 3945 stars
 
 ---
 
@@ -1674,82 +1674,225 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2412bb99` (2026-11-24)
-**Commit Message**: fix(parser): parse a noscript fragment context as markup when scripting is disabled (#1943)
+### Incident Patch 1: `de0102da` (2026-11-27)
+**Commit Message**: chore(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0 (#1949)
 
-* fix(parser): parse a noscript fragment context as markup when scripting is disabled
+Bumps [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) from 8.73.0 to 8.74.0.
+- [Release notes](https://github.com/typescript-eslint/typescript-eslint/releases)
+- [Changelog](https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/typescript-eslint/CHANGELOG.md)
+- [Commits](https://github.com/typescript-eslint/typescript-eslint/commits/v8.74.0/packages/typescript-eslint)
 
-Fixes #1942.
+---
+updated-dependencies:
+- dependency-name: typescript-eslint
+  dependency-version: 8.74.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-* test(parser): build the noscript context per test and name the map argument
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
----------
-
-Co-authored-by: goranai <[REDACTED_EMAIL]>
-
-**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +22/-0)
+**File**: `package-lock.json` (modified, +128/-128)
 ```diff
-@@ -295,6 +295,28 @@ describe('parser', () => {
-         });
-     });
- 
-+    describe('noscript fragment context', () => {
-+        let noscript: Element;
-+
-+        beforeEach(() => {
-+            noscript = (parseFragment('<noscript>') as { childNodes: Element[] }).childNodes[0];
-+        });
-+
-+        it('parses its content as text when scripting is enabled', () => {
-+            const fragment = parseFragment(noscript, '<p>a</p>', { scriptingEnabled: true });
-+
-+            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['#text']);
-+            expect(serialize(fragment)).toBe('&lt;p&gt;a&lt;/p&gt;');
-+        });
-+
-+        it('parses its content as markup when scripting is disabled', () => {
-+            const fragment = parseFragment(noscript, '<p>a</p><b>x</b>', { scriptingEnabled: false });
-+
-+            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['p', 'b']);
-+            expect(serialize(fragment)).toBe('<p>a</p><b>x</b>');
-+        });
-+    });
-+
-     describe('rawtext parsing', () => {
-         it.each([
-             ['iframe'],
+@@ -24,7 +24,7 @@
+                 "ts-node": "^10.9.2",
+                 "typedoc": "^0.28.20",
+                 "typescript": "^6.0.3",
+-                "typescript-eslint": "^8.73.0",
++                "typescript-eslint": "^8.74.0",
+                 "vitest": "^5.1.1"
+             }
+         },
+@@ -952,17 +952,17 @@
+             "dev": true
+         },
+         "node_modules/@typescript-eslint/eslint-plugin": {
+-            "version": "8.73.0",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.73.0.tgz",
+-            "integrity": "sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==",
++            "version": "8.74.0",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.74.0.tgz",
++            "integrity": "sha512-z3KXk1+Vm+d82ZRplOoC89ho4Rf1da5ju6sx8//92GnN532U62DGPjECXkkVqtYzIv0zoJlpO39SX2Z9tk6LVw==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+                 "@eslint-community/regexpp": "^4.12.2",
+-                "@typescript-eslint/scope-manager": "8.73.0",
+-                "@typescript-eslint/type-utils": "8.73.0",
+-                "@typescript-eslint/utils": "8.73.0",
+-                "@typescript-eslint/visitor-keys": "8.73.0",
++                "@typescript-eslint/scope-manager": "8.74.0",
++                "@typescript-eslint/type-utils": "8.74.0",
++                "@typescript-eslint/utils": "8.74.0",
++                "@typescript-eslint/visitor-keys": "8.74.0",
+                 "ignore": "^7.0.5",
+                 "natural-compare": "^1.4.0",
+                 "ts-api-utils": "^2.5.0"
+@@ -975,32 +975,32 @@
+                 "url": "https://opencollective.com/typescript-eslint"
+             },
+             "peerDependencies": {
+-                "@typescript-eslint/parser": "^8.73.0",
++                "@typescript-eslint/parser": "^8.74.0",
+                 "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+                 "typescript": ">=4.8.4 <6.1.0"
+             }
+         },
+         "node_modules/@typescript-eslint/eslint-plugin/node_modules/ignore": {
+-            "version": "7.0.14",
+-            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
+-            "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
++            "version": "7.0.16",
++            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.16.tgz",
++            "integrity": "sha512-52N+Y4HRMOJmbLmr+DqO4iSRyyB7N52gm7PWCT6h0p978+oKbqHCB7gIJIwZvBUsjlSdWbrBFqUSmIFNZMpn0A==",
+             "dev": true,
+             "license": "MIT",
+             "engines": {
+                 "node": ">= 4"
+             }
+         },
+         "node_modules/@typescript-eslint/parser": {
+-            "version": "8.73.0",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.73.0.tgz",
+-            "integrity": "sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==",
++            "version": "8.74.0",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.74.0.tgz",
++            "integrity": "sha512-ecr8AYdig7avVkxaHdQvxHnIJ/mOyliO4Gv/uWF8q69vBew/z3sexqBwHUZX5Vql+Ns0w4sH6gBLkICGbOvJkA==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/scope-manager": "8.73.0",
+-                "@typescript-eslint/types": "8.73.0",
+-                "@typescript-eslint/typescript-estree": "8.73.0",
+-                "@typescript-eslint/visitor-keys": "8.73.0",
++                "@typescript-eslint/scope-manager": "8.74.0",
++                "@typescript-eslint/types": "8.74.0",
++                "@typescript-eslint/typescript-estree": "8.74.0",
++                "@typescript-eslint/visitor-keys": "8.74.0",
+                 "debug": "^4.4.3"
+             },
+             "engines": {
+@@ -1016,14 +1016,14 @@
+             }
+         },
+         "node_modules/@typescript-eslint/project-service": {
+-            "version": "8.73.0",
+-            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.73.0.tgz",
+-            "integrity": "sha512-/pEf8Rc4Mjk+qJnY0uO1+Gadeal8uv50xpuic+srG2vIVatA0XxvWMUeMtFvs6OCHqftiQ7/+qH4aehG5stzIA==",
++            "version": "8.74.0",
++            "resolved": "https://registry.npmjs.org/@typescript-eslint/project-service/-/project-service-8.74.0.tgz",
++            "integrity": "sha512-z/mymuE+JlEeSFIv3Mo70EvgG1Zz74Hl0IDfExfXutARAP834bt+MppTD7mVAwmZO0GdxdOAi0jbTam749eH6g==",
+             "dev": true,
+             "license": "MIT",
+             "dependencies": {
+-                "@typescript-eslint/tsconfig-utils": "^8.73.0",
+-                "@typescript-eslint/types": "^8.73.0",
++                "@typescript-eslint/tsconfig-utils": "^8.74.0",
++            
 ```
 
-**File**: `packages/parse5/lib/parser/index.ts` (modified, +7/-2)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -393,11 +393,16 @@ export class Parser<T extends TreeAdapterTypeMap> implements TokenHandler, Stack
-             case $.XMP:
-             case $.IFRAME:
-             case $.NOEMBED:
--            case $.NOFRAMES:
--            case $.NOSCRIPT: {
-+            case $.NOFRAMES: {
-                 this.tokenizer.state = TokenizerMode.RAWTEXT;
-                 break;
+@@ -21,7 +21,7 @@
+         "ts-node": "^10.9.2",
+         "typedoc": "^0.28.20",
+         "typescript": "^6.0.3",
+-        "typescript-eslint": "^8.73.0",
++        "typescript-eslint": "^8.74.0",
+         "vitest": "^5.1.1"
+     },
+     "scripts": {
+```
+
+---
+
+### Incident Patch 2: `f3766efb` (2026-11-27)
+**Commit Message**: chore(deps): bump tinybench from 6.2.4 to 6.2.5 (#1948)
+
+Bumps [tinybench](https://github.com/tinylibs/tinybench) from 6.2.4 to 6.2.5.
+- [Release notes](https://github.com/tinylibs/tinybench/releases)
+- [Commits](https://github.com/tinylibs/tinybench/compare/v6.2.4...v6.2.5)
+
+---
+updated-dependencies:
+- dependency-name: tinybench
+  dependency-version: 6.2.5
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `bench/package.json` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+     "dependencies": {
+         "human-format": "^1.4.0",
+         "parse5": "npm:parse5",
+-        "tinybench": "^6.2.4"
++        "tinybench": "^6.2.5"
+     },
+     "devDependencies": {
+         "parse5-test-utils": "1.0.0"
+```
+
+**File**: `package-lock.json` (modified, +8/-8)
+```diff
+@@ -35,7 +35,7 @@
+             "dependencies": {
+                 "human-format": "^1.4.0",
+                 "parse5": "npm:parse5",
+-                "tinybench": "^6.2.4"
++                "tinybench": "^6.2.5"
+             },
+             "devDependencies": {
+                 "parse5-test-utils": "1.0.0"
+@@ -3130,9 +3130,9 @@
+             "license": "MIT"
+         },
+         "node_modules/tinybench": {
+-            "version": "6.2.4",
+-            "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.4.tgz",
+-            "integrity": "sha512-SQ52jEncXxbMCzJuY2A/jGIbbAu6NYsBWW7grz2pNE+EnzQdoGaoBfpk4qC/opE7qiUcGmGgaGIz5EoHdS1O9w==",
++            "version": "6.2.5",
++            "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.5.tgz",
++            "integrity": "sha512-b/8GRMdnY4cqkfCLyaFpTGIv1qwfi3oT0mWaepwT++6Z/ZrYehNfZZ2JDKVLKGhNoEkS3IIB1ELtCT0XS5DtOA==",
+             "license": "MIT",
+             "engines": {
+                 "node": ">=20.0.0"
+@@ -5395,7 +5395,7 @@
+                 "human-format": "^1.4.0",
+                 "parse5": "npm:parse5",
+                 "parse5-test-utils": "1.0.0",
+-                "tinybench": "^6.2.4"
++                "tinybench": "^6.2.5"
              }
-+            case $.NOSCRIPT: {
-+                if (this.options.scriptingEnabled) {
-+                    this.tokenizer.state = TokenizerMode.RAWTEXT;
-+                }
-+                break;
-+            }
-             case $.SCRIPT: {
-                 this.tokenizer.state = TokenizerMode.SCRIPT_DATA;
-                 break;
+         },
+         "parse5-html-rewriting-stream": {
+@@ -5612,9 +5612,9 @@
+             "dev": true
+         },
+         "tinybench": {
+-            "version": "6.2.4",
+-            "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.4.tgz",
+-            "integrity": "sha512-SQ52jEncXxbMCzJuY2A/jGIbbAu6NYsBWW7grz2pNE+EnzQdoGaoBfpk4qC/opE7qiUcGmGgaGIz5EoHdS1O9w=="
++            "version": "6.2.5",
++            "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.5.tgz",
++            "integrity": "sha512-b/8GRMdnY4cqkfCLyaFpTGIv1qwfi3oT0mWaepwT++6Z/ZrYehNfZZ2JDKVLKGhNoEkS3IIB1ELtCT0XS5DtOA=="
+         },
+         "tinyexec": {
+             "version": "1.3.1",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1949** (2026-11-27): chore(deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0 (@dependabot[bot])
+- **PR #1948** (2026-11-27): chore(deps): bump tinybench from 6.2.4 to 6.2.5 (@dependabot[bot])
 - **PR #1944** (2026-11-24): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
 - **PR #1943** (2026-11-24): fix(parser): parse a noscript fragment context as markup when scripting is disabled (@goranai)
 - **PR #1941** (2026-11-23): chore(deps-dev): bump @vitest/coverage-v8 from 5.1.0 to 5.1.1 (@dependabot[bot])
 - **PR #1940** (2026-11-23): chore(deps): bump tinybench from 6.2.3 to 6.2.4 (@dependabot[bot])
-- **PR #1939** (2026-11-23): chore(deps-dev): bump vitest from 5.1.0 to 5.1.1 (@dependabot[bot])
-- **PR #1936** (2026-11-20): chore(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0 (@dependabot[bot])
 
 ---
 
@@ -1769,52 +1912,63 @@ Co-authored-by: goranai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parser): parse a noscript fragment context as markup when scripting is disabled
+## X. deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0
 
 **RULE**:
-When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2412bb99`: parser): parse a noscript fragment context as markup when scripting is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de0102da`: deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/parser/index.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    describe('noscript fragment context', () => {
-        let noscript: Element;
-
-        beforeEach(() => {
-            noscript = (parseFragment('<noscript>') as { childNodes: Element[] }).childNodes[0];
-        });
-
-        it('parses its content as text when scripting is enabled', () => {
-            const fragment = parseFragment(noscript, '<p>a</p>', { scriptingEnabled: true });
-
-            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['#text']);
-            expect(serialize(fragment)).toBe('&lt;p&gt;a&lt;/p&gt;');
-        });
-
-        it('parses its content as markup when scripting is disabled', () => {
-            const fragment = parseFragment(noscript, '<p>a</p><b>x</b>', { scriptingEnabled: false });
-
-            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['p', 'b']);
-            expect(serialize(fragment)).toBe('<p>a</p><b>x</b>');
-        });
-    });
-
+                "typescript-eslint": "^8.74.0",
+            "version": "8.74.0",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.74.0.tgz",
+            "integrity": "sha512-z3KXk1+Vm+d82ZRplOoC89ho4Rf1da5ju6sx8//92GnN532U62DGPjECXkkVqtYzIv0zoJlpO39SX2Z9tk6LVw==",
+                "@typescript-eslint/scope-manager": "8.74.0",
+                "@typescript-eslint/type-utils": "8.74.0",
+                "@typescript-eslint/utils": "8.74.0",
+                "@typescript-eslint/visitor-keys": "8.74.0",
+                "@typescript-eslint/parser": "^8.74.0",
+            "version": "7.0.16",
+            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.16.tgz",
+            "integrity": "sha512-52N+Y4HRMOJmbLmr+DqO4iSRyyB7N52gm7PWCT6h0p978+oKbqHCB7gIJIwZvBUsjlSdWbrBFqUSmIFNZMpn0A==",
+            "version": "8.74.0",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.74.0.tgz",
+            "integrity": "sha512-ecr8AYdig7avVkxaHdQvxHnIJ/mOyliO4Gv/uWF8q69vBew/z3sexqBwHUZX5Vql+Ns0w4sH6gBLkICGbOvJkA==",
+                "@typescript-eslint/scope-manager": "8.74.0",
+                "@typescript-esl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                "typescript-eslint": "^8.73.0",
+            "version": "8.73.0",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.73.0.tgz",
+            "integrity": "sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==",
+                "@typescript-eslint/scope-manager": "8.73.0",
+                "@typescript-eslint/type-utils": "8.73.0",
+                "@typescript-eslint/utils": "8.73.0",
+                "@typescript-eslint/visitor-keys": "8.73.0",
+                "@typescript-eslint/parser": "^8.73.0",
+            "version": "7.0.14",
+            "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
+            "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
+            "version": "8.73.0",
+            "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.73.0.tgz",
+            "integrity": "sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==",
+                "@typescript-eslint/scope-manager": "8.73.0",
+                "@typescript-esl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2412bb99` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de0102da` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

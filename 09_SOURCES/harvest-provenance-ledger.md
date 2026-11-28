@@ -13969,3 +13969,4 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `bb3a487b` | Multi-dimensional audit evidence | 2026-11-28T01:54:51.189Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `4e3fd8c9` | Multi-dimensional audit evidence | 2026-11-28T01:54:57.211Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `091ebe85` | Multi-dimensional audit evidence | 2026-11-28T01:54:59.469Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `de0102da` | Multi-dimensional audit evidence | 2026-11-28T02:03:38.755Z |

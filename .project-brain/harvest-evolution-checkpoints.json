@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:55:08.878Z",
+  "last_updated": "2026-11-28T02:03:51.605Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T01:26:58.382Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-28T01:45:30.459Z",
+      "processed_at": "2026-11-28T02:03:50.624Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-28T00:09:50.800Z",
+      "processed_at": "2026-11-28T02:03:49.553Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -703,9 +703,9 @@
       "staged_for_review": 1
     },
     "inikulin-parse5-learnings.md": {
-      "processed_at": "2026-11-24T17:34:05.077Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-28T02:03:47.249Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "apache-shardingsphere-learnings.md": {
       "processed_at": "2026-11-27T22:55:26.586Z",
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5193,
+  "total_dossiers_evaluated": 5196,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3931
+  "total_staged_for_review": 3934
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:55:08.042Z",
+  "last_updated": "2026-11-28T02:03:50.980Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-0FO8",
+      "id": "CD-O0G3",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0FO8-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-O0G3-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -73894,6 +73894,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-NR7H",
+      "directive_title": "bump typescript-eslint from 8.73.0 to 8.74.0",
+      "source_repo": "inikulin/parse5",
+      "source_commit": "de0102da",
+      "staged_file": "11_INBOX/candidate-directives/CD-NR7H-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-NYU7",
+      "directive_title": "deps-dev): bump typescript-eslint from 8.73.0 to 8.74.0",
+      "source_repo": "inikulin-parse5-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NYU7-deps-dev-bump-typescript-eslint-from-8-73-0-to-8-74-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-28",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-BBB0A1",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BBB0A1-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-E66D7F",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E66D7F-bump-version-number.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

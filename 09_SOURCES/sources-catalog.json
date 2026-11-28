@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "2412bb99",
+    "sourceVersion": "de0102da",
     "license": "MIT",
-    "contentHash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
-    "lastHarvestedAt": "2026-11-24T17:33:08.758Z",
+    "contentHash": "5ce1c10865b46482aa7b5ca522fc2dbb7f26e4c704857c879d3b354d607e9f42",
+    "lastHarvestedAt": "2026-11-28T02:03:38.755Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {

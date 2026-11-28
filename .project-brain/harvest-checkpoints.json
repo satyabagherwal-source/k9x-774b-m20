@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:54:59.480Z",
+  "last_updated": "2026-11-28T02:03:38.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
-      "verified_at": "2026-11-24T17:33:08.777Z",
+      "content_hash": "5ce1c10865b46482aa7b5ca522fc2dbb7f26e4c704857c879d3b354d607e9f42",
+      "verified_at": "2026-11-28T02:03:38.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:33:08.777Z"
+      "last_updated": "2026-11-28T02:03:38.763Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",
