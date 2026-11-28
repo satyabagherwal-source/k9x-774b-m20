@@ -14057,3 +14057,6 @@
 | `CYCLE-20261128-QWTT` | `2026-11-28T13:17:57.041Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11102` | Yes (`3a9795e0...`) |
 | `CYCLE-20261128-RCCO` | `2026-11-28T13:18:17.160Z` | `gitroomhq/postiz-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11103` | Yes (`4592fa4a...`) |
 | `CYCLE-20261128-J3GV` | `2026-11-28T13:39:52.015Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11104` | Yes (`ccc1d7a7...`) |
+| `CYCLE-20261128-3IA8` | `2026-11-28T13:55:44.336Z` | `avajs/ava` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`0bd27cc8...`) |
+| `CYCLE-20261128-3MS2` | `2026-11-28T13:55:50.162Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11105` | Yes (`014f791d...`) |
+| `CYCLE-20261128-3SIM` | `2026-11-28T13:55:57.598Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11106` | Yes (`67f6933b...`) |

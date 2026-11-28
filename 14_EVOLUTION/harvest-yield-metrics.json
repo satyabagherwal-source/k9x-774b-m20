@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T13:39:52.025Z",
-  "total_cycles_completed": 13331,
-  "total_learnings_persisted": 13331,
-  "total_rules_promoted": 12029,
+  "last_updated": "2026-11-28T13:55:57.609Z",
+  "total_cycles_completed": 13334,
+  "total_learnings_persisted": 13334,
+  "total_rules_promoted": 12032,
   "history": [
-    {
-      "timestamp": "2026-11-27T17:50:22.208Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:08:17.500Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T18:08:25.591Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T18:08:29.855Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-28T13:39:52.025Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:55:44.347Z",
+      "repository": "avajs/ava",
+      "learningId": "learn-github-avajs-ava",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:55:50.173Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T13:55:57.609Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

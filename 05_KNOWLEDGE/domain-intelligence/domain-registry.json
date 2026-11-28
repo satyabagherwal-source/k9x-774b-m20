@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T13:39:58.597Z",
+  "last_updated": "2026-11-28T13:56:04.073Z",
   "total_records": 2902,
   "domains": {
     "A": {
@@ -11354,8 +11354,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "9fd25433fe9a32e220a90bc6a7e7d4ccc4a2a75e75815a9c525eb61761d08056",
-      "created_at": "2026-11-27T17:50:16.450Z"
+      "content_hash": "621cec3c551ddf12c9ff69bc275902f328cad47bd1131fa7d026a2cbe9a62b3b",
+      "created_at": "2026-11-28T13:55:50.639Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -11474,8 +11474,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "5fc39bb64121ea86775442afca30302f2a369abee5842376472e8e8741dad720",
-      "created_at": "2026-11-27T17:50:26.317Z"
+      "content_hash": "00828afbb2990a382e85c5195a7e53e365adbfbbd47f97324eba2fd99200750a",
+      "created_at": "2026-11-28T13:56:02.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -16665,8 +16665,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8c898f7576faa860e8412b0d9b9b1e5af78008d73028b7dbd9ac5f92e7bf6529",
-      "created_at": "2026-11-28T12:35:57.594Z"
+      "content_hash": "ebdda2924322abc3cb1162e711ab86f67b7614c69469700ad42aaa2ff9f24a7b",
+      "created_at": "2026-11-28T13:55:58.091Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -16725,8 +16725,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "02dc6ac42b0878b94139ceed86ac06777cb06d0e23225cd8a12b82f6b9bc2d09",
-      "created_at": "2026-11-28T12:36:04.274Z"
+      "content_hash": "a1e772e341f0393efde815649d93c57cddd84a590569f14183c69e8ac8344a71",
+      "created_at": "2026-11-28T13:56:04.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -27243,8 +27243,8 @@
       "title": "Architecture Intelligence: avajs/ava Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-architecture-intelligence-avajs-ava-core-invariants.md",
       "repository": "avajs/ava",
-      "content_hash": "3b3cd7a08a97c55b3d794f79d121fe5bc85c37facf2f524675d830afef0c3238",
-      "created_at": "2026-11-25T01:44:20.890Z"
+      "content_hash": "3807f54f05e5cab49168bf1b4b29c08dad72829d15dc68701d7ff20901c4dcdd",
+      "created_at": "2026-11-28T13:55:44.816Z"
     },
     "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apple-foundationdb-core-invariants",
@@ -27304,8 +27304,8 @@
       "title": "Architecture Intelligence: avajs-ava-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-learnings-architecture-intelligence-avajs-ava-learnings-core-invariant.md",
       "repository": "avajs-ava-learnings",
-      "content_hash": "bf7f0183b90a3ee7a06ece6dce0b951e8fb0baf51f71f48c70ffa01eb6ec9842",
-      "created_at": "2026-11-25T01:44:37.184Z"
+      "content_hash": "e18c3ddc0841e85efa6689a28552d61aa4f155cac8e04380e2b7d6571b2bd149",
+      "created_at": "2026-11-28T13:56:01.773Z"
     },
     "DOM-I-6DA6494F": {
       "record_id": "DOM-I-6DA6494F",

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QT00",
-    "timestamp": "2026-11-26T18:50:27.024Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1IC3",
-    "timestamp": "2026-11-26T18:58:46.419Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "01d3b680b535fb0420fee712f7afc016bb9cf726d5621a6b282143917f181a1c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1JDR",
-    "timestamp": "2026-11-26T18:58:47.775Z",
-    "repository": "o2sh/onefetch",
-    "learningId": "learn-github-o2sh-onefetch",
-    "contentHash": "5273ec8707dcb6842af72a7a707f7b5581c6359a2619b0979f00598d9306ccb7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-1QH9",
     "timestamp": "2026-11-26T18:58:56.973Z",
     "repository": "aws/aws-cdk",
@@ -7490,6 +7445,51 @@
     "repository": "temporalio/temporal",
     "learningId": "learn-github-temporalio-temporal",
     "contentHash": "ccc1d7a7faffcba1a864e3ebb93752c942ff547384f36bdd2477fe16554f7e3e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-3IA8",
+    "timestamp": "2026-11-28T13:55:44.336Z",
+    "repository": "avajs/ava",
+    "learningId": "learn-github-avajs-ava",
+    "contentHash": "0bd27cc83937356bfd9ef1ef062c050bc5c33287bfc121931020d7bbce56be8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-3MS2",
+    "timestamp": "2026-11-28T13:55:50.162Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "014f791d4b578fb5e0b1494bcaced4dd4ee595e3f4eae47e31bbd7bc1665c49a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-3SIM",
+    "timestamp": "2026-11-28T13:55:57.598Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

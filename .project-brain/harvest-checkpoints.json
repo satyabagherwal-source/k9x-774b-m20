@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T13:39:52.029Z",
+  "last_updated": "2026-11-28T13:55:57.612Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
-      "verified_at": "2026-11-28T12:35:57.124Z",
+      "content_hash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
+      "verified_at": "2026-11-28T13:55:57.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-28T12:35:57.124Z"
+      "last_updated": "2026-11-28T13:55:57.611Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "d3d5c229d0144ab01db63a9120d91e9641239177de2609be20ff4bdbce04ae45",
-      "verified_at": "2026-11-27T17:50:16.029Z",
+      "content_hash": "014f791d4b578fb5e0b1494bcaced4dd4ee595e3f4eae47e31bbd7bc1665c49a",
+      "verified_at": "2026-11-28T13:55:50.175Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T17:50:16.029Z"
+      "last_updated": "2026-11-28T13:55:50.175Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "7e7b94bc399697b9d4532c006d8774a4000d7971c39160db425d06007ebf339f",
-      "verified_at": "2026-11-25T01:44:20.485Z",
+      "content_hash": "0bd27cc83937356bfd9ef1ef062c050bc5c33287bfc121931020d7bbce56be8f",
+      "verified_at": "2026-11-28T13:55:44.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:44:20.485Z"
+      "last_updated": "2026-11-28T13:55:44.349Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",

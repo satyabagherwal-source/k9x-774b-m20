@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T13:39:58.795Z",
+  "last_updated": "2026-11-28T13:56:04.284Z",
   "total_verified_learnings": 9152,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 27142,
+  "total_items": 27147,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216253,8 +216253,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "e6e92e58",
-      "content_hash": "d3d5c229d0144ab01db63a9120d91e9641239177de2609be20ff4bdbce04ae45",
+      "source_version": "e4fa4448",
+      "content_hash": "014f791d4b578fb5e0b1494bcaced4dd4ee595e3f4eae47e31bbd7bc1665c49a",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -216322,6 +216322,11 @@
           "number": 10939,
           "title": "extract pluggable handshake seams on initiator and responder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11105,
+          "title": "document thread requirements for scheduler creation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216329,7 +216334,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T17:50:15.713Z",
+      "verified_at": "2026-11-28T13:55:49.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216371,10 +216376,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "e6e92e58",
-      "content_hash": "9fd25433fe9a32e220a90bc6a7e7d4ccc4a2a75e75815a9c525eb61761d08056",
+      "source_version": "e4fa4448",
+      "content_hash": "621cec3c551ddf12c9ff69bc275902f328cad47bd1131fa7d026a2cbe9a62b3b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:50:16.450Z"
+      "persisted_at": "2026-11-28T13:55:50.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -216383,10 +216388,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "e6e92e58",
-      "content_hash": "5563dac4c0544a21cd3ac60fe51371327c727b762cf5a5533eabdc846c9f0aa3",
+      "source_version": "e4fa4448",
+      "content_hash": "8d7532424213dc0c01dcd988b5f4c645c65e19d1514d28ab64bac1c26959fad5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:50:16.631Z"
+      "persisted_at": "2026-11-28T13:55:50.849Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216737,9 +216742,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fc39bb64121ea86775442afca30302f2a369abee5842376472e8e8741dad720",
+      "content_hash": "00828afbb2990a382e85c5195a7e53e365adbfbbd47f97324eba2fd99200750a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:50:26.317Z"
+      "persisted_at": "2026-11-28T13:56:02.768Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216749,9 +216754,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "163e7e54fd64c06b53dbbb1478982b9b058aedca64ab076bea50cc87b7f9da25",
+      "content_hash": "d2b903cbbfeafeba5690d46503b1140a012e6a9cd4a3ba8a9a43e526e1b979ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:50:26.516Z"
+      "persisted_at": "2026-11-28T13:56:02.985Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -231651,8 +231656,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6e57e554",
-      "content_hash": "e082739e7aa4ff6876a254ab4204989fa4d5a1ce179ce142261e2f2f7d5e735f",
+      "source_version": "1772058f",
+      "content_hash": "67f6933b032a67b3abe1738c97bf77515c61c72bb303c0b4f196bf0d343f70e5",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -232005,6 +232010,11 @@
           "number": 11083,
           "title": "Draft NUC 160 C# String Trimming Method Alias",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11106,
+          "title": "Draft NUC 162 Population Instance Removal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232012,7 +232022,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T12:35:56.842Z",
+      "verified_at": "2026-11-28T13:55:57.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232066,10 +232076,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6e57e554",
-      "content_hash": "e60acb09f65b0d9d8b0045b0e3961d082b4a694a757883d6950f4f69d019377d",
+      "source_version": "1772058f",
+      "content_hash": "d39eb309b1ea56fe107dcce770c74ba99a59403e89e148fff636bb5e9861f64c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T12:35:57.803Z"
+      "persisted_at": "2026-11-28T13:55:58.297Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233269,9 +233279,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "05307cbe5cb99cd06518d20f484f388cca391e9d0899e4453b493d40661feae0",
+      "content_hash": "862c2875b2d4ea451753d8173c4667dcafc3a62d9d275375e9c15461c735f439",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T12:36:04.494Z"
+      "persisted_at": "2026-11-28T13:56:04.284Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -233795,10 +233805,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6e57e554",
-      "content_hash": "8c898f7576faa860e8412b0d9b9b1e5af78008d73028b7dbd9ac5f92e7bf6529",
+      "source_version": "1772058f",
+      "content_hash": "ebdda2924322abc3cb1162e711ab86f67b7614c69469700ad42aaa2ff9f24a7b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T12:35:57.594Z"
+      "persisted_at": "2026-11-28T13:55:58.091Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
@@ -233820,9 +233830,9 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "02dc6ac42b0878b94139ceed86ac06777cb06d0e23225cd8a12b82f6b9bc2d09",
+      "content_hash": "a1e772e341f0393efde815649d93c57cddd84a590569f14183c69e8ac8344a71",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T12:36:04.274Z"
+      "persisted_at": "2026-11-28T13:56:04.073Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -276537,11 +276547,16 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "fc83bdc0",
-      "content_hash": "7e7b94bc399697b9d4532c006d8774a4000d7971c39160db425d06007ebf339f",
+      "source_version": "8988a729",
+      "content_hash": "0bd27cc83937356bfd9ef1ef062c050bc5c33287bfc121931020d7bbce56be8f",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7973,
+          "title": "Empirical Invariant Guard in package.json",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8914,
           "title": "Invariant Isolation of Upstream Runtime Flags across Worker Thread Spawns",
@@ -276563,7 +276578,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:44:20.253Z",
+      "verified_at": "2026-11-28T13:55:44.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276631,10 +276646,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-avajs-ava-architecture-intelligence-avajs-ava-core-invariants.md",
       "title": "Architecture Intelligence: avajs/ava Core Invariants",
       "repository": "avajs/ava",
-      "source_version": "fc83bdc0",
-      "content_hash": "3b3cd7a08a97c55b3d794f79d121fe5bc85c37facf2f524675d830afef0c3238",
+      "source_version": "8988a729",
+      "content_hash": "3807f54f05e5cab49168bf1b4b29c08dad72829d15dc68701d7ff20901c4dcdd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:44:20.890Z"
+      "persisted_at": "2026-11-28T13:55:44.816Z"
     },
     "agent_contract-agent-contract-avajs-ava-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-avajs-ava-autonomous-specialist-persona",
@@ -276655,10 +276670,10 @@
       "relative_path": "08_VERIFICATION/avajs-ava-verification-protocol-empirical-defect-shield-for-avajs-ava.md",
       "title": "Verification Protocol: Empirical Defect Shield for avajs/ava",
       "repository": "avajs/ava",
-      "source_version": "fc83bdc0",
-      "content_hash": "e67d17728794b41f34637431adf8ad60d20d99cee25829fd7374d0374974363e",
+      "source_version": "8988a729",
+      "content_hash": "a2fef56c8f14e9a49f247e6f2f3148905c8165b3973a4e6f0b48079580c665fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:44:21.067Z"
+      "persisted_at": "2026-11-28T13:55:45.033Z"
     },
     "rule-8916": {
       "learning_id": "rule-8916",
@@ -276946,9 +276961,9 @@
       "title": "Architecture Intelligence: avajs-ava-learnings Core Invariants",
       "repository": "avajs-ava-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf7f0183b90a3ee7a06ece6dce0b951e8fb0baf51f71f48c70ffa01eb6ec9842",
+      "content_hash": "e18c3ddc0841e85efa6689a28552d61aa4f155cac8e04380e2b7d6571b2bd149",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:44:37.184Z"
+      "persisted_at": "2026-11-28T13:56:01.773Z"
     },
     "agent_contract-agent-contract-avajs-ava-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-avajs-ava-learnings-autonomous-specialist-persona",
@@ -276970,9 +276985,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for avajs-ava-learnings",
       "repository": "avajs-ava-learnings",
       "source_version": "HEAD",
-      "content_hash": "4655fa60b81ab76319380bdbb24da20e10d829d0f426c54fcd8144427d93dd44",
+      "content_hash": "b13d792331df3054d6837317f6e5151874763ad1bb95196f14ffd40d3f01373a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:44:37.363Z"
+      "persisted_at": "2026-11-28T13:56:01.986Z"
     },
     "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i": {
       "item_id": "domain_intelligence-content-information-intelligence-dkhamsing-open-source-ios-apps-learnings-core-i",
@@ -366023,26 +366038,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7973,
       "title": "Empirical Invariant Guard in package.json",
-      "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "5b80fdec",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "8988a729",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-28T10:36:10.523Z"
+      "verified_at": "2026-11-28T13:55:44.055Z"
     },
     "candidate_directive-empirical-invariant-guard-in-package-json": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-package-json",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Z1WT-empirical-invariant-guard-in-package-json.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3VK7-empirical-invariant-guard-in-package-json.md",
       "title": "Empirical Invariant Guard in package.json",
-      "repository": "qwikdev-qwik-learnings",
+      "repository": "avajs-ava-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0ad8c1f9ecec4b0a51f8a52f86654001a4797e69e59c0d13d276b44d0d7edca",
+      "content_hash": "c7f2c805de1a222186ee5b8da7ce81fbddccadfdac37f982028f7cedfc420ab5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-28T10:36:19.184Z"
+      "persisted_at": "2026-11-28T13:56:01.544Z"
     },
     "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-meshery-meshery-core-invariants",
@@ -373185,6 +373200,70 @@
       "content_hash": "2d80183e83ede99328e1d5cfbf881ad36b97a4ce308f4c5863b1d09750ebc4e4",
       "domain_letter": "I",
       "persisted_at": "2026-11-28T13:39:55.959Z"
+    },
+    "rule-11105": {
+      "learning_id": "rule-11105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11105,
+      "title": "document thread requirements for scheduler creation",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "e4fa4448",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T13:55:49.898Z"
+    },
+    "candidate_directive-document-thread-requirements-for-scheduler-creation": {
+      "item_id": "candidate_directive-document-thread-requirements-for-scheduler-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3MZC-document-thread-requirements-for-scheduler-creation.md",
+      "title": "document thread requirements for scheduler creation",
+      "repository": "envoyproxy/envoy",
+      "source_version": "e4fa4448",
+      "content_hash": "e89953bce923dffb8d67b7e0059ed9489f28bb012d1883766b26e65cf6f22b18",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T13:55:50.428Z"
+    },
+    "rule-11106": {
+      "learning_id": "rule-11106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11106,
+      "title": "Draft NUC 162 Population Instance Removal",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "1772058f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T13:55:57.326Z"
+    },
+    "candidate_directive-draft-nuc-162-population-instance-removal": {
+      "item_id": "candidate_directive-draft-nuc-162-population-instance-removal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3XC8-draft-nuc-162-population-instance-removal.md",
+      "title": "Draft NUC 162 Population Instance Removal",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a4b4bfdb78e8aa519ed26b1d1b728fed6efb5a2279743105c2b6e80d859f128",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T13:56:03.851Z"
+    },
+    "candidate_directive-dynamic_modules-document-thread-requirements-for-scheduler-creation": {
+      "item_id": "candidate_directive-dynamic_modules-document-thread-requirements-for-scheduler-creation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3WCA-dynamic_modules-document-thread-requirements-for-scheduler-creation.md",
+      "title": "dynamic_modules: document thread requirements for scheduler creation",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e96e65e1da6474ccd5802153a46c9704e77d1e83a5d135da5a1d95fa34b26d01",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-28T13:56:02.558Z"
     }
   },
   "ai-builder-brain": {
