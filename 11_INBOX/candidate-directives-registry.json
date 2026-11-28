@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T15:54:30.950Z",
+  "last_updated": "2026-11-28T16:12:53.554Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-C7HQ",
+      "id": "CD-ZVZL",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-C7HQ-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZVZL-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -69127,11 +69127,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-GRIC",
+      "id": "CD-ZTKY",
       "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-GRIC-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZTKY-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -76743,6 +76743,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-10BC79-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-AD8443",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AD8443-ci-cache-the-pdfium-sdk-alongside-cargo-.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-145A68",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-145A68-bump-version-number.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-030DEA",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-030DEA-bump-version-number.md",
       "staged_date": "2026-11-28"
     }
   ]

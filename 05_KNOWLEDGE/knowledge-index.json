@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T15:54:31.403Z",
+  "last_updated": "2026-11-28T16:12:54.124Z",
   "total_verified_learnings": 9153,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "61013e2cf3a3d2b2e25cdccc2e00c3ec3f151bc5ca62e1c27d234ddaba8519b0",
+      "content_hash": "5334f2c2acd057f6ab295f002c59ca75f7b6826040791382289fa95a5120154b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T14:06:03.390Z"
+      "persisted_at": "2026-11-28T16:12:51.019Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcdc9eeb541b34b7542a18aeb035696014626b7abb73d24138641399cbf7f387",
+      "content_hash": "6268bd6434854e47a288335294c153f68ef334336bbb4eaf2197917fc399fc50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T14:06:03.633Z"
+      "persisted_at": "2026-11-28T16:12:51.265Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219857,9 +219857,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "68a928aa73047f165b5976f0e3ffd03fcd596761e95ce4900e38def815512999",
+      "content_hash": "babafc025d581842c1b1dcc77cc4ce88e2b340d772f0e39face60f4e7cb2fde8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:54:28.939Z"
+      "persisted_at": "2026-11-28T16:12:53.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219869,9 +219869,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "16c8d174b42c9a49e2bda47a667227ef47e4392bfacdd1c250738bb738bce6e9",
+      "content_hash": "59bf5b8d6dee539b037e5a871a2699a9b6d228501d212ed418610f5ccc95e6f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:54:29.167Z"
+      "persisted_at": "2026-11-28T16:12:54.124Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230616,9 +230616,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "72ca2504a61fc2a0ecf0bbc1c83c5abcbd5fc2d614f6b5aae085a3d5aed50d7d",
+      "content_hash": "ae195171ba4026f21384eb75dd40182f330552ebeb23b8fec187371f608d0ee7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:27:55.134Z"
+      "persisted_at": "2026-11-28T16:12:52.477Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230628,9 +230628,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a0e3df2d7e96f40f99702b895d379a261bb167ec5aca8f45c59439d0efcd13d",
+      "content_hash": "c2f15cbd558338af1d34499d308ecd24df5209a635c63a4a02c3a2016554ac01",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T15:27:55.381Z"
+      "persisted_at": "2026-11-28T16:12:52.751Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -302007,9 +302007,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9879c21c6901545f0201e2716b2ee2b05a7f649b646cf3811455070ee7c804c7",
+      "content_hash": "d72810a419c130e3bf1bbfa1bc5a1c4ca89d7f75eb45004f43b45480f6d696d4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T14:06:03.100Z"
+      "persisted_at": "2026-11-28T16:12:50.724Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -351338,13 +351338,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-C7HQ-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZVZL-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b3b1c6b5ee2c22313b91967003736945666173caefce6d1a09405c735124315",
+      "content_hash": "e14137ec31938c5d820f9046b5cfaac253dbbdcbd3e5d83875cea9857c2ddcc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T15:54:28.719Z"
+      "persisted_at": "2026-11-28T16:12:53.554Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -363840,13 +363840,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GRIC-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZTKY-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f302edc3fca528245466bc7d399dfe020f81a660a304e10ebc7dc33615581c63",
+      "content_hash": "f5a6e949e3ade4d88a5b9fd779137c01394244ae806adbc8eeae262ad6ef9f64",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T14:06:02.822Z"
+      "persisted_at": "2026-11-28T16:12:50.435Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
