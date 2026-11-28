@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T06:13:27.534Z",
+  "last_updated": "2026-11-28T06:22:16.176Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26993,
+  "total_items": 26997,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "584f39273e0a4655d8799c0c310ffba484d85bb81831dfeec102b469c86d97e2",
+      "content_hash": "67e385a88baf9da7b38c40bd0a1d7577e93d06c24d8ab20053c5ec6f7270b2ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T05:46:54.913Z"
+      "persisted_at": "2026-11-28T06:22:16.176Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0031c33e8d006fd1f667d4b2b678cd8716db2ac82cafa12a5e1ba1976e33c46",
+      "content_hash": "2a846bf892de07164d409846ada389e415bfa174cfeca5c6266a9741e98c1631",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:23:15.315Z"
+      "persisted_at": "2026-11-28T06:22:14.076Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e37c776a6c0f945654d5a9f8bb719af317f77ac9aea12d603d6fcc0f78b3517a",
+      "content_hash": "83912ac2e7d5a04a77443b1572b30f4ebf4c636237916727f782fc81c84f8f74",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T06:13:27.324Z"
+      "persisted_at": "2026-11-28T06:22:14.845Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b2f465646bf3e504c7441bc9298b7a0c88edfc91a4d93619ce5b8999a3afe16",
+      "content_hash": "40561ec904e8f65a5fdf51e642f84c934a298c8cc7b2963bd19e69c43b02ff5d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T06:13:27.534Z"
+      "persisted_at": "2026-11-28T06:22:15.053Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -240865,8 +240865,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "b5047de7",
-      "content_hash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
+      "source_version": "c7b96196",
+      "content_hash": "6efeb35f699ea81ac6659f8d7228c499580b6c00f37250e4f65cb1e317ebbdc6",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -240939,6 +240939,11 @@
           "number": 10764,
           "title": "Empirical Invariant Guard in MeshModelDetails.request.test.tsx",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11052,
+          "title": "Empirical Invariant Guard in dashboard.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240946,7 +240951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T13:23:10.574Z",
+      "verified_at": "2026-11-28T06:22:08.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241000,10 +241005,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "b5047de7",
-      "content_hash": "87efb22fe998d267c9b76943eab1386ce51b09aa712ae891e28ed09dc770b740",
+      "source_version": "c7b96196",
+      "content_hash": "ae35d94d1b763947e47a79aa6adf0e22b430c3eff4ef76bbdcb9212c099cea61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:23:11.517Z"
+      "persisted_at": "2026-11-28T06:22:09.762Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -278162,10 +278167,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "repository": "meshery/meshery",
-      "source_version": "c3d07784",
-      "content_hash": "eb0cc6b056a10b6cc1bed55e8d024ae7ef48115e93cd0117196d4592e5b64cf4",
+      "source_version": "c7b96196",
+      "content_hash": "143f40acace26987deeff7799b3b4fa429e5c2521dd9b4cc496b4b018e6324f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T19:37:19.014Z"
+      "persisted_at": "2026-11-28T06:22:09.344Z"
     },
     "rule-8954": {
       "learning_id": "rule-8954",
@@ -278237,9 +278242,9 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "3feaaf2a515dc01da3f68ca196d11203fa9fae19b48a40f0518f1a21030d8b9e",
+      "content_hash": "d7a393ef3e51334c8033e87ef6abcbb2b862c8961b2eeadfbc1d2f585ca4ce90",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T19:37:27.715Z"
+      "persisted_at": "2026-11-28T06:22:13.683Z"
     },
     "rule-8955": {
       "learning_id": "rule-8955",
@@ -359012,13 +359017,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MV45-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WC0E-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d87e07713e44bbea32aca6d34ad320bbf793ab7eb5beedaec04b84eef6015af9",
+      "content_hash": "1f8d1e01e9dd213c8486d0f237e7585fc88f851749e0c477aa413878961e3a33",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:46:54.347Z"
+      "persisted_at": "2026-11-28T06:22:15.761Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -359028,9 +359033,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2911676b6c39e5407854884c55cceffdac22a14b3f30ce302fed2d3056ee0b5f",
+      "content_hash": "c689b17b1221b0d958e97e8f4348a6d5a3ddc3cacf9c414d48f7743c152d8990",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T05:46:54.631Z"
+      "persisted_at": "2026-11-28T06:22:15.970Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361919,13 +361924,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-L03N-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WB59-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "14200aa944cc1b04292fd64a2cf7732dafb01808fc162e69bc9ac7389bb37e73",
+      "content_hash": "2a45c3c13d4f30eea3826e63f7c01905af7c387ebef82964768501dfa775beb6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T06:13:27.110Z"
+      "persisted_at": "2026-11-28T06:22:14.640Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -370963,6 +370968,56 @@
       "content_hash": "7c5c9a2e3a9acfe95167c100af95dd1b9d1de5eb681a606f2af64a9bbc72bf3d",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T06:13:25.156Z"
+    },
+    "rule-11052": {
+      "learning_id": "rule-11052",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11052,
+      "title": "Empirical Invariant Guard in dashboard.go",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "c7b96196",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:22:08.594Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-dashboard-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-dashboard-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WA85-empirical-invariant-guard-in-dashboard-go.md",
+      "title": "Empirical Invariant Guard in dashboard.go",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a74080cee99a00549454e57fa903cb62d1297dbe0fd173303536e6491150cbd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-28T06:22:13.446Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-meshery-meshery": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-meshery-meshery",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/meshery-meshery-skill-operational-integration-playbook-for-meshery-meshery.md",
+      "title": "Skill: Operational & Integration Playbook for meshery/meshery",
+      "repository": "meshery/meshery",
+      "source_version": "c7b96196",
+      "content_hash": "c5207db38082e383d547395c716e604968d2c44f3223b70651bdd0ec72aa4ddf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:22:09.556Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-meshery-meshery-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-meshery-meshery-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/meshery-meshery-learnings-skill-operational-integration-playbook-for-meshery-mes.md",
+      "title": "Skill: Operational & Integration Playbook for meshery-meshery-learnings",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dbeab545db29f760f804b12f422fb11ae05a6ab05314a970bfe33295b270f412",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:22:13.889Z"
     }
   },
   "ai-builder-brain": {

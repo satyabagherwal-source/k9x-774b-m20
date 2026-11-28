@@ -4,24 +4,24 @@
 {
   "source_repository": "meshery/meshery",
   "source_url": "https://github.com/meshery/meshery",
-  "source_version": "c3d07784",
+  "source_version": "c7b96196",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T19:37:18.809Z",
+  "timestamp": "2026-11-28T06:22:09.127Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meshery-meshery",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `c3d07784`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T19:37:18.809Z`  
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `c7b96196`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T06:22:09.127Z`  
 > **Learning ID**: `learn-github-meshery-meshery`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery/meshery:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T19:37:17.349Z  
+> **Harvest Timestamp**: 2026-11-28T06:22:07.453Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12340 stars
+- **Stars / Engagement**: 12354 stars
 
 ---
 
@@ -818,14 +818,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24413** (2026-11-26): **[UI] Handle empty component schema in Registry details**
-  *Symptoms*: **Notes for Reviewers**  This PR fixes #24410 by safely parsing `componentData?.component?.schema` in `ComponentContents` (`ui/components/registry/MeshModelDetails.tsx`) before reading `description`, preventing a `SyntaxError` crash when opening Registry components with an empty, whitespace-only, missing, `null`, non-object, or malformed `schema` (such as visual-annotation-only models like `kubecon-logo`).  ### Root Cause `ComponentContents` previously called `JSON.parse(componentData?.component?.schema)?.description` directly during render. When `component.schema` is `""` (the default serialized form for schema-less visual-annotation components in `schemas@v1.3.120`), whitespace-only, `undefined`, `null`, or malformed JSON, `JSON.parse` threw an uncaught `SyntaxError` in render and triggered `CustomErrorFallback`.  ### Changes - Added and exported `extractSchemaDescription(rawSchema: unknown): string | undefined` in `ui/components/registry/MeshModelDetails.tsx`:   - Trims string inputs and returns `undefined` when empty/whitespace-only.   - Parses JSON strings inside `try/catch` and returns `undefined` on parse errors.   - Supports pre-parsed schema objects and returns `description` only when it is a non-empty string on a plain object. - Updated `ComponentContents` to resolve `description` via:   `extractSchemaDescription(componentData?.component?.schema) || componentData?.description || undefined`   preserving schema descriptions first, falling back to component-level `desc
+- **Issue #24529** (2026-11-28): **fix(mesheryctl): allow istio-vet for Istio regardless of adapter location**
+  *Symptoms*: ## Intent  Address review on PR #24529: add a TestValidateMesh case for validate --adapter meshery-istio --spec istio-vet with no positional mesh, so the path where validate's PreRunE derives meshName from --adapter is covered. Uses a new sync.compose.golden fixture with Docker Compose adapter locations, allows that path's two sync requests, and resets meshName between cases. Test-only change.  ## What Changed  - `mesheryctl adapter validate --spec istio-vet` now decides support by checking whether the selected mesh is Istio (case-insensitive). It used to require the adapter URL to equal `meshery-istio:10000`. As a result, istio-vet now works when the Istio adapter runs at `localhost:10000` or behind a Kubernetes service name. Other meshes are still rejected with `only Istio supports istio-vet operation`. - `TestValidateMesh` adds three cases. The first runs istio-vet against an Istio adapter at a non-default location. The second checks that istio-vet is rejected for Linkerd and that no operation request is sent. The third runs `validate --adapter meshery-istio --spec istio-vet` with no positional mesh, so the mesh is resolved from `--adapter`. - To support these cases, the test table gains optional fields for the expected query, adapter and sync-call count. That last case uses a new `sync.compose.golden` fixture with Docker Compose adapter hostnames and expects two sync requests. The test also resets the package-level `meshName` between cases, and the rejection case has a ne
 
-- **Issue #24412** (2026-11-26): **[Blog] Subscribe button text is not clearly readable**
-  *Symptoms*: On the blog page (https://meshery.io/blog/), the "Subscribe" button in the Community Newsletter card on the right side is not clearly readable - the button text has poor contrast with the button background. This happens in both light mode and dark mode.  Steps to reproduce: 1. Go to https://meshery.io/blog/ 2. Look at the "Community Newsletter" card on the right side 3. The "Subscribe" button text is not clearly visible (in both light and dark mode)  Expected: the button text should be clearly readable in both modes.  (Screen recording of the issue will be attached separately.) 
-  **Post-Mortem & Fix Analysis**:
-  > I'd like to work on this.
-  > https://github.com/user-attachments/assets/d3bd19a3-53d6-4f5d-bc82-ca26f1e7dc87
+- **Issue #24515** (2026-11-28): **[Docs] Fix typos and table alignment in Providers and Docs Structure guides**
+  *Symptoms*: **Notes for Reviewers**  Fixes typos, phrasing, and a misaligned markdown table row across two documentation pages: - `docs/content/en/reference/extensibility/providers/index.md`:   - `Mehery UI` → `Meshery UI`   - Remove accidental leading spaces before `|/extension/\<your name here>|` in the extension points table   - `1. /logout - invalidating token` → `1. /logout - invalidate token` (consistent with `return valid token` / `return capabilities.json`) - `docs/content/en/project/contributing/contributing-docs-structure.md`:   - `Discoverying` → `Discovering`   - `securing the Meshery` → `securing Meshery`   - `all of Meshery adapters` → `all Meshery adapters`  **[Signed commits](https://docs.meshery.io/project/contributing#general-contribution-flow)** - [x] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Corrected spelling and grammar in the documentation structure and provider extension guides.   * Fixed indentation in the extension-path table.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -842,810 +839,393 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f676791` (2026-11-26)
-**Commit Message**: Merge pull request #24413 from BHAUMIK0711/fix/registry-empty-schema-crash
+### Incident Patch 1: `c7b96196` (2026-11-28)
+**Commit Message**: Merge pull request #24238 from SachinyadavAug20/fix/system-dashboard-args-validation
 
-[UI] Handle empty component schema in Registry details
+fix(mesheryctl): enforce exact positional argument validation in system dashboard
 
-**File**: `ui/components/registry/MeshModelDetails.request.test.tsx` (modified, +93/-0)
+**File**: `mesheryctl/internal/cli/root/system/dashboard.go` (modified, +8/-1)
 ```diff
-@@ -158,4 +158,97 @@ describe('MeshModelDetails component request', () => {
+@@ -63,12 +63,19 @@ func newDashboardOptions() *dashboardOptions {
+ 	}
+ }
  
-     expect(await screen.findByText('Declarative updates for Pods')).toBeInTheDocument();
-   });
++var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
 +
-+  const renderDetailsWithSchema = async (
-+    schema: unknown,
-+    extraFields: Record<string, unknown> = {},
-+  ) => {
-+    fetchMock.mockImplementationOnce(async () =>
-+      okJsonResponse({
-+        page: 0,
-+        pageSize: 1,
-+        totalCount: 1,
-+        components: [
-+          {
-+            ...componentDef,
-+            ...extraFields,
-+            component: {
-+              ...componentDef.component,
-+              ...(schema === Symbol.for('OMIT_SCHEMA') ? {} : { schema }),
-+            },
-+            registrant: { hostname: 'artifacthub' },
-+            duplicates: 0,
-+          },
-+        ],
-+      }),
-+    );
-+
-+    const store = configureStore({
-+      reducer: { [api.reducerPath]: api.reducer },
-+      middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
-+    });
-+
-+    render(
-+      <Provider store={store}>
-+        <MeshModelDetails
-+          view="Components"
-+          showDetailsData={{ type: 'Components', data: componentDef }}
-+        />
-+      </Provider>,
-+    );
-+
-+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-+  };
-+
-+  it('renders without crashing when component.schema is an empty string', async () => {
-+    await renderDetailsWithSchema('', {
-+      displayName: 'KubeCon Logo',
-+      description: 'Visual annotation logo component',
-+    });
-+
-+    expect(await screen.findByText('KubeCon Logo')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+    expect(screen.getByText('Visual annotation logo component')).toBeInTheDocument();
-+  });
-+
-+  it('renders without crashing when component.schema is whitespace-only', async () => {
-+    await renderDetailsWithSchema('   \n\t ');
-+
-+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+  });
-+
-+  it('renders without crashing when component.schema is missing (undefined)', async () => {
-+    await renderDetailsWithSchema(Symbol.for('OMIT_SCHEMA'));
-+
-+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+  });
-+
-+  it('renders without crashing when component.schema is null', async () => {
-+    await renderDetailsWithSchema(null);
-+
-+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+  });
-+
-+  it('renders without crashing when component.schema is malformed JSON', async () => {
-+    await renderDetailsWithSchema('{invalid-json');
-+
-+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+  });
-+
-+  it('renders without crashing when component.schema is a non-object JSON value', async () => {
-+    await renderDetailsWithSchema('[]');
-+
-+    expect(await screen.findByText('Deployment')).toBeInTheDocument();
-+    expect(screen.getByText('Description')).toBeInTheDocument();
-+  });
-+
-+  it('extracts description when component.schema is already an object', async () => {
-+    await renderDetailsWithSchema({ description: 'Pre-parsed schema description' });
-+
-+    expect(await screen.findByText('Pre-parsed schema description')).toBeInTheDocument();
-+  });
- });
+ var dashboardCmd = &cobra.Command{
+ 	Use:   "dashboard",
+ 	Short: "Open Meshery UI in browser.",
+ 	Long: `Open Meshery UI in browser.
+ 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
+-	Args: cobra.NoArgs,
++	Args: func(_ *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
++		}
++		return nil
++	},
+ 	Example: `
+ // Open Meshery UI in browser
+ mesheryctl system dashboard
 ```
 
-**File**: `ui/components/registry/MeshModelDetails.test.tsx` (modified, +27/-1)
+**File**: `mesheryctl/internal/cli/root/system/dashboard_test.go` (modified, +44/-0)
 ```diff
-@@ -91,7 +91,7 @@ vi.mock('next/dynamic', () => ({
-   default: () => () => <div data-testid="react-json" />,
- }));
+@@ -2,6 +2,7 @@ package system
  
--import MeshModelDetails from './MeshModelDetails';
-+import MeshModelDetails, { extractSchemaDescription } from './MeshModelDetails';
+ import (
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -10,6 +11,7 @@ import (
+ 	"testing"
  
- describe('MeshModelDetails', () => {
-   it('renders "No <view> selected" when data is empty', () => {
-@@ -122,3 +122,29 @@ describe('MeshModelDetails', () => {
-     expect(screen.getByTestId('details-container')).toHaveAttribute('data-is-empty', 'false');
-   });
- });
-+
-+describe('extractSchemaDescription', () => {
-+  it('returns description from a valid JSON schema string', () => {
-+    expect(extractSchemaDescription(JSON.stringify({ description: 'Pod workload' }))).toBe(
-+      'Pod workload',
-+    );
-+  });
-+
-+  it('returns description from an already-parsed schema object', () => {
-+    expect(extractSchemaDescription({ description: 'Object schema' })).toBe('Object schema');
-+  });
-+
-+  it.each([
-+    ['empty string', ''],
-+    ['whitespace-only string', '   \n\t '],
-+    ['undefined', undefined],
-+    ['null', null],
-+    ['malformed JSON', '{bad-json'],
-+    ['JSON array', '[]'],
-+    ['JSON primitive', '42'],
-+    ['blank description', JSON.stringify({ description: '   ' })],
-+    ['non-string description', JSON.stringify({ description: 123 })],
-+  ])('returns undefined for %s without throwing', (_label, input) => {
-+    expect(extractSchemaDescription(input)).toBeUndefined();
-+  });
-+});
-```
-
-**File**: `ui/components/registry/MeshModelDetails.tsx` (modified, +33/-1)
-```diff
-@@ -35,6 +35,33 @@ const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: fal
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	"github.com/stretchr/testify/assert"
+ )
  
- const ExportAvailable = true;
- 
-+/**
-+ * Safely extracts `description` from a component's serialized JSON schema
-+ * (or pre-parsed schema object), returning `undefined` for empty,
-+ * whitespace-only, missing, null, non-object, or malformed values.
-+ */
-+export const extractSchemaDescription = (rawSchema: unknown): string | undefined => {
-+  let parsed: unknown = rawSchema;
-+  if (typeof rawSchema === 'string') {
-+    const trimmed = rawSchema.trim();
-+    if (!trimmed) {
-+      return undefined;
-+    }
-+    try {
-+      parsed = JSON.parse(trimmed);
-+    } catch {
-+      return undefined;
-+    }
-+  }
-+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-+    const { description } = parsed as { description?: unknown };
-+    if (typeof description === 'string' && description.trim() !== '') {
-+      return description;
-+    }
-+  }
-+  return undefined;
-+};
+ // trackingBody wraps an io.ReadCloser to track when Close is called.
+@@ -136,3 +138,45 @@ func TestOpenMesheryUI(t *testing.T) {
+ 		})
+ 	}
+ }
 +
- type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
- const KeyValue = ({ property, value }: KeyValueProps) => {
-   let formattedValue = value;
-@@ -289,6 +316,11 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
-   const orderRight = ['registrant', 'duplicates'];
-   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
- 
-+  const description =
-+    extractSchemaDescription(componentData?.component?.schema) ||
-+    componentData?.description ||
-+    undefined;
++func TestDashboardCmdArgs(t *testing.T) {
++	expectedUsage := "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
++	expectedErr := utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", expectedUsage))
 +
-   return (
-     <>
-       {isSuccess && componentData ? (
-@@ -299,7 +331,7 @@ const ComponentContents = ({ componentDef }: { componentDef: any }) => {
-               iconSrc={componentData?.styles?.svgColor}
-             />
-           </div>
--          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
-+          <Description description={description} />
-           <RenderContents
-             metaDataLeft={metaDataLeft}
-             metaDataRight={metaDataRight}
++	tests := []struct {
++		Name          string
++		Args          []string
++		ExpectError   bool
++		ExpectedError error
++	}{
++		{
++			Name:        "valid with no positional arguments",
++			Args:        []string{},
++			ExpectError: false,
++		},
++		{
++			Name:          "invalid with unexpected positional argument",
++			Args:          []string{"unexpected-arg"},
++			ExpectError:   true,
++			ExpectedError: expectedErr,
++		},
++		{
++			Name:          "invalid with multiple unexpected positional arguments",
++			Args:          []string{"arg1", "arg2"},
++			ExpectError:   true,
++			ExpectedError: expectedErr,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.Name, func(t *testing.T) {
++			err := dashboardCmd.Args(dashboardCmd, tt.Args)
++			if tt.ExpectError {
++				assert.Error(t, err)
++				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
++			} else {
++				assert.NoError(t, err)
++			}
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `f28725f2` (2026-11-26)
-**Commit Message**: Merge pull request #24318 from singhaditya73/fix/design-download-progress
+### Incident Patch 2: `fa9bf0b7` (2026-11-28)
+**Commit Message**: Merge upstream/master into fix/system-dashboard-args-validation
 
-fix(ui): clear progress and notify errors on design download failure
+Signed-off-by: Sachin Chandra Yadav <[REDACTED_EMAIL]>
 
-**File**: `ui/components/designs/patterns/patterns-actions.test.tsx` (modified, +85/-3)
+**File**: `.github/scripts/fetch_meeting_minutes.sh` (modified, +5/-1)
 ```diff
-@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
- const encodeDesignFile = vi.fn((d: any) => `encoded:${JSON.stringify(d)}`);
- const getUnit8ArrayDecodedFile = vi.fn((f: any) => `decoded:${f}`);
- const downloadContent = vi.fn();
-+const updateProgress = vi.fn();
- const buildImportDesignRequestBody = vi.fn();
+@@ -6,7 +6,11 @@
+ set -e
  
- vi.mock('@sistent/sistent', () => ({
-@@ -37,7 +38,7 @@ vi.mock('../../../utils/fileDownloader', () => ({
- }));
+ # DISCOURSE_URL should be provided as an environment variable
+-DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io/}"
++DISCOURSE_URL="${DISCOURSE_URL:-https://discuss.meshery.io}"
++# Strip trailing slashes so path joins never produce double slashes (e.g. //t/...).
++while [[ "$DISCOURSE_URL" == */ ]]; do
++    DISCOURSE_URL="${DISCOURSE_URL%/}"
++done
+ TAG="meetings"
+ ARCHIVE_DIR=".github/meetings/archive"
  
- vi.mock('@/store/slices/mesheryUi', () => ({
--  updateProgress: vi.fn(),
-+  updateProgress: (...args: any[]) => updateProgress(...args),
- }));
- 
- vi.mock('../import-design-request', () => ({
-@@ -85,6 +86,8 @@ const baseDeps = () => {
- 
- describe('createPatternsActions', () => {
-   beforeEach(() => {
-+    downloadContent.mockReset();
-+    updateProgress.mockReset();
-     buildImportDesignRequestBody.mockReset();
-   });
- 
-@@ -188,7 +191,7 @@ describe('createPatternsActions', () => {
-     expect(deps.setSelectedRowData).toHaveBeenCalledWith(null);
-   });
- 
--  it('handleDownload triggers download and notifies', () => {
-+  it('handleDownload triggers download, notifies, and resets progress', () => {
-     const deps = baseDeps();
-     const actions = createPatternsActions(deps);
-     const stop = vi.fn();
-@@ -207,7 +210,86 @@ describe('createPatternsActions', () => {
-       source_type: 'manifest',
-       params: { param: 'v' },
-     });
--    expect(deps.notify).toHaveBeenCalled();
-+    expect(updateProgress.mock.calls).toEqual([
-+      [{ showProgress: true }],
-+      [{ showProgress: false }],
-+    ]);
-+    expect(deps.notify).toHaveBeenCalledWith({
-+      message: '"Design 1" design downloaded',
-+      event_type: 'info',
-+    });
-+  });
-+
-+  it('handleDownload clears progress and notifies error when downloadContent throws', () => {
-+    const deps = baseDeps();
-+    const actions = createPatternsActions(deps);
-+    const stop = vi.fn();
-+    downloadContent.mockImplementationOnce(() => {
-+      throw new Error('Download blocked');
-+    });
-+
-+    actions.handleDownload(
-+      { stopPropagation: stop } as any,
-+      { id: 'd1', name: 'Broken Design' },
-+      undefined,
-+      undefined,
-+    );
-+
-+    expect(stop).toHaveBeenCalled();
-+    expect(updateProgress.mock.calls).toEqual([
-+      [{ showProgress: true }],
-+      [{ showProgress: false }],
-+    ]);
-+    expect(deps.notify).toHaveBeenCalledTimes(1);
-+    expect(deps.notify).toHaveBeenCalledWith({
-+      message: 'Failed to download "Broken Design": Download blocked',
-+      event_type: 'error',
-+    });
-+  });
-+
-+  it('handleDownload falls back to generic design label and clears progress when design is null', () => {
-+    const deps = baseDeps();
-+    const actions = createPatternsActions(deps);
-+    const stop = vi.fn();
-+
-+    actions.handleDownload({ stopPropagation: stop } as any, null, undefined, undefined);
-+
-+    expect(stop).toHaveBeenCalled();
-+    expect(downloadContent).not.toHaveBeenCalled();
-+    expect(updateProgress.mock.calls).toEqual([
-+      [{ showProgress: true }],
-+      [{ showProgress: false }],
-+    ]);
-+    expect(deps.notify).toHaveBeenCalledTimes(1);
-+    expect(deps.notify).toHaveBeenCalledWith({
-+      message: 'Failed to download "design": Missing design ID',
-+      event_type: 'error',
-+    });
-+  });
-+
-+  it('handleDownload does not call downloadContent and clears progress when design.id is missing', () => {
-+    const deps = baseDeps();
-+    const actions = createPatternsActions(deps);
-+    const stop = vi.fn();
-+
-+    actions.handleDownload(
-+      { stopPropagation: stop } as any,
-+      { name: 'No ID Design' },
-+      undefined,
-+      undefined,
-+    );
-+
-+    expect(stop).toHaveBeenCalled();
-+    expect(downloadContent).not.toHaveBeenCalled();
-+    expect(updateProgress.mock.calls).toEqual([
-+      [{ showProgress: true }],
-+      [{ showProgress: false }],
-+    ]);
-+    expect(deps.notify).toHaveBeenCalledTimes(1);
-+    expect(deps.notify).toHaveBeenCalledWith({
-+      message: 'Failed to download "No ID Design": Missing design ID',
-+      event_type: 'error',
-+    });
-   });
- 
-   it('handleError surfaces the failure as a notification', () => {
 ```
 
-**File**: `ui/components/designs/patterns/patterns-actions.ts` (modified, +12/-7)
+**File**: `docs/assets/scss/_root-variables.scss` (modified, +1/-1)
 ```diff
-@@ -11,10 +11,7 @@ import { ACTION_TYPES } from './MesheryPatterns.constants';
+@@ -7,7 +7,7 @@
+   // Colors that will not change in the dark mode.
+   --brand-color-primary: #00d3a9;
+   --brand-color-secondary: #00b39f;
+-  --brand-color-secondary-50: rbga(0, 179, 159, .5);
++  --brand-color-secondary-50: rgba(0, 179, 159, 0.5);
+   --color-white: #fff;
+   // #EBC017;
+   // ////////////////////////////////////////////
+```
+
+**File**: `docs/assets/scss/_tabbed-menu.scss` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ section[class*="tabbed"] {
+   gap: 10px;
  
- /**
-  * Factory that returns the full set of CRUD / publish / clone / download
-- * handlers used by the Designs page. Behavior is identical to the
-- * original inline definitions in MesheryPatterns.tsx — the same RTK
-- * mutations are called with the same payloads, the same notifications
-- * are emitted, and the same modal/notification side-effects fire.
-+ * handlers used by the Designs page.
-  */
- export function createPatternsActions(deps) {
-   const {
-@@ -369,13 +366,21 @@ export function createPatternsActions(deps) {
-     e.stopPropagation();
-     updateProgress({ showProgress: true });
-     try {
-+      if (!design?.id) {
-+        throw new Error('Missing design ID');
-+      }
-       let id = design.id;
-       let name = design.name;
-       downloadContent({ id, name, type: 'pattern', source_type, params });
--      updateProgress({ showProgress: false });
-       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
--    } catch (e) {
--      console.error(e);
-+    } catch (error) {
-+      const errorMessage = error instanceof Error ? error.message : String(error);
-+      notify({
-+        message: `Failed to download "${design?.name ?? 'design'}": ${errorMessage}`,
-+        event_type: EVENT_TYPES.ERROR,
-+      });
-+    } finally {
-+      updateProgress({ showProgress: false });
-     }
-   };
+   &:hover {
+-    color: #888;
++    color: var(--color-secondary-dark);
+     background-color: var(--brand-color-secondary-50);
+   }
+ }
+```
+
+**File**: `docs/catalog/deployment/4c7673f9-d20c-4936-8890-e1fb5dcfc43f.md` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ layout: item
+-name: VoteSecure-Architecture
++name: VoteSecure-K8s-Architecture
+ publishedVersion: 0.0.1
+ userId: 14c3375e-e728-4813-a842-bbcc2607d9f8
+ userName: whoisphvl
+@@ -15,7 +15,7 @@ patternInfo: |
+ patternCaveats: |
+   Configured%20as%20a%20single-tier%20request%20chain%20routing%20frontend%20and%20API%20traffic%20sequentially%20through%20the%20web%20proxy%20service.%20Requires%20valid%20Kubernetes%20Secrets%20for%20database%20credentials%20and%20TLS%20termination%20before%20production%20deployment.
+ createdAt: 2026-11-21T02:25:43Z
+-permalink: catalog/deployment/votesecure-architecture-4c7673f9-d20c-4936-8890-e1fb5dcfc43f.html
++permalink: catalog/deployment/votesecure-k8s-architecture-4c7673f9-d20c-4936-8890-e1fb5dcfc43f.html
+ URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/4c7673f9-d20c-4936-8890-e1fb5dcfc43f/0.0.1/design.yml'
+ downloadLink: 4c7673f9-d20c-4936-8890-e1fb5dcfc43f/design.yml
+ ---
+\ No newline at end of file
+```
+
+**File**: `docs/content/en/project/contributing/contributing-adapters.md` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@ categories: [contributing]
  
+ Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).
+ 
+-With the [Contributing Overview]({{< ref "project/contributing/_index.md" >}}) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
++With the [Contributing Overview]({{< ref "project/contributing/_index.md" >}}) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking, GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
+ 
+ Each commit has to be signed off, see [Contributing Overview]({{< ref "project/contributing/_index.md" >}}).
+ 
+```
+
+**File**: `docs/content/en/project/contributing/contributing-docs-structure.md` (modified, +3/-3)
+```diff
+@@ -77,7 +77,7 @@ A task page shows how to do a **single** thing, typically by giving a short sequ
+ 
+ - **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
+ - **Configuration Management:** Designing infrastructure, managing configuration files.
+-- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
++- **Lifecycle Management:** Discovering, registering, configuring infrastructure
+   - Discovery (MeshSync): Greenfield/Brownfield scenarios.
+   - Managing Connections: Registering, updating, and deleting connections.
+   - Managing Credentials: Registering, updating, and deleting credentials.
+@@ -90,7 +90,7 @@ Designed for platform engineers, operators, DevOps, and other advanced users who
+ 
+ - **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
+ - **GitOps / DevOps & CI/CD**: Integrating Meshery with continuous integration and deployment pipelines.  
+-- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
++- **Best Practices:** Recommendations for securing Meshery, monitoring performance, managing versions.
+ - **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
+ - **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
+ - **Troubleshooting Guides:** Common errors, debugging, tips.  
+@@ -109,7 +109,7 @@ Meshery’s extensibility allows for seamless integration with existing systems
+   - **APIs:** Simple summary of Meshery's APIs.
+   - **Extension Points:** Providers, plugins, adapters, modules.
+ - **Integrations:** Meshery Models. Integrating Meshery with different infrastructure and systems.
+-- **Extensions:** List of all of Meshery adapters, plugins, and modules for different extension points.
++- **Extensions:** List of all Meshery adapters, plugins, and modules for different extension points.
+   - **Adapters:** Integrating Meshery with different infrastructure and extended capabilities.
+   - **Plugins:** Extended capabilities for Meshery.
+   - **Remote Providers:** Remote providers for additional functionality.
+```
+
+**File**: `docs/content/en/project/contributing/meshery-windows/index.md` (modified, +1/-1)
+```diff
+@@ -178,7 +178,7 @@ You are now ready to [contribute]({{< ref "project/contributing/_index.md" >}})
+ 
+ ## Using Hyper-V to install a linux VM
+ 
+-Here is a link to install linux VM using Hyper-V: [https://wiki.ubuntu.com/Hyper-V](https://wiki.ubuntu.com/Hyper-V)
++Here is a link to create a virtual machine using Hyper-V: [Create a virtual machine in Hyper-V](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v). Create a **Generation 2** VM, attach your Linux ISO at the **Installation Options** step, and, before its first boot, select **Microsoft UEFI Certificate Authority** as the Secure Boot template so the Linux installer can start.
+ 
+ 
+ ## Get the code
+```
+
+**File**: `docs/content/en/reference/extensibility/providers/index.md` (modified, +3/-3)
+```diff
+@@ -326,13 +326,13 @@ Interwoven into Meshery’s web-based user interface are a variety of extension
+ |navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
+ |userPrefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
+ |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
+-|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
+-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
++|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Meshery UI. Its work is to show active Meshery users under the same remote provider.|
++|/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
+ 
+ Remote Providers must fulfill the following endpoints:
+ 
+ 1. `/login` - return valid token
+-1. `/logout` - invalidating token
++1. `/logout` - invalidate token
+ 1. `/capabilities` - return capabilities.json
+ 
+ ## UI Extension Points
 ```
 
 ---
 
-### Incident Patch 3: `1797c0d4` (2026-11-26)
-**Commit Message**: no-mistakes(ci): Fixed failing CI check 'server Unit tests' by carrying forward cert-manager relationships into the newly seeded version directory models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships, resolving TestSeededModelsRetainRelationships
+### Incident Patch 3: `57daf4c8` (2026-11-28)
+**Commit Message**: Merge pull request #24499 from SachinyadavAug20/fix/24498-design-import-args-validation
 
-**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-certificate-ingress-tls.json` (added, +97/-0)
+fix(mesheryctl): reject positional arguments and trim file flag in design import
+
+**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,97 @@
-+{
-+  "evaluationQuery": "",
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "kind": "edge",
-+  "metadata": {
-+    "description": "A cert-manager Certificate issues its certificate into the Secret named by spec.secretName; an Ingress terminates TLS with that same Secret. The Certificate's secretName is written into the Ingress's first TLS entry (spec.tls.0.secretName) so the two stay in sync. This edge and the Kubernetes Secret -> Ingress TLS edge are alternative sources for the same spec.tls.0.secretName sink: connect the Ingress either to the Secret directly or to the cert-manager Certificate that issues it. A design that carries both converges when the two names agree; wiring both with disagreeing names is a contradictory design. The relationship is suggested for any Certificate/Ingress pair whose two fields are both still unset; setting the Certificate's spec.secretName is what drives the Ingress's first TLS entry.",
-+    "isAnnotation": false,
-+    "styles": {
-+      "primaryColor": "",
-+      "svgColor": "",
-+      "svgWhite": ""
-+    }
-+  },
-+  "model": {
-+    "displayName": "cert-manager",
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "model": {
-+      "version": "v1.22.0-alpha.0"
-+    },
-+    "name": "cert-manager",
-+    "registrant": {
-+      "kind": "github"
-+    },
-+    "version": "v1.0.0"
-+  },
-+  "schemaVersion": "relationships.meshery.io/v1beta2",
-+  "selectors": [
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "kind": "Certificate",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatorRef": [
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "secretName"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ],
-+        "to": [
-+          {
-+            "kind": "Ingress",
-+            "model": {
-+              "displayName": "Kubernetes",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "kubernetes",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatedRef": [
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "tls",
-+                  "0",
-+                  "secretName"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    }
-+  ],
-+  "status": "enabled",
-+  "subType": "reference",
-+  "type": "non-binding",
-+  "version": "v1.0.0"
-+}
+@@ -23,6 +23,7 @@ import (
+ 	"os"
+ 	"path"
+ 	"path/filepath"
++	"strings"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+@@ -60,6 +61,10 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+ 	`,
+ 	Args: func(_ *cobra.Command, args []string) error {
+ 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\n%s", errMsg))
++		}
++		file = strings.TrimSpace(file)
+ 		if file == "" {
+ 			utils.Log.Debug("File path not provided\n" + errMsg)
+ 			return ErrDesignFileNotProvided()
 ```
 
-**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-certificate-issuerref.json` (added, +175/-0)
+**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +67/-4)
 ```diff
-@@ -0,0 +1,175 @@
-+{
-+  "evaluationQuery": "",
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "kind": "edge",
-+  "metadata": {
-+    "description": "A Certificate names the issuer that signs it: the Issuer or ClusterIssuer name and kind are written into the Certificate's spec.issuerRef.",
-+    "isAnnotation": false,
-+    "styles": {
-+      "primaryColor": "",
-+      "svgColor": "",
-+      "svgWhite": ""
-+    }
-+  },
-+  "model": {
-+    "displayName": "cert-manager",
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "model": {
-+      "version": "v1.22.0-alpha.0"
-+    },
-+    "name": "cert-manager",
-+    "registrant": {
-+      "kind": "github"
-+    },
-+    "version": "v1.0.0"
-+  },
-+  "schemaVersion": "relationships.meshery.io/v1beta2",
-+  "selectors": [
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "kind": "ClusterIssuer",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatorRef": [
-+                [
-+                  "displayName"
-+                ],
-+                [
-+                  "component",
-+                  "kind"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ],
-+        "to": [
-+          {
-+            "kind": "Certificate",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatedRef": [
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "issuerRef",
-+                  "name"
-+                ],
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "issuerRef",
-+                  "kind"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    },
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "kind": "Issuer",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatorRef": [
-+                [
-+                  "displayName"
-+                ],
-+                [
-+                  "component",
-+                  "kind"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ],
-+        "to": [
-+          {
-+            "kind": "Certificate",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatedRef": [
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "issuerRef",
-+                  "name"
-+                ],
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "issuerRef",
-+                  "kind"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    }
-+  ],
-+  "status": "enabled",
-+  "subType": "reference",
-+  "type": "non-binding",
-+  "version": "v1.0.0"
-+}
-```
-
-**File**: `models/cert-manager/v1.22.0-alpha.0/v1.0.0/relationships/edge-non-binding-reference-issuer-ingress-annotation.json` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+{
-+  "evaluationQuery": "",
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "kind": "edge",
-+  "metadata": {
-+    "description": "Documents which Issuer or ClusterIssuer provisions an Ingress's certificate through the cert-manager ingress-shim annotations: a ClusterIssuer is named by metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer by metadata.annotations['cert-manager.io/issuer']. The annotation value is set manually today, because the current patch engine mis-splits dotted annotation keys when writing (meshery/meshkit#1097, fix meshery/meshkit#1098). Automatic patching returns once that fix ships in a meshkit release consumed by Meshery.",
-+    "isAnnotation": false,
-+    "styles": {
-+      "primaryColor": "",
-+      "svgColor": "",
-+      "svgWhite": ""
-+    }
-+  },
-+  "model": {
-+    "displayName": "cert-manager",
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "model": {
-+      "version": "v1.22.0-alpha.0"
-+    },
-+    "name": "cert-manager",
-+    "registrant": {
-+      "kind": "github"
-+    },
-+    "version": "v1.0.0"
-+  },
-+  "schemaVersion": "relationships.meshery.io/v1beta2",
-+  "selectors": [
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "kind": "ClusterIssuer",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": null
-+          }
-+        ],
-+        "to": [
-+          {
-+            "kind": "Ingress",
-+            "model": {
-+              "displayName": "Kubernetes",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "kubernetes",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": null
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    },
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "kind": "Issuer",
-+            "model": {
-+              "displayName": "cert-manager",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "cert-manager",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": null
-+          }
-+        ],
-+        "to": [
-+          {
-+            "kind": "Ingress",
-+            "model": {
-+              "displayName": "Kubernetes",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "kubernetes",
-+              "registrant": {
-+                "kind": "github"
-+              },
-+              "version": ""
-+            },
-+            "patch": null
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    }
-+  ],
-+  "status": "enabled",
-+  "subType": "reference",
-+  "type": "non-binding",
-+  "version": "v1.0.0"
-+}
+@@ -2,6 +2,7 @@ package design
+ 
+ import (
+ 	"encoding/json"
++	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"path/filepath"
+@@ -24,9 +25,10 @@ import (
+ // assertions below fail if that error identity regresses.
+ func Test_designImport_FlagValidation(t *testing.T) {
+ 	tests := []struct {
+-		name string
+-		run  func(t *testing.T) error
+-		want error
++		name       string
++		run        func(t *testing.T) error
++		want       error
++		wantSubstr string
+ 	}{
+ 		{
+ 			name: "given invalid source type when design import then error is thrown",
+@@ -50,6 +52,57 @@ func Test_designImport_FlagValidation(t *testing.T) {
+ 			},
+ 			want: ErrDesignFileNotProvided(),
+ 		},
++		{
++			name: "given whitespace file flag when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "   "
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, nil)
++			},
++			want: ErrDesignFileNotProvided(),
++		},
++		{
++			name: "given unexpected positional argument when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "design.yaml"
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, []string{"unexpected-arg"})
++			},
++			wantSubstr: "design import does not accept positional arguments",
++		},
++		{
++			name: "given multiple unexpected positional arguments when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "design.yaml"
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, []string{"arg1", "arg2"})
++			},
++			wantSubstr: "design import does not accept positional arguments",
++		},
++		{
++			name: "given valid file with surrounding whitespace when design import then whitespace is trimmed and succeeds",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "  design.yaml  "
++				t.Cleanup(func() { file = previous })
++
++				err := importCmd.Args(importCmd, nil)
++				if err != nil {
++					return err
++				}
++				if file != "design.yaml" {
++					return fmt.Errorf("expected trimmed file 'design.yaml', got %q", file)
++				}
++				return nil
++			},
++			want: nil,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -59,8 +112,18 @@ func Test_designImport_FlagValidation(t *testing.T) {
+ 			_ = utils.SetupMeshkitLoggerTesting(t, false)
+ 
+ 			err := tt.run(t)
++			if tt.want == nil && tt.wantSubstr == "" {
++				if err != nil {
++					t.Fatalf("expected nil error, got %v", err)
++				}
++				return
++			}
+ 			if err == nil {
+-				t.Fatalf("expected error %v, got nil", tt.want)
++				t.Fatalf("expected error, got nil")
++			}
++			if tt.wantSubstr != "" {
++				assert.Contains(t, err.Error(), tt.wantSubstr)
++				return
+ 			}
+ 			if err.Error() != tt.want.Error() {
+ 				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24413** (2026-11-26): [UI] Handle empty component schema in Registry details (@BHAUMIK0711)
-- **PR #24409** (2026-11-26): [mesheryctl] Check the selected context in IsMesheryRunning (@TunahanBalci)
-- **PR #24408** (closed): fix(ui): correct filter and design download progress and error handling (@AyushmanMohapatra015)
-- **PR #24406** (2026-11-26): [Server] Optimize planner graph in-degree calculation and cycle detection (@mystic-fae)
-- **PR #24399** (2026-11-26): docs(build): verify Dart Sass speaks embedded protocol in check-deps (@kjaid0341-creator)
-- **PR #24397** (2026-11-26): [Docs] Add Permissions Spreadsheet links to Authorization page (#24372) (@DerickDidas)
+- **PR #24529** (2026-11-28): fix(mesheryctl): allow istio-vet for Istio regardless of adapter location (@dhruvdumra)
+- **PR #24515** (2026-11-28): [Docs] Fix typos and table alignment in Providers and Docs Structure guides (@ag6393163475-lab)
+- **PR #24514** (2026-11-27): [Docs] Trim whitespace in docs search query before loading search index (@ag6393163475-lab)
+- **PR #24508** (closed): fix(server): use rune-safe truncation in getFirst42Chars (@sapnasingh4852-source)
+- **PR #24507** (closed): fix(mesheryctl): standardise timestamp format in org/env/workspace list (@sapnasingh4852-source)
+- **PR #24504** (2026-11-28): [CI] Default DISCOURSE_URL to HTTPS and strip trailing slashes in fetch_meeting_minutes.sh (@ag6393163475-lab)
 
 ---
 
@@ -1665,74 +1245,38 @@ fix(ui): clear progress and notify errors on design download failure
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in MeshModelDetails.request.test.tsx
+## X. Empirical Invariant Guard in dashboard.go
 
 **RULE**:
-When implementing operations in `ui/components/registry/MeshModelDetails.request.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/system/dashboard.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f676791`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7b96196`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/registry/MeshModelDetails.request.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/system/dashboard.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
 
-  const renderDetailsWithSchema = async (
-    schema: unknown,
-    extraFields: Record<string, unknown> = {},
-  ) => {
-    fetchMock.mockImplementationOnce(async () =>
-      okJsonResponse({
-        page: 0,
-        pageSize: 1,
-        totalCount: 1,
-        components: [
-          {
-            ...componentDef,
-            ...extraFields,
-            component: {
-              ...componentDef.component,
-              ...(schema === Symbol.for('OMIT_SCHEMA') ? {} : { schema }),
-            },
-            registrant: { hostname: 'artifacthub' },
-            duplicates: 0,
-          },
-        ],
-      }),
-    );
-
-    const store = configureStore({
-      reducer: { [api.reducerPath]: api.reducer },
-      middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
-    });
-
-    render(
-      <Provider store={store}>
-        <MeshModelDetails
-          view="Components"
-          showDetailsData={{ type: 'Components', data: componentDef }}
-        />
-      </Provider>,
-    );
-
-    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-  };
-
-  it('renders without crashing when component.schema is an empty string', async () => {
-    await renderDetailsWithSc
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
+		}
+		return nil
+	},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	Args: cobra.NoArgs,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f676791` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7b96196` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

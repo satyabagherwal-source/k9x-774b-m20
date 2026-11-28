@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T06:13:27.324Z",
+  "last_updated": "2026-11-28T06:22:15.970Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -9610,8 +9610,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e37c776a6c0f945654d5a9f8bb719af317f77ac9aea12d603d6fcc0f78b3517a",
-      "created_at": "2026-11-28T06:13:27.324Z"
+      "content_hash": "83912ac2e7d5a04a77443b1572b30f4ebf4c636237916727f782fc81c84f8f74",
+      "created_at": "2026-11-28T06:22:14.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -27819,8 +27819,8 @@
       "title": "Architecture Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-architecture-intelligence-meshery-meshery-core-invariants.md",
       "repository": "meshery/meshery",
-      "content_hash": "eb0cc6b056a10b6cc1bed55e8d024ae7ef48115e93cd0117196d4592e5b64cf4",
-      "created_at": "2026-11-26T19:37:19.014Z"
+      "content_hash": "143f40acace26987deeff7799b3b4fa429e5c2521dd9b4cc496b4b018e6324f2",
+      "created_at": "2026-11-28T06:22:09.344Z"
     },
     "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -27846,8 +27846,8 @@
       "title": "Architecture Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-meshery-meshery-learnings-architecture-intelligence-meshery-meshery-learnings-co.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "3feaaf2a515dc01da3f68ca196d11203fa9fae19b48a40f0518f1a21030d8b9e",
-      "created_at": "2026-11-26T19:37:27.715Z"
+      "content_hash": "d7a393ef3e51334c8033e87ef6abcbb2b862c8961b2eeadfbc1d2f585ca4ce90",
+      "created_at": "2026-11-28T06:22:13.683Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
@@ -46824,8 +46824,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2911676b6c39e5407854884c55cceffdac22a14b3f30ce302fed2d3056ee0b5f",
-      "created_at": "2026-11-28T05:46:54.631Z"
+      "content_hash": "c689b17b1221b0d958e97e8f4348a6d5a3ddc3cacf9c414d48f7743c152d8990",
+      "created_at": "2026-11-28T06:22:15.970Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

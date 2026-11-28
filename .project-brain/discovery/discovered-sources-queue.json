@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T06:04:35.373Z",
+  "updated_at": "2026-11-28T06:22:13.165Z",
   "stats": {
-    "total_discovered": 10809,
-    "approved_pending_harvest": 10262,
+    "total_discovered": 10815,
+    "approved_pending_harvest": 10267,
     "harvested_count": 0,
-    "rejected_count": 547,
+    "rejected_count": 548,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10273,
-      "OFFICIAL_DOCUMENTATION": 295,
+      "COMMUNITY_AND_EXPERT": 10278,
+      "OFFICIAL_DOCUMENTATION": 296,
       "STANDARDS_AND_SPECIFICATIONS": 165,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 58,
@@ -233996,6 +233996,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
         "fileName": "arxanas-git-branchless-learnings.md"
+      }
+    },
+    "SRC-E547FCD9EADB": {
+      "id": "SRC-E547FCD9EADB",
+      "url": "https://docs.meshery.io/reference/mesheryctl/system/dashboard%60",
+      "title": "https://docs.meshery.io/reference/mesheryctl/system/dashboard%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:22:12.770Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-8A2059FA99D7": {
+      "id": "SRC-8A2059FA99D7",
+      "url": "http://discuss.meshery.io/",
+      "title": "http://discuss.meshery.io/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-28T06:22:12.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-78C23DCDA666": {
+      "id": "SRC-78C23DCDA666",
+      "url": "https://discuss.meshery.io/",
+      "title": "https://discuss.meshery.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:22:12.931Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-62EA99690378": {
+      "id": "SRC-62EA99690378",
+      "url": "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/4c7673f9-d20c-4936-8890-e1fb5dcfc43f/0.0.1/design.yml",
+      "title": "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/4c7673f9-d20c-4936-8890-e1fb5dcfc43f/0.0.1/design.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:22:13.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-1C233813FF82": {
+      "id": "SRC-1C233813FF82",
+      "url": "https://wiki.ubuntu.com/Hyper-V",
+      "title": "https://wiki.ubuntu.com/Hyper-V",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:22:13.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-71C5C7547722": {
+      "id": "SRC-71C5C7547722",
+      "url": "https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v",
+      "title": "https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T06:22:13.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
       }
     }
   }

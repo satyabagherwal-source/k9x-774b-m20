@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-R90E",
-    "timestamp": "2026-11-26T16:30:49.694Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "e84cfca113d5d36d1256cbd01c3310dd8cc4f548b1a5f9623c119311388cd8b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-RBIL",
     "timestamp": "2026-11-26T16:30:52.941Z",
     "repository": "krakend/krakend-ce",
@@ -7490,6 +7475,21 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "d7e1aa8b16d7e98510cf5807f0a67dcf52f1ec2e0d28fad54c6598c4467f399d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-W6OZ",
+    "timestamp": "2026-11-28T06:22:08.867Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "6efeb35f699ea81ac6659f8d7228c499580b6c00f37250e4f65cb1e317ebbdc6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

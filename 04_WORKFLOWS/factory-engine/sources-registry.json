@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T06:13:24.705Z",
-    "lastVerified": "2026-11-28T06:13:24.706Z",
+    "lastChecked": "2026-11-28T06:22:12.498Z",
+    "lastVerified": "2026-11-28T06:22:12.498Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T05:46:48.905Z",
-    "lastVerified": "2026-11-28T05:46:48.905Z",
+    "lastChecked": "2026-11-28T06:22:10.396Z",
+    "lastVerified": "2026-11-28T06:22:10.396Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1015,9 +1015,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-27T11:54:24.442Z",
+    "lastChecked": "2026-11-28T06:22:07.671Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-27T11:54:24.442Z"
+    "lastVerified": "2026-11-28T06:22:07.671Z"
   },
   "eclipse-theia-theia": {
     "name": "eclipse-theia/theia",
@@ -2447,8 +2447,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T02:13:19.052Z",
-    "lastVerified": "2026-11-28T02:13:19.052Z",
+    "lastChecked": "2026-11-28T06:22:05.541Z",
+    "lastVerified": "2026-11-28T06:22:05.541Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -5635,14 +5635,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T13:23:09.866Z",
-    "lastVerified": "2026-11-27T13:23:09.866Z",
+    "lastChecked": "2026-11-28T06:22:07.453Z",
+    "lastVerified": "2026-11-28T06:22:07.453Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
+    "contentHash": "6efeb35f699ea81ac6659f8d7228c499580b6c00f37250e4f65cb1e317ebbdc6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 15,
+    "recentFixesCount": 20,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8175,9 +8175,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-27T06:46:15.037Z",
+    "lastChecked": "2026-11-28T06:21:55.044Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-27T06:46:15.037Z"
+    "lastVerified": "2026-11-28T06:21:55.044Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "LoyalAI/Underdog-Saluki-27B-1.0",
@@ -11445,9 +11445,9 @@
   "nalexn-viewinspector": {
     "name": "ViewInspector",
     "officialUrl": "https://github.com/nalexn/ViewInspector",
-    "lastChecked": "2026-11-26T04:22:32.714Z",
+    "lastChecked": "2026-11-28T06:22:00.062Z",
     "revisionIdentifier": "4d5e732c",
-    "lastVerified": "2026-11-26T04:22:32.714Z"
+    "lastVerified": "2026-11-28T06:22:00.062Z"
   },
   "wooorm-parse-entities": {
     "name": "parse-entities",
@@ -11831,9 +11831,9 @@
   "andythefactory-newspaper4k": {
     "name": "newspaper4k",
     "officialUrl": "https://github.com/AndyTheFactory/newspaper4k",
-    "lastChecked": "2026-11-24T21:38:32.229Z",
+    "lastChecked": "2026-11-28T06:21:57.548Z",
     "revisionIdentifier": "22a4be5c",
-    "lastVerified": "2026-11-24T21:38:32.229Z"
+    "lastVerified": "2026-11-28T06:21:57.548Z"
   },
   "aheze-popovers": {
     "name": "Popovers",

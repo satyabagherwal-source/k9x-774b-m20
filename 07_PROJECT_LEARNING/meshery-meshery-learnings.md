@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `b5047de7`  
+> **Source Version**: `c7b96196`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T13:23:10.004Z  
+> **Timestamp**: 2026-11-28T06:22:07.598Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T13:23:09.866Z  
+> **Harvest Timestamp**: 2026-11-28T06:22:07.453Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12344 stars
+- **Stars / Engagement**: 12354 stars
 
 ---
 
@@ -804,14 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24466** (2026-11-27): **[Docs] Fix missing comma in contributing-adapters guide**
-  *Symptoms*: ## Description  Fixed a missing comma in `docs/content/en/project/contributing/contributing-adapters.md`.  ## Change  **Line 10:** - Before: `On forking GitHub deactivates all workflows.` - After: `On forking, GitHub deactivates all workflows.`  A comma is required after the introductory phrase `On forking` to separate it from the main clause.  ## Type of change - [x] Documentation  ## Checklist - [x] Documentation only change  <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Clarified that GitHub deactivates workflows when a repository is forked. The contributing guide continues to explain how to reactivate workflows and configure push branch filters, secrets, and Docker Hub publishing conditions, so contributors can review the relevant setup steps in one place. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #24529** (2026-11-28): **fix(mesheryctl): allow istio-vet for Istio regardless of adapter location**
+  *Symptoms*: ## Intent  Address review on PR #24529: add a TestValidateMesh case for validate --adapter meshery-istio --spec istio-vet with no positional mesh, so the path where validate's PreRunE derives meshName from --adapter is covered. Uses a new sync.compose.golden fixture with Docker Compose adapter locations, allows that path's two sync requests, and resets meshName between cases. Test-only change.  ## What Changed  - `mesheryctl adapter validate --spec istio-vet` now decides support by checking whether the selected mesh is Istio (case-insensitive). It used to require the adapter URL to equal `meshery-istio:10000`. As a result, istio-vet now works when the Istio adapter runs at `localhost:10000` or behind a Kubernetes service name. Other meshes are still rejected with `only Istio supports istio-vet operation`. - `TestValidateMesh` adds three cases. The first runs istio-vet against an Istio adapter at a non-default location. The second checks that istio-vet is rejected for Linkerd and that no operation request is sent. The third runs `validate --adapter meshery-istio --spec istio-vet` with no positional mesh, so the mesh is resolved from `--adapter`. - To support these cases, the test table gains optional fields for the expected query, adapter and sync-call count. That last case uses a new `sync.compose.golden` fixture with Docker Compose adapter hostnames and expects two sync requests. The test also resets the package-level `meshName` between cases, and the rejection case has a ne
 
-- **Issue #24464** (2026-11-27): **[Docs] Add newcomers attendance for Chacko Abraham**
-  *Symptoms*: **Notes for Reviewers**  - Marks my attendance for the Newcomers meeting, week of 11-26-2026 (today's meeting, folder prepared in fb95d6f872d). - Documentation-only: adds one file, `docs/meetings/2026/week-of-11-26-2026/chacko-abraham.md`.  **[Signed commits](../CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a meeting introduction with background information, Meshery contribution areas, recent project work, goals, and a GitHub profile.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24464?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary><stro
-  > ### ✅ Meeting Minutes Auto-Merged 🗓️  This pull request has been automatically merged because it contains **only** changes to meeting minutes in `docs/meetings/`.  **Summary:** - Files modified: 1 - Merged by: @meshery-ci (Community Manager Bot)  Thank you for keeping our meeting records up to date! 📝
+- **Issue #24515** (2026-11-28): **[Docs] Fix typos and table alignment in Providers and Docs Structure guides**
+  *Symptoms*: **Notes for Reviewers**  Fixes typos, phrasing, and a misaligned markdown table row across two documentation pages: - `docs/content/en/reference/extensibility/providers/index.md`:   - `Mehery UI` → `Meshery UI`   - Remove accidental leading spaces before `|/extension/\<your name here>|` in the extension points table   - `1. /logout - invalidating token` → `1. /logout - invalidate token` (consistent with `return valid token` / `return capabilities.json`) - `docs/content/en/project/contributing/contributing-docs-structure.md`:   - `Discoverying` → `Discovering`   - `securing the Meshery` → `securing Meshery`   - `all of Meshery adapters` → `all Meshery adapters`  **[Signed commits](https://docs.meshery.io/project/contributing#general-contribution-flow)** - [x] Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Corrected spelling and grammar in the documentation structure and provider extension guides.   * Fixed indentation in the extension-path table.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -828,516 +825,173 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `216f7b83` (2026-11-27)
-**Commit Message**: Merge pull request #24440 from Nixantsingh943/fix/24429-audit-size-syntax-axi
+### Incident Patch 1: `c7b96196` (2026-11-28)
+**Commit Message**: Merge pull request #24238 from SachinyadavAug20/fix/system-dashboard-args-validation
 
-fix(ui): parse comment-like text and handle file failures in size audit
+fix(mesheryctl): enforce exact positional argument validation in system dashboard
 
-**File**: `ui/package.json` (modified, +3/-2)
+**File**: `mesheryctl/internal/cli/root/system/dashboard.go` (modified, +8/-1)
 ```diff
-@@ -21,7 +21,7 @@
-     "test:e2e:chromium": "ALLURE_LABEL_project=Meshery ALLURE_LABEL_type=e2e npx playwright test --project=chromium-local-provider",
-     "test:e2e:codegen": "npx playwright codegen --load-storage=playwright/.auth/user.json http://localhost:9081/extension/meshmap",
-     "test:e2e:fast": "npx playwright test --project=firefox --grep-invert @slow",
--    "test": "vitest run",
-+    "test": "npm run test:scripts && vitest run",
-     "test:watch": "vitest",
-     "test:coverage": "vitest run --coverage",
-     "relay": "relay-compiler",
-@@ -31,7 +31,8 @@
-     "audit:mui": "node scripts/audit-mui.js",
-     "audit:hex": "node scripts/audit-hex.js",
-     "audit:size": "node scripts/audit-size.js",
--    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js"
-+    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js",
-+    "test:scripts": "node --test scripts/audit-size.test.js"
-   },
-   "keywords": [],
-   "author": "Meshery Authors",
-```
-
-**File**: `ui/scripts/audit-size.js` (modified, +95/-29)
-```diff
-@@ -32,6 +32,7 @@
- 
- const fs = require('fs');
- const path = require('path');
-+const ts = require('typescript');
- 
- const UI_ROOT = path.resolve(__dirname, '..');
- 
-@@ -83,42 +84,89 @@ function walk(dir, out) {
+@@ -63,12 +63,19 @@ func newDashboardOptions() *dashboardOptions {
+ 	}
  }
  
- // Count lines the way ESLint's max-lines does with
--// { skipComments: true, skipBlankLines: true }. A line is skipped if
--// it is blank after trimming, or if it lies inside a /* ... */ block,
--// or if it starts with // after whitespace.
--function countSignificantLines(src) {
--  const lines = src.split(/\r?\n/);
-+// { skipComments: true, skipBlankLines: true }. Use the TypeScript parser
-+// rather than line prefixes so comment-like text in strings, templates,
-+// regular expressions, and JSX is treated as source code.
-+function countSignificantLines(src, file) {
-+  const extension = path.extname(file).toLowerCase();
-+  const scriptKind =
-+    extension === '.tsx'
-+      ? ts.ScriptKind.TSX
-+      : extension === '.ts'
-+        ? ts.ScriptKind.TS
-+        : ts.ScriptKind.JSX;
++var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
 +
-+  const sourceFile = ts.createSourceFile(file, src, ts.ScriptTarget.Latest, true, scriptKind);
-+
-+  const commentRanges = [];
-+
-+  function collectRanges(node) {
-+    if (node.kind === ts.SyntaxKind.JsxText || node.kind === ts.SyntaxKind.JSDoc) {
-+      return;
-+    }
-+
-+    const children = node.getChildren(sourceFile);
-+    if (children.every((child) => child.kind === ts.SyntaxKind.JSDoc)) {
-+      if (node.pos < node.getStart(sourceFile)) {
-+        commentRanges.push(
-+          ...(ts.getTrailingCommentRanges(src, node.pos) || []),
-+          ...(ts.getLeadingCommentRanges(src, node.pos) || []),
-+        );
-+      }
-+      return;
-+    }
-+
-+    for (const child of children) {
-+      collectRanges(child);
-+    }
-+  }
-+
-+  collectRanges(sourceFile);
-+
-+  const comments = [
-+    ...new Map(commentRanges.map((range) => [`${range.pos}:${range.end}`, range])).values(),
-+  ].sort((a, b) => a.pos - b.pos);
-+
-   let count = 0;
--  let inBlockComment = false;
--  for (const rawLine of lines) {
--    let line = rawLine.trim();
--    if (line === '') continue;
--
--    if (inBlockComment) {
--      const end = line.indexOf('*/');
--      if (end === -1) continue;
--      line = line.slice(end + 2).trim();
--      inBlockComment = false;
--      if (line === '') continue;
-+  let commentIndex = 0;
-+  let offset = 0;
-+
-+  for (const line of src.split(/\r?\n/)) {
-+    const lineEnd = offset + line.length;
-+    let cursor = offset;
-+    let hasCode = false;
-+
-+    while (commentIndex < comments.length && comments[commentIndex].end <= cursor) {
-+      commentIndex++;
-     }
- 
--    // Strip a leading // comment.
--    if (line.startsWith('//')) continue;
-+    let rangeIndex = commentIndex;
- 
--    // Strip a leading /* ... */ that begins and ends on this line.
--    while (line.startsWith('/*')) {
--      const end = line.indexOf('*/', 2);
--      if (end === -1) {
--        inBlockComment = true;
--        line = '';
-+    while (rangeIndex < comments.length && comments[rangeIndex].pos < lineEnd) {
-+      const comment = comments[rangeIndex];
-+
-+      if (/\S/.test(src.slice(cursor, Math.min(comment.pos, lineEnd)))) {
-+        hasCode = true;
-         break;
-       }
--      line = line.slice(end + 2).trim();
-+
-+      cursor = Math.max(cursor, Math.min(comment.end, lineEnd));
-+
-+      if (cursor >= lineEnd) break;
-+      rangeIndex++;
-+    }
-+
-+    if (!hasCode && cursor < lineEnd && /\S/.test(src.slice(cursor, lineEnd))) {
-+      hasCode = true;
-     }
--    if (line === '') continue;
- 
--    count++;
-+    if (hasCode) count++;
-+
-+    offset =
-+      lineEnd +
-+      (src[lineEnd] === '\r' && src[lineEnd + 1] === '\n' ? 2 : src[lineEnd] === '\n' ? 1 : 0);
-   }
-+
-   return count;
- }
- 
-@@ -134,8 +182,26 @@ function main() {
- 
-   const measured = [];
-   for (const file of files) {
--    const src = fs.readFileSync(file, 'utf8');
--    const lines = countSignificantLines(src);
-+    let src;
-+    try {
-+      src = fs.readFileSync(file, 'utf8');
-+    } catch (error) {
-+      process.stderr.write(
-+        `WARN size: unable to read ${path.relative(UI_ROOT, file)}: ${error.message}\n`,
-+      );
-+      continue;
-+    }
-+
-+    let lines;
-+    try {
-+      lines = countSignificantLines(src, file);
-+    } catch (error) {
-+      process.stderr.write(
-+        `WARN size: parser failed for ${path.relative(UI_ROOT, file)}; using non-empty-line fallback: ${error.message}\n`,
-+      );
-+      lines = src.split(/\r?\n/).filter((line) => line.trim() !== '').length;
-+    }
-+
-     if (lines < WARN_THRESHOLD) continue;
-     measured.push({ file: path.relative(UI_ROOT, file), lines });
-   }
+ var dashboardCmd = &cobra.Command{
+ 	Use:   "dashboard",
+ 	Short: "Open Meshery UI in browser.",
+ 	Long: `Open Meshery UI in browser.
+ 	Find more information at: https://docs.meshery.io/reference/mesheryctl/system/dashboard`,
+-	Args: cobra.NoArgs,
++	Args: func(_ *cobra.Command, args []string) error {
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
++		}
++		return nil
++	},
+ 	Example: `
+ // Open Meshery UI in browser
+ mesheryctl system dashboard
 ```
 
-**File**: `ui/scripts/audit-size.test.js` (added, +325/-0)
+**File**: `mesheryctl/internal/cli/root/system/dashboard_test.go` (modified, +44/-0)
 ```diff
-@@ -0,0 +1,325 @@
-+'use strict';
+@@ -2,6 +2,7 @@ package system
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -10,6 +11,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	"github.com/stretchr/testify/assert"
+ )
+ 
+ // trackingBody wraps an io.ReadCloser to track when Close is called.
+@@ -136,3 +138,45 @@ func TestOpenMesheryUI(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+const assert = require('node:assert/strict');
-+const { spawnSync } = require('node:child_process');
-+const fs = require('node:fs');
-+const os = require('node:os');
-+const path = require('node:path');
-+const { test } = require('node:test');
++func TestDashboardCmdArgs(t *testing.T) {
++	expectedUsage := "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
++	expectedErr := utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", expectedUsage))
 +
-+const productionScript = path.join(__dirname, 'audit-size.js');
++	tests := []struct {
++		Name          string
++		Args          []string
++		ExpectError   bool
++		ExpectedError error
++	}{
++		{
++			Name:        "valid with no positional arguments",
++			Args:        []string{},
++			ExpectError: false,
++		},
++		{
++			Name:          "invalid with unexpected positional argument",
++			Args:          []string{"unexpected-arg"},
++			ExpectError:   true,
++			ExpectedError: expectedErr,
++		},
++		{
++			Name:          "invalid with multiple unexpected positional arguments",
++			Args:          []string{"arg1", "arg2"},
++			ExpectError:   true,
++			ExpectedError: expectedErr,
++		},
++	}
 +
-+function writeFile(root, relativePath, contents) {
-+  const file = path.join(root, relativePath);
-+  fs.mkdirSync(path.dirname(file), { recursive: true });
-+  fs.writeFileSync(file, contents);
++	for _, tt := range tests {
++		t.Run(tt.Name, func(t *testing.T) {
++			err := dashboardCmd.Args(dashboardCmd, tt.Args)
++			if tt.ExpectError {
++				assert.Error(t, err)
++				utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
++			} else {
++				assert.NoError(t, err)
++			}
++		})
++	}
 +}
-+
-+function createFixture(t) {
-+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'audit-size-'));
-+  t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
-+
-+  fs.mkdirSync(path.join(fixture, 'ui', 'scripts'), { recursive: true });
-+  fs.copyFileSync(productionScript, path.join(fixture, 'ui', 'scripts', 'audit-size.js'));
-+
-+  return fixture;
-+}
-+
-+function runAudit(fixture, preload) {
-+  const script = path.join(fixture, 'ui', 'scripts', 'audit-size.js');
-+  const typescriptRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
-+  const args = preload ? ['--require', preload, script, '--json'] : [script, '--json'];
-+
-+  const execution = spawnSync(process.execPath, args, {
-+    encoding: 'utf8',
-+    env: {
-+      ...process.env,
-+      NODE_PATH: [typescriptRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
-+    },
-+  });
-+
-+  assert.equal(execution.status, 0, execution.stderr);
-+  return preload ? execution : JSON.parse(execution.stdout);
-+}
-+
-+test('counts comment-like template and JSX text while skipping actual comments', (t) => {
-+  const fixture = createFixture(t);
-+  const templateLines = Array.from({ length: 605 }, (_, i) => `// template content ${i + 1}`);
-+  const jsxLines = Array.from({ length: 605 }, (_, i) => `// JSX content ${i + 1}`);
-+
-+  writeFile(
-+    fixture,
-+    'ui/components/template.js',
-+    `const template = \`\n${templateLines.join('\n')}\n\`;\n`,
-+  );
-+
-+  writeFile(
-+    fixture,
-+    'ui/components/jsx.tsx',
-+    `const view = <div>\n${jsxLines.join('\n')}\n</div>;\n`,
-+  );
-+
-+  writeFile(
-+    fixture,
-+    'ui/components/comments.js',
-+    `${Array.from({ length: 605 }, (_, i) => `// actual comment ${i + 1}`).join('\n')}\nconst value = 1;\n`,
-+  );
-+
-+  const result = runAudit(fixture);
-+
-+  assert.equal(result.over_warn, 2);
-+  assert.equal(result.over_hard, 0);
-+  assert.deepEqual(result.files, [
-+    { file: 'components/jsx.tsx', lines: 607 },
-+    { file: 'components/template.js', lines: 607 },
-+  ]);
-+});
-+
-+test('counts code sharing a line with comments and regex literals containing slashes', (t) => {
-+  const fixture = createFixture(t);
-+  const mixedLines = Array.from(
-+    { length: 303 },
-+    (_, i) =>
-+      `const regex${i} = /[//]/; // trailing comment\n/* leading comment */ const value${i} = ${i};`,
-+  );
-+
-+  writeFile(fixture, 'ui/components/mixed.js', `${mixedLines.join('\n')}\n`);
-+
-+  const result = runAudit(fixture);
-+
-+  assert.equal(result.over_warn, 1);
-+  assert.equal(result.over_hard, 0);
-+  assert.deepEqual(result.files, [{ file: 'components/mixed.js', lines: 606 }]);
-+});
-+
-+test('handles multiline block comments and code after their closing delimiter', (t) => {
-+  const fixture = createFixture(t);
-+  const blockCodeEntries = Array.from(
-+    { length: 605 },
-+    (_, i) => `/* documentation\n * continues\n */ const value${i} = ${i};`,
-+  );
-+
-+  writeFile(
-+    fixture,
-+    'ui/components/block-comments.js',
-+    `/*\n${Array.from({ length: 605 }, (_, i) => ` * documentation ${i + 1}`).join('\n')}\n */\nconst value = 1;\n`,
-+  );
-+
-+  writeFile(fixture, 'ui/components/block-comment-code.js', `${blockCodeEntries.join('\n')}\n`);
-+
-+  const result = runAudit(fixture);
-+
-+  assert.equal(result.over_warn, 1);
-+  assert.equal(result.over_hard, 0);
-+  assert.deepEqual(result.files, [{ file: 'components/block-comment-code.js', lines: 605 }]);
-+});
-+
-+test('counts JSX text in JavaScript files and regex literals containing comment-like text', (t) => {
-+  const fixture = createFixture(t);
-+  const jsxLines = Array.from({ length: 605 }, (_, i) => `// JSX text ${i + 1}`);
-+  const regexLines = Array.from({ length: 605 }, (_, i) => `const pattern${i} = /[//]/;`);
-+
-+  writeFile(
-+    fixture,
-+    'ui/components/jsx.js',
-+    `const view = <div>\n${jsxLines.join('\n')}\n{title}\n</div>;\n`,
-+  );
-+
-+  writeFile(fixture, 'ui/components/regex.js', `${regexLines.join('\n')}\n`);
-+
-+  const result = runAudit(fixture);
-+
-+  assert.equal(result.over_warn, 2);
-+  assert.equal(result.over_hard, 0);
-+  assert.deepEqual(result.files, [
-+    { file: 'components/jsx.js', lines: 608 },
-+    { file: 'components/regex.js', lines: 605 },
-+  ]);
-+});
-+
-+test('counts code on lines containing block comments', (t) => {
-+  const fixture = createFixture(t);
-+  const lines = Array.from(
-+    { length: 605 },
-+    (_, i) => `/* comment ${i + 1} */ const value${i} = ${i};`,
-+  );
-+
-+  wri
 ```
 
 ---
 
-### Incident Patch 2: `dbda2bad` (2026-11-27)
-**Commit Message**: fix(ui): make size audit resilient to file failures
+### Incident Patch 2: `fa9bf0b7` (2026-11-28)
+**Commit Message**: Merge upstream/master into fix/system-dashboard-args-validation
 
-Signed-off-by: Nishant Singh <[REDACTED_EMAIL]>
+Signed-off-by: Sachin Chandra Yadav <[REDACTED_EMAIL]>
 
-**File**: `ui/package.json` (modified, +3/-2)
+**File**: `.github/scripts/fetch_meeting_minutes.sh` (modified, +5/-1)
 ```diff
-@@ -21,7 +21,7 @@
-     "test:e2e:chromium": "ALLURE_LABEL_project=Meshery ALLURE_LABEL_type=e2e npx playwright test --project=chromium-local-provider",
-     "test:e2e:codegen": "npx playwright codegen --load-storage=playwright/.auth/user.json http://localhost:9081/extension/meshmap",
-     "test:e2e:fast": "npx playwright test --project=firefox --grep-invert @slow",
--    "test": "vitest run",
-+    "test": "vitest run && npm run test:scripts",
-     "test:watch": "vitest",
-     "test:coverage": "vitest run --coverage",
-     "relay": "relay-compiler",
-@@ -31,7 +31,8 @@
-     "audit:mui": "node scripts/audit-mui.js",
-     "audit:hex": "node scripts/audit-hex.js",
-     "audit:size": "node scripts/audit-size.js",
--    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js"
-+    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js",
-+    "test:scripts": "node --test scripts/audit-size.test.js"
-   },
-   "keywords": [],
-   "author": "Meshery Authors",
+@@ -6,7 +6,11 @@
+ set -e
+ 
+ # DISCOURSE_URL should be provided as an environment variable
+-DISCOURSE_URL="${DISCOURSE_URL:-http://discuss.meshery.io/}"
++DISCOURSE_URL="${DISCOURSE_URL:-https://discuss.meshery.io}"
++# Strip trailing slashes so path joins never produce double slashes (e.g. //t/...).
++while [[ "$DISCOURSE_URL" == */ ]]; do
++    DISCOURSE_URL="${DISCOURSE_URL%/}"
++done
+ TAG="meetings"
+ ARCHIVE_DIR=".github/meetings/archive"
+ 
 ```
 
-**File**: `ui/scripts/audit-size.js` (modified, +20/-2)
+**File**: `docs/assets/scss/_root-variables.scss` (modified, +1/-1)
 ```diff
-@@ -182,8 +182,26 @@ function main() {
+@@ -7,7 +7,7 @@
+   // Colors that will not change in the dark mode.
+   --brand-color-primary: #00d3a9;
+   --brand-color-secondary: #00b39f;
+-  --brand-color-secondary-50: rbga(0, 179, 159, .5);
++  --brand-color-secondary-50: rgba(0, 179, 159, 0.5);
+   --color-white: #fff;
+   // #EBC017;
+   // ////////////////////////////////////////////
+```
+
+**File**: `docs/assets/scss/_tabbed-menu.scss` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ section[class*="tabbed"] {
+   gap: 10px;
  
-   const measured = [];
-   for (const file of files) {
--    const src = fs.readFileSync(file, 'utf8');
--    const lines = countSignificantLines(src, file);
-+    let src;
-+    try {
-+      src = fs.readFileSync(file, 'utf8');
-+    } catch (error) {
-+      process.stderr.write(
-+        `WARN size: unable to read ${path.relative(UI_ROOT, file)}: ${error.message}\n`,
-+      );
-+      continue;
-+    }
-+
-+    let lines;
-+    try {
-+      lines = countSignificantLines(src, file);
-+    } catch (error) {
-+      process.stderr.write(
-+        `WARN size: parser failed for ${path.relative(UI_ROOT, file)}; using non-empty-line fallback: ${error.message}\n`,
-+      );
-+      lines = src.split(/\r?\n/).filter((line) => line.trim() !== '').length;
-+    }
-+
-     if (lines < WARN_THRESHOLD) continue;
-     measured.push({ file: path.relative(UI_ROOT, file), lines });
+   &:hover {
+-    color: #888;
++    color: var(--color-secondary-dark);
+     background-color: var(--brand-color-secondary-50);
    }
+ }
 ```
 
-**File**: `ui/scripts/audit-size.test.js` (modified, +74/-4)
+**File**: `docs/catalog/deployment/4c7673f9-d20c-4936-8890-e1fb5dcfc43f.md` (modified, +2/-2)
 ```diff
-@@ -25,20 +25,21 @@ function createFixture(t) {
-   return fixture;
- }
- 
--function runAudit(fixture) {
-+function runAudit(fixture, preload) {
-   const script = path.join(fixture, 'ui', 'scripts', 'audit-size.js');
-   const typescriptRoot = path.resolve(path.dirname(require.resolve('typescript')), '..', '..');
-+  const args = preload ? ['--require', preload, script, '--json'] : [script, '--json'];
- 
--  const result = spawnSync(process.execPath, [script, '--json'], {
-+  const execution = spawnSync(process.execPath, args, {
-     encoding: 'utf8',
-     env: {
-       ...process.env,
-       NODE_PATH: [typescriptRoot, process.env.NODE_PATH].filter(Boolean).join(path.delimiter),
-     },
-   });
- 
--  assert.equal(result.status, 0, result.stderr);
--  return JSON.parse(result.stdout);
-+  assert.equal(execution.status, 0, execution.stderr);
-+  return preload ? execution : JSON.parse(execution.stdout);
- }
- 
- test('counts comment-like template and JSX text while skipping actual comments', (t) => {
-@@ -253,3 +254,72 @@ test('skips JSDoc comments attached to closing tokens and EOF', (t) => {
-   assert.equal(result.over_hard, 0);
-   assert.deepEqual(result.files, [{ file: 'components/jsdoc-eof.ts', lines: 608 }]);
- });
-+
-+test('falls back to non-empty-line counting when parser traversal throws', (t) => {
-+  const fixture = createFixture(t);
-+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
-+
-+  writeFile(fixture, 'ui/components/parser-fallback.js', `${lines.join('\n')}\n`);
-+  writeFile(
-+    fixture,
-+    'inject-parser-failure.cjs',
-+    `
-+const Module = require('node:module');
-+const originalLoad = Module._load;
-+
-+Module._load = function (request, parent, isMain) {
-+  const loaded = originalLoad.call(this, request, parent, isMain);
-+  if (request !== 'typescript') return loaded;
-+
-+  return new Proxy(loaded, {
-+    get(target, property, receiver) {
-+      if (property === 'createSourceFile') {
-+        return function (file, ...args) {
-+          if (file.endsWith('parser-fallback.js')) {
-+            throw new Error('injected parser failure');
-+          }
-+          return Reflect.get(target, property, receiver).apply(target, [file, ...args]);
-+        };
-+      }
-+      return Reflect.get(target, property, receiver);
-+    },
-+  });
-+};
-+`,
-+  );
-+
-+  const execution = runAudit(fixture, path.join(fixture, 'inject-parser-failure.cjs'));
-+  const result = JSON.parse(execution.stdout);
-+
-+  assert.match(execution.stderr, /parser failed.*using non-empty-line fallback/);
-+  assert.deepEqual(result.files, [{ file: 'components/parser-fallback.js', lines: 605 }]);
-+});
-+
-+test('continues auditing other files when one source file cannot be read', (t) => {
-+  const fixture = createFixture(t);
-+  const lines = Array.from({ length: 605 }, (_, i) => `const value${i} = ${i};`);
-+
-+  writeFile(fixture, 'ui/components/unreadable.js', `${lines.join('\n')}\n`);
-+  writeFile(fixture, 'ui/components/readable.js', `${lines.join('\n')}\n`);
-+  writeFile(
-+    fixture,
-+    'inject-read-failure.cjs',
-+    `
-+const fs = require('node:fs');
-+const original = fs.readFileSync;
-+fs.readFileSync = function (file, ...args) {
-+  if (String(file).endsWith('/unreadable.js')) {
-+    throw new Error('injected read failure');
-+  }
-+  return original.call(this, file, ...args);
-+};
-+`,
-+  );
-+
-+  const execution = runAudit(fixture, path.join(fixture, 'inject-read-failure.cjs'));
-+  const result = JSON.parse(execution.stdout);
-+
-+  assert.match(execution.stderr, /unable to read.*unreadable.js/);
-+  assert.deepEqual(result.files, [{ file: 'components/readable.js', lines: 605 }]);
-+  assert.equal(result.over_warn, 1);
-+});
+@@ -1,6 +1,6 @@
+ ---
+ layout: item
+-name: VoteSecure-Architecture
++name: VoteSecure-K8s-Architecture
+ publishedVersion: 0.0.1
+ userId: 14c3375e-e728-4813-a842-bbcc2607d9f8
+ userName: whoisphvl
+@@ -15,7 +15,7 @@ patternInfo: |
+ patternCaveats: |
+   Configured%20as%20a%20single-tier%20request%20chain%20routing%20frontend%20and%20API%20traffic%20sequentially%20through%20the%20web%20proxy%20service.%20Requires%20valid%20Kubernetes%20Secrets%20for%20database%20credentials%20and%20TLS%20termination%20before%20production%20deployment.
+ createdAt: 2026-11-21T02:25:43Z
+-permalink: catalog/deployment/votesecure-architecture-4c7673f9-d20c-4936-8890-e1fb5dcfc43f.html
++permalink: catalog/deployment/votesecure-k8s-architecture-4c7673f9-d20c-4936-8890-e1fb5dcfc43f.html
+ URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/4c7673f9-d20c-4936-8890-e1fb5dcfc43f/0.0.1/design.yml'
+ downloadLink: 4c7673f9-d20c-4936-8890-e1fb5dcfc43f/design.yml
+ ---
+\ No newline at end of file
 ```
-
----
-
-### Incident Patch 3: `b5047de7` (2026-11-27)
-**Commit Message**: Merge pull request #24466 from ag6393163475-lab/docs/fix-missing-comma-contributing-adapters
-
-[Docs] Fix missing comma in contributing-adapters guide
 
 **File**: `docs/content/en/project/contributing/contributing-adapters.md` (modified, +1/-1)
 ```diff
@@ -1352,13 +1006,212 @@ Signed-off-by: Nishant Singh <[REDACTED_EMAIL]>
  
 ```
 
+**File**: `docs/content/en/project/contributing/contributing-docs-structure.md` (modified, +3/-3)
+```diff
+@@ -77,7 +77,7 @@ A task page shows how to do a **single** thing, typically by giving a short sequ
+ 
+ - **Task Guides:** Step-by-step instructions for common tasks (deploying applications, managing resources).
+ - **Configuration Management:** Designing infrastructure, managing configuration files.
+-- **Lifecycle Management:** Discoverying, registering, configuring infrastructure
++- **Lifecycle Management:** Discovering, registering, configuring infrastructure
+   - Discovery (MeshSync): Greenfield/Brownfield scenarios.
+   - Managing Connections: Registering, updating, and deleting connections.
+   - Managing Credentials: Registering, updating, and deleting credentials.
+@@ -90,7 +90,7 @@ Designed for platform engineers, operators, DevOps, and other advanced users who
+ 
+ - **Performance Optimization:** Resource usage analysis, profiling tools, tuning techniques.
+ - **GitOps / DevOps & CI/CD**: Integrating Meshery with continuous integration and deployment pipelines.  
+-- **Best Practices:** Recommendations for securing the Meshery, monitoring performance, managing versions.
++- **Best Practices:** Recommendations for securing Meshery, monitoring performance, managing versions.
+ - **Advanced Concepts:** Advanced Meshery concepts, features, and capabilities.
+ - **Air-gapped Environments:** Deploying Meshery in air-gapped environments.
+ - **Troubleshooting Guides:** Common errors, debugging, tips.  
+@@ -109,7 +109,7 @@ Meshery’s extensibility allows for seamless integration with existing systems
+   - **APIs:** Simple summary of Meshery's APIs.
+   - **Extension Points:** Providers, plugins, adapters, modules.
+ - **Integrations:** Meshery Models. Integrating Meshery with different infrastructure and systems.
+-- **Extensions:** List of all of Meshery adapters, plugins, and modules for different extension points.
++- **Extensions:** List of all Meshery adapters, plugins, and modules for different extension points.
+   - **Adapters:** Integrating Meshery with different infrastructure and extended capabilities.
+   - **Plugins:** Extended capabilities for Meshery.
+   - **Remote Providers:** Remote providers for additional functionality.
+```
+
+**File**: `docs/content/en/project/contributing/meshery-windows/index.md` (modified, +1/-1)
+```diff
+@@ -178,7 +178,7 @@ You are now ready to [contribute]({{< ref "project/contributing/_index.md" >}})
+ 
+ ## Using Hyper-V to install a linux VM
+ 
+-Here is a link to install linux VM using Hyper-V: [https://wiki.ubuntu.com/Hyper-V](https://wiki.ubuntu.com/Hyper-V)
++Here is a link to create a virtual machine using Hyper-V: [Create a virtual machine in Hyper-V](https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/create-a-virtual-machine-in-hyper-v). Create a **Generation 2** VM, attach your Linux ISO at the **Installation Options** step, and, before its first boot, select **Microsoft UEFI Certificate Authority** as the Secure Boot template so the Linux installer can start.
+ 
+ 
+ ## Get the code
+```
+
+**File**: `docs/content/en/reference/extensibility/providers/index.md` (modified, +3/-3)
+```diff
+@@ -326,13 +326,13 @@ Interwoven into Meshery’s web-based user interface are a variety of extension
+ |navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
+ |userPrefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
+ |account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
+-|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
+-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
++|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Meshery UI. Its work is to show active Meshery users under the same remote provider.|
++|/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `~/.meshery/provider/<provider-name>/<package-version>`.|
+ 
+ Remote Providers must fulfill the following endpoints:
+ 
+ 1. `/login` - return valid token
+-1. `/logout` - invalidating token
++1. `/logout` - invalidate token
+ 1. `/capabilities` - return capabilities.json
+ 
+ ## UI Extension Points
+```
+
+---
+
+### Incident Patch 3: `57daf4c8` (2026-11-28)
+**Commit Message**: Merge pull request #24499 from SachinyadavAug20/fix/24498-design-import-args-validation
+
+fix(mesheryctl): reject positional arguments and trim file flag in design import
+
+**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +5/-0)
+```diff
+@@ -23,6 +23,7 @@ import (
+ 	"os"
+ 	"path"
+ 	"path/filepath"
++	"strings"
+ 
+ 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+@@ -60,6 +61,10 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+ 	`,
+ 	Args: func(_ *cobra.Command, args []string) error {
+ 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
++		if len(args) != 0 {
++			return utils.ErrInvalidArgument(fmt.Errorf("design import does not accept positional arguments\n\n%s", errMsg))
++		}
++		file = strings.TrimSpace(file)
+ 		if file == "" {
+ 			utils.Log.Debug("File path not provided\n" + errMsg)
+ 			return ErrDesignFileNotProvided()
+```
+
+**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +67/-4)
+```diff
+@@ -2,6 +2,7 @@ package design
+ 
+ import (
+ 	"encoding/json"
++	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"path/filepath"
+@@ -24,9 +25,10 @@ import (
+ // assertions below fail if that error identity regresses.
+ func Test_designImport_FlagValidation(t *testing.T) {
+ 	tests := []struct {
+-		name string
+-		run  func(t *testing.T) error
+-		want error
++		name       string
++		run        func(t *testing.T) error
++		want       error
++		wantSubstr string
+ 	}{
+ 		{
+ 			name: "given invalid source type when design import then error is thrown",
+@@ -50,6 +52,57 @@ func Test_designImport_FlagValidation(t *testing.T) {
+ 			},
+ 			want: ErrDesignFileNotProvided(),
+ 		},
++		{
++			name: "given whitespace file flag when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "   "
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, nil)
++			},
++			want: ErrDesignFileNotProvided(),
++		},
++		{
++			name: "given unexpected positional argument when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "design.yaml"
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, []string{"unexpected-arg"})
++			},
++			wantSubstr: "design import does not accept positional arguments",
++		},
++		{
++			name: "given multiple unexpected positional arguments when design import then error is thrown",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "design.yaml"
++				t.Cleanup(func() { file = previous })
++
++				return importCmd.Args(importCmd, []string{"arg1", "arg2"})
++			},
++			wantSubstr: "design import does not accept positional arguments",
++		},
++		{
++			name: "given valid file with surrounding whitespace when design import then whitespace is trimmed and succeeds",
++			run: func(t *testing.T) error {
++				previous := file
++				file = "  design.yaml  "
++				t.Cleanup(func() { file = previous })
++
++				err := importCmd.Args(importCmd, nil)
++				if err != nil {
++					return err
++				}
++				if file != "design.yaml" {
++					return fmt.Errorf("expected trimmed file 'design.yaml', got %q", file)
++				}
++				return nil
++			},
++			want: nil,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+@@ -59,8 +112,18 @@ func Test_designImport_FlagValidation(t *testing.T) {
+ 			_ = utils.SetupMeshkitLoggerTesting(t, false)
+ 
+ 			err := tt.run(t)
++			if tt.want == nil && tt.wantSubstr == "" {
++				if err != nil {
++					t.Fatalf("expected nil error, got %v", err)
++				}
++				return
++			}
+ 			if err == nil {
+-				t.Fatalf("expected error %v, got nil", tt.want)
++				t.Fatalf("expected error, got nil")
++			}
++			if tt.wantSubstr != "" {
++				assert.Contains(t, err.Error(), tt.wantSubstr)
++				return
+ 			}
+ 			if err.Error() != tt.want.Error() {
+ 				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)
+```
+
 #### Recent Merged Pull Requests:
-- **PR #24466** (2026-11-27): [Docs] Fix missing comma in contributing-adapters guide (@ag6393163475-lab)
-- **PR #24464** (2026-11-27): [Docs] Add newcomers attendance for Chacko Abraham (@ChackoPAbraham19)
-- **PR #24462** (2026-11-27): [Docs] Add newcomer introduction for Jashwanth Valurouthu (@jashwanth176)
-- **PR #24459** (2026-11-27): [mesheryctl] Fix stale config used by system reset (@BHAUMIK0711)
-- **PR #24458** (2026-11-27): [mesheryctl] Show required model name in model export synopsis (@ChackoPAbraham19)
-- **PR #24451** (2026-11-27): Add newcomers meeting directory preparation note (@Mahakgupta108)
+- **PR #24529** (2026-11-28): fix(mesheryctl): allow istio-vet for Istio regardless of adapter location (@dhruvdumra)
+- **PR #24515** (2026-11-28): [Docs] Fix typos and table alignment in Providers and Docs Structure guides (@ag6393163475-lab)
+- **PR #24514** (2026-11-27): [Docs] Trim whitespace in docs search query before loading search index (@ag6393163475-lab)
+- **PR #24508** (closed): fix(server): use rune-safe truncation in getFirst42Chars (@sapnasingh4852-source)
+- **PR #24507** (closed): fix(mesheryctl): standardise timestamp format in org/env/workspace list (@sapnasingh4852-source)
+- **PR #24504** (2026-11-28): [CI] Default DISCOURSE_URL to HTTPS and strip trailing slashes in fetch_meeting_minutes.sh (@ag6393163475-lab)
 
 ---
 
@@ -1378,31 +1231,35 @@ Signed-off-by: Nishant Singh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in package.json
+## X. Empirical Invariant Guard in dashboard.go
 
 **RULE**:
-When implementing operations in `ui/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mesheryctl/internal/cli/root/system/dashboard.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `216f7b83`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7b96196`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/package.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `mesheryctl/internal/cli/root/system/dashboard.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    "test": "npm run test:scripts && vitest run",
-    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js",
-    "test:scripts": "node --test scripts/audit-size.test.js"
+var dashboardUsageMsg = "Usage: mesheryctl system dashboard [flags]\nRun 'mesheryctl system dashboard --help' to see detailed help message"
+
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return utils.ErrInvalidArgument(fmt.Errorf("unexpected argument(s)\n\n%s", dashboardUsageMsg))
+		}
+		return nil
+	},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    "test": "vitest run",
-    "audit:all": "node scripts/audit-mui.js && node scripts/audit-hex.js && node scripts/audit-size.js"
+	Args: cobra.NoArgs,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `216f7b83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7b96196` are properly handled with clean fallback behavior.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T06:13:21.302Z",
-  "total_cycles_completed": 13278,
-  "total_learnings_persisted": 13278,
-  "total_rules_promoted": 11971,
+  "last_updated": "2026-11-28T06:22:08.878Z",
+  "total_cycles_completed": 13279,
+  "total_learnings_persisted": 13279,
+  "total_rules_promoted": 11972,
   "history": [
-    {
-      "timestamp": "2026-11-27T12:12:20.807Z",
-      "repository": "strata-engine/Inkling-2-Mini-Strata",
-      "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:12:28.441Z",
       "repository": "mrkai77/Loop",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-28T06:13:21.302Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:22:08.878Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T06:13:21.306Z",
+  "last_updated": "2026-11-28T06:22:08.881Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "8116d39641c025ccc70e9515c127135c58bd79cb99ee1b246ca112a005047881",
-      "verified_at": "2026-11-27T13:23:10.867Z",
+      "content_hash": "6efeb35f699ea81ac6659f8d7228c499580b6c00f37250e4f65cb1e317ebbdc6",
+      "verified_at": "2026-11-28T06:22:08.880Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T13:23:10.867Z"
+      "last_updated": "2026-11-28T06:22:08.880Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
