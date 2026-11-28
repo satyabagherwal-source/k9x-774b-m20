@@ -13988,3 +13988,7 @@
 | `CYCLE-20261128-5W1J` | `2026-11-28T05:33:42.391Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11045` | Yes (`1dedc67e...`) |
 | `CYCLE-20261128-MPOR` | `2026-11-28T05:46:47.307Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11046` | Yes (`e76645c8...`) |
 | `CYCLE-20261128-Y44L` | `2026-11-28T05:55:39.237Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11047` | Yes (`8c402e41...`) |
+| `CYCLE-20261128-957D` | `2026-11-28T06:04:13.849Z` | `unsloth/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | Yes (`b0f8c879...`) |
+| `CYCLE-20261128-966R` | `2026-11-28T06:04:15.123Z` | `arxanas/git-branchless` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11048` | Yes (`a6385947...`) |
+| `CYCLE-20261128-9DIV` | `2026-11-28T06:04:24.631Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11049` | Yes (`30913f79...`) |
+| `CYCLE-20261128-9I0F` | `2026-11-28T06:04:30.447Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11050` | Yes (`92bbbb4a...`) |

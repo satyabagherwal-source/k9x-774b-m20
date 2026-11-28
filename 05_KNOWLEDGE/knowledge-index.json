@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T05:55:46.442Z",
+  "last_updated": "2026-11-28T06:04:37.419Z",
   "total_verified_learnings": 9149,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26983,
+  "total_items": 26991,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "091ebe85",
-      "content_hash": "3eb6ba52e58611ef35d64096c35b59a3dbf4bda2261f496eb3458deaac41b281",
+      "source_version": "d486755f",
+      "content_hash": "edc686f7c695df4480b2e9b957eade69047059359e16f32a7adcd9f0be4bd6b1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T01:55:00.113Z"
+      "persisted_at": "2026-11-28T06:04:25.061Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "091ebe85",
-      "content_hash": "1ed226c1e097410e4da1d9d2c4bf1800153cd0598acfe214fdb018ab57446c12",
+      "source_version": "d486755f",
+      "content_hash": "4116edaa0e4bff5834f1fd75e08203f3c392140ab2b2227e423251f9311ff4f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:55:00.395Z"
+      "persisted_at": "2026-11-28T06:04:25.244Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -224765,8 +224765,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "091ebe85",
-      "content_hash": "ab60099cd56555a50b990d75755a46181e365cec8e160b658282279b2a219f56",
+      "source_version": "d486755f",
+      "content_hash": "30913f79ab7dbd3d98d47f7c13044ea18f9d252af888d4c7169a82e11e0ffc42",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224939,6 +224939,11 @@
           "number": 11014,
           "title": "feature/conn25: only admit protocols the datapath can map to a transit IP",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11049,
+          "title": "make Setenv update RegisterInt knobs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224946,7 +224951,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T01:54:59.091Z",
+      "verified_at": "2026-11-28T06:04:24.384Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225037,9 +225042,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "c64aa1f4ae4008e3dd622224cbc26fdcfdd1e253a447e250f989cdf2b1d11eba",
+      "content_hash": "16b6474b94622756645cd1e782540bc8dd645239026c93c05bc1f1b76f731ade",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:46:47.811Z"
+      "persisted_at": "2026-11-28T06:04:37.234Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -225049,9 +225054,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "20927b8b27c4009a71ca375235d9f3f54ed71f1932eda6db32a48cfec4ae55d2",
+      "content_hash": "184da8b9615673c8393f12a62cc23ff8da94acfbb19833780bcf4ecc61ade01a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:46:48.005Z"
+      "persisted_at": "2026-11-28T06:04:37.419Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -231586,8 +231591,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "c9eb7758",
-      "content_hash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
+      "source_version": "761b277c",
+      "content_hash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231930,6 +231935,11 @@
           "number": 11038,
           "title": "Draft NUC 157 Padding Method Aliases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11050,
+          "title": "Draft NUC 158 List Invocation of Function Values",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231937,7 +231947,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-28T04:48:17.542Z",
+      "verified_at": "2026-11-28T06:04:30.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231979,10 +231989,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2eca620d",
-      "content_hash": "0b579280b50f154a6c3404398ed813aac48839000d96de198e1102dc8896c53f",
+      "source_version": "761b277c",
+      "content_hash": "0ddb8adc61b26e000ee1ef4c7535138f3c6115028df90d7687997654860a3fdb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-28T02:59:17.742Z"
+      "persisted_at": "2026-11-28T06:04:30.869Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231991,10 +232001,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "c9eb7758",
-      "content_hash": "8d63032ea28b7c0a1e5c0f4e0d4abd94d481f396a8a7042a7e92a57561312978",
+      "source_version": "761b277c",
+      "content_hash": "96c3de0c9b28291f7c04fce8d76176a827856cdedf9a711bb66b5bbe7d6ad91c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T04:48:18.576Z"
+      "persisted_at": "2026-11-28T06:04:31.048Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -282727,14 +282737,19 @@
       "slug": "arxanas-git-branchless",
       "platform": "github",
       "source_url": "https://github.com/arxanas/git-branchless",
-      "source_version": "d0eceb7e",
-      "content_hash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
+      "source_version": "0e29ffcf",
+      "content_hash": "a63859478b16a830ce143f67aec512a5b03f400c7692ef5cc9e89b66241dbf3d",
       "dossier_path": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md",
       "promoted_rules": [
         {
           "number": 9015,
           "title": "pin build-git job to ubuntu-24.04",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11048,
+          "title": "bump the actions-deps group across 1 directory with 2 updates",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -282743,7 +282758,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:11:28.313Z",
+      "verified_at": "2026-11-28T06:04:14.877Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282785,10 +282800,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arxanas-git-branchless-architecture-intelligence-arxanas-git-branchless-core-inv.md",
       "title": "Architecture Intelligence: arxanas/git-branchless Core Invariants",
       "repository": "arxanas/git-branchless",
-      "source_version": "d0eceb7e",
-      "content_hash": "4c996b70e1f64d09bee66908cd0dbd0b41321f1e23e4df5942deda6c57fc4bf8",
+      "source_version": "0e29ffcf",
+      "content_hash": "06fff8a4f704d17a954374b44c495f6c77ffd090a78192b35061e4cdea349747",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:11:29.022Z"
+      "persisted_at": "2026-11-28T06:04:15.584Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless",
@@ -282797,10 +282812,10 @@
       "relative_path": "08_VERIFICATION/arxanas-git-branchless-verification-protocol-empirical-defect-shield-for-arxanas.md",
       "title": "Verification Protocol: Empirical Defect Shield for arxanas/git-branchless",
       "repository": "arxanas/git-branchless",
-      "source_version": "d0eceb7e",
-      "content_hash": "bcf9e8af4346ddddeef5cc44cb558462e3c4c90abae0e783c97864922068e97b",
+      "source_version": "0e29ffcf",
+      "content_hash": "0e9b38ec62a5bc3d1f9173875bbb946c9715d942f2f5dde3f71531ac9a367ecd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:11:29.251Z"
+      "persisted_at": "2026-11-28T06:04:15.789Z"
     },
     "learn-huggingface-unsloth-flint-gguf": {
       "learning_id": "learn-huggingface-unsloth-flint-gguf",
@@ -282887,9 +282902,9 @@
       "title": "Architecture Intelligence: arxanas-git-branchless-learnings Core Invariants",
       "repository": "arxanas-git-branchless-learnings",
       "source_version": "HEAD",
-      "content_hash": "96a770a410bceb31a63562ca2380ecd78aef6e820078ed6bf117e3b02e4ee41f",
+      "content_hash": "f80d7d7ba54489aabb1fde4a960906a00f67ca5623ae5881dd14eb2231544532",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:11:38.583Z"
+      "persisted_at": "2026-11-28T06:04:35.860Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arxanas-git-branchless-learnin",
@@ -282899,9 +282914,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arxanas-git-branchless-learnings",
       "repository": "arxanas-git-branchless-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c0a425460cde5893bdde966f4e298dfabe5b2d8ecd216ef230d8474b5006509",
+      "content_hash": "0129a68e0772f784596e78d2fd1a69afaaf1cea6b7b5e61c8d6f8e364c6d9a41",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:11:38.781Z"
+      "persisted_at": "2026-11-28T06:04:36.046Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants",
@@ -314172,7 +314187,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
       "source_version": "hf-unsloth-inkling-2-mini-gguf",
-      "content_hash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
+      "content_hash": "b0f8c879fca20c937d608ff8713edc94fa95e4793d2585e99c45a5f1b13935dd",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md",
       "promoted_rules": [],
@@ -314181,7 +314196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T21:15:32.460Z",
+      "verified_at": "2026-11-28T06:04:13.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314198,9 +314213,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Inkling-2-Mini-GGUF Core Invariants",
       "repository": "unsloth/Inkling-2-Mini-GGUF",
       "source_version": "hf-unsloth-inkling-2-mini-gguf",
-      "content_hash": "d26d7774d958aed858f4ca1fb1cdfb0e1ebde43b1087c36a6c23d5e52a6c3621",
+      "content_hash": "6c2fd6e7e2df0396e15dc6c71169f9894dbf68bfa18236817a99940dd96efde6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:15:32.964Z"
+      "persisted_at": "2026-11-28T06:04:14.110Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-inkling-2-mini-gguf-learnings-core-in",
@@ -314210,9 +314225,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-inkling-2-mini-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-inkling-2-mini-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f6417aa62307133679bc0e9d50eba8be7f6962b503e74c76ec0f6e9a84a2e71",
+      "content_hash": "35f336bdfa40b461c789d0044555fdab107e7024a0ed58840a40df49e12ae854",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:15:55.616Z"
+      "persisted_at": "2026-11-28T06:04:36.465Z"
     },
     "rule-9646": {
       "learning_id": "rule-9646",
@@ -370815,6 +370830,108 @@
       "content_hash": "75ccc8753cc3cabf3782b1f9a21816ad4cf8a74d1c8295a1506a27ef6db247b0",
       "domain_letter": "H",
       "persisted_at": "2026-11-28T05:55:43.423Z"
+    },
+    "rule-11048": {
+      "learning_id": "rule-11048",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11048,
+      "title": "bump the actions-deps group across 1 directory with 2 updates",
+      "source_url": "https://github.com/arxanas/git-branchless",
+      "source_version": "0e29ffcf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:04:14.877Z"
+    },
+    "candidate_directive-bump-the-actions-deps-group-across-1-directory-with-2-updates": {
+      "item_id": "candidate_directive-bump-the-actions-deps-group-across-1-directory-with-2-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-96DF-bump-the-actions-deps-group-across-1-directory-with-2-updates.md",
+      "title": "bump the actions-deps group across 1 directory with 2 updates",
+      "repository": "arxanas/git-branchless",
+      "source_version": "0e29ffcf",
+      "content_hash": "1aa0a4c067a672499cd6f5a829bf6e8543b693370fea9506d0c3359575a0316e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:04:15.368Z"
+    },
+    "rule-11049": {
+      "learning_id": "rule-11049",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11049,
+      "title": "make Setenv update RegisterInt knobs",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "d486755f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:04:24.384Z"
+    },
+    "candidate_directive-make-setenv-update-registerint-knobs": {
+      "item_id": "candidate_directive-make-setenv-update-registerint-knobs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9DPK-make-setenv-update-registerint-knobs.md",
+      "title": "make Setenv update RegisterInt knobs",
+      "repository": "tailscale/tailscale",
+      "source_version": "d486755f",
+      "content_hash": "944a31adc5bcab77814e6500b77ef2044ac3a4d61d097870e7c5d82dff65f58a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:04:24.873Z"
+    },
+    "rule-11050": {
+      "learning_id": "rule-11050",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11050,
+      "title": "Draft NUC 158 List Invocation of Function Values",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "761b277c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T06:04:30.198Z"
+    },
+    "candidate_directive-draft-nuc-158-list-invocation-of-function-values": {
+      "item_id": "candidate_directive-draft-nuc-158-list-invocation-of-function-values",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9I6U-draft-nuc-158-list-invocation-of-function-values.md",
+      "title": "Draft NUC 158 List Invocation of Function Values",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "761b277c",
+      "content_hash": "58427d66d3d18a6c74c259602f2bc919cebcf009a3f6ccd51c994c4dac2bcf51",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:04:30.681Z"
+    },
+    "candidate_directive-build-bump-the-actions-deps-group-across-1-directory-with-2-updates": {
+      "item_id": "candidate_directive-build-bump-the-actions-deps-group-across-1-directory-with-2-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9M1F-build-bump-the-actions-deps-group-across-1-directory-with-2-updates.md",
+      "title": "build: bump the actions-deps group across 1 directory with 2 updates",
+      "repository": "arxanas-git-branchless-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a286ea4737aa5f75cc15a228912767a0cc209d3a2c6edae35b67ec5492fcc38f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:04:35.671Z"
+    },
+    "candidate_directive-envknob-make-setenv-update-registerint-knobs": {
+      "item_id": "candidate_directive-envknob-make-setenv-update-registerint-knobs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9N3P-envknob-make-setenv-update-registerint-knobs.md",
+      "title": "envknob: make Setenv update RegisterInt knobs",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1edbf3affc629bc0ea121e367a25466eeefe23572aa50250c3f5c211debf03b5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T06:04:37.045Z"
     }
   },
   "ai-builder-brain": {

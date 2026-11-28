@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T05:55:46.228Z",
+  "last_updated": "2026-11-28T06:04:37.234Z",
   "total_records": 2877,
   "domains": {
     "A": {
@@ -8764,8 +8764,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "3eb6ba52e58611ef35d64096c35b59a3dbf4bda2261f496eb3458deaac41b281",
-      "created_at": "2026-11-28T01:55:00.113Z"
+      "content_hash": "edc686f7c695df4480b2e9b957eade69047059359e16f32a7adcd9f0be4bd6b1",
+      "created_at": "2026-11-28T06:04:25.061Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13791,8 +13791,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "c64aa1f4ae4008e3dd622224cbc26fdcfdd1e253a447e250f989cdf2b1d11eba",
-      "created_at": "2026-11-26T00:46:47.811Z"
+      "content_hash": "16b6474b94622756645cd1e782540bc8dd645239026c93c05bc1f1b76f731ade",
+      "created_at": "2026-11-28T06:04:37.234Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15956,8 +15956,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "0b579280b50f154a6c3404398ed813aac48839000d96de198e1102dc8896c53f",
-      "created_at": "2026-11-28T02:59:17.742Z"
+      "content_hash": "0ddb8adc61b26e000ee1ef4c7535138f3c6115028df90d7687997654860a3fdb",
+      "created_at": "2026-11-28T06:04:30.869Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -29025,8 +29025,8 @@
       "title": "Architecture Intelligence: arxanas/git-branchless Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arxanas-git-branchless-architecture-intelligence-arxanas-git-branchless-core-inv.md",
       "repository": "arxanas/git-branchless",
-      "content_hash": "4c996b70e1f64d09bee66908cd0dbd0b41321f1e23e4df5942deda6c57fc4bf8",
-      "created_at": "2026-11-17T17:11:29.022Z"
+      "content_hash": "06fff8a4f704d17a954374b44c495f6c77ffd090a78192b35061e4cdea349747",
+      "created_at": "2026-11-28T06:04:15.584Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-flint-gguf-core-invariants",
@@ -29043,8 +29043,8 @@
       "title": "Architecture Intelligence: arxanas-git-branchless-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arxanas-git-branchless-learnings-architecture-intelligence-arxanas-git-branchles.md",
       "repository": "arxanas-git-branchless-learnings",
-      "content_hash": "96a770a410bceb31a63562ca2380ecd78aef6e820078ed6bf117e3b02e4ee41f",
-      "created_at": "2026-11-17T17:11:38.583Z"
+      "content_hash": "f80d7d7ba54489aabb1fde4a960906a00f67ca5623ae5881dd14eb2231544532",
+      "created_at": "2026-11-28T06:04:35.860Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-flint-gguf-learnings-core-invariants",
@@ -37372,8 +37372,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Inkling-2-Mini-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-research-knowledge-intelligence-unsloth-inkling-2.md",
       "repository": "unsloth/Inkling-2-Mini-GGUF",
-      "content_hash": "d26d7774d958aed858f4ca1fb1cdfb0e1ebde43b1087c36a6c23d5e52a6c3621",
-      "created_at": "2026-11-24T21:15:32.964Z"
+      "content_hash": "6c2fd6e7e2df0396e15dc6c71169f9894dbf68bfa18236817a99940dd96efde6",
+      "created_at": "2026-11-28T06:04:14.110Z"
     },
     "DOM-D-0EAB1E60": {
       "record_id": "DOM-D-0EAB1E60",
@@ -37423,8 +37423,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-inkling-2-mini-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-inkling-2-mini-gguf-learnings",
-      "content_hash": "8f6417aa62307133679bc0e9d50eba8be7f6962b503e74c76ec0f6e9a84a2e71",
-      "created_at": "2026-11-24T21:15:55.616Z"
+      "content_hash": "35f336bdfa40b461c789d0044555fdab107e7024a0ed58840a40df49e12ae854",
+      "created_at": "2026-11-28T06:04:36.465Z"
     },
     "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-skyhook-io-radar-core-invariants",

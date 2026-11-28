@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T05:55:42.667Z",
-    "lastVerified": "2026-11-28T05:55:42.667Z",
+    "lastChecked": "2026-11-28T06:04:33.749Z",
+    "lastVerified": "2026-11-28T06:04:33.749Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,22 +399,21 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T05:24:54.524Z",
-    "lastVerified": "2026-11-28T05:24:54.524Z",
+    "lastChecked": "2026-11-28T06:04:29.274Z",
+    "lastVerified": "2026-11-28T06:04:29.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
+    "contentHash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c9eb7758"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -861,9 +860,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-11-27T11:33:53.207Z",
+    "lastChecked": "2026-11-28T06:04:23.133Z",
     "revisionIdentifier": "2fd7bd0f",
-    "lastVerified": "2026-11-27T11:33:53.207Z"
+    "lastVerified": "2026-11-28T06:04:23.133Z"
   },
   "max-sixty-worktrunk": {
     "name": "max-sixty/worktrunk",
@@ -2271,12 +2270,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-28T01:54:57.637Z",
-    "lastVerified": "2026-11-28T01:54:57.637Z",
+    "lastChecked": "2026-11-28T06:04:23.471Z",
+    "lastVerified": "2026-11-28T06:04:23.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "ab60099cd56555a50b990d75755a46181e365cec8e160b658282279b2a219f56",
+    "contentHash": "30913f79ab7dbd3d98d47f7c13044ea18f9d252af888d4c7169a82e11e0ffc42",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5481,8 +5480,8 @@
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T12:59:17.193Z",
-    "lastVerified": "2026-11-27T12:59:17.193Z",
+    "lastChecked": "2026-11-28T06:04:18.300Z",
+    "lastVerified": "2026-11-28T06:04:18.300Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
@@ -7988,11 +7987,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "arxanas-git-branchless": {
-    "name": "git-branchless",
+    "name": "arxanas/git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-27T06:29:02.971Z",
-    "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-27T06:29:02.971Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-28T06:04:13.931Z",
+    "lastVerified": "2026-11-28T06:04:13.931Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-arxanas-git-branchless",
+    "contentHash": "a63859478b16a830ce143f67aec512a5b03f400c7692ef5cc9e89b66241dbf3d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -11396,9 +11405,9 @@
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
     "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
-    "lastChecked": "2026-11-26T04:04:59.746Z",
+    "lastChecked": "2026-11-28T06:04:15.913Z",
     "revisionIdentifier": "c7c08652",
-    "lastVerified": "2026-11-26T04:04:59.746Z"
+    "lastVerified": "2026-11-28T06:04:15.913Z"
   },
   "syntax-tree-hast-util-to-html": {
     "name": "hast-util-to-html",
@@ -11782,12 +11791,12 @@
     "officialUrl": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-24T21:15:31.905Z",
-    "lastVerified": "2026-11-24T21:15:31.905Z",
+    "lastChecked": "2026-11-28T06:04:13.173Z",
+    "lastVerified": "2026-11-28T06:04:13.173Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
-    "contentHash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
+    "contentHash": "b0f8c879fca20c937d608ff8713edc94fa95e4793d2585e99c45a5f1b13935dd",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

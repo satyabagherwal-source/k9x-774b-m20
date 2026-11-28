@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T05:55:39.248Z",
-  "total_cycles_completed": 13273,
-  "total_learnings_persisted": 13273,
-  "total_rules_promoted": 11967,
+  "last_updated": "2026-11-28T06:04:30.456Z",
+  "total_cycles_completed": 13277,
+  "total_learnings_persisted": 13277,
+  "total_rules_promoted": 11970,
   "history": [
-    {
-      "timestamp": "2026-11-27T11:54:25.293Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:03:35.837Z",
-      "repository": "serpapi/google-search-results-python",
-      "learningId": "learn-github-serpapi-google-search-results-python",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:03:39.864Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T12:03:44.242Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T12:03:45.866Z",
       "repository": "chroma-core/chroma",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-28T05:55:39.248Z",
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:04:13.864Z",
+      "repository": "unsloth/Inkling-2-Mini-GGUF",
+      "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:04:15.132Z",
+      "repository": "arxanas/git-branchless",
+      "learningId": "learn-github-arxanas-git-branchless",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:04:24.639Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T06:04:30.456Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

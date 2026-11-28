@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "c9eb7758",
+    "sourceVersion": "761b277c",
     "license": "Apache-2.0",
-    "contentHash": "8b451207fc0e7a7d03090fa8822f27d5f9cc0b335c34d1182a9c4c7b0d6349d4",
-    "lastHarvestedAt": "2026-11-28T04:48:17.855Z",
+    "contentHash": "92bbbb4ab431e5499e21fe50358c267decd9751f4324e57eb59326089d83cff3",
+    "lastHarvestedAt": "2026-11-28T06:04:30.451Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "091ebe85",
+    "sourceVersion": "d486755f",
     "license": "BSD-3-Clause",
-    "contentHash": "ab60099cd56555a50b990d75755a46181e365cec8e160b658282279b2a219f56",
-    "lastHarvestedAt": "2026-11-28T01:54:59.469Z",
+    "contentHash": "30913f79ab7dbd3d98d47f7c13044ea18f9d252af888d4c7169a82e11e0ffc42",
+    "lastHarvestedAt": "2026-11-28T06:04:24.634Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7093,10 +7093,10 @@
     "repository": "arxanas/git-branchless",
     "platform": "github",
     "sourceUrl": "https://github.com/arxanas/git-branchless",
-    "sourceVersion": "d0eceb7e",
+    "sourceVersion": "0e29ffcf",
     "license": "Apache-2.0",
-    "contentHash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
-    "lastHarvestedAt": "2026-11-17T17:11:28.594Z",
+    "contentHash": "a63859478b16a830ce143f67aec512a5b03f400c7692ef5cc9e89b66241dbf3d",
+    "lastHarvestedAt": "2026-11-28T06:04:15.127Z",
     "learningId": "learn-github-arxanas-git-branchless"
   },
   "pingcap-tidb": {
@@ -13115,8 +13115,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Inkling-2-Mini-GGUF",
     "sourceVersion": "hf-unsloth-inkling-2-mini-gguf",
     "license": "Open-Source",
-    "contentHash": "6be3bcb4386548f3f43e880936832103c98d3a33647be09b34cffaa0d4ca2526",
-    "lastHarvestedAt": "2026-11-24T21:15:32.709Z",
+    "contentHash": "b0f8c879fca20c937d608ff8713edc94fa95e4793d2585e99c45a5f1b13935dd",
+    "lastHarvestedAt": "2026-11-28T06:04:13.859Z",
     "learningId": "learn-huggingface-unsloth-inkling-2-mini-gguf"
   },
   "dosco-deeporg": {

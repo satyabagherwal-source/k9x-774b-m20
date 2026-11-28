@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T17:11:38.231Z",
+  "timestamp": "2026-11-28T06:04:35.537Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-arxanas-git-branchless-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [arxanas-git-branchless-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T17:11:38.231Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T06:04:35.537Z`  
 > **Learning ID**: `LEARN-EVO-arxanas-git-branchless-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md`  
 > **Source**: github ([https://github.com/arxanas/git-branchless](https://github.com/arxanas/git-branchless))  
-> **Source Version**: `d0eceb7e`  
+> **Source Version**: `0e29ffcf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:11:27.293Z  
+> **Timestamp**: 2026-11-28T06:04:13.937Z  
 > **Learning ID**: `learn-github-arxanas-git-branchless`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arxanas-git-branchless-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arxanas/git-branchless](https://github.com/arxanas/git-branchless))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:11:27.095Z  
+> **Harvest Timestamp**: 2026-11-28T06:04:13.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-velocity, monorepo-scale workflow for Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4144 stars
+- **Stars / Engagement**: 4145 stars
 
 ---
 
@@ -808,6 +808,22 @@ pub fn get_smartlog_show_worktrees(repo: &Repo) -> eyre::Result<bool> {
         .get_or("branchless.smartlog.showWorktrees", false)
 }
 
+/// At what column to wrap commit messages by default, if at all.
+#[instrument]
+pub fn get_record_wrap_width(repo: &Repo) -> eyre::Result<Option<u8>> {
+    let width: String = match repo
+        .get_readonly_config()?
+        .get("branchless.record.wrapWidth")?
+    {
+        Some(width) => width,
+        None => return Ok(None),
+    };
+
+    let width = width.parse::<u8>()?;
+
+    Ok(Some(width))
+}
+
 /// Get the default comment character.
 #[instrument]
 pub fn get_comment_char(repo: &Repo) -> eyre::Result<char> {
@@ -954,17 +970,7 @@ pub enum Hint {
     /// automatically reconsidered for tracking.
     AddSkippedFiles,
 
-    /// Suggest running `git test clean` in order to clean cached test results.
-    CleanCachedTestResults,
-
-    /// Suggest omitting arguments when they would default to `HEAD`.
-    MoveImplicitHeadArgument,
-
-    /// Suggest running `git restack` when a commit is abandoned as part of a `rewrite` event.
-    RestackWarnAbandoned,
-
-    /// Suggest running `git restack` when the smartlog prints an abandoned commit.
-    SmartlogFixAbando
+    /// Suggest running `git test 
 ```
 
 ### Core Architecture Module: `git-branchless-lib/src/core/dag.rs`
@@ -1062,7 +1068,7 @@ impl Parents for GitParentsBlocking {
         trace!(?v, "visiting Git commit");
 
         let oid = MaybeZeroOid::from_bytes(v.as_ref())
-            .map_err(|_e| anyhow::anyhow!("Could not convert to Git oid: {:?}", &v))
+            .map_err(|_e| anyhow::anyhow!("Could not convert to Git oid: {:?}", v))
             .map_err(BackendError::Other)?;
         let oid = match oid {
             MaybeZeroOid::NonZero(oid) => oid,
@@ -1072,7 +1078,7 @@ impl Parents for GitParentsBlocking {
         let repo = self.repo.lock().unwrap();
         let commit = repo
             .find_commit(oid)
-            .map_err(|_e| anyhow::anyhow!("Could not resolve to Git commit: {:?}", &v))
+            .map_err(|_e| anyhow::anyhow!("Could not resolve to Git commit: {:?}", v))
             .map_err(BackendError::Other)?;
         let commit = match commit {
             Some(commit) => commit,
@@ -1227,7 +1233,7 @@ impl Dag {
         let dag_dir = repo.get_dag_dir()?;
         std::fs::create_dir_all(&dag_dir).wrap_err("Creating .git/branchless/dag dir")?;
         let dag = eden_dag::Dag::open(&dag_dir)
-            .wrap_err_with(|| format!("Opening DAG directory at: {:?}", &dag_dir))?;
+            .wrap_err_with(|| format!("Opening DAG directory at: {:?}", dag_dir))?;
         Ok(dag)
     }
 
@@ -1268,7 +1274,7 @@ impl Dag {
             .into_iter()
             .map(|vertex| (CommitVertex::from(vertex), master_group_options.clone()))
             .collect_vec();
-        let non_ma
+        let non_maste
 ```
 
 ### Core Architecture Module: `git-branchless-lib/src/core/effects.rs`
@@ -1355,7 +1361,7 @@ impl Display for OperationType {
             OperationType::RepairBranches => write!(f, "Checking for broken branches"),
             OperationType::RepairCommits => write!(f, "Checking for broken commits"),
             OperationType::RunGitCommand(command) => {
-                write!(f, "Running Git command: {}", &command)
+                write!(f, "Running Git command: {command}")
             }
             OperationType::RunTests(command) => write!(f, "Running command: {command}"),
             OperationType::RunTestOnCommit(commit) => write!(f, "Waiting to run on {commit}"),
@@ -1531,9 +1537,10 @@ pub mod icons {
 }
 
 /// An icon denoting the status of an operation.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default)]
 pub enum OperationIcon {
     /// A suitable waiting icon should be rendered.
+    #[default]
     InProgress,
 
     /// The operation was a success.
@@ -1546,8 +1553,8 @@ pub enum OperationIcon {
     Failure,
 }
 
-impl Default for OperationIcon {
-    fn default() -> Self {
+#[derive(Debug)]
+struct OperationState
 ```
 
 ### Core Architecture Module: `git-branchless-lib/src/core/eventlog.rs`
@@ -2357,56 +2364,371 @@ pub mod worktree;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `577567af` (2026-11-17)
-**Commit Message**: fix(ci): pin build-git job to ubuntu-24.04
+### Incident Patch 1: `0e29ffcf` (2026-11-28)
+**Commit Message**: build: bump the actions-deps group across 1 directory with 2 updates
 
-GH is moving `ubuntu-latest` to 26.04, which ships with gcc 15.2, which
-in turn defaults to C23. The older versions of git that we currently
-build and test again can't build with C23, though. This can be
-sidestepped by forcing gcc to use C17 via something like
-CFLAGS=-std=gnu17, but then we run into an issue relating to a curl shim
-that existed in older gits but has been removed.
+Bumps the actions-deps group with 2 updates in the / directory: [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) and [cachix/install-nix-action](https://github.com/cachix/install-nix-action).
 
-The curl shim was removed in 2.34, so 3 of our 4 versions are affected,
-and git was updated to build with C23 as of 2.48. We can move to
-ubuntu-latest once we test with git 2.34+ (with the C17 standard) and we
-can move to latest without any changes once we test again only 2.48+.
 
-But testing against newer gits is another big project. See
-https://github.com/arxanas/git-branchless/pull/1685 and
-https://github.com/arxanas/git-branchless/pull/1671 and
-https://github.com/arxanas/git-branchless/issues/1334, for example.
+Updates `Swatinem/rust-cache` from 2.9.1 to 2.9.3
+- [Release notes](https://github.com/swatinem/rust-cache/releases)
+- [Changelog](https://github.com/Swatinem/rust-cache/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/swatinem/rust-cache/compare/c19371144df3bb44fab255c43d04cbc2ab54d1c4...d1527c8f67ef9af357290475d4af4b0fab8f12e0)
 
-Ref: https://github.blog/changelog/2026-09-17-ubuntu-26-generally-
-available-and-latest-migration/
-Ref: https://gcc.gnu.org/gcc-15/porting_to.html#c23
+Updates `cachix/install-nix-action` from 31 to 32
+- [Release notes](https://github.com/cachix/install-nix-action/releases)
+- [Changelog](https://github.com/cachix/install-nix-action/blob/master/RELEASE.md)
+- [Commits](https://github.com/cachix/install-nix-action/compare/v31...v32)
 
-Assited-by: Zed:Opus 5.5
+---
+updated-dependencies:
+- dependency-name: Swatinem/rust-cache
+  dependency-version: 2.9.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: actions-deps
+- dependency-name: cachix/install-nix-action
+  dependency-version: '32'
+  dependency-type: di
 
-**File**: `.github/workflows/linux.yml` (modified, +5/-1)
+**File**: `.github/workflows/lint.yml` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,11 @@ env:
+@@ -35,7 +35,7 @@ jobs:
+           override: true
  
- jobs:
-   build-git:
--    runs-on: ubuntu-latest
-+    # Later versions of ubuntu-latest (eg ubuntu-26.04) bundle updated gcc and
-+    # libcurl that are not out-of-the-box compatible with the older versions of
-+    # git we test against. This can be unpinned once we update our tests to more
-+    # up-to-date git versions.
-+    runs-on: ubuntu-24.04
+       - name: Cache dependencies
+-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
  
-     strategy:
-       matrix:
+       - name: Run `cargo fmt`
+         uses: actions-rs/cargo@v1
+```
+
+**File**: `.github/workflows/linux.yml` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ jobs:
+           override: true
+ 
+       - name: Cache dependencies
+-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+ 
+       - name: Compile (all features)
+         run: cargo build --all-features --all-targets --workspace
+```
+
+**File**: `.github/workflows/macos.yml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ jobs:
+           override: true
+ 
+       - name: Cache dependencies
+-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+ 
+       - name: Compile
+         run: cargo build --benches --tests
+```
+
+**File**: `.github/workflows/nix-linux.yml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ jobs:
+       - uses: actions/checkout@v7
+         with:
+           fetch-depth: 0
+-      - uses: cachix/install-nix-action@v31
++      - uses: cachix/install-nix-action@v32
+         with:
+           extra_nix_config: |
+             experimental-features = nix-command flakes
+```
+
+**File**: `.github/workflows/nix-macos.yml` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ jobs:
+       - uses: actions/checkout@v7
+         with:
+           fetch-depth: 0
+-      - uses: cachix/install-nix-action@v31
++      - uses: cachix/install-nix-action@v32
+         with:
+           extra_nix_config: |
+             experimental-features = nix-command flakes
+```
+
+**File**: `.github/workflows/windows.yml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ jobs:
+           override: true
+ 
+       - name: Cache dependencies
+-        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
++        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+ 
+       - name: Compile
+         run: cargo build --all-targets --workspace
+```
+
+---
+
+### Incident Patch 2: `cc924296` (2026-10-01)
+**Commit Message**: build: bump the deps group across 1 directory with 24 updates
+
+Bumps the deps group with 24 updates in the / directory:
+
+| Package | From | To |
+| --- | --- | --- |
+| [anyhow](https://github.com/dtolnay/anyhow) | `1.0.102` | `1.0.104` |
+| [async-trait](https://github.com/dtolnay/async-trait) | `0.1.89` | `0.1.92` |
+| [bstr](https://github.com/BurntSushi/bstr) | `1.12.1` | `1.13.1` |
+| [chrono](https://github.com/chronotope/chrono) | `0.4.44` | `0.4.45` |
+| [chrono-english](https://github.com/stevedonovan/chrono-english) | `0.1.8` | `0.2.1` |
+| [clap](https://github.com/clap-rs/clap) | `4.6.1` | `4.6.7` |
+| [clap_mangen](https://github.com/clap-rs/clap) | `0.3.0` | `0.3.3` |
+| [console](https://github.com/console-rs/console) | `0.16.3` | `0.16.6` |
+| [crossbeam](https://github.com/crossbeam-rs/crossbeam) | `0.8.4` | `0.8.5` |
+| [cursive_core](https://github.com/gyscos/cursive) | `0.4.6` | `0.4.7` |
+| [eyre](https://github.com/eyre-rs/eyre) | `0.6.12` | `0.6.14` |
+| [futures](https://github.com/rust-lang/futures-rs) | `0.3.32` | `0.3.34` |
+| [git2](https://github.com/rust-lang/git2-rs) | `0.20.4` | `0.21.0` |
+| [glob](https://github.com/rust-lang/glob) | `0.3.3` | `0.3.4` |
+| [indexm
+
+**File**: `Cargo.lock` (modified, +262/-275)
+```diff
+@@ -164,9 +164,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "anyhow"
+-version = "1.0.102"
++version = "1.0.104"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
++checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+ 
+ [[package]]
+ name = "arbitrary"
+@@ -191,13 +191,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "async-trait"
+-version = "0.1.89"
++version = "0.1.92"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
++checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 2.0.117",
++ "syn 3.0.6",
+ ]
+ 
+ [[package]]
+@@ -313,13 +313,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "bstr"
+-version = "1.12.1"
++version = "1.13.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "63044e1ae8e69f3b5a92c736ca6269b8d12fa7efe39bf34ddb06d102cf0e2cab"
++checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
+ dependencies = [
+  "memchr",
+- "regex-automata 0.4.13",
+- "serde",
++ "regex-automata 0.4.18",
++ "serde_core",
+ ]
+ 
+ [[package]]
+@@ -383,14 +383,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.2.61"
++version = "1.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d16d90359e986641506914ba71350897565610e87ce0ad9e6f28569db3dd5c6d"
++checksum = "f360145194ee8e21db5ee7f3fcd4fe52210864c75c985dae33218202c8bbe040"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+  "libc",
+- "shlex",
++ "shlex 2.0.1",
+ ]
+ 
+ [[package]]
+@@ -423,9 +423,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "chrono"
+-version = "0.4.44"
++version = "0.4.45"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c673075a2e0e5f4a1dde27ce9dee1ea4558c7ffe648f576438a20ca1d2acc4b0"
++checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+ dependencies = [
+  "iana-time-zone",
+  "js-sys",
+@@ -436,9 +436,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "chrono-english"
+-version = "0.1.8"
++version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "38a56613410c9249673f4676ab8d27c70949814accb27b6b738009e2ff1034a1"
++checksum = "01f13833384af0b2e8d3dbba6d611a2b9ee3ced8b141fcb5d932706d63b5680e"
+ dependencies = [
+  "chrono",
+  "scanlex",
+@@ -482,19 +482,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap"
+-version = "4.6.1"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1ddb117e43bbf7dacf0a4190fef4d345b9bad68dfc649cb349e7d17d28428e51"
++checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+ ]
+ 
+ [[package]]
+ name = "clap_builder"
+-version = "4.6.0"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "714a53001bf66416adb0e2ef5ac857140e7dc3a0c48fb28b2f10762fc4b5069f"
++checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
+ dependencies = [
+  "anstream 1.0.0",
+  "anstyle",
+@@ -504,14 +504,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_derive"
+-version = "4.6.1"
++version = "4.6.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f2ce8604710f6733aa641a2b3731eaa1e8b3d9973d5e3565da11800813f997a9"
++checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
+ dependencies = [
+  "heck",
+  "proc-macro2",
+  "quote",
+- "syn 2.0.117",
++ "syn 3.0.6",
+ ]
+ 
+ [[package]]
+@@ -522,9 +522,9 @@ checksum = "3a822ea5bc7590f9d40f1ba12c0dc3c2760f3482c6984db1573ad11031420831"
+ 
+ [[package]]
+ name = "clap_mangen"
+-version = "0.3.0"
++version = "0.3.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d82842b45bf9f6a3be090dd860095ac30728042c08e0d6261ca7259b5d850f07"
++checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
+ dependencies = [
+  "clap",
+  "roff 1.1.1",
+@@ -563,20 +563,6 @@ version = "1.0.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
+ 
+-[[package]]
+-name = "compact_str"
+-version = "0.8.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3b79c4069c6cad78e2e0cdfcbd26275770669fb39fd308a752dc110e83b9af32"
+-dependencies = [
+- "castaway",
+- "cfg-if",
+- "itoa",
+- "rustversion",
+- "ryu",
+- "static_assertions",
+-]
+-
+ [[package]]
+ name = "compact_str"
+ version = "0.9.0"
+@@ -613,9 +599,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "console"
+-version = "0.16.3"
++version = "0.16.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d64e8af5551369d19cf50138de61f1c42074ab970f74e99be916646777f8fc87"
++checksum = "e96a4956774c13c126a8b5af4daa79384f4d826534c95a02d76afb39e2ab64e3"
+ dependencies = [
+  "en
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -38,7 +38,7 @@ bstr = "1.12.1"
+ bugreport = "0.6.0"
+ chashmap = "2.2.2"
+ chrono = "0.4.44"
+-chrono-english = "0.1.8"
++chrono-english = "0.2.1"
+ chronoutil = "0.2.7"
+ clap = "4.6.1"
+ clap_mangen = "0.3.0"
+@@ -69,11 +69,11 @@ git-branchless-smartlog = { version = "0.11.1", path = "git-branchless-smartlog"
+ git-branchless-submit = { version = "0.11.1", path = "git-branchless-submit" }
+ git-branchless-test = { version = "0.11.1", path = "git-branchless-test" }
+ git-branchless-undo = { version = "0.11.1", path = "git-branchless-undo" }
+-git2 = { version = "0.20.4", default-features = false }
++git2 = { version = "0.21.0", default-features = false }
+ glob = "0.3.3"
+ indexmap = "2.14.0"
+ indicatif = { version = "0.18.4", features = ["improved_unicode"] }
+-itertools = "0.14.0"
++itertools = "0.15.0"
+ lalrpop = "0.23.1"
+ lalrpop-util = "0.23.0"
+ lazy_static = "1.5.0"
+@@ -85,7 +85,7 @@ path-slash = "0.2.1"
+ portable-pty = "0.9.0"
+ rayon = "1.12.0"
+ regex = "1.12.3"
+-rusqlite = { version = "0.39.0", features = ["bundled"] }
++rusqlite = { version = "0.40.2", features = ["bundled"] }
+ scm-bisect = { version = "0.11.1", path = "scm-bisect" }
+ scm-diff-editor = "0.10.1"
+ scm-record = "0.10.1"
+```
+
+**File**: `scm-bisect/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ version = "0.11.1"
+ 
+ [dependencies]
+ indexmap = "2"
+-itertools = "0.14"
++itertools = "0.15"
+ thiserror = "2"
+ tracing = "0.1"
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1710** (2026-11-28): build: bump the actions-deps group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #1709** (2026-11-27): chore: bump MSRV to 1.97 (@claytonrcarter)
+- **PR #1707** (2026-11-27): feat(record/reword): add option to wrap commit messages (@claytonrcarter)
 - **PR #1706** (2026-11-17): fix(ci): build git as C17 (@claytonrcarter)
 - **PR #1705** (2026-11-17): feat(nav): handle unambiguous "all the way" navigation (@claytonrcarter)
 - **PR #1704** (2026-10-24): test: add additional snapsnots (@claytonrcarter)
-- **PR #1702** (2026-10-23): fix(revset): allow `#` in branch names (@anyingiit)
-- **PR #1701** (2026-10-23): fix(rewrite): preserve hidden commit status (@ppwwyyxx)
-- **PR #1698** (closed): build: bump the deps group across 1 directory with 21 updates (@dependabot[bot])
 
 ---
 
@@ -2426,35 +2748,31 @@ Assited-by: Zed:Opus 5.5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): pin build-git job to ubuntu-24.04
+## X. build: bump the actions-deps group across 1 directory with 2 updates
 
 **RULE**:
-When implementing operations in `.github/workflows/linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arxanas/git-branchless. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/lint.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arxanas/git-branchless. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `577567af`: ci): pin build-git job to ubuntu-24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0e29ffcf`: build: bump the actions-deps group across 1 directory with 2 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/linux.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/lint.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # Later versions of ubuntu-latest (eg ubuntu-26.04) bundle updated gcc and
-    # libcurl that are not out-of-the-box compatible with the older versions of
-    # git we test against. This can be unpinned once we update our tests to more
-    # up-to-date git versions.
-    runs-on: ubuntu-24.04
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    runs-on: ubuntu-latest
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `577567af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0e29ffcf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

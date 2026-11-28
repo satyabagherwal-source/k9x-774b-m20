@@ -14021,3 +14021,7 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `85c63335` | Multi-dimensional audit evidence | 2026-11-28T05:33:42.405Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `f6d320a1` | Multi-dimensional audit evidence | 2026-11-28T05:46:47.321Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `dbc515bd` | Multi-dimensional audit evidence | 2026-11-28T05:55:39.242Z |
+| `learn-huggingface-unsloth-inkling-2-mini-gguf` | `https://huggingface.co/unsloth/Inkling-2-Mini-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-28T06:04:13.859Z |
+| `learn-github-arxanas-git-branchless` | `https://github.com/arxanas/git-branchless` | `0e29ffcf` | Multi-dimensional audit evidence | 2026-11-28T06:04:15.127Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `d486755f` | Multi-dimensional audit evidence | 2026-11-28T06:04:24.634Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `761b277c` | Multi-dimensional audit evidence | 2026-11-28T06:04:30.451Z |
