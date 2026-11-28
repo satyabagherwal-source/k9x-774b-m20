@@ -13963,3 +13963,5 @@ Every entry in this ledger must capture:
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `2975135e` | Multi-dimensional audit evidence | 2026-11-28T01:35:28.685Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `24b444d1` | Multi-dimensional audit evidence | 2026-11-28T01:35:31.459Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a0a5c188` | Multi-dimensional audit evidence | 2026-11-28T01:35:40.035Z |
+| `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b` | `https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B` | `hf-ovhaill` | Multi-dimensional audit evidence | 2026-11-28T01:45:16.881Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `436166f7` | Multi-dimensional audit evidence | 2026-11-28T01:45:24.080Z |

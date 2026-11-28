@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T01:35:46.911Z",
+  "last_updated": "2026-11-28T01:45:31.561Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49248,13 +49248,13 @@
       "rule_number": 2780,
       "title": "[SHARED] Update libs",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "e11ca719",
+      "source_version": "436166f7",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T14:21:09.664Z"
+      "verified_at": "2026-11-28T01:45:23.720Z"
     },
     "rule-2781": {
       "learning_id": "rule-2781",
@@ -219802,9 +219802,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f52278eb4853c5f5969f98257a0eafe1cedc4c22c34fe93ab231fa7eea01ae0",
+      "content_hash": "15bc518e57a2626bcbe38e23c695bdccc283f5160cff8ab07f9a721ae4a74d05",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:00:42.285Z"
+      "persisted_at": "2026-11-28T01:45:31.285Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219814,9 +219814,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b2f1f86d7baed4dc4fc353326393859877efffb29c83b22f02420121aa0f2ea",
+      "content_hash": "2b41b84d84971bd9580bc56c64bcb9efe6f02a0a1e146bc5ba9cf94b419e3be1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:00:42.575Z"
+      "persisted_at": "2026-11-28T01:45:31.561Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -260557,8 +260557,8 @@
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "e11ca719",
-      "content_hash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
+      "source_version": "436166f7",
+      "content_hash": "9361a6f1ebf609a3f699d3092e35e88223341ee3c4b1d5d91b2cd27fe83389b7",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "promoted_rules": [
@@ -260583,7 +260583,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:21:09.664Z",
+      "verified_at": "2026-11-28T01:45:23.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260637,10 +260637,10 @@
       "relative_path": "08_VERIFICATION/kamgurgul-cpu-info-verification-protocol-empirical-defect-shield-for-kamgurgul-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for kamgurgul/cpu-info",
       "repository": "kamgurgul/cpu-info",
-      "source_version": "e11ca719",
-      "content_hash": "96682f8865aa98de00c12b2e8d2f5514d6afd9da9da796687c8aabdcfec552da",
+      "source_version": "436166f7",
+      "content_hash": "dfe9b19ed2ce34c249f2fc5d99dd9d1ae7ffd205386ca78cf94db9ef64aac7e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:21:10.482Z"
+      "persisted_at": "2026-11-28T01:45:25.005Z"
     },
     "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases": {
       "item_id": "candidate_directive-run-validateandnormalizeconfig-in-ordered-phases",
@@ -260778,9 +260778,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kamgurgul-cpu-info-learnings",
       "repository": "kamgurgul-cpu-info-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b282ffe545aba9993003f57ac3fdfc2950af4e48e104840f2cadbdd06f984d7",
+      "content_hash": "da8eb9657393de3e49698b23e3d311679e90d214beadb828c1c8bb209222cebd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:21:16.284Z"
+      "persisted_at": "2026-11-28T01:45:30.169Z"
     },
     "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases": {
       "item_id": "candidate_directive-normalize-run-validateandnormalizeconfig-in-ordered-phases",
@@ -309368,10 +309368,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kamgurgul-cpu-info-architecture-intelligence-kamgurgul-cpu-info-core-invariants.md",
       "title": "Architecture Intelligence: kamgurgul/cpu-info Core Invariants",
       "repository": "kamgurgul/cpu-info",
-      "source_version": "e11ca719",
-      "content_hash": "9b8c2693af58a1e800b5d288c7a281ea7628e65ae7362cb97500f56a90764bc8",
+      "source_version": "436166f7",
+      "content_hash": "0fd17a01b4b0280cd7948244e3d4f488c7082c5752cddeb02f8e56385b75c8c9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:21:10.300Z"
+      "persisted_at": "2026-11-28T01:45:24.718Z"
     },
     "rule-9553": {
       "learning_id": "rule-9553",
@@ -309498,9 +309498,9 @@
       "title": "Architecture Intelligence: kamgurgul-cpu-info-learnings Core Invariants",
       "repository": "kamgurgul-cpu-info-learnings",
       "source_version": "HEAD",
-      "content_hash": "52c29d55cf06d8e3299a388bdaa6d26d1251c9e88ad4bd0577148ae3b9ff13d0",
+      "content_hash": "7f254833c0856b256bbdd89f65368f3e69adf566fa32215c719133a6f5ac0657",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:21:16.104Z"
+      "persisted_at": "2026-11-28T01:45:29.877Z"
     },
     "learn-github-kianuni-erosion-cn": {
       "learning_id": "learn-github-kianuni-erosion-cn",
@@ -311853,7 +311853,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
       "source_version": "hf-ovhaillm-olala-v1.0-mini-7a1b",
-      "content_hash": "c0f32927ca0678f9dcd0e9a2a46068e1395a45a424fdcc74abc9b172a2f6f2a8",
+      "content_hash": "7abfe4c945de351fd46e1bb1735d87e8155778cdd8b65430fdff3b7be722e20e",
       "dossier_path": "07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md",
       "promoted_rules": [],
@@ -311862,7 +311862,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:13:33.504Z",
+      "verified_at": "2026-11-28T01:45:16.513Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311879,9 +311879,9 @@
       "title": "Research & Knowledge Intelligence: OVHaiLLM/Olala-v1.0-mini-7A1B Core Invariants",
       "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
       "source_version": "hf-ovhaillm-olala-v1.0-mini-7a1b",
-      "content_hash": "27209d448b33d38ca91d3f727b76a50f2a54dd0639394488d361ea243301dfd5",
+      "content_hash": "1983c0ebdc5ba560835df4d14e1742665f23a557f197b1b05edae5bf6508503a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:13:34.089Z"
+      "persisted_at": "2026-11-28T01:45:17.226Z"
     },
     "rule-9601": {
       "learning_id": "rule-9601",
@@ -311955,9 +311955,9 @@
       "title": "Research & Knowledge Intelligence: hf-ovhaillm-olala-v1.0-mini-7a1b-learnings Core Invariants",
       "repository": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
       "source_version": "HEAD",
-      "content_hash": "54630a73fcfca2d65f0409ecbd8be3070db213ad5aa2e24cc45aa4c39e7151fe",
+      "content_hash": "448490417948fbd54881cdced4288c5c993a967a3215ed71af8795e7ef52d9cc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:14:29.130Z"
+      "persisted_at": "2026-11-28T01:45:28.732Z"
     },
     "candidate_directive-filters-remove-the-allowlists-and-rerun-the-4-0-upgrade-once": {
       "item_id": "candidate_directive-filters-remove-the-allowlists-and-rerun-the-4-0-upgrade-once",
@@ -331344,13 +331344,13 @@
       "item_id": "candidate_directive-shared-update-libs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T2Q5-shared-update-libs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0ELT-shared-update-libs.md",
       "title": "[SHARED] Update libs",
       "repository": "kamgurgul-cpu-info-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf480e5b49dfa95c6a21f399ce2776e0ba16fe92fddf1658d429e148ded155f2",
+      "content_hash": "e55a1e71ad688e5a72da12afff1125c48cded81f1dd194141870a37d7cf9163c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:21:15.918Z"
+      "persisted_at": "2026-11-28T01:45:29.585Z"
     },
     "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fei-craft-ds-bot-learnings-core-invariants",
@@ -350785,13 +350785,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ESU7-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0FO8-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a7ee0b928db735e620f5b2fa71c31f136707cc6108c203bd7e5f8c825fd5607",
+      "content_hash": "b0bac28009b756817277f5b405ed1a22c7ac98335a7c7f03ae7f7659ec120740",
       "domain_letter": "H",
-      "persisted_at": "2026-11-28T01:00:41.984Z"
+      "persisted_at": "2026-11-28T01:45:30.968Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",

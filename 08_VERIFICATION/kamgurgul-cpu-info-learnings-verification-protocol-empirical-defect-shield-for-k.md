@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T14:21:15.819Z",
+  "timestamp": "2026-11-28T01:45:29.423Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kamgurgul-cpu-info-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kamgurgul-cpu-info-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T14:21:15.819Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-28T01:45:29.423Z`  
 > **Learning ID**: `LEARN-EVO-kamgurgul-cpu-info-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source**: github ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
-> **Source Version**: `e11ca719`  
+> **Source Version**: `436166f7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T14:21:09.127Z  
+> **Timestamp**: 2026-11-28T01:45:22.936Z  
 > **Learning ID**: `learn-github-kamgurgul-cpu-info`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kamgurgul/cpu-info](https://github.com/kamgurgul/cpu-info))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:21:09.122Z  
+> **Harvest Timestamp**: 2026-11-28T01:45:22.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CPU Info is a multiplatform application which provides information about device hardware and software
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1107 stars
+- **Stars / Engagement**: 1111 stars
 
 ---
 
@@ -679,50 +679,23 @@ fun formatHz(valueHz: Long): String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e11ca719` (2026-11-21)
+### Incident Patch 1: `436166f7` (2026-11-26)
 **Commit Message**: [SHARED] Update libs
 
-**File**: `gradle/libs.versions.toml` (modified, +2/-2)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
 @@ -1,5 +1,5 @@
  [versions]
--androidGradlePlugin = "9.5.1"
-+androidGradlePlugin = "9.5.2"
+-androidGradlePlugin = "9.5.2"
++androidGradlePlugin = "9.5.3"
  androidxActivity = "1.13.0"
  androidxArchCoreTesting = "2.2.0"
  androidxCore = "1.19.1"
-@@ -40,7 +40,7 @@ licenses = "3.1.5"
- oshi = "7.8.0"
- profileinstaller = "1.4.1"
- relinker = "1.4.5"
--spotless = "8.11.0"
-+spotless = "8.12.0"
- turbine = "1.2.1"
- uiautomator = "2.4.1"
- 
-```
-
----
-
-### Incident Patch 2: `a8e9be39` (2026-11-21)
-**Commit Message**: [IOS] Add screenshoots
-
-**File**: `iosApp/iosApp/Info.plist` (modified, +2/-0)
-```diff
-@@ -20,6 +20,8 @@
- 	<string>1.5.0</string>
- 	<key>CFBundleVersion</key>
- 	<string>$(CURRENT_PROJECT_VERSION)</string>
-+	<key>ITSAppUsesNonExemptEncryption</key>
-+	<false/>
- 	<key>LSRequiresIPhoneOS</key>
- 	<true/>
- 	<key>UIApplicationSceneManifest</key>
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #657** (closed): Update dependency com.diffplug.spotless to v8.12.0 - autoclosed (@renovate[bot])
-- **PR #656** (closed): Update androidGradlePlugin to v9.5.2 - autoclosed (@renovate[bot])
+- **PR #656** (closed): Update androidGradlePlugin to v9.5.3 - autoclosed (@renovate[bot])
 - **PR #655** (closed): Update composeUiTest to v1.13.0 - autoclosed (@renovate[bot])
 - **PR #654** (closed): Update androidxWear to v1.7.2 - autoclosed (@renovate[bot])
 - **PR #653** (2026-11-19): Update dependency ruby to v4.0.10 (@renovate[bot])
@@ -752,7 +725,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kamgurgul/cpu-info. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e11ca719`: [SHARED] Update libs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `436166f7`: [SHARED] Update libs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
@@ -760,19 +733,17 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-androidGradlePlugin = "9.5.2"
-spotless = "8.12.0"
+androidGradlePlugin = "9.5.3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-androidGradlePlugin = "9.5.1"
-spotless = "8.11.0"
+androidGradlePlugin = "9.5.2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e11ca719` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `436166f7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

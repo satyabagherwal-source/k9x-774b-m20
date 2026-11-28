@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:35:46.486Z",
+  "last_updated": "2026-11-28T01:45:30.968Z",
   "directives": [
     {
       "id": "CD-001",
@@ -49292,14 +49292,14 @@
       "domain_letter": "I"
     },
     {
-      "id": "CD-T2Q5",
+      "id": "CD-0ELT",
       "directive_title": "[SHARED] Update libs",
       "source_repo": "kamgurgul-cpu-info-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-T2Q5-shared-update-libs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0ELT-shared-update-libs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-28",
       "domain_letter": "G"
     },
     {
@@ -54516,11 +54516,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-ESU7",
+      "id": "CD-0FO8",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ESU7-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0FO8-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
@@ -73803,6 +73803,24 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-28",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-E29F3A",
+      "directive_title": "[SHARED] Update libs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kamgurgul-cpu-info",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E29F3A--shared-update-libs.md",
+      "staged_date": "2026-11-28"
+    },
+    {
+      "id": "CD-REV-778854",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-778854-bump-version-number.md",
+      "staged_date": "2026-11-28"
     }
   ]
 }

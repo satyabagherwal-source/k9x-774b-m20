@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:35:40.043Z",
+  "last_updated": "2026-11-28T01:45:24.092Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13311,14 +13311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kamgurgul-cpu-info",
-      "content_hash": "d915c223c67baf7cc0856a41ec1dd10161e911e3e9318011d3feb110e44f6156",
-      "verified_at": "2026-11-23T14:21:09.887Z",
+      "content_hash": "9361a6f1ebf609a3f699d3092e35e88223341ee3c4b1d5d91b2cd27fe83389b7",
+      "verified_at": "2026-11-28T01:45:24.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:21:09.887Z"
+      "last_updated": "2026-11-28T01:45:24.091Z"
     },
     "ugolbck/seofordev": {
       "repository": "ugolbck/seofordev",
@@ -19731,14 +19731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
-      "content_hash": "c0f32927ca0678f9dcd0e9a2a46068e1395a45a424fdcc74abc9b172a2f6f2a8",
-      "verified_at": "2026-11-24T17:13:33.808Z",
+      "content_hash": "7abfe4c945de351fd46e1bb1735d87e8155778cdd8b65430fdff3b7be722e20e",
+      "verified_at": "2026-11-28T01:45:16.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:13:33.808Z"
+      "last_updated": "2026-11-28T01:45:16.892Z"
     },
     "thinkingmachines/Inkling-2-Mini": {
       "repository": "thinkingmachines/Inkling-2-Mini",

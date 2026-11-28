@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:35:40.040Z",
-  "total_cycles_completed": 13220,
-  "total_learnings_persisted": 13220,
-  "total_rules_promoted": 11925,
+  "last_updated": "2026-11-28T01:45:24.088Z",
+  "total_cycles_completed": 13222,
+  "total_learnings_persisted": 13222,
+  "total_rules_promoted": 11926,
   "history": [
-    {
-      "timestamp": "2026-11-27T07:39:16.089Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T07:39:24.561Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T07:48:45.942Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T01:35:40.040Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:45:16.888Z",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:45:24.088Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

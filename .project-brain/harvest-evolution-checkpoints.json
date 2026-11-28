@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:35:47.096Z",
+  "last_updated": "2026-11-28T01:45:31.812Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-28T01:26:58.382Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-28T01:00:41.506Z",
+      "processed_at": "2026-11-28T01:45:30.459Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1333,7 +1333,7 @@
       "staged_for_review": 1
     },
     "kamgurgul-cpu-info-learnings.md": {
-      "processed_at": "2026-11-23T14:21:15.613Z",
+      "processed_at": "2026-11-28T01:45:29.054Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3603,7 +3603,7 @@
       "staged_for_review": 0
     },
     "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md": {
-      "processed_at": "2026-11-24T17:14:28.799Z",
+      "processed_at": "2026-11-28T01:45:28.345Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5187,
+  "total_dossiers_evaluated": 5190,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3926
+  "total_staged_for_review": 3928
 }

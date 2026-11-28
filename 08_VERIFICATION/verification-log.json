@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-TGEE",
-    "timestamp": "2026-11-26T13:44:34.886Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "e0dd0c0c17337545968447fa8c16325c3a817d3b11e77df4898e21d5cd460b9d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-TI06",
-    "timestamp": "2026-11-26T13:44:36.966Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "1783d1838ba58b528479dade1ef6fff31f958874b1a57711a7626c19abc90450",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-TLS8",
     "timestamp": "2026-11-26T13:44:41.864Z",
     "repository": "a2ui-project/a2ui",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "4adbf022ef1a0ddeeb34f00ea5978d3475b95595a1b9b879202bd7cc2548cf85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-04SK",
+    "timestamp": "2026-11-28T01:45:16.868Z",
+    "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+    "contentHash": "7abfe4c945de351fd46e1bb1735d87e8155778cdd8b65430fdff3b7be722e20e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-0ACI",
+    "timestamp": "2026-11-28T01:45:24.066Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "9361a6f1ebf609a3f699d3092e35e88223341ee3c4b1d5d91b2cd27fe83389b7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

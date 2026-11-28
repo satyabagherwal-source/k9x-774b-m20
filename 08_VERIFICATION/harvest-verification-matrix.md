@@ -13930,3 +13930,5 @@
 | `CYCLE-20261128-NIXS` | `2026-11-28T01:35:28.672Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11008` | Yes (`1505dbbb...`) |
 | `CYCLE-20261128-NL2U` | `2026-11-28T01:35:31.446Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11009` | Yes (`66dc107f...`) |
 | `CYCLE-20261128-NRP2` | `2026-11-28T01:35:40.022Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11010` | Yes (`4adbf022...`) |
+| `CYCLE-20261128-04SK` | `2026-11-28T01:45:16.868Z` | `OVHaiLLM/Olala-v1.0-mini-7A1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | Yes (`7abfe4c9...`) |
+| `CYCLE-20261128-0ACI` | `2026-11-28T01:45:24.066Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2780` | Yes (`9361a6f1...`) |
