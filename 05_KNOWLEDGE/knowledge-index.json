@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-28T01:18:59.903Z",
+  "last_updated": "2026-11-28T01:26:59.321Z",
   "total_verified_learnings": 9148,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26875,
+  "total_items": 26877,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bdc4d4fac40f01eb994d1496461a97658fc2f490904c7efdbe252936a4a7f17",
+      "content_hash": "7b5f1e7a116f9aabf6e5e27613b8e40790be76f57262e1db640ac1107eefb4d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-28T01:18:59.903Z"
+      "persisted_at": "2026-11-28T01:26:59.321Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -230942,8 +230942,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "1a8e9c9a",
-      "content_hash": "47173e1c788f50a07c6b71e7165031e5289058df7c3a8aee2f666a36688b4baa",
+      "source_version": "711f4b42",
+      "content_hash": "83e949288125adf49f8d546390d420a3385a0c1e869f25d0d58327d47170f361",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -231006,6 +231006,11 @@
           "number": 10848,
           "title": "show whether the source is ahead of what is applied, and build Activity fr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 11007,
+          "title": "Grade a nested Flux HelmRelease or Kustomization by its own status",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231013,7 +231018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T07:22:00.995Z",
+      "verified_at": "2026-11-28T01:26:52.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231055,10 +231060,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "ce0c9eba",
-      "content_hash": "79d823008a9cb2f1c67b68b91ef5938bc165b6c1ce851e25b02612c55c059386",
+      "source_version": "711f4b42",
+      "content_hash": "5ee693d2095b3a15ed9a24db792fe843d06d5aebef8b9927d64854a942182605",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:33:49.700Z"
+      "persisted_at": "2026-11-28T01:26:53.577Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar",
@@ -231067,10 +231072,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "1a8e9c9a",
-      "content_hash": "7c58bfba6446130f2924dd93b260c7788c3394be687c2128022cc53ad84952fe",
+      "source_version": "711f4b42",
+      "content_hash": "e34efb044106565101161ed9307026276304cbaec365454bc56ffed1db46252d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:22:01.898Z"
+      "persisted_at": "2026-11-28T01:26:53.774Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -231104,9 +231109,9 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "efc3eca1673dbad1d4bd81443c3710976d78a80a733fb301286b751a992739b1",
+      "content_hash": "1b04b59b13af60b64ec78dd8142bb81716c668e683f0710d2db85b569bddf122",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T14:24:03.870Z"
+      "persisted_at": "2026-11-28T01:26:57.910Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-skyhook-io-radar-learnings",
@@ -231116,9 +231121,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io-radar-learnings",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ca3d95e1caaef9adac03addd1c433cc090f04902ee0fcb01482392ad85c8321",
+      "content_hash": "67246dc7de4ea35ef3591dc7d5c0bb7c865cb6638638e150559692210e895d1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T07:22:10.310Z"
+      "persisted_at": "2026-11-28T01:26:58.117Z"
     },
     "learn-huggingface-qwen-qwen3-vl-8b-instruct": {
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
@@ -311794,7 +311799,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/DepthPro2",
       "source_version": "hf-apple-depthpro2",
-      "content_hash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
+      "content_hash": "a18f4677418eddf6ce11be9820d5ef688d7df71625bb87b2b6057205cd0f48d8",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md",
       "promoted_rules": [],
@@ -311803,7 +311808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:03:02.795Z",
+      "verified_at": "2026-11-28T01:26:43.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311820,9 +311825,9 @@
       "title": "Research & Knowledge Intelligence: apple/DepthPro2 Core Invariants",
       "repository": "apple/DepthPro2",
       "source_version": "hf-apple-depthpro2",
-      "content_hash": "0571e9b2e8d9ae537a5207af1a8e3259c7e6682acd25f4f84904e1816e0d305d",
+      "content_hash": "0cf4cbb1db1e581106a999a1bf4b239392ba96bbe22420894ad01126fd27fdcf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:03:03.228Z"
+      "persisted_at": "2026-11-28T01:26:44.003Z"
     },
     "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b": {
       "learning_id": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
@@ -311923,9 +311928,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-depthpro2-learnings Core Invariants",
       "repository": "hf-apple-depthpro2-learnings",
       "source_version": "HEAD",
-      "content_hash": "202cc39acac1cfedf7559063517c400122c17ad8c4e10eb1cbe9f2b3c4ac4c4f",
+      "content_hash": "e21d2ebdd836aca68f4770c9310c8d67bfa2d7bdd6aafeb0e9827b74cad47418",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T17:03:20.659Z"
+      "persisted_at": "2026-11-28T01:26:56.937Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-core-",
@@ -358776,13 +358781,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2BO2-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CLKS-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "dffe1501df0d892a0328ce526d7e0e743b299e51f48ad24ebf815ccba5cd08fc",
+      "content_hash": "cd438870c01f36aa5d693cc28e598235c7adcd789359b24c47fc47bdae6fc058",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T01:18:59.477Z"
+      "persisted_at": "2026-11-28T01:26:58.882Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358792,9 +358797,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a41a592cdc1dd873bf36fa0f70a184e529cad6ad89f08b6d2584f20681fd52c4",
+      "content_hash": "43ea39156bb1d4aad96de338f61708a79d86f032bfd9142a43f5848394ca481b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-28T01:18:59.702Z"
+      "persisted_at": "2026-11-28T01:26:59.124Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -369206,6 +369211,32 @@
       "content_hash": "23ba9c565a8dbdd7c145464e5beadc8b764038c4e8ad6aee3699a7877bbe6e52",
       "domain_letter": "G",
       "persisted_at": "2026-11-28T01:18:58.611Z"
+    },
+    "rule-11007": {
+      "learning_id": "rule-11007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 11007,
+      "title": "Grade a nested Flux HelmRelease or Kustomization by its own status",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "711f4b42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-28T01:26:52.878Z"
+    },
+    "candidate_directive-grade-a-nested-flux-helmrelease-or-kustomization-by-its-own-status": {
+      "item_id": "candidate_directive-grade-a-nested-flux-helmrelease-or-kustomization-by-its-own-status",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CKO5-grade-a-nested-flux-helmrelease-or-kustomization-by-its-own-status.md",
+      "title": "Grade a nested Flux HelmRelease or Kustomization by its own status",
+      "repository": "skyhook-io-radar-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3711aaadef5b5b523ade9962e10e79db97b36ee6a9fa3d711d97ebfd0b393b7d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-28T01:26:57.708Z"
     }
   },
   "ai-builder-brain": {

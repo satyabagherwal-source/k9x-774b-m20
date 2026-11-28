@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-28T01:18:57.909Z",
+  "updated_at": "2026-11-28T01:26:57.346Z",
   "stats": {
-    "total_discovered": 10667,
-    "approved_pending_harvest": 10126,
+    "total_discovered": 10669,
+    "approved_pending_harvest": 10128,
     "harvested_count": 0,
     "rejected_count": 541,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10135,
+      "COMMUNITY_AND_EXPERT": 10137,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230914,6 +230914,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
         "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-99DB440B8AD8": {
+      "id": "SRC-99DB440B8AD8",
+      "url": "https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/pkg/gitops/tree/builder.go",
+      "title": "https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/pkg/gitops/tree/builder.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:26:57.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-C94C9F3CF192": {
+      "id": "SRC-C94C9F3CF192",
+      "url": "https://github.com/fluxcd/flux2-kustomize-helm-example",
+      "title": "https://github.com/fluxcd/flux2-kustomize-helm-example",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-28T01:26:57.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
       }
     }
   }

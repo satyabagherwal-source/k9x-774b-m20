@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-28T01:18:59.702Z",
+  "last_updated": "2026-11-28T01:26:59.124Z",
   "total_records": 2868,
   "domains": {
     "A": {
@@ -15791,8 +15791,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "79d823008a9cb2f1c67b68b91ef5938bc165b6c1ce851e25b02612c55c059386",
-      "created_at": "2026-11-26T14:33:49.700Z"
+      "content_hash": "5ee693d2095b3a15ed9a24db792fe843d06d5aebef8b9927d64854a942182605",
+      "created_at": "2026-11-28T01:26:53.577Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -15902,8 +15902,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "efc3eca1673dbad1d4bd81443c3710976d78a80a733fb301286b751a992739b1",
-      "created_at": "2026-11-25T14:24:03.870Z"
+      "content_hash": "1b04b59b13af60b64ec78dd8142bb81716c668e683f0710d2db85b569bddf122",
+      "created_at": "2026-11-28T01:26:57.910Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -36919,8 +36919,8 @@
       "title": "Research & Knowledge Intelligence: apple/DepthPro2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-research-knowledge-intelligence-apple-depthpro2-core-invarian.md",
       "repository": "apple/DepthPro2",
-      "content_hash": "0571e9b2e8d9ae537a5207af1a8e3259c7e6682acd25f4f84904e1816e0d305d",
-      "created_at": "2026-11-24T17:03:03.228Z"
+      "content_hash": "0cf4cbb1db1e581106a999a1bf4b239392ba96bbe22420894ad01126fd27fdcf",
+      "created_at": "2026-11-28T01:26:44.003Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ovhaillm-olala-v1-0-mini-7a1b-core-invariants",
@@ -36979,8 +36979,8 @@
       "title": "Research & Knowledge Intelligence: hf-apple-depthpro2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-depthpro2-learnings-research-knowledge-intelligence-hf-apple-depthpro2-.md",
       "repository": "hf-apple-depthpro2-learnings",
-      "content_hash": "202cc39acac1cfedf7559063517c400122c17ad8c4e10eb1cbe9f2b3c4ac4c4f",
-      "created_at": "2026-11-24T17:03:20.659Z"
+      "content_hash": "e21d2ebdd836aca68f4770c9310c8d67bfa2d7bdd6aafeb0e9827b74cad47418",
+      "created_at": "2026-11-28T01:26:56.937Z"
     },
     "DOM-D-FE8131E1": {
       "record_id": "DOM-D-FE8131E1",
@@ -46815,8 +46815,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a41a592cdc1dd873bf36fa0f70a184e529cad6ad89f08b6d2584f20681fd52c4",
-      "created_at": "2026-11-28T01:18:59.702Z"
+      "content_hash": "43ea39156bb1d4aad96de338f61708a79d86f032bfd9142a43f5848394ca481b",
+      "created_at": "2026-11-28T01:26:59.124Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

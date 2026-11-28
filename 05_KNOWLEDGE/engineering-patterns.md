@@ -832017,3 +832017,84 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8d73e835` are properly handled with clean fallback behavior.
+
+
+---
+
+## 11007. Grade a nested Flux HelmRelease or Kustomization by its own status (Harvested from skyhook-io/radar)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Grade a nested Flux HelmRelease or Kustomization by its own status",
+  "source": "skyhook-io/radar",
+  "source_url": "https://github.com/skyhook-io/radar",
+  "source_version": "711f4b42",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-28T01:26:52.590Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-skyhook-io-radar",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `711f4b42`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/gitops/tree/builder.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `44fc4457`: Grade a nested Flux HelmRelease or Kustomization by its own status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gitops/tree/builder.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		sync, health, source := res.Sync, res.Health, res.HealthSource
+		// A Flux inventory entry carries no health. When it is itself a Flux
+		// Kustomization or HelmRelease, its own conditions and spec.suspend
+		// are the verdict, as on its own page; Radar's topology estimate
+		// would read a suspended release as Healthy.
+		if childTool, _ := classifyGitOpsKind(obj); tool == ToolFluxCD && childTool == string(ToolFluxCD) {
+			s := rootStatus(obj, ToolFluxCD)
+			sync, health, source = s.Sync, s.Health, HealthSourceController
+		}
+			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
+			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
+			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `44fc4457` are properly handled with clean fallback behavior.

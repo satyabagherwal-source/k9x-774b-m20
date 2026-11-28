@@ -4,24 +4,24 @@
 {
   "source_repository": "skyhook-io/radar",
   "source_url": "https://github.com/skyhook-io/radar",
-  "source_version": "ce0c9eba",
+  "source_version": "711f4b42",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T14:33:49.424Z",
+  "timestamp": "2026-11-28T01:26:53.386Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-skyhook-io-radar",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `ce0c9eba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T14:33:49.424Z`  
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `711f4b42`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-28T01:26:53.386Z`  
 > **Learning ID**: `learn-github-skyhook-io-radar`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from skyhook-io/radar:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:33:47.385Z  
+> **Harvest Timestamp**: 2026-11-28T01:26:51.998Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4236 stars
+- **Stars / Engagement**: 4250 stars
 
 ---
 
@@ -1947,6 +1947,7 @@ import (
 	"net/netip"
 	"strings"
 
+	"github.com/skyhook-io/radar/pkg/k8score"
 	"github.com/skyhook-io/radar/pkg/resourceid"
 )
 
@@ -2038,7 +2039,7 @@ func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 // matchesModifiers reports whether a candidate passes the query's hard
 // filters (kind:, ns:, label:, image:). It reads identity only, never Content.
 func matchesModifiers(q Query, c candidate) bool {
-	if len(q.KindFilter) > 0 && !kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
+	if len(q.KindFilter) > 0 && !q.kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
 		return false
 	}
 	if len(q.NSFilter) > 0 && !sliceContainsFold(q.NSFilter, c.Namespace) {
@@ -2294,25 +2295,14 @@ func kindMatches(kind, group, resource string, filters []string) bool {
 	return false
 }
 
-func sliceContainsFold(haystack []string, needle string) bool {
-	for _, h := range haystack {
-		if strings.EqualFold(h, needle) {
-			return true
-		}
-	}
-	return false
-}
+// shortNameKey names a discovered kubectl short name for one kind in one group.
+type shortNameKey struct{ name, group, kind string }
 
-func anyContainsFold(haystack []string, needle string) bool {
-	low := strings.ToLower(needle)
-	for _, h := range haystack {
-		if strings.Contains(strings.ToLower(h), low) {
-			return true
-		}
-	}
-	return false
-}
-
+func indexShortNames(resources []k8score.APIResource) map[shortNameKey]bool {
+	index := map[shortNameKey]bool{}
+	for _, ar := range resources {
+		for _, name := range ar.ShortNames {
+			index[shortNameKey{strings.ToLower(name), ar.Group, 
 ```
 
 ### Core Architecture Module: `internal/server/ai_engine.go`
@@ -2418,11 +2408,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2784** (2026-11-27): **GitOps tree: a nested Flux HelmRelease or Kustomization reads Radar's estimate, not its own status (suspended shows Healthy)**
+  *Symptoms*: ## Describe the bug  In the GitOps tree of a Flux Kustomization, the Flux objects it applies (a child HelmRelease or Kustomization) are graded by Radar's topology instead of by their own status. A suspended child HelmRelease reads **Healthy**, and the header counts it among the healthy resources; on a real cluster we also saw one read **Unknown** while it upgraded. On its own page the same object reads Suspended.  The child is a declared node: `nodeFromTopology` gets the empty health of the Flux inventory entry and falls back to `healthFromTopology` ([builder.go#L311](https://github.com/skyhook-io/radar/blob/e02bbdaa3c06e36e13bdc02d7dc85975290f0b7c/pkg/gitops/tree/builder.go#L311)). The tree API shows it: the child's `healthSource` is `radar`, while the GitRepository and HelmRepository in the same tree read `controller`. The child's own `Ready` condition and `spec.suspend` are recorded only as data (`recordFluxReady`), never as its health.  On one cluster, 24 nested Flux nodes read this way.  ## To reproduce  1. A cluster with Flux, for example `./scripts/gitops-demo.sh up`. 2. Apply a Kustomization that applies a HelmRelease. This uses Flux's own example, pinned to a commit that works with Flux v2.4:     ```yaml    apiVersion: source.toolkit.fluxcd.io/v1    kind: GitRepository    metadata:      name: nested-example      namespace: flux-system    spec:      interval: 10m      url: https://github.com/fluxcd/flux2-kustomize-helm-example      ref:        commit: 386ef7488e05575d
+
 - **Issue #2689** (2026-11-20): **Release Desktop workflow fails due to Go toolchain version mismatch**
   *Symptoms*: ## Describe the bug  The Release Desktop GitHub Actions workflow is failing during dependency installation because the project is using Go 1.26.11 while a required dependency (`github.com/goreleaser/nfpm/v2@v2.49.0`) requires Go >= 1.27.4.  The failing job is `Release Desktop` for run `117535128137` / job `132767922940` (`https://github.com/skyhook-io/radar/actions/runs/43406103414/job/132767922940`).  ## To reproduce  1. Trigger the `Release Desktop` GitHub Actions workflow. 2. The job reaches the Go dependency installation step for `nfpm`. 3. The workflow exits with code 1 before producing the desktop artifacts.  ## Expected behavior  The Release Desktop workflow should complete successfully with the required Go toolchain version and produce the expected desktop release artifacts (`.tar.gz`, `.deb`, `.rpm`, `.AppImage`).  ## Screenshots  Not applicable.  ## Diagnostics (optional)  <details><summary>Diagnostics snapshot</summary>  <!-- Paste here -->  </details>  - Radar version: not specified - Kubernetes: not applicable to this CI release job  ## Logs  ```text go: downloading github.com/goreleaser/nfpm v1.10.3 go: downloading github.com/goreleaser/nfpm/v2 v2.49.0 go: github.com/goreleaser/nfpm/v2/cmd/nfpm@latest: github.com/goreleaser/nfpm/v2@v2.49.0 requires go >= 1.27.4 (running go 1.26.11; GOTOOLCHAIN=local) ##[error]Process completed with exit code 1. ```  ## Additional context  This appears to be a CI/toolchain mismatch rather than a code regression in the app itself.
-
-- **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
-  *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2439,586 +2429,160 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0c9eba` (2026-11-26)
-**Commit Message**: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (#2953)
+### Incident Patch 1: `44fc4457` (2026-11-27)
+**Commit Message**: Grade a nested Flux HelmRelease or Kustomization by its own status (#2816)
 
-## Summary
+Fixes #2784.
 
-Builds Radar with Go 1.27 without paying for Go 1.27's JSON regression
-on large responses.
+In the GitOps tree of a Flux Kustomization, a HelmRelease or
+Kustomization it applies is graded by Radar's topology estimate instead
+of its own status. A suspended child HelmRelease reads Healthy and is
+counted among the healthy resources in the header, while its own page
+says Suspended. The tree API shows `healthSource: radar` on that node.
 
-Go 1.27 reimplements `encoding/json` on top of `encoding/json/v2`. Its
-`Encoder` encodes into a buffer from a shared pool that throws away a
-large buffer once small encodes have used it a few times in a row
-(`jsontext/pools.go`). Kubernetes types call `json.Marshal` on small
-values from their own `MarshalJSON` methods (`IntOrString` does), so
-every large list response hands its buffer to those small calls, loses
-it, and grows a new one from 64 bytes. On a 3,200-pod test cluster,
-stock Go 1.27 used **+38% process CPU** and **2.6× the allocations** of
-Go 1.26 for the same requests, and full pod lists got 13% slower.
+Flux inventory entries carry no health, so `nodeFromTopology` falls back
+to the topology estimate. When a managed node in a Flux tree is itself a
+Flux HelmRelease or Kustomization, the builder now takes sync and health
+from `rootStatus(obj, ToolFluxCD)`, the same path the related source
+objects (GitRepository, HelmRepository) in the same tree already use.
+Those nodes report `healthSource: controller`.
 
-`writeJSON` now encodes with `encoding/json/v2`'s `MarshalWrite` and
-`json.DefaultOptionsV1()` into a buffer Radar owns, taken from a pool of
-four slots that keeps buffers up to 16 MiB. That avoids the evicting
-pool, and the output is byte-for-byte what Go 1.27's
-`json.NewEncoder(w).Encode` writes.
+Where to look: `pkg/gitops/tree/builder.go`, the managed loop. The
+override applies only when the tree is a Flux tree and the object Radar
+read is a Flux reconciler. If the object could not be read, or the
+member is anything else (a Deployment, a ConfigMap), the topology
+estimate stays as before. Header counts follow node health, so a
+Suspended child is no 
 
-## What changed
-
-**JSON responses (`internal/server/server.go`).** `writeJSON` encodes
-the whole v
-
-**File**: `.github/workflows/appimage-smoke.yml` (modified, +1/-1)
+**File**: `pkg/gitops/tree/builder.go` (modified, +11/-2)
 ```diff
-@@ -43,7 +43,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+@@ -350,10 +350,19 @@ func (b *Builder) Build(ctx context.Context, kind, namespace, name, group string
+ 			continue
+ 		}
+ 		obj := objects[refKey(res.Ref)]
++		sync, health, source := res.Sync, res.Health, res.HealthSource
++		// A Flux inventory entry carries no health. When it is itself a Flux
++		// Kustomization or HelmRelease, its own conditions and spec.suspend
++		// are the verdict, as on its own page; Radar's topology estimate
++		// would read a suspended release as Healthy.
++		if childTool, _ := classifyGitOpsKind(obj); tool == ToolFluxCD && childTool == string(ToolFluxCD) {
++			s := rootStatus(obj, ToolFluxCD)
++			sync, health, source = s.Sync, s.Health, HealthSourceController
++		}
+ 		if live, ok := findTopoNode(topoByRef, res.Ref); ok {
+-			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
++			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
+ 		} else {
+-			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
++			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
+ 		}
+ 		if tool == ToolArgoCD && missing[refKey(res.Ref)] {
+ 			node := nodes[id]
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +6/-5)
+**File**: `pkg/gitops/tree/flux_nested_status_test.go` (added, +114/-0)
 ```diff
-@@ -125,6 +125,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
-+          # Exercise pkg with the Go version Radar Hub uses.
-           go-version: '1.26'
-           cache: false
- 
-@@ -177,7 +178,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -226,7 +227,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -264,7 +265,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -293,7 +294,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -357,7 +358,7 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
-       - name: Restore Go caches
-         uses: ./.github/actions/go-cache-restore
-```
-
-**File**: `.github/workflows/codeql.yml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ jobs:
-         if: matrix.language == 'go'
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Initialize CodeQL
-         uses: github/codeql-action/init@v4
-```
-
-**File**: `.github/workflows/helm-refresh-windows.yml` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache-dependency-path: go.sum
-       - name: Test Windows cache file sharing
-         run: go test ./internal/helm/repository_cache_windows.go ./internal/helm/repository_cache_windows_test.go -count=1 -timeout 30s
-```
-
-**File**: `.github/workflows/release-desktop.yml` (modified, +11/-5)
-```diff
-@@ -28,7 +28,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -81,8 +81,12 @@ jobs:
-       - name: Build macOS .app (universal)
-         run: cd cmd/desktop && wails build -platform darwin/universal -ldflags "-X main.version=${GITHUB_REF_NAME#v}"
- 
--      - name: Update bundle identifier
--        run: plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
-+      # Go 1.27 binaries need macOS 13; declaring it lets macOS refuse the app
-+      # with a clear message instead of a crash at launch.
-+      - name: Update bundle identifier and minimum macOS
-+        run: |
-+          plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
-+          plutil -replace LSMinimumSystemVersion -string "13.0" build/bin/radar-desktop.app/Contents/Info.plist
- 
-       - name: Codesign with Developer ID
-         run: |
-@@ -161,7 +165,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -267,7 +271,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -495,6 +499,8 @@ jobs:
-             desc "Kubernetes visibility — topology, traffic, and Helm management"
-             homepage "https://github.com/skyhook-io/radar"
- 
-+            depends_on macos: :ventura
-+
-             app "Radar.app"
- 
-             # No caveats needed — app is signed and notarized
-```
-
-**File**: `.github/workflows/release-image.yml` (modified, +1/-1)
-```diff
-@@ -52,7 +52,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-```
-
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       # CI runs claim setup-go's default cache key with linux/amd64 objects only,
-```
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@ For detailed architecture, API reference, and release process, see [DEVELOPMENT.
- 
- ### Prerequisites
- 
--- Go 1.26+
-+- Go 1.27+
- - Node.js 24+
- - npm
- - Access to a Kubernetes cluster (minikube, kind, or remote)
-```
-
----
-
-### Incident Patch 2: `691fa362` (2026-11-25)
-**Commit Message**: Move the built-in workload action handlers out of server.go (no functional change) (#2921)
-
-## Summary
-
-A pure move, with no functional change. The built-in workload and
-CronJob action handlers leave `internal/server/server.go`, now 6,400
-lines, for `internal/server/workload_actions.go`. That puts them next to
-the other per-action handler files (`workload_restart.go`,
-`workload_images_handlers.go`, `rollouts_handlers.go`,
-`node_handlers.go`, `workflow_stop.go`).
-
-## What changed
-
-- **Moved byte for byte:**
-  - CronJob trigger, suspend and resume
-  - Deployment pause and resume
-  - scale
-- revisions and rollback, with the `rollbackableWorkloadKinds` gate,
-`errCodeWorkloadPaused`, and the rollback error mapping
-
-That's 359 lines. Only the package clause and import blocks are new;
-`server.go` drops the now-unused `pkg/rollouts` import.
-- **Unchanged:** route registrations stay in `server.go`, and so does
-every request, response and Kubernetes call.
-- **Docs:** CLAUDE.md now names the new file as the home of
-`rollbackableWorkloadKinds`, and `docs/STRUCTURE.md` lists it.
-
-## Testing
-
-- **Byte-identical move, checked by script:** the lines removed from
-`server.go`, minus one blank separa
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -147,7 +147,7 @@ After `make <name>-demo`, run `kubectl config use-context kind-radar-<name>-demo
- - MCP: `/mcp` (Streamable HTTP — POST for JSON-RPC, GET for SSE)
- - Sealed Secrets: `GET /api/sealedsecrets/controller?sealedSecretNamespace=` — the controller serving that namespace (not `namespace`, the filter the totals honour), chosen from its Deployment flags (caller's `get deployments` in its namespace), sealing-key names and `tls.crt` dates ordered by the controller's own key order (caller's `list secrets` there; never key material, labels or annotations) and the SealedSecret totals the caller can list. A denied part is a state in a 200 (`controllerState` / `keysState`), never a whole-response 403; `ambiguous` is the same for every caller and names no candidate; `atKubesealDefault` is set even for a denied controller. `GET /api/sealedsecrets/cert?sealedSecretNamespace=` returns that controller's public certificate `{certPem, certFingerprint, controller}` from its fixed `/v1/cert.pem` (409 `ambiguous`/`unknown` rather than a guess; auth on: `get services/proxy` on the kubeseal Service-and-port name; capability `sealedSecretsCert`). Rules in docs/integrations.md (Bitnami Sealed Secrets)
- - Helm: `/api/helm/releases/...`. `/api/helm/inventory` (+ `/{namespace}/{name}`) is the list as far as the caller's access reaches: where the read of Helm's release Secrets is denied, rows come from the stamps on objects the caller can read, through `search.Scan`'s per-user gates, and never from a Secret. See [docs/helm.md](docs/helm.md#without-access-to-secrets)
--- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `server.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
-+- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `internal/server/workload_actions.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
- - Argo Rollouts: `/api/rollouts/{ns}/{name}/{abort,retry,promote,promote-full,skip-step}` (POST) + `/capabilities` (GET); rollback/history deliberately live on the `/workloads` routes. The status verbs patch the `rollouts/status` subresource, so capabilities SAR `rollouts` **and** `rollouts/status` separately — `patch rollouts` does not imply `patch rollouts/status`. Promotion waits for the controller to observe the current pod template, so `promote-full` can return **503** (`ErrControllerNotCaughtUp`) and is safe to retry; for a `workloadRef` Rollout the caller must be able to `get` the referenced workload. Engine `pkg/rollouts`, handlers `internal/server/rollouts_handlers.go`
- - GitOps write evidence: `POST /api/gitops/write-evidence` `{kind, group, namespace, name, paths[], owner?}` reads the target (and its GitOps owner) as the caller and returns, per field path, whether it is in last-applied, which field managers own it and whether an ignore rule covers it, plus the owner's sync policy — never raw managedFields/last-applied. Classification is the pure `evaluateGitOpsWriteGuard` in k8s-ui (`utils/gitops-write-guard.ts`); Set image and Diagnose Apply show it via `GitOpsWriteWarning` + `web/src/hooks/useGitOpsWriteGuard.ts`. Copy never promises a change won't be reverted. See docs/gitops.md
- - GitOps controller actions: `/api/argo/applications/...` (sync, refresh, terminate, suspend, resume, rollb
-```
-
-**File**: `docs/STRUCTURE.md` (modified, +1/-0)
-```diff
-@@ -66,6 +66,7 @@ radar/
- │   │   ├── portforward.go     # Port forwarding sessions
- │   │   ├── resource_counts.go # Resource counting
- │   │   ├── dashboard.go       # Dashboard summary endpoint
-+│   │   ├── workload_actions.go # Built-in workload and CronJob actions: scale, pause/resume, revisions/rollback, CronJob trigger/suspend/resume
- │   │   ├── argo_handlers.go   # ArgoCD sync/refresh/terminate/suspend/resume/rollback/selective-sync
- │   │   ├── flux_handlers.go   # FluxCD reconcile/suspend/resume/sync-with-source
- │   │   ├── gitops_handlers.go # /api/gitops/tree + /api/gitops/insights handlers
-```
-
-**File**: `internal/server/server.go` (modified, +0/-361)
-```diff
-@@ -77,7 +77,6 @@ import (
- 	"github.com/skyhook-io/radar/pkg/rbac"
- 	"github.com/skyhook-io/radar/pkg/readreason"
- 	"github.com/skyhook-io/radar/pkg/resourceid"
--	"github.com/skyhook-io/radar/pkg/rollouts"
- 	topology "github.com/skyhook-io/radar/pkg/topology"
- 	"github.com/skyhook-io/radar/pkg/urlutil"
- )
-@@ -4776,366 +4775,6 @@ func (s *Server) handleCascadeDeletePreview(w http.ResponseWriter, r *http.Reque
- 	s.writeJSON(w, preview)
- }
- 
--// handleTriggerCronJob creates a Job from a CronJob. The optional body
--// {"jobName": "..."} names the Job; without it the API server generates
--// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
--func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	// A pointer so a JSON null, which decodes without error, can be refused.
--	req := &struct {
--		JobName string `json:"jobName"`
--	}{}
--	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
--		var tooLarge *http.MaxBytesError
--		if errors.As(err, &tooLarge) {
--			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
--			return
--		}
--		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
--		return
--	}
--	if req == nil {
--		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
--		return
--	}
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
--	if err != nil {
--		if errors.Is(err, k8score.ErrInvalidJobName) {
--			s.writeError(w, http.StatusBadRequest, err.Error())
--			return
--		}
--		if apierrors.IsAlreadyExists(err) {
--			s.writeError(w, http.StatusConflict, err.Error())
--			return
--		}
--		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
--			s.writeError(w, http.StatusBadRequest, err.Error())
--			return
--		}
--		if apierrors.IsForbidden(err) {
--			s.writeError(w, http.StatusForbidden, err.Error())
--			return
--		}
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]any{
--		"message": "Job created successfully",
--		"jobName": result.GetName(),
--	})
--}
--
--// handleSuspendCronJob suspends a CronJob
--func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
--	if err != nil {
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
--}
--
--// handleResumeCronJob resumes a suspended CronJob
--func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
--	if err != nil {
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
--}
--
--// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
--func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
--	s.setDeploymentPaused(w, r, true)
--}
--
--// handleResumeDeployment lets a paused Deployment roll out its pod template again.
--func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
--	s.setDeploymentPaused(w, r, false)
--}
--
--// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
--// returns 403 when the caller can't patch the Deployment. Without authentication
--// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
--// site from reaching it.
--func (s *Serve
-```
-
-**File**: `internal/server/workload_actions.go` (added, +378/-0)
-```diff
-@@ -0,0 +1,378 @@
-+package server
+@@ -0,0 +1,114 @@
++package tree
 +
 +import (
-+	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"log"
-+	"net/http"
-+	"strings"
++	"context"
++	"testing"
 +
-+	"github.com/go-chi/chi/v5"
-+	"github.com/skyhook-io/radar/internal/auth"
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+	"github.com/skyhook-io/radar/pkg/rollouts"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++
++	"github.com/skyhook-io/radar/pkg/topology"
 +)
 +
-+// handleTriggerCronJob creates a Job from a CronJob. The optional body
-+// {"jobName": "..."} names the Job; without it the API server generates
-+// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
-+func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
++func fluxObject(apiVersion, kind, namespace, name string, suspend bool, ready, reason string) *unstructured.Unstructured {
++	obj := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": apiVersion, "kind": kind,
++		"metadata": map[string]any{"name": name, "namespace": namespace, "generation": int64(2)},
++		"spec":     map[string]any{"suspend": suspend},
++		"status": map[string]any{"conditions": []any{
++			map[string]any{"type": "Ready", "status": ready, "reason": reason, "observedGeneration": int64(2)},
++		}},
++	}}
++	return obj
++}
 +
-+	// A pointer so a JSON null, which decodes without error, can be refused.
-+	req := &struct {
-+		JobName string `json:"jobName"`
-+	}{}
-+	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
-+		var tooLarge *http.MaxBytesError
-+		if errors.As(err, &tooLarge) {
-+			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
-+			return
-+		}
-+		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
-+		return
++func healthyTopoNode(kind topology.NodeKind, apiVersion, namespace, name string) topology.Node {
++	return topology.Node{
++		ID: string(kind) + "/" + namespace + "/" + name, Kind: kind, Name: name, Status: topology.StatusHealthy,
++		Data: map[string]any{"namespace": namespace, "apiVersion": apiVersion},
 +	}
-+	if req == nil {
-+		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
-+		return
-+	}
++}
 +
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
-+	}
-+	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
++// A Flux object a Kustomization applies is graded by its own conditions and
++// spec.suspend, as on its own page, not by Radar's topology estimate.
++func TestNestedFluxReconcilerReadsItsOwnStatus(t *testing.T) {
++	parent := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization",
++		"metadata": map[string]any{"name": "apps", "namespace": "flux-system"},
++		"spec":     map[string]any{"sourceRef": map[string]any{"kind": "GitRepository", "name": "repo"}},
++		"status": map[string]any{"inventory": map[string]any{"entries": []any{
++			map[string]any{"id": "podinfo_podinfo_helm.toolkit.fluxcd.io_HelmRelease", "v": "v2"},
++			map[string]any{"id": "flux-system_infra_kustomize.toolkit.fluxcd.io_Kustomization", "v": "v1"},
++			map[string]any{"id": "podinfo_gone_helm.toolkit.fluxcd.io_HelmRelease", "v": "v2"},
++			map[string]any{"id": "podinfo_web_apps_Deployment", "v": "v1"},
++		}}},
++	}}
++	parentRef := ResourceRef{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization", Namespace: "flux-system", Name: "apps"}
++	hrRef := ResourceRef{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease", Namespace: "podinfo", Name: "podinfo"}
++	ksRef := ResourceRef{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization", Namespace: "flux-system", Name: "infra"}
++	goneRef := ResourceRef{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease", Namespace: "podinfo", Name: "gone"}
++	depRef := ResourceRef{Group: "apps", Kind: "Deployment", Namespace: "podinfo", Name: "web"}
++	getter := &fakeDynamic{objects: map[string]*unstructured.Unstructured{
++		refKey(parentRef): parent,
++		refKey(hrRef):     fluxObject("helm.toolkit.fluxcd.io/v2", "HelmRelease", "podinfo", "podinfo", true, "True", "UpgradeSucceeded"),
++		refKey(ksRef):     fluxObject("kustomize.toolkit.fluxcd.io/v1", "Kustomization", "flux-system", "infra", false, "False", "BuildFailed"),
++		refKey(depRef):    {Object: map[string]any{"apiVersion": "apps/v1", "kind": "Deployment", "metadata": map[string]any{"name": "web", "namespace": "podinfo"}}},
++	}}
++	topo := &topology.Topology{Nodes: []topology.Node{
++		healthyTopoNode(topology.KindHelmRelease, "helm.toolkit.fluxcd.io/v2", "podinfo", "podinfo"),
++		healthyTopoNode(topology.KindKustomization, "kustomize.toolkit.fluxcd.io/v1", "flux-system", "infra"),
++		healthyTopoNode(topology.KindHelmRelease, "helm.toolkit.fluxcd.io/v2", "podinfo", "gone"),
++		healthyTopoNode(topology.KindDeployment, "apps/v1", "podinfo", "web"),
++	}}
++	tree, _, err := newTestBuilder(t, getter, topo).Build(context.Background(), "Kustomization", "flux-system", "apps", "kustomize.toolkit.fluxcd.io")
 +	if err != nil {
-+		if errors.Is(err, k8score.ErrInvalidJobName) {
-+			s.writeError(w, http.StatusBadRequest, err.Error())
-+			return
-+		}
-+		if apierrors.IsAlreadyExists(err) {
-+			s.writeError(w, http.StatusConflict, err.Error())
-+			return
-+		}
-+		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
-+			s.writeError(w, http.StatusBadRequest, err.Error())
-+			return
-+		}
-+		if apierrors.IsForbidden(err) {
-+			s.writeError(w, http.StatusForbidden, err.Error())
-+			return
-+		}
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
-+		}
-+		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
++		t.Fatalf("Build: %v", err)
 +	}
 +
-+	s.writeJSON(w, map[string]any{
-+		"message": "Job created successfully",
-+		"jobName": result.GetName(),
-+	})
-+}
-+
-+// handleSuspendCronJob suspends a CronJob
-+func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
-+
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
++	for _, tc := range []struct {
++		name         string
++		ref          ResourceRef
++		sync, health string
++		source       HealthSource
++		tone         string
++	}{
++		{"suspended child HelmRelease", hrRef, "Synced", "Suspended", HealthSourceController, "degraded"},
++		{"failing child Kustomization", ksRef, "OutOfSync", "Degraded", HealthSourceController, "unhealthy"},
++		{"child whose object Radar could not read keeps the topology estimate", goneRef, "", "Healthy", HealthSourceRadar, "healthy"},
++		{"non-Flux member keeps the topology estimate", depRef, "", "Healthy", HealthSourceRadar, "healthy"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			n := findNode(t, tree, tc.ref)
++			if n.Sync != tc.sync || n.Health != tc.health || n.HealthSource != tc.source || n.TopologyStatus != tc.tone {
++				t.Errorf("node = sync %q health %q source %q tone %q, want %q/%q/%q/%q", n.Sync, n.Health, n.HealthSource, n.TopologyStatus, tc.sync, tc.health, tc.source, tc.tone)
++			}
++		})
 +	}
-+	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
-+	if err != nil {
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
-+		}
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
++	if tree.Summary.Degraded != 1 || tree.Summary.OutOfSync != 1 {
++		t.Errorf("Summary = %+v, want the failing child as the one degraded and out-of-sync resource", tree.Summary)
 +	}
-+
-+	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
 +}
 +
-+// handleResumeCronJob resumes a suspended CronJob
-+func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
-+
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
-+	}
-+	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
-+	if err != nil {
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
-+		}
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
-+	}
-+
-+	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
-+}
-+
-+// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
-+func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
-+	s.setDeploymentPaused(w, r, true)
-+}
-+
-+// handleResumeDeployment lets a paused Deployment roll out its pod template again.
-+func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
-+	s.setDeploymentPaused(w, r, false)
-+}
-+
-+// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
-+// returns 403 when the caller can't patch the Deployment. Without authentication
-+// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
-+// site from reaching it.
-+func (s *Server) setDeploymentPaused(w http.ResponseWriter, r *http.Re
++// An Argo Application that deploys a Flux HelmRelease keeps Argo's
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2972** (2026-11-27): Align Velero permissions with one Cloud Owner switch (@nadaverell)
+- **PR #2959** (2026-11-26): Send NKP clusters to the NKP connect steps; name the basePath fix (@hisco)
+- **PR #2958** (2026-11-27): What's New for v1.22.0 (@arlenvasconcelos)
+- **PR #2957** (2026-11-27): Check live Kubernetes permissions for Cloud Owner grants (@nadaverell)
+- **PR #2956** (2026-11-26): feat(resources): match kubectl short names in kind filter and command palette (@rvandernoort)
 - **PR #2953** (2026-11-26): Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (@nadaverell)
-- **PR #2946** (2026-11-26): Group related issues in application panels and expand linked issues (@nadaverell)
-- **PR #2944** (2026-11-26): Align the OpenObserve metrics settings with the other connection forms (@arlenvasconcelos)
-- **PR #2938** (2026-11-26): Share the revision-locked settings file (@nadaverell)
-- **PR #2937** (2026-11-26): Keep acronyms whole in generated labels; share shellWord (@nadaverell)
-- **PR #2936** (2026-11-26): Share workspace summary cards and conditions; CNPG uses them (@nadaverell)
 
 ---
 
@@ -3038,31 +2602,42 @@ every request, response and Kubernetes call.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build with Go 1.27 and keep JSON responses as fast as on Go 1.26
+## X. Grade a nested Flux HelmRelease or Kustomization by its own status
 
 **RULE**:
-When implementing operations in `.github/workflows/appimage-smoke.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/gitops/tree/builder.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0c9eba`: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44fc4457`: Grade a nested Flux HelmRelease or Kustomization by its own status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/appimage-smoke.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gitops/tree/builder.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          go-version: '1.27'
+		sync, health, source := res.Sync, res.Health, res.HealthSource
+		// A Flux inventory entry carries no health. When it is itself a Flux
+		// Kustomization or HelmRelease, its own conditions and spec.suspend
+		// are the verdict, as on its own page; Radar's topology estimate
+		// would read a suspended release as Healthy.
+		if childTool, _ := classifyGitOpsKind(obj); tool == ToolFluxCD && childTool == string(ToolFluxCD) {
+			s := rootStatus(obj, ToolFluxCD)
+			sync, health, source = s.Sync, s.Health, HealthSourceController
+		}
+			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
+			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, sync, health, source), obj), res.Data)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          go-version: '1.26'
+			nodes[id] = mergeData(enrichNodeFromObject(nodeFromTopology(live, res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
+			nodes[id] = mergeData(enrichNodeFromObject(syntheticNode(res.Ref, RoleDeclared, tool, res.Sync, res.Health, res.HealthSource), obj), res.Data)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0c9eba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44fc4457` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

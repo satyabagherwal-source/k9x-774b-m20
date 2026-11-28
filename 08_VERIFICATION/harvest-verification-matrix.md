@@ -13924,3 +13924,5 @@
 | `CYCLE-20261128-QRXL` | `2026-11-28T01:10:00.681Z` | `lxml/lxml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11004` | Yes (`af0506cc...`) |
 | `CYCLE-20261128-20RS` | `2026-11-28T01:18:45.352Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11005` | Yes (`45ee7bbf...`) |
 | `CYCLE-20261128-26Q0` | `2026-11-28T01:18:53.064Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11006` | Yes (`09e00446...`) |
+| `CYCLE-20261128-C9W7` | `2026-11-28T01:26:43.735Z` | `apple/DepthPro2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | Yes (`a18f4677...`) |
+| `CYCLE-20261128-CH53` | `2026-11-28T01:26:53.127Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 11007` | Yes (`83e94928...`) |

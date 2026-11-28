@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "1a8e9c9a",
+    "sourceVersion": "711f4b42",
     "license": "Apache-2.0",
-    "contentHash": "47173e1c788f50a07c6b71e7165031e5289058df7c3a8aee2f666a36688b4baa",
-    "lastHarvestedAt": "2026-11-27T07:22:01.246Z",
+    "contentHash": "83e949288125adf49f8d546390d420a3385a0c1e869f25d0d58327d47170f361",
+    "lastHarvestedAt": "2026-11-28T01:26:53.140Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -13085,8 +13085,8 @@
     "sourceUrl": "https://huggingface.co/apple/DepthPro2",
     "sourceVersion": "hf-apple-depthpro2",
     "license": "Open-Source",
-    "contentHash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
-    "lastHarvestedAt": "2026-11-24T17:03:03.013Z",
+    "contentHash": "a18f4677418eddf6ce11be9820d5ef688d7df71625bb87b2b6057205cd0f48d8",
+    "lastHarvestedAt": "2026-11-28T01:26:43.749Z",
     "learningId": "learn-huggingface-apple-depthpro2"
   },
   "hf-ovhaillm-olala-v1.0-mini-7a1b": {

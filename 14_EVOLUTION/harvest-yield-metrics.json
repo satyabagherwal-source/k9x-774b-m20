@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:18:53.081Z",
-  "total_cycles_completed": 13214,
-  "total_learnings_persisted": 13214,
-  "total_rules_promoted": 11921,
+  "last_updated": "2026-11-28T01:26:53.146Z",
+  "total_cycles_completed": 13216,
+  "total_learnings_persisted": 13216,
+  "total_rules_promoted": 11922,
   "history": [
-    {
-      "timestamp": "2026-11-27T07:21:51.762Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T07:22:01.256Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T07:22:05.376Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-28T01:18:53.081Z",
       "repository": "kumahq/kuma",
       "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:26:43.756Z",
+      "repository": "apple/DepthPro2",
+      "learningId": "learn-huggingface-apple-depthpro2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-28T01:26:53.146Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

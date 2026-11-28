@@ -13957,3 +13957,5 @@ Every entry in this ledger must capture:
 | `learn-github-lxml-lxml` | `https://github.com/lxml/lxml` | `1bbb09aa` | Multi-dimensional audit evidence | 2026-11-28T01:10:00.694Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `8b91bb75` | Multi-dimensional audit evidence | 2026-11-28T01:18:45.363Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `8d73e835` | Multi-dimensional audit evidence | 2026-11-28T01:18:53.076Z |
+| `learn-huggingface-apple-depthpro2` | `https://huggingface.co/apple/DepthPro2` | `hf-apple-d` | Multi-dimensional audit evidence | 2026-11-28T01:26:43.749Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `711f4b42` | Multi-dimensional audit evidence | 2026-11-28T01:26:53.140Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-28T01:18:53.084Z",
+  "last_updated": "2026-11-28T01:26:53.149Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "47173e1c788f50a07c6b71e7165031e5289058df7c3a8aee2f666a36688b4baa",
-      "verified_at": "2026-11-27T07:22:01.258Z",
+      "content_hash": "83e949288125adf49f8d546390d420a3385a0c1e869f25d0d58327d47170f361",
+      "verified_at": "2026-11-28T01:26:53.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T07:22:01.258Z"
+      "last_updated": "2026-11-28T01:26:53.148Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -19716,14 +19716,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-depthpro2",
-      "content_hash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
-      "verified_at": "2026-11-24T17:03:03.027Z",
+      "content_hash": "a18f4677418eddf6ce11be9820d5ef688d7df71625bb87b2b6057205cd0f48d8",
+      "verified_at": "2026-11-28T01:26:43.759Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:03:03.027Z"
+      "last_updated": "2026-11-28T01:26:43.759Z"
     },
     "OVHaiLLM/Olala-v1.0-mini-7A1B": {
       "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",

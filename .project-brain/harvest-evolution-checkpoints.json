@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-28T01:19:00.077Z",
+  "last_updated": "2026-11-28T01:26:59.510Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-28T01:18:58.996Z",
+      "processed_at": "2026-11-28T01:26:58.382Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1658,7 +1658,7 @@
       "staged_for_review": 1
     },
     "skyhook-io-radar-learnings.md": {
-      "processed_at": "2026-11-27T07:22:09.298Z",
+      "processed_at": "2026-11-28T01:26:57.186Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3598,7 +3598,7 @@
       "staged_for_review": 0
     },
     "hf-apple-depthpro2-learnings.md": {
-      "processed_at": "2026-11-24T17:03:20.426Z",
+      "processed_at": "2026-11-28T01:26:56.682Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5181,
+  "total_dossiers_evaluated": 5184,
   "total_canonical_promoted": 588,
-  "total_staged_for_review": 3922
+  "total_staged_for_review": 3924
 }

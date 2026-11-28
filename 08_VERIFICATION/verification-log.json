@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-I8MG",
-    "timestamp": "2026-11-26T13:35:51.592Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "2da64f18f7ba7626d8a4a26c22f477fedc691b068969b523be60b88a08759d04",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-IE3W",
-    "timestamp": "2026-11-26T13:35:58.700Z",
-    "repository": "Jarvis322/macos-sysdata",
-    "learningId": "learn-github-jarvis322-macos-sysdata",
-    "contentHash": "4caf90df2317367dda64bf71c832b36e3bd392799f9b8ac0cfe39e3adb82acce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-IG8O",
     "timestamp": "2026-11-26T13:36:01.464Z",
     "repository": "beclab/Olares",
@@ -7490,6 +7460,36 @@
     "repository": "kumahq/kuma",
     "learningId": "learn-github-kumahq-kuma",
     "contentHash": "09e004467f1e59470cfb2bc3e18456deb5e9a0f60ec42ff54394f774419d03ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-C9W7",
+    "timestamp": "2026-11-28T01:26:43.735Z",
+    "repository": "apple/DepthPro2",
+    "learningId": "learn-huggingface-apple-depthpro2",
+    "contentHash": "a18f4677418eddf6ce11be9820d5ef688d7df71625bb87b2b6057205cd0f48d8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261128-CH53",
+    "timestamp": "2026-11-28T01:26:53.127Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "83e949288125adf49f8d546390d420a3385a0c1e869f25d0d58327d47170f361",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
