@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-28T15:06:06.892Z",
-    "lastVerified": "2026-11-28T15:06:06.892Z",
+    "lastChecked": "2026-11-28T15:54:28.120Z",
+    "lastVerified": "2026-11-28T15:54:28.120Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-28T15:36:21.188Z",
-    "lastVerified": "2026-11-28T15:36:21.188Z",
+    "lastChecked": "2026-11-28T15:54:28.129Z",
+    "lastVerified": "2026-11-28T15:54:28.129Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -216,8 +216,8 @@
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T13:13:45.386Z",
-    "lastVerified": "2026-11-27T13:13:45.386Z",
+    "lastChecked": "2026-11-28T15:54:13.112Z",
+    "lastVerified": "2026-11-28T15:54:13.112Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -458,12 +458,12 @@
     "lastVerified": "2026-11-26T15:50:08.283Z"
   },
   "nginx-kubernetes-ingress": {
-    "name": "nginx/kubernetes-ingress",
+    "name": "kubernetes-ingress",
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T19:18:15.745Z",
-    "lastVerified": "2026-11-27T19:18:15.745Z",
+    "lastChecked": "2026-11-28T15:54:20.652Z",
+    "lastVerified": "2026-11-28T15:54:20.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
@@ -472,7 +472,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "28009b62"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -751,8 +752,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-28T07:40:11.902Z",
-    "lastVerified": "2026-11-28T07:40:11.902Z",
+    "lastChecked": "2026-11-28T15:54:23.110Z",
+    "lastVerified": "2026-11-28T15:54:23.110Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3736,9 +3737,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-27T17:59:44.835Z",
+    "lastChecked": "2026-11-28T15:54:25.623Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-27T17:59:44.835Z"
+    "lastVerified": "2026-11-28T15:54:25.623Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -12321,9 +12322,9 @@
   "alyssaxuu-later": {
     "name": "later",
     "officialUrl": "https://github.com/alyssaxuu/later",
-    "lastChecked": "2026-11-26T10:30:52.565Z",
+    "lastChecked": "2026-11-28T15:54:18.112Z",
     "revisionIdentifier": "26e79369",
-    "lastVerified": "2026-11-26T10:30:52.565Z"
+    "lastVerified": "2026-11-28T15:54:18.112Z"
   },
   "dosco-deeporg": {
     "name": "dosco/deeporg",
@@ -12733,9 +12734,9 @@
   "syntax-tree-mdast": {
     "name": "mdast",
     "officialUrl": "https://github.com/syntax-tree/mdast",
-    "lastChecked": "2026-11-25T02:55:58.942Z",
+    "lastChecked": "2026-11-28T15:54:15.624Z",
     "revisionIdentifier": "c034ec9d",
-    "lastVerified": "2026-11-25T02:55:58.942Z"
+    "lastVerified": "2026-11-28T15:54:15.624Z"
   },
   "xotahal-react-native-material-ui": {
     "name": "react-native-material-ui",
